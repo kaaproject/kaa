@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CODE_CHARACTERS;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
@@ -143,7 +144,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.accessToken = dto.getAccessToken();
         this.groupState = MongoDaoUtil.convertDtoToModelList(dto.getGroupState());
         this.sequenceNumber = dto.getSequenceNumber();
-        this.profile = substitudeMongoReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
+        this.profile = encodeReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
         this.profileHash = dto.getProfileHash();
         this.profileVersion = dto.getClientProfileVersion();
         this.serverProfileVersion = dto.getServerProfileVersion();
@@ -389,7 +390,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.version = version;
     }
 
-    private DBObject substitudeMongoReservedCharacteres(DBObject profileBody) {
+    private DBObject encodeReservedCharacteres(DBObject profileBody) {
         if (profileBody == null) {
             return null;
         }
@@ -398,10 +399,11 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (keySet != null) {
             for (String key : keySet) {
                 Object value = profileBody.get(key);
-                key = key.replace('.', (char) 0xFF0E);
-                key = key.replace('$', (char) 0xFF04);
+                for(char symbolToReplace : CODE_CHARACTERS.keySet()) {
+                	key = key.replace(symbolToReplace, CODE_CHARACTERS.get(symbolToReplace));                	
+                }
                 if(value instanceof DBObject) {
-                    modifiedNode.put(key, substitudeMongoReservedCharacteres((DBObject) value));
+                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
                 } else {
                     modifiedNode.put(key, value);
                 }
@@ -410,7 +412,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         return modifiedNode;
     }
 
-    private String convertToOriginalProfileCharacteres(DBObject profileBody) {
+    private String decodeReservedCharacteres(DBObject profileBody) {
         if (profileBody == null) {
             return "";
         }
@@ -419,10 +421,11 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (keySet != null) {
             for (String key : keySet) {
                 Object value = profileBody.get(key);
-                key = key.replace((char) 0xFF0E, '.');
-                key = key.replace((char) 0xFF04, '$');
+                for(char symbolToReplace : CODE_CHARACTERS.values()) {
+                	key = key.replace(symbolToReplace, CODE_CHARACTERS.inverse().get(symbolToReplace));                	
+                }
                 if(value instanceof DBObject) {
-                    modifiedNode.put(key, (DBObject) JSON.parse(convertToOriginalProfileCharacteres((DBObject) value)));
+                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
                 } else {
                     modifiedNode.put(key, value);
                 }
@@ -568,7 +571,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setClientProfileBody(convertToOriginalProfileCharacteres(profile));
+        dto.setClientProfileBody(decodeReservedCharacteres(profile));
         dto.setProfileHash(profileHash);
         dto.setClientProfileVersion(profileVersion);
         dto.setServerProfileVersion(serverProfileVersion);

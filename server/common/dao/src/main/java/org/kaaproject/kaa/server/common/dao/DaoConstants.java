@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 public class DaoConstants {
 
     public static final String TENANT_PROPERTY = "tenant";
@@ -418,6 +421,12 @@ public class DaoConstants {
     public static final String PROFILE = "profile";
     public static final String OPT_LOCK = "opt_lock";
     public static final String APPLIED = "[applied]";
+
+    public static final BiMap<Character, Character> CODE_CHARACTERS = HashBiMap.create();
+    static {
+        CODE_CHARACTERS.put('.', (char) 0xFF0E);
+        CODE_CHARACTERS.put('$', (char) 0xFF04);
+    }
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");
