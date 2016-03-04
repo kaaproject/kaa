@@ -30,11 +30,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -3521,4 +3523,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (StringUtils.isEmpty(endpointUserExternalId)) {
+                String message = "The endpoint user external ID provided is empty!";
+                throw new IllegalArgumentException(message);
+            }
+            return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId(endpointUserExternalId, getCurrentUser().getTenantId());
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
 }

@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -229,7 +230,7 @@ public class EndpointServiceImplTest extends AbstractTest {
     }
     
     @Test
-    public void attchEndpointToUserTest() {
+    public void attachEndpointToUserTest() {
         TenantDto tenantDto = generateTenantDto();
         EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
         String endpointGroupId = "124";
@@ -244,6 +245,38 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertEquals(1, endpointIds.size());
         Assert.assertEquals(endpointProfileDto.getId(), endpointIds.get(0));
     }
+    
+    @Test
+    public void findEndpointProfilesByExternalUserIdTest() {
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
+        String endpointGroupId = "124";
+        String accessToken1 = "1111";
+        String accessToken2 = "2222";
+        EndpointProfileDto endpointProfileDto1 = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+        endpointProfileDto1.setAccessToken(accessToken1);
+        EndpointProfileDto endpointProfileDto2 = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+        endpointProfileDto2.setAccessToken(accessToken2);
+        endpointProfileDto1 = endpointService.saveEndpointProfile(endpointProfileDto1);
+        endpointProfileDto2 = endpointService.saveEndpointProfile(endpointProfileDto2);
+        endpointService.attachEndpointToUser(endpointUserDto.getId(), accessToken1);
+        endpointService.attachEndpointToUser(endpointUserDto.getId(), accessToken2);
+        
+        List<EndpointProfileDto> endpointProfiles = endpointService.findEndpointProfilesByExternalIdAndTenantId(endpointUserDto.getExternalId(), tenantDto.getId());
+        Assert.assertEquals(2, endpointProfiles.size());
+        
+        Comparator<EndpointProfileDto> endpointProfilesComparator = new Comparator<EndpointProfileDto>() {
+            @Override
+            public int compare(EndpointProfileDto o1, EndpointProfileDto o2) {
+                return o1.getId().compareTo(o2.getId());
+            }
+        };
+        
+        List<EndpointProfileDto> expected = Arrays.asList(endpointProfileDto1, endpointProfileDto2);
+        Collections.sort(expected, endpointProfilesComparator);
+        Collections.sort(endpointProfiles, endpointProfilesComparator);
+        Assert.assertEquals(expected, endpointProfiles);
+    } 
     
     @Test(expected = KaaOptimisticLockingFailureException.class)
     public void createDuplicateProfileTest() {

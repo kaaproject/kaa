@@ -2194,6 +2194,11 @@ public class DefaultControlService implements ControlService {
         }
     }
 
+    @Override
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException {
+        return this.endpointService.findEndpointProfilesByExternalIdAndTenantId(endpointUserExternalId, tenantId);
+    }
+
     @PreDestroy
     public void onStop() {
         if (neighbors != null) {

@@ -16,6 +16,22 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -59,21 +75,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 @Service
 public class EndpointServiceImpl implements EndpointService {
@@ -503,6 +504,15 @@ public class EndpointServiceImpl implements EndpointService {
     public List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId) {
         return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUserId));
     }
+    
+    @Override
+    public List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId) {
+        if (isValidId(externalId) && isValidId(tenantId)) {
+            EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalId, tenantId);
+            return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUser.getId()));
+        }
+        return Collections.emptyList();
+    }
 
     public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
         this.endpointProfileDao = endpointProfileDao;
@@ -540,4 +550,5 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDao.removeById(id);
         }
     }
+
 }

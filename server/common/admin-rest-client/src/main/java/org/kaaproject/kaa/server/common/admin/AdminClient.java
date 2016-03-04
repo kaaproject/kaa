@@ -1059,4 +1059,10 @@ public class AdminClient {
         return restTemplate.postForObject(url + "userProfile", userDto, UserDto.class);
     }
 
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) {
+        String address = this.url + "endpointProfiles?userExternalId=" + endpointUserExternalId;
+        ParameterizedTypeReference<List<EndpointProfileDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileDto>>() {};
+        ResponseEntity<List<EndpointProfileDto>> response = this.restTemplate.exchange(address, HttpMethod.GET, null, typeRef);
+        return response.getBody();
+    }
 }
