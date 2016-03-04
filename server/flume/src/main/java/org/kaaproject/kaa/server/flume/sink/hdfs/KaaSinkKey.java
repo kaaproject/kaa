@@ -66,20 +66,26 @@ public class KaaSinkKey implements EventConstants {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         KaaSinkKey other = (KaaSinkKey) obj;
         if (applicationToken == null) {
-            if (other.applicationToken != null)
+            if (other.applicationToken != null) {
                 return false;
-        } else if (!applicationToken.equals(other.applicationToken))
+            }
+        } else if (!applicationToken.equals(other.applicationToken)) {
             return false;
-        if (schemaVersion != other.schemaVersion)
+        }
+        if (schemaVersion != other.schemaVersion) {
             return false;
+        }
         return true;
     }
 

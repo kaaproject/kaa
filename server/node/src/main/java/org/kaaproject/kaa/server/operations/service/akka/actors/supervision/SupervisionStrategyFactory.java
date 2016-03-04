@@ -30,6 +30,9 @@ public final class SupervisionStrategyFactory {
     
     private static final Logger LOG = LoggerFactory.getLogger(SupervisionStrategyFactory.class);
 
+    private SupervisionStrategyFactory() {
+    }
+
     public static SupervisorStrategy createIORouterStrategy(AkkaContext context) {
         return buildResumeOrEscalateStrategy();
     }

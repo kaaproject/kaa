@@ -20,12 +20,12 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;

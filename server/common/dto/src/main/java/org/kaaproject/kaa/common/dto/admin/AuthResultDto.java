@@ -33,7 +33,7 @@ public class AuthResultDto implements Serializable {
     public AuthResultDto() {
     }
 
-    public AuthResultDto(String username, String displayName, KaaAuthorityDto authority, Result authResult) {
+    public AuthResultDto(String username, String displayName, KaaAuthorityDto authority) {
         super();
         this.username = username;
         this.displayName = displayName;

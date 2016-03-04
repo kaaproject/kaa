@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseCliThriftService implements CliThriftService.Iface {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(BaseCliThriftService.class);
 

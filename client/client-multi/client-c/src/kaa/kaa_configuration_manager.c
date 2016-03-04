@@ -57,6 +57,7 @@ struct kaa_configuration_manager {
     kaa_channel_manager_t               *channel_manager;
     kaa_status_t                        *status;
     kaa_logger_t                        *logger;
+    size_t                               payload_size;
 };
 
 
@@ -135,6 +136,7 @@ kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE + SHA_1_DIGEST_LENGTH;
+    self->payload_size = SHA_1_DIGEST_LENGTH;
 
     return KAA_ERR_NONE;
 }
@@ -147,10 +149,8 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
 
-    uint32_t payload_size = sizeof(uint32_t) + SHA_1_DIGEST_LENGTH;
-
     kaa_platform_message_writer_t tmp_writer = *writer;
-    kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_CONFIGURATION_EXTENSION_TYPE, KAA_CONFIGURATION_ALL_FLAGS, payload_size);
+    kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_CONFIGURATION_EXTENSION_TYPE, KAA_CONFIGURATION_ALL_FLAGS, self->payload_size);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write configuration extension header");
         return KAA_ERR_WRITE_FAILED;

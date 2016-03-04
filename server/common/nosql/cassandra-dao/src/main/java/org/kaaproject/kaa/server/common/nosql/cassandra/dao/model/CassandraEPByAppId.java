@@ -64,14 +64,21 @@ public class CassandraEPByAppId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CassandraEPByAppId that = (CassandraEPByAppId) o;
 
-        if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
-        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null)
+        if (appId != null ? !appId.equals(that.appId) : that.appId != null) {
             return false;
+        }
+        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) {
+            return false;
+        }
 
         return true;
     }

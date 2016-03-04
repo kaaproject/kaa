@@ -718,6 +718,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
         profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
@@ -743,6 +744,7 @@ public class AbstractTest {
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setGroupState(groupState);
         profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
+        profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }

@@ -38,7 +38,6 @@ import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
-import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;

@@ -19,8 +19,6 @@
 
 #define TAG @"StorageSizeWithTimeLimitLogUploadStrategy >>>"
 
-//Start log upload when there storage size is >= volumeThreshold bytes or records are stored for more then timeLimit TimeUnit units.
-
 @implementation StorageSizeWithTimeLimitLogUploadStrategy
 
 

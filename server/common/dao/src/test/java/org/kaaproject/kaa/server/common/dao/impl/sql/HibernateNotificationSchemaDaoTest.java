@@ -32,8 +32,6 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

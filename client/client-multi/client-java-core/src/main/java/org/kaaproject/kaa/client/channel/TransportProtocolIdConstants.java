@@ -34,4 +34,7 @@ public class TransportProtocolIdConstants {
     
     public static final TransportProtocolId HTTP_TRANSPORT_ID = new TransportProtocolId(HTTP_TRANSPORT_PROTOCOL_ID, HTTP_TRANSPORT_PROTOCOL_VERSION);
     public static final TransportProtocolId TCP_TRANSPORT_ID = new TransportProtocolId(TCP_TRANSPORT_PROTOCOL_ID, TCP_TRANSPORT_PROTOCOL_VERSION);
+
+    private TransportProtocolIdConstants() {
+    }
 }

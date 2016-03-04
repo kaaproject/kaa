@@ -143,16 +143,16 @@ public class ActionsLabel extends Label {
                     .toSafeStyles().asString());
 
             html = template.menuImageItemContent(style, text);
-        }
-        else {
+        } else {
             html = template.menuItemContent(text);
         }
         MenuItem item = new MenuItem(html, new Command() {
 
             @Override
             public void execute() {
-                if (actionsPopup != null && actionsPopup.isVisible())
+                if (actionsPopup != null && actionsPopup.isVisible()) {
                     actionsPopup.hide();
+                }
                 listener.onMenuItemSelected();
             }
 

@@ -17,11 +17,8 @@
 package org.kaaproject.kaa.server.common.dao.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
-import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
-import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +42,9 @@ public abstract class DaoUtil {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DaoUtil.class);
+
+    private DaoUtil() {
+    }
 
     /**
      * This method take string id from <code>GenericModel</code> object

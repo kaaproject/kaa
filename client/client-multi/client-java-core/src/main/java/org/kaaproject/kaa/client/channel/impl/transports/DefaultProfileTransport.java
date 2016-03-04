@@ -40,7 +40,7 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
 
     private boolean isProfileOutDated(EndpointObjectHash currentProfileHash) {
         EndpointObjectHash currentHash = clientState.getProfileHash();
-        return currentHash != null ? !currentHash.equals(currentProfileHash) : true;
+        return currentHash == null || !currentHash.equals(currentProfileHash);
     }
 
     @Override
@@ -53,7 +53,9 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
         if (clientState != null && manager != null && properties != null) {
             byte [] serializedProfile = manager.getSerializedProfile();
             EndpointObjectHash currentProfileHash = EndpointObjectHash.fromSHA1(serializedProfile);
-            if (isProfileOutDated(currentProfileHash) || !clientState.isRegistered()) {
+            if (isProfileOutDated(currentProfileHash)
+                    || !clientState.isRegistered()
+                    || clientState.isNeedProfileResync()) {
                 clientState.setProfileHash(currentProfileHash);
                 ProfileSyncRequest request = new ProfileSyncRequest();
                 request.setEndpointAccessToken(clientState.getEndpointAccessToken());
@@ -74,7 +76,8 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
     @Override
     public void onProfileResponse(ProfileSyncResponse response) throws Exception {
         if (response.getResponseStatus() == SyncResponseStatus.RESYNC) {
-            syncAll(TransportType.PROFILE);
+            clientState.setIfNeedProfileResync(true);
+            sync();
         } else if (clientState != null && !clientState.isRegistered()) {
             clientState.setRegistered(true);
         }

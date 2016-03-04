@@ -61,23 +61,30 @@ public class HdfsSinkKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         HdfsSinkKey other = (HdfsSinkKey) obj;
         if (kaaSinkKey == null) {
-            if (other.kaaSinkKey != null)
+            if (other.kaaSinkKey != null) {
                 return false;
-        } else if (!kaaSinkKey.equals(other.kaaSinkKey))
+            }
+        } else if (!kaaSinkKey.equals(other.kaaSinkKey)) {
             return false;
+        }
         if (rootPath == null) {
-            if (other.rootPath != null)
+            if (other.rootPath != null) {
                 return false;
-        } else if (!rootPath.equals(other.rootPath))
+            }
+        } else if (!rootPath.equals(other.rootPath)) {
             return false;
+        }
         return true;
     }
 

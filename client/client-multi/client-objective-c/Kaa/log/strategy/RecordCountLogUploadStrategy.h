@@ -17,6 +17,9 @@
 #import <Foundation/Foundation.h>
 #import "DefaultLogUploadStrategy.h"
 
+/**
+ * Issue log upload when reaches records count threshold in storage.
+ */
 @interface RecordCountLogUploadStrategy : DefaultLogUploadStrategy
 
 - (instancetype)initWithCountThreshold:(int32_t)countThreshold;

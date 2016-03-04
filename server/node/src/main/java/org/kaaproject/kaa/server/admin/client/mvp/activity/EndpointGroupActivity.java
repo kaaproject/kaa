@@ -126,8 +126,7 @@ public class EndpointGroupActivity
                               id.getServerProfileSchemaId(), id.getEndpointGroupId(), false, true, 0);
                       profileFilterPlace.setPreviousPlace(place);
                       goTo(profileFilterPlace);
-                  }
-                  else if (event.getAction()==RowActionEvent.DELETE) {
+                  } else if (event.getAction()==RowActionEvent.DELETE) {
                         KaaAdmin.getDataSource().deleteProfileFilterRecord(id.getEndpointProfileSchemaId(), id.getServerProfileSchemaId(), id.getEndpointGroupId(),
                                 new BusyAsyncCallback<Void>() {
                                       @Override
@@ -186,8 +185,7 @@ public class EndpointGroupActivity
                       ConfigurationPlace configurationPlace = new ConfigurationPlace(applicationId, id.getSchemaId(), id.getEndpointGroupId(), false, true, 0);
                       configurationPlace.setPreviousPlace(place);
                       goTo(configurationPlace);
-                  }
-                  else if (event.getAction()==RowActionEvent.DELETE) {
+                  } else if (event.getAction()==RowActionEvent.DELETE) {
                         KaaAdmin.getDataSource().deleteConfigurationRecord(id.getSchemaId(), id.getEndpointGroupId(),
                                 new BusyAsyncCallback<Void>() {
                                       @Override
@@ -225,8 +223,7 @@ public class EndpointGroupActivity
                    String id = event.getClickedId();
                    if (event.getAction()==RowActionEvent.CLICK) {
                        //do nothing
-                   }
-                   else if (event.getAction()==RowActionEvent.DELETE) {
+                   } else if (event.getAction()==RowActionEvent.DELETE) {
                          KaaAdmin.getDataSource().removeTopicFromEndpointGroup(entityId, id,
                                  new BusyAsyncCallback<Void>() {
                                        @Override
@@ -247,11 +244,9 @@ public class EndpointGroupActivity
                  if (detailsView != null) {
                      if (event.checkClass(ProfileFilterDto.class) && profileFiltersDataProvider != null) {
                          profileFiltersDataProvider.reload();
-                     }
-                     else if (event.checkClass(ConfigurationDto.class) && configurationsDataProvider != null) {
+                     } else if (event.checkClass(ConfigurationDto.class) && configurationsDataProvider != null) {
                          configurationsDataProvider.reload();
-                     }
-                     else if (event.checkClass(TopicDto.class) && topicsDataProvider != null) {
+                     } else if (event.checkClass(TopicDto.class) && topicsDataProvider != null) {
                          topicsDataProvider.reload();
                      }
                  }
@@ -312,8 +307,7 @@ public class EndpointGroupActivity
                 public void onSuccessImpl(EndpointGroupDto result) {
                     if (create) {
                         goTo(new EndpointGroupPlace(applicationId, result.getId(), false, false));
-                    }
-                    else {
+                    } else {
                         goTo(place.getPreviousPlace());
                     }
                 }

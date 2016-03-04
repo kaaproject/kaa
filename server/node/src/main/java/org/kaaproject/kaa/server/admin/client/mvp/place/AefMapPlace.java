@@ -59,18 +59,23 @@ public class AefMapPlace extends AefMapsPlace {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AefMapPlace other = (AefMapPlace) obj;
         if (aefMapId == null) {
-            if (other.aefMapId != null)
+            if (other.aefMapId != null) {
                 return false;
-        } else if (!aefMapId.equals(other.aefMapId))
+            }
+        } else if (!aefMapId.equals(other.aefMapId)) {
             return false;
+        }
         return true;
     }
 

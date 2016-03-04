@@ -16,12 +16,9 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import java.io.IOException;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

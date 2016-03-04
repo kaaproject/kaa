@@ -31,7 +31,7 @@ public class ConfigurationRecordViewDto extends StructureRecordDto<Configuration
     public ConfigurationRecordViewDto(ConfigurationRecordFormDto activeConfiguration, ConfigurationRecordFormDto inactiveConfiguration) {
         super(activeConfiguration, inactiveConfiguration);
     }
-    
+
     public int getSchemaVersion() {
       return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
     }
@@ -45,4 +45,13 @@ public class ConfigurationRecordViewDto extends StructureRecordDto<Configuration
         return this.getSchemaVersion() - o.getSchemaVersion();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

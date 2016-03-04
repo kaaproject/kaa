@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.control.zk;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -34,6 +29,11 @@ import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**

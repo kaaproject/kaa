@@ -628,6 +628,9 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ACCESS_TOKEN_FIELD_ID:
                 profileSync.setEndpointAccessToken(getUTF8String(buf));
+                break;
+            default:
+                break;
             }
         }
         sync.setProfileSync(profileSync);
@@ -647,6 +650,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ENDPOINT_DETACH_FIELD_ID:
                 userSync.setEndpointDetachRequests(parseEndpointDetachRequests(buf));
+                break;
+            default:
                 break;
             }
         }

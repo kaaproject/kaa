@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractKaaTransport implements KaaTransport {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTransport.class);
 
     protected KaaChannelManager channelManager;

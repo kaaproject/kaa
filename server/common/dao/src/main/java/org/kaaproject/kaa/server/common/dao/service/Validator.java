@@ -27,8 +27,11 @@ import org.slf4j.LoggerFactory;
  * This is util class which uses for validate fields, object in service layer.
  */
 public class Validator {
-    /* The constant logger */
+    /* The constant LOG */
     private static final Logger LOG = LoggerFactory.getLogger(Validator.class);
+
+    private Validator() {
+    }
 
     /**
      * This method validate string id. Id is a string object which will be
@@ -79,7 +82,7 @@ public class Validator {
      * @return <code>true</code> if the argument is not null, <code>false</code> otherwise
      */
     public static boolean isValidObject(HasId object) {
-        return (object != null);
+        return object != null;
     }
 
     /**
