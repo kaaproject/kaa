@@ -178,6 +178,22 @@ public class KaaClientPropertiesStateTest {
     }
 
     @Test
+    public void testNeedProfileResync() throws Exception{
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
+        Assert.assertFalse(state.isNeedProfileResync());
+
+        state.setIfNeedProfileResync(true);
+        Assert.assertTrue(state.isNeedProfileResync());
+
+        state.persist();
+        state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
+        Assert.assertTrue(state.isNeedProfileResync());
+
+        state.setIfNeedProfileResync(false);
+        Assert.assertFalse(state.isNeedProfileResync());
+    }
+
+    @Test
     public void testClean() throws Exception {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         File stateProps = new File(WORK_DIR + STATE_PROPERTIES);
