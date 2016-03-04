@@ -91,6 +91,9 @@ extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_
 /** External status API */
 extern kaa_error_t kaa_status_save(kaa_status_t *self);
 
+/** Resync flag indicating that profile manager should be resynced */
+#define KAA_PROFILE_RESYNC_FLAG     0x1
+
 
 struct kaa_platform_protocol_t
 {
@@ -172,13 +175,18 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
 {
     KAA_RETURN_IF_NIL4(platform_protocol_p, context, context->logger, status, KAA_ERR_BADPARAM);
 
-    *platform_protocol_p = KAA_MALLOC(sizeof(kaa_platform_protocol_t));
-    KAA_RETURN_IF_NIL(*platform_protocol_p, KAA_ERR_NOMEM);
+    kaa_platform_protocol_t *protocol;
 
-    (*platform_protocol_p)->request_id = 0;
-    (*platform_protocol_p)->kaa_context = context;
-    (*platform_protocol_p)->status = status;
-    (*platform_protocol_p)->logger = context->logger;
+    protocol = KAA_MALLOC(sizeof(*protocol));
+    KAA_RETURN_IF_NIL(protocol, KAA_ERR_NOMEM);
+
+    protocol->request_id = 0;
+    protocol->kaa_context = context;
+    protocol->status = status;
+    protocol->logger = context->logger;
+
+    *platform_protocol_p = protocol;
+
     return KAA_ERR_NONE;
 }
 
@@ -446,8 +454,6 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     return error;
 }
 
-
-
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
                                                     , const char *buffer
                                                     , size_t buffer_size)
@@ -471,6 +477,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
         KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_PROTOCOL_ID, "Unsupported protocol ID %x", protocol_id);
         return KAA_ERR_BAD_PROTOCOL_ID;
     }
+
     if (protocol_version != KAA_PLATFORM_PROTOCOL_VERSION) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_PROTOCOL_VERSION, "Unsupported protocol version %u", protocol_version);
         return KAA_ERR_BAD_PROTOCOL_VERSION;
@@ -489,6 +496,9 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                               , &extension_length);
         KAA_RETURN_IF_ERR(error_code);
 
+        /* Do not resync unless it is requested by the metadata extension */
+        self->status->profile_needs_resync = false;
+
         switch (extension_type) {
         case KAA_BOOTSTRAP_EXTENSION_TYPE: {
             error_code = kaa_bootstrap_manager_handle_server_sync(self->kaa_context->bootstrap_manager
@@ -498,10 +508,35 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
             break;
         }
         case KAA_META_DATA_EXTENSION_TYPE: {
-            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received meta server sync: options 0, payload size %u", sizeof(uint32_t));
-            error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
-            request_id = KAA_NTOHL(request_id);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync request id %u", request_id);
+            error_code = kaa_platform_message_read(reader, &request_id, sizeof(request_id));
+
+            if (!error_code) {
+                request_id = KAA_NTOHL(request_id);
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE,
+                              "Server sync request id %u", request_id);
+
+                /* Check if managers needs resync */
+
+                uint32_t resync_request;
+                error_code = kaa_platform_message_read(reader,
+                                                       &resync_request,
+                                                       sizeof(resync_request));
+
+                if (error_code) {
+                    break;
+                }
+
+                resync_request = KAA_NTOHL(resync_request);
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE,
+                              "Server resync request %u", resync_request);
+
+                if (resync_request & KAA_PROFILE_RESYNC_FLAG) {
+                    KAA_LOG_INFO(self->logger, KAA_ERR_NONE,
+                                 "Profile resync is requested");
+                    self->status->profile_needs_resync = true;
+                    error_code = kaa_profile_force_sync(self->kaa_context->profile_manager);
+                }
+            }
             break;
         }
         case KAA_PROFILE_EXTENSION_TYPE: {
