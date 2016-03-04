@@ -30,7 +30,6 @@
 - (void)setUp {
     [super setUp];
     self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    NSLog(@"New state created!");
 }
 
 - (void)tearDown {
@@ -126,6 +125,19 @@
     [self.state clean];
     XCTAssertFalse([fileManager fileExistsAtPath:stateFile]);
     XCTAssertFalse([fileManager fileExistsAtPath:backupFile]);
+}
+
+- (void)testProfileResync {
+    [self.state setNeedProfileResync:YES];
+    XCTAssertTrue([self.state needProfileResync]);
+    
+    [self.state persist];
+    
+    self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
+    XCTAssertTrue([self.state needProfileResync]);
+    
+    [self.state setNeedProfileResync:NO];
+    XCTAssertFalse([self.state needProfileResync]);
 }
 
 @end
