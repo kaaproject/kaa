@@ -1,6 +1,7 @@
     {% assign navurl = page.nav %}
     {% assign navurl =  page.nav | replace: '/:path' , '' %}
     {% assign navurl =  navurl | prepend: page.dir %}
+    {% assign navurl =  navurl | replace: '//' , '/' %}
     {% assign next_lvl = include.lvl | plus: 1 %}
     {% for item in include.nav %}
     
