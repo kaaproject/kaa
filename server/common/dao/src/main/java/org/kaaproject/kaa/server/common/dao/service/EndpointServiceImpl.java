@@ -29,6 +29,7 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObje
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -503,6 +504,15 @@ public class EndpointServiceImpl implements EndpointService {
     public List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId) {
         return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUserId));
     }
+    
+    @Override
+    public List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId) {
+        if (isValidId(externalId) && isValidId(tenantId)) {
+            EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalId, tenantId);
+            return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUser.getId()));
+        }
+        return Collections.emptyList();
+    }
 
     public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
         this.endpointProfileDao = endpointProfileDao;
@@ -540,4 +550,5 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUserDao.removeById(id);
         }
     }
+
 }

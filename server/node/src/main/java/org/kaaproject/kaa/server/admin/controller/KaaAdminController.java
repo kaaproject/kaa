@@ -2087,17 +2087,17 @@ public class KaaAdminController {
 
     /**
      * Returns a list of endpoint profiles attached to the endpoint user with
-     * the given ID.
+     * the given external ID.
      *
-     * @param endpointUserId The endpoint user ID
+     * @param endpointUserExternalId The endpoint user external ID
      *
-     * @return A list of endpoint profiles for the user with the given ID
+     * @return A list of endpoint profiles for the user with the given external ID
      *
      * @throws KaaAdminServiceException - if an exception occures.
      */
-    @RequestMapping(value = "endpointProfiles", params = { "userId" }, method = RequestMethod.GET)
+    @RequestMapping(value = "endpointProfiles", params = { "userExternalId" }, method = RequestMethod.GET)
     @ResponseBody
-    public List<EndpointProfileDto> getEndpointProfilesByUserId(@RequestParam("userId") String endpointUserId) throws KaaAdminServiceException {
-        return this.kaaAdminService.getEndpointProfilesByUserId(endpointUserId);
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(@RequestParam("userExternalId") String endpointUserExternalId) throws KaaAdminServiceException {
+        return this.kaaAdminService.getEndpointProfilesByUserExternalId(endpointUserExternalId);
     }
 }

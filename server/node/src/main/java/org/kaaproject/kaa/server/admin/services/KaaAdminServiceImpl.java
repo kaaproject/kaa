@@ -3522,20 +3522,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public List<EndpointProfileDto> getEndpointProfilesByUserId(String endpointUserId) throws KaaAdminServiceException {
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if (StringUtils.isEmpty(endpointUserId)) {
-                String message = "The endpoint user ID provided is empty!";
+            if (StringUtils.isEmpty(endpointUserExternalId)) {
+                String message = "The endpoint user external ID provided is empty!";
                 throw new IllegalArgumentException(message);
             }
-            EndpointUserDto endpointUser = this.controlService.getEndpointUser(endpointUserId);
-            if (endpointUser != null) {
-                return this.controlService.getEndpointProfilesByUserId(endpointUserId);
-            } else {
-                String message = "No user with the given ID found!";
-                throw new NotFoundException(message);
-            }
+            return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId(endpointUserExternalId, getCurrentUser().getTenantId());
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

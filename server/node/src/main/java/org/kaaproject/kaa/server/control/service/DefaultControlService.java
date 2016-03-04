@@ -2195,8 +2195,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public List<EndpointProfileDto> getEndpointProfilesByUserId(String endpointUserId) throws ControlServiceException {
-        return this.endpointService.findEndpointProfilesByUserId(endpointUserId);
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException {
+        return this.endpointService.findEndpointProfilesByExternalIdAndTenantId(endpointUserExternalId, tenantId);
     }
 
     @PreDestroy
