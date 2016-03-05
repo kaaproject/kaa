@@ -288,6 +288,6 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
 
         return client.createSdkProfile(new SdkProfileDto(appId, configSchemaVersion, profileSchemaVersion,
                 notificationSchemaVersion, logSchemaVersion, aefMapIds, defaultVerifierToken, null,
-                "devuser", 100000L, "someName"));
+                "devuser", 100000L, "someName", false));
     }
 }

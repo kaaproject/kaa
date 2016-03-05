@@ -28,6 +28,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NOTI
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PROFILE_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TOKEN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_VERIFY_ENDPOINT_CREDENTIALS;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -89,6 +90,9 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
     @Column(name = SDK_PROFILE_ENDPOINT_COUNT)
     private Integer endpointCount = 0;
 
+    @Column(name = SDK_PROFILE_VERIFY_ENDPOINT_CREDENTIALS)
+    private Boolean verifyEndpointCredentialsFlag = false;
+
     public SdkProfile() {
     }
 
@@ -135,6 +139,8 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
                     dto.getAefMapIds().add(id);
                 }
             }
+
+            this.verifyEndpointCredentialsFlag = dto.getVerifyEndpointCredentialsFlag();
         }
     }
 
@@ -234,6 +240,14 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         this.endpointCount = endpointCount;
     }
 
+    public Boolean getVerifyEndpointCredentialsFlag() {
+        return this.verifyEndpointCredentialsFlag;
+    }
+
+    public void setVerifyEndpointCredentialsFlag(Boolean verifyEndpointCredentialsFlag) {
+        this.verifyEndpointCredentialsFlag = verifyEndpointCredentialsFlag;
+    }
+
     @Override
     protected SdkProfileDto createDto() {
         return new SdkProfileDto();
@@ -273,6 +287,8 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         dto.setCreatedUsername(this.createdUsername);
         dto.setCreatedTime(this.createdTime);
         dto.setEndpointCount(this.endpointCount);
+
+        dto.setVerifyEndpointCredentialsFlag(this.verifyEndpointCredentialsFlag);
 
         return dto;
     }
@@ -321,6 +337,9 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         if (createdTime != null ? !createdTime.equals(other.createdTime) : other.createdTime != null) {
             return false;
         }
+        if (verifyEndpointCredentialsFlag != null ? !verifyEndpointCredentialsFlag.equals(other.verifyEndpointCredentialsFlag) : other.verifyEndpointCredentialsFlag != null) {
+            return false;
+        }
 
 
         return true;
@@ -339,6 +358,7 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
         result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
         result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
+        result = 31 * result + (verifyEndpointCredentialsFlag != null ? verifyEndpointCredentialsFlag.hashCode() : 0);
 
         return result;
     }
@@ -358,6 +378,7 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
                 ", createdUsername=" + createdUsername +
                 ", createdTime=" + createdTime +
                 ", endpointCount=" + endpointCount +
+                ", verifyEndpointCredentialsFlag=" + verifyEndpointCredentialsFlag +
                 '}';
     }
 }

@@ -60,7 +60,7 @@ public class SdkProfileTest {
     private SdkProfileDto generateSdkProfileDto(String appId, String appToken) {
         List<String> aefMapIdsList = new ArrayList<>(Arrays.asList("firstId", "secondId", "thirdId"));
         SdkProfileDto sdkProfileDto = new SdkProfileDto(appId, 2, 3, 4, 5, aefMapIdsList, "someVerifierToken", appToken,
-                "devuser", 100000L, "someName");
+                "devuser", 100000L, "someName", false);
         SdkTokenGenerator.generateSdkToken(sdkProfileDto);
         return sdkProfileDto;
     }
@@ -72,7 +72,7 @@ public class SdkProfileTest {
     public void testForURLSafeToken() {
         List<String> aefMapIdsList = Collections.singletonList("290");
         SdkProfileDto sdkProfileDto = new SdkProfileDto("113", 1, 0, 1, 1, aefMapIdsList,
-                "someVerifierToken", "15643220456970528206", "devuser", 100000L, "");
+                "someVerifierToken", "15643220456970528206", "devuser", 100000L, "", false);
         SdkTokenGenerator.generateSdkToken(sdkProfileDto);
         Assert.assertFalse(sdkProfileDto.getToken().contains("/"));
     }
