@@ -42,6 +42,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -58,6 +59,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
 
     private SizedTextBox name;
 
+    private CheckBox verifyEndpointCredentialsFlag;
     private VersionListBox configurationSchemaVersion;
     private VersionListBox profileSchemaVersion;
     private VersionListBox notificationSchemaVersion;
@@ -92,6 +94,18 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         name.addInputHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, name);
+
+        row++;
+        label = new Label(Utils.constants.verifyEndpointCredentials());
+        verifyEndpointCredentialsFlag = new CheckBox();
+        verifyEndpointCredentialsFlag.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                fireChanged();
+            }
+        });
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, verifyEndpointCredentialsFlag);
 
         row++;
         label = new Label(Utils.constants.configurationSchemaVersion());
@@ -258,6 +272,11 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
     }
 
     @Override
+    public CheckBox getVerifyEndpointCredentialsFlag() {
+        return verifyEndpointCredentialsFlag;
+    }
+
+    @Override
     public ValueListBox<VersionDto> getConfigurationSchemaVersion() {
         return configurationSchemaVersion;
     }
@@ -298,6 +317,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
     @Override
     protected void resetImpl() {
         name.setValue("");
+        verifyEndpointCredentialsFlag.setValue(false);
         configurationSchemaVersion.reset();
         profileSchemaVersion.reset();
         notificationSchemaVersion.reset();
