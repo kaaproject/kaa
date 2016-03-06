@@ -36,6 +36,7 @@ import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -56,13 +57,16 @@ import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.EndpointCredentials;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
@@ -93,6 +97,7 @@ public class EndpointServiceImpl implements EndpointService {
     private TopicDao<Topic> topicDao;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    private EndpointCredentialsDao<EndpointCredentials> endpointCredentialsDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     private EndpointUserDao<EndpointUser> endpointUserDao;
     private TopicListEntryDao<TopicListEntry> topicListEntryDao;
@@ -508,6 +513,10 @@ public class EndpointServiceImpl implements EndpointService {
         this.endpointProfileDao = endpointProfileDao;
     }
 
+    public void setEndpointCredentialsDao(EndpointCredentialsDao<EndpointCredentials> endpointCredentialsDao) {
+        this.endpointCredentialsDao = endpointCredentialsDao;
+    }
+
     public void setEndpointConfigurationDao(EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao) {
         this.endpointConfigurationDao = endpointConfigurationDao;
     }
@@ -539,5 +548,29 @@ public class EndpointServiceImpl implements EndpointService {
         if (isValidId(id)) {
             endpointUserDao.removeById(id);
         }
+    }
+
+    @Override
+    public EndpointCredentialsDto findEndpointCredentialsByEndpointId(String endpointId) {
+        EndpointCredentialsDto result = null;
+        if (Validator.isValidId(endpointId)) {
+            EndpointCredentials endpointCredentials = this.endpointCredentialsDao.findByEndpointId(endpointId);
+            result = DaoUtil.getDto(endpointCredentials);
+        }
+        return result;
+    }
+
+    @Override
+    public EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials) {
+        EndpointCredentialsDto result = null;
+        if (Validator.isValidObject(endpointCredentials)) {
+            result = DaoUtil.getDto(this.endpointCredentialsDao.save(endpointCredentials));
+        }
+        return result;
+    }
+
+    @Override
+    public void removeEndpointCredentialsByEndpointId(String endpointId) {
+        this.endpointCredentialsDao.removeByEndpointId(endpointId);
     }
 }

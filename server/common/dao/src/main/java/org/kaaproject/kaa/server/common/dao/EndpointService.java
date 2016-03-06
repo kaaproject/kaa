@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -307,4 +308,32 @@ public interface EndpointService {
      *            the endpoint user id
      */
     void removeEndpointUserById(String id);
+
+    /**
+     * Returns the security credentials of the given endpoint.
+     *
+     * @param endpointId
+     *        The endpoint ID
+     *
+     * @return The security credentials of the given endpoint
+     */
+    EndpointCredentialsDto findEndpointCredentialsByEndpointId(String endpointId);
+
+    /**
+     * Saves the given endpoint security credentials.
+     *
+     * @param endpointCredentials
+     *        The endpoint security credentials
+     *
+     * @return The endpoint security credentials saved
+     */
+    EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials);
+
+    /**
+     * Removes the security credentials of the given endpoint.
+     *
+     * @param endpointId
+     *        The endpoint ID
+     */
+    void removeEndpointCredentialsByEndpointId(String endpointId);
 }

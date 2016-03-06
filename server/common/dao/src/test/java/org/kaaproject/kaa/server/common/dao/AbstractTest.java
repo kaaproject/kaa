@@ -47,6 +47,7 @@ import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
@@ -708,6 +709,22 @@ public class AbstractTest {
         configurationDto.setSchemaVersion(configurationSchema.getVersion());
 
         return userConfigurationService.saveUserConfiguration(configurationDto);
+    }
+
+    protected EndpointCredentialsDto generateEndpointCredentials(
+            String applicationId,
+            String endpointId,
+            String publicKey,
+            Integer serverProfileVersion,
+            String serverProfileBody) {
+
+        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
+        endpointCredentials.setApplicationId(applicationId);
+        endpointCredentials.setEndpointId(endpointId);
+        endpointCredentials.setPublicKey(publicKey);
+        endpointCredentials.setServerProfileVersion(serverProfileVersion);
+        endpointCredentials.setServerProfileBody(serverProfileBody);
+        return this.endpointService.saveEndpointCredentials(endpointCredentials);
     }
 
     protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {
