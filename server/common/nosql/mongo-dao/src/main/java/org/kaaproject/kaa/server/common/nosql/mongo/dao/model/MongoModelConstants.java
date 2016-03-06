@@ -122,4 +122,13 @@ public class MongoModelConstants {
     public static final String USER_CONF_SCHEMA_VERSION = "schema_version";
     public static final String USER_CONF_BODY = BODY;
 
+    /**
+     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointCredentials}
+     */
+    public static final String ENDPOINT_CREDENTIALS = "endpoint_credentials";
+    public static final String ENDPOINT_CREDENTIALS_APPLICATION_ID = APPLICATION_ID;
+    public static final String ENDPOINT_CREDENTIALS_ENDPOINT_ID = "endpoint_id";
+    public static final String ENDPOINT_CREDENTIALS_PUBLIC_KEY = "public_key";
+    public static final String ENDPOINT_CREDENTIALS_SERVER_PROFILE_VERSION = "server_profile_version";
+    public static final String ENDPOINT_CREDENTIALS_SERVER_PROFILE_BODY = "server_profile_body";
 }

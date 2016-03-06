@@ -19,10 +19,12 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointCredentials;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUserConfiguration;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoTopicListEntry;
@@ -38,6 +40,8 @@ public class AbstractMongoTest extends AbstractTest {
     protected EndpointUserConfigurationDao<MongoEndpointUserConfiguration> endpointUserConfigurationDao;
     @Autowired
     protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
+    @Autowired
+    protected EndpointCredentialsDao<MongoEndpointCredentials> endpointCredentialsDao;
     @Autowired
     protected TopicListEntryDao<MongoTopicListEntry> topicListEntryDao;
 
