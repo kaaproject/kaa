@@ -509,7 +509,9 @@ public class EndpointServiceImpl implements EndpointService {
     public List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId) {
         if (isValidId(externalId) && isValidId(tenantId)) {
             EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalId, tenantId);
-            return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUser.getId()));
+            if (endpointUser != null) {
+                return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUser.getId()));
+            }
         }
         return Collections.emptyList();
     }
