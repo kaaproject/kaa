@@ -310,6 +310,18 @@ public interface EndpointService {
     void removeEndpointUserById(String id);
 
     /**
+     * Returns the list of endpoint security credentials for the given
+     * application.
+     *
+     * @param applicationId
+     *        The application ID
+     *
+     * @return The list of endpoint security credentials for the given
+     *         application
+     */
+    List<EndpointCredentialsDto> findEndpointCredentialsByApplicationId(String applicationId);
+
+    /**
      * Returns the security credentials of the given endpoint.
      *
      * @param endpointId

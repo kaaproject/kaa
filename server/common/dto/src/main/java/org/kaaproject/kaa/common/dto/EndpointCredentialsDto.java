@@ -18,23 +18,37 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
+@JsonInclude(Include.NON_NULL)
 public class EndpointCredentialsDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 1000L;
 
+    @JsonIgnore
     private String id;
+
     private String applicationId;
     private String endpointId;
     private String publicKey;
     private Integer serverProfileVersion;
     private String serverProfileBody;
 
+    @JsonIgnore
+    private Boolean serverProfileExpired = false;
+
     public EndpointCredentialsDto() {
+    }
+
+    public EndpointCredentialsDto(String applicationId, String endpointId, String publicKey) {
+        this(applicationId, endpointId, publicKey, null, null);
     }
 
     public EndpointCredentialsDto(String applicationId, String endpointId, String publicKey, Integer serverProfileVersion, String serverProfileBody) {
@@ -50,6 +64,7 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         return this.id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -92,6 +107,14 @@ public class EndpointCredentialsDto implements HasId, Serializable {
 
     public void setServerProfileBody(String serverProfileBody) {
         this.serverProfileBody = serverProfileBody;
+    }
+
+    public Boolean getServerProfileExpired() {
+        return this.serverProfileExpired;
+    }
+
+    public void setServerProfileExpired(Boolean serverProfileExpired) {
+        this.serverProfileExpired = serverProfileExpired;
     }
 
     @Override
@@ -171,6 +194,8 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         builder.append(this.serverProfileVersion);
         builder.append(", serverProfileBody=");
         builder.append(this.serverProfileBody);
+        builder.append(", serverProfileExpired=");
+        builder.append(this.serverProfileExpired);
         builder.append("]");
         return builder.toString();
     }

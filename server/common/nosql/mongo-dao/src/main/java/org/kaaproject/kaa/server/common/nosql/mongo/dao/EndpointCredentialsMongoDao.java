@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointCredentials;
@@ -50,6 +52,13 @@ public class EndpointCredentialsMongoDao extends AbstractMongoDao<MongoEndpointC
     public MongoEndpointCredentials save(EndpointCredentialsDto endpointCredentials) {
         LOG.debug("Saving {}", endpointCredentials.toString());
         return this.save(new MongoEndpointCredentials(endpointCredentials));
+    }
+
+    @Override
+    public List<MongoEndpointCredentials> findByApplicationId(String applicationId) {
+        LOG.debug("Searching for endpoint credentials by application ID [{}]", applicationId);
+        Query query = Query.query(Criteria.where(MongoModelConstants.ENDPOINT_CREDENTIALS_APPLICATION_ID).is(applicationId));
+        return this.find(query);
     }
 
     @Override

@@ -711,6 +711,10 @@ public class AbstractTest {
         return userConfigurationService.saveUserConfiguration(configurationDto);
     }
 
+    protected EndpointCredentialsDto generateEndpointCredentials(String applicationId, String endpointId, String publicKey) {
+        return this.generateEndpointCredentials(applicationId, endpointId, publicKey, null, null);
+    }
+
     protected EndpointCredentialsDto generateEndpointCredentials(
             String applicationId,
             String endpointId,

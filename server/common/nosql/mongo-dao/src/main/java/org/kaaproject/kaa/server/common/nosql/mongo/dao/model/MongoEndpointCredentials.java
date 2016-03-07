@@ -39,7 +39,7 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
 
     private static final long serialVersionUID = 1000L;
 
-    private static final String[] EXCLUDE_FIELDS = { "id" };
+    private static final String[] EXCLUDE_FIELDS = { "id", "serverProfileExpired" };
 
     @Id
     private String id;
@@ -60,6 +60,9 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_SERVER_PROFILE_BODY)
     private String serverProfileBody;
 
+    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_SERVER_PROFILE_EXPIRED)
+    private Boolean serverProfileExpired = false;
+
     public MongoEndpointCredentials() {
     }
 
@@ -70,6 +73,7 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
         this.publicKey = endpointCredentials.getPublicKey();
         this.serverProfileVersion = endpointCredentials.getServerProfileVersion();
         this.serverProfileBody = endpointCredentials.getServerProfileBody();
+        this.serverProfileExpired = endpointCredentials.getServerProfileExpired();
     }
 
     @Override
@@ -103,6 +107,11 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     }
 
     @Override
+    public Boolean getServerProfileExpired() {
+        return this.serverProfileExpired;
+    }
+
+    @Override
     public EndpointCredentialsDto toDto() {
         EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
         endpointCredentials.setId(this.id);
@@ -111,6 +120,7 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
         endpointCredentials.setPublicKey(this.publicKey);
         endpointCredentials.setServerProfileVersion(this.serverProfileVersion);
         endpointCredentials.setServerProfileBody(this.serverProfileBody);
+        endpointCredentials.setServerProfileExpired(this.serverProfileExpired);
         return endpointCredentials;
     }
 

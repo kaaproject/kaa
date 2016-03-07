@@ -20,13 +20,14 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -551,6 +552,11 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    public List<EndpointCredentialsDto> findEndpointCredentialsByApplicationId(String applicationId) {
+        return DaoUtil.convertDtoList(this.endpointCredentialsDao.findByApplicationId(applicationId));
+    }
+
+    @Override
     public EndpointCredentialsDto findEndpointCredentialsByEndpointId(String endpointId) {
         EndpointCredentialsDto result = null;
         if (Validator.isValidId(endpointId)) {
@@ -564,7 +570,12 @@ public class EndpointServiceImpl implements EndpointService {
     public EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials) {
         EndpointCredentialsDto result = null;
         if (Validator.isValidObject(endpointCredentials)) {
-            result = DaoUtil.getDto(this.endpointCredentialsDao.save(endpointCredentials));
+            EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointId(endpointCredentials.getEndpointId());
+            if (databaseRecord == null || databaseRecord.getId().equals(endpointCredentials.getId())) {
+                result = DaoUtil.getDto(this.endpointCredentialsDao.save(endpointCredentials));
+            } else {
+                throw new IncorrectParameterException("The endpoint credentials already exist!");
+            }
         }
         return result;
     }

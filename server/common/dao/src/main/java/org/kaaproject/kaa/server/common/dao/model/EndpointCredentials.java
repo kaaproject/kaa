@@ -36,4 +36,6 @@ public interface EndpointCredentials extends ToDto<EndpointCredentialsDto> {
     Integer getServerProfileVersion();
 
     String getServerProfileBody();
+
+    Boolean getServerProfileExpired();
 }

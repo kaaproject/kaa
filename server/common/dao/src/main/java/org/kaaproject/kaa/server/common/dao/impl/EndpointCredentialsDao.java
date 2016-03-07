@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointCredentials;
 
@@ -45,6 +47,18 @@ public interface EndpointCredentialsDao<T extends EndpointCredentials> extends D
      * @return The security credentials of the given endpoint
      */
     T findByEndpointId(String endpointId);
+
+    /**
+     * Returns the list of endpoint security credentials for the given
+     * application.
+     *
+     * @param applicationId
+     *        The application ID
+     *
+     * @return The list of endpoint security credentials for the given
+     *         application
+     */
+    List<T> findByApplicationId(String applicationId);
 
     /**
      * Removes the security credentials of the given endpoint.
