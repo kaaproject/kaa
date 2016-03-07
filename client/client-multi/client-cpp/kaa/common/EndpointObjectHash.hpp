@@ -20,9 +20,12 @@
 #include <utility>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 
 #include <cstdint>
 #include <boost/shared_array.hpp>
+
+#include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
 

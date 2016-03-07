@@ -183,6 +183,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
     }
 
     context_.getStatus().setTopicStates(topicStates);
+
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         syncAck();
     }

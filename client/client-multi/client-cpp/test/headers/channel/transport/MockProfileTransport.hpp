@@ -14,37 +14,37 @@
  *  limitations under the License.
  */
 
-#ifndef TESTPROFILECONTAINER_HPP_
-#define TESTPROFILECONTAINER_HPP_
+#ifndef MOCKPROFILETRANSPORT_HPP_
+#define MOCKPROFILETRANSPORT_HPP_
 
-#include <string>
+#include <cstddef>
 
-#include "kaa/profile/AbstractProfileContainer.hpp"
-
-#include "headers/gen/EndpointGen.hpp"
+#include "kaa/channel/transport/IProfileTransport.hpp"
 
 namespace kaa {
 
-class TestProfileContainer: public AbstractProfileContainer<BasicEndpointProfile>
-{
+class MockProfileTransport: public IProfileTransport {
 public:
-    TestProfileContainer() {
-        profile_.profileBody = "dummy";
+    virtual ProfileSyncRequestPtr createProfileRequest() {
+        return ProfileSyncRequestPtr();
     }
 
-    virtual BasicEndpointProfile getProfile() {
-        return profile_;
+    virtual void onProfileResponse(const ProfileSyncResponse& response) {
+        ++onProfileResponse_;
     }
 
-    void setProfileBody(const std::string newBody) {
-        profile_.profileBody = newBody;
-        updateProfile();
+    virtual void setProfileManager(IProfileManager* manager) {}
+
+    virtual void sync() {
+        ++onSync_;
     }
 
-private:
-    BasicEndpointProfile profile_;
+public:
+    std::size_t onSync_ = 0;
+    std::size_t onProfileResponse_ = 0;
+
 };
 
 } /* namespace kaa */
 
-#endif /* TESTPROFILECONTAINER_HPP_ */
+#endif /* MOCKPROFILETRANSPORT_HPP_ */

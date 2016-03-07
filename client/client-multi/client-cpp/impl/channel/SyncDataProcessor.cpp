@@ -233,7 +233,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
             if (bootstrapTransport_) {
                 bootstrapTransport_->onBootstrapResponse(syncResponse.bootstrapSyncResponse.get_BootstrapSyncResponse());
             } else {
-                KAA_LOG_ERROR("Got bootstrap sync response, but profile transport was not set!");
+                KAA_LOG_ERROR("Got bootstrap sync response, but bootstrap transport was not set!");
             }
         }
 
@@ -245,12 +245,6 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
                 profileTransport_->onProfileResponse(syncResponse.profileSyncResponse.get_ProfileSyncResponse());
             } else {
                 KAA_LOG_ERROR("Got profile sync response, but profile transport was not set!");
-            }
-        } else if (syncResponse.status == SyncResponseResultType::PROFILE_RESYNC) {
-            if (profileTransport_) {
-                profileTransport_->onProfileResync();
-            } else {
-                KAA_LOG_ERROR("Got profile resync request, but profile transport was not set!");
             }
         }
 
@@ -332,8 +326,21 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
             }
         }
 
-        KAA_LOG_DEBUG("Processed SyncResponse");
+        bool needProfileResync = (syncResponse.status == SyncResponseResultType::PROFILE_RESYNC);
+        context_.getStatus().setProfileResyncNeeded(needProfileResync);
+
+        if (needProfileResync) {
+            if (profileTransport_) {
+                KAA_LOG_INFO("Profile resync received");
+                profileTransport_->sync();
+            } else {
+                KAA_LOG_ERROR("Got profile resync request, but profile transport was not set!");
+            }
+        }
+
         context_.getStatus().save();
+
+        KAA_LOG_DEBUG("Processed SyncResponse");
     } catch (const std::exception& e) {
         KAA_LOG_ERROR(boost::format("Unable to process response: %s") % e.what());
         returnCode = DemultiplexerReturnCode::FAILURE;
