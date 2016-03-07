@@ -319,12 +319,11 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);
     while (it) {
-        kaa_error_t error_code;
         channel_wrapper = kaa_list_get_data(it);
 
-        error_code = channel_wrapper->channel.get_supported_services(channel_wrapper->channel.context,
-                                                                     &services,
-                                                                     &service_count);
+        kaa_error_t error_code = channel_wrapper->channel.get_supported_services(channel_wrapper->channel.context,
+                                                                                 &services,
+                                                                                 &service_count);
         if (error_code || !services || !service_count) {
             KAA_LOG_WARN(self->kaa_context->logger, error_code, "Failed to retrieve list of supported services "
                                         "for transport channel [0x%08X]", channel_wrapper->channel_id);

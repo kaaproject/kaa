@@ -404,9 +404,8 @@ int test_init(void)
         return error;
     }
 
-    error = kaa_channel_manager_add_transport_channel(channel_manager,
-                                                      &channel,
-                                                      NULL);
+    /* Add channel will fail due to absent access point, but it is expected */
+    kaa_channel_manager_add_transport_channel(channel_manager, &channel, NULL);
 
     error = kaa_profile_manager_create(&profile_manager,
                                        status, channel_manager, logger);

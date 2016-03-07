@@ -60,7 +60,7 @@ struct kaa_profile_manager_t {
 
 static bool resync_is_required(kaa_profile_manager_t *self)
 {
-    return (self->need_resync || self->status->profile_needs_resync);
+    return self->need_resync || self->status->profile_needs_resync;
 }
 
 /**
@@ -98,17 +98,18 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p
 
 kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    if (!self)
+        return KAA_ERR_BADPARAM;
 
     kaa_transport_channel_interface_t *channel =
             kaa_channel_manager_get_transport_channel(
                     self->channel_manager, KAA_SERVICE_PROFILE);
-    if (channel) {
-        channel->sync_handler(channel->context, profile_sync_services, 1);
-        return KAA_ERR_NONE;
+    if (!channel) {
+        return KAA_ERR_NOT_FOUND;
     }
 
-    return KAA_ERR_NOT_FOUND;
+    channel->sync_handler(channel->context, profile_sync_services, 1);
+    return KAA_ERR_NONE;
 }
 
 
