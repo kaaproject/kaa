@@ -129,3 +129,18 @@ CREATE TABLE IF NOT EXISTS kaa.tl_entry (
     tl_entry_topic_ids list<text>,
     opt_lock bigint
 );
+
+CREATE TABLE IF NOT EXISTS kaa.ep_creds (
+    id text,
+    app_id text,
+    ep_key_hash text PRIMARY KEY,
+    ep_key text,
+    srv_pf_ver int,
+    srv_pf text,
+    srv_pf_exp boolean
+);
+
+CREATE TABLE IF NOT EXISTS kaa.app_id_ep_creds (
+    app_id text PRIMARY KEY,
+    ep_key_hash text
+);

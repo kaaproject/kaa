@@ -24,17 +24,20 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.dto.CTLDataDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointCredentials;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
@@ -52,6 +55,8 @@ public abstract class AbstractCassandraTest {
     protected EndpointConfigurationDao<CassandraEndpointConfiguration> endpointConfigurationDao;
     @Autowired
     protected EndpointProfileDao<CassandraEndpointProfile> endpointProfileDao;
+    @Autowired
+    protected EndpointCredentialsDao<CassandraEndpointCredentials> endpointCredentialsDao;
     @Autowired
     protected EndpointUserCassandraDao endpointUserDao;
     @Autowired
@@ -192,5 +197,22 @@ public abstract class AbstractCassandraTest {
 
     protected String generateStringId() {
         return UUID.randomUUID().toString();
+    }
+
+    protected EndpointCredentialsDto generateEndpointCredentials(String applicationId, String endpointId, String publicKey) {
+        return this.generateEndpointCredentials(applicationId, endpointId, publicKey, null, null);
+    }
+
+    protected EndpointCredentialsDto generateEndpointCredentials(
+            String applicationId,
+            String endpointId,
+            String publicKey,
+            Integer serverProfileVersion,
+            String serverProfileBody) {
+
+        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto(applicationId, endpointId, publicKey);
+        endpointCredentials.setServerProfileVersion(serverProfileVersion);
+        endpointCredentials.setServerProfileBody(serverProfileBody);
+        return this.endpointCredentialsDao.save(endpointCredentials).toDto();
     }
 }
