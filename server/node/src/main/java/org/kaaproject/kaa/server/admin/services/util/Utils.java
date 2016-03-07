@@ -38,13 +38,13 @@ public class Utils {
     }
 
     public static KaaAdminServiceException handleException(Exception exception, String message) {
-        LOG.error("Unexpected exception catched!", exception);
+        LOG.error("An unexpected exception occured!", exception);
         return new KaaAdminServiceException(message, ServiceErrorCode.GENERAL_ERROR);
     }
 
     public static KaaAdminServiceException handleException(Exception exception, boolean logException) {
         if (logException) {
-            LOG.error("Unexpected exception catched!", exception);
+            LOG.error("An unexpected exception occured!", exception);
         }
 
         String cause = "";
@@ -66,7 +66,7 @@ public class Utils {
 
     public static <T> T checkNotNull(T reference) throws KaaAdminServiceException {
         if (reference == null) {
-            throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
+            throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
         }
         return reference;
     }

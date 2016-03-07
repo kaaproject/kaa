@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -419,5 +420,12 @@ public interface KaaAdminService extends RemoteService {
     
     public boolean testProfileFilter(RecordField endpointProfile, RecordField serverProfile, String filterBody) throws KaaAdminServiceException;
 
+    public EndpointCredentialsDto provideEndpointCredentials(String applicationId, String publicKey, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
+
+    public void revokeEndpointCredentials(String endpointId) throws KaaAdminServiceException;
+
+    public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws KaaAdminServiceException;
+
+    public List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) throws KaaAdminServiceException;
     
 }

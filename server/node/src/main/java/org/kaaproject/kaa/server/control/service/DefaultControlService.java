@@ -44,6 +44,7 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -2201,6 +2202,31 @@ public class DefaultControlService implements ControlService {
             neighbors.shutdown();
             LOG.info("Shutdown of control service neighbors complete!");
         }
+    }
+
+    @Override
+    public void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException {
+        this.endpointService.removeEndpointProfileByKeyHash(endpointId.getBytes());
+    }
+
+    @Override
+    public List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) throws ControlServiceException {
+        return this.endpointService.findEndpointCredentialsByApplicationId(applicationId);
+    }
+
+    @Override
+    public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException {
+        return this.endpointService.findEndpointCredentialsByEndpointId(endpointId);
+    }
+
+    @Override
+    public EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials) throws ControlServiceException {
+        return this.endpointService.saveEndpointCredentials(endpointCredentials);
+    }
+
+    @Override
+    public void removeEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException {
+        this.endpointService.removeEndpointCredentialsByEndpointId(endpointId);
     }
     
 }

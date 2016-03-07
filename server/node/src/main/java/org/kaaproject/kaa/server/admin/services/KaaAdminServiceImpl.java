@@ -21,6 +21,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import java.util.Set;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -48,6 +50,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
@@ -95,6 +98,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -3519,4 +3523,94 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
+    public EndpointCredentialsDto provideEndpointCredentials(
+            String applicationId,
+            String publicKey,
+            Integer serverProfileVersion,
+            String serverProfileBody)
+                    throws KaaAdminServiceException {
+
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            if (StringUtils.isEmpty(publicKey)) {
+                throw new IllegalArgumentException("The public key provided is empty!");
+            }
+            EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromSHA1(publicKey);
+            String endpointId = Base64.encodeBytes(endpointKeyHash.getData(), Base64.URL_SAFE);
+            if (serverProfileVersion != null && serverProfileBody != null) {
+                ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
+                this.validateServerProfile(serverProfileSchema, serverProfileBody);
+            } else if (serverProfileVersion != null || serverProfileBody != null) {
+                String missingParameter = (serverProfileVersion == null ? "schema version" : "body");
+                String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
+                throw new IllegalArgumentException(message);
+            }
+            EndpointCredentialsDto endpointCredentials;
+            endpointCredentials = new EndpointCredentialsDto(applicationId, endpointId, publicKey, serverProfileVersion, serverProfileBody);
+            return this.controlService.saveEndpointCredentials(endpointCredentials);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void revokeEndpointCredentials(String endpointId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointCredentialsDto endpointCredentials = this.controlService.getEndpointCredentialsByEndpointId(endpointId);
+            Utils.checkNotNull(endpointCredentials);
+            this.checkApplicationId(endpointCredentials.getApplicationId());
+            this.controlService.removeEndpointCredentialsByEndpointId(endpointId);
+            EndpointProfileDto endpointProfile = this.controlService.getEndpointProfileByKeyHash(endpointId);
+            if (endpointProfile != null) {
+                this.controlService.removeEndpointProfileByEndpointId(endpointId);
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointCredentialsDto endpointCredentials = this.controlService.getEndpointCredentialsByEndpointId(endpointId);
+            Utils.checkNotNull(endpointCredentials);
+            this.checkApplicationId(endpointCredentials.getApplicationId());
+            return endpointCredentials;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            return this.controlService.getEndpointCredentialsByApplicationId(applicationId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    private ServerProfileSchemaDto getServerProfileSchema(String applicationId, Integer serverProfileVersion) throws Exception {
+        ServerProfileSchemaDto serverProfileSchema = this.controlService.getServerProfileSchemaByApplicationIdAndVersion(applicationId, serverProfileVersion);
+        if (serverProfileSchema == null) {
+            throw new NotFoundException("No server-side endpoint profile schema found!");
+        }
+        return serverProfileSchema;
+    }
+
+    private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema, String serverProfileBody) throws Exception {
+        CTLSchemaDto commonType = this.controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
+        Schema typeSchema = this.controlService.exportCTLSchemaFlatAsSchema(commonType);
+        try {
+            new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
+        } catch (Exception cause) {
+            throw new IllegalArgumentException("Invalid server-side endpoint profile body provided!");
+        }
+    }
 }
