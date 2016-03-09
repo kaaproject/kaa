@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
@@ -62,16 +63,16 @@ public class EndpointCredentialsMongoDao extends AbstractMongoDao<MongoEndpointC
     }
 
     @Override
-    public MongoEndpointCredentials findByEndpointId(String endpointId) {
-        LOG.debug("Searching for endpoint credentials by endpoint ID [{}]", endpointId);
-        Query query = Query.query(Criteria.where(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_ID).is(endpointId));
+    public MongoEndpointCredentials findByEndpointKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Searching for endpoint credentials by endpoint public key hash {}", Arrays.toString(endpointKeyHash));
+        Query query = Query.query(Criteria.where(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_KEY_HASH).is(endpointKeyHash));
         return this.findOne(query);
     }
 
     @Override
-    public void removeByEndpointId(String endpointId) {
-        LOG.debug("Removing endpoint credentials by endpoint ID [{}]", endpointId);
-        Query query = Query.query(Criteria.where(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_ID).is(endpointId));
+    public void removeByEndpointKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Removing endpoint credentials by endpoint public key hash {}", endpointKeyHash);
+        Query query = Query.query(Criteria.where(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_KEY_HASH).is(endpointKeyHash));
         this.remove(query);
     }
 }

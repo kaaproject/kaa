@@ -711,21 +711,21 @@ public class AbstractTest {
         return userConfigurationService.saveUserConfiguration(configurationDto);
     }
 
-    protected EndpointCredentialsDto generateEndpointCredentials(String applicationId, String endpointId, String publicKey) {
-        return this.generateEndpointCredentials(applicationId, endpointId, publicKey, null, null);
+    protected EndpointCredentialsDto generateEndpointCredentials(String applicationId, byte[] endpointKey, byte[] endpointKeyHash) {
+        return this.generateEndpointCredentials(applicationId, endpointKey, endpointKeyHash, null, null);
     }
 
     protected EndpointCredentialsDto generateEndpointCredentials(
             String applicationId,
-            String endpointId,
-            String publicKey,
+            byte[] endpointKey,
+            byte[] endpointKeyHash,
             Integer serverProfileVersion,
             String serverProfileBody) {
 
         EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
         endpointCredentials.setApplicationId(applicationId);
-        endpointCredentials.setEndpointId(endpointId);
-        endpointCredentials.setPublicKey(publicKey);
+        endpointCredentials.setEndpointKey(endpointKey);
+        endpointCredentials.setEndpointKeyHash(endpointKeyHash);
         endpointCredentials.setServerProfileVersion(serverProfileVersion);
         endpointCredentials.setServerProfileBody(serverProfileBody);
         return this.endpointService.saveEndpointCredentials(endpointCredentials);

@@ -47,12 +47,12 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_APPLICATION_ID)
     private String applicationId;
 
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_ID)
     @Indexed
-    private String endpointId;
+    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_KEY)
+    private byte[] endpointKey;
 
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_PUBLIC_KEY)
-    private String publicKey;
+    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_KEY_HASH)
+    private byte[] endpointKeyHash;
 
     @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_SERVER_PROFILE_VERSION)
     private Integer serverProfileVersion;
@@ -66,8 +66,8 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     public MongoEndpointCredentials(EndpointCredentialsDto endpointCredentials) {
         this.id = endpointCredentials.getId();
         this.applicationId = endpointCredentials.getApplicationId();
-        this.endpointId = endpointCredentials.getEndpointId();
-        this.publicKey = endpointCredentials.getPublicKey();
+        this.endpointKey = endpointCredentials.getEndpointKey();
+        this.endpointKeyHash = endpointCredentials.getEndpointKeyHash();
         this.serverProfileVersion = endpointCredentials.getServerProfileVersion();
         this.serverProfileBody = endpointCredentials.getServerProfileBody();
     }
@@ -83,13 +83,13 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     }
 
     @Override
-    public String getEndpointId() {
-        return this.endpointId;
+    public byte[] getEndpointKey() {
+        return this.endpointKey;
     }
 
     @Override
-    public String getPublicKey() {
-        return this.publicKey;
+    public byte[] getEndpointKeyHash() {
+        return this.endpointKeyHash;
     }
 
     @Override
@@ -107,8 +107,8 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
         EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
         endpointCredentials.setId(this.id);
         endpointCredentials.setApplicationId(this.applicationId);
-        endpointCredentials.setEndpointId(this.endpointId);
-        endpointCredentials.setPublicKey(this.publicKey);
+        endpointCredentials.setEndpointKey(this.endpointKey);
+        endpointCredentials.setEndpointKeyHash(this.endpointKeyHash);
         endpointCredentials.setServerProfileVersion(this.serverProfileVersion);
         endpointCredentials.setServerProfileBody(this.serverProfileBody);
         return endpointCredentials;

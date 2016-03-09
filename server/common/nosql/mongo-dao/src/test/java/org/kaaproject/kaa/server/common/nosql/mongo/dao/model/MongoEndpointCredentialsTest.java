@@ -31,8 +31,8 @@ import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 public class MongoEndpointCredentialsTest {
 
     private static final String APPLICATION_ID = "application_id";
-    private static final String ENDPOINT_ID = "endpoint_id";
-    private static final String PUBLIC_KEY = "public_key";
+    private static final byte[] ENDPOINT_KEY = "endpoint_key".getBytes();
+    private static final byte[] ENDPOINT_KEY_HASH = "endpoint_key_hash".getBytes();
 
     @Test
     public void equalsVerifierTest() throws Exception {
@@ -41,7 +41,7 @@ public class MongoEndpointCredentialsTest {
 
     @Test
     public void dataConversionTest() throws Exception {
-        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto(APPLICATION_ID, ENDPOINT_ID, PUBLIC_KEY);
+        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto(APPLICATION_ID, ENDPOINT_KEY, ENDPOINT_KEY_HASH);
         MongoEndpointCredentials endpointCredentialsModel = new MongoEndpointCredentials(endpointCredentials);
         Assert.assertEquals(endpointCredentials, endpointCredentialsModel.toDto());
     }

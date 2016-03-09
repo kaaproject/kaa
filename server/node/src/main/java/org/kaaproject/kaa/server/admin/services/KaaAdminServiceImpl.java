@@ -3537,8 +3537,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (StringUtils.isEmpty(publicKey)) {
                 throw new IllegalArgumentException("The public key provided is empty!");
             }
-            EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromSHA1(publicKey);
-            String endpointId = Base64.encodeBytes(endpointKeyHash.getData(), Base64.URL_SAFE);
+            byte[] endpointKey = publicKey.getBytes();
+            byte[] endpointKeyHash = EndpointObjectHash.fromSHA1(publicKey).getData();
             if (serverProfileVersion != null && serverProfileBody != null) {
                 ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
                 this.validateServerProfile(serverProfileSchema, serverProfileBody);
@@ -3548,7 +3548,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 throw new IllegalArgumentException(message);
             }
             EndpointCredentialsDto endpointCredentials;
-            endpointCredentials = new EndpointCredentialsDto(applicationId, endpointId, publicKey, serverProfileVersion, serverProfileBody);
+            endpointCredentials = new EndpointCredentialsDto(applicationId, endpointKey, endpointKeyHash, serverProfileVersion, serverProfileBody);
             return this.controlService.saveEndpointCredentials(endpointCredentials);
         } catch (Exception cause) {
             throw Utils.handleException(cause);

@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -24,6 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointCredentials;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -50,12 +52,12 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
     @Column(name = CassandraModelConstants.EP_CREDS_APPLICATION_ID_PROPERTY)
     private String applicationId;
 
-    @PartitionKey
-    @Column(name = CassandraModelConstants.EP_CREDS_ENDPOINT_ID_PROPERTY)
-    private String endpointId;
+    @Column(name = CassandraModelConstants.EP_CREDS_ENDPOINT_KEY_PROPERTY)
+    private ByteBuffer endpointKeyWrapper;
 
-    @Column(name = CassandraModelConstants.EP_CREDS_PUBLIC_KEY_PROPERTY)
-    private String publicKey;
+    @PartitionKey
+    @Column(name = CassandraModelConstants.EP_CREDS_ENDPOINT_KEY_HASH_PROPERTY)
+    private ByteBuffer endpointKeyHashWrapper;
 
     @Column(name = CassandraModelConstants.EP_CREDS_SERVER_PROFILE_VERSION_PROPERTY)
     private Integer serverProfileVersion;
@@ -69,8 +71,8 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
     public CassandraEndpointCredentials(EndpointCredentialsDto endpointCredentials) {
         this.id = endpointCredentials.getId();
         this.applicationId = endpointCredentials.getApplicationId();
-        this.endpointId = endpointCredentials.getEndpointId();
-        this.publicKey = endpointCredentials.getPublicKey();
+        this.endpointKeyWrapper = CassandraDaoUtil.getByteBuffer(endpointCredentials.getEndpointKey());
+        this.endpointKeyHashWrapper = CassandraDaoUtil.getByteBuffer(endpointCredentials.getEndpointKeyHash());
         this.serverProfileVersion = endpointCredentials.getServerProfileVersion();
         this.serverProfileBody = endpointCredentials.getServerProfileBody();
     }
@@ -94,21 +96,29 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
     }
 
     @Override
-    public String getEndpointId() {
-        return this.endpointId;
+    public byte[] getEndpointKey() {
+        return CassandraDaoUtil.getBytes(this.endpointKeyWrapper);
     }
 
-    public void setEndpointId(String endpointId) {
-        this.endpointId = endpointId;
+    public ByteBuffer getEndpointKeyWrapper() {
+        return this.endpointKeyWrapper;
+    }
+
+    public void setEndpointKeyWrapper(ByteBuffer endpointKeyWrapper) {
+        this.endpointKeyWrapper = endpointKeyWrapper;
     }
 
     @Override
-    public String getPublicKey() {
-        return this.publicKey;
+    public byte[] getEndpointKeyHash() {
+        return CassandraDaoUtil.getBytes(this.endpointKeyHashWrapper);
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public ByteBuffer getEndpointKeyHashWrapper() {
+        return this.endpointKeyHashWrapper;
+    }
+
+    public void setEndpointKeyHashWrapper(ByteBuffer endpointKeyHashWrapper) {
+        this.endpointKeyHashWrapper = endpointKeyHashWrapper;
     }
 
     @Override
@@ -134,8 +144,8 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
         EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
         endpointCredentials.setId(this.id);
         endpointCredentials.setApplicationId(this.applicationId);
-        endpointCredentials.setEndpointId(this.endpointId);
-        endpointCredentials.setPublicKey(this.publicKey);
+        endpointCredentials.setEndpointKey(this.getEndpointKey());
+        endpointCredentials.setEndpointKeyHash(this.getEndpointKeyHash());
         endpointCredentials.setServerProfileVersion(this.serverProfileVersion);
         endpointCredentials.setServerProfileBody(this.serverProfileBody);
         return endpointCredentials;

@@ -17,11 +17,14 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.kaaproject.kaa.server.common.dao.model.EndpointCredentials;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
@@ -35,7 +38,7 @@ import com.datastax.driver.mapping.annotations.Transient;
  * @since v0.9.0
  */
 @Table(name = CassandraModelConstants.EP_CREDS_BY_APP_ID_COLUMN_FAMILY_NAME)
-public class CassandraEpCredsByAppId implements Serializable {
+public class CassandraEPCredentialsByAppID implements Serializable {
 
     @Transient
     private static final long serialVersionUID = 1000L;
@@ -45,15 +48,21 @@ public class CassandraEpCredsByAppId implements Serializable {
     private String applicationId;
 
     @ClusteringColumn
-    @Column(name = CassandraModelConstants.EP_CREDS_BY_APP_ID_ENDPOINT_ID_PROPERTY)
-    private String endpointId;
+    @Column(name = CassandraModelConstants.EP_CREDS_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY)
+    private ByteBuffer endpointKeyHashWrapper;
 
-    public CassandraEpCredsByAppId() {
+    public static CassandraEPCredentialsByAppID fromEndpointCredentials(EndpointCredentials endpointCredentials) {
+        String applicationId = endpointCredentials.getApplicationId();
+        ByteBuffer endpointKeyHashWrapper = CassandraDaoUtil.getByteBuffer(endpointCredentials.getEndpointKeyHash());
+        return new CassandraEPCredentialsByAppID(applicationId, endpointKeyHashWrapper);
     }
 
-    public CassandraEpCredsByAppId(String applicationId, String endpointId) {
+    public CassandraEPCredentialsByAppID() {
+    }
+
+    public CassandraEPCredentialsByAppID(String applicationId, ByteBuffer endpointKeyHashWrapper) {
         this.applicationId = applicationId;
-        this.endpointId = endpointId;
+        this.endpointKeyHashWrapper = endpointKeyHashWrapper;
     }
 
     public String getApplicationId() {
@@ -64,12 +73,12 @@ public class CassandraEpCredsByAppId implements Serializable {
         this.applicationId = applicationId;
     }
 
-    public String getEndpointId() {
-        return this.endpointId;
+    public ByteBuffer getEndpointKeyHashWrapper() {
+        return this.endpointKeyHashWrapper;
     }
 
-    public void setEndpointId(String endpointId) {
-        this.endpointId = endpointId;
+    public void setEndpointKeyHashWrapper(ByteBuffer endpointKeyHashWrapper) {
+        this.endpointKeyHashWrapper = endpointKeyHashWrapper;
     }
 
     @Override

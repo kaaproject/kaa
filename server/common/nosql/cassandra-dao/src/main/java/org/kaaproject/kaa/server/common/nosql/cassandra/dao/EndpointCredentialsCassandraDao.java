@@ -16,15 +16,18 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpCredsByAppIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPCredentialsByAppIDDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPCredentialsByAppID;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointCredentials;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpCredsByAppId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +50,7 @@ public class EndpointCredentialsCassandraDao extends AbstractCassandraDao<Cassan
     private static final Logger LOG = LoggerFactory.getLogger(EndpointCredentialsCassandraDao.class);
 
     @Autowired
-    private CassandraEpCredsByAppIdDao byApplicationID;
+    private CassandraEPCredentialsByAppIDDao byAppID;
 
     @Override
     protected Class<CassandraEndpointCredentials> getColumnFamilyClass() {
@@ -63,8 +66,8 @@ public class EndpointCredentialsCassandraDao extends AbstractCassandraDao<Cassan
     public CassandraEndpointCredentials save(EndpointCredentialsDto endpointCredentials) {
         LOG.debug("Saving {}", endpointCredentials.toString());
         if (StringUtils.isBlank(endpointCredentials.getId())) {
-            String endpointId = endpointCredentials.getEndpointId();
-            endpointCredentials.setId(endpointId);
+            byte[] endpointKeyHash = endpointCredentials.getEndpointKeyHash();
+            endpointCredentials.setId(Base64.encodeBase64String(endpointKeyHash));
         }
         return this.save(new CassandraEndpointCredentials(endpointCredentials));
     }
@@ -74,7 +77,7 @@ public class EndpointCredentialsCassandraDao extends AbstractCassandraDao<Cassan
         endpointCredentials = super.save(endpointCredentials);
         List<Statement> statements = new ArrayList<>();
         statements.add(this.getSaveQuery(endpointCredentials));
-        statements.add(this.byApplicationID.getSaveQuery(this.prepareByApplicationIDTableEntry(endpointCredentials)));
+        statements.add(this.byAppID.getSaveQuery(CassandraEPCredentialsByAppID.fromEndpointCredentials(endpointCredentials)));
         this.executeBatch(statements.toArray(new Statement[statements.size()]));
         return endpointCredentials;
     }
@@ -85,9 +88,9 @@ public class EndpointCredentialsCassandraDao extends AbstractCassandraDao<Cassan
         List<CassandraEndpointCredentials> result = null;
         Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_CREDS_APPLICATION_ID_PROPERTY, applicationId);
         Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
-        List<String> endpointIDs = this.byApplicationID.getEndpointIDs(applicationId);
-        if (endpointIDs != null) {
-            clause = QueryBuilder.in(CassandraModelConstants.EP_CREDS_ENDPOINT_ID_PROPERTY, endpointIDs);
+        List<ByteBuffer> endpointKeyHashes = this.byAppID.getEndpointKeyHashes(applicationId);
+        if (endpointKeyHashes != null) {
+            clause = QueryBuilder.in(CassandraModelConstants.EP_CREDS_ENDPOINT_KEY_HASH_PROPERTY, endpointKeyHashes);
             statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
             result = this.findListByStatement(statement);
         }
@@ -95,24 +98,18 @@ public class EndpointCredentialsCassandraDao extends AbstractCassandraDao<Cassan
     }
 
     @Override
-    public CassandraEndpointCredentials findByEndpointId(String endpointId) {
-        LOG.debug("Searching for endpoint credentials by endpoint ID [{}]", endpointId);
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_CREDS_ENDPOINT_ID_PROPERTY, endpointId);
+    public CassandraEndpointCredentials findByEndpointKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Searching for endpoint credentials by endpoint public key hash {}", Arrays.toString(endpointKeyHash));
+        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_CREDS_ENDPOINT_KEY_HASH_PROPERTY, CassandraDaoUtil.getByteBuffer(endpointKeyHash));
         Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
         return this.findOneByStatement(statement);
     }
 
     @Override
-    public void removeByEndpointId(String endpointId) {
-        LOG.debug("Removing endpoint credentials by endpoint ID [{}]", endpointId);
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_CREDS_ENDPOINT_ID_PROPERTY, endpointId);
+    public void removeByEndpointKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Removing endpoint credentials by endpoint public key hash {}", Arrays.toString(endpointKeyHash));
+        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_CREDS_ENDPOINT_KEY_HASH_PROPERTY, CassandraDaoUtil.getByteBuffer(endpointKeyHash));
         Statement statement = QueryBuilder.delete().from(this.getColumnFamilyName()).where(clause);
         this.execute(statement);
-    }
-
-    private CassandraEpCredsByAppId prepareByApplicationIDTableEntry(CassandraEndpointCredentials endpointCredentials) {
-        String applicationId = endpointCredentials.getApplicationId();
-        String endpointId = endpointCredentials.getEndpointId();
-        return new CassandraEpCredsByAppId(applicationId, endpointId);
     }
 }

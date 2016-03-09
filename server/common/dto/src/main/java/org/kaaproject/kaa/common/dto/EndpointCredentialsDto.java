@@ -17,10 +17,12 @@
 package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Bohdan Khablenko
@@ -36,22 +38,27 @@ public class EndpointCredentialsDto implements HasId, Serializable {
     private String id;
 
     private String applicationId;
-    private String endpointId;
-    private String publicKey;
+
+    @JsonProperty("publicKey")
+    private byte[] endpointKey;
+
+    @JsonProperty("endpointId")
+    private byte[] endpointKeyHash;
+
     private Integer serverProfileVersion;
     private String serverProfileBody;
 
     public EndpointCredentialsDto() {
     }
 
-    public EndpointCredentialsDto(String applicationId, String endpointId, String publicKey) {
-        this(applicationId, endpointId, publicKey, null, null);
+    public EndpointCredentialsDto(String applicationId, byte[] endpointKey, byte[] endpointKeyHash) {
+        this(applicationId, endpointKey, endpointKeyHash, null, null);
     }
 
-    public EndpointCredentialsDto(String applicationId, String endpointId, String publicKey, Integer serverProfileVersion, String serverProfileBody) {
+    public EndpointCredentialsDto(String applicationId, byte[] endpointKey, byte[] endpointKeyHash, Integer serverProfileVersion, String serverProfileBody) {
         this.applicationId = applicationId;
-        this.endpointId = endpointId;
-        this.publicKey = publicKey;
+        this.endpointKey = (endpointKey != null ? Arrays.copyOf(endpointKey, endpointKey.length) : null);
+        this.endpointKeyHash = (endpointKeyHash != null ? Arrays.copyOf(endpointKeyHash, endpointKeyHash.length) : null);
         this.serverProfileVersion = serverProfileVersion;
         this.serverProfileBody = serverProfileBody;
     }
@@ -74,20 +81,20 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         this.applicationId = applicationId;
     }
 
-    public String getEndpointId() {
-        return this.endpointId;
+    public byte[] getEndpointKey() {
+        return (this.endpointKey != null ? Arrays.copyOf(this.endpointKey, this.endpointKey.length) : null);
     }
 
-    public void setEndpointId(String endpointId) {
-        this.endpointId = endpointId;
+    public void setEndpointKey(byte[] endpointKey) {
+        this.endpointKey = (endpointKey != null ? Arrays.copyOf(endpointKey, endpointKey.length) : null);
     }
 
-    public String getPublicKey() {
-        return this.publicKey;
+    public byte[] getEndpointKeyHash() {
+        return (this.endpointKeyHash != null ? Arrays.copyOf(this.endpointKeyHash, this.endpointKeyHash.length) : null);
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setEndpointKeyHash(byte[] endpointKeyHash) {
+        this.endpointKeyHash = (endpointKeyHash != null ? Arrays.copyOf(endpointKeyHash, endpointKeyHash.length) : null);
     }
 
     public Integer getServerProfileVersion() {
@@ -111,8 +118,8 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.applicationId == null) ? 0 : this.applicationId.hashCode());
-        result = prime * result + ((this.endpointId == null) ? 0 : this.endpointId.hashCode());
-        result = prime * result + ((this.publicKey == null) ? 0 : this.publicKey.hashCode());
+        result = prime * result + Arrays.hashCode(this.endpointKey);
+        result = prime * result + Arrays.hashCode(this.endpointKeyHash);
         result = prime * result + ((this.serverProfileBody == null) ? 0 : this.serverProfileBody.hashCode());
         result = prime * result + ((this.serverProfileVersion == null) ? 0 : this.serverProfileVersion.hashCode());
         return result;
@@ -137,18 +144,10 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         } else if (!this.applicationId.equals(other.applicationId)) {
             return false;
         }
-        if (this.endpointId == null) {
-            if (other.endpointId != null) {
-                return false;
-            }
-        } else if (!this.endpointId.equals(other.endpointId)) {
+        if (!Arrays.equals(this.endpointKey, other.endpointKey)) {
             return false;
         }
-        if (this.publicKey == null) {
-            if (other.publicKey != null) {
-                return false;
-            }
-        } else if (!this.publicKey.equals(other.publicKey)) {
+        if (!Arrays.equals(this.endpointKeyHash, other.endpointKeyHash)) {
             return false;
         }
         if (this.serverProfileBody == null) {
@@ -175,10 +174,10 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         builder.append(this.id);
         builder.append(", applicationId=");
         builder.append(this.applicationId);
-        builder.append(", endpointId=");
-        builder.append(this.endpointId);
-        builder.append(", publicKey=");
-        builder.append(this.publicKey);
+        builder.append(", endpointKey=");
+        builder.append(Arrays.toString(this.endpointKey));
+        builder.append(", endpointKeyHash=");
+        builder.append(Arrays.toString(this.endpointKeyHash));
         builder.append(", serverProfileVersion=");
         builder.append(this.serverProfileVersion);
         builder.append(", serverProfileBody=");

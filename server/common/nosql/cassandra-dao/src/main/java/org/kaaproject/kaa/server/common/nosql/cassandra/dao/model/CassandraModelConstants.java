@@ -199,15 +199,15 @@ public class CassandraModelConstants {
     public static final String EP_CREDS_COLUMN_FAMILY_NAME = "ep_creds";
     public static final String EP_CREDS_ID_PROPERTY = "id";
     public static final String EP_CREDS_APPLICATION_ID_PROPERTY = EP_APP_ID_PROPERTY;
-    public static final String EP_CREDS_ENDPOINT_ID_PROPERTY = EP_EP_KEY_HASH_PROPERTY;
-    public static final String EP_CREDS_PUBLIC_KEY_PROPERTY = EP_EP_KEY_PROPERTY;
+    public static final String EP_CREDS_ENDPOINT_KEY_PROPERTY = EP_EP_KEY_PROPERTY;
+    public static final String EP_CREDS_ENDPOINT_KEY_HASH_PROPERTY = EP_EP_KEY_HASH_PROPERTY;
     public static final String EP_CREDS_SERVER_PROFILE_VERSION_PROPERTY = EP_SERVER_PROFILE_VERSION_PROPERTY;
     public static final String EP_CREDS_SERVER_PROFILE_BODY_PROPERTY = EP_SERVER_PROFILE_PROPERTY;
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpCredsByAppId}
+     * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPCredentialsByAppID}
      */
     public static final String EP_CREDS_BY_APP_ID_COLUMN_FAMILY_NAME = "app_id_ep_creds";
     public static final String EP_CREDS_BY_APP_ID_APPLICATION_ID_PROPERTY = EP_CREDS_APPLICATION_ID_PROPERTY;
-    public static final String EP_CREDS_BY_APP_ID_ENDPOINT_ID_PROPERTY = EP_CREDS_ENDPOINT_ID_PROPERTY;
+    public static final String EP_CREDS_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY = EP_CREDS_ENDPOINT_KEY_HASH_PROPERTY;
 }

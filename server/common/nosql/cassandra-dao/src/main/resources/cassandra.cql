@@ -133,14 +133,13 @@ CREATE TABLE IF NOT EXISTS kaa.tl_entry (
 CREATE TABLE IF NOT EXISTS kaa.ep_creds (
     id text,
     app_id text,
-    ep_key_hash text PRIMARY KEY,
-    ep_key text,
+    ep_key_hash blob PRIMARY KEY,
+    ep_key blob,
     srv_pf_ver int,
-    srv_pf text,
-    srv_pf_exp boolean
+    srv_pf text
 );
 
 CREATE TABLE IF NOT EXISTS kaa.app_id_ep_creds (
     app_id text PRIMARY KEY,
-    ep_key_hash text
+    ep_key_hash blob
 );

@@ -29,9 +29,9 @@ public interface EndpointCredentials extends ToDto<EndpointCredentialsDto> {
 
     String getApplicationId();
 
-    String getEndpointId();
+    byte[] getEndpointKey();
 
-    String getPublicKey();
+    byte[] getEndpointKeyHash();
 
     Integer getServerProfileVersion();
 

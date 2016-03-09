@@ -324,12 +324,12 @@ public interface EndpointService {
     /**
      * Returns the security credentials of the given endpoint.
      *
-     * @param endpointId
-     *        The endpoint ID
+     * @param endpointKeyHash
+     *        The endpoint public key hash
      *
      * @return The security credentials of the given endpoint
      */
-    EndpointCredentialsDto findEndpointCredentialsByEndpointId(String endpointId);
+    EndpointCredentialsDto findEndpointCredentialsByEndpointKeyHash(byte[] endpointKeyHash);
 
     /**
      * Saves the given endpoint security credentials.
@@ -344,8 +344,8 @@ public interface EndpointService {
     /**
      * Removes the security credentials of the given endpoint.
      *
-     * @param endpointId
-     *        The endpoint ID
+     * @param endpointKeyHash
+     *        The endpoint public key hash
      */
-    void removeEndpointCredentialsByEndpointId(String endpointId);
+    void removeEndpointCredentialsByEndpointKeyHash(byte[] endpointKeyHash);
 }

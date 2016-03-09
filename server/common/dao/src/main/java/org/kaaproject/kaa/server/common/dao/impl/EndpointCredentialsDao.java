@@ -41,12 +41,12 @@ public interface EndpointCredentialsDao<T extends EndpointCredentials> extends D
     /**
      * Returns the security credentials of the given endpoint.
      *
-     * @param endpointId
-     *        The endpoint ID
+     * @param endpointKeyHash
+     *        The endpoint public key hash
      *
      * @return The security credentials of the given endpoint
      */
-    T findByEndpointId(String endpointId);
+    T findByEndpointKeyHash(byte[] endpointKeyHash);
 
     /**
      * Returns the list of endpoint security credentials for the given
@@ -63,8 +63,8 @@ public interface EndpointCredentialsDao<T extends EndpointCredentials> extends D
     /**
      * Removes the security credentials of the given endpoint.
      *
-     * @param endpointId
-     *        The endpoint ID
+     * @param endpointKeyHash
+     *        The endpoint public key hash
      */
-    void removeByEndpointId(String endpointId);
+    void removeByEndpointKeyHash(byte[] endpointKeyHash);
 }

@@ -2216,7 +2216,8 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException {
-        return this.endpointService.findEndpointCredentialsByEndpointId(endpointId);
+        byte[] endpointKeyHash = Base64.decodeBase64(endpointId);
+        return this.endpointService.findEndpointCredentialsByEndpointKeyHash(endpointKeyHash);
     }
 
     @Override
@@ -2226,7 +2227,8 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public void removeEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException {
-        this.endpointService.removeEndpointCredentialsByEndpointId(endpointId);
+        byte[] endpointKeyHash = Base64.decodeBase64(endpointId);
+        this.endpointService.removeEndpointCredentialsByEndpointKeyHash(endpointKeyHash);
     }
     
 }

@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import java.util.List;
@@ -38,12 +39,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class EndpointCredentialsCassandraDaoTest extends AbstractCassandraTest {
 
     private static final String APPLICATION_ID = "application_id";
-    private static final String ENDPOINT_ID = "endpoint_id";
-    private static final String PUBLIC_KEY = "public_key";
+    private static final byte[] ENDPOINT_KEY = "endpoint_key".getBytes();
+    private static final byte[] ENDPOINT_KEY_HASH = "endpoint_key_hash".getBytes();
 
     @Test
     public void findByApplicationIdTest() throws Exception {
-        EndpointCredentialsDto endpointCredentials = this.generateEndpointCredentials(APPLICATION_ID, ENDPOINT_ID, PUBLIC_KEY);
+        EndpointCredentialsDto endpointCredentials = this.generateEndpointCredentials(APPLICATION_ID, ENDPOINT_KEY, ENDPOINT_KEY_HASH);
         Assert.assertNotNull(endpointCredentials);
         Assert.assertNotNull(endpointCredentials.getId());
 
@@ -53,30 +54,28 @@ public class EndpointCredentialsCassandraDaoTest extends AbstractCassandraTest {
 
         EndpointCredentials databaseRecord = databaseRecords.get(0);
         Assert.assertNotNull(databaseRecord);
-        Assert.assertEquals(endpointCredentials.getId(), databaseRecord.getId());
-        Assert.assertEquals(endpointCredentials.getEndpointId(), databaseRecord.getEndpointId());
+        Assert.assertEquals(endpointCredentials, databaseRecord.toDto());
     }
 
     @Test
-    public void findByEndpointIdTest() throws Exception {
-        EndpointCredentialsDto endpointCredentials = this.generateEndpointCredentials(APPLICATION_ID, ENDPOINT_ID, PUBLIC_KEY);
+    public void findByEndpointKeyHashTest() throws Exception {
+        EndpointCredentialsDto endpointCredentials = this.generateEndpointCredentials(APPLICATION_ID, ENDPOINT_KEY, ENDPOINT_KEY_HASH);
         Assert.assertNotNull(endpointCredentials);
         Assert.assertNotNull(endpointCredentials.getId());
 
-        EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointId(ENDPOINT_ID);
+        EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointKeyHash(ENDPOINT_KEY_HASH);
         Assert.assertNotNull(databaseRecord);
-        Assert.assertEquals(endpointCredentials.getId(), databaseRecord.getId());
-        Assert.assertEquals(endpointCredentials.getEndpointId(), databaseRecord.getEndpointId());
+        Assert.assertEquals(endpointCredentials, databaseRecord.toDto());
     }
 
     @Test
-    public void removeByEndpointIdTest() throws Exception {
-        EndpointCredentialsDto endpointCredentials = this.generateEndpointCredentials(APPLICATION_ID, ENDPOINT_ID, PUBLIC_KEY);
+    public void removeByEndpointKeyHashTest() throws Exception {
+        EndpointCredentialsDto endpointCredentials = this.generateEndpointCredentials(APPLICATION_ID, ENDPOINT_KEY, ENDPOINT_KEY_HASH);
         Assert.assertNotNull(endpointCredentials);
         Assert.assertNotNull(endpointCredentials.getId());
 
-        this.endpointCredentialsDao.removeByEndpointId(ENDPOINT_ID);
-        EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointId(ENDPOINT_ID);
+        this.endpointCredentialsDao.removeByEndpointKeyHash(ENDPOINT_KEY_HASH);
+        EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointKeyHash(ENDPOINT_KEY_HASH);
         Assert.assertNull(databaseRecord);
     }
 }

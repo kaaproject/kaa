@@ -27,7 +27,6 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSql
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -557,20 +556,17 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public EndpointCredentialsDto findEndpointCredentialsByEndpointId(String endpointId) {
-        EndpointCredentialsDto result = null;
-        if (Validator.isValidId(endpointId)) {
-            EndpointCredentials endpointCredentials = this.endpointCredentialsDao.findByEndpointId(endpointId);
-            result = DaoUtil.getDto(endpointCredentials);
-        }
-        return result;
+    public EndpointCredentialsDto findEndpointCredentialsByEndpointKeyHash(byte[] endpointKeyHash) {
+        Validator.validateHash(endpointKeyHash, "The endpoint public key hash provided is invalid!");
+        EndpointCredentials endpointCredentials = this.endpointCredentialsDao.findByEndpointKeyHash(endpointKeyHash);
+        return DaoUtil.getDto(endpointCredentials);
     }
 
     @Override
     public EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials) {
         EndpointCredentialsDto result = null;
         if (Validator.isValidObject(endpointCredentials)) {
-            EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointId(endpointCredentials.getEndpointId());
+            EndpointCredentials databaseRecord = this.endpointCredentialsDao.findByEndpointKeyHash(endpointCredentials.getEndpointKeyHash());
             if (databaseRecord == null || databaseRecord.getId().equals(endpointCredentials.getId())) {
                 result = DaoUtil.getDto(this.endpointCredentialsDao.save(endpointCredentials));
             } else {
@@ -581,7 +577,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public void removeEndpointCredentialsByEndpointId(String endpointId) {
-        this.endpointCredentialsDao.removeByEndpointId(endpointId);
+    public void removeEndpointCredentialsByEndpointKeyHash(byte[] endpointKeyHash) {
+        this.endpointCredentialsDao.removeByEndpointKeyHash(endpointKeyHash);
     }
 }
