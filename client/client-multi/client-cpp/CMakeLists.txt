@@ -58,7 +58,7 @@ if (NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif ()
 
-if (KAA_DEBUG_ENABLED)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     if (NOT MSVC)
        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
     endif () 
@@ -79,13 +79,6 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
 endif ()
 
-# Release version is built by default.
-if(KAA_DEBUG_ENABLED)
-    set(CMAKE_BUILD_TYPE DEBUG)
-else()
-    set(CMAKE_BUILD_TYPE RELEASE)
-endif()
-
 #
 # Sets maximum Kaa SDK log level.
 #
@@ -98,7 +91,7 @@ endif()
 # DEBUG - 5
 # TRACE - 6
 if(NOT DEFINED KAA_MAX_LOG_LEVEL)
-    if(KAA_DEBUG_ENABLED)
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         set(KAA_MAX_LOG_LEVEL 6)
     else()
         set(KAA_MAX_LOG_LEVEL 4)
@@ -313,7 +306,7 @@ if (SQLITE_LOG_STORAGE_ENABLED)
     target_link_libraries(kaacpp ${SQLITE3_LIBRARY})
 endif()
 
-if (WIN32 AND KAA_DEBUG_ENABLED)
+if (WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_libraries(kaacpp dbghelp)
 endif()
 
