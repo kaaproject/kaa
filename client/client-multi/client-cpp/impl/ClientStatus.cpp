@@ -307,71 +307,71 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
 {
     auto eventSeqNumberTokenParamToken = parameterToToken_.left.find(ClientParameterT::EVENT_SEQUENCE_NUMBER);
     if (eventSeqNumberTokenParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> eventSeqNumber(
+        std::shared_ptr<IPersistentParameter> eventSeqNumberParam(
                 new ClientParameter<std::int32_t>(eventSeqNumberTokenParamToken->second, eventSeqNumberDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::EVENT_SEQUENCE_NUMBER, eventSeqNumber));
+        parameters_.insert(std::make_pair(ClientParameterT::EVENT_SEQUENCE_NUMBER, eventSeqNumberParam));
     }
     auto isRegisteredParamToken = parameterToToken_.left.find(ClientParameterT::IS_REGISTERED);
     if (isRegisteredParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> isRegistered(new ClientParameter<bool>(
+        std::shared_ptr<IPersistentParameter> isRegisteredParam(new ClientParameter<bool>(
                 isRegisteredParamToken->second, isRegisteredDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::IS_REGISTERED, isRegistered));
+        parameters_.insert(std::make_pair(ClientParameterT::IS_REGISTERED, isRegisteredParam));
     }
     auto topicListParamToken = parameterToToken_.left.find(ClientParameterT::TOPIC_LIST);
     if (topicListParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> topicList(new ClientParameter<Topics>(
+        std::shared_ptr<IPersistentParameter> topicListParam(new ClientParameter<Topics>(
                 topicListParamToken->second, topicListDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::TOPIC_LIST, topicList));
+        parameters_.insert(std::make_pair(ClientParameterT::TOPIC_LIST, topicListParam));
     }
     auto topicListHashParamToken = parameterToToken_.left.find(ClientParameterT::TOPIC_LIST_HASH);
     if (topicListHashParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> topicList(new ClientParameter<std::int32_t>(
+        std::shared_ptr<IPersistentParameter> topicListHashParam(new ClientParameter<std::int32_t>(
                 topicListHashParamToken->second, topicListHashDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::TOPIC_LIST_HASH, topicList));
+        parameters_.insert(std::make_pair(ClientParameterT::TOPIC_LIST_HASH, topicListHashParam));
     }
     auto endpointHashParamToken = parameterToToken_.left.find(ClientParameterT::PROFILE_HASH);
     if (endpointHashParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<HashDigest>(
+        std::shared_ptr<IPersistentParameter> profileHashParam(new ClientParameter<HashDigest>(
                 endpointHashParamToken->second, endpointHashDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::PROFILE_HASH, endpointHash));
+        parameters_.insert(std::make_pair(ClientParameterT::PROFILE_HASH, profileHashParam));
     }
     auto attachedEndpointsParamToken = parameterToToken_.left.find(ClientParameterT::ATTACHED_ENDPOINTS);
     if (attachedEndpointsParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> attachedEndpoints(new ClientParameter<AttachedEndpoints>(
+        std::shared_ptr<IPersistentParameter> attachedEndpointsParam(new ClientParameter<AttachedEndpoints>(
                 attachedEndpointsParamToken->second, attachedEndpoints_));
-        parameters_.insert(std::make_pair(ClientParameterT::ATTACHED_ENDPOINTS, attachedEndpoints));
+        parameters_.insert(std::make_pair(ClientParameterT::ATTACHED_ENDPOINTS, attachedEndpointsParam));
     }
     auto endpointAccessTokenParamToken = parameterToToken_.left.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (endpointAccessTokenParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointAccessToken(
+        std::shared_ptr<IPersistentParameter> endpointAccessTokenParam(
                 new ClientParameter<std::string>(endpointAccessTokenParamToken->second, ""));
-        parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessToken));
+        parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessTokenParam));
     }
     auto endpointAttachStatusParamToken = parameterToToken_.left.find(ClientParameterT::EP_ATTACH_STATUS);
     if (endpointAttachStatusParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> isEndpointAttached(new ClientParameter<bool>(
+        std::shared_ptr<IPersistentParameter> isEndpointAttachedParam(new ClientParameter<bool>(
                 endpointAttachStatusParamToken->second, endpointDefaultAttachStatus_));
-        parameters_.insert(std::make_pair(ClientParameterT::EP_ATTACH_STATUS, isEndpointAttached));
+        parameters_.insert(std::make_pair(ClientParameterT::EP_ATTACH_STATUS, isEndpointAttachedParam));
     }
     auto endpointKeyHashParamToken = parameterToToken_.left.find(ClientParameterT::EP_KEY_HASH);
     if (endpointKeyHashParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointKeyHash(new ClientParameter<std::string>(
+        std::shared_ptr<IPersistentParameter> endpointKeyHashParam(new ClientParameter<std::string>(
                 endpointKeyHashParamToken->second, endpointKeyHashDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHash));
+        parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHashParam));
     }
 
     auto propertiesHashParamToken = parameterToToken_.left.find(ClientParameterT::PROPERTIES_HASH);
     if (propertiesHashParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> propertiesHash(new ClientParameter<HashDigest>(
+        std::shared_ptr<IPersistentParameter> propertiesHashParam(new ClientParameter<HashDigest>(
                 propertiesHashParamToken->second, endpointHashDefault_/*It's OK*/));
-        parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHash));
+        parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHashParam));
     }
 
     auto isProfileResyncNeededParamToken = parameterToToken_.left.find(ClientParameterT::IS_PROFILE_RESYNC_NEEDED);
     if (isProfileResyncNeededParamToken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> isProfileResyncNeeded(new ClientParameter<bool>(
+        std::shared_ptr<IPersistentParameter> isProfileResyncNeededParam(new ClientParameter<bool>(
                 isProfileResyncNeededParamToken->second, isProfileResyncNeededDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::IS_PROFILE_RESYNC_NEEDED, isProfileResyncNeeded));
+        parameters_.insert(std::make_pair(ClientParameterT::IS_PROFILE_RESYNC_NEEDED, isProfileResyncNeededParam));
     }
 
     this->read();
