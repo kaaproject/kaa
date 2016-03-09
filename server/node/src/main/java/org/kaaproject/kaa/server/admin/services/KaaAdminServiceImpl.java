@@ -145,6 +145,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -2741,8 +2742,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (isEmpty(user.getExternalUid())) {
                 userFacade.deleteUser(result.getUserId());
             }
-            throw new KaaAdminServiceException("Failed to send email with temporary password. See server logs for details.",
-                    ServiceErrorCode.GENERAL_ERROR);
+            StringBuilder errorMessage = new StringBuilder("Failed to send email with temporary password. ");
+            if (e instanceof MailException) {
+                errorMessage.append("Please, check outgoing email settings. ");
+            }
+            throw new KaaAdminServiceException(String.valueOf(errorMessage.append("See server logs for details.")), ServiceErrorCode.GENERAL_ERROR);
         }
         return result.getUserId();
     }
