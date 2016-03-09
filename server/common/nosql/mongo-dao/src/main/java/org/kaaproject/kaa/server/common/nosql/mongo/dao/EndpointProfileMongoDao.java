@@ -102,17 +102,17 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
         query.skip(offs).limit(lim + 1);
         query.fields().include(DaoConstants.PROFILE).include(EP_SERVER_PROFILE_PROPERTY).include(EP_ENDPOINT_KEY_HASH).include(EP_APPLICATION_ID)
                 .include(EP_PROFILE_VERSION).include(EP_SERVER_PROFILE_VERSION_PROPERTY);
-        List<MongoEndpointProfile> mongoEndpointProfileList = mongoTemplate.find(query, getDocumentClass());
-        if (mongoEndpointProfileList.size() == (lim + 1)) {
+        List<EndpointProfileDto> endpointProfileDtoList = convertDtoList(mongoTemplate.find(query, getDocumentClass()));
+        if (endpointProfileDtoList.size() == (lim + 1)) {
             String offset = Integer.toString(lim + offs);
             pageLink.setOffset(offset);
-            mongoEndpointProfileList.remove(lim);
+            endpointProfileDtoList.remove(lim);
         } else {
             pageLink.setNext(DaoConstants.LAST_PAGE_MESSAGE);
         }
-        for (MongoEndpointProfile ep : mongoEndpointProfileList) {
-            EndpointProfileBodyDto endpointProfileBodyDto = new EndpointProfileBodyDto(ep.getEndpointKeyHash(), ep.getProfileAsString(),
-                    ep.getServerProfile(),ep.getProfileVersion(), ep.getServerProfileVersion(), ep.getApplicationId());
+        for (EndpointProfileDto ep : endpointProfileDtoList) {
+            EndpointProfileBodyDto endpointProfileBodyDto = new EndpointProfileBodyDto(ep.getEndpointKeyHash(), ep.getClientProfileBody(),
+                    ep.getServerProfileBody(),ep.getClientProfileVersion(), ep.getServerProfileVersion(), ep.getApplicationId());
             endpointProfileBodyDto.setEndpointKeyHash(ep.getEndpointKeyHash());
             profilesBody.add(endpointProfileBodyDto);
         }
@@ -148,14 +148,14 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
         Query query = Query.query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));
         query.fields().include(DaoConstants.PROFILE).include(EP_SERVER_PROFILE_PROPERTY).include(EP_APPLICATION_ID)
                 .include(EP_PROFILE_VERSION).include(EP_SERVER_PROFILE_VERSION_PROPERTY);
-        MongoEndpointProfile pf = mongoTemplate.findOne(query, getDocumentClass());
+        EndpointProfileDto pf = mongoTemplate.findOne(query, getDocumentClass()).toDto();
         if (pf != null) {
-            endpointProfileBodyDto = new EndpointProfileBodyDto(endpointKeyHash, pf.getProfileAsString(), pf.getServerProfile(),
-                    pf.getProfileVersion(), pf.getServerProfileVersion(), pf.getApplicationId());
+            endpointProfileBodyDto = new EndpointProfileBodyDto(endpointKeyHash, pf.getClientProfileBody(), pf.getServerProfileBody(),
+                    pf.getClientProfileVersion(), pf.getServerProfileVersion(), pf.getApplicationId());
         }
         LOG.debug("[{}] Found client-side endpoint profile body {} with client-side endpoint profile version {} and server-side endpoint profile body {} " +
-                "with server-side endpoint profile version {} and application id {}", endpointKeyHash, pf.getProfileAsString(), pf.getProfileVersion(),
-                pf.getServerProfile(), pf.getServerProfileVersion(), pf.getApplicationId());
+                "with server-side endpoint profile version {} and application id {}", endpointKeyHash, pf.getClientProfileBody(), pf.getServerProfileBody(),
+                pf.getClientProfileVersion(), pf.getServerProfileVersion(), pf.getApplicationId());
         return endpointProfileBodyDto;
     }
 
