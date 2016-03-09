@@ -311,11 +311,13 @@ if (SQLITE_LOG_STORAGE_ENABLED)
     target_link_libraries(kaacpp ${SQLITE3_LIBRARY})
 endif()
 
-if (WIN32)
+if (WIN32 AND KAA_DEBUG_ENABLED)
     target_link_libraries(kaacpp dbghelp)
-else (WIN32)
+endif()
+
+if (NOT WIN32)
     target_link_libraries(kaacpp pthread)
-endif (WIN32)
+endif()
 
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
 
