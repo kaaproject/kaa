@@ -16,7 +16,12 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import org.apache.commons.io.IOUtils;
+import org.kaaproject.kaa.common.dto.HasId;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.server.common.dao.model.ToDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,11 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ModelUtils {
 
@@ -152,6 +153,21 @@ public class ModelUtils {
             }
         }
         return ids;
+    }
+
+    public static List<TopicDto> getTopicDtos(List<String> topicIds) {
+        List<TopicDto> topics = Collections.emptyList();
+        if (topicIds != null && !topicIds.isEmpty()) {
+            topics = new ArrayList<>(topicIds.size());
+            for (String id : topicIds) {
+                if (id != null) {
+                    TopicDto topicDto = new TopicDto();
+                    topicDto.setId(id);
+                    topics.add(topicDto);
+                }
+            }
+        }
+        return topics;
     }
 
     public static String binaryToString(byte[] data) {
