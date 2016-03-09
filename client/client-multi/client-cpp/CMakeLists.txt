@@ -79,10 +79,6 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
 endif ()
 
-if (WIN32)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0502") 
-endif (WIN32)
-
 # Release version is built by default.
 if(KAA_DEBUG_ENABLED)
     set(CMAKE_BUILD_TYPE DEBUG)
@@ -245,6 +241,12 @@ if (SQLITE_LOG_STORAGE_ENABLED)
 endif()
 
 if (WIN32 AND NOT CYGWIN AND NOT MSYS)
+    if (CMAKE_SYSTEM_VERSION)
+        string(REGEX REPLACE "^([0-9])\\.([0-9]).*" "0\\10\\2" version ${CMAKE_SYSTEM_VERSION})
+
+        add_definitions(-D_WIN32_WINNT=0x${version})
+    endif() 
+
     add_definitions (/EHs)
     add_definitions (
         -DBOOST_REGEX_DYN_LINK
