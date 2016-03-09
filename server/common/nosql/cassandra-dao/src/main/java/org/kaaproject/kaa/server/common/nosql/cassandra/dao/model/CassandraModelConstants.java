@@ -203,7 +203,6 @@ public class CassandraModelConstants {
     public static final String EP_CREDS_PUBLIC_KEY_PROPERTY = EP_EP_KEY_PROPERTY;
     public static final String EP_CREDS_SERVER_PROFILE_VERSION_PROPERTY = EP_SERVER_PROFILE_VERSION_PROPERTY;
     public static final String EP_CREDS_SERVER_PROFILE_BODY_PROPERTY = EP_SERVER_PROFILE_PROPERTY;
-    public static final String EP_CREDS_SERVER_PROFILE_EXPIRED_PROPERTY = "srv_pf_exp";
 
     /**
      * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpCredsByAppId}

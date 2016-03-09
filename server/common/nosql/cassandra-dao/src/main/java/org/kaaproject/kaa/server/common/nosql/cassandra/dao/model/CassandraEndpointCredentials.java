@@ -42,7 +42,7 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
     private static final long serialVersionUID = 1000L;
 
     @Transient
-    private static final String[] EXCLUDE_FIELDS = { "id", "serverProfileExpired" };
+    private static final String[] EXCLUDE_FIELDS = { "id" };
 
     @Column(name = CassandraModelConstants.EP_CREDS_ID_PROPERTY)
     private String id;
@@ -63,9 +63,6 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
     @Column(name = CassandraModelConstants.EP_CREDS_SERVER_PROFILE_BODY_PROPERTY)
     private String serverProfileBody;
 
-    @Column(name = CassandraModelConstants.EP_CREDS_SERVER_PROFILE_EXPIRED_PROPERTY)
-    private Boolean serverProfileExpired = false;
-
     public CassandraEndpointCredentials() {
     }
 
@@ -76,7 +73,6 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
         this.publicKey = endpointCredentials.getPublicKey();
         this.serverProfileVersion = endpointCredentials.getServerProfileVersion();
         this.serverProfileBody = endpointCredentials.getServerProfileBody();
-        this.serverProfileExpired = endpointCredentials.getServerProfileExpired();
     }
 
     @Override
@@ -134,15 +130,6 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
     }
 
     @Override
-    public Boolean getServerProfileExpired() {
-        return this.serverProfileExpired;
-    }
-
-    public void setServerProfileExpired(Boolean serverProfileExpired) {
-        this.serverProfileExpired = serverProfileExpired;
-    }
-
-    @Override
     public EndpointCredentialsDto toDto() {
         EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
         endpointCredentials.setId(this.id);
@@ -151,7 +138,6 @@ public final class CassandraEndpointCredentials implements EndpointCredentials, 
         endpointCredentials.setPublicKey(this.publicKey);
         endpointCredentials.setServerProfileVersion(this.serverProfileVersion);
         endpointCredentials.setServerProfileBody(this.serverProfileBody);
-        endpointCredentials.setServerProfileExpired(this.serverProfileExpired);
         return endpointCredentials;
     }
 

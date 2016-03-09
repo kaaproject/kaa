@@ -42,7 +42,7 @@ public class MongoEndpointCredentialsTest {
     @Test
     public void dataConversionTest() throws Exception {
         EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto(APPLICATION_ID, ENDPOINT_ID, PUBLIC_KEY);
-        MongoEndpointCredentials model = new MongoEndpointCredentials(endpointCredentials);
-        Assert.assertEquals(endpointCredentials, model.toDto());
+        MongoEndpointCredentials endpointCredentialsModel = new MongoEndpointCredentials(endpointCredentials);
+        Assert.assertEquals(endpointCredentials, endpointCredentialsModel.toDto());
     }
 }

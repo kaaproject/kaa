@@ -41,9 +41,6 @@ public class EndpointCredentialsDto implements HasId, Serializable {
     private Integer serverProfileVersion;
     private String serverProfileBody;
 
-    @JsonIgnore
-    private Boolean serverProfileExpired = false;
-
     public EndpointCredentialsDto() {
     }
 
@@ -107,14 +104,6 @@ public class EndpointCredentialsDto implements HasId, Serializable {
 
     public void setServerProfileBody(String serverProfileBody) {
         this.serverProfileBody = serverProfileBody;
-    }
-
-    public Boolean getServerProfileExpired() {
-        return this.serverProfileExpired;
-    }
-
-    public void setServerProfileExpired(Boolean serverProfileExpired) {
-        this.serverProfileExpired = serverProfileExpired;
     }
 
     @Override
@@ -194,8 +183,6 @@ public class EndpointCredentialsDto implements HasId, Serializable {
         builder.append(this.serverProfileVersion);
         builder.append(", serverProfileBody=");
         builder.append(this.serverProfileBody);
-        builder.append(", serverProfileExpired=");
-        builder.append(this.serverProfileExpired);
         builder.append("]");
         return builder.toString();
     }

@@ -131,5 +131,4 @@ public class MongoModelConstants {
     public static final String ENDPOINT_CREDENTIALS_PUBLIC_KEY = "public_key";
     public static final String ENDPOINT_CREDENTIALS_SERVER_PROFILE_VERSION = "server_profile_version";
     public static final String ENDPOINT_CREDENTIALS_SERVER_PROFILE_BODY = "server_profile_body";
-    public static final String ENDPOINT_CREDENTIALS_SERVER_PROFILE_EXPIRED = "server_profile_expired";
 }
