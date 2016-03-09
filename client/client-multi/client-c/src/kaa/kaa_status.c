@@ -53,7 +53,7 @@ extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
  * topic_hash                       sizeof(int32_t)
  * token_buf                        sizeof(KAA_SDK_TOKEN)
  */
-#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(size_t) + sizeof(uint32_t) + sizeof(size_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
+#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(size_t) + sizeof(bool) + sizeof(uint32_t) + sizeof(size_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
         memcpy(TO, FROM, SIZE); \
@@ -247,6 +247,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     size_t buffer_size = KAA_STATUS_STATIC_SIZE
             + sizeof(endpoint_access_token_length)
             + endpoint_access_token_length
+            /*               Topic ID            Sequence number  */
             + states_count * (sizeof(uint32_t) + sizeof(uint64_t))
             + topics_size
             + sizeof(int32_t);
