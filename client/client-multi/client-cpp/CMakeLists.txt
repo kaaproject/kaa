@@ -244,7 +244,7 @@ if (WIN32 AND NOT CYGWIN AND NOT MSYS)
     if (CMAKE_SYSTEM_VERSION)
         string(REGEX REPLACE "^([0-9])\\.([0-9]).*" "0\\10\\2" version ${CMAKE_SYSTEM_VERSION})
 
-        add_definitions(-D_WIN32_WINNT="0x${version}")
+        add_definitions(-D_WIN32_WINNT=0x${version})
     endif() 
 
     add_definitions (/EHs)
