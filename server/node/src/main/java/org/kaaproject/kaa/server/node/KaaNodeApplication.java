@@ -30,7 +30,7 @@ public class KaaNodeApplication extends AbstractServerApplication {
     private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS = new String[] { "kaaNodeContext.xml" };
 
     private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
-            "kaa-node.properties", "dao.properties" };
+            "kaa-node.properties", "sql-dao.properties", "nosql-dao.properties"};
 
     /**
      * The main method. Used to launch Kaa Node.
