@@ -49,9 +49,6 @@ public:
     std::int32_t getEventSequenceNumber() const;
     void setEventSequenceNumber(std::int32_t sequenceNumber);
 
-    SequenceNumber getAppSeqNumber() const;
-    void setAppSeqNumber(SequenceNumber appSeqNumber);
-
     bool isRegistered() const;
     void setRegistered(bool isRegistered);
 
@@ -77,10 +74,13 @@ public:
     void setTopicListHash(const std::int32_t topicListHash);
     std::int32_t getTopicListHash();
 
-    void setTopicStates(std::map<std::int64_t, std::int32_t>& subscriptions);
-    std::map<std::int64_t, std::int32_t> &getTopicStates();
+    void setTopicStates(const TopicStates& subscriptions);
+    TopicStates& getTopicStates();
 
     virtual bool isSDKPropertiesUpdated() const { return isSDKPropertiesForUpdated_; }
+
+    virtual bool isProfileResyncNeeded() const;
+    virtual void setProfileResyncNeeded(bool isNeeded);
 
     void read();
     void save();
@@ -90,29 +90,34 @@ private:
     /* Helpers */
     template< ClientParameterT Type, class ParameterData >
     void setParameterData(const ParameterData& data);
+
+    template< ClientParameterT Type, class ParameterData >
+    void setParameterDataWithEqualCheck(const ParameterData& data);
+
     template< ClientParameterT Type, class ParameterData >
     ParameterData getParameterData(const ParameterData& defaultValue) const;
 
 private:
-    std::string filename_;
+    const std::string filename_;
     std::map<ClientParameterT, std::shared_ptr<IPersistentParameter> > parameters_;
 
-    bool isSDKPropertiesForUpdated_;
-    bool hasUpdate_;
+    bool            isSDKPropertiesForUpdated_;
+    bool            hasUpdate_;
+    TopicStates    topicStates_;
+
     IKaaClientContext &context_;
 
-    KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
-    std::uint32_t topicListHash_;
-    std::map<std::int64_t, std::int32_t>    topicStates_;
 
     static const bimap                      parameterToToken_;
-    static const SequenceNumber             appSeqNumberDefault_;
+    static const std::int32_t               eventSeqNumberDefault_;
     static const bool                       isRegisteredDefault_;
     static const HashDigest                 endpointHashDefault_;
-    static const Topics                     topicList_;
+    static const Topics                     topicListDefault_;
+    static const std::int32_t               topicListHashDefault_;
     static const AttachedEndpoints          attachedEndpoints_;
     static const bool                       endpointDefaultAttachStatus_;
     static const std::string                endpointKeyHashDefault_;
+    static const bool                       isProfileResyncNeededDefault_;
 };
 
 }
