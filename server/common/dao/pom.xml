@@ -86,7 +86,7 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
-        </dependency>     
+        </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
@@ -147,6 +147,13 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -236,6 +243,9 @@
                 </plugins>
             </build>
         </profile>
+
+
+
         <profile>
             <id>mongo-dao</id>
             <activation>
@@ -255,9 +265,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="src/main/resources/dao.properties.template"
-                                              tofile="src/main/resources/dao.properties" overwrite="true"/>
-                                        <replace file="src/main/resources/dao.properties"
+                                        <copy file="src/main/resources/nosql-dao.properties.template"
+                                              tofile="src/main/resources/nosql-dao.properties" overwrite="true"/>
+                                        <replace file="src/main/resources/nosql-dao.properties"
                                                  token="#nosql_provider_name#" value="mongodb"/>
                                     </tasks>
                                 </configuration>
@@ -283,9 +293,9 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="src/main/resources/dao.properties.template"
-                                              tofile="src/main/resources/dao.properties" overwrite="true"/>
-                                        <replace file="src/main/resources/dao.properties"
+                                        <copy file="src/main/resources/nosql-dao.properties.template"
+                                               tofile="src/main/resources/nosql-dao.properties" overwrite="true"/>
+                                        <replace file="src/main/resources/nosql-dao.properties"
                                                  token="#nosql_provider_name#" value="cassandra"/>
                                     </tasks>
                                 </configuration>
@@ -295,5 +305,68 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+        <profile>
+            <id>mariadb-dao</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-properties</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="src/main/resources/maria-dao.properties.template"
+                                              tofile="src/main/resources/sql-dao.properties" overwrite="true"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+        <profile>
+            <id>postgresql-dao</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-properties</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="src/main/resources/postgre-dao.properties.template"
+                                              tofile="src/main/resources/sql-dao.properties" overwrite="true"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--  //////////////////////////////////////////////////////////////////////////////////////////////////////-->
     </profiles>
 </project>

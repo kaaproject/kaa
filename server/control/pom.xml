@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.7.4-SNAPSHOT</version>
+        <version>0.9.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -570,7 +570,17 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/dao.properties</src>
+                                    <src>../common/dao/src/main/resources/sql-dao.properties</src>
+                                    <type>file</type>
+                                    <conffile>true</conffile>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <filemode>755</filemode>
+                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../common/dao/src/main/resources/nosql-dao.properties</src>
                                     <type>file</type>
                                     <conffile>true</conffile>
                                     <mapper>
@@ -715,7 +725,10 @@
                                             <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
                                         </source>
                                         <source>
-                                            <location>../common/dao/src/main/resources/dao.properties</location>
+                                            <location>../common/dao/src/main/resources/sql-dao.properties</location>
+                                        </source>
+                                        <source>
+                                            <location>../common/dao/src/main/resources/nosql-dao.properties</location>
                                         </source>
                                         <source>
                                             <location>../common/nosql/cassandra-dao/src/main/resources/cassandra.cql</location>
