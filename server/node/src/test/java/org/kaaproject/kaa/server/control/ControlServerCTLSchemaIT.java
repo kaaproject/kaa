@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,17 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         this.loginTenantDeveloper(tenantDeveloperUser);
         CTLSchemaDto alpha = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_ALPHA), tenantDeveloperDto.getTenantId(), null);
         Assert.assertNotNull(alpha.getId());
+    }
+
+    /**
+     * Saves a CTL schema with incorrect version to the database.
+     *
+     * @throws Exception
+     */
+    @Test(expected = HttpClientErrorException.class)
+    public void saveCTLSchemaVithWrongVerionTest() throws Exception {
+        this.loginKaaAdmin();
+        CTLSchemaDto gamma = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_GAMMA), null, null);
     }
 
     /**
