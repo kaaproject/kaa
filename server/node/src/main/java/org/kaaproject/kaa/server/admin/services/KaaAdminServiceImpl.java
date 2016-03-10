@@ -1634,6 +1634,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupWeight(endpointGroup.getWeight());
             if (isEmpty(endpointGroup.getId())) {
                 endpointGroup.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(endpointGroup.getApplicationId());
@@ -1643,6 +1644,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             return controlService.editEndpointGroup(endpointGroup);
         } catch (Exception e) {
             throw Utils.handleException(e);
+        }
+    }
+
+    private void checkEndpointGroupWeight(int weight) throws KaaAdminServiceException {
+        if (weight < 0) {
+            throw new IllegalArgumentException("The weight can't be negative number!");
         }
     }
 

@@ -751,7 +751,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     protected EndpointGroupDto createEndpointGroup(String applicationId) throws Exception {
         EndpointGroupDto endpointGroup = new EndpointGroupDto();
         endpointGroup.setName(generateString(ENDPOINT_GROUP));
-        endpointGroup.setWeight(random.nextInt());
+        endpointGroup.setWeight(Math.abs(random.nextInt()));
         if (strIsEmpty(applicationId)) {
             ApplicationDto application = createApplication(tenantAdminDto);
             endpointGroup.setApplicationId(application.getId());
