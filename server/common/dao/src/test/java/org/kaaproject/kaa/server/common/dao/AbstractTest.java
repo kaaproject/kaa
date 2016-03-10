@@ -166,6 +166,8 @@ public class AbstractTest {
     @Autowired
     protected EndpointService endpointService;
     @Autowired
+    protected EndpointVerificationService endpointVerificationService;
+    @Autowired
     protected HistoryService historyService;
     @Autowired
     protected ProfileService profileService;
@@ -728,7 +730,7 @@ public class AbstractTest {
         endpointCredentials.setEndpointKeyHash(endpointKeyHash);
         endpointCredentials.setServerProfileVersion(serverProfileVersion);
         endpointCredentials.setServerProfileBody(serverProfileBody);
-        return this.endpointService.saveEndpointCredentials(endpointCredentials);
+        return this.endpointVerificationService.saveEndpointCredentials(endpointCredentials);
     }
 
     protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {

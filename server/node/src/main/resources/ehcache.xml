@@ -80,7 +80,7 @@
         <persistence strategy="localTempSwap" />
     </cache>
 
-    <cache name="sdkProperties" maxEntriesLocalHeap="10000"
+    <cache name="sdkProfiles" maxEntriesLocalHeap="10000"
         eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
         timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
         transactionalMode="off" statistics="true">

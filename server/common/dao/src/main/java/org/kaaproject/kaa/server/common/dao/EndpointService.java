@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -308,44 +307,4 @@ public interface EndpointService {
      *            the endpoint user id
      */
     void removeEndpointUserById(String id);
-
-    /**
-     * Returns the list of endpoint security credentials for the given
-     * application.
-     *
-     * @param applicationId
-     *        The application ID
-     *
-     * @return The list of endpoint security credentials for the given
-     *         application
-     */
-    List<EndpointCredentialsDto> findEndpointCredentialsByApplicationId(String applicationId);
-
-    /**
-     * Returns the security credentials of the given endpoint.
-     *
-     * @param endpointKeyHash
-     *        The endpoint public key hash
-     *
-     * @return The security credentials of the given endpoint
-     */
-    EndpointCredentialsDto findEndpointCredentialsByEndpointKeyHash(byte[] endpointKeyHash);
-
-    /**
-     * Saves the given endpoint security credentials.
-     *
-     * @param endpointCredentials
-     *        The endpoint security credentials
-     *
-     * @return The endpoint security credentials saved
-     */
-    EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials);
-
-    /**
-     * Removes the security credentials of the given endpoint.
-     *
-     * @param endpointKeyHash
-     *        The endpoint public key hash
-     */
-    void removeEndpointCredentialsByEndpointKeyHash(byte[] endpointKeyHash);
 }

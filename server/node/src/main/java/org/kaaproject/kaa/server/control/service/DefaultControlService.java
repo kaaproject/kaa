@@ -96,6 +96,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EndpointVerificationService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
@@ -199,6 +200,10 @@ public class DefaultControlService implements ControlService {
     /** The endpoint service. */
     @Autowired
     private EndpointService endpointService;
+
+    /** The endpoint verification service */
+    @Autowired
+    private EndpointVerificationService endpointVerificationService;
 
     /** The notification service. */
     @Autowired
@@ -2211,24 +2216,24 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) throws ControlServiceException {
-        return this.endpointService.findEndpointCredentialsByApplicationId(applicationId);
+        return this.endpointVerificationService.getEndpointCredentialsByApplicationId(applicationId);
     }
 
     @Override
     public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException {
         byte[] endpointKeyHash = Base64.decodeBase64(endpointId);
-        return this.endpointService.findEndpointCredentialsByEndpointKeyHash(endpointKeyHash);
+        return this.endpointVerificationService.getEndpointCredentialsByEndpointKeyHash(endpointKeyHash);
     }
 
     @Override
     public EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials) throws ControlServiceException {
-        return this.endpointService.saveEndpointCredentials(endpointCredentials);
+        return this.endpointVerificationService.saveEndpointCredentials(endpointCredentials);
     }
 
     @Override
     public void removeEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException {
         byte[] endpointKeyHash = Base64.decodeBase64(endpointId);
-        this.endpointService.removeEndpointCredentialsByEndpointKeyHash(endpointKeyHash);
+        this.endpointVerificationService.removeEndpointCredentialsByEndpointKeyHash(endpointKeyHash);
     }
     
 }
