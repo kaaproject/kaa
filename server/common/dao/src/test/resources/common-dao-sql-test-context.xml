@@ -70,8 +70,7 @@
         </bean>
     </beans>
 
-    <!-- ////////////////////////  -->
-    <beans profile="mariadb">
+    <beans profile="h2">
 
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
             <property name="dataSource" ref="dataSource"/>
@@ -82,45 +81,6 @@
                     <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
-
-                    <!--<prop key="hibernate.generate_statistics">true</prop>-->
-                </props>
-            </property>
-        </bean>
-
-        <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-            <property name="poolName" value="SpringHikariCP" />
-            <property name="connectionTestQuery" value="SELECT 1" />
-            <property name="dataSourceClassName" value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
-            <property name="connectionTimeout" value="10000" />
-            <property name="maximumPoolSize" value="256" />
-            <property name="idleTimeout" value="120000" />
-            <property name="dataSourceProperties">
-                <props>
-                    <prop key="url">jdbc:#{dao[sql_provider_name]}://#{dao[jdbc_host]}/#{dao[db_name]}</prop>
-                    <prop key="user">#{dao[jdbc_username]</prop>
-                    <prop key="password">#{dao[jdbc_password]</prop>
-                </props>
-            </property>
-        </bean>
-
-        <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-            <constructor-arg ref="hikariConfig" />
-        </bean>
-    </beans>
-    <!-- ////////////////////////  -->
-
-    <beans profile="h2">
-
-        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-            <property name="dataSource" ref="dataSource"/>
-            <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql"/>
-            <property name="hibernateProperties">
-                <props>
-                    <prop key="hibernate.hbm2ddl.auto">update</prop>
-                    <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-                    <prop key="hibernate.format_sql">false</prop>
-                    <prop key="hibernate.show_sql">false</prop>
                 </props>
             </property>
         </bean>
@@ -134,9 +94,9 @@
             <property name="idleTimeout" value="120000" />
             <property name="dataSourceProperties">
                 <props>
-                    <prop key="url">jdbc:h2:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL</prop>
-                    <prop key="user">sa</prop>
-                    <prop key="password"></prop>
+                    <prop key="url">jdbc:#{dao[jdbc_url_db_name]}:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL</prop>
+                    <prop key="user">#{dao[jdbc_username]}</prop>
+                    <prop key="password">#{dao[jdbc_password]}</prop>
                 </props>
             </property>
         </bean>

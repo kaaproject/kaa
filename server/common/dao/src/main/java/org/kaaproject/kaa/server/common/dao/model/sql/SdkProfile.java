@@ -34,7 +34,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -70,7 +75,6 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
     private Integer logSchemaVersion;
 
     @ElementCollection
-    @CollectionTable(name = "sdkprofile_aefmapids")
     private List<String> aefMapIds;
 
     @Column(name = SDK_PROFILE_DEFAULT_VERIFIER_TOKEN)
