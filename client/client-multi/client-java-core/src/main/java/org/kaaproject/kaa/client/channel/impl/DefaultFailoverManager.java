@@ -178,6 +178,8 @@ public class DefaultFailoverManager implements FailoverManager {
     public synchronized FailoverDecision onFailover(FailoverStatus failoverStatus) {
         LOG.trace("Applying failover strategy for status: {}", failoverStatus);
         switch (failoverStatus) {
+            case ENDPOINT_VERIFICATION_FAILED:
+                return new FailoverDecision(FailoverAction.STOP_APP);
             case BOOTSTRAP_SERVERS_NA:
                 AccessPointIdResolution bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
                 if (bootstrapResolution != null) {
