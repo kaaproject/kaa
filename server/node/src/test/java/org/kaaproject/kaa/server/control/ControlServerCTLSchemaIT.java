@@ -64,7 +64,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
      * @throws Exception
      */
     @Test(expected = HttpClientErrorException.class)
-    public void saveCTLSchemaVithWrongVerionTest() throws Exception {
+    public void saveCTLSchemaWithWrongVerionTest() throws Exception {
         this.loginKaaAdmin();
         CTLSchemaDto gamma = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_GAMMA), null, null);
     }
