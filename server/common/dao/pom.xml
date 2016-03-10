@@ -151,7 +151,6 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>1.3.0</version>
         </dependency>
 
         <dependency>
@@ -243,9 +242,6 @@
                 </plugins>
             </build>
         </profile>
-
-
-
         <profile>
             <id>mongo-dao</id>
             <activation>
@@ -305,8 +301,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////// -->
         <profile>
             <id>mariadb-dao</id>
             <activation>
@@ -336,8 +330,6 @@
                 </plugins>
             </build>
         </profile>
-        <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-
         <profile>
             <id>postgresql-dao</id>
             <activation>
@@ -367,6 +359,5 @@
                 </plugins>
             </build>
         </profile>
-        <!--  //////////////////////////////////////////////////////////////////////////////////////////////////////-->
     </profiles>
 </project>
