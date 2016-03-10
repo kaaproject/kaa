@@ -48,6 +48,8 @@ extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manage
                                                           , uint16_t extension_options
                                                           , size_t extension_length);
 
+
+
 /** External user manager API */
 extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
@@ -58,6 +60,7 @@ extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_co
 extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
 extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+extern kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
 
 /** External event manager API */
 #ifndef KAA_DISABLE_FEATURE_EVENTS
