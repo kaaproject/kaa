@@ -42,7 +42,7 @@ public class SdkProfileViewImpl extends BaseDetailsViewImpl implements SdkProfil
     private AbstractGrid<ApplicationEventFamilyMapDto, String> sdkAefMapsGrid;
 
     public SdkProfileViewImpl() {
-        super(true, false);
+        super(false, false);
     }
 
     @Override
