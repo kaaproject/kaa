@@ -143,7 +143,7 @@
                 
                 if (bucketInfo) {
                     [self.bucketInfoDictionary removeObjectForKey:key];
-                    
+
                     if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                         [self.storage removeBucketWithId:status.requestId];
                         if (self.logDeliveryDelegate) {
