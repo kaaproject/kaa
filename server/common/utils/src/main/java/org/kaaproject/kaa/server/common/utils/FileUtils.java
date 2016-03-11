@@ -30,6 +30,9 @@ public class FileUtils {
     
     private static final Logger LOG = LoggerFactory.getLogger(FileUtils.class);
 
+    private FileUtils() {
+    }
+
     /**
      * Read resource.
      *

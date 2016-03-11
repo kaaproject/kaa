@@ -191,9 +191,10 @@ public class DefaultOperationsServerListService implements OperationsServerListS
                 try {
                     return f.get();
                 } catch (CancellationException e) {
+                    LOG.error("Cancellation exception exception ", e);
                     cache.remove(arg, f);
                 } catch (ExecutionException e) {
-                    LOG.error("Cache execution exception", e);
+                    LOG.error("Cache execution exception ", e);
                 }
             }
         }

@@ -28,6 +28,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -114,12 +115,7 @@ public final class MongoTopicListEntry implements TopicListEntry, Serializable {
 
     @Override
     public TopicListEntryDto toDto() {
-        List<TopicDto> topicDtos = new ArrayList<>();
-        for (String topicId : topicIds) {
-            TopicDto topicDto = new TopicDto();
-            topicDto.setId(topicId);
-            topicDtos.add(topicDto);
-        }
+        List<TopicDto> topicDtos = ModelUtils.getTopicDtos(topicIds);
         return new TopicListEntryDto(simpleHash, hash, topicDtos);
     }
 }

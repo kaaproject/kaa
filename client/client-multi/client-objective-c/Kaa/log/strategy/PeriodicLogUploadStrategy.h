@@ -19,6 +19,9 @@
 #import "DefaultLogUploadStrategy.h"
 #import "TimeCommons.h"
 
+/**
+ * Issue log upload when reaches time limit with specified time unit.
+ */
 @interface PeriodicLogUploadStrategy : DefaultLogUploadStrategy
 
 @property (nonatomic) int64_t lastUploadTime;

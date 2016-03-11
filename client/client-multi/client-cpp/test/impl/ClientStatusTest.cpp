@@ -67,6 +67,7 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
     BOOST_CHECK_EQUAL(cs.getAttachedEndpoints().size(), 0);
     BOOST_CHECK_EQUAL(cs.getEndpointAccessToken().empty(), false);
     BOOST_CHECK_EQUAL(cs.getEndpointAttachStatus(), false);
+    BOOST_CHECK_EQUAL(cs.isProfileResyncNeeded(), false);
 
     cleanfile();
 }
@@ -77,9 +78,17 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     properties.setStateFileName(filename);
     properties.setWorkingDirectoryPath(directory);
     KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
+
+    const bool isRegisteredExpected = true;
+    const bool isProfileResyncNeededExpected = true;
+
     ClientStatus cs(clientContext);
-    cs.setRegistered(true);
-    BOOST_CHECK_EQUAL(cs.isRegistered(), true);
+
+    cs.setRegistered(isRegisteredExpected);
+    BOOST_CHECK_EQUAL(cs.isRegistered(), isRegisteredExpected);
+
+    cs.setProfileResyncNeeded(isProfileResyncNeededExpected);
+    BOOST_CHECK_EQUAL(cs.isProfileResyncNeeded(), isProfileResyncNeededExpected);
 
     HashDigest sdb;
     for (uint8_t i = 0; i < 5; ++i) {
@@ -135,6 +144,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setEndpointKeyHash(endpointKeyHash);
 
     cs.save();
+
     ClientStatus cs_restored(clientContext);
 
     auto topicList2 = cs_restored.getTopicList();
@@ -154,6 +164,9 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 
     BOOST_CHECK_EQUAL(cs_restored.getEndpointAttachStatus(), isAttached);
     BOOST_CHECK_EQUAL(cs_restored.getEndpointKeyHash(), endpointKeyHash);
+
+    BOOST_CHECK_EQUAL(cs_restored.isRegistered(), isRegisteredExpected);
+    BOOST_CHECK_EQUAL(cs_restored.isProfileResyncNeeded(), isProfileResyncNeededExpected);
 
     cleanfile();
 }

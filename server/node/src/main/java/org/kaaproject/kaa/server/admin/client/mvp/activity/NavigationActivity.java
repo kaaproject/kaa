@@ -62,8 +62,7 @@ public class NavigationActivity extends AbstractActivity implements NavigationVi
         if (openNode(node, place)) {
             navigationView.getSelectionModel().setSelected(place, true);
             pendingPlace = null;
-        }
-        else {
+        } else {
             navigationView.getSelectionModel().clear();
         }
     }
@@ -74,14 +73,12 @@ public class NavigationActivity extends AbstractActivity implements NavigationVi
             if (node.getChildValue(i).equals(place)) {
               //node.setChildOpen(i, true, true);
               return true;
-            }
-            else if (!node.isChildLeaf(i)) {
+            } else if (!node.isChildLeaf(i)) {
                 boolean wasOpen = node.isChildOpen(i);
                 TreeNode child = node.setChildOpen(i, true);
                 if (child != null && openNode(child, place)) {
                     return true;
-                }
-                else if (!wasOpen) {
+                } else if (!wasOpen) {
                     node.setChildOpen(i, false);
                 }
             }

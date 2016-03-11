@@ -77,13 +77,21 @@ public class NotificationSchema extends Schema<NotificationSchemaDto> implements
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         NotificationSchema that = (NotificationSchema) o;
 
-        if (type != that.type) return false;
+        if (type != that.type) {
+            return false;
+        }
 
         return true;
     }

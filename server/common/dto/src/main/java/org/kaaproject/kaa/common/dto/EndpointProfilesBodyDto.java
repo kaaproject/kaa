@@ -57,18 +57,23 @@ public class EndpointProfilesBodyDto extends AbstractEndpointProfilesDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         EndpointProfilesBodyDto other = (EndpointProfilesBodyDto) obj;
         if (endpointProfilesBody == null) {
-            if (other.endpointProfilesBody != null)
+            if (other.endpointProfilesBody != null) {
                 return false;
-        } else if (!endpointProfilesBody.equals(other.endpointProfilesBody))
+            }
+        } else if (!endpointProfilesBody.equals(other.endpointProfilesBody)) {
             return false;
+        }
         return true;
     }
 }

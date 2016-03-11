@@ -326,6 +326,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         LOG.warn("Stopping application according to failover strategy decision!");
                         System.exit(EXIT_FAILURE); //NOSONAR
                         break;
+                    default:
+                        break;
                 }
             } else {
                 LOG.trace("Can't find next bootstrap server");
@@ -348,6 +350,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                     case STOP_APP:
                         LOG.warn("Stopping application according to failover strategy decision!");
                         System.exit(EXIT_FAILURE); //NOSONAR
+                        break;
+                    default:
                         break;
                 }
             }

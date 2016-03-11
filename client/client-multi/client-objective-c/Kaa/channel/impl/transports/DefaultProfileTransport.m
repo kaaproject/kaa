@@ -39,7 +39,9 @@
     if (self.clientState && self.profileMgr && self.properties) {
         NSData *serializedProfile = [self.profileMgr getSerializedProfile];
         EndpointObjectHash *currentProfileHash = [EndpointObjectHash hashWithSHA1:serializedProfile];
-        if ([self isProfileOutdated:currentProfileHash] || ![self.clientState isRegistred]) {
+        if ([self isProfileOutdated:currentProfileHash]
+            || ![self.clientState isRegistred]
+            || [self.clientState needProfileResync]) {
             [self.clientState setProfileHash:currentProfileHash];
             ProfileSyncRequest *request = [[ProfileSyncRequest alloc] init];
             request.endpointAccessToken = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0
@@ -66,7 +68,8 @@
 
 - (void)onProfileResponse:(ProfileSyncResponse *)response {
     if (response.responseStatus == SYNC_RESPONSE_STATUS_RESYNC) {
-        [self syncAll:TRANSPORT_TYPE_PROFILE];
+        [self.clientState setNeedProfileResync:YES];
+        [self syncAll:[self getTransportType]];
     } else if (self.clientState && ![self.clientState isRegistred]) {
         [self.clientState setIsRegistred:YES];
     }

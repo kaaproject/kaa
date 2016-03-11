@@ -35,6 +35,8 @@
 #include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"
 #include "platform/sock.h"
+#include "platform/ext_transport_channel.h"
+#include "kaa_channel_manager.h"
 
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
@@ -86,6 +88,62 @@ void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
         *needs_deallocation = false;
     }
 }
+
+
+/*----------------------------------------------------------------------------*/
+/* Mock transport channel                                                     */
+
+/* Flag to check that sync handler is actually called */
+static int mock_sync_handler_called;
+
+static kaa_error_t init_channel(void *ctx, kaa_transport_context_t *tctx)
+{
+    return KAA_ERR_NONE;
+}
+static kaa_error_t set_access_point(void *ctx, kaa_access_point_t *ap)
+{
+    return KAA_ERR_NONE;
+}
+static kaa_error_t get_protocol_id(void *ctx, kaa_transport_protocol_id_t *id)
+{
+    id->id = 0;
+    id->version = 0;
+    return KAA_ERR_NONE;
+}
+static kaa_error_t get_services(void *ctx,
+                                kaa_service_t **supported_list,
+                                size_t *count)
+{
+    /* Only profile service is "supported" by this mock */
+    static kaa_service_t service = KAA_SERVICE_PROFILE;
+    *supported_list = &service;
+    *count = 1;
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t sync_handler(void *ctx,
+                                const kaa_service_t services[],
+                                size_t count)
+{
+    ASSERT_EQUAL(1, count);
+    ASSERT_EQUAL(KAA_SERVICE_PROFILE, services[0]);
+
+    mock_sync_handler_called = 1;
+
+    return KAA_ERR_NONE;
+}
+
+static kaa_transport_channel_interface_t channel = {
+        .context = NULL,
+        .destroy = NULL,
+        .sync_handler = sync_handler,
+        .init = init_channel,
+        .set_access_point = set_access_point,
+        .get_protocol_id = get_protocol_id,
+        .get_supported_services = get_services,
+};
+
+/*----------------------------------------------------------------------------*/
 
 void test_profile_is_set(void)
 {
@@ -316,9 +374,20 @@ void test_profile_handle_sync(void)
     KAA_TRACE_OUT(logger);
 }
 
+static void test_profile_force_sync(void)
+{
+    kaa_error_t rc = kaa_profile_force_sync(profile_manager);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    ASSERT_TRUE(mock_sync_handler_called);
+}
+
 int test_init(void)
 {
-    kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
+    kaa_error_t error = kaa_log_create(&logger,
+                                       KAA_MAX_LOG_MESSAGE_LENGTH,
+                                       KAA_MAX_LOG_LEVEL,
+                                       NULL);
     if (error || !logger) {
         return error;
     }
@@ -335,15 +404,17 @@ int test_init(void)
         return error;
     }
 
-    error = kaa_profile_manager_create(&profile_manager, status, channel_manager, logger);
+    /* Add channel will fail due to absent access point, but it is expected */
+    kaa_channel_manager_add_transport_channel(channel_manager, &channel, NULL);
+
+    error = kaa_profile_manager_create(&profile_manager,
+                                       status, channel_manager, logger);
     if (error || !profile_manager) {
         return error;
     }
 
     return 0;
 }
-
-
 
 int test_deinit(void)
 {
@@ -354,12 +425,12 @@ int test_deinit(void)
     return 0;
 }
 
-
-
 KAA_SUITE_MAIN(Profile, test_init, test_deinit,
         KAA_TEST_CASE(profile_is_set, test_profile_is_set)
         KAA_TEST_CASE(profile_update, test_profile_update)
         KAA_TEST_CASE(profile_request, test_profile_sync_get_size)
         KAA_TEST_CASE(profile_sync_serialize, test_profile_sync_serialize)
         KAA_TEST_CASE(profile_handle_sync, test_profile_handle_sync)
+        KAA_TEST_CASE(profile_force_sync, test_profile_force_sync)
+
 )

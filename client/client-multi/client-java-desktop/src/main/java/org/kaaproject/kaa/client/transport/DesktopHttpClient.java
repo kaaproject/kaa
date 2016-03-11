@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class DesktopHttpClient extends AbstractHttpClient {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DesktopHttpClient.class);
 
@@ -79,8 +79,7 @@ public class DesktopHttpClient extends AbstractHttpClient {
                 response.close();
                 method = null;
             }
-        }
-        else {
+        } else {
             method = null;
             throw new InterruptedException();
         }
@@ -111,15 +110,6 @@ public class DesktopHttpClient extends AbstractHttpClient {
                 } else {
                     signature = new byte[0];
                 }
-
-                // LOG.debug("Remote Public Key: {}" +
-                // messageEncDec.getRemotePublicKey().getEncoded().length);
-                // LOG.debug(MessageEncoderDecoder.bytesToHex(messageEncDec.getRemotePublicKey().getEncoded()));
-                // LOG.debug("Signature size: {}" + signature.length);
-                // LOG.debug(MessageEncoderDecoder.bytesToHex(signature));
-                // LOG.debug("Body size: {}" + body.length);
-                // LOG.debug(MessageEncoderDecoder.bytesToHex(body));
-
                 return verifyResponse(body, signature);
             } else {
                 return body;

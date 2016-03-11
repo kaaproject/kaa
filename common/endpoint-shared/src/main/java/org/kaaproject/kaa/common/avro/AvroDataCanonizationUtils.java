@@ -31,6 +31,9 @@ public class AvroDataCanonizationUtils {
     private static final String UUIDT = "org.kaaproject.configuration.uuidT";
     private static final AvroDataComparator COMPARATOR = new AvroDataComparator();
 
+    private AvroDataCanonizationUtils() {
+    }
+
     /**
      * Performs canonization of records in array if they are present.
      *

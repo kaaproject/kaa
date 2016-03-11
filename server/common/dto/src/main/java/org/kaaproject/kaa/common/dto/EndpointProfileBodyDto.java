@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -26,16 +24,22 @@ public class EndpointProfileBodyDto implements Serializable {
     private static final long serialVersionUID = 1459044085470010138L;
 
     private byte[] endpointKeyHash;
-    private String profile;
-    @JsonIgnore
+    private String clientSideProfile;
+    private String serverSideProfile;
+    private int clientSideProfileVersion;
+    private int serverSideProfileVersion;
     private String appId;
 
     public EndpointProfileBodyDto() {}
 
-    public EndpointProfileBodyDto(byte[] endpointKeyHash, String profile, String appId) {
-       this.endpointKeyHash = endpointKeyHash;
-       this.profile = profile;
-       this.appId = appId;
+    public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile, String serverSideProfile, int clientSideProfileVersion,
+                                  int serverSideProfileVersion, String appId) {
+        this.endpointKeyHash = endpointKeyHash;
+        this.clientSideProfile = clientSideProfile;
+        this.serverSideProfile = serverSideProfile;
+        this.clientSideProfileVersion = clientSideProfileVersion;
+        this.serverSideProfileVersion = serverSideProfileVersion;
+        this.appId = appId;
     }
 
     public byte[] getEndpointKeyHash() {
@@ -46,43 +50,80 @@ public class EndpointProfileBodyDto implements Serializable {
         this.endpointKeyHash = endpointKeyHash;
     }
 
-    public String getProfile() {
-        return profile;
+    public String getClientSideProfile() {
+        return clientSideProfile;
     }
 
-    public void setProfile(String profile) {
-        this.profile = profile;
+    public void setClientSideProfile(String clientSideProfile) {
+        this.clientSideProfile = clientSideProfile;
+    }
+
+    public String getServerSideProfile() {
+        return serverSideProfile;
+    }
+
+    public void setServerSideProfile(String serverSideProfile) {
+        this.serverSideProfile = serverSideProfile;
     }
 
     public String getAppId() {
         return appId;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(endpointKeyHash);
-        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
-        return result;
+    public int getClientSideProfileVersion() {
+        return clientSideProfileVersion;
+    }
+
+    public void setClientSideProfileVersion(int clientSideProfileVersion) {
+        this.clientSideProfileVersion = clientSideProfileVersion;
+    }
+
+    public int getServerSideProfileVersion() {
+        return serverSideProfileVersion;
+    }
+
+    public void setServerSideProfileVersion(int serverSideProfileVersion) {
+        this.serverSideProfileVersion = serverSideProfileVersion;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
-        if (obj == null)
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+
+        EndpointProfileBodyDto that = (EndpointProfileBodyDto) o;
+
+        if (clientSideProfileVersion != that.clientSideProfileVersion) {
             return false;
-        EndpointProfileBodyDto other = (EndpointProfileBodyDto) obj;
-        if (!Arrays.equals(endpointKeyHash, other.endpointKeyHash))
+        }
+        if (serverSideProfileVersion != that.serverSideProfileVersion) {
             return false;
-        if (profile == null) {
-            if (other.profile != null)
-                return false;
-        } else if (!profile.equals(other.profile))
+        }
+        if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
             return false;
-        return true;
+        }
+        if (clientSideProfile != null ? !clientSideProfile.equals(that.clientSideProfile) : that.clientSideProfile != null) {
+            return false;
+        }
+        if (serverSideProfile != null ? !serverSideProfile.equals(that.serverSideProfile) : that.serverSideProfile != null) {
+            return false;
+        }
+        return !(appId != null ? !appId.equals(that.appId) : that.appId != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0;
+        result = 31 * result + (clientSideProfile != null ? clientSideProfile.hashCode() : 0);
+        result = 31 * result + (serverSideProfile != null ? serverSideProfile.hashCode() : 0);
+        result = 31 * result + clientSideProfileVersion;
+        result = 31 * result + serverSideProfileVersion;
+        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        return result;
     }
 }

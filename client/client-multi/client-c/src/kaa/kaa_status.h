@@ -41,6 +41,7 @@ typedef struct
     bool            is_updated;
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
+    bool            profile_needs_resync;   /**< Indicates that profile should be resynced */
 
     kaa_list_t      *topic_states;          /**< States of topics received */
     kaa_list_t      *topics;                /**< Whole set of topics */

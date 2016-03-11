@@ -21,7 +21,7 @@
 #include "../../platform/ext_transport_channel.h"
 #include "../../platform/time.h"
 #include "../../utilities/kaa_mem.h"
-#include "../../kaa_context.h"
+#include "kaa_channel_manager.h"
 
 /**
  * @brief The default value (in seconds) for time to wait a log delivery response.
@@ -66,9 +66,6 @@ typedef struct {
     kaa_channel_manager_t   *channel_manager;
     kaa_bootstrap_manager_t *bootstrap_manager;
 } ext_log_upload_strategy_t;
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
 
 /*
  * Strategy implementation.

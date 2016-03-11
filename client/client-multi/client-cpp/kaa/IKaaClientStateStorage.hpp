@@ -30,6 +30,7 @@ typedef struct {
 } SequenceNumber;
 
 typedef std::map<std::string, std::string> AttachedEndpoints;
+typedef std::map<std::int64_t, std::int32_t> TopicStates;
 
 class IKaaClientStateStorage {
 public:
@@ -37,9 +38,6 @@ public:
 
     virtual std::int32_t getEventSequenceNumber() const = 0;
     virtual void setEventSequenceNumber(std::int32_t sequenceNumber) = 0;
-
-    virtual SequenceNumber getAppSeqNumber() const = 0;
-    virtual void setAppSeqNumber(SequenceNumber appSeqNumber) = 0;
 
     virtual bool isRegistered() const = 0;
     virtual void setRegistered(bool isRegistered) = 0;
@@ -68,8 +66,11 @@ public:
 
     virtual bool isSDKPropertiesUpdated() const = 0;
 
-    virtual void setTopicStates(std::map<std::int64_t, std::int32_t>& subscriptions) = 0;
-    virtual std::map<std::int64_t, std::int32_t> &getTopicStates() = 0;
+    virtual TopicStates& getTopicStates() = 0;
+    virtual void setTopicStates(const TopicStates& states) = 0;
+
+    virtual bool isProfileResyncNeeded() const = 0;
+    virtual void setProfileResyncNeeded(bool isNeeded) = 0;
 
     virtual void read() = 0;
     virtual void save() = 0;

@@ -19,6 +19,10 @@
 #import "DefaultLogUploadStrategy.h"
 #import "TimeCommons.h"
 
+/**
+ * Issue log upload when there storage size reaches specified threshold in bytes 
+ * or records are stored longer than specified time limit.
+ */
 @interface StorageSizeWithTimeLimitLogUploadStrategy : DefaultLogUploadStrategy
 
 @property (nonatomic) int64_t lastUploadTime;

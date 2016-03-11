@@ -62,14 +62,21 @@ public class CassandraEPByAccessToken implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CassandraEPByAccessToken that = (CassandraEPByAccessToken) o;
 
-        if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) return false;
-        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null)
+        if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) {
             return false;
+        }
+        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) {
+            return false;
+        }
 
         return true;
     }

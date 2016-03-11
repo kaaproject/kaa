@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultFilterService implements FilterService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultFilterService.class);
 
     /** The cache service. */

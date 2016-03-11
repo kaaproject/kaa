@@ -71,8 +71,6 @@ void KaaClient::init()
     profileManager_.reset(new ProfileManager(context_));
 
 #ifdef KAA_USE_CONFIGURATION
-    SequenceNumber sn = { 1 };
-    status_->setAppSeqNumber(sn);
     configurationManager_.reset(new ConfigurationManager(context_));
 #endif
 #ifdef KAA_USE_EVENTS
