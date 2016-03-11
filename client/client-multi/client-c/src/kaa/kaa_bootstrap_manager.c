@@ -32,10 +32,6 @@
 #include "platform/ext_kaa_failover_strategy.h"
 
 
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
 extern kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
                                                          , kaa_transport_protocol_id_t *protocol_id
                                                          , kaa_server_type_t server_type
@@ -44,8 +40,6 @@ extern kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t
 extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
                                                                    kaa_platform_message_writer_t* writer);
 
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
     size_t                         index;

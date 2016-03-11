@@ -42,8 +42,6 @@
 
 
 
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
 extern kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 
 
