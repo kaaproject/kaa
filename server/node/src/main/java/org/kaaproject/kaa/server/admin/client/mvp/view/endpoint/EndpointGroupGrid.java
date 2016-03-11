@@ -72,16 +72,6 @@ public class EndpointGroupGrid extends AbstractKaaGrid<EndpointGroupDto, String>
                         return Utils.millisecondsToDateString(item.getCreatedTime());
                     }
                 }, 80);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.numberOfEps(),
-                new StringValueProvider<EndpointGroupDto>() {
-                    @Override
-                    public String getValue(EndpointGroupDto item) {
-                        return item.getEndpointCount()+"";
-                    }
-                }, 80);
-
         return prefWidth;
     }
 
