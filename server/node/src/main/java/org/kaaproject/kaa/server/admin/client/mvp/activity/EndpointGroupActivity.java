@@ -285,7 +285,6 @@ public class EndpointGroupActivity
         detailsView.getDescription().setValue(entity.getDescription());
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
-        detailsView.getEndpointCount().setValue(entity.getEndpointCount()+"");
         if (entity.getWeight()==0 && !create) {
             detailsView.setReadOnly();
         }
