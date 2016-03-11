@@ -129,7 +129,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Field(EP_SDK_TOKEN)
     private String sdkToken;
     @Field(EP_SERVER_PROFILE_PROPERTY)
-    private String serverProfile;
+    private DBObject serverProfile;
     @Version
     @Field(OPT_LOCK)
     private Long version;
@@ -167,7 +167,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.ecfVersionStates = MongoDaoUtil.convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
-        this.serverProfile = dto.getServerProfileBody();
+        this.serverProfile = encodeReservedCharacteres((DBObject) JSON.parse(dto.getServerProfileBody()));
         this.version = dto.getVersion();
     }
 
@@ -238,14 +238,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
 
     public void setChangedFlag(Boolean changedFlag) {
         this.changedFlag = changedFlag;
-    }
-
-    public String getProfileAsString() {
-        String pfBody = null;
-        if (profile != null) {
-            pfBody = profile.toString();
-        }
-        return pfBody;
     }
 
     public byte[] getProfileHash() {
@@ -377,16 +369,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.sdkToken = sdkToken;
     }
 
-    @Override
-    public String getServerProfile() {
-        return serverProfile;
-    }
-
-    public void setServerProfile(String serverProfile) {
-        this.serverProfile = serverProfile;
-    }
-    
-    @Override
     public Long getVersion() {
         return version;
     }
@@ -406,7 +388,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
             for (String key : keySet) {
                 Object value = profileBody.get(key);
                 for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
-                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
+                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
                 }
                 if(value instanceof DBObject) {
                     modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
@@ -428,7 +410,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
             for (String key : keySet) {
                 Object value = profileBody.get(key);
                 for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
-                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
+                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
                 }
                 if(value instanceof DBObject) {
                     modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
@@ -591,7 +573,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEcfVersionStates(DaoUtil.convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
-        dto.setServerProfileBody(serverProfile);
+        dto.setServerProfileBody(decodeReservedCharacteres(serverProfile));
         dto.setVersion(version);
         return dto;
     }
