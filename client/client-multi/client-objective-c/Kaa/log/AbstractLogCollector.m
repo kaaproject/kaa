@@ -160,7 +160,7 @@
                         [self.storage rollbackBucketWithId:status.requestId];
                         
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                            LogDeliveryErrorCode errorCode = [((NSNumber *)status.errorCode.data) intValue];
+                            LogDeliveryErrorCode errorCode = [(NSNumber *)status.errorCode.data intValue];
                             [weakSelf.strategy onFailureForController:weakSelf errorCode:errorCode];
                         }];
                         
