@@ -1,19 +1,25 @@
 package org.kaaproject.kaa.server.common.admin;
 
-import org.apache.http.HttpHost;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.web.client.*;
-import org.springframework.web.util.UriTemplate;
-
 import java.io.IOException;
 import java.net.URI;
-import java.util.Random;
+
+import org.apache.http.HttpHost;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by Chyzhevskyi Volodymyr on 19.02.16.
  */
 public class KaaRestTemplate extends RestTemplate {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminClient.class);
+
+    private static final int DEFAULT_PORT = 80;
 
     private String[] hosts;
 
@@ -29,53 +35,49 @@ public class KaaRestTemplate extends RestTemplate {
 
     private int index;
 
-    public KaaRestTemplate(String[] hosts, int[] ports) {
-        if((hosts.length != ports.length) && (hosts!=null)){
-
+    private KaaRestTemplate(String[] hosts, int[] ports) {
+        if ((hosts.length != ports.length) && (hosts != null)) {
             throw new IllegalArgumentException("Length of arrays of hosts and ports must be the same length and not null");
-
-        }else {
-
-            this.currentUrl ="http://" + hosts[index] + ":" + ports[index] + restApiSuffix;
+        } else {
             this.hosts = hosts;
             this.ports = ports;
-
-            initIndexAndRequestFactory();
+            setNewRequestFactory(0);
         }
     }
 
     public KaaRestTemplate(String host, int port) {
-        this(new String[]{host}, new int[]{port});
+        this(new String[] { host }, new int[] { port });
     }
 
-    //host:port, host:port ...
-    public KaaRestTemplate(String addresses) {
-        if(addresses == null){
+    /**
+     * Initialize KaaRestTempalte using following format host1:port1,host2:port2
+     * 
+     * @param hostPortList
+     * @return
+     */
+    public static KaaRestTemplate build(String hostPortList) {
+        if (hostPortList == null) {
             throw new IllegalArgumentException("String of addresses must be not null");
         }
 
-        String[] splitedAddresses = addresses.split(",");
+        String[] splitedAddresses = hostPortList.split(",");
 
-        int lengthOfHostsAndPOrtsArrays = splitedAddresses.length;
+        String[] hosts = new String[splitedAddresses.length];
+        int[] ports = new int[splitedAddresses.length];
 
-        this.hosts = new String[lengthOfHostsAndPOrtsArrays];
-        this.ports = new int[lengthOfHostsAndPOrtsArrays];
-
-        for(int i=0; i < hosts.length; i++){
+        for (int i = 0; i < hosts.length; i++) {
             String[] separatedAddresses = splitedAddresses[i].split(":");
             hosts[i] = separatedAddresses[0];
-            ports[i] = Integer.parseInt(separatedAddresses[1]);
+            if (separatedAddresses.length == 2) {
+                ports[i] = Integer.parseInt(separatedAddresses[1]);
+            } else {
+                ports[i] = DEFAULT_PORT;
+            }
         }
-
-        initIndexAndRequestFactory();
+        return new KaaRestTemplate(hosts, ports);
     }
 
-    private void initIndexAndRequestFactory(){
-        index = new Random().nextInt(hosts.length);
-        setNewRequestFactory(new HttpHost(hosts[index], ports[index], "http"));
-    }
-
-    public String getUrl(){
+    public String getUrl() {
         return currentUrl;
     }
 
@@ -88,62 +90,78 @@ public class KaaRestTemplate extends RestTemplate {
     }
 
     @Override
-    protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback,
-                              ResponseExtractor<T> responseExtractor) throws ResourceAccessException {
-
+    protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor)
+            throws ResourceAccessException {
         int maxRetry = hosts.length;
-
-        while(true){
-
+        while (true) {
             try {
+                return super.doExecute(url, method, requestCallback, responseExtractor);
+            } catch (Exception ex) {
+                boolean isRequestFactorySet = false;
+                while (!isRequestFactorySet) {
+                    if (index != hosts.length) {
+                        index++;
+                    } else {
+                        index = 0;
+                    }
 
-                super.doExecute(url, method, requestCallback, responseExtractor);
-
-            }catch (Exception ex) {
-
-                index++;
-
-                if(maxRetry <= 0) {
-                    throw new ResourceAccessException("I/O error on " + method.name() +
-                            " request for \"" + url + "\":" + ex.getMessage(), (IOException) ex);
+                    if (maxRetry <= 0) {
+                        throw new ResourceAccessException(
+                                "I/O error on " + method.name() + " request for \"" + url + "\":" + ex.getMessage(), new IOException(ex));
+                    } else {
+                        maxRetry--;
+                    }
+                    try {
+                        setNewRequestFactory(index);
+                    } catch (Exception e) {
+                        logger.info("Failed to initialize new request factory ({}:{})", getCurHost(), getCurPort(), e);
+                        continue;
+                    }
+                    url = updateURL(url);
+                    isRequestFactorySet = true;
                 }
-
-                if(username != null && password != null) {
-                    HttpComponentsRequestFactoryBasicAuth requestFactory = (HttpComponentsRequestFactoryBasicAuth) getRequestFactory();
-                    requestFactory.setCredentials(username, password);
-                }
-
-                currentUrl = "http://" + hosts[index] + ":" + ports[index] + restApiSuffix;
-
-                setNewRequestFactory(new HttpHost(hosts[index], ports[index], "http"));
-
-                String currentErrorURI = url.toString();
-
-                int indexOfDefaultPartOfURI = currentErrorURI.indexOf(restApiSuffix);
-
-                String defaultURIPartWithVariableHostPort = currentErrorURI.substring(0, indexOfDefaultPartOfURI);
-                String otherPart = currentErrorURI.substring(indexOfDefaultPartOfURI);
-
-                defaultURIPartWithVariableHostPort = currentErrorURI.replaceFirst(url.getHost(), hosts[index]);
-                defaultURIPartWithVariableHostPort = currentErrorURI.replaceFirst(String.valueOf(url.getPort()), String.valueOf(ports[index]));
-
-                url = URI.create(defaultURIPartWithVariableHostPort + otherPart);
-
-                maxRetry--;
-
             }
         }
     }
 
-    private void setNewRequestFactory(HttpHost http) {
-        ClientHttpRequestFactory requestFactory = new HttpComponentsRequestFactoryBasicAuth(http);
-        setRequestFactory(requestFactory);
+    private URI updateURL(URI url) {
+        String currentURI = url.toString();
+
+        int sufixPartIdx = currentURI.indexOf(restApiSuffix);
+
+        String defaultURIPartWithVariableHostPort = currentURI.substring(0, sufixPartIdx);
+        String sufixPart = currentURI.substring(sufixPartIdx);
+
+        defaultURIPartWithVariableHostPort = defaultURIPartWithVariableHostPort.replaceFirst(url.getHost(), getCurHost());
+        defaultURIPartWithVariableHostPort = defaultURIPartWithVariableHostPort.replaceFirst(String.valueOf(url.getPort()),
+                String.valueOf(getCurPort()));
+
+        return URI.create(defaultURIPartWithVariableHostPort + sufixPart);
     }
 
-    public void setUsernamePassword(String username, String password){
+    private int getCurPort() {
+        return ports[index];
+    }
+
+    private String getCurHost() {
+        return hosts[index];
+    }
+
+    private void setNewRequestFactory(int index) {
+        String host = hosts[index];
+        int port = ports[index];
+        setRequestFactory(new HttpComponentsRequestFactoryBasicAuth(new HttpHost(host, port, "http")));
+        currentUrl = "http://" + host + ":" + port + restApiSuffix;
+        if (username != null && password != null) {
+            login(username, password);
+        }
+    }
+
+    public void login(String username, String password) {
         this.username = username;
         this.password = password;
+        HttpComponentsRequestFactoryBasicAuth requestFactory = (HttpComponentsRequestFactoryBasicAuth) getRequestFactory();
+        requestFactory.setCredentials(username, password);
     }
-
 
 }

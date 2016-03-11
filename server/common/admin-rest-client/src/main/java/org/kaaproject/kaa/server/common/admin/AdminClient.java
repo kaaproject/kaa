@@ -103,13 +103,8 @@ public class AdminClient {
         restTemplate = new KaaRestTemplate(host, port);
     }
 
-    public AdminClient(String[] hosts, int[] ports) {
-        restTemplate = new KaaRestTemplate(hosts, ports);
-    }
-
-    //host:port, host:port ...
-    public AdminClient(String addresses) {
-        restTemplate = new KaaRestTemplate(addresses);
+    public AdminClient(String hosts) {
+        restTemplate = KaaRestTemplate.build(hosts);
     }
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
@@ -176,9 +171,7 @@ public class AdminClient {
     }
 
     public void login(String username, String password) {
-        restTemplate.setUsernamePassword(username, password);
-        HttpComponentsRequestFactoryBasicAuth requestFactory = (HttpComponentsRequestFactoryBasicAuth) restTemplate.getRequestFactory();
-        requestFactory.setCredentials(username, password);
+        restTemplate.login(username, password);
     }
 
     public void clearCredentials() {
