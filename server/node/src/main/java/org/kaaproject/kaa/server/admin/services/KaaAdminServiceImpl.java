@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.avro.Schema;
@@ -948,6 +947,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             Schema schema = new Schema.Parser().parse(avroSchema);
+            validateRecordSchema(schema);
             return simpleSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -960,6 +960,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             Schema schema = new Schema.Parser().parse(avroSchema);
+            validateRecordSchema(schema);
             return commonSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -972,6 +973,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             Schema schema = new Schema.Parser().parse(avroSchema);
+            validateRecordSchema(schema);
             return configurationSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1245,6 +1247,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private void convertToStringSchema(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws Exception {
         Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
+        validateRecordSchema(schema);
         String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
         dto.setSchema(schemaString);
     }
@@ -2760,17 +2763,28 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private void setSchema(AbstractSchemaDto schemaDto, byte[] data) throws KaaAdminServiceException {
         String schema = new String(data);
-        validateSchema(schema);
+        validateRecordSchema(schema);
         schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
     }
 
-    private void validateSchema(String schema) throws KaaAdminServiceException {
+    private Schema validateSchema(String avroSchema) throws KaaAdminServiceException {
         Schema.Parser parser = new Schema.Parser();
         try {
-            parser.parse(schema);
+            return parser.parse(avroSchema);
         } catch (SchemaParseException spe) {
             LOG.error("Exception catched: ", spe);
             throw new KaaAdminServiceException(spe.getMessage(), ServiceErrorCode.INVALID_SCHEMA);
+        }
+    }
+    
+    private void validateRecordSchema(String avroSchema) throws KaaAdminServiceException {
+        Schema schema = validateSchema(avroSchema);
+        validateRecordSchema(schema);
+    }
+    
+    private void validateRecordSchema(Schema schema) throws KaaAdminServiceException {
+        if (schema.getType() != Schema.Type.RECORD) {
+            throw new KaaAdminServiceException("Schema " + schema.getFullName() + " is not a record schema!", ServiceErrorCode.INVALID_SCHEMA);
         }
     }
 
@@ -3336,6 +3350,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkCTLSchemaReadScope(getCurrentUser().getTenantId(), applicationId);
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
+            validateRecordSchema(avroSchema);
             SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId);
             RecordField form = converter.createSchemaFormFromSchema(avroSchema);
             if (form.getVersion() == null) {
