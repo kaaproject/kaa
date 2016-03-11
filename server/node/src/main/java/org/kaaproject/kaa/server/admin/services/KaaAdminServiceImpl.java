@@ -3036,6 +3036,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkCTLSchemaEditScope(tenantId, applicationId);            
             CTLSchemaParser parser = new CTLSchemaParser(controlService, tenantId);
             CTLSchemaDto schema = parser.parse(body, applicationId);
+            checkCTLSchemaVersion(schema.getVersion());
             // Check if the schema body is valid
             parser.validate(schema);
             CTLSchemaDto result = controlService.saveCTLSchema(schema);
@@ -3050,6 +3051,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
             Utils.checkNotNull(schema);
+            checkCTLSchemaVersion(schema.getVersion());
             checkCTLSchemaEditScope(schema.getMetaInfo().getTenantId(), schema.getMetaInfo().getApplicationId());
              // Check if the schema dependencies are present in the database
             List<FqnVersion> missingDependencies = new ArrayList<>();

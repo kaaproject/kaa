@@ -1240,6 +1240,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
     protected static final String TEST_CTL_SCHEMA_ALPHA = "control/data/ctl/alpha.json";
     protected static final String TEST_CTL_SCHEMA_BETA = "control/data/ctl/beta.json";
+    protected static final String TEST_CTL_SCHEMA_GAMMA = "control/data/ctl/gamma.json";
     
     protected String ctlRandomFieldName() {
         return CTL_DEFAULT_NAME + random.nextInt(100000);
