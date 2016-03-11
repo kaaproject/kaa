@@ -19,6 +19,9 @@ cmake_minimum_required(VERSION 2.8.8)
 project(Kaa-c)
 enable_language(C)
 
+# Expose Kaa SDK directory to all modules
+set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
+
 # Path to CMake's scripts.
 set(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
@@ -27,8 +30,8 @@ set(CMAKE_MODULE_PATH
 
 #
 # Sets common compilation flags.
-# 
-# NOTE: Platform specific compilation flags should be set 
+#
+# NOTE: Platform specific compilation flags should be set
 # in the corresponding platform CMake script(s).
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
