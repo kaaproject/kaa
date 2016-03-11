@@ -28,7 +28,6 @@ import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
@@ -64,15 +63,12 @@ public class DefaultEndpointUserService implements EndpointUserService {
     private EndpointService endpointService;
 
     @Autowired
-    private ApplicationService applicationService;
-    
-    @Autowired
     private UserVerifierService userVerifierService;
 
     /** The application service. */
     @Autowired
     private CacheService cacheService;
-    
+
     @Override
     public UserVerifierDto findUserVerifier(String appId, String verifierToken) {
         return userVerifierService.findUserVerifiersByAppIdAndVerifierToken(appId, verifierToken);
@@ -82,7 +78,7 @@ public class DefaultEndpointUserService implements EndpointUserService {
     public List<UserVerifierDto> findUserVerifiers(String appId) {
         return userVerifierService.findUserVerifiersByAppId(appId);
     }
-    
+
     @Override
     public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
         String tenantId = cacheService.getTenantIdByAppToken(appToken);
@@ -98,18 +94,15 @@ public class DefaultEndpointUserService implements EndpointUserService {
         String endpointUserId = profile.getEndpointUserId();
         if (isNotEmpty(endpointUserId)) {
             try {
-                EndpointProfileDto attachedEndpoint = endpointService.attachEndpointToUser(endpointUserId,
-                        endpointAttachRequest.getEndpointAccessToken());
+                EndpointProfileDto attachedEndpoint = endpointService.attachEndpointToUser(endpointUserId, endpointAttachRequest.getEndpointAccessToken());
                 response.setResult(SyncStatus.SUCCESS);
                 response.setEndpointKeyHash(Base64Util.encode(attachedEndpoint.getEndpointKeyHash()));
             } catch (DatabaseProcessingException e) {
                 LOG.warn("[{}] failed to attach endpoint with access token {} and user {}, exception catched: {}",
-                        Base64Util.encode(profile.getEndpointKeyHash()), endpointAttachRequest.getEndpointAccessToken(),
-                        profile.getEndpointUserId(), e);
+                        Base64Util.encode(profile.getEndpointKeyHash()), endpointAttachRequest.getEndpointAccessToken(), profile.getEndpointUserId(), e);
             }
         } else {
-            LOG.warn("[{}] received attach endpoint request, but there is no user to attach.",
-                    Base64Util.encode(profile.getEndpointKeyHash()));
+            LOG.warn("[{}] received attach endpoint request, but there is no user to attach.", Base64Util.encode(profile.getEndpointKeyHash()));
         }
 
         return response;
@@ -130,26 +123,23 @@ public class DefaultEndpointUserService implements EndpointUserService {
                 } else {
                     EndpointProfileDto detachEndpoint = endpointService.findEndpointProfileByKeyHash(endpointKeyHash);
                     if (detachEndpoint != null) {
-                        if (detachEndpoint.getEndpointUserId() != null
-                                && detachEndpoint.getEndpointUserId().equals(profile.getEndpointUserId())) {
+                        if (detachEndpoint.getEndpointUserId() != null && detachEndpoint.getEndpointUserId().equals(profile.getEndpointUserId())) {
                             endpointService.detachEndpointFromUser(detachEndpoint);
                             response.setResult(SyncStatus.SUCCESS);
                         } else {
                             LOG.warn("[{}] received detach endpoint request, but requested {} and current {} user mismatch.",
-                                    Base64Util.encode(profile.getEndpointKeyHash()), profile.getEndpointUserId(),
-                                    detachEndpoint.getEndpointUserId());
+                                    Base64Util.encode(profile.getEndpointKeyHash()), profile.getEndpointUserId(), detachEndpoint.getEndpointUserId());
                         }
                     } else {
-                        LOG.warn("[{}] received detach endpoint request, for not existing endpoint.",
-                                Base64Util.encode(profile.getEndpointKeyHash()));
+                        LOG.warn("[{}] received detach endpoint request, for not existing endpoint.", Base64Util.encode(profile.getEndpointKeyHash()));
                     }
                 }
             } catch (DatabaseProcessingException e) {
                 LOG.warn("[{}] failed to detach endpoint {}, exception catched: ", profile, e);
             }
         } else {
-            LOG.warn("[{}] detach endpoint request {} or profile {} is not valid", Base64Util.encode(profile.getEndpointKeyHash()),
-                    endpointDetachRequest, profile);
+            LOG.warn("[{}] detach endpoint request {} or profile {} is not valid", Base64Util.encode(profile.getEndpointKeyHash()), endpointDetachRequest,
+                    profile);
         }
 
         return response;
