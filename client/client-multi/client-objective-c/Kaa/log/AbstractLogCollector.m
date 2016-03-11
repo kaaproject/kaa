@@ -136,40 +136,47 @@
             NSArray *deliveryStatuses = response.deliveryStatuses.data;
             __weak typeof(self) weakSelf = self;
             for (LogDeliveryStatus *status in deliveryStatuses) {
-                __block BucketInfo *bucketInfo = self.bucketInfoDictionary[@(status.requestId)];
                 
-                if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
-                    [self.storage removeBucketWithId:status.requestId];
-                    if (self.logDeliveryDelegate) {
+                NSNumber *key = @(status.requestId);
+                
+                __block BucketInfo *bucketInfo = self.bucketInfoDictionary[key];
+                
+                if (bucketInfo) {
+                    if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
+                        [self.storage removeBucketWithId:status.requestId];
+                        if (self.logDeliveryDelegate) {
+                            [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                                [weakSelf.logDeliveryDelegate onLogDeliverySuccessWithBucketInfo:bucketInfo];
+                            }];
+                        }
+                        
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                            [weakSelf.logDeliveryDelegate onLogDeliverySuccessWithBucketInfo:bucketInfo];
+                            [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
                         }];
+                        
+                    } else {
+                        [self.storage rollbackBucketWithId:status.requestId];
+                        
+                        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                            LogDeliveryErrorCode errorCode = [((NSNumber *)status.errorCode.data) intValue];
+                            [weakSelf.strategy onFailureForController:weakSelf errorCode:errorCode];
+                        }];
+                        
+                        if (self.logDeliveryDelegate) {
+                            [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                                [weakSelf.logDeliveryDelegate onLogDeliveryFailureWithBucketInfo:bucketInfo];
+                            }];
+                        }
+                        
+                        isAlreadyScheduled = YES;
                     }
-                    
-                    [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                        [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
-                    }];
-                    
                 } else {
-                    [self.storage rollbackBucketWithId:status.requestId];
-                    
-                    [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                        LogDeliveryErrorCode errorCode = [((NSNumber *)status.errorCode.data) intValue];
-                        [weakSelf.strategy onFailureForController:weakSelf errorCode:errorCode];
-                    }];
-                    
-                    if (self.logDeliveryDelegate) {
-                        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                            [weakSelf.logDeliveryDelegate onLogDeliveryFailureWithBucketInfo:bucketInfo];
-                        }];
-                    }
-                    
-                    isAlreadyScheduled = YES;
+                    DDLogWarn(@"%@ Can't process log response: no bucket info for id: %i", TAG, status.requestId);
                 }
                 
                 DDLogInfo(@"%@ Removing bucket id from timeouts: %i", TAG, status.requestId);
                 [self.timeoutsLock lock];
-                NSNumber *key = @(status.requestId);
+                
                 NSOperation *timeout = self.timeouts[key];
                 if (timeout) {
                     [self.timeouts removeObjectForKey:key];
