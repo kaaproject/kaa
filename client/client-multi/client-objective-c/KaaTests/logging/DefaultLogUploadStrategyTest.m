@@ -30,6 +30,18 @@
 #import "MemLogStorage.h"
 #import "DefaultLogCollector.h"
 
+@interface AbstractLogCollector (NoTimeoutLogCollector)
+
+@end
+
+@implementation AbstractLogCollector (NoTimeoutLogCollector)
+
+- (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId {
+    //NOTE: method stub to avoid removing buckets from timeout tracking
+}
+
+@end
+
 @interface TestLogStorageStatus : NSObject <LogStorageStatus>
 
 @property (nonatomic) int64_t consumedVolume;
@@ -136,8 +148,10 @@
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
     NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    dispatch_queue_t schedulerQueue = dispatch_queue_create("scheduler", 0);
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
+    [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
     
     AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
@@ -178,9 +192,11 @@
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
     NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    dispatch_queue_t schedulerQueue = dispatch_queue_create("scheduler", 0);
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
-    
+    [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
+
     AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy isUploadNeededForStorageStatus:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
