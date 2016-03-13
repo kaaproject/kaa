@@ -571,7 +571,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         || socket == null
                         || !oldServer.getHost().equals(currentServer.getHost())
                         || oldServer.getPort() != currentServer.getPort()) {
-                LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", oldServer, oldServer);
+                LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", currentServer, oldServer);
                 closeConnection();
                 scheduleOpenConnectionTask(0);
             }
