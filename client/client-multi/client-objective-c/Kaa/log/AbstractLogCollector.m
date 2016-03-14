@@ -148,15 +148,16 @@
 
                     if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                         [self.storage removeBucketWithId:status.requestId];
+                        
+                        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                            [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
+                        }];
+                        
                         if (self.logDeliveryDelegate) {
                             [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                                 [weakSelf.logDeliveryDelegate onLogDeliverySuccessWithBucketInfo:bucketInfo];
                             }];
                         }
-                        
-                        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                            [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
-                        }];
 
                     } else {
                         [self.storage rollbackBucketWithId:status.requestId];

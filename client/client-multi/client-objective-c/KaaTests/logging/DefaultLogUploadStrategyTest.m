@@ -30,11 +30,13 @@
 #import "MemLogStorage.h"
 #import "DefaultLogCollector.h"
 
-@interface AbstractLogCollector (NoTimeoutLogCollector)
+@interface NoTimeoutLogCollector : DefaultLogCollector
+
+- (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId;
 
 @end
 
-@implementation AbstractLogCollector (NoTimeoutLogCollector)
+@implementation NoTimeoutLogCollector
 
 - (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId {
     //NOTE: method stub to avoid removing buckets from timeout tracking
@@ -153,7 +155,7 @@
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
     [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
     
-    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[NoTimeoutLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
     [logCollector setValue:strategy forKey:@"strategy"];
@@ -197,7 +199,7 @@
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
     [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
 
-    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[NoTimeoutLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy isUploadNeededForStorageStatus:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
