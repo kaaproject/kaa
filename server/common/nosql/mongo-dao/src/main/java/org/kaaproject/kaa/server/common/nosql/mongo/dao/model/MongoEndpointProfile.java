@@ -68,11 +68,6 @@ import com.mongodb.util.JSON;
 public final class MongoEndpointProfile implements EndpointProfile, Serializable {
 
     private static final long serialVersionUID = -3227246639864687299L;
-    private static final BiMap<Character, Character> RESERVED_CHARACTERS = HashBiMap.create();
-    static {
-        RESERVED_CHARACTERS.put('.', (char) 0xFF0E);
-        RESERVED_CHARACTERS.put('$', (char) 0xFF04);
-    }
 
     @Id
     private String id;
@@ -150,7 +145,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.accessToken = dto.getAccessToken();
         this.groupState = MongoDaoUtil.convertDtoToModelList(dto.getGroupState());
         this.sequenceNumber = dto.getSequenceNumber();
-        this.profile = encodeReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
+        this.profile = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
         this.profileHash = dto.getProfileHash();
         this.profileVersion = dto.getClientProfileVersion();
         this.serverProfileVersion = dto.getServerProfileVersion();
@@ -167,7 +162,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.ecfVersionStates = MongoDaoUtil.convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
-        this.serverProfile = encodeReservedCharacteres((DBObject) JSON.parse(dto.getServerProfileBody()));
+        this.serverProfile = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getServerProfileBody()));
         this.version = dto.getVersion();
     }
 
@@ -378,50 +373,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.version = version;
     }
 
-    private DBObject encodeReservedCharacteres(DBObject profileBody) {
-        if (profileBody == null) {
-            return null;
-        }
-        Set<String> keySet = profileBody.keySet();
-        DBObject modifiedNode = new BasicDBObject();
-        if (keySet != null) {
-            for (String key : keySet) {
-                Object value = profileBody.get(key);
-                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
-                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
-                }
-                if(value instanceof DBObject) {
-                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
-                } else {
-                    modifiedNode.put(key, value);
-                }
-            }
-        }
-        return modifiedNode;
-    }
-
-    private String decodeReservedCharacteres(DBObject profileBody) {
-        if (profileBody == null) {
-            return "";
-        }
-        Set<String> keySet = profileBody.keySet();
-        DBObject modifiedNode = new BasicDBObject();
-        if (keySet != null) {
-            for (String key : keySet) {
-                Object value = profileBody.get(key);
-                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
-                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
-                }
-                if(value instanceof DBObject) {
-                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
-                } else {
-                    modifiedNode.put(key, value);
-                }
-            }
-        }
-        return modifiedNode != null ? modifiedNode.toString() : "";
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -559,7 +510,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setClientProfileBody(decodeReservedCharacteres(profile));
+        dto.setClientProfileBody(MongoDaoUtil.decodeReservedCharacteres(profile));
         dto.setProfileHash(profileHash);
         dto.setClientProfileVersion(profileVersion);
         dto.setServerProfileVersion(serverProfileVersion);
@@ -573,7 +524,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEcfVersionStates(DaoUtil.convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
-        dto.setServerProfileBody(decodeReservedCharacteres(serverProfile));
+        dto.setServerProfileBody(MongoDaoUtil.decodeReservedCharacteres(serverProfile));
         dto.setVersion(version);
         return dto;
     }
