@@ -88,6 +88,8 @@ include_directories(
         ${CC32XX_SDK}/simplelink
         ${CC32XX_SDK}/simplelink/include
         ${CC32XX_SDK}/simplelink/source
-        ${CC32XX_SDK}/example/common)
+        ${CC32XX_SDK}/simplelink_extlib/provisioninglib
+        ${CC32XX_SDK}/example/common
+        )
 
 add_definitions(-Dgcc -DCC32XX -DUSER_INPUT_ENABLE)
