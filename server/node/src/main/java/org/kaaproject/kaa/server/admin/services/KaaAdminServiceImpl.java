@@ -3080,7 +3080,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (schema.getDependencySet() != null) {
                 for (CTLSchemaDto dependency : schema.getDependencySet()) {
                     CTLSchemaDto schemaFound = 
-                            controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+                            controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(
                                     dependency.getMetaInfo().getFqn(), dependency.getVersion(),
                             schema.getMetaInfo().getTenantId(), schema.getMetaInfo().getApplicationId());
                     if (schemaFound == null) {
