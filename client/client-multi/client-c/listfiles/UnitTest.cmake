@@ -113,7 +113,7 @@ add_executable  (test_log
                     ${KAA_SRC_FOLDER}/kaa_status.c
                     ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
                 )
-target_link_libraries(test_log ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+target_link_libraries(test_log kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_platform_protocol
                     test/test_platform_protocol.c
