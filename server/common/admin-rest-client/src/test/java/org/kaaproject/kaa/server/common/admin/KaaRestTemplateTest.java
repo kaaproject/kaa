@@ -25,7 +25,7 @@ public class KaaRestTemplateTest {
 
     @Before
     public void init() throws Exception {
-        kaaRestTemplate = new KaaRestTemplate("localhost:8081, localhost:8080");
+        kaaRestTemplate = new KaaRestTemplate("localhost:8080");
         mockServer=MockRestServiceServer.createServer(kaaRestTemplate);
         testMessage = new TestMessage();
     }
