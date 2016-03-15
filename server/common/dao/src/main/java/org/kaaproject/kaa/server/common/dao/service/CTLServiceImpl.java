@@ -475,7 +475,12 @@ public class CTLServiceImpl implements CTLService {
 
     @Override
     public Schema flatExportAsSchema(CTLSchemaDto schema) {
-        return this.parseDependencies(schema, new Schema.Parser());
+        try {
+            return this.parseDependencies(schema, new Schema.Parser());
+        } catch (Exception cause) {
+            LOG.error("Unable to export CTL schema as flat: {}", schema, cause);
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
     }
 
     @Override
@@ -526,13 +531,16 @@ public class CTLServiceImpl implements CTLService {
         }
     }
 
-    private Schema parseDependencies(CTLSchemaDto schema, final Schema.Parser parser) {
+    private Schema parseDependencies(CTLSchemaDto schema, final Schema.Parser parser) throws Exception {
         if (schema.getDependencySet() != null) {
             for (CTLSchemaDto dependency : schema.getDependencySet()) {
                 this.parseDependencies(dependency, parser);
             }
         }
-        return parser.parse(schema.getBody());
+        ObjectNode object = new ObjectMapper().readValue(schema.getBody(), ObjectNode.class);
+        object.remove(DEPENDENCIES);
+        String body = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        return parser.parse(body);
     }
 
     private List<FileData> recursiveShallowExport(List<FileData> files, CTLSchemaDto parent) throws Exception {
