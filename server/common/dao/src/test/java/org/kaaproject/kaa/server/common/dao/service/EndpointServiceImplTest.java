@@ -87,16 +87,16 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
     }
 
-//    @Test
-//    public void findEndpointProfileBodyByEndpointGroupIdTest() {
-//        EndpointGroupDto group = generateEndpointGroupDto(null);
-//        String endpointGroupId = group.getId();
-//        PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-//        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
-//        EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
-//        EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
-//        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
-//    }
+    @Test
+    public void findEndpointProfileBodyByEndpointGroupIdTest() {
+        EndpointGroupDto group = generateEndpointGroupDto(null);
+        String endpointGroupId = group.getId();
+        PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+        EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
+        EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
+        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
+    }
 
     @Test
     public void findEndpointProfileByKeyHashTest() {
@@ -106,13 +106,13 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
     }
 
-//    @Test
-//    public void findEndpointProfileBodyByKeyHashTest() {
-//        String endpointGroupId = "124";
-//        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
-//        EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
-//        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
-//    }
+    @Test
+    public void findEndpointProfileBodyByKeyHashTest() {
+        String endpointGroupId = "124";
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+        EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
+        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
+    }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveEndpointGroupWithSameWeightTest() {

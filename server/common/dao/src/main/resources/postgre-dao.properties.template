@@ -21,7 +21,7 @@ hibernate_hbm2ddl_auto=update
 jdbc_driver_className=org.postgresql.Driver
 
 # specify jdbc database user name
-jdbc_username=postgres
+jdbc_username=sqladmin
 
 # specify jdbc database password
 jdbc_password=admin

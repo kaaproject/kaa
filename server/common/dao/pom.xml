@@ -144,16 +144,6 @@
             <artifactId>commons-pool</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
@@ -303,6 +293,12 @@
         </profile>
         <profile>
             <id>mariadb-dao</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                </dependency>
+            </dependencies>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -332,9 +328,12 @@
         </profile>
         <profile>
             <id>postgresql-dao</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>

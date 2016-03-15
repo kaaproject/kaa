@@ -1146,9 +1146,6 @@
         </profile>
         <profile>
             <id>postgresql-admin</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
