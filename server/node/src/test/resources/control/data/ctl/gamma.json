@@ -1,0 +1,7 @@
+{
+    "type": "record",
+    "name": "Gamma",
+    "namespace": "org.kaaproject.kaa",
+    "version": -1,
+    "fields": []
+}

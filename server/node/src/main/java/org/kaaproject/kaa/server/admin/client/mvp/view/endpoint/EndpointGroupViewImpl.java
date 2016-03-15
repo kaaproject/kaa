@@ -51,7 +51,6 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     private SizedTextArea description;
     private SizedTextBox createdUsername;
     private SizedTextBox createdDateTime;
-    private SizedTextBox endpointCount;
 
     private Label profileFiltersLabel;
     private CheckBox includeDeprecatedProfileFilters;
@@ -88,58 +87,56 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         if (!create) {
             detailsTable.getColumnFormatter().setWidth(2, "200px");
         }
+        int row = 0;
+        
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
-        detailsTable.setWidget(0, 0, authorLabel);
-        detailsTable.setWidget(0, 1, createdUsername);
+        detailsTable.setWidget(row, 0, authorLabel);
+        detailsTable.setWidget(row, 1, createdUsername);
 
         authorLabel.setVisible(!create);
         createdUsername.setVisible(!create);
 
+        row++;
         Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
         createdDateTime = new KaaAdminSizedTextBox(-1, false);
         createdDateTime.setWidth("100%");
-        detailsTable.setWidget(1, 0, dateTimeCreatedLabel);
-        detailsTable.setWidget(1, 1, createdDateTime);
+        detailsTable.setWidget(row, 0, dateTimeCreatedLabel);
+        detailsTable.setWidget(row, 1, createdDateTime);
 
         dateTimeCreatedLabel.setVisible(!create);
         createdDateTime.setVisible(!create);
 
-        Label endpointCountLabel = new Label(Utils.constants.numberOfEndpoints());
-        endpointCount = new KaaAdminSizedTextBox(-1, false);
-        endpointCount.setWidth("100%");
-        detailsTable.setWidget(2, 0, endpointCountLabel);
-        detailsTable.setWidget(2, 1, endpointCount);
-
-        endpointCountLabel.setVisible(!create);
-        endpointCount.setVisible(!create);
-
+        row++;
         name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         name.setWidth("100%");
         nameLabel = new Label(Utils.constants.name());
-        detailsTable.setWidget(3, 0, nameLabel);
-        detailsTable.setWidget(3, 1, name);
+        detailsTable.setWidget(row, 0, nameLabel);
+        detailsTable.setWidget(row, 1, name);
         name.addInputHandler(this);
 
+        row++;
         weight = new IntegerBox();
         weight.setWidth("100%");
         weightLabel = new Label(Utils.constants.weight());
-        detailsTable.setWidget(4, 0, weightLabel);
-        detailsTable.setWidget(4, 1, weight);
+        detailsTable.setWidget(row, 0, weightLabel);
+        detailsTable.setWidget(row, 1, weight);
         weight.addChangeHandler(this);
 
+        row++;
         description = new SizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         description.getTextArea().getElement().getStyle().setPropertyPx("maxWidth", 487);
         Label descriptionLabel = new Label(Utils.constants.description());
-        detailsTable.setWidget(5, 0, descriptionLabel);
-        detailsTable.setWidget(5, 1, description);
-        detailsTable.getFlexCellFormatter().setColSpan(5, 1, 2);
+        detailsTable.setWidget(row, 0, descriptionLabel);
+        detailsTable.setWidget(row, 1, description);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 1, 2);
         description.addInputHandler(this);
-        detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
+        detailsTable.getCellFormatter().setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
 
+        row++;
         profileFiltersGrid = new ProfileFilterStructGrid();
         profileFiltersGrid.setSize("700px", "200px");
         profileFiltersLabel = new Label(Utils.constants.profileFilters());
@@ -150,23 +147,25 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         addProfileFilterButton = new Button(Utils.constants.addProfileFilter());
         addProfileFilterButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
-        detailsTable.setWidget(6, 0, profileFiltersLabel);
+        detailsTable.setWidget(row, 0, profileFiltersLabel);
         profileFiltersLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
 
-        detailsTable.setWidget(6, 1, includeDeprecatedProfileFilters);
+        detailsTable.setWidget(row, 1, includeDeprecatedProfileFilters);
 
+        row++;
+        detailsTable.setWidget(row, 0, profileFiltersGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
 
-        detailsTable.setWidget(7, 0, profileFiltersGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(7, 0, 3);
-
-        detailsTable.setWidget(8, 2, addProfileFilterButton);
+        row++;
+        detailsTable.setWidget(row, 2, addProfileFilterButton);
         addProfileFilterButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-        detailsTable.getCellFormatter().setHorizontalAlignment(8, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+        detailsTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
         profileFiltersLabel.setVisible(!create);
         includeDeprecatedProfileFilters.setVisible(!create);
         profileFiltersGrid.setVisible(!create);
 
+        row++;
         configurationsGrid = new ConfigurationStructGrid();
         configurationsGrid.setSize("700px", "200px");
         Label configurationsLabel = new Label(Utils.constants.configurations());
@@ -177,22 +176,25 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         addConfigurationButton = new Button(Utils.constants.addConfiguration());
         addConfigurationButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
-        detailsTable.setWidget(9, 0, configurationsLabel);
+        detailsTable.setWidget(row, 0, configurationsLabel);
         configurationsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
 
-        detailsTable.setWidget(9, 1, includeDeprecatedConfigurations);
+        detailsTable.setWidget(row, 1, includeDeprecatedConfigurations);
 
-        detailsTable.setWidget(10, 0, configurationsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(10, 0, 3);
+        row++;
+        detailsTable.setWidget(row, 0, configurationsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
 
-        detailsTable.setWidget(11, 2, addConfigurationButton);
+        row++;
+        detailsTable.setWidget(row, 2, addConfigurationButton);
         addConfigurationButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-        detailsTable.getCellFormatter().setHorizontalAlignment(11, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+        detailsTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
         configurationsLabel.setVisible(!create);
         includeDeprecatedConfigurations.setVisible(!create);
         configurationsGrid.setVisible(!create);
 
+        row++;
         topicsGrid = new TopicGrid(true);
         topicsGrid.setSize("700px", "200px");
         Label topicsLabel = new Label(Utils.constants.notificationTopics());
@@ -201,15 +203,17 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         addTopicButton = new Button(Utils.constants.addNotificationTopic());
         addTopicButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
-        detailsTable.setWidget(12, 0, topicsLabel);
+        detailsTable.setWidget(row, 0, topicsLabel);
         topicsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
 
-        detailsTable.setWidget(13, 0, topicsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(13, 0, 3);
+        row++;
+        detailsTable.setWidget(row, 0, topicsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
 
-        detailsTable.setWidget(14, 2, addTopicButton);
+        row++;
+        detailsTable.setWidget(row, 2, addTopicButton);
         addTopicButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-        detailsTable.getCellFormatter().setHorizontalAlignment(14, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+        detailsTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
         topicsLabel.setVisible(!create);
         topicsGrid.setVisible(!create);
@@ -237,7 +241,6 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         description.setValue("");
         createdUsername.setValue("");
         createdDateTime.setValue("");
-        endpointCount.setValue("");
         addProfileFilterButton.setVisible(!create);
         addConfigurationButton.setVisible(!create);
         addTopicButton.setVisible(!create);
@@ -295,11 +298,6 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     @Override
     public HasValue<String> getCreatedDateTime() {
         return createdDateTime;
-    }
-
-    @Override
-    public HasValue<String> getEndpointCount() {
-        return endpointCount;
     }
 
     @Override

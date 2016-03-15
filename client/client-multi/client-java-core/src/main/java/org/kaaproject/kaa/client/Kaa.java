@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 public class Kaa {
     private static final Logger LOG = LoggerFactory.getLogger(Kaa.class);
 
+    private Kaa() {
+    }
+
     public static KaaClient newClient(KaaClientPlatformContext context) throws KaaRuntimeException {
         return newClient(context, null);
     }

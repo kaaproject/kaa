@@ -33,16 +33,16 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 @SuppressWarnings("serial")
 public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(SpringGwtRemoteServiceServlet.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(SpringGwtRemoteServiceServlet.class);
 
     static ThreadLocal<HttpServletRequest> perThreadRequest = 
             new ThreadLocal<HttpServletRequest>();
 
 	@Override
 	public void init() {
-		if (logger.isDebugEnabled()) {
-		    logger.debug("Spring GWT service exporter deployed");
+		if (LOG.isDebugEnabled()) {
+		    LOG.debug("Spring GWT service exporter deployed");
 		}
 	}
 
@@ -53,8 +53,8 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 			Object handler = getBean(getThreadLocalRequest());
 			RPCRequest rpcRequest = RPC.decodeRequest(payload, handler.getClass(), this);
 			onAfterRequestDeserialized(rpcRequest);
-			if (logger.isDebugEnabled()) {
-			    logger.debug("Invoking " + handler.getClass().getName() + "." + rpcRequest.getMethod().getName());
+			if (LOG.isDebugEnabled()) {
+			    LOG.debug("Invoking " + handler.getClass().getName() + "." + rpcRequest.getMethod().getName());
 			}
 			return RPCHelper.invokeAndEncodeResponse(handler, rpcRequest.getMethod(), rpcRequest.getParameters(), rpcRequest
 					.getSerializationPolicy());
@@ -62,10 +62,9 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 			log("An IncompatibleRemoteServiceException was thrown while processing this call.", ex);
 			return RPC.encodeResponseForFailure(null, ex);
 		} catch (SerializationException ex) {
-		    logger.error("An SerializationException was thrown while processing this call.", ex);
+		    LOG.error("An SerializationException was thrown while processing this call.", ex);
         	throw ex;
-		} 
-        finally {
+		} finally {
             perThreadRequest.set(null);
         }
 	}
@@ -92,8 +91,8 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 		if (!(bean instanceof RemoteService)) {
 			throw new IllegalArgumentException("Spring bean is not a GWT RemoteService: " + service + " (" + bean + ")");
 		}
-		if (logger.isDebugEnabled()) {
-		    logger.debug("Bean for service " + service + " is " + bean);
+		if (LOG.isDebugEnabled()) {
+		    LOG.debug("Bean for service " + service + " is " + bean);
 		}
 		return bean;
 	}
@@ -107,8 +106,8 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 	protected String getService(HttpServletRequest request) {
 		String url = request.getRequestURI();
 		String service = url.substring(url.lastIndexOf("/") + 1);
-		if (logger.isDebugEnabled()) {
-		    logger.debug("Service for URL {} is {}", url, service);
+		if (LOG.isDebugEnabled()) {
+		    LOG.debug("Service for URL {} is {}", url, service);
 		}
 		return service;
 	}

@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.common.dao.impl;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 
 /**

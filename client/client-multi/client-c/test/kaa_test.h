@@ -42,6 +42,17 @@
 
 #define KAA_RUN_TESTS \
         CU_automated_run_tests(); \
+        CU_pFailureRecord failures = CU_get_failure_list(); \
+        if (failures) {	\
+            size_t i = 1; \
+            printf("========================= TEST FAILURES DETECTED ==================================\n"); \
+            while (failures) { \
+                printf("%zu. Suite: %s, test: %s\n", i++, failures->pSuite->pName, failures->pTest->pName); \
+                printf("%s:%u\n", failures->strFileName, failures->uiLineNumber); \
+                printf("=================================================================================\n"); \
+               failures = failures->pNext; \
+            } \
+        } \
 
 /* Helper macro to control setup and teardown process per each test in group.
  * Must be placed in the exact suite.

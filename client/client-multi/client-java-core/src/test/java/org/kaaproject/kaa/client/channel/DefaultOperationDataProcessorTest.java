@@ -269,4 +269,33 @@ public class DefaultOperationDataProcessorTest {
         Mockito.verify(logTransport, Mockito.times(0)).onLogResponse(Mockito.any(LogSyncResponse.class));
     }
 
+    @Test
+    public void testProfileResync() throws Exception {
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
+
+        ProfileTransport profileTransport = Mockito.mock(ProfileTransport.class);
+        operationsDataProcessor.setProfileTransport(profileTransport);
+
+        SyncResponse response = new SyncResponse();
+        response.setStatus(SyncResponseResultType.PROFILE_RESYNC);
+
+        AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
+
+        byte[] responseData = converter.toByteArray(response);
+
+        operationsDataProcessor.processResponse(responseData);
+        Mockito.verify(profileTransport, Mockito.times(1)).sync();
+
+        operationsDataProcessor.processResponse(responseData);
+        Mockito.verify(profileTransport, Mockito.times(2)).sync();
+
+        response.setStatus(SyncResponseResultType.SUCCESS);
+        responseData = converter.toByteArray(response);
+
+        operationsDataProcessor.processResponse(responseData);
+        //invocation count still equals 2 because no resync response received
+        Mockito.verify(profileTransport, Mockito.times(2)).sync();
+    }
+
 }

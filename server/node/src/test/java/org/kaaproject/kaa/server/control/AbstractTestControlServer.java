@@ -16,22 +16,7 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.mongodb.DB;
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -97,7 +82,20 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import com.mongodb.DB;
+import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * The Class AbstractTestControlServer.
@@ -753,7 +751,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     protected EndpointGroupDto createEndpointGroup(String applicationId) throws Exception {
         EndpointGroupDto endpointGroup = new EndpointGroupDto();
         endpointGroup.setName(generateString(ENDPOINT_GROUP));
-        endpointGroup.setWeight(random.nextInt());
+        endpointGroup.setWeight(Math.abs(random.nextInt()));
         if (strIsEmpty(applicationId)) {
             ApplicationDto application = createApplication(tenantAdminDto);
             endpointGroup.setApplicationId(application.getId());
@@ -1242,6 +1240,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
     protected static final String TEST_CTL_SCHEMA_ALPHA = "control/data/ctl/alpha.json";
     protected static final String TEST_CTL_SCHEMA_BETA = "control/data/ctl/beta.json";
+    protected static final String TEST_CTL_SCHEMA_GAMMA = "control/data/ctl/gamma.json";
     
     protected String ctlRandomFieldName() {
         return CTL_DEFAULT_NAME + random.nextInt(100000);

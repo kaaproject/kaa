@@ -19,6 +19,9 @@
 #import "DefaultLogUploadStrategy.h"
 #import "TimeCommons.h"
 
+/**
+ * Issue log upload when there storage size reaches specified threshold in bytes.
+ */
 @interface StorageSizeLogUploadStrategy : DefaultLogUploadStrategy
 
 - (instancetype)initWithVolumeThreshold:(int32_t)volumeThreshold;

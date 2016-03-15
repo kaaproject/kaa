@@ -28,7 +28,7 @@
             </else>    
         </if>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${server_log_dir}/kaa-operations-server${server_log_sufix}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${server_log_dir}/kaa-node${server_log_sufix}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>

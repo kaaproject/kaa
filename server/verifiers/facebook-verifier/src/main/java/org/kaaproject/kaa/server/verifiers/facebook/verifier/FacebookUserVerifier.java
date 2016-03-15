@@ -117,7 +117,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
                     try {
                         closeableHttpResponse.close();
                     } catch (IOException e) {
-                        LOG.debug("Connection error: can't close CloseableHttpResponse");
+                        LOG.debug("Connection error: can't close CloseableHttpResponse ", e);
                     }
                 }
             }
@@ -220,7 +220,7 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
         try {
             httpClient.close();
         } catch (IOException e) {
-            LOG.debug("Unable to close HttpClient");
+            LOG.debug("Unable to close HttpClient ", e);
         }
         LOG.info("facebook user verifier stopped");
     }

@@ -28,6 +28,7 @@
 
 #include "../kaa_error.h"
 #include "../platform/defaults.h"
+#include "../platform/stdio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,8 +67,8 @@ extern "C" {
  * @brief Kaa logger type
  */
 #ifndef KAA_LOGGER_T
-    #define KAA_LOGGER_T
-    typedef struct kaa_logger_t             kaa_logger_t;
+#define KAA_LOGGER_T
+typedef struct kaa_logger_t             kaa_logger_t;
 #endif
 
 /**

@@ -147,6 +147,8 @@ set ( KAA_TEST_SOURCES
         impl/profile/ProfileManagerTest.cpp
         impl/channel/PingConnectivityCheckerTest.cpp
         impl/KaaClientPropertiesTest.cpp
+        impl/profile/ProfileTransportTest.cpp
+        impl/channel/SyncDataProcessorTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

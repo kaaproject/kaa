@@ -47,15 +47,19 @@ public final class RedirectServerSync {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RedirectServerSync other = (RedirectServerSync) obj;
-        if (accessPointId != other.accessPointId)
+        if (accessPointId != other.accessPointId) {
             return false;
+        }
         return true;
     }
 

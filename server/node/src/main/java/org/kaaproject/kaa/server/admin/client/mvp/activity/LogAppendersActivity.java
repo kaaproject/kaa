@@ -102,6 +102,7 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
         switch (action) {
             case KaaRowAction.DOWNLOAD_SCHEMA:
                 KaaAdmin.getDataSource().getLogAppender(String.valueOf(appenderId), callback);
+                break;
             default:
                 break;
         }

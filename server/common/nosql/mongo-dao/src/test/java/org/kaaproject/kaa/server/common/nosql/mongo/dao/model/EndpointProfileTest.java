@@ -44,7 +44,6 @@ public class EndpointProfileTest {
         profile.setEcfVersionStates(null);
         profile.setId(null);
         profile.setTopicHash(null);
-        profile.setProfile(null);
         profile.setProfileHash(null);
         profile.setServerHash(null);
         profile.setSubscriptions(null);
@@ -69,7 +68,6 @@ public class EndpointProfileTest {
         Assert.assertNull(profile.getEcfVersionStates());
         Assert.assertNull(profile.getId());
         Assert.assertNull(profile.getTopicHash());
-        Assert.assertNull(profile.getProfile());
         Assert.assertNull(profile.getProfileHash());
         Assert.assertNull(profile.getServerHash());
         Assert.assertNull(profile.getSubscriptions());

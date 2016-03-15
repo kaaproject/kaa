@@ -33,6 +33,8 @@ import org.codehaus.jackson.JsonNode;
 
 public class AvroUtils {
 
+    private AvroUtils() {
+    }
 
     /**
      * Generates UUID bytes.

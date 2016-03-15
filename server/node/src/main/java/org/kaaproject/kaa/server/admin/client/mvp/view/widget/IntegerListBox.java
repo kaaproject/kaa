@@ -44,12 +44,10 @@ public class IntegerListBox extends ValueListBox<Integer> {
             if (object != null) {
                 if (object==Integer.MAX_VALUE) {
                     return Utils.constants.infinite();
-                }
-                else {
+                } else {
                     return object.toString();
                 }
-            }
-            else {
+            } else {
                 return "";
             }
         }

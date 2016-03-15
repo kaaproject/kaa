@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 
-set(KAA_SOURCE_FILES 
+set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_client.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
@@ -29,31 +29,31 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_reboot.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
-    )
+        )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)
-    set(KAA_SOURCE_FILES 
+    set(KAA_SOURCE_FILES
             ${KAA_SOURCE_FILES}
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
             ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_tcp_utils.c
             ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
-        )
+            )
 endif()
 
 set(KAA_THIRDPARTY_LIBRARIES
         ${KAA_THIRDPARTY_LIBRARIES}
-    )
+        )
 
 
 set(CC32XX_INCDIRS ${CC32XX_SDK}/inc
-                   ${CC32XX_SDK}/driverlib
-                   ${CC32XX_SDK}/oslib
-                   ${CC32XX_SDK}/simplelink
-                   ${CC32XX_SDK}/simplelink/include
-                   ${CC32XX_SDK}/simplelink/source
-                   ${CC32XX_SDK}/example/common
-   )
+        ${CC32XX_SDK}/driverlib
+        ${CC32XX_SDK}/oslib
+        ${CC32XX_SDK}/simplelink
+        ${CC32XX_SDK}/simplelink/include
+        ${CC32XX_SDK}/simplelink/source
+        ${CC32XX_SDK}/example/common
+        )
 
 set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${CC32XX_INCDIRS})
 
@@ -70,7 +70,7 @@ set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
 
 set(KAA_BUILD_STATIC_ONLY 1)
 
-set(CC32XX_RSA_KEY ../src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
+set(CC32XX_RSA_KEY ${KAA_SDK_DIR}/src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
 
 execute_process(COMMAND rm ${CC32XX_RSA_KEY})
-execute_process(COMMAND java -jar ../tools/pub_key_generator.jar ${CC32XX_RSA_KEY})
+execute_process(COMMAND java -jar ${KAA_SDK_DIR}/tools/pub_key_generator.jar ${CC32XX_RSA_KEY})

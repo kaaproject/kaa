@@ -83,6 +83,11 @@
 @property (nonatomic) int32_t topicListHash;
 
 /**
+ * Defines whether server need profile resync.
+ */
+@property (nonatomic) BOOL needProfileResync;
+
+/**
  * Adds topic with all its information.
  */
 - (void)addTopic:(Topic *)topic;

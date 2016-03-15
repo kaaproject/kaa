@@ -144,16 +144,30 @@ public final class Notification {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Notification that = (Notification) o;
 
-        if (body != null ? !body.equals(that.body) : that.body != null) return false;
-        if (seqNumber != null ? !seqNumber.equals(that.seqNumber) : that.seqNumber != null) return false;
-        if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) return false;
-        if (type != that.type) return false;
-        if (uid != null ? !uid.equals(that.uid) : that.uid != null) return false;
+        if (body != null ? !body.equals(that.body) : that.body != null) {
+            return false;
+        }
+        if (seqNumber != null ? !seqNumber.equals(that.seqNumber) : that.seqNumber != null) {
+            return false;
+        }
+        if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) {
+            return false;
+        }
+        if (type != that.type) {
+            return false;
+        }
+        if (uid != null ? !uid.equals(that.uid) : that.uid != null) {
+            return false;
+        }
 
         return true;
     }

@@ -213,7 +213,7 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
         for (FormField acceptableValue : acceptableValues) {
             if (acceptableValue != null && acceptableValue instanceof RecordField) {
                 RecordField recordValue = (RecordField)acceptableValue;
-                if ((include && eventClassTypes.contains(recordValue.getFqn().getName()))) {
+                if (include && eventClassTypes.contains(recordValue.getFqn().getName())) {
                     filteredAcceptableValues.add(acceptableValue);
                 } else if (!include && !eventClassTypes.contains(recordValue.getFqn().getName())) {
                     filteredAcceptableValues.add(acceptableValue);

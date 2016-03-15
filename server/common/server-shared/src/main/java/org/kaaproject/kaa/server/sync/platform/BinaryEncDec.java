@@ -278,6 +278,7 @@ public class BinaryEncDec implements PlatformEncDec {
     private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
         buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 4);
         buf.putInt(sync.getRequestId());
+        buf.putInt(sync.getStatus().ordinal());
     }
 
     private void encode(GrowingByteBuffer buf, BootstrapServerSync bootstrapSync) {
@@ -628,6 +629,9 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ACCESS_TOKEN_FIELD_ID:
                 profileSync.setEndpointAccessToken(getUTF8String(buf));
+                break;
+            default:
+                break;
             }
         }
         sync.setProfileSync(profileSync);
@@ -647,6 +651,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ENDPOINT_DETACH_FIELD_ID:
                 userSync.setEndpointDetachRequests(parseEndpointDetachRequests(buf));
+                break;
+            default:
                 break;
             }
         }

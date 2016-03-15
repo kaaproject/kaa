@@ -30,6 +30,20 @@
 #import "MemLogStorage.h"
 #import "DefaultLogCollector.h"
 
+@interface NoTimeoutLogCollector : DefaultLogCollector
+
+- (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId;
+
+@end
+
+@implementation NoTimeoutLogCollector
+
+- (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId {
+    //NOTE: method stub to avoid removing buckets from timeout tracking
+}
+
+@end
+
 @interface TestLogStorageStatus : NSObject <LogStorageStatus>
 
 @property (nonatomic) int64_t consumedVolume;
@@ -88,27 +102,6 @@
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeededForStorageStatus:status]);
 }
 
-- (void)testSuccessLogUploadCallback {
-    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
-    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
-    
-    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
-    [logCollector setValue:strategy forKey:@"strategy"];
-    
-    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
-    [given([executorContext getCallbackExecutor]) willReturn:executor];
-    
-    LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
-    status.requestId = 42;
-    status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
-    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
-    
-    [logCollector onLogResponse:response];
-}
-
 - (void)testFailureLogUploadCallback {
     id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
@@ -116,7 +109,10 @@
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
     
-    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport
+                                                                         executorContext:executorContext
+                                                                          channelManager:channelManager
+                                                                         failoverManager:failoverManager];
     [logCollector setValue:strategy forKey:@"strategy"];
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
@@ -127,6 +123,7 @@
     status.result = SYNC_RESPONSE_RESULT_TYPE_FAILURE;
     LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
     
+    logCollector.bucketInfoDictionary[@(42)] = [[BucketInfo alloc] initWithBucketId:42 logCount:1];
     [logCollector onLogResponse:response];
     
     [NSThread sleepForTimeInterval:0.001];
@@ -153,10 +150,12 @@
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
     NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    dispatch_queue_t schedulerQueue = dispatch_queue_create("scheduler", 0);
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
+    [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
     
-    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[NoTimeoutLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
     [logCollector setValue:strategy forKey:@"strategy"];
@@ -195,10 +194,12 @@
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
     NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    dispatch_queue_t schedulerQueue = dispatch_queue_create("scheduler", 0);
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
-    
-    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
+
+    AbstractLogCollector *logCollector = [[NoTimeoutLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy isUploadNeededForStorageStatus:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];

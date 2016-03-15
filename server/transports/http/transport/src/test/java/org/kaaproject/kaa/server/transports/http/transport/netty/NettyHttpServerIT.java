@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NettyHttpServerIT {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpServerIT.class);
 
     /** Port which used to bind to for Netty HTTP */

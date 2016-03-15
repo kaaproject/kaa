@@ -95,7 +95,7 @@ public class ConcurrentCacheService implements CacheService {
     /** The Constant ALGORITHM. */
     private static final String ALGORITHM = "RSA";
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentCacheService.class);
 
     /** The application service. */
@@ -410,6 +410,7 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @CacheEvict(value = "filterLists", key = "#key")
     public void resetFilters(AppProfileVersionsKey key) {
+        // Do nothing
     }
 
     /*
@@ -861,6 +862,7 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @CacheEvict(value = "endpointGroups", key = "#key")
     public void resetGroup(String key) {
+        // Do nothing
     }
 
     @Override

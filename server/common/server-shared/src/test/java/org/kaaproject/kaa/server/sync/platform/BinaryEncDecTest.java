@@ -114,7 +114,6 @@ public class BinaryEncDecTest {
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertEquals(1 * 256 * 256 * 256 + 2 * 256 * 256 + 3 * 256 + 4, sync.getRequestId());
     }
-
     @Test
     public void testParseMetaDataWithOptions() throws PlatformEncDecException {
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 1), getValidMetaData()));
@@ -130,13 +129,14 @@ public class BinaryEncDecTest {
     public void testEncodeBasicServerSync() throws PlatformEncDecException {
         ServerSync sync = new ServerSync();
         sync.setRequestId(MAGIC_NUMBER);
+		sync.setStatus(SyncStatus.PROFILE_RESYNC);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
         int size = 8 // header
-        + 8 + 4 // metadata
+        + 8 + 4 + 4 // metadata
         ;
         Assert.assertEquals(size, buf.array().length);
-        buf.position(buf.capacity() - 4);
+        buf.position(buf.capacity() - 8);
         Assert.assertEquals(MAGIC_NUMBER, buf.getInt());
         LOG.trace(Arrays.toString(buf.array()));
     }
@@ -147,14 +147,15 @@ public class BinaryEncDecTest {
         sync.setRequestId(MAGIC_NUMBER);
         ProfileServerSync pSync = new ProfileServerSync(SyncResponseStatus.RESYNC);
         sync.setProfileSync(pSync);
+		sync.setStatus(SyncStatus.PROFILE_RESYNC);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
         int size = 8 // header
-        + 8 + 4 // metadata
+        + 8 + 4 + 4 // metadata
         + 8 // profile sync
         ;
         Assert.assertEquals(size, buf.array().length);
-        buf.position(buf.capacity() - 12);
+        buf.position(buf.capacity() - 16);
         Assert.assertEquals(MAGIC_NUMBER, buf.getInt());
         LOG.trace(Arrays.toString(buf.array()));
     }
@@ -165,10 +166,11 @@ public class BinaryEncDecTest {
         sync.setRequestId(MAGIC_NUMBER);
         LogServerSync lSync = new LogServerSync(Collections.singletonList(new LogDeliveryStatus(MAGIC_NUMBER, SyncStatus.FAILURE, null)));
         sync.setLogSync(lSync);
+		sync.setStatus(SyncStatus.PROFILE_RESYNC);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
         int size = 8 // header
-                + 8 + 4 // metadata
+                + 8 + 4 + 4 // metadata
                 + 4 + 8 + 4// log sync
         ;
         Assert.assertEquals(size, buf.array().length);
@@ -186,10 +188,11 @@ public class BinaryEncDecTest {
         UserServerSync uSync = new UserServerSync();
         uSync.setUserAttachNotification(new UserAttachNotification("id", "token"));
         sync.setUserSync(uSync);
+		sync.setStatus(SyncStatus.PROFILE_RESYNC);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
         int size = 8 // header
-                + 8 + 4 // metadata
+                + 8 + 4 + 4 // metadata
                 + 8 + 4 + 4 + 8// user sync
         ;
         Assert.assertEquals(size, buf.array().length);
@@ -207,10 +210,11 @@ public class BinaryEncDecTest {
         event.setSource(Base64Util.encode(new byte[SHA_1_LENGTH]));
         eSync.setEvents(Collections.singletonList(event));
         sync.setEventSync(eSync);
+		sync.setStatus(SyncStatus.PROFILE_RESYNC);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
         int size = 8 // header
-                + 8 + 4 // metadata
+                + 8 + 4 + 4 // metadata
                 + 8 + 4 // event header + seq number
                 + 4 + 4 + SHA_1_LENGTH + 4// event sync
         ;
@@ -395,7 +399,7 @@ public class BinaryEncDecTest {
                 4 + 4 + 3 + 1 + // unicast notifications
                 4 + 8 + // add topic command
                 4 + 8  // remove topic command
-                ]); 
+                ]);
         // topic hash
         buf.putInt(MAGIC_NUMBER);
         // topic list

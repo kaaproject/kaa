@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ThriftClient<T extends TServiceClient> implements Runnable {
     
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(ThriftClient.class);
     

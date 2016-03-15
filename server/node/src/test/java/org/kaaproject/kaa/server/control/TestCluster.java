@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TestCluster {
     
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(TestCluster.class);
 

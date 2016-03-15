@@ -29,7 +29,6 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTU
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_LAST_MODIFY_TIME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MODIFIED_USERNAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_STATUS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_TABLE_NAME;

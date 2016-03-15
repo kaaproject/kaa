@@ -53,20 +53,26 @@ public final class BootstrapClientSync {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BootstrapClientSync other = (BootstrapClientSync) obj;
         if (keys == null) {
-            if (other.keys != null)
+            if (other.keys != null) {
                 return false;
-        } else if (!keys.equals(other.keys))
+            }
+        } else if (!keys.equals(other.keys)) {
             return false;
-        if (requestId != other.requestId)
+        }
+        if (requestId != other.requestId) {
             return false;
+        }
         return true;
     }
 

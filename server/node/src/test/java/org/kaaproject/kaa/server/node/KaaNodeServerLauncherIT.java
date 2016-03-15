@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
  */
 public class KaaNodeServerLauncherIT {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory
             .getLogger(KaaNodeServerLauncherIT.class);
     
     /** The Constant HOST. */
@@ -91,9 +91,9 @@ public class KaaNodeServerLauncherIT {
                 @SuppressWarnings("static-access")
                 @Override
                 public void run() {
-                    logger.info("Starting Kaa Node Server ...");
+                    LOG.info("Starting Kaa Node Server ...");
                     new KaaNodeApplication(new String[]{}, new String[]{}).main(new String[]{"common-test-context.xml", "kaa-node-test.properties"});
-                    logger.info("Kaa Node Server Stopped");
+                    LOG.info("Kaa Node Server Stopped");
                 }
             });
             
@@ -142,9 +142,9 @@ public class KaaNodeServerLauncherIT {
             kaaNodeServerLauncherThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    logger.info("Starting Kaa Node Server ...");
+                    LOG.info("Starting Kaa Node Server ...");
                     KaaNodeApplication.main(new String[]{"common-zk-test-context.xml", "kaa-node-zk-test.properties"});
-                    logger.info("Kaa Node Server Stopped");
+                    LOG.info("Kaa Node Server Stopped");
                 }
             });
             

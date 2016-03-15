@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class KaaNodeThriftServiceImpl extends BaseCliThriftService implements KaaNodeThriftService.Iface {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(KaaNodeThriftServiceImpl.class);
     
     /** The kaa node initialization service. */
@@ -46,6 +46,7 @@ public class KaaNodeThriftServiceImpl extends BaseCliThriftService implements Ka
 
     @Override
     protected void initServiceCommands() {
+        // Do nothing
     }
 
     /*

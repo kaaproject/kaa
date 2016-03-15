@@ -103,6 +103,7 @@
 		B843B49E1BE67F950060519D /* TestsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B843B49D1BE67F950060519D /* TestsHelper.m */; };
 		B844623C1BB5C377009826FC /* KaaLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B844623A1BB5C377009826FC /* KaaLogging.h */; };
 		B844623D1BB5C377009826FC /* KaaLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B844623B1BB5C377009826FC /* KaaLogging.m */; };
+		B85B18F51C92E9CA002467B1 /* AbstractLogCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */; };
 		B86212401BE3CEAB005C5FE7 /* DefaultKaaPlatformContext.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B86229E71BE352EF0045ED0D /* DefaultKaaPlatformContext.h */; };
 		B86229E91BE352EF0045ED0D /* DefaultKaaPlatformContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B86229E71BE352EF0045ED0D /* DefaultKaaPlatformContext.h */; };
 		B86229EA1BE352EF0045ED0D /* DefaultKaaPlatformContext.m in Sources */ = {isa = PBXBuildFile; fileRef = B86229E81BE352EF0045ED0D /* DefaultKaaPlatformContext.m */; };
@@ -114,6 +115,7 @@
 		B8B4CDC11B8213C0007FE20D /* KaaClientProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */; };
 		B8B4CDC21B8213C0007FE20D /* KaaClientProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = B8B4CDC01B8213C0007FE20D /* KaaClientProperties.m */; };
 		B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */; };
+		B8C794881C9337B7009469EB /* LogDeliveryCallbackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */; };
 		B8CCBD861C4664D800C26F0B /* io.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD601C4664D800C26F0B /* io.h */; };
 		B8CCBD871C4664D800C26F0B /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD611C4664D800C26F0B /* platform.h */; };
 		B8CCBD881C4664D800C26F0B /* avro_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD621C4664D800C26F0B /* avro_private.h */; };
@@ -754,6 +756,7 @@
 		B843B49D1BE67F950060519D /* TestsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestsHelper.m; sourceTree = "<group>"; };
 		B844623A1BB5C377009826FC /* KaaLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaLogging.h; sourceTree = "<group>"; };
 		B844623B1BB5C377009826FC /* KaaLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaLogging.m; sourceTree = "<group>"; };
+		B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractLogCollectorTests.m; sourceTree = "<group>"; };
 		B86229E71BE352EF0045ED0D /* DefaultKaaPlatformContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultKaaPlatformContext.h; sourceTree = "<group>"; };
 		B86229E81BE352EF0045ED0D /* DefaultKaaPlatformContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultKaaPlatformContext.m; sourceTree = "<group>"; };
 		B87629A31B8DA6DF006AD5EF /* KaaClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KaaClient.h; sourceTree = "<group>"; };
@@ -764,6 +767,7 @@
 		B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaClientProperties.h; sourceTree = "<group>"; };
 		B8B4CDC01B8213C0007FE20D /* KaaClientProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientProperties.m; sourceTree = "<group>"; };
 		B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientPropertiesTest.m; sourceTree = "<group>"; };
+		B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDeliveryCallbackTests.m; sourceTree = "<group>"; };
 		B8CCBD601C4664D800C26F0B /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
 		B8CCBD611C4664D800C26F0B /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
 		B8CCBD621C4664D800C26F0B /* avro_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avro_private.h; sourceTree = "<group>"; };
@@ -1000,7 +1004,7 @@
 		B8CCC0301C467EAB00C26F0B /* DefaultEndpointRegistrationManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultEndpointRegistrationManagerTest.m; sourceTree = "<group>"; };
 		B8CCC0321C467EAB00C26F0B /* KaaTcpMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaTcpMessageTest.m; sourceTree = "<group>"; };
 		B8CCC0331C467EAB00C26F0B /* MessageFactoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageFactoryTest.m; sourceTree = "<group>"; };
-		B8CCC0351C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultLogUploadStrategyTest.m; sourceTree = "<group>"; };
+		B8CCC0351C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DefaultLogUploadStrategyTest.m; path = ../DefaultLogUploadStrategyTest.m; sourceTree = "<group>"; };
 		B8CCC0371C467EAB00C26F0B /* MemBucketTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemBucketTest.m; sourceTree = "<group>"; };
 		B8CCC0381C467EAB00C26F0B /* MemLogStorageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemLogStorageTest.m; sourceTree = "<group>"; };
 		B8CCC03A1C467EAB00C26F0B /* PeriodicLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeriodicLogUploadStrategyTest.m; sourceTree = "<group>"; };
@@ -1697,9 +1701,10 @@
 		B8CCC0341C467EAB00C26F0B /* logging */ = {
 			isa = PBXGroup;
 			children = (
-				B8CCC0351C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m */,
 				B8CCC0361C467EAB00C26F0B /* memory */,
 				B8CCC0391C467EAB00C26F0B /* strategies */,
+				B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */,
+				B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -1716,6 +1721,7 @@
 		B8CCC0391C467EAB00C26F0B /* strategies */ = {
 			isa = PBXGroup;
 			children = (
+				B8CCC0351C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m */,
 				B8CCC03A1C467EAB00C26F0B /* PeriodicLogUploadStrategyTest.m */,
 				B8CCC03B1C467EAB00C26F0B /* RecordCountLogUploadStrategyTest.m */,
 				B8CCC03C1C467EAB00C26F0B /* RecordCountWithTimeLimitLogUploadStrategyTest.m */,
@@ -2247,10 +2253,12 @@
 				B8CCC04B1C467EAB00C26F0B /* DefaultBootstrapChannelTest.m in Sources */,
 				B8CCC0671C467EAB00C26F0B /* StorageSizeLogUploadStrategyTest.m in Sources */,
 				B8CCC06A1C467EAB00C26F0B /* DefaultProfileManagerTest.m in Sources */,
+				B8C794881C9337B7009469EB /* LogDeliveryCallbackTests.m in Sources */,
 				B8CCC0571C467EAB00C26F0B /* DefaultProfileTransportTest.m in Sources */,
 				B8CCC0681C467EAB00C26F0B /* StorageSizeWithTimeLimitLogUploadStrategyTest.m in Sources */,
 				B8CCC0691C467EAB00C26F0B /* DefaultNotificationManagerTest.m in Sources */,
 				E815A8531C05984D00FEDECA /* KaaClientTest.m in Sources */,
+				B85B18F51C92E9CA002467B1 /* AbstractLogCollectorTests.m in Sources */,
 				B8CCC0601C467EAB00C26F0B /* MessageFactoryTest.m in Sources */,
 				B8CCC0651C467EAB00C26F0B /* RecordCountLogUploadStrategyTest.m in Sources */,
 				B8CCC0531C467EAB00C26F0B /* DefaultNotificationTransportTest.m in Sources */,

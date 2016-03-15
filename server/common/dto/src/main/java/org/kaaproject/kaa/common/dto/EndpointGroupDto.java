@@ -32,7 +32,6 @@ public class EndpointGroupDto implements HasId, Serializable {
     private int weight;
     private int sequenceNumber;
     private List<String> topics;
-    private long endpointCount;
 
     public String getId() {
         return id;
@@ -104,14 +103,6 @@ public class EndpointGroupDto implements HasId, Serializable {
 
     public void setTopics(List<String> topics) {
         this.topics = topics;
-    }
-    
-    public long getEndpointCount() {
-        return endpointCount;
-    }
-
-    public void setEndpointCount(long endpointCount) {
-        this.endpointCount = endpointCount;
     }
 
     @Override

@@ -68,6 +68,7 @@ public class CacheServiceImpl implements CacheService {
     @Override
     @CacheEvict(value = SDK_CACHE, key = "#key")
     public void flushSdk(SdkKey key) {
+        // Do nothing
     }
 
     public List<SdkKey> getCachedSdkKeys(String applicationId) {
@@ -148,6 +149,7 @@ public class CacheServiceImpl implements CacheService {
     @Override
     @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
     public void removeUploadedFile(String key) {
+        // Do nothing
     }
 
 

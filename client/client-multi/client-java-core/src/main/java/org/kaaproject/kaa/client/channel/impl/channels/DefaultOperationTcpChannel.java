@@ -376,10 +376,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.warn("Attempt to reconnect will be made in {} ms " +
                             "according to failover strategy decision", retryPeriod);
                     scheduleOpenConnectionTask(retryPeriod);
-                break;
+                    break;
                 case STOP_APP:
                     LOG.warn("Stopping application according to failover strategy decision!");
                     System.exit(EXIT_FAILURE); //NOSONAR
+                    break;
+                default:
+                    break;
             }
         } else {
             failoverManager.onServerFailed(currentServer);
@@ -568,7 +571,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         || socket == null
                         || !oldServer.getHost().equals(currentServer.getHost())
                         || oldServer.getPort() != currentServer.getPort()) {
-                LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", oldServer, oldServer);
+                LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", currentServer, oldServer);
                 closeConnection();
                 scheduleOpenConnectionTask(0);
             }

@@ -73,6 +73,8 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
         case GENERIC:
             events = generateGenericEvent(schema, logEvents);
             break;
+        default:
+            break;
         }
         return events;
     }
@@ -129,7 +131,7 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
             encoder.flush();
             event = EventBuilder.withBody(baos.toByteArray());
         } catch (IOException e) {
-            LOG.warn("Can't convert avro object {} to binary.", logData);
+            LOG.warn("Can't convert avro object {} to binary. Exception catched: {}", logData, e);
         }
         LOG.trace("Build flume event with array body [{}]", baos);
         return event;

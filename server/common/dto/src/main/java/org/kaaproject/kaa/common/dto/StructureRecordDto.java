@@ -82,5 +82,42 @@ public abstract class StructureRecordDto<T extends AbstractStructureDto> impleme
     public String getEndpointGroupId() {
         return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() : inactiveStructureDto.getEndpointGroupId();
     }
-   
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        StructureRecordDto other = (StructureRecordDto) obj;
+        if (activeStructureDto == null) {
+            if (other.activeStructureDto != null) {
+                return false;
+            }
+        } else if (!activeStructureDto.equals(other.activeStructureDto)) {
+            return false;
+        }
+        if (inactiveStructureDto == null) {
+            if (other.inactiveStructureDto != null) {
+                return false;
+            }
+        } else if (!inactiveStructureDto.equals(other.inactiveStructureDto)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((activeStructureDto == null) ? 0 : activeStructureDto.hashCode());
+        result = prime * result + ((inactiveStructureDto == null) ? 0 : inactiveStructureDto.hashCode());
+        return result;
+    }
 }

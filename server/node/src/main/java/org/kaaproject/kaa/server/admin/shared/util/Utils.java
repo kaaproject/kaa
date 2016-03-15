@@ -18,6 +18,9 @@ package org.kaaproject.kaa.server.admin.shared.util;
 
 public class Utils {
 
+    private Utils() {
+    }
+
     public static boolean isEmpty(CharSequence cs) {
         return cs == null || cs.length() == 0;
     }

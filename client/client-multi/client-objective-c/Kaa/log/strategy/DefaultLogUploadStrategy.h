@@ -17,6 +17,9 @@
 #import <Foundation/Foundation.h>
 #import "LogUploadStrategy.h"
 
+/**
+ * Default implementation of log upload strategy.
+ */
 @interface DefaultLogUploadStrategy : NSObject <LogUploadStrategy>
 
 @property (nonatomic) int32_t timeout;

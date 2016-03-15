@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.logs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
@@ -30,10 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class DefaultLogAppenderService implements LogAppenderService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogAppenderService.class);
 
     @Autowired
@@ -77,7 +77,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
                 LogAppender logAppender = logAppenderResolver.getAppender(appender);
                 logAppenders.add(logAppender);
             } catch (Exception e) {
-                LOG.warn("Can't initialize log appender [{}]", appender);
+                LOG.warn("Can't initialize log appender [{}], exception catched: {}", appender, e);
                 continue;
             }
         }
