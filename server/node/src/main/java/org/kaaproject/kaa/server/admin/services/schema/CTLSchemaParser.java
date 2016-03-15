@@ -16,12 +16,22 @@
 
 package org.kaaproject.kaa.server.admin.services.schema;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.avro.Schema;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -31,13 +41,6 @@ import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This class is used to parse and validate CTL schemas on save.
@@ -50,6 +53,18 @@ import java.util.Set;
  * @see #validate(CTLSchemaDto)
  */
 public class CTLSchemaParser {
+
+    private static final String VERSION = "version";
+
+    private static final String NAME = "name";
+
+    private static final String NAMESPACE = "namespace";
+
+    private static final String TYPE = "type";
+
+    private static final String FQN = "fqn";
+
+    private static final String DEPENDENCIES = "dependencies";
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(CTLSchemaParser.class);
@@ -71,39 +86,39 @@ public class CTLSchemaParser {
         
         ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
 
-        if (!object.has("type") || !object.get("type").isTextual() || !object.get("type").getTextValue().equals("record")) {
+        if (!object.has(TYPE) || !object.get(TYPE).isTextual() || !object.get(TYPE).getTextValue().equals("record")) {
             throw new IllegalArgumentException("The data provided is not a record!");
         }
 
-        if (!object.has("namespace") || !object.get("namespace").isTextual()) {
+        if (!object.has(NAMESPACE) || !object.get(NAMESPACE).isTextual()) {
             throw new IllegalArgumentException("No namespace specified!");
-        } else if (!object.has("name") || !object.get("name").isTextual()) {
+        } else if (!object.has(NAME) || !object.get(NAME).isTextual()) {
             throw new IllegalArgumentException("No name specified!");
         } else {
-            fqn = object.get("namespace").getTextValue() + "." + object.get("name").getTextValue();
+            fqn = object.get(NAMESPACE).getTextValue() + "." + object.get(NAME).getTextValue();
         }
         metaInfo = new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId);
         schema.setMetaInfo(metaInfo);
 
-        if (!object.has("version") || !object.get("version").isInt()) {
-            object.put("version", 1);
+        if (!object.has(VERSION) || !object.get(VERSION).isInt()) {
+            object.put(VERSION, 1);
         } 
-        schema.setVersion(object.get("version").asInt());
+        schema.setVersion(object.get(VERSION).asInt());
 
         Set<CTLSchemaDto> dependencies = new HashSet<>();
         List<FqnVersion> missingDependencies = new ArrayList<>();
-        if (!object.has("dependencies")) {
+        if (!object.has(DEPENDENCIES)) {
             schema.setDependencySet(dependencies);
-        } else if (!object.get("dependencies").isArray()) {
+        } else if (!object.get(DEPENDENCIES).isArray()) {
             throw new IllegalArgumentException("Illegal dependencies format!");
         } else {
-            for (JsonNode child : object.get("dependencies")) {
-                if (!child.isObject() || !child.has("fqn") || !child.get("fqn").isTextual() || !child.has("version")
-                        || !child.get("version").isInt()) {
+            for (JsonNode child : object.get(DEPENDENCIES)) {
+                if (!child.isObject() || !child.has(FQN) || !child.get(FQN).isTextual() || !child.has(VERSION)
+                        || !child.get(VERSION).isInt()) {
                     throw new IllegalArgumentException("Illegal dependency format!");
                 } else {
-                    String dependencyFqn = child.get("fqn").asText();
-                    int dependencyVersion = child.get("version").asInt();
+                    String dependencyFqn = child.get(FQN).asText();
+                    int dependencyVersion = child.get(VERSION).asInt();
                     
                     CTLSchemaDto dependency = controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(dependencyFqn, dependencyVersion, tenantId, applicationId);
                     if (dependency != null) {
@@ -163,5 +178,35 @@ public class CTLSchemaParser {
         } catch (Exception cause) {
             LOG.error("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): ", cause);
             throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());        }
+    }
+    
+    /**
+     * Parses the given string CTL schema along with its dependencies as an
+     * {@link org.apache.avro.Schema Avro schema}.
+     *
+     * @param schema
+     *            A string CTL schema to parse
+     *
+     * @return A parsed CTL schema as an Avro schema
+     *
+     * @throws Exception
+     *             - if the given CTL schema is invalid and thus cannot be
+     *             parsed.
+     */    
+    public static Schema parseStringCtlSchema(String avroSchema) throws Exception {
+        Schema.Parser parser = new Schema.Parser();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(avroSchema);
+        JsonNode dependenciesNode = node.get(DEPENDENCIES);
+        if (dependenciesNode != null && dependenciesNode.isArray()) {
+            Map<String,Schema> types = new HashMap<>();
+            for (int i=0;i<dependenciesNode.size();i++) {
+                JsonNode dependencyNode = dependenciesNode.get(i);
+                Fqn fqn = new Fqn(dependencyNode.get(FQN).asText());
+                types.put(fqn.getFqnString(), Schema.createRecord(fqn.getName(), null, fqn.getNamespace(), false));
+            }
+            parser.addTypes(types);
+        }
+        return parser.parse(avroSchema);
     }
 }
