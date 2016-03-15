@@ -184,7 +184,7 @@ public class CTLSchemaParser {
      * Parses the given string CTL schema along with its dependencies as an
      * {@link org.apache.avro.Schema Avro schema}.
      *
-     * @param schema
+     * @param avroSchema
      *            A string CTL schema to parse
      *
      * @return A parsed CTL schema as an Avro schema

@@ -25,9 +25,8 @@ import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
 
 /**
- * The interface ProfileService is used to model profile service.
- * Profile service is responsible for various profile actions:
- * get, register, update
+ * The interface ProfileService is used to model profile service. Profile
+ * service is responsible for various profile actions: get, register, update
  * 
  * @author ashvayka
  */
@@ -36,7 +35,8 @@ public interface ProfileService {
     /**
      * Gets the profile.
      *
-     * @param endpointKey the endpoint key
+     * @param endpointKey
+     *            the endpoint key
      * @return the profile
      */
     EndpointProfileDto getProfile(EndpointObjectHash endpointKey);
@@ -44,7 +44,10 @@ public interface ProfileService {
     /**
      * Update profile.
      *
-     * @param profile the profile
+     * @param profile
+     *            the profile
+     * @param mergeFunction
+     *            the merge function
      * @return the updated endpoint profile dto
      */
     EndpointProfileDto updateProfile(EndpointProfileDto profile, BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction);
@@ -52,7 +55,8 @@ public interface ProfileService {
     /**
      * Register profile.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the endpoint profile dto
      */
     EndpointProfileDto registerProfile(RegisterProfileRequest request);
@@ -60,7 +64,8 @@ public interface ProfileService {
     /**
      * Update profile.
      *
-     * @param requst the requst
+     * @param requst
+     *            the requst
      * @return the endpoint profile dto
      */
     EndpointProfileDto updateProfile(UpdateProfileRequest requst);
