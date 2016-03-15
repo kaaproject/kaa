@@ -162,6 +162,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 
 # Kaa include directories
 set(KAA_INCLUDE_DIRS
+        ${KAA_INCLUDE_PATHS}         # Provided by platform cmake
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
@@ -171,6 +172,7 @@ set(KAA_INCLUDE_DIRS
 set(KAA_BUILD_STATIC kaac_s)
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
 target_include_directories(kaac_o PUBLIC ${KAA_INCLUDE_DIRS})
+
 add_library(${KAA_BUILD_STATIC} STATIC ${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
 target_link_libraries(${KAA_BUILD_STATIC} PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 target_include_directories(${KAA_BUILD_STATIC} PUBLIC ${KAA_INCLUDE_DIRS})
