@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-# Exist immediately if error occurs
+# Exits immediately if error occurs
 set -e
 
 RUN_DIR=`pwd`
@@ -133,20 +133,17 @@ function run_rats {
 }
 
 function run_analysis {
-	check_installed_software
+    check_installed_software
 
-    if [[ VALGRIND_INSTALLED -eq 1 ]]
-    then
+    if [[ VALGRIND_INSTALLED -eq 1 ]]; then
         run_valgrind
     fi
 
-    if [[ CPPCHECK_INTSALLED -eq 1 ]]
-    then
+    if [[ CPPCHECK_INTSALLED -eq 1 ]]; then
         run_cppcheck
     fi
 
-    if [[ RATS_INSTALLED -eq 1 ]]
-	then
+    if [[ RATS_INSTALLED -eq 1 ]]; then
         run_rats
     fi
 }
