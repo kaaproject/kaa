@@ -1,0 +1,19 @@
+language: python
+python: "3.4"
+sudo: required
+dist: trusty
+install:
+  - bash <(curl -sS https://nixos.org/nix/install)
+  - source $HOME/.nix-profile/etc/profile.d/nix.sh
+
+  - sudo mkdir /etc/nix
+  - sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'
+
+  - cd client/client-multi/client-c
+  - travis_wait 25 nix-shell -Q --arg cc3200Support false --pure --run true
+  - cd ../../..
+
+script:
+  - cd client/client-multi/client-c
+  - nix-shell --arg cc3200Support false --pure --run "make"
+  - nix-shell --arg cc3200Support false --pure --run "./build.sh test"

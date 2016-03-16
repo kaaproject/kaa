@@ -83,6 +83,7 @@ in with self; with pkgs; {
     ] ++ lib.optional testSupport [
       cppcheck
       valgrind
+      python
     ] ++ lib.optional esp8266Support [
       gcc-xtensa-lx106
       esp8266-rtos-sdk
