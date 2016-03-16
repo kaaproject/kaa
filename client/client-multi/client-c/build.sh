@@ -55,7 +55,7 @@ execute_tests() {
 }
 
 check_installed_software() {
-    if [ "$(rats -h)" = RATS* ]
+    if hash rats 2>/dev/null
     then
         RATS_INSTALLED=1
     else
@@ -63,7 +63,7 @@ check_installed_software() {
         RATS_INSTALLED=0
     fi
 
-    if [ "$(cppcheck --version)" = Cppcheck* ]
+    if hash cppcheck 2>/dev/null
     then
         CPPCHECK_INSTALLED=1
     else
@@ -71,7 +71,8 @@ check_installed_software() {
         echo "cppcheck not installed, skipping..."
     fi
 
-    if [ "$(valgrind --version)" = valgrind* ]
+
+    if hash valgrind 2>/dev/null
     then
         VALGRIND_INSTALLED=1
     else
