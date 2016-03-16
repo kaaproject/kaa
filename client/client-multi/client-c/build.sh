@@ -43,42 +43,19 @@ prepare_build() {
 }
 
 build() {
-    cd build && make && cd ..
+    cd build
+    make
+    cd ..
 }
 
 execute_tests() {
     cd build
-    FAILUTE_COUNTER=0
-    FAILED_TESTS=""
-    for test in test_*
-    do
-        echo -e "Starting test $test"
-        ./$test
-        TEST_RESULT=$?
-        echo -e "Test $test finished"
-        if [ $TEST_RESULT -ne 0 ]
-        then
-            FAILUTE_COUNTER=$((FAILUTE_COUNTER + 1))
-            FAILED_TESTS="$test\n$FAILED_TESTS"
-        fi
-    done
-    if [ -f ../gcovr ]
-    then
-        chmod +x ../gcovr
-        ../gcovr -d -x -f ".*" -e ".*(test|avro|gen).*" -o ./gcovr-report.xml -v > ./gcovr.log
-    fi
-    if [ "$FAILUTE_COUNTER" -ne "0" ]
-    then
-        echo -e "\n$FAILUTE_COUNTER TEST(S) FAILED:\n$FAILED_TESTS"
-    else
-        echo -e "\nTESTS WERE SUCCESSFULLY PASSED\n"
-    fi
+    ctest --output-on-failure .
     cd ..
-
 }
 
 check_installed_software() {
-    if [ "$(rats -h)" = RATS* ]
+    if hash rats 2>/dev/null
     then
         RATS_INSTALLED=1
     else
@@ -86,7 +63,7 @@ check_installed_software() {
         RATS_INSTALLED=0
     fi
 
-    if [ "$(cppcheck --version)" = Cppcheck* ]
+    if hash cppcheck 2>/dev/null
     then
         CPPCHECK_INSTALLED=1
     else
@@ -94,7 +71,8 @@ check_installed_software() {
         echo "cppcheck not installed, skipping..."
     fi
 
-    if [ "$(valgrind --version)" = valgrind* ]
+
+    if hash valgrind 2>/dev/null
     then
         VALGRIND_INSTALLED=1
     else
@@ -110,11 +88,16 @@ run_valgrind() {
     then
         mkdir valgrindReports
     fi
-    for test in test_*
-    do
-        valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v --log-file=./valgrind.log --xml=yes --xml-file=./valgrindReports/$test.memreport.xml ./$test
-        chmod 0666 ./valgrindReports/$test.memreport.xml
-    done
+
+    # CMake supports running memory checker (like valgrind) only as a step
+    # of CDash.
+    # Calling valgrind externally in relation to CTest is viable workaround.
+    # Possibly, this will be moved someday into the Kaa build system in a form
+    # of a cmake script.
+    valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v \
+    --log-file=valgrind.log --xml=yes --xml-file=valgrindReports/%p.memreport.xml \
+    ctest --output-on-failure
+
     cd ..
     echo "Valgrind analysis finished."
 }
