@@ -19,7 +19,7 @@ enable_testing()
 find_package(CUnit)
 find_package(OpenSSL REQUIRED)
 
-set(CUNIT_LIB_NAME "")
+set(CUNIT_LIB_NAME)
 
 if(CUNIT_FOUND)
     set(CUNIT_LIB_NAME ${CUNIT_LIBRARIES})
@@ -48,33 +48,31 @@ function(kaa_add_unit_test)
             ${ARGN}
     )
 
-    if (DEFINED UNIT_TEST_NAME AND DEFINED UNIT_TEST_SOURCES)
-        message("-----------------------------------------------")
-        message("	Test added: ${UNIT_TEST_NAME}")
-        message("	Test sources: ${UNIT_TEST_SOURCES}")
-
-        add_executable(${UNIT_TEST_NAME} ${UNIT_TEST_SOURCES})
-        add_test(NAME ${UNIT_TEST_NAME} COMMAND ${UNIT_TEST_NAME})
-        target_link_libraries(${UNIT_TEST_NAME} CppUTest)
-        target_link_libraries(${UNIT_TEST_NAME} CppUTestExt)
-    else ()
+    if (NOT DEFINED UNIT_TEST_NAME AND DEFINED UNIT_TEST_SOURCES)
         message(FATAL_ERROR "Test sources and name must be defined!")
-    endif ()
+    endif()
 
-    if (UNIT_TEST_DEPENDS)
+    message("-----------------------------------------------")
+    message("	Test added: ${UNIT_TEST_NAME}")
+    message("	Test sources: ${UNIT_TEST_SOURCES}")
+
+    add_executable(${UNIT_TEST_NAME} ${UNIT_TEST_SOURCES})
+    add_test(NAME ${UNIT_TEST_NAME} COMMAND ${UNIT_TEST_NAME})
+    target_link_libraries(${UNIT_TEST_NAME} ${CUNIT_LIB_NAME})
+
+    if(UNIT_TEST_DEPENDS)
         message("	Test dependencies: ${UNIT_TEST_DEPENDS}")
         target_link_libraries(${UNIT_TEST_NAME} ${UNIT_TEST_DEPENDS})
-    endif ()
+    endif()
 
-    if (UNIT_TEST_INC_DIRS)
+    if(UNIT_TEST_INC_DIRS)
         message("	Test includes: ${UNIT_TEST_INC_DIRS}")
         target_include_directories(
                 ${UNIT_TEST_NAME}
                 PRIVATE
                 ${UNIT_TEST_INC_DIRS})
-    endif ()
+    endif()
 
-    target_include_directories(${UNIT_TEST_NAME} PRIVATE ${CPPUTEST_INCLUDE_DIRS})
     message("-----------------------------------------------")
 endfunction()
 
@@ -89,55 +87,55 @@ kaa_add_unit_test(NAME test_ext_log_storage_memory
         test/platform-impl/test_ext_log_storage_memory.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_ext_log_upload_strategy_by_volume
         SOURCES
         test/platform-impl/test_ext_log_upload_strategies.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_user_extension
         SOURCES
         test/test_kaa_user.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_meta_extension
         SOURCES
         test/test_meta_extension.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_platform_utils
         SOURCES
         test/test_platform_utils.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_context
         SOURCES
         test/test_kaa_context.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_event
         SOURCES
         test/test_kaa_event.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_status
         SOURCES
         test/test_kaa_status.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_profile
         SOURCES
@@ -145,14 +143,14 @@ kaa_add_unit_test(NAME test_profile
         test/kaa_test_external.c
         ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_common
         SOURCES
         test/test_kaa_common.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_log
         SOURCES
@@ -172,57 +170,64 @@ kaa_add_unit_test(NAME test_log
         ${KAA_SRC_FOLDER}/kaa_status.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_platform_protocol
         SOURCES
         test/test_platform_protocol.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_list
         SOURCES
         test/collections/test_kaa_list.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_kaatcp_parser
         SOURCES
         test/kaatcp/kaatcp_parser_test.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_kaatcp_request
         SOURCES
         test/kaatcp/kaatcp_request_test.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_kaa_tcp_channel_bootstrap
         SOURCES
         test/kaa_tcp_channel/test_kaa_tcp_channel_bootstrap.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_kaa_configuration_manager
         SOURCES
         test/test_kaa_configuration.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
+
+kaa_add_unit_test(NAME test_kaa_common_schema
+        SOURCES
+        test/test_kaa_common_schema.c
+        test/kaa_test_external.c
+        DEPENDS
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_kaa_notification_manager
         SOURCES
         test/test_kaa_notification.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
 
 kaa_add_unit_test(NAME test_kaa_reallocation
         SOURCES
         test/utilities/test_kaa_reallocation.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+        kaac ${OPENSSL_LIBRARIES})
