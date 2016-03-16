@@ -16,7 +16,7 @@
 #
 
 
-function help {
+help() {
     echo "Choose one of the following: {build|install|test|clean}"
     exit 1
 }
@@ -32,16 +32,16 @@ then
     chmod +x $RUN_DIR/gcovr
 fi
 
-function measure_coverage {
+measure_coverage() {
     echo "Collecting coverage metrics..."
     cd $RUN_DIR && ./gcovr -d -x -f "($RUN_DIR).*" -e ".*(test|kaa/gen).*" -o $RUN_DIR/gcovr-report.xml -v > $RUN_DIR/gcovr.log   
 }
 
-function run_tests {
+run_tests() {
     cd build && make -j4 && TEST_BUILD_FAILED=0 && ./kaatest && TEST_RESULT=0 # --report_level=detailed --report_format=xml 2>$RUN_DIR/unittest_result.xml && TEST_RESULT=0
 }
 
-function test_cleanup {
+test_cleanup() {
     echo "Cleaning up..."
     cd $TEST_DIR/build && make clean
     echo "Cleanup done." 
@@ -75,12 +75,12 @@ case "$cmd" in
     cd $TEST_DIR
     mkdir -p build; cd build; cmake ..; cd ..
     run_tests
-    if [[ $TEST_BUILD_FAILED -eq 0 ]]
+    if [ $TEST_BUILD_FAILED -eq 0 ]
     then
         measure_coverage  
     fi
     test_cleanup
-    if [[ $TEST_RESULT -ne 0 ]]
+    if [ $TEST_RESULT -ne 0 ]
     then
         echo "Kaa C++ SDK unittests have failed!"
         exit $TEST_RESULT
