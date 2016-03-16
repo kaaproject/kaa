@@ -20,7 +20,7 @@ set -e
 
 RUN_DIR=`pwd`
 
-function help {
+help() {
     echo "Choose one of the following: {build|install|test|clean}"
     exit 1
 }
@@ -34,18 +34,19 @@ DEBUG_ENABLED=1
 UNITTESTS_COMPILE=0
 MAX_LOG_LEVEL=6
 COLLECT_COVERAGE=0
-function prepare_build {
+
+prepare_build() {
     mkdir -p build;
     cd build;
     cmake -DKAA_DEBUG_ENABLED=$DEBUG_ENABLED -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE ..;
     cd ..
 }
 
-function build {
+build() {
     cd build && make && cd ..
 }
 
-function execute_tests {
+execute_tests() {
     cd build
     FAILUTE_COUNTER=0
     FAILED_TESTS=""
@@ -61,7 +62,7 @@ function execute_tests {
             FAILED_TESTS="$test\n$FAILED_TESTS"
         fi
     done
-    if [[ -f ../gcovr ]]
+    if [ -f ../gcovr ]
     then
         chmod +x ../gcovr
         ../gcovr -d -x -f ".*" -e ".*(test|avro|gen).*" -o ./gcovr-report.xml -v > ./gcovr.log
@@ -76,8 +77,8 @@ function execute_tests {
 
 }
 
-function check_installed_software {
-    if [[ "$(rats -h)" = RATS* ]]
+check_installed_software() {
+    if [ "$(rats -h)" = RATS* ]
     then
         RATS_INSTALLED=1
     else
@@ -85,15 +86,15 @@ function check_installed_software {
         RATS_INSTALLED=0
     fi
 
-    if [[ "$(cppcheck --version)" = Cppcheck* ]]
+    if [ "$(cppcheck --version)" = Cppcheck* ]
     then
-        CPPCHECK_INTSALLED=1
+        CPPCHECK_INSTALLED=1
     else
         CPPCHECK_INSTALLED=0
         echo "cppcheck not installed, skipping..."
     fi
 
-    if [[ "$(valgrind --version)" = valgrind* ]]
+    if [ "$(valgrind --version)" = valgrind* ]
     then
         VALGRIND_INSTALLED=1
     else
@@ -102,10 +103,10 @@ function check_installed_software {
     fi
 }
 
-function run_valgrind {
+run_valgrind() {
     echo "Starting valgrind..."
     cd build
-    if [[ ! -d valgrindReports ]]
+    if [ ! -d valgrindReports ]
     then
         mkdir valgrindReports
     fi
@@ -118,7 +119,7 @@ function run_valgrind {
     echo "Valgrind analysis finished."
 }
 
-function run_cppcheck {
+run_cppcheck() {
     echo "Starting Cppcheck..."
     cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build/cppcheck_.xml > build/cppcheck.log
     sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build/cppcheck_.xml > build/cppcheck.xml
@@ -126,33 +127,33 @@ function run_cppcheck {
     echo "Cppcheck analysis finished."
 }
 
-function run_rats {
+run_rats() {
     echo "Starting RATS..."
     rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
     echo "RATS analysis finished."
 }
 
-function run_analysis {
+run_analysis() {
     check_installed_software
 
-    if [[ VALGRIND_INSTALLED -eq 1 ]]; then
+    if [ $VALGRIND_INSTALLED -eq 1 ]; then
         run_valgrind
     fi
 
-    if [[ CPPCHECK_INTSALLED -eq 1 ]]; then
+    if [ $CPPCHECK_INSTALLED -eq 1 ]; then
         run_cppcheck
     fi
 
-    if [[ RATS_INSTALLED -eq 1 ]]; then
+    if [ $RATS_INSTALLED -eq 1 ]; then
         run_rats
     fi
 }
 
-function clean {
-    if [[ -d build ]]
+clean() {
+    if [ -d build ]
     then
         cd build
-        if [[ -f Makefile ]]
+        if [ -f Makefile ]
         then
             make clean
         fi
