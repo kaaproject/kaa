@@ -34,18 +34,8 @@ public class KaaRestTemplate extends RestTemplate {
 
     private int index;
 
-    private void checkArrays(String[] hosts, int[] ports) {
-        if ((hosts.length != ports.length) && (hosts != null)) {
-            throw new IllegalArgumentException("Length of arrays of hosts and ports must be the same length and not null");
-        } else {
-            this.hosts = hosts;
-            this.ports = ports;
-            setNewRequestFactory(new Random().nextInt(hosts.length));
-        }
-    }
-
     public KaaRestTemplate(String host, int port) {
-        checkArrays(new String[] { host }, new int[] { port });
+        checkHostPortLists(new String[] { host }, new int[] { port });
     }
 
     /**
@@ -72,7 +62,18 @@ public class KaaRestTemplate extends RestTemplate {
                 ports[i] = DEFAULT_PORT;
             }
         }
-        checkArrays(hosts, ports);
+        checkHostPortLists(hosts, ports);
+    }
+
+    private void checkHostPortLists(String[] hosts, int[] ports) {
+        if ((hosts.length != ports.length) && (hosts != null)) {
+            throw new IllegalArgumentException("Length of arrays of hosts and ports must be the same length and not null");
+        } else {
+            this.hosts = hosts;
+            this.ports = ports;
+            index = new Random().nextInt(hosts.length);
+            setNewRequestFactory(index);
+        }
     }
 
     public String getUrl() {
@@ -98,7 +99,7 @@ public class KaaRestTemplate extends RestTemplate {
                 logger.info("Connect to ({}:{}) failed", getCurHost(), getCurPort(), ex);
                 boolean isRequestFactorySet = false;
                 while (!isRequestFactorySet) {
-                    if (index != hosts.length) {
+                    if (index < hosts.length-1) {
                         index++;
                     } else {
                         index = 0;
@@ -144,9 +145,6 @@ public class KaaRestTemplate extends RestTemplate {
     }
 
     private String getCurHost() {
-        if (index >= hosts.length) {
-            index=0;
-        }
         return hosts[index];
     }
 
