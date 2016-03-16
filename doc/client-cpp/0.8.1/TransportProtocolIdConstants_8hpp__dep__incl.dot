@@ -1,0 +1,23 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_1/client/client-multi/client-cpp/kaa/channel/TransportProtocolIdConstants.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/channel/TransportProtocolIdConstants.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/channel/impl/AbstractHttpChannel.hpp",height=0.2,width=0.4,color="black",URL="$AbstractHttpChannel_8hpp.html"];
+  Node2 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/channel/impl/DefaultBootstrapChannel.hpp",height=0.2,width=0.4,color="black",URL="$DefaultBootstrapChannel_8hpp.html"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/KaaClient.hpp",height=0.2,width=0.4,color="black",URL="$KaaClient_8hpp.html"];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/channel/impl/DefaultOperationHttpChannel.hpp",height=0.2,width=0.4,color="black",URL="$DefaultOperationHttpChannel_8hpp.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/channel/impl/DefaultOperationLongPoll\lChannel.hpp",height=0.2,width=0.4,color="black",URL="$DefaultOperationLongPollChannel_8hpp.html"];
+  Node6 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_1/client\l/client-multi/client-cpp/kaa\l/channel/impl/DefaultOperationTcpChannel.hpp",height=0.2,width=0.4,color="black",URL="$DefaultOperationTcpChannel_8hpp.html"];
+  Node7 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

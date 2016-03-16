@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>EndpointRegistrationManager Protocol Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Kaa client Objective-C SDK </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">CyberVision</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/attachEndpointWithAccessToken:delegate:">- attachEndpointWithAccessToken:delegate:</option>
+		
+		<option value="//api/name/attachUserWithId:userAccessToken:delegate:">- attachUserWithId:userAccessToken:delegate:</option>
+		
+		<option value="//api/name/attachUserWithVerifierToken:userExternalId:userAccessToken:delegate:">- attachUserWithVerifierToken:userExternalId:userAccessToken:delegate:</option>
+		
+		<option value="//api/name/detachEndpointWithKeyHash:delegate:">- detachEndpointWithKeyHash:delegate:</option>
+		
+		<option value="//api/name/isAttachedToUser">- isAttachedToUser</option>
+		
+		<option value="//api/name/setAttachDelegate:">- setAttachDelegate:</option>
+		
+		<option value="//api/name/setDetachDelegate:">- setDetachDelegate:</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">EndpointRegistrationManager Protocol Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Declared in</th>
+	<td>EndpointRegistrationManager.h</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>  Module that manages endpoint-initiated attaching and detaching endpoints to/from user.</p>
+
+<p>  To assign endpoints to user current endpoint has to be already attached,
+  otherwise attach/detach operations will fail.</p>
+
+<p>  Current endpoint can be attached to user in two ways:<br>
+  1. By calling -attachUser.<br>
+  2. Attached from another endpoint.</p>
+
+<p>  EndpointKeyHash for endpoint can be received with AttachEndpoint operation
+  provided from Operations server.</p>
+
+<p>  If current endpoint is assumed to be attached or detached by another endpoint,
+  specific AttachEndpointToUserDelegate and DetachEndpointFromUserDelegate
+  may be specified to receive notification about such event.</p>
+
+<p>  Manager uses specific UserTransport to communicate with Operations
+  server in scope of basic functionality and ProfileTransport when its
+  access token is changed.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/attachEndpointWithAccessToken:delegate:" title="attachEndpointWithAccessToken:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/attachEndpointWithAccessToken:delegate:">&ndash;&nbsp;attachEndpointWithAccessToken:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Updates with new endpoint attach request.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)attachEndpointWithAccessToken:(EndpointAccessToken *)<em>accessToken</em> delegate:(id&lt;OnAttachEndpointOperationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>accessToken</code></th>
+						<td><p>Access token of the attaching endpoint</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to notify about result of the endpoint attaching</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Updates with new endpoint attach request.</p>
+
+<p>OnAttachEndpointOperationDelegate is populated with EndpointKeyHash of an attached endpoint.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/detachEndpointWithKeyHash:delegate:" title="detachEndpointWithKeyHash:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/detachEndpointWithKeyHash:delegate:">&ndash;&nbsp;detachEndpointWithKeyHash:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Updates with new endpoint detach request</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)detachEndpointWithKeyHash:(EndpointKeyHash *)<em>keyHash</em> delegate:(id&lt;OnDetachEndpointOperationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to notify about result of the enpoint detaching</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>endpointKeyHash</code></th>
+						<td><p>Key hash of the detaching endpoint</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Updates with new endpoint detach request</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/attachUserWithId:userAccessToken:delegate:" title="attachUserWithId:userAccessToken:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/attachUserWithId:userAccessToken:delegate:">&ndash;&nbsp;attachUserWithId:userAccessToken:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates user attach request using default verifier. Default verifier is selected during SDK generation.
+If there was no default verifier selected this method will throw runtime exception.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)attachUserWithId:(NSString *)<em>userExternalId</em> userAccessToken:(NSString *)<em>token</em> delegate:(id&lt;UserAttachDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates user attach request using default verifier. Default verifier is selected during SDK generation.
+If there was no default verifier selected this method will throw runtime exception.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/attachUserWithVerifierToken:userExternalId:userAccessToken:delegate:" title="attachUserWithVerifierToken:userExternalId:userAccessToken:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/attachUserWithVerifierToken:userExternalId:userAccessToken:delegate:">&ndash;&nbsp;attachUserWithVerifierToken:userExternalId:userAccessToken:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates user attach request using specified verifier.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)attachUserWithVerifierToken:(NSString *)<em>userVerifierToken</em> userExternalId:(NSString *)<em>externalId</em> userAccessToken:(NSString *)<em>token</em> delegate:(id&lt;UserAttachDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates user attach request using specified verifier.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/isAttachedToUser" title="isAttachedToUser"></a>
+	<h3 class="method-title"><code><a href="#//api/name/isAttachedToUser">&ndash;&nbsp;isAttachedToUser</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Checks if current endpoint is attached to user.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (BOOL)isAttachedToUser</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>YES if current endpoint is attached to any user, NO otherwise.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Checks if current endpoint is attached to user.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setAttachDelegate:" title="setAttachDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setAttachDelegate:">&ndash;&nbsp;setAttachDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets delegate for notifications when current endpoint is attached to user</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setAttachDelegate:(id&lt;AttachEndpointToUserDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets delegate for notifications when current endpoint is attached to user</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setDetachDelegate:" title="setDetachDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setDetachDelegate:">&ndash;&nbsp;setDetachDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets delegate for notifications when current endpoint is detached from user</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setDetachDelegate:(id&lt;DetachEndpointFromUserDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets delegate for notifications when current endpoint is detached from user</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">EndpointRegistrationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 CyberVision. All rights reserved. Updated: 2016-03-16</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>
