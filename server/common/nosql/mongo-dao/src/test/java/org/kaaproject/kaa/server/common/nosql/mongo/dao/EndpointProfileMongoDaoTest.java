@@ -199,7 +199,6 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         Assert.assertNull(endpointProfile.getEndpointKey());
         Assert.assertNull(ep.getEndpointKey());
         Assert.assertNull(ep.getEndpointUserId());
-        Assert.assertNull(ep.getServerProfile());
         Assert.assertNull(ep.getSubscriptions());
     }
 
