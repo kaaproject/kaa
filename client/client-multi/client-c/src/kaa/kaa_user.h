@@ -108,7 +108,7 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
                                                     , const kaa_attachment_status_listeners_t *listeners);
 
 /**
- * @brief .
+ * @brief Attaches external endpoint by its access token.
  *
  * @param[in]   self                     The user manager instance.
  * @param[in]   endpoint_access_token    Null-terminated string representing endpoint access token.
@@ -119,7 +119,7 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
 
 
 /**
- * @brief .
+ * @brief Detaches external endpoint by its access token.
  *
  * @param[in]   self                 The user manager instance.
  * @param[in]   endpoint_hash_key    Unique endpoint id.
