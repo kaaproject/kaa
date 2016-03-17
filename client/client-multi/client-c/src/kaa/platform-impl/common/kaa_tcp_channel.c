@@ -167,13 +167,14 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     //Check supported services, as Bootstrap channel we accept only one service which is bootstrap.
     //From other hand bootstrap can't be as service in operations service.
     bool bootstrap_found = false;
-    size_t i = 0;
-    for(;i<supported_service_count;i++) {
+
+    for (size_t i = 0; i < supported_service_count; i++) {
         if (supported_services[i] == KAA_SERVICE_BOOTSTRAP) {
             bootstrap_found = true;
             break;
         }
     }
+
     if (bootstrap_found && supported_service_count > 1) {
         //unsupported configuration
         KAA_LOG_ERROR(logger,KAA_ERR_BADPARAM,"Kaa TCP channel creating, error unsupported configuration,  "
@@ -202,10 +203,8 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     }
 
     kaa_tcp_channel->supported_service_count = supported_service_count;
-    i = 0;
-    for (; i < supported_service_count; ++i) {
-        kaa_tcp_channel->supported_services[i] = supported_services[i];
-    }
+
+	memcpy(kaa_tcp_channel->supported_services, supported_services, sizeof(kaa_service_t) * supported_service_count);
 
     /*
      * Define type of channel (bootstrap or operations)
