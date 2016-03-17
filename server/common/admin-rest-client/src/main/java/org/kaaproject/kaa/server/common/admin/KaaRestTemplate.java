@@ -2,6 +2,7 @@ package org.kaaproject.kaa.server.common.admin;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Random;
 
 import org.apache.http.HttpHost;
 import org.slf4j.Logger;
@@ -12,9 +13,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Created by Chyzhevskyi Volodymyr on 19.02.16.
- */
+
 public class KaaRestTemplate extends RestTemplate {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminClient.class);
@@ -35,27 +34,16 @@ public class KaaRestTemplate extends RestTemplate {
 
     private int index;
 
-    private KaaRestTemplate(String[] hosts, int[] ports) {
-        if ((hosts.length != ports.length) && (hosts != null)) {
-            throw new IllegalArgumentException("Length of arrays of hosts and ports must be the same length and not null");
-        } else {
-            this.hosts = hosts;
-            this.ports = ports;
-            setNewRequestFactory(0);
-        }
-    }
-
     public KaaRestTemplate(String host, int port) {
-        this(new String[] { host }, new int[] { port });
+        checkHostPortLists(new String[] { host }, new int[] { port });
     }
 
     /**
      * Initialize KaaRestTempalte using following format host1:port1,host2:port2
-     * 
+     *
      * @param hostPortList
-     * @return
      */
-    public static KaaRestTemplate build(String hostPortList) {
+    public KaaRestTemplate (String hostPortList) {
         if (hostPortList == null) {
             throw new IllegalArgumentException("String of addresses must be not null");
         }
@@ -74,7 +62,18 @@ public class KaaRestTemplate extends RestTemplate {
                 ports[i] = DEFAULT_PORT;
             }
         }
-        return new KaaRestTemplate(hosts, ports);
+        checkHostPortLists(hosts, ports);
+    }
+
+    private void checkHostPortLists(String[] hosts, int[] ports) {
+        if ((hosts.length != ports.length) && (hosts != null)) {
+            throw new IllegalArgumentException("Length of arrays of hosts and ports must be the same length and not null");
+        } else {
+            this.hosts = hosts;
+            this.ports = ports;
+            index = new Random().nextInt(hosts.length);
+            setNewRequestFactory(index);
+        }
     }
 
     public String getUrl() {
@@ -97,15 +96,17 @@ public class KaaRestTemplate extends RestTemplate {
             try {
                 return super.doExecute(url, method, requestCallback, responseExtractor);
             } catch (Exception ex) {
+                logger.info("Connect to ({}:{}) failed", getCurHost(), getCurPort(), ex);
                 boolean isRequestFactorySet = false;
                 while (!isRequestFactorySet) {
-                    if (index != hosts.length) {
+                    if (index < hosts.length-1) {
                         index++;
                     } else {
                         index = 0;
                     }
-
+                    logger.info("Trying connect to ({}:{})", getCurHost(), getCurPort(), ex);
                     if (maxRetry <= 0) {
+                        logger.error("Failed to connect to ({}:{})", getCurHost(), getCurPort(), ex);
                         throw new ResourceAccessException(
                                 "I/O error on " + method.name() + " request for \"" + url + "\":" + ex.getMessage(), new IOException(ex));
                     } else {

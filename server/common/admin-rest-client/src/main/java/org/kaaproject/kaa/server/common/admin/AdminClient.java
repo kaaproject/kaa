@@ -104,8 +104,8 @@ public class AdminClient {
         restTemplate = new KaaRestTemplate(host, port);
     }
 
-    public AdminClient(String hosts) {
-        restTemplate = KaaRestTemplate.build(hosts);
+    public AdminClient(String hostPortList) {
+        restTemplate = new KaaRestTemplate(hostPortList);
     }
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
