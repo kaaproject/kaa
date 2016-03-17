@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(SchemaCreatorImpl.class);
 

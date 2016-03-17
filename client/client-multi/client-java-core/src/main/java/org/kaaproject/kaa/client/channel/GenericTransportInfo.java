@@ -60,7 +60,9 @@ public class GenericTransportInfo implements TransportConnectionInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
         if (!(o instanceof GenericTransportInfo)) {
             return false;
         }

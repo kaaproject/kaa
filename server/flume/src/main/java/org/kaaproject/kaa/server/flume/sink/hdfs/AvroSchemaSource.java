@@ -76,8 +76,7 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
                     CONFIG_KAA_REST_PASSWORD + " must be specified for " + SCHEMA_SOURCE_REST + " avro schema source");
             
             initHttpRestClient();
-        }
-        else {
+        } else {
             schemaLocalRoot = context.getString(CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_LOCAL_ROOT);
 
             Preconditions.checkArgument(schemaLocalRoot != null && schemaLocalRoot.length() > 0,
@@ -118,8 +117,7 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
                 schemaString = logSchemaDto.getSchema();
                 EntityUtils.consume(entity);
             }
-        }
-        else {
+        } else {
             String applicationToken = key.getApplicationToken();
             int version = key.getSchemaVersion();
             String separator = System.getProperty("file.separator");

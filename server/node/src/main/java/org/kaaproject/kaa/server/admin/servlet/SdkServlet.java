@@ -38,8 +38,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 public class SdkServlet extends HttpServlet implements Servlet, ServletParams {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(SdkServlet.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(SdkServlet.class);
 
     private static final long serialVersionUID = 4151191758109799417L;
 
@@ -67,9 +67,8 @@ public class SdkServlet extends HttpServlet implements Servlet, ServletParams {
             response.setBufferSize(BUFFER);
             response.getOutputStream().write(sdkFile.getFileData());
             response.flushBuffer();
-        }
-        catch (Exception e) {
-            logger.error("Unexpected error in SdkServlet.doGet: ", e);
+        } catch (Exception e) {
+            LOG.error("Unexpected error in SdkServlet.doGet: ", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get Sdk file: " + e.getMessage());
         }
     }

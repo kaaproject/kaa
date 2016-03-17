@@ -124,8 +124,7 @@ public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P ex
                     goTo(place.getPreviousPlace());
                 }
             }));
-        }
-        else {
+        } else {
             detailsView.setBackEnabled(false);
             detailsView.setCancelEnabled(false);
         }
@@ -135,8 +134,7 @@ public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P ex
         if (create) {
             entity = newEntity();
             onEntityRetrieved();
-        }
-        else {
+        } else {
             loadEntity();
         }
     }

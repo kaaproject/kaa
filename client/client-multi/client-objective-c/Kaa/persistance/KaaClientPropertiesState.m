@@ -40,6 +40,7 @@
 #define PROPERTIES_HASH         @"properties.hash"
 #define TOPIC_LIST              @"topic.list"
 #define TOPIC_LIST_HASH         @"topic.list.hash"
+#define NEED_PROFILE_RESYNC     @"need.profile.resync"
 
 @interface KaaClientPropertiesState ()
 
@@ -77,6 +78,7 @@
 @synthesize eventSequenceNumber = _eventSequenceNumber;
 @synthesize isAttachedToUser = _isAttachedToUser;
 @synthesize topicListHash = _topicListHash;
+@synthesize needProfileResync = _needProfileResync;
 
 - (instancetype)initWithBase64:(id<KAABase64>)base64 clientProperties:(KaaClientProperties *)properties {
     self = [super init];
@@ -130,7 +132,8 @@
                 if (eventSeqNumStr) {
                     int eventSeqNum = [eventSeqNumStr intValue];
                     if (eventSeqNum == 0) {
-                        DDLogError(@"%@ Error occurred parsing event sequence number. Can not parse %@ to integer", TAG, eventSeqNumStr);
+                        DDLogError(@"%@ Error occurred parsing event sequence number. Can not parse %@ to int",
+                                   TAG, eventSeqNumStr);
                     }
                     self.eventSequenceNumber = eventSeqNum;
                 }
@@ -171,6 +174,15 @@
 
 - (void)setIsRegistred:(BOOL)isRegistred {
     [self setStateBooleanValue:isRegistred forPropertyKey:IS_REGISTERED];
+}
+
+- (BOOL)needProfileResync {
+    NSString *value = self.state[NEED_PROFILE_RESYNC];
+    return value ? [value boolValue] : NO;
+}
+
+- (void)setNeedProfileResync:(BOOL)needProfileResync {
+    [self setStateBooleanValue:needProfileResync forPropertyKey:NEED_PROFILE_RESYNC];
 }
 
 - (void)persist {
@@ -377,6 +389,7 @@
 
 - (void)clean {
     [self setIsRegistred:NO];
+    [self setNeedProfileResync:NO];
     [self deleteFileAtPath:self.stateFileLocation];
     [self deleteFileAtPath:[NSString stringWithFormat:@"%@_bckp", self.stateFileLocation]];
     self.hasUpdate = YES;
@@ -384,7 +397,8 @@
 
 - (void)setPropertiesHash:(NSData *)hash {
     NSData *encodedHash = [self.base64 encodeBase64:hash];
-    [self setStateStringValue:[[NSString alloc] initWithData:encodedHash encoding:NSUTF8StringEncoding] forPropertyKey:PROPERTIES_HASH];
+    NSString *encodedStr = [[NSString alloc] initWithData:encodedHash encoding:NSUTF8StringEncoding];
+    [self setStateStringValue:encodedStr forPropertyKey:PROPERTIES_HASH];
 }
 
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties {

@@ -302,59 +302,81 @@ public final class ClientSync {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ClientSync other = (ClientSync) obj;
         if (bootstrapSync == null) {
-            if (other.bootstrapSync != null)
+            if (other.bootstrapSync != null) {
                 return false;
-        } else if (!bootstrapSync.equals(other.bootstrapSync))
+            }
+        } else if (!bootstrapSync.equals(other.bootstrapSync)) {
             return false;
+        }
         if (clientSyncMetaData == null) {
-            if (other.clientSyncMetaData != null)
+            if (other.clientSyncMetaData != null) {
                 return false;
-        } else if (!clientSyncMetaData.equals(other.clientSyncMetaData))
+            }
+        } else if (!clientSyncMetaData.equals(other.clientSyncMetaData)) {
             return false;
+        }
         if (configurationSync == null) {
-            if (other.configurationSync != null)
+            if (other.configurationSync != null) {
                 return false;
-        } else if (!configurationSync.equals(other.configurationSync))
+            }
+        } else if (!configurationSync.equals(other.configurationSync)) {
             return false;
+        }
         if (eventSync == null) {
-            if (other.eventSync != null)
+            if (other.eventSync != null) {
                 return false;
-        } else if (!eventSync.equals(other.eventSync))
+            }
+        } else if (!eventSync.equals(other.eventSync)) {
             return false;
-        if (forceConfigurationSync != other.forceConfigurationSync)
+        }
+        if (forceConfigurationSync != other.forceConfigurationSync) {
             return false;
-        if (forceNotificationSync != other.forceNotificationSync)
+        }
+        if (forceNotificationSync != other.forceNotificationSync) {
             return false;
+        }
         if (logSync == null) {
-            if (other.logSync != null)
+            if (other.logSync != null) {
                 return false;
-        } else if (!logSync.equals(other.logSync))
+            }
+        } else if (!logSync.equals(other.logSync)) {
             return false;
+        }
         if (notificationSync == null) {
-            if (other.notificationSync != null)
+            if (other.notificationSync != null) {
                 return false;
-        } else if (!notificationSync.equals(other.notificationSync))
+            }
+        } else if (!notificationSync.equals(other.notificationSync)) {
             return false;
+        }
         if (profileSync == null) {
-            if (other.profileSync != null)
+            if (other.profileSync != null) {
                 return false;
-        } else if (!profileSync.equals(other.profileSync))
+            }
+        } else if (!profileSync.equals(other.profileSync)) {
             return false;
-        if (requestId != other.requestId)
+        }
+        if (requestId != other.requestId) {
             return false;
+        }
         if (userSync == null) {
-            if (other.userSync != null)
+            if (other.userSync != null) {
                 return false;
-        } else if (!userSync.equals(other.userSync))
+            }
+        } else if (!userSync.equals(other.userSync)) {
             return false;
+        }
         return true;
     }
 

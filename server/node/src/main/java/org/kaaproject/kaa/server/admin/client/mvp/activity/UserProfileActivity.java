@@ -104,8 +104,7 @@ public class UserProfileActivity
             public void onSuccessImpl(ResultCode result) {
                 if (result != ResultCode.OK) {
                     detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                }
-                else {
+                } else {
                     performSave();
                 }
             }

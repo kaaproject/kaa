@@ -16,15 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +35,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
@@ -124,8 +124,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     public void testFindBodyByKeyHash() throws Exception {
         EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertFalse(found.getProfile().isEmpty());
-        Assert.assertEquals(expected.getClientProfileBody(), found.getProfile());
+        Assert.assertFalse(found.getClientSideProfile().isEmpty());
+        Assert.assertFalse(found.getServerSideProfile().isEmpty());
+        Assert.assertEquals(expected.getClientProfileBody(), found.getClientSideProfile());
+        Assert.assertEquals(expected.getServerProfileBody(), found.getServerSideProfile());
     }
 
     @Test

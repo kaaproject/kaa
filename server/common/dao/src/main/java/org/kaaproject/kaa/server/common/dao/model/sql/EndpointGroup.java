@@ -98,7 +98,6 @@ public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Ser
             this.description = dto.getDescription();
             this.createdUsername = dto.getCreatedUsername();
             this.createdTime = dto.getCreatedTime();
-            this.endpointCount = dto.getEndpointCount();
             Long appId = getLongId(dto.getApplicationId());
             this.application = appId != null ? new Application(appId) : null;
             this.topics = getTopic(dto.getTopics());
@@ -210,7 +209,6 @@ public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Ser
         dto.setSequenceNumber(sequenceNumber);
         dto.setWeight(weight);
         dto.setTopics(getTopicIds(topics));
-        dto.setEndpointCount(endpointCount);
         return dto;
     }
 

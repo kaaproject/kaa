@@ -26,7 +26,6 @@ import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.flume.Event;
-import org.apache.flume.event.EventBuilder;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData;
 
 import com.google.common.collect.Lists;

@@ -38,8 +38,6 @@ public interface EndpointGroupView extends BaseDetailsView {
 
     public HasValue<String> getCreatedDateTime();
 
-    public HasValue<String> getEndpointCount();
-
     public ProfileFilterStructGrid getProfileFiltersGrid();
     
     public void setProfileFiltersVisible(boolean visible);

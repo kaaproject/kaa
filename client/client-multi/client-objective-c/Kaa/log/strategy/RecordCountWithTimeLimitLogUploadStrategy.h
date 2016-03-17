@@ -19,6 +19,10 @@
 #import "DefaultLogUploadStrategy.h"
 #import "TimeCommons.h"
 
+/**
+ * Issue log upload when reaches records count threshold in storage 
+ * or records are stored longer than specified time limit.
+ */
 @interface RecordCountWithTimeLimitLogUploadStrategy : DefaultLogUploadStrategy
 
 @property (nonatomic) int64_t lastUploadTime;

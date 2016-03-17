@@ -69,7 +69,7 @@ import com.google.common.collect.Lists;
 
 public class TestKaaHdfsSink {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestKaaHdfsSink.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestKaaHdfsSink.class);
 
     private static AvroSource source;
     private static KaaHdfsSink sink;
@@ -162,8 +162,8 @@ public class TestKaaHdfsSink {
 
         List<TestLogData> testLogs = generateAndSendRecords(header);
 
-        logger.info("Sent records count: " + testLogs.size());
-        logger.info("Waiting for sink...");
+        LOG.info("Sent records count: " + testLogs.size());
+        LOG.info("Waiting for sink...");
 
         int maxWaitTime = 5000;
         int elapsed = 0;

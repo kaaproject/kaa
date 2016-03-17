@@ -17,8 +17,6 @@
 package org.kaaproject.kaa.server.control;
 
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -26,6 +24,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * The Class ControlServerTopicIT.

@@ -20,8 +20,6 @@
 
 #define TAG @"PeriodicLogUploadStrategy >>>"
 
-//Issue log upload each timeLimit timeUnit units.
-
 @implementation PeriodicLogUploadStrategy
 
 - (instancetype)init {

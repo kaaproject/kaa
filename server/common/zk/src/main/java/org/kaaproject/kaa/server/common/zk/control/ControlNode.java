@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ControlNode extends WorkerNodeTracker {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(ControlNode.class);
 
@@ -131,7 +131,7 @@ public class ControlNode extends WorkerNodeTracker {
                     .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
             LOG.info("Created node with path: " + nodePath);
         } catch (NodeExistsException e) {
-            LOG.info("master already exists");
+            LOG.info("master already exists ", e);
         } catch (Exception e) {
             LOG.error("Unknown Error", e);
             close();

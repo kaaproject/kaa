@@ -52,20 +52,26 @@ public final class BootstrapServerSync {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BootstrapServerSync other = (BootstrapServerSync) obj;
         if (protocolList == null) {
-            if (other.protocolList != null)
+            if (other.protocolList != null) {
                 return false;
-        } else if (!protocolList.equals(other.protocolList))
+            }
+        } else if (!protocolList.equals(other.protocolList)) {
             return false;
-        if (requestId != other.requestId)
+        }
+        if (requestId != other.requestId) {
             return false;
+        }
         return true;
     }
 

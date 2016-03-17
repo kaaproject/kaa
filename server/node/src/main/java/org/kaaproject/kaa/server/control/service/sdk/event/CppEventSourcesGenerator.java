@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class CppEventSourcesGenerator {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(CppEventSourcesGenerator.class);
 
@@ -134,6 +134,9 @@ public class CppEventSourcesGenerator {
         } catch (IOException e) {
             LOG.error("Unable to initialize CppEventSourcesGenerator", e);
         }
+    }
+
+    private CppEventSourcesGenerator() {
     }
 
     public static List<TarEntryData> generateEventSources(List<EventFamilyMetadata> eventFamilies) {

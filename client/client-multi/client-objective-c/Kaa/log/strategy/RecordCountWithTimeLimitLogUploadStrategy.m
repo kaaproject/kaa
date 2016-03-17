@@ -19,8 +19,6 @@
 
 #define TAG @"RecordCountWithTimeLimitLogUploadStrategy >>>"
 
-//Start log upload when there is countThreshold records in storage or records are stored for more then timeLimit TimeUnit units.
-
 @implementation RecordCountWithTimeLimitLogUploadStrategy
 
 - (instancetype)init {

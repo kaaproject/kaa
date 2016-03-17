@@ -18,19 +18,6 @@ package org.kaaproject.kaa.server.common.admin;
 
 
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +51,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -93,9 +81,22 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class AdminClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClient.class);
 
     private KaaRestTemplate restTemplate;
 
@@ -792,7 +793,7 @@ public class AdminClient {
         FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
         RequestCallback request = new DataRequestCallback<>(key);
         restTemplate.execute(restTemplate.getUrl() + "sdk", HttpMethod.POST, request, extractor);
-        logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
+        LOG.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
 
     public FileData downloadLogRecordLibrary(RecordKey key) throws Exception {
@@ -815,6 +816,20 @@ public class AdminClient {
         FileData data = restTemplate.execute(restTemplate.getUrl() + "sdk", HttpMethod.POST, request, extractor);
         return data;
     }
+    
+    public FileData downloadCtlSchema(CTLSchemaDto ctlSchemaDto, CTLSchemaExportMethod method) {
+        FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("fqn", ctlSchemaDto.getMetaInfo().getFqn());
+        parameters.add("version", Integer.toString(ctlSchemaDto.getVersion()));
+        if (ctlSchemaDto.getMetaInfo().getApplicationId() != null) {
+            parameters.add("applicationId", ctlSchemaDto.getMetaInfo().getApplicationId());
+        }
+        parameters.add("method", method.name());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        return restTemplate.execute(restTemplate.getUrl() + "CTL/exportSchema", HttpMethod.POST, request, extractor);
+    }
+
 
     public void flushSdkCache() throws Exception {
         restTemplate.postForLocation(restTemplate.getUrl() + "flushSdkCache", null);
@@ -991,6 +1006,10 @@ public class AdminClient {
         }
     }
 
+    public CTLSchemaDto getCTLSchemaById(String id) {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchemaById?id={id}", CTLSchemaDto.class, id);
+    }
+
     public boolean checkFqnExists(String fqn, String tenantId, String applicationId) {
         if (tenantId != null && applicationId != null) {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}&applicationId={applicationId}",
@@ -1035,4 +1054,10 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "userProfile", userDto, UserDto.class);
     }
 
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) {
+        String address = restTemplate.getUrl() + "endpointProfiles?userExternalId=" + endpointUserExternalId;
+        ParameterizedTypeReference<List<EndpointProfileDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileDto>>() {};
+        ResponseEntity<List<EndpointProfileDto>> response = this.restTemplate.exchange(address, HttpMethod.GET, null, typeRef);
+        return response.getBody();
+    }
 }

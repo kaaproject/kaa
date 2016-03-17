@@ -84,7 +84,7 @@ void test_create_request(void)
     ASSERT_EQUAL(KAA_HTONS(*((uint16_t *) cursor)), KAA_CONFIGURATION_EXTENSION_TYPE);
     cursor += sizeof(uint32_t);
 
-    ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)), sizeof(uint32_t) + SHA_1_DIGEST_LENGTH);    // checking payload size
+    ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)),  SHA_1_DIGEST_LENGTH);    // checking payload size
     cursor += sizeof(uint32_t);
 
     kaa_digest check_hash;

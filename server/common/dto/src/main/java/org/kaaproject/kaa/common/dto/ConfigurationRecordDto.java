@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto> implements Serializable, Comparable<ConfigurationRecordDto> {
 
     private static final long serialVersionUID = 5838762122987694212L;
-    
+
     public ConfigurationRecordDto() {
         super();
     }
@@ -69,4 +69,13 @@ public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
         return this.getSchemaVersion() - o.getSchemaVersion();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

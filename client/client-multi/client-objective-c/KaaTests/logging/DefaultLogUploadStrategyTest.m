@@ -88,27 +88,6 @@
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeededForStorageStatus:status]);
 }
 
-- (void)testSuccessLogUploadCallback {
-    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
-    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
-    
-    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
-    [logCollector setValue:strategy forKey:@"strategy"];
-    
-    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
-    [given([executorContext getCallbackExecutor]) willReturn:executor];
-    
-    LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
-    status.requestId = 42;
-    status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
-    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
-    
-    [logCollector onLogResponse:response];
-}
-
 - (void)testFailureLogUploadCallback {
     id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
@@ -116,7 +95,10 @@
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
     
-    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport
+                                                                         executorContext:executorContext
+                                                                          channelManager:channelManager
+                                                                         failoverManager:failoverManager];
     [logCollector setValue:strategy forKey:@"strategy"];
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
@@ -127,6 +109,7 @@
     status.result = SYNC_RESPONSE_RESULT_TYPE_FAILURE;
     LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
     
+    logCollector.bucketInfoDictionary[@(42)] = [[BucketInfo alloc] initWithBucketId:42 logCount:1];
     [logCollector onLogResponse:response];
     
     [NSThread sleepForTimeInterval:0.001];

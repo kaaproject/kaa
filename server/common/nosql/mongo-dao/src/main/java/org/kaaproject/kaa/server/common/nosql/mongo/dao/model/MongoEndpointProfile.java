@@ -47,7 +47,10 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
@@ -58,12 +61,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
 import com.mongodb.util.JSON;
 
 @Document(collection = ENDPOINT_PROFILE)
 public final class MongoEndpointProfile implements EndpointProfile, Serializable {
 
     private static final long serialVersionUID = -3227246639864687299L;
+    private static final BiMap<Character, Character> RESERVED_CHARACTERS = HashBiMap.create();
+    static {
+        RESERVED_CHARACTERS.put('.', (char) 0xFF0E);
+        RESERVED_CHARACTERS.put('$', (char) 0xFF04);
+    }
 
     @Id
     private String id;
@@ -141,7 +150,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.accessToken = dto.getAccessToken();
         this.groupState = MongoDaoUtil.convertDtoToModelList(dto.getGroupState());
         this.sequenceNumber = dto.getSequenceNumber();
-        this.profile = (DBObject) JSON.parse(dto.getClientProfileBody());
+        this.profile = encodeReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
         this.profileHash = dto.getProfileHash();
         this.profileVersion = dto.getClientProfileVersion();
         this.serverProfileVersion = dto.getServerProfileVersion();
@@ -231,20 +240,12 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.changedFlag = changedFlag;
     }
 
-    public DBObject getProfile() {
-        return profile;
-    }
-
     public String getProfileAsString() {
         String pfBody = null;
         if (profile != null) {
             pfBody = profile.toString();
         }
         return pfBody;
-    }
-
-    public void setProfile(DBObject profile) {
-        this.profile = profile;
     }
 
     public byte[] getProfileHash() {
@@ -395,6 +396,50 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.version = version;
     }
 
+    private DBObject encodeReservedCharacteres(DBObject profileBody) {
+        if (profileBody == null) {
+            return null;
+        }
+        Set<String> keySet = profileBody.keySet();
+        DBObject modifiedNode = new BasicDBObject();
+        if (keySet != null) {
+            for (String key : keySet) {
+                Object value = profileBody.get(key);
+                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
+                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
+                }
+                if(value instanceof DBObject) {
+                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
+                } else {
+                    modifiedNode.put(key, value);
+                }
+            }
+        }
+        return modifiedNode;
+    }
+
+    private String decodeReservedCharacteres(DBObject profileBody) {
+        if (profileBody == null) {
+            return "";
+        }
+        Set<String> keySet = profileBody.keySet();
+        DBObject modifiedNode = new BasicDBObject();
+        if (keySet != null) {
+            for (String key : keySet) {
+                Object value = profileBody.get(key);
+                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
+                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
+                }
+                if(value instanceof DBObject) {
+                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
+                } else {
+                    modifiedNode.put(key, value);
+                }
+            }
+        }
+        return modifiedNode != null ? modifiedNode.toString() : "";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -532,7 +577,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setClientProfileBody(profile != null ? profile.toString() : "");
+        dto.setClientProfileBody(decodeReservedCharacteres(profile));
         dto.setProfileHash(profileHash);
         dto.setClientProfileVersion(profileVersion);
         dto.setServerProfileVersion(serverProfileVersion);
