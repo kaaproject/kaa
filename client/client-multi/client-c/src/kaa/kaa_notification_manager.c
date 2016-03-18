@@ -231,6 +231,7 @@ static bool kaa_predicate_for_notifications(void *notif_1, void *notif_2)
 }
 static void kaa_sort_notifications_by_sqn(void *data, void *context)
 {
+    (void)context;
     kaa_topic_notifications_node_t *node = data;
     kaa_list_sort(node->notifications, &kaa_predicate_for_notifications);
 }

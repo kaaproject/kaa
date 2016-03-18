@@ -102,10 +102,10 @@ kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, kaatcp_m
         } while (payload_size);
 
         *size = payload_size + header_size;
-        return KAA_ERR_NONE;
+        return (kaatcp_error_t)KAA_ERR_NONE;
     }
 
-    return KAA_ERR_BADPARAM;
+    return (kaatcp_error_t)KAA_ERR_BADPARAM;
 
 }
 

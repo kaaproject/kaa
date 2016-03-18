@@ -17,13 +17,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "platform/sock.h"
 #include "kaa_channel_manager.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
+
+// This header conflicts with stdio.h and should be put last
+#include "platform/sock.h"
 
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self

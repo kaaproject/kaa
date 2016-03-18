@@ -21,11 +21,14 @@
 #define KAA_CONFIGURATION_STORAGE "" /* there is no filesystem on esp8266 */
 
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) {
-
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 }
 
 void ext_configuration_store(const char *buffer, size_t buffer_size) {
-
+    (void)buffer;
+    (void)buffer_size;
 }
 
 void ext_configuration_delete(void)

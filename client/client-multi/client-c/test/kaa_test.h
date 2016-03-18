@@ -33,6 +33,7 @@
 #define KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN)  \
     int main(int argc, char ** argv) \
     { \
+        (void)argc; (void)argv; \
         CU_initialize_registry(); \
         CU_set_output_filename(#SUITE_NAME); \
         CU_pSuite testSuite = CU_add_suite(#SUITE_NAME, INIT_FN, CLEANUP_FN); \

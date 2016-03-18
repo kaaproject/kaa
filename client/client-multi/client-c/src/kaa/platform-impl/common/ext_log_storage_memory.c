@@ -152,6 +152,7 @@ kaa_error_t ext_limited_log_storage_create(void **log_storage_context_p
 
 kaa_error_t ext_log_storage_allocate_log_record_buffer(void *context, kaa_log_record_t *record)
 {
+    (void)context;
     KAA_RETURN_IF_NIL2(record, record->size, KAA_ERR_BADPARAM);
 
     record->data = (char *) KAA_MALLOC(record->size * sizeof(char));
@@ -238,6 +239,7 @@ kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *reco
 
 kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_record_t *record)
 {
+    (void)context;
     KAA_RETURN_IF_NIL2(record, record->data, KAA_ERR_BADPARAM);
 
     KAA_FREE(record->data);

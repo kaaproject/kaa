@@ -56,18 +56,24 @@ kaa_topic_listener_t topic_listener_2;
 //-----------------------------------------------------------------------------------------------
 void on_notification(void* contextmock, uint64_t *topic_id, kaa_notification_t *notif)
 {
+    (void)contextmock;
+    (void)topic_id;
+    (void)notif;
     printf("\nNotification listener got his Notification\n\n");
     listener_has_been_notified = true;
 }
 
 void on_topic(void* contextmock, kaa_list_t *topics)
 {
+    (void)contextmock;
+    (void)topics;
     printf("\nTopic list listener got his topic list.\n\n");
 }
 
 char *allocator (void *context, size_t size)
 {
-    return (char *)KAA_MALLOC(size);
+    (void)context;
+    return KAA_MALLOC(size);
 }
 
 
@@ -306,7 +312,7 @@ void test_serializing(void)
     info->services = service;
     info->services_count = 1;
     info->allocator = &allocator;
-    info->allocator_context = &allocator; //mock
+    info->allocator_context = NULL;
     err = kaa_platform_protocol_serialize_client_sync(context->platform_protocol, info, &buffer, &buffer_size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
@@ -343,14 +349,14 @@ void test_subscriptions(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-KAA_SUITE_MAIN(Notification, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-       ,
+KAA_SUITE_MAIN(Notification, test_init, test_deinit,
        KAA_TEST_CASE(deserializing, test_deserializing)
        KAA_TEST_CASE(removing_and_adding_notifications_listeners, test_notification_listeners_adding_and_removing)
        KAA_TEST_CASE(removing_and_adding_topic_list_listeners, test_topic_list_listeners_adding_and_removing)
        KAA_TEST_CASE(topic_list_retrieving, test_retrieving_topic_list)
        KAA_TEST_CASE(serializing, test_serializing)
-       KAA_TEST_CASE(subscriptions, test_subscriptions)
+       KAA_TEST_CASE(subscriptions, test_subscriptions))
+#else
+KAA_SUITE_MAIN(Notification, test_init, test_deinit)
 #endif
-        )

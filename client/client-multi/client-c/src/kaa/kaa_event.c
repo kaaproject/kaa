@@ -479,8 +479,7 @@ static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *sel
             if (!request->is_sent) {
                 *expected_size += sizeof(uint32_t); // request id + fqns count
                 *expected_size += sizeof(uint32_t) * request->fqns_count; // fqn length + reserved
-                int i = 0;
-                for (; i < request->fqns_count; ++i) {
+                for (size_t i = 0; i < request->fqns_count; ++i) {
                     *expected_size += kaa_aligned_size_get(request->fqns[i]->size);
                 }
             }
@@ -607,8 +606,7 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
             writer->current += sizeof(uint16_t);
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize event listeners: request id '%u', fqn count '%u'"
                         , request->request_id, request->fqns_count);
-            int i = 0;
-            for (; i < request->fqns_count; ++i) {
+            for (size_t i = 0; i < request->fqns_count; ++i) {
                 size_t fqn_length = request->fqns[i]->size;
                 *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) fqn_length);
                 writer->current += sizeof(uint32_t); // fqn length + reserved

@@ -177,7 +177,7 @@ void test_write_extension_header(void)
     size_t buffer_size = sizeof(buffer) / sizeof(char);
     kaa_platform_message_writer_t *writer = NULL;
 
-    const char serialized_header[KAA_EXTENSION_HEADER_SIZE] = {0x00, 0xfa, 0x11, 0x12, 0xaa, 0xbb, 0xcc, 0xff};
+    const uint8_t serialized_header[KAA_EXTENSION_HEADER_SIZE] = {0x00, 0xfa, 0x11, 0x12, 0xaa, 0xbb, 0xcc, 0xff};
     uint16_t extension_type = 250;
     uint16_t extension_options = (0x11 << 8) | 0x12;
     uint32_t extension_payload_length = 0xaabbccff;
@@ -328,10 +328,10 @@ void test_read_extension_header(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
 
-    const char serialized_header[KAA_EXTENSION_HEADER_SIZE] = {0x00, 0xfa, 0x11, 0x12, 0xaa, 0xbb, 0xcc, 0xff};
+    const uint8_t serialized_header[KAA_EXTENSION_HEADER_SIZE] = {0x00, 0xfa, 0x11, 0x12, 0xaa, 0xbb, 0xcc, 0xff};
 
     kaa_error_t error_code = KAA_ERR_NONE;
-    error_code = kaa_platform_message_reader_create(&reader, serialized_header, KAA_PROTOCOL_MESSAGE_HEADER_SIZE);
+    error_code = kaa_platform_message_reader_create(&reader, (char *)serialized_header, KAA_PROTOCOL_MESSAGE_HEADER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     const uint16_t extension_type = 250;
