@@ -204,7 +204,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
     kaa_tcp_channel->supported_service_count = supported_service_count;
 
-	memcpy(kaa_tcp_channel->supported_services, supported_services, sizeof(kaa_service_t) * supported_service_count);
+    memcpy(kaa_tcp_channel->supported_services, supported_services, sizeof(kaa_service_t) * supported_service_count);
 
     /*
      * Define type of channel (bootstrap or operations)
