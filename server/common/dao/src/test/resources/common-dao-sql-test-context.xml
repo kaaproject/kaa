@@ -39,10 +39,10 @@
             <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql"/>
             <property name="hibernateProperties">
                 <props>
-                    <prop key="hibernate.hbm2ddl.auto">#{dao[hibernate_hbm2ddl_auto]}</prop>
+                    <prop key="hibernate.hbm2ddl.auto">#{sql_dao[hibernate_hbm2ddl_auto]}</prop>
                     <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</prop>
-                    <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
-                    <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+                    <prop key="hibernate.format_sql">#{sql_dao[hibernate_format_sql]}</prop>
+                    <prop key="hibernate.show_sql">#{sql_dao[hibernate_show_sql]}</prop>
 
                     <!--<prop key="hibernate.generate_statistics">true</prop>-->
                 </props>
@@ -78,10 +78,10 @@
             <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql"/>
             <property name="hibernateProperties">
                 <props>
-                    <prop key="hibernate.hbm2ddl.auto">#{dao[hibernate_hbm2ddl_auto]}</prop>
-                    <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
-                    <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
-                    <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+                    <prop key="hibernate.hbm2ddl.auto">#{sql_dao[hibernate_hbm2ddl_auto]}</prop>
+                    <prop key="hibernate.dialect">#{sql_dao[hibernate_dialect]}</prop>
+                    <prop key="hibernate.format_sql">#{sql_dao[hibernate_format_sql]}</prop>
+                    <prop key="hibernate.show_sql">#{sql_dao[hibernate_show_sql]}</prop>
 
                     <!--<prop key="hibernate.generate_statistics">true</prop>-->
                 </props>
@@ -97,9 +97,9 @@
             <property name="idleTimeout" value="120000" />
             <property name="dataSourceProperties">
                 <props>
-                    <prop key="url">jdbc:#{dao[sql_provider_name]}://#{dao[jdbc_host]}/#{dao[db_name]}</prop>
-                    <prop key="user">#{dao[jdbc_username]</prop>
-                    <prop key="password">#{dao[jdbc_password]</prop>
+                    <prop key="url">jdbc:#{sql_dao[sql_provider_name]}://#{sql_dao[jdbc_host]}/#{sql_dao[db_name]}</prop>
+                    <prop key="user">#{sql_dao[jdbc_username]</prop>
+                    <prop key="password">#{sql_dao[jdbc_password]</prop>
                 </props>
             </property>
         </bean>
@@ -117,10 +117,10 @@
             <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql"/>
             <property name="hibernateProperties">
                 <props>
-                    <prop key="hibernate.hbm2ddl.auto">update</prop>
-                    <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-                    <prop key="hibernate.format_sql">false</prop>
-                    <prop key="hibernate.show_sql">false</prop>
+                    <prop key="hibernate.hbm2ddl.auto">#{sql_dao[hibernate_hbm2ddl_auto]}</prop>
+                    <prop key="hibernate.dialect">#{sql_dao[hibernate_dialect]}</prop>
+                    <prop key="hibernate.format_sql">#{sql_dao[hibernate_format_sql]}</prop>
+                    <prop key="hibernate.show_sql">#{sql_dao[hibernate_show_sql]}</prop>
                 </props>
             </property>
         </bean>
@@ -134,9 +134,9 @@
             <property name="idleTimeout" value="120000" />
             <property name="dataSourceProperties">
                 <props>
-                    <prop key="url">jdbc:h2:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL</prop>
-                    <prop key="user">sa</prop>
-                    <prop key="password"></prop>
+                    <prop key="url">jdbc:#{sql_dao[jdbc_url_db_name]}:mem:kaa;DATABASE_TO_UPPER=true</prop>
+                    <prop key="user">#{sql_dao[jdbc_username]}</prop>
+                    <prop key="password">#{sql_dao[jdbc_password]}</prop>
                 </props>
             </property>
         </bean>
@@ -153,5 +153,6 @@
             <constructor-arg value="-web,-webPort,11111"/>
         </bean>
     </beans>
+
 
 </beans>

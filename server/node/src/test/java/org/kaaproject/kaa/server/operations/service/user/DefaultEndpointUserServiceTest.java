@@ -91,7 +91,6 @@ public class DefaultEndpointUserServiceTest {
         applicationService = mock(ApplicationService.class);
         ReflectionTestUtils.setField(endpointUserService, "endpointService", endpointService);
         ReflectionTestUtils.setField(endpointUserService, "cacheService", cacheService);
-        ReflectionTestUtils.setField(endpointUserService, "applicationService", applicationService);
     }
 
 //    TODO: move to appropriate place

@@ -8,11 +8,12 @@ import org.apache.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 
 public class KaaRestTemplate extends RestTemplate {
 
@@ -43,7 +44,7 @@ public class KaaRestTemplate extends RestTemplate {
      *
      * @param hostPortList
      */
-    public KaaRestTemplate (String hostPortList) {
+    public KaaRestTemplate(String hostPortList) {
         if (hostPortList == null) {
             throw new IllegalArgumentException("String of addresses must be not null");
         }
@@ -95,11 +96,13 @@ public class KaaRestTemplate extends RestTemplate {
         while (true) {
             try {
                 return super.doExecute(url, method, requestCallback, responseExtractor);
+            } catch (RestClientException e) {
+                throw e;
             } catch (Exception ex) {
                 logger.info("Connect to ({}:{}) failed", getCurHost(), getCurPort(), ex);
                 boolean isRequestFactorySet = false;
                 while (!isRequestFactorySet) {
-                    if (index < hosts.length-1) {
+                    if (index < hosts.length - 1) {
                         index++;
                     } else {
                         index = 0;

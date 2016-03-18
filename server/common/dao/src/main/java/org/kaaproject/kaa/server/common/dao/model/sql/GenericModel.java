@@ -22,6 +22,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 
@@ -31,7 +32,8 @@ public abstract class GenericModel<T> implements Serializable, ToDto<T> {
     private static final long serialVersionUID = 8371621337499494435L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name="seq", initialValue=1, allocationSize=100)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq") 
     protected Long id;
 
     public Long getId() {
