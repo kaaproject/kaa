@@ -1668,7 +1668,7 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    public SdkProfileDto findSdkProfileByToken(String sdkToken) throws ControlServiceException;
+    SdkProfileDto findSdkProfileByToken(String sdkToken) throws ControlServiceException;
 
     /**
      * Removes the given endpoint profile from the database.
@@ -1678,7 +1678,7 @@ public interface ControlService {
      *
      * @throws ControlServiceException
      */
-    public void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException;
+    void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException;
 
     /**
      * Returns the list of endpoint security credentials for the given
@@ -1725,4 +1725,17 @@ public interface ControlService {
      * @throws ControlServiceException
      */
     void removeEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException;
+
+    /**
+     * Returns a list of endpoint profiles for the endpoint user with the given external ID and tenant ID.
+     *
+     * @param endpointUserExternalId The endpoint user external ID
+     * @param tenantId The tenant ID
+     *
+     * @return A list of endpoint profiles for the endpoint user with the given ID.
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException;
+
 }

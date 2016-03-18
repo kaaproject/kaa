@@ -62,13 +62,21 @@ public class ConfigurationDto extends AbstractStructureDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         ConfigurationDto that = (ConfigurationDto) o;
 
-        if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) return false;
+        if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
+            return false;
+        }
         return protocolSchema != null ? protocolSchema.equals(that.protocolSchema) : that.protocolSchema == null;
 
     }

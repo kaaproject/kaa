@@ -18,6 +18,9 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
 public class CassandraModelConstants {
 
+    private CassandraModelConstants() {
+    }
+
     /**
      * Generic constants.
      */

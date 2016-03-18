@@ -104,10 +104,10 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
 
 
     /**
-     * Find endpoint user by endpoint user id.
+     * Find endpoint profiles by endpoint user id.
      *
      * @param endpointUserId the endpoint user id
-     * @return the endpoint user
+     * @return the list of endpoint profiles
      */
     List<T> findByEndpointUserId(String endpointUserId);
 

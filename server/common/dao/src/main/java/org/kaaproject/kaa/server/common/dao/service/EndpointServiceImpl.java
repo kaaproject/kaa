@@ -29,6 +29,7 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateStr
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +50,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
@@ -100,8 +102,7 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     @Transactional
     public List<EndpointGroupDto> findEndpointGroupsByAppId(String applicationId) {
-        validateSqlId(applicationId, "Can't find endpoint groups by application id. Incorrect application id "
-                + applicationId);
+        validateSqlId(applicationId, "Can't find endpoint groups by application id. Incorrect application id " + applicationId);
         return convertDtoList(endpointGroupDao.findByApplicationId(applicationId));
     }
 
@@ -115,8 +116,7 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     @Transactional
     public void removeEndpointGroupByAppId(String applicationId) {
-        validateSqlId(applicationId, "Can't remove endpoint groups by application id. Incorrect application id "
-                + applicationId);
+        validateSqlId(applicationId, "Can't remove endpoint groups by application id. Incorrect application id " + applicationId);
         List<EndpointGroup> groups = endpointGroupDao.findByApplicationId(applicationId);
         if (groups != null && !groups.isEmpty()) {
             for (EndpointGroup group : groups) {
@@ -246,22 +246,19 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public EndpointProfileDto findEndpointProfileByKeyHash(byte[] endpointProfileKeyHash) {
-        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
-                + endpointProfileKeyHash);
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash " + endpointProfileKeyHash);
         return getDto(endpointProfileDao.findByKeyHash(endpointProfileKeyHash));
     }
 
     @Override
     public EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash) {
-        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
-                + endpointProfileKeyHash);
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash " + endpointProfileKeyHash);
         return endpointProfileDao.findBodyByKeyHash(endpointProfileKeyHash);
     }
 
     @Override
     public void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash) {
-        validateHash(endpointProfileKeyHash, "Can't remove endpoint profile by key hash. Invalid key hash "
-                + endpointProfileKeyHash);
+        validateHash(endpointProfileKeyHash, "Can't remove endpoint profile by key hash. Invalid key hash " + endpointProfileKeyHash);
         endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
     }
 
@@ -279,7 +276,8 @@ public class EndpointServiceImpl implements EndpointService {
         if (endpointProfileDto.getServerProfileBody() == null) {
             ServerProfileSchemaDto serverProfileSchemaDto = serverProfileService.findLatestServerProfileSchema(endpointProfileDto.getApplicationId());
             CTLSchemaDto schemaDto = ctlService.findCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
-            LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(), schemaDto.getBody(), keyHash);
+            LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(),
+                    schemaDto.getBody(), keyHash);
             endpointProfileDto.setServerProfileVersion(serverProfileSchemaDto.getVersion());
             endpointProfileDto.setServerProfileBody(schemaDto.getDefaultRecord());
         }
@@ -326,19 +324,19 @@ public class EndpointServiceImpl implements EndpointService {
         endpointIds.add(profile.getId());
         endpointUser = endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
-        while(true){
-            try{
+        while (true) {
+            try {
                 LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
                 return saveEndpointProfile(profile);
-            }catch(KaaOptimisticLockingFailureException ex){
+            } catch (KaaOptimisticLockingFailureException ex) {
                 LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(profile.getEndpointKey()), ex);
                 profile = findEndpointProfileByKeyHash(profile.getEndpointKeyHash());
                 profile.setEndpointUserId(endpointUser.getId());
             }
         }
     }
-    
-    @Override    
+
+    @Override
     public EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) throws KaaOptimisticLockingFailureException {
         LOG.info("Try to attach endpoint with access token {} to user with {}", endpointAccessToken, endpointUserId);
         validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
@@ -361,8 +359,17 @@ public class EndpointServiceImpl implements EndpointService {
                     }
                     endpointIds.add(endpoint.getId());
                     endpointUser = endpointUserDao.save(endpointUser);
-                    endpoint.setEndpointUserId(endpointUser.getId());
-                    endpoint = endpointProfileDao.save(endpoint);
+                    while (true) {
+                        try {
+                            endpoint.setEndpointUserId(endpointUser.getId());
+                            LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, endpoint);
+                            endpoint = endpointProfileDao.save(endpoint);
+                            break;
+                        } catch (KaaOptimisticLockingFailureException ex) {
+                            LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(endpoint.getEndpointKey()), ex);
+                            endpoint = endpointProfileDao.findByKeyHash(SHA1HashUtils.hashToBytes(endpoint.getEndpointKey()));
+                        }
+                    }
                     return getDto(endpoint);
                 } else {
                     LOG.warn("Endpoint is already assigned to different user {}. Unassign it first!.", endpoint.getEndpointUserId());
@@ -379,21 +386,30 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public void detachEndpointFromUser(EndpointProfileDto detachEndpoint) {
-        String endpointUserId = detachEndpoint.getEndpointUserId();
+    public void detachEndpointFromUser(EndpointProfileDto endpoint) {
+        String endpointUserId = endpoint.getEndpointUserId();
         validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
         EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
         if (endpointUser != null) {
             List<String> endpointIds = endpointUser.getEndpointIds();
-            if (endpointIds != null && endpointIds.contains(detachEndpoint.getId())) {
-                endpointIds.remove(detachEndpoint.getId());
+            if (endpointIds != null && endpointIds.contains(endpoint.getId())) {
+                endpointIds.remove(endpoint.getId());
             } else {
                 LOG.warn("Endpoint is not assigned to current user {}!", endpointUserId);
                 throw new DatabaseProcessingException("Endpoint is not assigned to current user.");
             }
             endpointUserDao.save(endpointUser);
-            detachEndpoint.setEndpointUserId(null);
-            saveEndpointProfile(detachEndpoint);
+            while (true) {
+                try {
+                    LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, endpoint);
+                    endpoint.setEndpointUserId(null);
+                    saveEndpointProfile(endpoint);
+                    break;
+                } catch (KaaOptimisticLockingFailureException ex) {
+                    LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(endpoint.getEndpointKey()), ex);
+                    endpoint = getDto(endpointProfileDao.findByKeyHash(SHA1HashUtils.hashToBytes(endpoint.getEndpointKey())));
+                }
+            }
         } else {
             LOG.warn("Endpoint user with id {} is not present in db.", endpointUserId);
             throw new DatabaseProcessingException("Endpoint user is not present in db.");
@@ -413,9 +429,9 @@ public class EndpointServiceImpl implements EndpointService {
         }
         return endpointUserDto;
     }
-    
+
     @Override
-    public EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId){
+    public EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId) {
         EndpointUserDto endpointUserDto = null;
         if (isValidId(externalId) && isValidId(tenantId)) {
             endpointUserDto = getDto(endpointUserDao.findByExternalIdAndTenantId(externalId, tenantId));
@@ -452,11 +468,13 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     /**
-     * This method remove endpoint group by id and check if endpoint group is not default.
-     * It's forbidden to remove default endpoint group by id
+     * This method remove endpoint group by id and check if endpoint group is
+     * not default. It's forbidden to remove default endpoint group by id
      *
-     * @param id          endpoint group id
-     * @param forceRemove boolean flag define if its removing groups by application.
+     * @param id
+     *            endpoint group id
+     * @param forceRemove
+     *            boolean flag define if its removing groups by application.
      */
     private ChangeNotificationDto removeEndpointGroup(String id, boolean forceRemove) {
         EndpointGroup endpointGroup = endpointGroupDao.findById(id);
@@ -464,9 +482,10 @@ public class EndpointServiceImpl implements EndpointService {
         if (endpointGroup != null) {
             if (endpointGroup.getWeight() != 0 || forceRemove) {
                 LOG.debug("Cascade delete endpoint group with profile filter and configurations.");
-//                profileFilterDao.removeByEndpointGroupId(id);
-//                configurationDao.removeByEndpointGroupId(id);
-//                TODO: need to add to history about deleted configurations and profile filters
+                // profileFilterDao.removeByEndpointGroupId(id);
+                // configurationDao.removeByEndpointGroupId(id);
+                // TODO: need to add to history about deleted configurations and
+                // profile filters
                 endpointGroupDao.removeById(id);
                 EndpointGroupDto groupDto = endpointGroup.toDto();
                 HistoryDto historyDto = addHistory(groupDto, ChangeType.REMOVE_GROUP);
@@ -504,6 +523,17 @@ public class EndpointServiceImpl implements EndpointService {
         return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUserId));
     }
 
+    @Override
+    public List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId) {
+        if (isValidId(externalId) && isValidId(tenantId)) {
+            EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalId, tenantId);
+            if (endpointUser != null) {
+                return convertDtoList(endpointProfileDao.findByEndpointUserId(endpointUser.getId()));
+            }
+        }
+        return Collections.emptyList();
+    }
+
     public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
         this.endpointProfileDao = endpointProfileDao;
     }
@@ -519,7 +549,7 @@ public class EndpointServiceImpl implements EndpointService {
     public void setTopicListEntryDao(TopicListEntryDao<TopicListEntry> topicListEntryDao) {
         this.topicListEntryDao = topicListEntryDao;
     }
-    
+
     @Override
     public EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto) {
         EndpointUserDto endpointUser = null;
@@ -533,11 +563,12 @@ public class EndpointServiceImpl implements EndpointService {
         }
         return endpointUser;
     }
-    
+
     @Override
     public void removeEndpointUserById(String id) {
         if (isValidId(id)) {
             endpointUserDao.removeById(id);
         }
     }
+
 }

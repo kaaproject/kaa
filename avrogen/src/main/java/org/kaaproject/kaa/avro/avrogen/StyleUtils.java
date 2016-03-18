@@ -17,6 +17,10 @@
 package org.kaaproject.kaa.avro.avrogen;
 
 public class StyleUtils {
+
+    private StyleUtils() {
+    }
+
     public static String toLowerUnderScore(String camelCaseName) {
         StringBuilder convertedName = new StringBuilder();
 
@@ -26,8 +30,7 @@ public class StyleUtils {
                 c = Character.toLowerCase(c);
                 if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
                         && (Character.isLowerCase(camelCaseName.charAt(i + 1))
-                                || Character.isLowerCase(camelCaseName.charAt(i - 1))))
-                {
+                                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
                     convertedName.append("_");
                 }
                 convertedName.append(c);
@@ -47,8 +50,7 @@ public class StyleUtils {
             if (Character.isUpperCase(c)) {
                 if (convertedName.length() > 0  && ((i + 1) < camelCaseName.length()) &&
                         (Character.isLowerCase(camelCaseName.charAt(i + 1))
-                                || Character.isLowerCase(camelCaseName.charAt(i - 1))))
-                {
+                                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
                     convertedName.append("_");
                 }
                 convertedName.append(c);
@@ -72,6 +74,6 @@ public class StyleUtils {
 
     public static String removePackageName(String fullClassName) {
         int index = fullClassName.lastIndexOf('.');
-        return (index == -1 ? fullClassName : fullClassName.substring(index + 1));
+        return index == -1 ? fullClassName : fullClassName.substring(index + 1);
     }
 }

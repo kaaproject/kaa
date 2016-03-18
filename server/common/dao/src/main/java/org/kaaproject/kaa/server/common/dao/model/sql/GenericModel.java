@@ -31,7 +31,7 @@ public abstract class GenericModel<T> implements Serializable, ToDto<T> {
     private static final long serialVersionUID = 8371621337499494435L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
 
     public Long getId() {

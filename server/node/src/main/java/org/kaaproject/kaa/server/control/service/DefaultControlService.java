@@ -1685,7 +1685,7 @@ public class DefaultControlService implements ControlService {
             try {
                 operation = Operation.valueOf(type.name());
             } catch (IllegalArgumentException ex) {
-                LOG.info("Unsupported change type. Check Operation and ChangeType enums.");
+                LOG.info("Unsupported change type. Check Operation and ChangeType enums.", ex);
             }
         }
         return operation;
@@ -2198,6 +2198,11 @@ public class DefaultControlService implements ControlService {
         } else {
             throw new ControlServiceException("Can't find sdk profile by sdk token: " + sdkToken + "!");
         }
+    }
+
+    @Override
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException {
+        return this.endpointService.findEndpointProfilesByExternalIdAndTenantId(endpointUserExternalId, tenantId);
     }
 
     @PreDestroy

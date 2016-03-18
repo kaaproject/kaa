@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.transport.http.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.common.utils.CRC32Util;
-import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.transport.KaaTransportConfig;
 import org.kaaproject.kaa.server.transport.TransportConfig;
 import org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig;

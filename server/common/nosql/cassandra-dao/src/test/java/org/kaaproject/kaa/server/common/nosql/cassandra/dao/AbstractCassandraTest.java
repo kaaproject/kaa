@@ -16,13 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
 import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
@@ -44,6 +37,12 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpo
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractCassandraTest {
 
@@ -170,7 +169,8 @@ public abstract class AbstractCassandraTest {
         profileDto.setApplicationId(appId);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(generateStringId());
-        profileDto.setClientProfileBody("test Profile");
+        profileDto.setClientProfileBody("test profile");
+        profileDto.setServerProfileBody("test server-side profile");
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
         profileDto.setGroupState(groupState);

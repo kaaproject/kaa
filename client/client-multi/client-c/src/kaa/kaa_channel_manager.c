@@ -17,20 +17,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "platform/stdio.h"
 #include "platform/sock.h"
-#include <string.h>
 #include "kaa_channel_manager.h"
-
-#include "kaa_context.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
-#include "kaa_common_schema.h"
 #include "kaa_platform_common.h"
-#include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
-#include "platform-impl/posix/posix_kaa_failover_strategy.h"
 
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
@@ -320,19 +313,17 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
 {
     KAA_RETURN_IF_NIL(self, NULL);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     kaa_transport_channel_wrapper_t *channel_wrapper;
     kaa_service_t *services;
     size_t service_count;
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);
     while (it) {
-        channel_wrapper = (kaa_transport_channel_wrapper_t *) kaa_list_get_data(it);
+        channel_wrapper = kaa_list_get_data(it);
 
-        error_code = channel_wrapper->channel.get_supported_services(channel_wrapper->channel.context
-                                                                   , &services
-                                                                   , &service_count);
+        kaa_error_t error_code = channel_wrapper->channel.get_supported_services(channel_wrapper->channel.context,
+                                                                                 &services,
+                                                                                 &service_count);
         if (error_code || !services || !service_count) {
             KAA_LOG_WARN(self->kaa_context->logger, error_code, "Failed to retrieve list of supported services "
                                         "for transport channel [0x%08X]", channel_wrapper->channel_id);

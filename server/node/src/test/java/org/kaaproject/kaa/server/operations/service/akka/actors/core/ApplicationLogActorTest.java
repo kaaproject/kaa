@@ -16,13 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -48,8 +43,12 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.mockito.Mockito;
 
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ApplicationLogActorTest {
 

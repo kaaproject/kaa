@@ -31,7 +31,10 @@ public class ThriftExecutor {
 
     /** The executor. */
     private static ExecutorService executor = null;
-    
+
+    private ThriftExecutor() {
+    }
+
     /**
      * Execute.
      *

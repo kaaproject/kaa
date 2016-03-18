@@ -40,7 +40,8 @@
     
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
 
-    <util:properties id="dao" location="classpath:dao.properties"/>
+    <util:properties id="sql_dao" location="classpath:sql-dao.properties"/>
+    <util:properties id="nosql_dao" location="classpath:nosql-dao.properties"/>
 
     <import resource="classpath:common-dao-sql-context.xml"/>
     <import resource="classpath:common-dao-${nosql_db_provider_name}-context.xml"/>

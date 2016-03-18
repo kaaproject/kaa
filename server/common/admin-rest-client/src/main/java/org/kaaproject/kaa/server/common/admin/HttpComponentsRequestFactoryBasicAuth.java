@@ -44,7 +44,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 public class HttpComponentsRequestFactoryBasicAuth extends
         HttpComponentsClientHttpRequestFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpComponentsRequestFactoryBasicAuth.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpComponentsRequestFactoryBasicAuth.class);
     
     private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 100;
 
@@ -109,7 +109,7 @@ public class HttpComponentsRequestFactoryBasicAuth extends
                 HttpContext context) {
             if (executionCount <= getRetryCount()) {
                 try {
-                    logger.warn("IOException '{}'. Wait for {} before next attempt to connect...", exception.getMessage(), connectRetryInterval);
+                    LOG.warn("IOException '{}'. Wait for {} before next attempt to connect...", exception.getMessage(), connectRetryInterval);
                     Thread.sleep(connectRetryInterval);
                 } catch (InterruptedException e) {}
                 return true;

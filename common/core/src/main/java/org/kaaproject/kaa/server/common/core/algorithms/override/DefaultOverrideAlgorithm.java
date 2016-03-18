@@ -177,7 +177,7 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
                }
                switch (mergeStrategy) {
                    case REPLACE:
-                       if (sourceArray.get(0) instanceof GenericRecord) {
+                       if (sourceArray.getSchema().getElementType().getType() == Schema.Type.RECORD) {
                            GenericArray destArray = new GenericData.Array<>(sourceArray.size(), sourceArray.getSchema());
                            for (Object item : sourceArray) {
                                GenericRecord recordItem = (GenericRecord) item;
@@ -192,7 +192,7 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
                        break;
                    case APPEND:
                        GenericArray destArray = (GenericArray) destinationChild;
-                       if (sourceArray.get(0) instanceof GenericRecord) {
+                       if (sourceArray.getSchema().getElementType().getType() == Schema.Type.RECORD) {
                            for (Object item : sourceArray) {
                                GenericRecord recordItem = (GenericRecord) item;
                                GenericRecord destRecord = new GenericData.Record(getSchemaByName(recordItem.getSchema().getFullName()));

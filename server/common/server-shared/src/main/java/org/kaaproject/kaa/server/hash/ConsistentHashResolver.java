@@ -45,7 +45,7 @@ public class ConsistentHashResolver implements OperationsServerResolver {
     private static final int SIZE_OF_INT = 4;
     private static final String MD5 = "MD5";
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final ThreadLocal<MessageDigest> md5 = new ThreadLocal<MessageDigest>() {
+    private static final ThreadLocal<MessageDigest> md5 = new ThreadLocal<MessageDigest>() { //NOSONAR
         @Override
         protected MessageDigest initialValue() {
             try {

@@ -23,8 +23,6 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include "kaa/KaaDefaults.hpp"
 
-#if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
-
 #include "kaa/logging/ILogger.hpp"
 
 namespace kaa {
@@ -42,7 +40,5 @@ private:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* DEFAULTLOGGER_HPP_ */

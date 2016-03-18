@@ -77,6 +77,16 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
                                                     , uint32_t *channel_id);
 
 /**
+ * @brief Gets transport channel associated with the service.
+ * @param[in] self          Channel manager.
+ * @param[in] service_type  Type of service with associated channel.
+ * @return                  Channel, if found. NULL if not found.
+ */
+kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
+                                                                             kaa_service_t service_type);
+
+
+/**
  * @brief Removes user-defined transport channel implementation from
  * the currently registered list.
  *

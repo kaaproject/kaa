@@ -47,8 +47,8 @@ import org.slf4j.LoggerFactory;
 
 public class CliThriftIT {
     
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory
             .getLogger(CliThriftIT.class);
     
     /** The Constant HOST. */
@@ -121,9 +121,9 @@ public class CliThriftIT {
             thriftServerThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    logger.info("Thrift Server started.");
+                    LOG.info("Thrift Server started.");
                     server.serve();
-                    logger.info("Thrift Server stopped.");
+                    LOG.info("Thrift Server stopped.");
                 }
             });
 

@@ -41,7 +41,6 @@ public:
     virtual ProfileSyncRequestPtr createProfileRequest();
 
     virtual void onProfileResponse(const ProfileSyncResponse& response);
-    virtual void onProfileResync() { syncAll(); }
 
     virtual void setProfileManager(IProfileManager* manager)
     {

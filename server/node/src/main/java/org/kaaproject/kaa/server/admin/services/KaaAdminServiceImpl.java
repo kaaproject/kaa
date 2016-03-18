@@ -147,6 +147,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -158,7 +159,7 @@ import net.iharder.Base64;
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     /**
-     * The Constant logger.
+     * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
@@ -372,6 +373,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 record = createRecordFieldFromCtlSchemaAndBody(serverProfileSchema.getCtlSchemaId(), 
                         serverProfileBody);
             } catch (Exception e) {
+                LOG.error("Provided server profile body is not valid: ", e);
                 throw new KaaAdminServiceException("Provided server profile body is not valid: " 
                                     + e.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
             }
@@ -948,6 +950,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             Schema schema = new Schema.Parser().parse(avroSchema);
+            validateRecordSchema(schema);
             return simpleSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -960,6 +963,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             Schema schema = new Schema.Parser().parse(avroSchema);
+            validateRecordSchema(schema);
             return commonSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -972,6 +976,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             Schema schema = new Schema.Parser().parse(avroSchema);
+            validateRecordSchema(schema);
             return configurationSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1245,6 +1250,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private void convertToStringSchema(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws Exception {
         Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
+        validateRecordSchema(schema);
         String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
         dto.setSchema(schemaString);
     }
@@ -1634,6 +1640,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupWeight(endpointGroup.getWeight());
             if (isEmpty(endpointGroup.getId())) {
                 endpointGroup.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(endpointGroup.getApplicationId());
@@ -1643,6 +1650,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             return controlService.editEndpointGroup(endpointGroup);
         } catch (Exception e) {
             throw Utils.handleException(e);
+        }
+    }
+
+    private void checkEndpointGroupWeight(int weight) throws KaaAdminServiceException {
+        if (weight < 0) {
+            throw new IllegalArgumentException("The weight can't be negative number!");
         }
     }
 
@@ -1865,6 +1878,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             return controlService.editConfiguration(configuration);
         } catch (StaleObjectStateException e) {
+            LOG.error("Someone has already updated the configuration. Reload page to be able to edit it. ", e);
             throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
                     ServiceErrorCode.GENERAL_ERROR);
         } catch (Exception e) {
@@ -2741,24 +2755,39 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (isEmpty(user.getExternalUid())) {
                 userFacade.deleteUser(result.getUserId());
             }
-            throw new KaaAdminServiceException("Failed to send email with temporary password. See server logs for details.",
-                    ServiceErrorCode.GENERAL_ERROR);
+            StringBuilder errorMessage = new StringBuilder("Failed to send email with temporary password. ");
+            if (e instanceof MailException) {
+                errorMessage.append("Please, check outgoing email settings. ");
+            }
+            throw new KaaAdminServiceException(String.valueOf(errorMessage.append("See server logs for details.")), ServiceErrorCode.GENERAL_ERROR);
         }
         return result.getUserId();
     }
 
     private void setSchema(AbstractSchemaDto schemaDto, byte[] data) throws KaaAdminServiceException {
         String schema = new String(data);
-        validateSchema(schema);
+        validateRecordSchema(schema);
         schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
     }
 
-    private void validateSchema(String schema) throws KaaAdminServiceException {
+    private Schema validateSchema(String avroSchema) throws KaaAdminServiceException {
         Schema.Parser parser = new Schema.Parser();
         try {
-            parser.parse(schema);
+            return parser.parse(avroSchema);
         } catch (SchemaParseException spe) {
+            LOG.error("Exception catched: ", spe);
             throw new KaaAdminServiceException(spe.getMessage(), ServiceErrorCode.INVALID_SCHEMA);
+        }
+    }
+    
+    private void validateRecordSchema(String avroSchema) throws KaaAdminServiceException {
+        Schema schema = validateSchema(avroSchema);
+        validateRecordSchema(schema);
+    }
+    
+    private void validateRecordSchema(Schema schema) throws KaaAdminServiceException {
+        if (schema.getType() != Schema.Type.RECORD) {
+            throw new KaaAdminServiceException("Schema " + schema.getFullName() + " is not a record schema!", ServiceErrorCode.INVALID_SCHEMA);
         }
     }
 
@@ -3031,6 +3060,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkCTLSchemaEditScope(tenantId, applicationId);            
             CTLSchemaParser parser = new CTLSchemaParser(controlService, tenantId);
             CTLSchemaDto schema = parser.parse(body, applicationId);
+            checkCTLSchemaVersion(schema.getVersion());
             // Check if the schema body is valid
             parser.validate(schema);
             CTLSchemaDto result = controlService.saveCTLSchema(schema);
@@ -3045,6 +3075,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
             Utils.checkNotNull(schema);
+            checkCTLSchemaVersion(schema.getVersion());
             checkCTLSchemaEditScope(schema.getMetaInfo().getTenantId(), schema.getMetaInfo().getApplicationId());
              // Check if the schema dependencies are present in the database
             List<FqnVersion> missingDependencies = new ArrayList<>();
@@ -3245,8 +3276,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Collections.sort(availableVersions);
             ctlSchemaForm.getMetaInfo().setVersions(availableVersions);
             return ctlSchemaForm;
-        }
-        catch (Exception cause) {
+        } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
@@ -3323,6 +3353,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkCTLSchemaReadScope(getCurrentUser().getTenantId(), applicationId);
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
+            validateRecordSchema(avroSchema);
             SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId);
             RecordField form = converter.createSchemaFormFromSchema(avroSchema);
             if (form.getVersion() == null) {
@@ -3591,6 +3622,21 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             this.checkApplicationId(applicationId);
             return this.controlService.getEndpointCredentialsByApplicationId(applicationId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+
+    public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (StringUtils.isEmpty(endpointUserExternalId)) {
+                String message = "The endpoint user external ID provided is empty!";
+                throw new IllegalArgumentException(message);
+            }
+            return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId(endpointUserExternalId, getCurrentUser().getTenantId());
+
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

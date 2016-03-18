@@ -60,14 +60,24 @@ public final class UserAttachResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         UserAttachResponse that = (UserAttachResponse) o;
 
-        if (errorCode != that.errorCode) return false;
-        if (errorReason != null ? !errorReason.equals(that.errorReason) : that.errorReason != null) return false;
-        if (result != that.result) return false;
+        if (errorCode != that.errorCode) {
+            return false;
+        }
+        if (errorReason != null ? !errorReason.equals(that.errorReason) : that.errorReason != null) {
+            return false;
+        }
+        if (result != that.result) {
+            return false;
+        }
 
         return true;
     }

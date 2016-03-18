@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 public class CTLSchemaDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -7601241323233814152L;
-    
+
     private String id;
     private CTLSchemaMetaInfoDto metaInfo;
     private Integer version;
@@ -51,7 +51,7 @@ public class CTLSchemaDto implements HasId, Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public CTLSchemaMetaInfoDto getMetaInfo() {
         return metaInfo;
     }
@@ -107,7 +107,7 @@ public class CTLSchemaDto implements HasId, Serializable {
     public void setDependencySet(Set<CTLSchemaDto> dependencySet) {
         this.dependencySet = dependencySet;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

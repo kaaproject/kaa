@@ -32,7 +32,6 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.test.Timing;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;

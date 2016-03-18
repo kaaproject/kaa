@@ -69,7 +69,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
-    @Value("#{dao[dao_max_wait_time]}")
+    @Value("#{sql_dao[dao_max_wait_time]}")
     private int waitSeconds;
     @Autowired
     private TopicDao<Topic> topicDao;
@@ -135,6 +135,7 @@ public class NotificationServiceImpl implements NotificationService {
             try {
                 dto.setBody(serializeNotificationBody(dto, schema));
             } catch (IOException e) {
+                LOG.error("Can't serialize notification body using schema. ", e);
                 throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
             }
 
@@ -296,6 +297,7 @@ public class NotificationServiceImpl implements NotificationService {
                 try {
                     notificationDto.setBody(serializeNotificationBody(notificationDto, schema));
                 } catch (IOException e) {
+                    LOG.error("Can't serialize notification body using schema. ", e);
                     throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
                 }
             } else {

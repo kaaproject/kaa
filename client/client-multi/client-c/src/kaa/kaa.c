@@ -24,11 +24,8 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
-#include "kaa_common.h"
-
-#include "kaa_context.h"
+#include "kaa_channel_manager.h"
 #include "kaa_defaults.h"
-#include "platform/ext_transport_channel.h"
 #include "platform/ext_key_utils.h"
 
 /*
@@ -50,8 +47,6 @@ extern bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
-                                                                                    kaa_service_t service_type);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status,

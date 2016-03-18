@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
  */
 public class TestCluster {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory
             .getLogger(TestCluster.class);
 
     /** The Constant BOOTSTRAP_NODE_HOST. */
@@ -61,7 +61,7 @@ public class TestCluster {
     public static void checkStarted() throws Exception {
         zkCluster = new TestingCluster(new InstanceSpec(null, EventServiceThriftTestIT.ZK_PORT, -1, -1, true, -1, -1, -1));
         zkCluster.start();
-        logger.info("ZK Cluster started");
+        LOG.info("ZK Cluster started");
         OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
         operationsNode = new OperationsNode(endpointNodeInfo,

@@ -64,7 +64,7 @@ public class EndpointCountRebalancer implements Rebalancer {
     @Override
     public Map<Integer, List<RedirectionRule>> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
         Map<Integer, List<RedirectionRule>> result = new HashMap<>();
-        if (opsServerLoadHistory.size() == 0) {
+        if (opsServerLoadHistory.isEmpty()) {
             LOG.debug("No ops server load history yet");
             return result;
         }
@@ -182,7 +182,7 @@ public class EndpointCountRebalancer implements Rebalancer {
 
     private int getLastEndpointCount(OperationsServerLoadHistory loadHistory) {
         List<OperationsServerLoad> history = loadHistory.getHistory();
-        if (history.size() > 0) {
+        if (!history.isEmpty()) {
             LoadInfo loadInfo = history.get(history.size() - 1).getLoadInfo();
             if (loadInfo != null) {
                 return loadInfo.getEndpointCount();

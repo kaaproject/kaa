@@ -89,8 +89,7 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
                     logsRootPath, DEFAULT_SYSTEM_USER);
         } catch (IOException e) {
             LOG.error("Can't create root log dir: " + logsRootPath, e);
-        }
-        finally {
+        } finally {
             if (createRootLogDirScript != null) {
                 createRootLogDirScript.delete();
             }
@@ -105,7 +104,7 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
             FileUtils.deleteDirectory(directory);
             LOG.debug("Directory was successfully deleted");
         } catch (IOException e) {
-            LOG.error("Unable to delete directory with path: {}", path);
+            LOG.error("Unable to delete directory with path: {}, exception catched: {}", path, e);
         }
     }
     

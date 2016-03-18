@@ -32,6 +32,9 @@ import com.datastax.driver.core.utils.Bytes;
 
 public class CassandraDaoUtil {
 
+    private CassandraDaoUtil() {
+    }
+
     /**
      * Specific method for converting list of <code>EndpointGroupStateDto</code> objects
      * to list of model objects <code>CassandraEndpointGroupState</code>.

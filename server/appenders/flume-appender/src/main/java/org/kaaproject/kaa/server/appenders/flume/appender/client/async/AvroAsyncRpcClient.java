@@ -126,6 +126,6 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
 
     @Override
     public void close() throws FlumeException {
-
+        // Do nothing
     }
 }

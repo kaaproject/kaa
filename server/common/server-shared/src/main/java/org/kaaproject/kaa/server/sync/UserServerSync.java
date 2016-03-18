@@ -133,21 +133,30 @@ public final class UserServerSync {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         UserServerSync that = (UserServerSync) o;
 
-        if (endpointAttachResponses != null ? !endpointAttachResponses.equals(that.endpointAttachResponses) : that.endpointAttachResponses != null)
+        if (endpointAttachResponses != null ? !endpointAttachResponses.equals(that.endpointAttachResponses) : that.endpointAttachResponses != null) {
             return false;
-        if (endpointDetachResponses != null ? !endpointDetachResponses.equals(that.endpointDetachResponses) : that.endpointDetachResponses != null)
+        }
+        if (endpointDetachResponses != null ? !endpointDetachResponses.equals(that.endpointDetachResponses) : that.endpointDetachResponses != null) {
             return false;
-        if (userAttachNotification != null ? !userAttachNotification.equals(that.userAttachNotification) : that.userAttachNotification != null)
+        }
+        if (userAttachNotification != null ? !userAttachNotification.equals(that.userAttachNotification) : that.userAttachNotification != null) {
             return false;
-        if (userAttachResponse != null ? !userAttachResponse.equals(that.userAttachResponse) : that.userAttachResponse != null)
+        }
+        if (userAttachResponse != null ? !userAttachResponse.equals(that.userAttachResponse) : that.userAttachResponse != null) {
             return false;
-        if (userDetachNotification != null ? !userDetachNotification.equals(that.userDetachNotification) : that.userDetachNotification != null)
+        }
+        if (userDetachNotification != null ? !userDetachNotification.equals(that.userDetachNotification) : that.userDetachNotification != null) {
             return false;
+        }
 
         return true;
     }

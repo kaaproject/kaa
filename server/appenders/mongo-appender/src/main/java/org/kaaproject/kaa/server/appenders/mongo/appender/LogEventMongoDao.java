@@ -99,7 +99,7 @@ public class LogEventMongoDao implements LogEventDao {
                 mongoTemplate.createCollection(collectionName);
             }
         } catch (UncategorizedMongoDbException e) {
-            LOG.warn("Failed to create collection {} due to", collectionName, e.getMessage());
+            LOG.warn("Failed to create collection {} due to", collectionName, e);
         }
     }
 

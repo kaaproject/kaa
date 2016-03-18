@@ -95,13 +95,15 @@ public final class ConfigurationServerSync {
 
         ConfigurationServerSync that = (ConfigurationServerSync) o;
 
-        if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null)
+        if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null) {
             return false;
-        if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null)
+        }
+        if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null) {
             return false;
-        if (responseStatus != that.responseStatus) return false;
-
+        }
+        if (responseStatus != that.responseStatus) return false; {
         return true;
+        }
     }
 
     @Override

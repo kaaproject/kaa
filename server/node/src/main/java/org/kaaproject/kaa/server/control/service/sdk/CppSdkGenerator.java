@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CppSdkGenerator extends SdkGenerator {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(CppSdkGenerator.class);
 
@@ -159,25 +159,19 @@ public class CppSdkGenerator extends SdkGenerator {
         CompressorOutputStream cos = csf.createCompressorOutputStream(CompressorStreamFactory.GZIP, sdkOutput);
         ArchiveOutputStream sdkFile = asf.createArchiveOutputStream(ArchiveStreamFactory.TAR, cos);
 
-        Map<String, TarEntryData> replacementData = new HashMap<String, TarEntryData>();
+        Map<String, TarEntryData> replacementData = new HashMap<>();
 
         List<TarEntryData> cppSources = new ArrayList<>();
 
         // TODO: remove all version fields and add single sdkToken field
         // create entry for default properties
         TarArchiveEntry entry = new TarArchiveEntry(SDK_DEFAULTS_PATH);
-        byte[] data = generateKaaDefaults(bootstrapNodes, sdkToken,
-                                          configurationSchemaVersion, profileSchemaVersion,
-                                          notificationSchemaVersion, logSchemaVersion,
-                                          configurationProtocolSchemaBody,
-                                          defaultConfigurationData,
-                                          eventFamilies,
-                                          defaultVerifierToken);
+        byte[] data = generateKaaDefaults(bootstrapNodes, sdkToken, defaultConfigurationData, defaultVerifierToken);
         entry.setSize(data.length);
         TarEntryData tarEntry = new TarEntryData(entry, data);
         cppSources.add(tarEntry);
 
-        Map<String, String> profileVars = new HashMap<String, String>();
+        Map<String, String> profileVars = new HashMap<>();
         profileVars.put(SDK_PROFILE_VERSION_VAR, profileSchemaVersion.toString());
         cppSources.addAll(processFeatureSchema(profileSchemaBody, PROFILE_SCHEMA_AVRO_SRC,
                                                PROFILE_DEFINITIONS_TEMPLATE, PROFILE_DEFINITIONS_PATH, profileVars));
@@ -238,8 +232,7 @@ public class CppSdkGenerator extends SdkGenerator {
 
     private List<TarEntryData> processFeatureSchema(String schemaBody, String schemaPath,
                                                     String templatePath, String outputPath,
-                                                    Map<String, String> vars) throws IOException
-    {
+                                                    Map<String, String> vars) throws IOException {
         List<TarEntryData> cppSources = new LinkedList<>();
 
         if (!StringUtils.isBlank(schemaBody)) {
@@ -254,7 +247,7 @@ public class CppSdkGenerator extends SdkGenerator {
             entry = new TarArchiveEntry(outputPath);
 
             String templateStr = replaceVar(definitionsHpp, RECORD_CLASS_NAME_VAR, schema.getName());
-            if (vars != null && vars.size() > 0) {
+            if (vars != null && !vars.isEmpty()) {
                 for (Entry<String, String> var : vars.entrySet()) {
                     templateStr = replaceVar(templateStr, var.getKey(), var.getValue());
                 }
@@ -274,26 +267,14 @@ public class CppSdkGenerator extends SdkGenerator {
      *
      * @param bootstrapNodes the bootstrap nodes
      * @param sdkToken the app token
-     * @param configurationSchemaVersion the configuration schema version
-     * @param profileSchemaVersion the profile schema version
-     * @param notificationSchemaVersion the notification schema version
-     * @param logSchemaVersion the log schema version
-     * @param configurationProtocolSchemaBody the configuration protocol schema body
      * @param defaultConfigurationData the default configuration data
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
                                        String sdkToken,
-                                       int configurationSchemaVersion,
-                                       int profileSchemaVersion,
-                                       int notificationSchemaVersion,
-                                       int logSchemaVersion,
-                                       String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       List<EventFamilyMetadata> eventFamilies,
-                                       String defaultVerifierToken) throws IOException
-    {
+                                       String defaultVerifierToken) throws IOException {
         String kaaDefaultsString = SdkGenerator.readResource(SDK_DEFAULTS_TEMPLATE);
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());

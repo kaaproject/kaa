@@ -283,6 +283,17 @@ public interface EndpointService {
      * @return the list
      */
     List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId);
+    
+    /**
+     * Find endpoint profiles by user external id and tenant id.
+     *
+     * @param externalId
+     *            the endpoint user external id
+     * @param tenantId
+     *            the tenant id
+     * @return the list of endpoint profiles
+     */
+    List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId);
 
     /**
      * 
