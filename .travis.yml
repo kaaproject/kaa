@@ -2,18 +2,16 @@ language: python
 python: "3.4"
 sudo: required
 dist: trusty
-install:
-  - bash <(curl -sS https://nixos.org/nix/install)
-  - source $HOME/.nix-profile/etc/profile.d/nix.sh
+install: |
+  if test -n "$(git diff --name-only ${TRAVIS_COMMIT_RANGE/.../..} -- client/client-multi/client-c)"; then
+    cd client/client-multi/client-c &&
+    ./scripts/install.sh --arg cc3200Support false &&
+    . $HOME/.nix-profile/etc/profile.d/nix.sh &&
+    cd ../../..
+  fi
 
-  - sudo mkdir /etc/nix
-  - sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'
-
-  - cd client/client-multi/client-c
-  - nix-shell -Q --arg cc3200Support false --pure --run true
-  - cd ../../..
-
-script:
-  - cd client/client-multi/client-c
-  - nix-shell --arg withWerror true --arg cc3200Support false --pure --run "make"
-  - nix-shell --arg withWerror true --arg cc3200Support false --pure --run "./build.sh test"
+script: |
+  if test -n "$(git diff --name-only ${TRAVIS_COMMIT_RANGE/.../..} -- client/client-multi/client-c)"; then
+    cd client/client-multi/client-c &&
+    ./scripts/build.sh --arg cc3200Support false
+  fi
