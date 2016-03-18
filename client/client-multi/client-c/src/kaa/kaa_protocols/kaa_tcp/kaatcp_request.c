@@ -286,9 +286,9 @@ kaatcp_error_t kaatcp_get_request_kaasync(const kaatcp_kaasync_t *message, char 
 
     if (message->sync_request) {
         if (cursor + message->sync_request_size <= buf + first_buf_size) {
-	  memcpy(cursor, message->sync_request, message->sync_request_size);
-	  cursor += message->sync_request_size;
-	}
+            memcpy(cursor, message->sync_request, message->sync_request_size);
+            cursor += message->sync_request_size;
+        }
     }
     *buf_size = cursor - buf;
     return first_buf_size < *buf_size ? KAATCP_ERR_BUFFER_NOT_ENOUGH : KAATCP_ERR_NONE;
