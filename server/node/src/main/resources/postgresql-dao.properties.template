@@ -1,5 +1,5 @@
 # specify hibernate sql dialect
-hibernate_dialect=org.hibernate.dialect.MySQL5Dialect
+hibernate_dialect=org.hibernate.dialect.PostgreSQL82Dialect
 
 # specify if hibernate will format sql request
 hibernate_format_sql=false
@@ -11,7 +11,7 @@ hibernate_show_sql=false
 hibernate_hbm2ddl_auto=update
 
 # specify jdbc driver class
-jdbc_driver_className=org.mariadb.jdbc.Driver
+jdbc_driver_className=org.postgresql.Driver
 
 # specify jdbc database user name
 jdbc_username=sqladmin
@@ -20,4 +20,4 @@ jdbc_username=sqladmin
 jdbc_password=admin
 
 # specify jdbc database url
-jdbc_url=jdbc:mysql:failover://localhost:3306/kaa
+jdbc_url=jdbc:postgresql://localhost:5432/kaa
