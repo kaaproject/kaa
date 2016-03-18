@@ -140,7 +140,6 @@ void test_kaatcp_ping(void)
     KAA_TRACE_OUT(logger);
 }
 
- 
 void test_get_request_kaasync_over_buff(void)
 {
     KAA_TRACE_IN(logger);
@@ -152,7 +151,7 @@ void test_get_request_kaasync_over_buff(void)
     memset(buffer, 0xEA, 100);
     ASSERT_EQUAL(kaatcp_get_request_kaasync(&kaa_sync_message, buffer, &buffer_size), KAATCP_ERR_BUFFER_NOT_ENOUGH);
     for (int i = 10; i < 100; i++) {
-      ASSERT_EQUAL(buffer[i], 0xEA);
+        ASSERT_EQUAL(buffer[i], 0xEA);
     }
     KAA_TRACE_OUT(logger);
 }
