@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,6 +127,13 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
                 }
                 if (syncResponse.getLogSyncResponse() != null && logTransport != null) {
                     logTransport.onLogResponse(syncResponse.getLogSyncResponse());
+                }
+
+                boolean needProfileResync = syncResponse.getStatus() == SyncResponseResultType.PROFILE_RESYNC;
+                state.setIfNeedProfileResync(needProfileResync);
+                if (needProfileResync) {
+                    LOG.info("Going to resync profile...");
+                    profileTransport.sync();
                 }
             } finally {
                 state.persist();

@@ -32,12 +32,6 @@
 
 #include "platform/sock.h"
 
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
-
-
 struct kaa_notification_manager_t {
     kaa_list_t                     *mandatory_listeners;
     kaa_list_t                     *topics_listeners;

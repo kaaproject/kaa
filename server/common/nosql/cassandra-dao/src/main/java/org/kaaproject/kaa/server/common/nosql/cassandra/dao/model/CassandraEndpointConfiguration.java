@@ -83,16 +83,24 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CassandraEndpointConfiguration that = (CassandraEndpointConfiguration) o;
 
-        if (configuration != null ? !configuration.equals(that.configuration) : that.configuration != null)
+        if (configuration != null ? !configuration.equals(that.configuration) : that.configuration != null) {
             return false;
-        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null)
+        }
+        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) {
             return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
 
         return true;
     }

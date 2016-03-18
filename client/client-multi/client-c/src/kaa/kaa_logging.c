@@ -38,9 +38,6 @@
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
 
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
 extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
 
 typedef enum {

@@ -41,7 +41,7 @@ public class CtlExportServlet extends HttpServlet implements Servlet, ServletPar
 
     private static final long serialVersionUID = 1584721028492234643L;
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(CtlExportServlet.class);
 
     private static final int BUFFER = 1024 * 100;

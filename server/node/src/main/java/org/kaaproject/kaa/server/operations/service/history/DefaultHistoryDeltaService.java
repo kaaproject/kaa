@@ -48,7 +48,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultHistoryDeltaService implements HistoryDeltaService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHistoryDeltaService.class);
 
     /** The cache service. */

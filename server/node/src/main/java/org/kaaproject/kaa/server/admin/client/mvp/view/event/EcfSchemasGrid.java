@@ -67,8 +67,7 @@ public class EcfSchemasGrid extends AbstractKaaGrid<EventSchemaVersionDto, Integ
     protected Integer getObjectId(EventSchemaVersionDto value) {
         if (value != null) {
             return value.getVersion();
-        }
-        else {
+        } else {
             return null;
         }
     }

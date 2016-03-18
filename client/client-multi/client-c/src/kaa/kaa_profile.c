@@ -18,14 +18,12 @@
 #include <stdbool.h>
 #include <inttypes.h>
 #include <sys/types.h>
-#include "platform/stdio.h"
 #include "platform/sock.h"
 #include "avro_src/avro/io.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"
 #include "kaa_status.h"
 #include "kaa_profile.h"
-#include "kaa_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_defaults.h"
@@ -39,13 +37,7 @@
 
 extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
-
-
-static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
+static kaa_service_t profile_sync_services[] = { KAA_SERVICE_PROFILE };
 
 
 
@@ -66,6 +58,10 @@ struct kaa_profile_manager_t {
 };
 
 
+static bool resync_is_required(kaa_profile_manager_t *self)
+{
+    return self->need_resync || self->status->profile_needs_resync;
+}
 
 /**
  * PUBLIC FUNCTIONS
@@ -100,6 +96,21 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self)
+{
+    if (!self)
+        return KAA_ERR_BADPARAM;
+
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(
+                    self->channel_manager, KAA_SERVICE_PROFILE);
+    if (!channel) {
+        return KAA_ERR_NOT_FOUND;
+    }
+
+    channel->sync_handler(channel->context, profile_sync_services, 1);
+    return KAA_ERR_NONE;
+}
 
 
 bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self)
@@ -134,7 +145,7 @@ void kaa_profile_manager_destroy(kaa_profile_manager_t *self)
 kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *result)
 {
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
-    *result = self->need_resync;
+    *result = resync_is_required(self);
     return KAA_ERR_NONE;
 }
 
@@ -145,7 +156,7 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // profile body size
 #if KAA_PROFILE_SCHEMA_VERSION > 0
-    if (self->need_resync)
+    if (resync_is_required(self))
         *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
 #endif
 
@@ -195,7 +206,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
 
     uint32_t network_order_32 = KAA_HTONL(0);
 #if KAA_PROFILE_SCHEMA_VERSION > 0
-    if (self->need_resync) {
+    if (resync_is_required(self)) {
         network_order_32 = KAA_HTONL(self->profile_body.size);
         error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
         KAA_RETURN_IF_ERR(error_code);

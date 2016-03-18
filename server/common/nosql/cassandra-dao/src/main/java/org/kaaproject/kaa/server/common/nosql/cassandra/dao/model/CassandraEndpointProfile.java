@@ -289,7 +289,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         return subscriptions;
     }
 
-    @Override
     public int getServerProfileVersion() {
         return serverProfileVersion;
     }
@@ -298,7 +297,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverProfileVersion = serverProfileVersion;
     }
 
-    @Override
     public String getServerProfile() {
         return serverProfile;
     }

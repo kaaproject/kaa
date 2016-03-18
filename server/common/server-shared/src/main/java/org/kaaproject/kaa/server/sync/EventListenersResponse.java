@@ -89,14 +89,24 @@ public final class EventListenersResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         EventListenersResponse that = (EventListenersResponse) o;
 
-        if (requestId != that.requestId) return false;
-        if (listeners != null ? !listeners.equals(that.listeners) : that.listeners != null) return false;
-        if (result != that.result) return false;
+        if (requestId != that.requestId) {
+            return false;
+        }
+        if (listeners != null ? !listeners.equals(that.listeners) : that.listeners != null) {
+            return false;
+        }
+        if (result != that.result) {
+            return false;
+        }
 
         return true;
     }

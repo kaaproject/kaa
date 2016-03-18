@@ -17,8 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.cache;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import org.junit.Test;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 

@@ -92,7 +92,8 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         Assert.assertNotNull(endpointProfile);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertNotNull(found);
-        Assert.assertEquals(endpointProfile.getClientProfileBody(), found.getProfile());
+        Assert.assertEquals(endpointProfile.getClientProfileBody(), found.getClientSideProfile());
+        Assert.assertEquals(endpointProfile.getServerProfileBody(), found.getServerSideProfile());
     }
 
     @Test
@@ -198,7 +199,6 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         Assert.assertNull(endpointProfile.getEndpointKey());
         Assert.assertNull(ep.getEndpointKey());
         Assert.assertNull(ep.getEndpointUserId());
-        Assert.assertNull(ep.getServerProfile());
         Assert.assertNull(ep.getSubscriptions());
     }
 

@@ -55,7 +55,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
 
     private static final int DEFAULT_LOAD_INDEX = 1;
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OperationsInitializationService.class);
 
     /** The operations node. */

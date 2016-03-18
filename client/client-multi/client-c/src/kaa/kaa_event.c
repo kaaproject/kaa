@@ -121,11 +121,6 @@ struct kaa_event_manager_t {
 static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
 
 
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
-
 static void destroy_event_listener_request(void *request_p)
 {
     KAA_RETURN_IF_NIL(request_p,);

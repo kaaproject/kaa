@@ -18,12 +18,28 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 
 public class MongoDaoUtil {
+
+    private MongoDaoUtil() {
+    }
+
+    private static final BiMap<Character, Character> RESERVED_CHARACTERS = HashBiMap.create();
+    static {
+        RESERVED_CHARACTERS.put('.', (char) 0xFF0E);
+        RESERVED_CHARACTERS.put('$', (char) 0xFF04);
+    }
+
     /**
      * Specific method for converting list of <code>EndpointGroupStateDto</code> objects
      * to list of model objects <code>EndpointGroupState</code>.
@@ -49,7 +65,7 @@ public class MongoDaoUtil {
     /**
      * Specific method for converting list of <code>EventClassFamilyVersionStateDto</code> objects
      * to list of model objects <code>EventClassFamilyVersionState</code>
-     * @param stateDtoList
+     * @param stateDtoList the stateDtoList
      * @return converted list of <code>EndpointGroupState</code> objects
      */
     public static List<EventClassFamilyVersionState> convertECFVersionDtoToModelList(List<EventClassFamilyVersionStateDto> stateDtoList) {
@@ -81,5 +97,59 @@ public class MongoDaoUtil {
             }
         }
         return notifications;
+    }
+
+    /**
+     * Specific method for recursive substitute the reserved $ and . characters in the key names of the DBObject.
+     * @param profileBody the profileBody
+     * @return encoded DBObject
+     */
+    public static DBObject encodeReservedCharacteres(DBObject profileBody) {
+        if (profileBody == null) {
+            return null;
+        }
+        Set<String> keySet = profileBody.keySet();
+        DBObject modifiedNode = new BasicDBObject();
+        if (keySet != null) {
+            for (String key : keySet) {
+                Object value = profileBody.get(key);
+                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
+                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
+                }
+                if(value instanceof DBObject) {
+                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
+                } else {
+                    modifiedNode.put(key, value);
+                }
+            }
+        }
+        return modifiedNode;
+    }
+
+    /**
+     * Specific method for recursive decoding the reserved $ and . characters in the key names of the DBObject.
+     * @param profileBody the profileBody
+     * @return decoded DBObject
+     */
+    public static String decodeReservedCharacteres(DBObject profileBody) {
+        if (profileBody == null) {
+            return "";
+        }
+        Set<String> keySet = profileBody.keySet();
+        DBObject modifiedNode = new BasicDBObject();
+        if (keySet != null) {
+            for (String key : keySet) {
+                Object value = profileBody.get(key);
+                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
+                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
+                }
+                if(value instanceof DBObject) {
+                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
+                } else {
+                    modifiedNode.put(key, value);
+                }
+            }
+        }
+        return modifiedNode != null ? modifiedNode.toString() : "";
     }
 }

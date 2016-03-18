@@ -51,7 +51,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     /** The Constant BOOTSTRAP_SERVER_NODE_PATH. */
     protected static final String BOOTSTRAP_SERVER_NODE_PATH = "/bootstrapServerNodes";
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(ControlNodeTracker.class);
 

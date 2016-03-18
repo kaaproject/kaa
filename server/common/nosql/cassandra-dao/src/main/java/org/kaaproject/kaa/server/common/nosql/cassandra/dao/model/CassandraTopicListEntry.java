@@ -33,6 +33,7 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
 
 @Table(name = TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME)
@@ -117,12 +118,7 @@ public final class CassandraTopicListEntry implements TopicListEntry, Serializab
 
     @Override
     public TopicListEntryDto toDto() {
-        List<TopicDto> topicDtos = new ArrayList<>();
-        for (String topicId : topicIds) {
-            TopicDto topicDto = new TopicDto();
-            topicDto.setId(topicId);
-            topicDtos.add(topicDto);
-        }
+        List<TopicDto> topicDtos = ModelUtils.getTopicDtos(topicIds);
         return new TopicListEntryDto(simpleHash, getBytes(hash), topicDtos);
     }
 }

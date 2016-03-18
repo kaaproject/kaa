@@ -20,7 +20,7 @@
 #include "kaa/KaaDefaults.hpp"
 
 #if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
-#include "kaa/logging/LoggerFactory.hpp"
+#include "kaa/logging/ILogger.hpp"
 
 #include <string.h>
 #include <boost/format.hpp>

@@ -37,7 +37,10 @@ public class RecordWrapperSchemaGenerator {
     private static final String RECORD_DATA_SCHEMA_VAR = "\\$\\{record_data_schema\\}";
     
     private static String recordWrapperSchemaTemplate;
-    
+
+    private RecordWrapperSchemaGenerator() {
+    }
+
     public static Schema generateRecordWrapperSchema(String userRecordSchema) throws IOException {
         if (recordWrapperSchemaTemplate == null) {
             recordWrapperSchemaTemplate = FileUtils.readResource(RECORD_WRAPPER_SCHEMA_TEMPLATE);

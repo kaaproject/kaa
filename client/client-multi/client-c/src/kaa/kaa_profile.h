@@ -82,8 +82,6 @@ kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t 
  */
 kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id);
 
-
-
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

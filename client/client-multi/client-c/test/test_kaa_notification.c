@@ -74,6 +74,25 @@ char *allocator (void *context, size_t size)
 char *buffer = NULL;
 size_t buffer_size = 0;
 
+/* We should remove status file after running the test, because
+ * client persists notification sequence number and if the test is run
+ * two times in a row, notification manager will throw out the notification
+ * which is serialized in test, because it considers that the notification
+ * has already been received -> client won't received the notification and
+ * the test will be failed.
+ */
+#define KAA_STATUS_FILE_NAME      "./kaa_status.bin"
+static void remove_state_file(const char* filename)
+{
+    int res = remove(filename);
+    if (!res) {
+        printf("Status file has been successfully removed\n");
+    } else {
+        printf("Error: Can't remove status file!\n");
+    }
+}
+
+
 int test_init(void)
 {
     err = KAA_ERR_NONE;
@@ -94,7 +113,6 @@ int test_init(void)
     topic_listener_2.context = &topic_listener;
 
     topic_id = 22;
-
     return 0;
 }
 
@@ -107,6 +125,7 @@ int test_deinit(void)
         KAA_FREE(buffer_pointer);
     }
 
+    remove_state_file(KAA_STATUS_FILE_NAME);
     return 0;
 }
 

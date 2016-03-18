@@ -20,6 +20,9 @@ import java.util.Arrays;
 
 public class Util {
 
+    private Util() {
+    }
+
     public static byte[] getArrayCopy(byte[] array) {
         byte[] bytes = null;
         if (array != null) {

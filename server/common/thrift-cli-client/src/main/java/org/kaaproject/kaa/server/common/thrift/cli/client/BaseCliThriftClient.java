@@ -16,12 +16,7 @@
 
 package org.kaaproject.kaa.server.common.thrift.cli.client;
 
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-
 import jline.console.ConsoleReader;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftException;
@@ -29,12 +24,16 @@ import org.kaaproject.kaa.server.common.thrift.gen.cli.CommandResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
 /**
  * The Class BaseCliThriftClient.<br>
  * Main class to start CLI Client session.
  */
 public class BaseCliThriftClient {
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(BaseCliThriftClient.class);
 
@@ -82,6 +81,7 @@ public class BaseCliThriftClient {
                 CommandResult result = client.executeCommand(cmdTrimmed);
                 out.print(result.message);
             } catch (CliThriftException cliException) {
+                LOG.error("Exception catched: ", cliException);
                 ret = cliException.errorCode;
                 if (ret != 0) {
                     String errMsg = cliException.message;
@@ -91,6 +91,7 @@ public class BaseCliThriftClient {
                     err.println("[Thrift CLI Error]: " + errMsg);
                 }
             } catch (TException e) {
+                LOG.error("Exception catched: ", e);
                 String errMsg = e.getMessage();
                 if (errMsg == null) {
                     errMsg = e.toString();
@@ -119,7 +120,7 @@ public class BaseCliThriftClient {
                         try {
                             port = Integer.valueOf(strPort);
                         } catch (Exception e) {
-                            LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer", strPort);
+                            LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer, exception catched {}", strPort, e);
                         }
                         if (port > 0) {
                             parsed = true;
@@ -227,6 +228,7 @@ public class BaseCliThriftClient {
             ss.out = new PrintStream(System.out, true, "UTF-8"); //NOSONAR
             ss.err = new PrintStream(System.err, true, "UTF-8"); //NOSONAR
         } catch (UnsupportedEncodingException e) {
+            LOG.error("Exception catched: ", e);
             System.exit(3); //NOSONAR
         }
 

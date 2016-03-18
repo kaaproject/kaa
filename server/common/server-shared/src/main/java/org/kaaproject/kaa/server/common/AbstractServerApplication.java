@@ -88,10 +88,10 @@ public abstract class AbstractServerApplication {
                     properties.add(arg);
                 }
             }
-            if (contexts.size() > 0) {
+            if (!contexts.isEmpty()) {
                 appContextXmls = contexts.toArray(new String[contexts.size()]);
             }
-            if (properties.size() > 0) {
+            if (!properties.isEmpty()) {
                 appPropertiesFiles = properties.toArray(new String[properties.size()]);
             }
         }
@@ -104,7 +104,7 @@ public abstract class AbstractServerApplication {
                     sources.addLast(new ResourcePropertySource(propertyFile, AbstractServerApplication.class
                             .getClassLoader()));
                 } catch (IOException e) {
-                    LOG.error("Can't load properties file {} from classpath", propertyFile);
+                    LOG.error("Can't load properties file {} from classpath, exception catched {}", propertyFile, e);
                     return;
                 }
             }

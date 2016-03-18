@@ -39,6 +39,9 @@ public interface KaaClientState {
     void setAppStateSeqNumber(int appStateSeqNumber);
     int getAppStateSeqNumber();
 
+    void setIfNeedProfileResync(boolean needProfileResync);
+    boolean isNeedProfileResync();
+
     void setProfileHash(EndpointObjectHash hash);
     EndpointObjectHash getProfileHash();
 
