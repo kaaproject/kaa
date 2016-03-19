@@ -114,7 +114,7 @@ in with self; with pkgs; {
         export CC32XX_SDK=${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk
       '' +
       lib.optionalString esp8266Support ''
-        export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}/lib/ct-ng.1.20.0/builds/xtensa-lx106-elf"
+        export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}"
         export ESP8266_SDK_BASE=${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk
       '' +
       ''

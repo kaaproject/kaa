@@ -10,7 +10,7 @@ install:
   - sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'
 
   - cd client/client-multi/client-c
-  - travis_wait 25 nix-shell -Q --arg cc3200Support false --pure --run true
+  - nix-shell -Q --arg cc3200Support false --pure --run true
   - cd ../../..
 
 script:
