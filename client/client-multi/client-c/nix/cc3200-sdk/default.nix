@@ -2,11 +2,11 @@
 }:
 stdenv.mkDerivation rec {
 
-  name = "cc3200-sdk-1.2.0";
+  name = "cc3200-sdk-1.1.0";
 
   src = requireFile {
-    name = "CC3200SDK-1.2.0-windows-installer.exe";
-    sha256 = "1wdm52n7mx5w57l48gdl8387nsn2vgq3pwxy9z5zc7v9k16zcldh";
+    name = "CC3200SDK-1.1.0-windows-installer.exe";
+    sha256 = "1m5yjp2wjpgbjkq200b700gmz974519fw7rxby8cfxirkzknicw1";
     url = "http://www.ti.com/tool/cc3200sdk";
   };
 
