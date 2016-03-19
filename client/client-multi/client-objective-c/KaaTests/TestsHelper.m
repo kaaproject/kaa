@@ -59,7 +59,39 @@
     return properties;
 }
 
++ (NSData *)getData {
+    char five = 5;
+    NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
+    [data appendBytes:&five length:sizeof(five)];
+    [data appendBytes:&five length:sizeof(five)];
+    return data;
+}
+
 @end
+
+
+@implementation HttpClientMock
+
+- (void)executeHttpRequest:(NSString *)uri
+                    entity:(NSDictionary *)entity
+            verifyResponse:(BOOL)verifyResponse
+                   success:(void (^)(NSData *))success
+                   failure:(void (^)(NSInteger))failure {
+    success([TestsHelper getData]);
+}
+
+- (void)close {
+}
+
+- (void)abort {
+}
+
+- (BOOL)canAbort {
+    return YES;
+}
+
+@end
+
 
 /** 
  * Implementation for XCTestLog category. 
