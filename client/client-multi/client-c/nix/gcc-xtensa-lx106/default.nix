@@ -1,57 +1,47 @@
-{ stdenv, fetchFromGitHub
-, autoconf, gperf, which, flex, bison, texinfo, wget
-, libtool, automake, ncurses, gcc
-, expat, file, unzip
+{ stdenv, fetchurl, zlib
 }:
-stdenv.mkDerivation {
-  name = "gcc-xtensa-lx106-20150607";
+let
+  src =
+    if stdenv.system == "i686-linux" then
+       fetchurl {
+         url = "http://arduino.esp8266.com/linux32-xtensa-lx106-elf.tar.gz";
+         sha256 = "0nlmvjfjv3mcj0ihvf27dflrmjhads00wr2si42zny00ky0ifj5j";
+       } else
+    if stdenv.system == "x86_64-linux" then
+       fetchurl {
+         url = http://arduino.esp8266.com/linux64-xtensa-lx106-elf-gb404fb9.tar.gz;
+         sha256 = "1dvk2i1r5nw9ajlv4h4rs2b2149qa0rayz8n4sd8h85kv3xmgw26";
+       } else
+    if stdenv.system == "i686-darwin" || stdenv.system == "x86_64-darwin" then
+       fetchurl {
+         url = http://arduino.esp8266.com/osx-xtensa-lx106-elf-gb404fb9-2.tar.gz;
+         sha256 = "1rp4p5b9wqddm8gfw6mwax906c0pf54kv7glw1ai7gcp74cm1w8c";
+       } else
+    abort "no snapshot for this platform (missing target triple)";
 
-  src = fetchFromGitHub {
-    owner = "jcmvbkbc";
-    repo = "crosstool-NG";
-    rev = "f4a3946c3e120d1826bf458a8c1c4c50bc19d9e9";
-    sha256 = "0xnh8idxxyjdb8lwrrmxm626wmzazkyp990vp29qv26fmnb3a1j0";
-  };
+in stdenv.mkDerivation {
+  name = "gcc-xtensa-lx106-1.20.0-26-gb404fb9-2";
 
-  buildInputs = [
-    stdenv
-    autoconf
-    gperf
-    which
-    flex
-    bison
-    texinfo
-    wget
-
-    libtool
-    automake
-    ncurses
-
-    expat
-    file
-    unzip
-
-    gcc
-  ];
-
-  preConfigure = ''
-    ./bootstrap
-  '';
-
-  buildPhase = ''
-    make && make install
-    cp -r local-patches/ overlays/ $out/lib/ct-ng.1.20.0/
-    cd $out
-    ./bin/ct-ng xtensa-lx106-elf
-    echo 'CT_HOST_PREFIX=${gcc}/bin/' >> .config
-    ./bin/ct-ng build
-  '';
+  inherit src;
 
   installPhase = ''
-    for executable in $out/lib/ct-ng.1.20.0/builds/xtensa-lx106-elf/bin/*; do
-      ln -s $executable $out/bin/$(basename $executable)
-    done
+    mkdir -p $out
+    cp -r . $out
   '';
+
+  preFixup = if stdenv.isLinux then let
+    rpath = stdenv.lib.concatStringsSep ":" [
+      "$out/lib"
+      (stdenv.lib.makeLibraryPath [ zlib ])
+      "${stdenv.cc.cc}/lib${stdenv.lib.optionalString stdenv.is64bit "64"}"
+    ];
+  in ''
+    find -H $out/ -type f -executable -exec \
+      patchelf \
+        --interpreter "${stdenv.glibc}/lib/${stdenv.cc.dynamicLinker}" \
+        --set-rpath "${rpath}" \
+        {} \;
+  '' else "";
 
   dontStrip = true;
 }
