@@ -103,7 +103,8 @@ static inline size_t kaa_aligned_size_get(size_t size)
     return (size + (KAA_ALIGNMENT - (size % KAA_ALIGNMENT)) % KAA_ALIGNMENT);
 }
 
-
+#define KAA_STATIC_ASSERT(name, expr) \
+    static char static_assertion_##name[expr] __attribute__((unused))
 
 #ifdef __cplusplus
 }      /* extern "C" */

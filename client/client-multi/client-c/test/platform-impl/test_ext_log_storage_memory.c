@@ -128,12 +128,12 @@ void test_allocate_log_record_buffer(void)
     error_code = ext_log_storage_allocate_log_record_buffer(storage, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    kaa_log_record_t record1 = { NULL, 0 };
+    kaa_log_record_t record1 = { NULL, 0, 0, };
     error_code = ext_log_storage_allocate_log_record_buffer(storage, &record1);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NULL(record1.data);
 
-    kaa_log_record_t record2 = { NULL, 256 };
+    kaa_log_record_t record2 = { NULL, 256, 0, };
     error_code = ext_log_storage_allocate_log_record_buffer(storage, &record2);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(record2.data);

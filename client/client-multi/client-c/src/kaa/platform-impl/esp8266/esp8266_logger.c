@@ -21,13 +21,18 @@
 
 #include "../../platform/ext_system_logger.h"
 
+int snprintf(char *str, size_t count, const char *fmt, ...);
+int vsnprintf(char *str, size_t count, const char *fmt, va_list arg);
+
 kaa_time_t ext_get_systime(void)
 {
     return system_get_rtc_time()*((system_rtc_clock_cali_proc()*1000)>>12)/1000;
-};
+}
 
 void ext_write_log(FILE *sink, const char *buffer, size_t message_size)
 {
+    (void)sink;
+    (void)message_size;
     printf("%s", buffer);
 }
 
@@ -55,6 +60,3 @@ int ext_format_sprintf(char * buffer, size_t buffer_size, const char * format,
             0, 0, 0, 0, 0,
             log_level_name, truncated_name, lineno, error_code);
 }
-
-
-

@@ -34,17 +34,14 @@ set(CMAKE_MODULE_PATH
 #
 # NOTE: Platform specific compilation flags should be set
 # in the corresponding platform CMake script(s).
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic")
 
 # Compiler specific flags.
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND APPLE)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
 endif ()
 
 if (CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-
     if (KAA_DEBUG_ENABLED)
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -ggdb")
     else ()

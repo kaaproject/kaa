@@ -108,18 +108,23 @@ typedef struct {
 static kaa_error_t test_kaa_init_channel(void *channel_context
                                           , kaa_transport_context_t *transport_context)
 {
+    (void)channel_context;
+    (void)transport_context;
     return KAA_ERR_NONE;
 }
 
 static kaa_error_t test_kaa_set_access_point(void *channel_context
                                               , kaa_access_point_t *access_point)
 {
+    (void)channel_context;
+    (void)access_point;
     return KAA_ERR_NONE;
 }
 
 static kaa_error_t test_kaa_get_protocol_id(void *context
                                              , kaa_transport_protocol_id_t *protocol_info)
 {
+    (void)context;
     protocol_info->id = 1;
     protocol_info->version = 1;
     return KAA_ERR_NONE;
@@ -129,6 +134,7 @@ static kaa_error_t test_kaa_get_supported_services(void *context
                                                     , kaa_service_t **supported_services
                                                     , size_t *service_count)
 {
+    (void)context;
     *supported_services = (kaa_service_t *)OPERATIONS_SERVICES;
     *service_count = OPERATIONS_SERVICES_COUNT;
     return KAA_ERR_NONE;
@@ -138,6 +144,8 @@ static kaa_error_t test_kaa_sync_handler(void *context
                                           , const kaa_service_t services[]
                                           , size_t service_count)
 {
+    (void)services;
+    (void)service_count;
     ((mock_transport_channel_context_t *)context)->on_sync_count++;
     return KAA_ERR_NONE;
 }
@@ -167,6 +175,7 @@ static void test_kaa_channel_create(kaa_transport_channel_interface_t *self)
  */
 ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context)
 {
+    (void)log_storage_context;
     return ((mock_strategy_context_t *)context)->decision;
 }
 
@@ -183,6 +192,7 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
 
 kaa_error_t ext_log_upload_strategy_on_failure(void *context, logging_delivery_error_code_t error_code)
 {
+    (void)error_code;
     ((mock_strategy_context_t *)context)->on_failure_count++;
     return KAA_ERR_NONE;
 }
@@ -194,11 +204,12 @@ size_t ext_log_upload_strategy_get_max_parallel_uploads(void *context)
 
 void ext_log_upload_strategy_destroy(void *context)
 {
-
+    (void)context;
 }
 
 bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
 {
+    (void)strategy;
     return false;
 }
 
@@ -214,12 +225,14 @@ typedef struct {
 
 kaa_error_t ext_log_storage_allocate_log_record_buffer(void *context, kaa_log_record_t *record)
 {
+    (void)context;
     record->data = KAA_MALLOC(record->size);
     return KAA_ERR_NONE;
 }
 
 kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_record_t *record)
 {
+    (void)context;
     KAA_FREE(record->data);
     return KAA_ERR_NONE;
 }
@@ -258,12 +271,14 @@ kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_
 
 kaa_error_t ext_log_storage_remove_by_bucket_id(void *context, uint16_t bucket_id)
 {
+    (void)bucket_id;
     ((mock_storage_context_t *)context)->on_remove_by_id_count++;
     return KAA_ERR_NONE;
 }
 
 kaa_error_t ext_log_storage_unmark_by_bucket_id(void *context, uint16_t bucket_id)
 {
+    (void)bucket_id;
     ((mock_storage_context_t *)context)->on_unmark_by_id_count++;
     return KAA_ERR_NONE;
 }
@@ -803,8 +818,8 @@ static mock_storage_context_t          *test_storage2;
 static kaa_log_collector_t             *log_collector;
 static size_t                          test_log_record_size = TEST_BUFFER_SIZE;
 /* Will contain response_packet. Thus required to be aligned. */
-_Alignas(4) static char                test_reader_buffer[TEST_BUFFER_SIZE];
-_Alignas(4) static char                test_writer_buffer[TEST_BUFFER_SIZE];
+static uint32_t                        test_reader_buffer[TEST_BUFFER_SIZE / 4];
+static uint32_t                        test_writer_buffer[TEST_BUFFER_SIZE / 4];
 /* Portion of the test buffer filled with valid data */
 static size_t                          test_filled_size;
 static kaa_platform_message_reader_t   *test_reader;
@@ -1169,9 +1184,10 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     test_filled_size = sizeof(struct response_packet)
             + sizeof(struct response_chunk) * 2;
 
-    error_code = kaa_platform_message_reader_create(&test_reader,
-                                                    test_reader_buffer,
-                                                    test_filled_size);
+    error_code = kaa_platform_message_reader_create(
+        &test_reader,
+        (char *)test_reader_buffer,
+        test_filled_size);
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(test_reader);
@@ -1400,16 +1416,18 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
     test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
     test_log_record_size = test_log_record->get_size(test_log_record);
 
-    error_code = kaa_platform_message_reader_create(&test_reader,
-                                                    test_reader_buffer,
-                                                    test_filled_size);
+    error_code = kaa_platform_message_reader_create(
+        &test_reader,
+        (char *)test_reader_buffer,
+        test_filled_size);
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(test_reader);
 
-    error_code = kaa_platform_message_writer_create(&test_writer,
-                                                    test_writer_buffer,
-                                                    test_log_record_size);
+    error_code = kaa_platform_message_writer_create(
+        &test_writer,
+        (char *)test_writer_buffer,
+        test_log_record_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     KAA_TRACE_OUT(logger);
@@ -1519,9 +1537,8 @@ int test_deinit(void)
 }
 
 
-KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-        ,
+KAA_SUITE_MAIN(Log, test_init, test_deinit,
         KAA_TEST_CASE(create_request, test_create_request)
         KAA_TEST_CASE(process_response, test_response)
         KAA_TEST_CASE(process_timeout, test_timeout)
@@ -1538,6 +1555,7 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
         KAA_RUN_TEST(log_callback_with_storage, on_success_called);
         KAA_RUN_TEST(log_callback_with_storage, on_fail_called);
         KAA_RUN_TEST(log_callback_with_storage, on_fail_and_success_called);
-        KAA_RUN_TEST(log_callback_with_storage_and_strategy, on_timeout_called);
+        KAA_RUN_TEST(log_callback_with_storage_and_strategy, on_timeout_called);)
+#else
+KAA_SUITE_MAIN(Log, test_init, test_deinit)
 #endif
-        )

@@ -15,5 +15,5 @@ install:
 
 script:
   - cd client/client-multi/client-c
-  - nix-shell --arg cc3200Support false --pure --run "make"
-  - nix-shell --arg cc3200Support false --pure --run "./build.sh test"
+  - nix-shell --arg withWerror true --arg cc3200Support false --pure --run "make"
+  - nix-shell --arg withWerror true --arg cc3200Support false --pure --run "./build.sh test"

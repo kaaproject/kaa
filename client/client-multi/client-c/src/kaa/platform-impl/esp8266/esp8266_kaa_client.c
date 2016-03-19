@@ -97,6 +97,9 @@ static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
                                                   , kaa_logger_t *logger);
 
+// I'm sorry for the next line. That will be fixed later.
+extern void ext_log_upload_timeout(kaa_log_collector_t *self);
+
 kaa_error_t kaa_log_collector_init(kaa_client_t *client);
 #endif
 
@@ -106,6 +109,7 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *client);
 
 kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {
+    (void)fd;
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
 
     if (event_type == SOCKET_DISCONNECTED) {
@@ -116,6 +120,7 @@ kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t even
 }
 
 kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) {
+    (void)props;
     KAA_RETURN_IF_NIL(client, KAA_ERR_BADPARAM);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -273,7 +278,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
 
     while (kaa_client->operate) {
         if (kaa_client->external_process) {
-            if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
+            if (KAA_TIME() - kaa_client->external_process_last_call >= (kaa_time_t)kaa_client->external_process_max_delay) {
                 kaa_client->external_process(kaa_client->external_process_context);
             }
             kaa_client->external_process_last_call = KAA_TIME();

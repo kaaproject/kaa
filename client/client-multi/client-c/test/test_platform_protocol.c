@@ -47,7 +47,8 @@ static void *mock = NULL;
 
 char* allocator(void *mock_context, size_t size)
 {
-    return (char *) KAA_MALLOC(size);
+    (void)mock_context;
+    return KAA_MALLOC(size);
 }
 
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
@@ -108,9 +109,9 @@ int test_deinit(void)
 
 #endif
 
-KAA_SUITE_MAIN(plarform_protocol_test,test_init,test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-       ,
-       KAA_TEST_CASE(empty_log_collector_test, test_empty_log_collector_extension_count)
+KAA_SUITE_MAIN(plarform_protocol_test,test_init,test_deinit,
+       KAA_TEST_CASE(empty_log_collector_test, test_empty_log_collector_extension_count))
+#else
+KAA_SUITE_MAIN(plarform_protocol_test,test_init,test_deinit)
 #endif
-        )

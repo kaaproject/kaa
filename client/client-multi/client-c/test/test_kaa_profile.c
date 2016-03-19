@@ -70,10 +70,15 @@ static const char test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6
 
 void kaa_read_status_ext(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 }
 
 void kaa_store_status_ext(const char *buffer, size_t buffer_size)
 {
+    (void)buffer;
+    (void)buffer_size;
 }
 
 void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
@@ -98,14 +103,19 @@ static int mock_sync_handler_called;
 
 static kaa_error_t init_channel(void *ctx, kaa_transport_context_t *tctx)
 {
+    (void)ctx;
+    (void)tctx;
     return KAA_ERR_NONE;
 }
 static kaa_error_t set_access_point(void *ctx, kaa_access_point_t *ap)
 {
+    (void)ctx;
+    (void)ap;
     return KAA_ERR_NONE;
 }
 static kaa_error_t get_protocol_id(void *ctx, kaa_transport_protocol_id_t *id)
 {
+    (void)ctx;
     id->id = 0;
     id->version = 0;
     return KAA_ERR_NONE;
@@ -114,6 +124,7 @@ static kaa_error_t get_services(void *ctx,
                                 kaa_service_t **supported_list,
                                 size_t *count)
 {
+    (void)ctx;
     /* Only profile service is "supported" by this mock */
     static kaa_service_t service = KAA_SERVICE_PROFILE;
     *supported_list = &service;
@@ -125,6 +136,8 @@ static kaa_error_t sync_handler(void *ctx,
                                 const kaa_service_t services[],
                                 size_t count)
 {
+    (void)ctx;
+
     ASSERT_EQUAL(1, count);
     ASSERT_EQUAL(KAA_SERVICE_PROFILE, services[0]);
 
@@ -373,6 +386,9 @@ void test_profile_handle_sync(void)
 
     KAA_TRACE_OUT(logger);
 }
+
+// Mom, I'm sorry. Promise to fix that later
+extern kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
 
 static void test_profile_force_sync(void)
 {

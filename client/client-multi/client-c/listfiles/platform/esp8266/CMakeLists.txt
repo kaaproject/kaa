@@ -14,7 +14,8 @@
 #  limitations under the License.
 #
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM")
+# esp8266-rtos-sdk has some warnings, so we put -Wno-comment and -Wno-pedantic to suppress them
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM -Wno-comment -Wno-pedantic")
 
 set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 
