@@ -71,6 +71,8 @@
     
     ConfigurationSyncRequest *request = [transport createConfigurationRequest];
     
+    XCTAssertNotNil(request);
+    
     [verifyCount(hashContainer, times(1)) getConfigurationHash];
 }
 

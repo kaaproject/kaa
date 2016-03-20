@@ -35,7 +35,7 @@
  * @return Number of bytes processed from this data.
  * @exception KaaTcpProtocolException In case of protocol errors.
  */
-- (int)pushBytes:(NSMutableData *)data;
+- (int32_t)pushBytes:(NSMutableData *)data;
 
 /**
  * Reset Framer state by dropping current frame.

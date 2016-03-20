@@ -19,14 +19,16 @@
 #import <objc/objc-runtime.h>
 #import "KaaLogging.h"
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 @implementation TestsHelper
 
 + (ProtocolMetaData *)buildMetaDataWithTransportProtocolId:(TransportProtocolId *)TPid
                                                       host:(NSString *)host
                                                       port:(int32_t)port
                                                  publicKey:(NSData *)publicKey {
-    int32_t publicKeyLength = CFSwapInt32([publicKey length]);
-    int32_t hostLength = CFSwapInt32([host lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+    int32_t publicKeyLength = CFSwapInt32((uint32_t)[publicKey length]);
+    int32_t hostLength = CFSwapInt32((uint32_t)[host lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
     int32_t portToWrite = CFSwapInt32(port);
     NSMutableData *data = [NSMutableData data];
     
@@ -42,7 +44,7 @@
     
     ProtocolMetaData *md = [[ProtocolMetaData alloc] init];
     [md setConnectionInfo:data];
-    [md setAccessPointId:[[NSString stringWithFormat:@"%@:%i", host, port] hash]];
+    [md setAccessPointId:(int32_t)[[NSString stringWithFormat:@"%@:%i", host, port] hash]];
     [md setProtocolVersionInfo:pair];
     return md;
 }

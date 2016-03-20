@@ -44,7 +44,7 @@
 }
 
 - (void)decodeAvroObjectFromInput:(NSInputStream *)input {
-    int avroObjectSize = self.buffer.length - self.bufferPosition;
+    int32_t avroObjectSize = (int32_t)(self.buffer.length - self.bufferPosition);
     if (avroObjectSize > 0) {
         uint8_t data[avroObjectSize];
         [input read:data maxLength:sizeof(data)];
@@ -56,7 +56,7 @@
 - (void)pack {
     [self packVariableHeader];
     [self.buffer appendData:_avroObject];
-    self.bufferPosition += _avroObject.length;
+    self.bufferPosition += (int32_t)_avroObject.length;
 }
 
 - (void)decode {
@@ -69,7 +69,7 @@
 
 - (void)setAvroObject:(NSData *)avroObject {
     _avroObject = avroObject;
-    self.remainingLength = KAASYNC_VARIABLE_HEADER_LENGTH_V1 + avroObject.length;
+    self.remainingLength = (int32_t)(KAASYNC_VARIABLE_HEADER_LENGTH_V1 + avroObject.length);
 }
 
 @end

@@ -17,6 +17,8 @@
 #import "AbstractConfigurationManager.h"
 #import "KaaLogging.h"
 
+#pragma GCC diagnostic ignored "-Wprotocol"
+
 #define TAG @"AbstractConfigurationManager >>>"
 
 @interface AbstractConfigurationManager ()

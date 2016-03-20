@@ -37,6 +37,7 @@
 @implementation ConcreteUserAttachDelegate
 
 - (void)onAttachResult:(UserAttachResponse *)response {
+#pragma unused(response)
 }
 
 @end

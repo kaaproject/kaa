@@ -40,6 +40,7 @@
 }
 
 - (void)onEventListenersReceived:(NSArray *)eventListeners {
+#pragma unused(eventListeners)
 }
 
 
@@ -70,6 +71,7 @@
 }
 
 - (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
+#pragma unused(eventFQN, data, source)
     self.eventsCount++;
 }
 
