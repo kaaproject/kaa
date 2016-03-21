@@ -62,6 +62,7 @@ static const char CONFIG_UUID[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x
 
 static kaa_error_t on_configuration_updated(void *context, const kaa_root_configuration_t *configuration)
 {
+    (void)configuration;
     bool *result = (bool *) context;
     *result = true;
     return KAA_ERR_NONE;
@@ -168,10 +169,10 @@ int test_deinit(void)
 
 
 
-KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-       ,
+KAA_SUITE_MAIN(Log, test_init, test_deinit,
        KAA_TEST_CASE(create_request, test_create_request)
-       KAA_TEST_CASE(process_response, test_response)
+       KAA_TEST_CASE(process_response, test_response))
+#else
+KAA_SUITE_MAIN(Log, test_init, test_deinit)
 #endif
-        )

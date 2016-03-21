@@ -76,6 +76,8 @@ static bool last_is_attached_result = false;
 
 static kaa_error_t on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
 {
+    (void)context;
+
     ASSERT_EQUAL(strcmp(ACCESS_TOKEN, endpoint_access_token), 0);
     ASSERT_EQUAL(strcmp(USER_EXTERNAL_ID, user_external_id), 0);
     is_on_attached_invoked = true;
@@ -84,6 +86,8 @@ static kaa_error_t on_attached(void *context, const char *user_external_id, cons
 
 static kaa_error_t on_detached(void *context, const char *endpoint_access_token)
 {
+    (void)context;
+
     ASSERT_EQUAL(strcmp(ACCESS_TOKEN, endpoint_access_token), 0);
     is_on_detached_invoked = true;
     return KAA_ERR_NONE;
@@ -91,6 +95,8 @@ static kaa_error_t on_detached(void *context, const char *endpoint_access_token)
 
 static kaa_error_t on_attach_success(void *context)
 {
+    (void)context;
+
     last_is_attached_result = true;
     is_attach_success_invoked = true;
     return KAA_ERR_NONE;
@@ -98,6 +104,7 @@ static kaa_error_t on_attach_success(void *context)
 
 static kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t error_code, const char *reason)
 {
+    (void)context;
     is_attach_failed_invoked = true;
     ASSERT_EQUAL(error_code, CONNECTION_ERROR);
     ASSERT_EQUAL(memcmp(reason, ATTACH_ERROR_REASON, strlen(ATTACH_ERROR_REASON)), 0);

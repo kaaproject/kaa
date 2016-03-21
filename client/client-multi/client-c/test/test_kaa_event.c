@@ -100,6 +100,7 @@ static bool is_event_listeners_cb_called = false;
 
 static kaa_error_t event_listeners_callback(void *context, const kaa_endpoint_id listeners[], size_t listeners_count)
 {
+    (void)context;
     ASSERT_EQUAL(listeners_count, 2);
     ASSERT_EQUAL(memcmp(listeners[0], endpoint_id1, KAA_ENDPOINT_ID_LENGTH), 0);
     ASSERT_EQUAL(memcmp(listeners[1], endpoint_id2, KAA_ENDPOINT_ID_LENGTH), 0);
@@ -109,6 +110,7 @@ static kaa_error_t event_listeners_callback(void *context, const kaa_endpoint_id
 
 static kaa_error_t event_listeners_request_failed(void *context)
 {
+    (void)context;
     return KAA_ERR_NONE;
 }
 
@@ -464,6 +466,10 @@ void test_event_sync_serialize(void)
 
 void global_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoint_id_p source)
 {
+    (void)fqn;
+    (void)data;
+    (void)size;
+    (void)source;
     global_events_counter++;
 }
 
@@ -471,6 +477,10 @@ void global_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoin
 
 void specific_event_cb(const char *fqn, const char *data, size_t size, kaa_endpoint_id_p source)
 {
+    (void)fqn;
+    (void)data;
+    (void)size;
+    (void)source;
     specific_events_counter++;
 }
 
@@ -479,6 +489,7 @@ static size_t event_get_size(const char *fqn
                            , size_t event_data_size
                            , kaa_endpoint_id_p source)
 {
+    (void)source;
     size_t size = 0;
 
     size += sizeof(uint16_t) /* event options */
@@ -687,9 +698,8 @@ static int test_deinit(void)
 
 
 
-KAA_SUITE_MAIN(Event, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-        ,
+KAA_SUITE_MAIN(Event, test_init, test_deinit,
           KAA_TEST_CASE(create_event_manager, test_kaa_create_event_manager)
           KAA_TEST_CASE(compile_event_request, test_kaa_event_sync_get_size)
           KAA_TEST_CASE(event_sync_serialize, test_event_sync_serialize)
@@ -697,5 +707,7 @@ KAA_SUITE_MAIN(Event, test_init, test_deinit
           KAA_TEST_CASE(event_listeners_serialize_request, test_kaa_event_listeners_serialize_request)
           KAA_TEST_CASE(event_listeners_handle_sync, test_kaa_event_listeners_handle_sync)
           KAA_TEST_CASE(event_test_blocks, test_event_blocks)
-#endif
         )
+#else
+KAA_SUITE_MAIN(Event, test_init, test_deinit)
+#endif

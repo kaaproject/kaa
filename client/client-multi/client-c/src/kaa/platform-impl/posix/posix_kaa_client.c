@@ -37,6 +37,7 @@
 #include "../../platform-impl/posix/posix_kaa_failover_strategy.h"
 #include "../../kaa_logging.h"
 #include "../../kaa_channel_manager.h"
+#include "../../kaa_platform_utils.h"
 
 
 
@@ -71,7 +72,7 @@ static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeo
 #define MAX_LOG_COUNT           SIZE_MAX
 #define MAX_LOG_BUCKET_SIZE     (KAA_TCP_CHANNEL_OUT_BUFFER_SIZE >> 3)
 
-_Static_assert(MAX_LOG_BUCKET_SIZE, "Maximum bucket size cannot be 0!");
+KAA_STATIC_ASSERT(log_bucket_size_is_not_zero, MAX_LOG_BUCKET_SIZE != 0);
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED = 0,
@@ -120,6 +121,7 @@ static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {
+    (void)fd;
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
 
     if (event_type == SOCKET_DISCONNECTED) {
@@ -131,6 +133,7 @@ kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t even
 
 kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *props)
 {
+    (void)props;
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
     kaa_error_t error_code = KAA_ERR_NONE;

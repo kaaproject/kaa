@@ -215,7 +215,7 @@ void test_upload_decision_by_timeout(void)
 
     log_storage_context.upload_timeout = DEFAULT_UPLOAD_TIMEOUT_THRESHOLD + 1;
 
-    usleep(1000 * 1000);
+    sleep(1);
 
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);

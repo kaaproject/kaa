@@ -6,6 +6,7 @@
 , raspberrypiSupport ? true
 , testSupport ? true
 , withCUnit ? true
+, withWerror ? false
 }:
 
 assert testSupport -> posixSupport;
@@ -28,7 +29,31 @@ let
 
     raspberrypi-openssl = callPackage ./nix/raspberrypi-openssl { };
 
-    kaa-generic-makefile = pkgs.writeTextFile {
+    # Currently, it causes compilation failure, so we use 4.7 for now.
+    # gcc-arm-embedded = pkgs.callPackage_i686 ./nix/gcc-arm-embedded {
+    #   dirName = "5.0";
+    #   subdirName = "5-2015-q4-major";
+    #   version = "5.2-2015q4-20151219";
+    #   releaseType = "major";
+    #   sha256 = "12mbwl9iwbw7h6gwwkvyvfmrsz7vgjz27jh2cz9z006ihzigi50y";
+    # };
+    gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
+
+    kaa-generic-makefile =
+      let
+        target = enable: name: cmake_options:
+          pkgs.lib.optionalString enable
+            ''
+              .PHONY: __propagate_${name}
+              __propagate: __propagate_${name}
+              __propagate_${name}: build-${name}/Makefile
+              > make -C build-${name} $(ARGS)
+
+              build-${name}/Makefile:
+              > mkdir -p build-${name}
+              > cmake -Bbuild-${name} -H. ${cmake_options} ${pkgs.lib.optionalString withWerror "-DCMAKE_C_FLAGS=-Werror"}
+            '';
+    in pkgs.writeTextFile {
       name = "kaa-generic-makefile";
       destination = "/Makefile";
       text = ''
@@ -54,19 +79,6 @@ let
     };
   };
 
-  target = enable: name: cmake_options:
-    pkgs.lib.optionalString enable
-      ''
-        .PHONY: __propagate_${name}
-        __propagate: __propagate_${name}
-        __propagate_${name}: build-${name}/Makefile
-        > make -C build-${name} $(ARGS)
-
-        build-${name}/Makefile:
-        > mkdir -p build-${name}
-        > cmake -Bbuild-${name} -H. ${cmake_options}
-      '';
-
 in with self; with pkgs; {
   kaaEnv = stdenv.mkDerivation {
     name = "kaa-env";
@@ -90,7 +102,7 @@ in with self; with pkgs; {
       jre
     ] ++ lib.optional cc3200Support [
       cc3200-sdk
-      gcc-arm-embedded
+      self.gcc-arm-embedded
       jre
     ] ++ lib.optional raspberrypiSupport [
       raspberrypi-tools
@@ -102,7 +114,7 @@ in with self; with pkgs; {
         export CC32XX_SDK=${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk
       '' +
       lib.optionalString esp8266Support ''
-        export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}/lib/ct-ng.1.20.0/builds/xtensa-lx106-elf"
+        export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}"
         export ESP8266_SDK_BASE=${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk
       '' +
       ''

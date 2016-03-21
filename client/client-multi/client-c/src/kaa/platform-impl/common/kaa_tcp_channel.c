@@ -877,7 +877,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
         kaa_time_t interval = KAA_TIME() - tcp_channel->keepalive.last_sent_keepalive;
 
-        if (interval >= KAA_TCP_CHANNEL_PING_TIMEOUT) {
+        if (interval >= (kaa_time_t)KAA_TCP_CHANNEL_PING_TIMEOUT) {
             //Send ping request
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {

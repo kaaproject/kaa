@@ -114,7 +114,7 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
 
     if (self->upload_retry_ts) {
-        if (KAA_TIME() >= self->upload_retry_ts) {
+        if (KAA_TIME() >= (kaa_time_t)self->upload_retry_ts) {
             // force upload after retry timeout has elapsed
             self->upload_retry_ts = 0;
             decision = UPLOAD;
@@ -122,7 +122,7 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
         return decision;
     }
 
-    if ((self->type & 0x04) && KAA_TIME() >= self->timeout) {
+    if ((self->type & 0x04) && KAA_TIME() >= (kaa_time_t)self->timeout) {
         decision = UPLOAD;
         self->timeout = KAA_TIME() + self->upload_timeout;
     } else if ((self->type & 0x01) && ext_log_storage_get_total_size(log_storage_context) >= self->threshold_volume) {

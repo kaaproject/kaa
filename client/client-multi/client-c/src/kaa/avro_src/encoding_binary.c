@@ -104,6 +104,7 @@ write_bytes(avro_writer_t writer, const char *bytes, const int64_t len)
 
 static int read_string(avro_reader_t reader, char **s, int64_t *len)
 {
+    (void)len;
     int64_t  str_len = 0;
     int rval;
     check_prefix(rval, read_long(reader, &str_len),
