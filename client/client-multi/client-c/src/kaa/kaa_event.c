@@ -16,6 +16,8 @@
 
 # ifndef KAA_DISABLE_FEATURE_EVENTS
 
+#include "kaa_private.h"
+
 # include <stdbool.h>
 # include <stdint.h>
 # include <string.h>
@@ -119,7 +121,6 @@ struct kaa_event_manager_t {
 };
 
 static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
-
 
 static void destroy_event_listener_request(void *request_p)
 {

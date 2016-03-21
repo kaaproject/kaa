@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,8 @@
 #include "../../platform-impl/common/kaa_tcp_channel.h"
 #include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform/ext_kaa_failover_strategy.h"
+
+#include "kaa_private.h"
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_CONNECTED = 0,
@@ -91,17 +93,6 @@ struct kaa_client_t {
 static kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel_type_t channel_type);
 static kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client);
 static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                  , kaa_logger_t *logger);
-
-// I'm sorry for the next line. That will be fixed later.
-extern void ext_log_upload_timeout(kaa_log_collector_t *self);
-
-kaa_error_t kaa_log_collector_init(kaa_client_t *client);
-#endif
 
 #define KAA_RETURN_IF_ERR_MSG(E, msg) \
         { if(E) { printf("Error %i. \"%s\"\n",(E), (msg)); return (E); } }
@@ -469,4 +460,3 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
     return error_code;
 }
 #endif
-

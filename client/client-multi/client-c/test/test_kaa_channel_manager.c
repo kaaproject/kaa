@@ -37,19 +37,7 @@
 #include "kaa_platform_utils.h"
 #include "platform/sock.h"
 
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_context_t *context);
-
-extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
-                                                                , size_t *expected_size);
-
-extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self
-                                                                 , kaa_platform_message_writer_t* writer);
-
-
+#include "kaa_private.h"
 
 typedef struct {
     kaa_transport_protocol_id_t protocol_info;

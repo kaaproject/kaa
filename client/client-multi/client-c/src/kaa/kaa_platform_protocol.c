@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -34,69 +36,8 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 
-
-
-/** External channel manager API */
-extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
-                                                                , size_t *expected_size);
-
-extern kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer);
-
-/** External bootstrap manager API */
-extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
-                                                          , kaa_platform_message_reader_t *reader
-                                                          , uint16_t extension_options
-                                                          , size_t extension_length);
-
-
-
-/** External user manager API */
-extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
-extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-
-/** External profile API */
-extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
-extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
-extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-extern kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
-
-/** External event manager API */
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
-#endif
-
-/** External logging API */
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-extern kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result);
-extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
-extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-#endif
-
-/** External configuration API */
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-#endif
-
-/** External notification API */
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
-#endif
-
-/** External status API */
-extern kaa_error_t kaa_status_save(kaa_status_t *self);
-
 /** Resync flag indicating that profile manager should be resynced */
 #define KAA_PROFILE_RESYNC_FLAG     0x1
-
 
 struct kaa_platform_protocol_t
 {

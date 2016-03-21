@@ -39,13 +39,7 @@
 #include "../../kaa_channel_manager.h"
 #include "../../kaa_platform_utils.h"
 
-
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                  , kaa_logger_t *logger);
-
-extern void ext_log_upload_timeout(kaa_log_collector_t *self);
-
+#include "kaa_private.h"
 
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
@@ -114,10 +108,8 @@ static kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client);
 static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 #endif
-
-
 
 kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {

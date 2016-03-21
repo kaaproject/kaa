@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -23,16 +25,8 @@
 #include "utilities/kaa_mem.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
-
 // This header conflicts with stdio.h and should be put last
 #include "platform/sock.h"
-
-
-extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
-                                                                        , kaa_transport_protocol_id_t *protocol_info);
-
-extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
-                                                                          , kaa_transport_protocol_id_t *protocol_id);
 
 typedef struct {
     uint32_t                             channel_id;

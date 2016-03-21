@@ -39,28 +39,7 @@
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
 
-
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
-extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
-                                          , kaa_status_t *status
-                                          , kaa_channel_manager_t *channel_manager
-                                          , kaa_logger_t *logger);
-extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
-
-extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
-                                                , kaa_platform_message_reader_t *reader
-                                                , uint16_t extension_options
-                                                , size_t extension_length);
-extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
-
-
+#include "kaa_private.h"
 
 static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;

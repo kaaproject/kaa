@@ -78,13 +78,8 @@ struct kaa_client_t {
 
 //Forward declaration of internal functions
 kaa_error_t kaa_init_security_stuff(void);
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 /* forward declarations */
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                    , kaa_logger_t *logger);
-
 
 void print_mem_stat(kaa_client_t *kaa_client);
 /*

@@ -49,7 +49,8 @@ let
               __propagate_${name}: build-${name}/Makefile
               > make -C build-${name} $(ARGS)
 
-              build-${name}/Makefile:
+              build-${name}/Makefile: Makefile
+              > rm -rf build-${name}
               > mkdir -p build-${name}
               > cmake -Bbuild-${name} -H. ${cmake_options} ${pkgs.lib.optionalString withWerror "-DCMAKE_C_FLAGS=-Werror"}
             '';

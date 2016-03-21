@@ -54,7 +54,7 @@ void test_create_destroy_writer(void)
     error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(writer);
-    ASSERT_EQUAL((writer->end - writer->begin), buffer_size);
+    ASSERT_EQUAL((size_t)(writer->end - writer->begin), buffer_size);
     ASSERT_EQUAL(writer->begin, writer->current);
 
     kaa_platform_message_writer_destroy(writer);
@@ -75,7 +75,7 @@ void test_write(void)
 
     error_code = kaa_platform_message_write(writer, test_data, test_data_len);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL((writer->current - writer->begin), test_data_len);
+    ASSERT_EQUAL((size_t)(writer->current - writer->begin), test_data_len);
 
     error_code = (memcmp(writer->begin, test_data, test_data_len) == 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -101,7 +101,7 @@ void test_aligned_write(void)
 
     error_code = kaa_platform_message_write_aligned(writer, unmatch_alignment_data, unmatch_alignment_data_len);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL((writer->current - writer->begin), kaa_aligned_size_get(unmatch_alignment_data_len));
+    ASSERT_EQUAL((size_t)(writer->current - writer->begin), kaa_aligned_size_get(unmatch_alignment_data_len));
     error_code = (memcmp(writer->begin, unmatch_alignment_data, unmatch_alignment_data_len) == 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -117,7 +117,7 @@ void test_aligned_write(void)
     char* begin = writer->current;
     error_code = kaa_platform_message_write_aligned(writer, match_alignment_data, match_alignment_data_len);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL((writer->current - begin), kaa_aligned_size_get(match_alignment_data_len));
+    ASSERT_EQUAL((size_t)(writer->current - begin), kaa_aligned_size_get(match_alignment_data_len));
     error_code = (memcmp(begin, match_alignment_data, kaa_aligned_size_get(match_alignment_data_len)) == 0 ? KAA_ERR_NONE : KAA_ERR_WRITE_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -217,7 +217,7 @@ void test_create_destroy_reader(void)
     error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(reader);
-    ASSERT_EQUAL((reader->end - reader->begin), buffer_size);
+    ASSERT_EQUAL((size_t)(reader->end - reader->begin), buffer_size);
     ASSERT_EQUAL(reader->begin, reader->current);
 
     kaa_platform_message_reader_destroy(reader);

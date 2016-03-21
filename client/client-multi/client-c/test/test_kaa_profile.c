@@ -38,23 +38,7 @@
 #include "platform/ext_transport_channel.h"
 #include "kaa_channel_manager.h"
 
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
-extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status
-        , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
-
-extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
-extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
-extern bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
-
+#include "kaa_private.h"
 
 static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
@@ -386,9 +370,6 @@ void test_profile_handle_sync(void)
 
     KAA_TRACE_OUT(logger);
 }
-
-// Mom, I'm sorry. Promise to fix that later
-extern kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
 
 static void test_profile_force_sync(void)
 {

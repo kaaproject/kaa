@@ -16,6 +16,8 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
+#include "kaa_private.h"
+
 #include <string.h>
 #include <inttypes.h>
 #include <sys/types.h>
@@ -37,8 +39,6 @@
 
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
-
-extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
 
 typedef enum {
     LOGGING_RESULT_SUCCESS = 0x00,
@@ -636,7 +636,7 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 }
 
 
-extern void ext_log_upload_timeout(kaa_log_collector_t *self)
+void ext_log_upload_timeout(kaa_log_collector_t *self)
 {
     if (!is_timeout(self)
             || ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context)) {
