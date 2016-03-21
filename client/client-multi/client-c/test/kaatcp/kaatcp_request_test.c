@@ -145,7 +145,7 @@ void test_get_request_kaasync_over_buff(void)
     KAA_TRACE_IN(logger);
     kaatcp_kaasync_t kaasync;
     char *payload = "payload";
-    unsigned char kaasync_buf[100] = "";
+    char kaasync_buf[100] = "";
     size_t kaasync_buf_size = 5;
 
     kaatcp_fill_kaasync_message(payload, strlen(payload), 5, 0, 1, &kaasync);
@@ -155,7 +155,7 @@ void test_get_request_kaasync_over_buff(void)
     ASSERT_EQUAL(rval, KAATCP_ERR_BUFFER_NOT_ENOUGH);
 
     for (int i = 8; i < 100; i++) {
-        ASSERT_EQUAL(kaasync_buf[i], 0xEA);
+        ASSERT_EQUAL((uint8_t)kaasync_buf[i], 0xEA);
     }
     KAA_TRACE_OUT(logger);
 }
