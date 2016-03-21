@@ -143,15 +143,19 @@ void test_kaatcp_ping(void)
 void test_get_request_kaasync_over_buff(void)
 {
     KAA_TRACE_IN(logger);
-    kaatcp_kaasync_t kaa_sync_message;
-    kaa_sync_message.sync_request_size = 6;
-    kaa_sync_message.sync_request = "hello";
-    unsigned char buffer[100] = "";
-    size_t buffer_size = 5;
-    memset(buffer, 0xEA, 100);
-    ASSERT_EQUAL(kaatcp_get_request_kaasync(&kaa_sync_message, buffer, &buffer_size), KAATCP_ERR_BUFFER_NOT_ENOUGH);
-    for (int i = 10; i < 100; i++) {
-        ASSERT_EQUAL(buffer[i], 0xEA);
+    kaatcp_kaasync_t kaasync;
+    char *payload = "payload";
+    unsigned char kaasync_buf[100] = "";
+    size_t kaasync_buf_size = 5;
+
+    kaatcp_fill_kaasync_message(payload, strlen(payload), 5, 0, 1, &kaasync);
+    memset(kaasync_buf, 0xEA, 100);
+
+    kaatcp_error_t rval = kaatcp_get_request_kaasync(&kaasync, kaasync_buf, &kaasync_buf_size);
+    ASSERT_EQUAL(rval, KAATCP_ERR_BUFFER_NOT_ENOUGH);
+
+    for (int i = 8; i < 100; i++) {
+        ASSERT_EQUAL(kaasync_buf[i], 0xEA);
     }
     KAA_TRACE_OUT(logger);
 }
