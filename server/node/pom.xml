@@ -448,7 +448,11 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-annotations</artifactId>
         </dependency>
-        
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -642,9 +646,7 @@
                                         <include>common-dao-context.xml</include>
                                         <include>common-dao-sql-context.xml</include>
                                         <include>sql-dao.properties</include>
-                                        <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                                         <include>nosql-dao.properties</include>
-                                        <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                                     </includes>
                                 </resource>
                                 <resource>

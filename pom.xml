@@ -41,6 +41,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <hikari.cp.version>2.4.2</hikari.cp.version>
         <pgsql.driver.ver>9.3-1101-jdbc41</pgsql.driver.ver>
         <mariadb-driver.version>1.3.0</mariadb-driver.version>
+        <mysql-driver.version>5.1.6</mysql-driver.version>
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
@@ -1018,13 +1019,16 @@ Copyright 2014-2016 CyberVision, Inc.
                 <artifactId>postgresql</artifactId>
                 <version>${pgsql.driver.ver}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
                 <artifactId>mariadb-java-client</artifactId>
                 <version>${mariadb-driver.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-driver.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.oracle.kv</groupId>
                 <artifactId>oracle-nosql-client</artifactId>

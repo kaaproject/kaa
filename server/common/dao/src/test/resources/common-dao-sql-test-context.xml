@@ -70,7 +70,6 @@
         </bean>
     </beans>
 
-    <!-- ////////////////////////  -->
     <beans profile="mariadb">
 
         <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -79,7 +78,7 @@
             <property name="hibernateProperties">
                 <props>
                     <prop key="hibernate.hbm2ddl.auto">#{sql_dao[hibernate_hbm2ddl_auto]}</prop>
-                    <prop key="hibernate.dialect">#{sql_dao[hibernate_dialect]}</prop>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
                     <prop key="hibernate.format_sql">#{sql_dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{sql_dao[hibernate_show_sql]}</prop>
 
@@ -97,9 +96,9 @@
             <property name="idleTimeout" value="120000" />
             <property name="dataSourceProperties">
                 <props>
-                    <prop key="url">jdbc:#{sql_dao[sql_provider_name]}://#{sql_dao[jdbc_host]}/#{sql_dao[db_name]}</prop>
-                    <prop key="user">#{sql_dao[jdbc_username]</prop>
-                    <prop key="password">#{sql_dao[jdbc_password]</prop>
+                    <prop key="url">jdbc:mysql://localhost:3306/kaa</prop>
+                    <prop key="user">sqladmin</prop>
+                    <prop key="password">admin</prop>
                 </props>
             </property>
         </bean>
@@ -108,7 +107,6 @@
             <constructor-arg ref="hikariConfig" />
         </bean>
     </beans>
-    <!-- ////////////////////////  -->
 
     <beans profile="h2">
 
