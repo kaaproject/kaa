@@ -23,6 +23,8 @@
 #import "KaaLogging.h"
 #import "LogCollector.h"
 
+#pragma clang diagnostic ignored "-Wprotocol"
+
 #define TAG @"AbstractLogCollector >>>"
 
 @interface AbstractLogCollector () <LogFailoverCommand>

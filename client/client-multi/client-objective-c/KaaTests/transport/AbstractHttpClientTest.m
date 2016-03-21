@@ -30,6 +30,7 @@
 @implementation TestHttpClient
 
 - (NSData *)executeHttpRequest:(NSString *)uri entity:(NSDictionary *)entity verifyResponse:(BOOL)verifyResponse {
+#pragma unused(uri, entity, verifyResponse)
     return nil;
 }
 

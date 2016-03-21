@@ -47,10 +47,12 @@
 }
 
 - (void)onLogDeliveryFailureWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
     [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
 }
 
 - (void)onLogDeliveryTimeoutWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
     [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
 }
 

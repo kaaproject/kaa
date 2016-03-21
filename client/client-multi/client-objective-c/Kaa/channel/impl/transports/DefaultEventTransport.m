@@ -27,7 +27,7 @@
 @property (nonatomic, strong) id<EventManager> kaaEventManager;
 
 @property (nonatomic) BOOL isEventSequenceNumberSynchronized;
-@property (atomic) int startEventSequenceNumber;
+@property (atomic) int32_t startEventSequenceNumber;
 
 @end
 
@@ -117,7 +117,7 @@
             
             NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             
-            [self.kaaClientState setEventSequenceNumber:(self.startEventSequenceNumber + [sortedEvents count])];
+            [self.kaaClientState setEventSequenceNumber:(self.startEventSequenceNumber + (int32_t)[sortedEvents count])];
             if ([sortedEvents count] > 0 && [(Event *)sortedEvents.firstObject seqNum] != self.startEventSequenceNumber) {
                 DDLogInfo(@"%@ Put in order event sequence numbers (expected: %i, actual: %i)",
                           TAG, self.startEventSequenceNumber, [(Event *)sortedEvents.firstObject seqNum]);
@@ -125,7 +125,7 @@
                     event.seqNum = self.startEventSequenceNumber++;
                 }
             } else {
-                self.startEventSequenceNumber += [sortedEvents count];
+                self.startEventSequenceNumber += (int32_t)[sortedEvents count];
             }
             
             DDLogInfo(@"%@ Event sequence number isn't synchronized. Set to %i", TAG, self.startEventSequenceNumber);

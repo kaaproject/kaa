@@ -120,7 +120,7 @@
 		B8CCBD871C4664D800C26F0B /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD611C4664D800C26F0B /* platform.h */; };
 		B8CCBD881C4664D800C26F0B /* avro_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD621C4664D800C26F0B /* avro_private.h */; };
 		B8CCBD891C4664D800C26F0B /* encoding.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD631C4664D800C26F0B /* encoding.h */; };
-		B8CCBD8A1C4664D800C26F0B /* encoding_binary.c in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBD641C4664D800C26F0B /* encoding_binary.c */; };
+		B8CCBD8A1C4664D800C26F0B /* encoding_binary.c in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBD641C4664D800C26F0B /* encoding_binary.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		B8CCBD8B1C4664D800C26F0B /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBD651C4664D800C26F0B /* io.c */; };
 		B8CCBD8C1C4664D800C26F0B /* AvroBased.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD661C4664D800C26F0B /* AvroBased.h */; };
 		B8CCBD8D1C4664D800C26F0B /* AvroBased.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBD671C4664D800C26F0B /* AvroBased.m */; };
@@ -2326,9 +2326,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2363,9 +2366,12 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2415,20 +2421,14 @@
 			baseConfigurationReference = 2B82CEEF86BDB0D4EB551C48 /* Pods-KaaTests.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = KaaTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kaaproject.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2439,16 +2439,10 @@
 			baseConfigurationReference = 288B6E34A174A0B006D7475F /* Pods-KaaTests.release.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = KaaTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kaaproject.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
