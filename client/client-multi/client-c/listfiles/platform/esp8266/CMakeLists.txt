@@ -48,4 +48,5 @@ set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS})
 set(KAA_BUILD_STATIC_ONLY 1)
 
 execute_process(COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/tools/pub_key_generator.jar
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-impl/esp8266/rsa.h)
+                ${CMAKE_CURRENT_BINARY_DIR}/rsa.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
