@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.Base64Util;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -53,12 +52,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class DefaultEndpointUserServiceTest {
     private static final int ECF1_VERSION = 43;
     private static final String ECF1_ID = "EF1_ID";
-    private static final String USER_ACCESS_TOKEN = "userAccessToken";
     private static final String ENDPOINT_ACCESS_TOKEN = "endpointAccessToken";
     private static final String EXTERNAL_USER_ID = "userExternalId";
     private static final String USER_ID = "userId";
 
-    private static final String APPLICATION_ID = "APPLICATION_ID";
     private static final String TEST_TENANT_ID = "testTenantId";
 
     private static final String EXTERNAL_USER_ID_OTHER = "userExternalIdOther";
@@ -81,14 +78,12 @@ public class DefaultEndpointUserServiceTest {
     private EndpointUserService endpointUserService;
     private EndpointService endpointService;
     private CacheService cacheService;
-    private ApplicationService applicationService;
 
     @Before
     public void before() {
         endpointUserService = new DefaultEndpointUserService();
         endpointService = mock(EndpointService.class);
         cacheService = mock(CacheService.class);
-        applicationService = mock(ApplicationService.class);
         ReflectionTestUtils.setField(endpointUserService, "endpointService", endpointService);
         ReflectionTestUtils.setField(endpointUserService, "cacheService", cacheService);
     }

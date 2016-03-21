@@ -115,6 +115,7 @@
 		B8B4CDC11B8213C0007FE20D /* KaaClientProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */; };
 		B8B4CDC21B8213C0007FE20D /* KaaClientProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = B8B4CDC01B8213C0007FE20D /* KaaClientProperties.m */; };
 		B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */; };
+		B8C794881C9337B7009469EB /* LogDeliveryCallbackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */; };
 		B8CCBD861C4664D800C26F0B /* io.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD601C4664D800C26F0B /* io.h */; };
 		B8CCBD871C4664D800C26F0B /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD611C4664D800C26F0B /* platform.h */; };
 		B8CCBD881C4664D800C26F0B /* avro_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBD621C4664D800C26F0B /* avro_private.h */; };
@@ -766,6 +767,7 @@
 		B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaClientProperties.h; sourceTree = "<group>"; };
 		B8B4CDC01B8213C0007FE20D /* KaaClientProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientProperties.m; sourceTree = "<group>"; };
 		B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientPropertiesTest.m; sourceTree = "<group>"; };
+		B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDeliveryCallbackTests.m; sourceTree = "<group>"; };
 		B8CCBD601C4664D800C26F0B /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
 		B8CCBD611C4664D800C26F0B /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
 		B8CCBD621C4664D800C26F0B /* avro_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avro_private.h; sourceTree = "<group>"; };
@@ -1702,6 +1704,7 @@
 				B8CCC0361C467EAB00C26F0B /* memory */,
 				B8CCC0391C467EAB00C26F0B /* strategies */,
 				B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */,
+				B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -2250,6 +2253,7 @@
 				B8CCC04B1C467EAB00C26F0B /* DefaultBootstrapChannelTest.m in Sources */,
 				B8CCC0671C467EAB00C26F0B /* StorageSizeLogUploadStrategyTest.m in Sources */,
 				B8CCC06A1C467EAB00C26F0B /* DefaultProfileManagerTest.m in Sources */,
+				B8C794881C9337B7009469EB /* LogDeliveryCallbackTests.m in Sources */,
 				B8CCC0571C467EAB00C26F0B /* DefaultProfileTransportTest.m in Sources */,
 				B8CCC0681C467EAB00C26F0B /* StorageSizeWithTimeLimitLogUploadStrategyTest.m in Sources */,
 				B8CCC0691C467EAB00C26F0B /* DefaultNotificationManagerTest.m in Sources */,

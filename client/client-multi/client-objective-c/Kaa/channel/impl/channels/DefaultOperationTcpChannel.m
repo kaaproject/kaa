@@ -545,7 +545,7 @@ typedef enum {
                 || ![[oldServer getHost] isEqualToString:[self.currentServer getHost]]
                 || [oldServer getPort] != [self.currentServer getPort]) {
                 DDLogInfo(@"%@ New server's: %@ host or ip is different from the old %@, reconnecting",
-                          TAG, oldServer, self.currentServer);
+                          TAG, self.currentServer, oldServer);
                 [self closeConnection];
                 [self scheduleOpenConnectionTaskWithRetryPeriod:0];
             }

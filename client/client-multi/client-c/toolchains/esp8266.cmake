@@ -16,8 +16,10 @@
 
 include(CMakeForceCompiler)
 
-if(NOT DEFINED ESPRESSIF_HOME)
+if(NOT DEFINED ENV{ESPRESSIF_HOME})
     set(ESPRESSIF_HOME /opt/Espressif)
+else()
+    set(ESPRESSIF_HOME $ENV{ESPRESSIF_HOME})
 endif()
 
 set(ESP_TOOLCHAIN_BASE ${ESPRESSIF_HOME}/crosstool-NG/builds/xtensa-lx106-elf/bin)

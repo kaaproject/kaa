@@ -43,11 +43,15 @@ public interface DeltaService {
     /**
      * Gets the up to date configuration for given endpoint profile
      * 
+     * @param appToken
+     *            - the application token
+     * @param endpointKey
+     *            - the endpoint key
      * @param profile
-     *            - endpoint profile
+     *            - the endpoint profile
      * @return cache entry
      * @throws GetDeltaException
-     *              the get delta exception
+     *             the get delta exception
      */
     ConfigurationCacheEntry getConfiguration(String appToken, String endpointKey, EndpointProfileDto profile) throws GetDeltaException;
 

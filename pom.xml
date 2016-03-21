@@ -82,7 +82,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <jline.version>2.11</jline.version>
-        <avro-ui.version>0.2.1-SNAPSHOT</avro-ui.version>
+        <avro-ui.version>0.2.1</avro-ui.version>
 
         <slf4j.version>1.7.7</slf4j.version>
         <slf4j-android.version>1.7.7</slf4j-android.version>
