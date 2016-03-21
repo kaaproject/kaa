@@ -16,6 +16,21 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-public class MariaDBTestRunner extends SqlTestRunner {
+import org.kaaproject.kaa.server.common.dao.DBTestRunner;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class SqlTestRunner extends DBTestRunner {
+
+    @Override
+    protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
+        return connection.prepareStatement("SELECT tablename FROM pg_tables where schemaname = 'public'");
+    }
+
+    @Override
+    protected String getTrancateSql() {
+        return new StringBuilder("TRUNCATE TABLE ").append(FORMATER).append(" CASCADE").toString();
+    }
 }

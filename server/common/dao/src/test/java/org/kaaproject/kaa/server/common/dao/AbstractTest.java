@@ -246,11 +246,10 @@ public class AbstractTest {
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-            } else if(url.contains("postgres")){
+            } else if(url.contains("postgres")) {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
-            }
-            else{
+            } else {
                 LOG.info("Deleting data from MariaDB database");
                 new MariaDBTestRunner().truncateTables(dataSource);
             }
