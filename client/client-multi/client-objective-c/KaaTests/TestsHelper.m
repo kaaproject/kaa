@@ -19,7 +19,7 @@
 #import <objc/objc-runtime.h>
 #import "KaaLogging.h"
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 @implementation TestsHelper
 

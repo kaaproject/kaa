@@ -23,7 +23,7 @@
 #import "KaaLogging.h"
 #import "LogCollector.h"
 
-#pragma GCC diagnostic ignored "-Wprotocol"
+#pragma clang diagnostic ignored "-Wprotocol"
 
 #define TAG @"AbstractLogCollector >>>"
 
