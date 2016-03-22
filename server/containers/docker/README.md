@@ -11,7 +11,8 @@ Default environments that comes in this package is:
     - MongoDB
   - Single Kaa node, that can be deployed to an existing cluster
 
-Base image configuration done with next environment variables:
+Base image configuration is done using next environment variables:
+
 | Variable name      | Sample values                    | Description                                                      |
 |--------------------|----------------------------------|------------------------------------------------------------------|
 | CONTROL_ENABLED    | true/false                       | Determines whether control server enabled on this node or not    |
