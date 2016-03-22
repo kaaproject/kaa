@@ -19,30 +19,12 @@ postgreshost:
     environment:
         - POSTGRES_PASSWORD=admin
         - POSTGRES_DB=kaa
-kaa_node1:
+kaa_node:
     image: kaaproject/node:0.9.0
     environment:
         - CONTROL_ENABLED=true
-        - BOOTSTRAP_ENABLED=false
-        - OPERATIONS_ENABLED=true
-        - DATABASE=cassandra
-        - ZK_HOSTS=zookeeperhost:2181
-        - CASSANDRA_HOSTS=cassandrahost:9042
-        - MONGODB_HOSTS=mongodbhost:27017
-        - JDBC_HOST=postgreshost
-        - JDBC_PORT=5432
-    command: bash -c "/config_listener.sh && /usr/bin/kaa-node start && while true; do sleep 1; done"
-    links:
-        - cassandrahost
-        - zookeeperhost
-        - mongodbhost
-        - postgreshost
-kaa_node2:
-    image: kaaproject/node:0.9.0
-    environment:
-        - CONTROL_ENABLED=false
         - BOOTSTRAP_ENABLED=true
-        - OPERATIONS_ENABLED=false
+        - OPERATIONS_ENABLED=true
         - DATABASE=cassandra
         - ZK_HOSTS=zookeeperhost:2181
         - CASSANDRA_HOSTS=cassandrahost:9042
