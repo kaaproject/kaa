@@ -36,6 +36,8 @@
 #include "platform/ext_log_upload_strategy.h"
 #include "platform-impl/common/ext_log_upload_strategies.h"
 
+#include "kaa_private.h"
+
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
 static kaa_context_t* kaa_context= NULL;
@@ -50,9 +52,6 @@ char* allocator(void *mock_context, size_t size)
     (void)mock_context;
     return KAA_MALLOC(size);
 }
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                  , kaa_logger_t *logger);
 
 void test_empty_log_collector_extension_count(void)
 {

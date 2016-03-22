@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdint.h>
 #include <string.h>
 

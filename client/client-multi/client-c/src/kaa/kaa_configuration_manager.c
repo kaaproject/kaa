@@ -16,6 +16,7 @@
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
+#include "kaa_private.h"
 
 #include <stdbool.h>
 #include <inttypes.h>

@@ -33,20 +33,7 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
-
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p,
-                                                    kaa_channel_manager_t *channel_manager, kaa_status_t *status,
-                                                    kaa_logger_t *logger);
-extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
-
-extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-
+#include "kaa_private.h"
 
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;

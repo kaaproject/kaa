@@ -22,6 +22,7 @@
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
+#include <stdint.h>
 #include "kaa_error.h"
 
 #ifdef __cplusplus

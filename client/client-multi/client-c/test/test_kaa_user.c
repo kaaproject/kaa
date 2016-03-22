@@ -34,31 +34,13 @@
 #include "utilities/kaa_log.h"
 #include "platform/sock.h"
 
-
+#include "kaa_private.h"
 
 #define USER_EXTERNAL_ID    "user@id"
 #define ACCESS_TOKEN        "token"
 #define USER_VERIFIER       "user_verifier"
 
 #define ATTACH_ERROR_REASON "Bad user credentials"
-
-
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
-extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status
-                                         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-extern void kaa_user_manager_destroy(kaa_user_manager_t *self);
-
-extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
-extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-
-
 
 static kaa_context_t kaa_context;
 static kaa_user_manager_t *user_manager = NULL;

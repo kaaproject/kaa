@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
+#include "kaa_private.h"
 #include "ext_log_upload_strategies.h"
 #include "../../platform/ext_log_upload_strategy.h"
 #include "../../platform/ext_transport_channel.h"
@@ -201,7 +202,7 @@ kaa_error_t ext_log_upload_strategy_change_strategy(void *strategy, uint8_t type
     return KAA_ERR_NONE;
 }
 
-extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
+bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
 {
     KAA_RETURN_IF_NIL(strategy, KAA_ERR_BADPARAM);
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)strategy;

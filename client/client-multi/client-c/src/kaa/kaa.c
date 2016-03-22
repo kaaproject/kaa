@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -28,71 +30,10 @@
 #include "kaa_defaults.h"
 #include "platform/ext_key_utils.h"
 
-/*
- * External constructors and destructors from around the Kaa SDK
- */
-extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status,
-                                           kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-
-extern void kaa_user_manager_destroy(kaa_user_manager_t *user_manager);
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern kaa_error_t kaa_status_save(kaa_status_t *kaa_status_p);
-extern void kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status,
-                                              kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-extern void kaa_profile_manager_destroy(kaa_profile_manager_t *self);
-extern bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
-extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-extern kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status,
-                                            kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-extern void kaa_event_manager_destroy(kaa_event_manager_t *self);
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status,
-                                            kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-extern void kaa_log_collector_destroy(kaa_log_collector_t *self);
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p,
-                                                    kaa_channel_manager_t *channel_manager, kaa_status_t *status,
-                                                    kaa_logger_t *logger);
-extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
-#endif
-
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context);
-
-extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
-
-extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p, kaa_context_t *context,
-                                                kaa_status_t *status);
-extern void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self);
-
 struct kaa_status_holder_t {
     kaa_status_t *status_instance;
 };
 
-extern kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
-
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-extern kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
-                                                 , kaa_channel_manager_t *channel_manager
-                                                 , kaa_logger_t *logger);
-extern void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
-#endif
-
-extern kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa_logger_t *logger);
-extern void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy);
-extern bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self);
-
-/* Forward declaration */
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
 
 static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *logger)

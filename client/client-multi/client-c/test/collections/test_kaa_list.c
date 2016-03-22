@@ -69,8 +69,8 @@ void test_list_push_front()
     ASSERT_NOT_NULL(list);
 
     int32_t *number;
-    int node_number = 2;
-    for (int i = 0; i < node_number; ++i) {
+    size_t node_number = 2;
+    for (size_t i = 0; i < node_number; ++i) {
         number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();

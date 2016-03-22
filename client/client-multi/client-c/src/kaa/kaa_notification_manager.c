@@ -16,6 +16,8 @@
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 
+#include "kaa_private.h"
+
 #include "kaa_notification_manager.h"
 
 #include <string.h>

@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -30,20 +32,6 @@
 #include "platform/ext_log_upload_strategy.h"
 
 #include "platform-impl/common/ext_log_upload_strategies.h"
-
-
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_context_t *context);
-extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                              , kaa_channel_manager_t *channel_manager
-                                              , kaa_logger_t *logger);
-
-extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
-
-
 
 typedef struct {
     uint8_t type;
@@ -313,17 +301,13 @@ int test_init(void)
     }
     kaa_context.channel_manager = channel_manager;
 
-    error = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+    error = kaa_bootstrap_manager_create(&bootstrap_manager, &kaa_context);
     if (error || !bootstrap_manager) {
         return error;
     }
     kaa_context.bootstrap_manager = bootstrap_manager;
 
-    error = ext_log_upload_strategy_create(&kaa_context, &strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    if(error)
-        return error;
-
-    return 0;
+    return ext_log_upload_strategy_create(&kaa_context, &strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
 }
 
 int test_deinit(void)

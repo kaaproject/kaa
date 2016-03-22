@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -34,18 +36,6 @@
 #include "platform/ext_sha.h"
 #include "platform/sock.h"
 #include "kaa.h"
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
-extern kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status
-                                                 , kaa_platform_message_writer_t* writer
-                                                 , uint32_t request_id);
-
-extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
-                                       , kaa_context_t *context
-                                       , kaa_status_t *status);
 
 
 static kaa_logger_t *logger = NULL;
@@ -93,7 +83,7 @@ void test_meta_extension_serialize_failed(void)
     error_code = kaa_meta_data_request_serialize(NULL, NULL, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)!NULL, 0);
+    error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)0x1, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_writer_destroy(writer);

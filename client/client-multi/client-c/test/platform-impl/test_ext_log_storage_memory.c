@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+#include <kaa_private.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -31,23 +33,9 @@
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
 
-
 #define TEST_RECORD_BUCKET_ID 1
 
-
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p, kaa_logger_t *logger);
-extern kaa_error_t ext_limited_log_storage_create(void **log_storage_context_p
-                                                , kaa_logger_t *logger
-                                                , size_t storage_size
-                                                , size_t percent_to_delete);
-extern kaa_error_t ext_log_storage_destroy(void *context);
-
-
-
 static kaa_logger_t *logger = NULL;
-
-
 
 void test_create_unlimited_storage(void)
 {

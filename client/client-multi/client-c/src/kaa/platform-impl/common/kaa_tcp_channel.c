@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -111,8 +113,6 @@ typedef struct {
     kaa_tcp_keepalive_t            keepalive;
     kaa_tcp_encrypt_t              encryption;
 } kaa_tcp_channel_t;
-
-extern kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered);
 
 static kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info);
 static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_service_t **supported_services, size_t *service_count);

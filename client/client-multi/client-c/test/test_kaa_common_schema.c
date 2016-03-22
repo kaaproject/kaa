@@ -127,13 +127,13 @@ static void test_string_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_string_serialize(auto_avro_writer, NULL);
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_string_t fake_kaa_str = { NULL, NULL};
 
@@ -141,7 +141,7 @@ static void test_string_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     /*
      * REAL DATA
@@ -209,7 +209,7 @@ static void test_bytes_move_create(void)
     kaa_bytes_t *kaa_bytes1 = kaa_bytes_move_create(plain_bytes1, plain_bytes1_size, NULL);
 
     ASSERT_NOT_NULL(kaa_bytes1);
-    ASSERT_EQUAL(kaa_bytes1->size, plain_bytes1_size);
+    ASSERT_EQUAL((size_t)kaa_bytes1->size, plain_bytes1_size);
     ASSERT_NULL(kaa_bytes1->destroy);
     ASSERT_EQUAL(memcmp(kaa_bytes1->buffer, plain_bytes1, plain_bytes1_size), 0);
 
@@ -223,7 +223,7 @@ static void test_bytes_move_create(void)
     kaa_bytes_t *kaa_bytes2 = kaa_bytes_move_create(plain_bytes2, plain_bytes1_size, &kaa_data_destroy);
 
     ASSERT_NOT_NULL(kaa_bytes2);
-    ASSERT_EQUAL(kaa_bytes2->size, plain_bytes1_size);
+    ASSERT_EQUAL((size_t)kaa_bytes2->size, plain_bytes1_size);
     ASSERT_EQUAL(kaa_bytes2->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_bytes2->buffer, plain_bytes1, plain_bytes1_size), 0);
 
@@ -249,7 +249,7 @@ static void test_bytes_copy_create(void)
     kaa_bytes_t *kaa_bytes1 = kaa_bytes_copy_create(plain_bytes1, plain_bytes1_size);
 
     ASSERT_NOT_NULL(kaa_bytes1);
-    ASSERT_EQUAL(kaa_bytes1->size, plain_bytes1_size);
+    ASSERT_EQUAL((size_t)kaa_bytes1->size, plain_bytes1_size);
     ASSERT_EQUAL(kaa_bytes1->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_bytes1->buffer, plain_bytes1, plain_bytes1_size), 0);
 
@@ -296,13 +296,13 @@ static void test_bytes_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_bytes_serialize(auto_avro_writer, NULL);
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_bytes_t fake_kaa_bytes = { NULL, 0, NULL };
 
@@ -310,7 +310,7 @@ static void test_bytes_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     /*
      * REAL DATA
@@ -380,7 +380,7 @@ static void test_fixed_move_create(void)
     kaa_bytes_t *kaa_fixed1 = kaa_fixed_move_create(plain_fixed1, plain_fixed1_size, NULL);
 
     ASSERT_NOT_NULL(kaa_fixed1);
-    ASSERT_EQUAL(kaa_fixed1->size, plain_fixed1_size);
+    ASSERT_EQUAL((size_t)kaa_fixed1->size, plain_fixed1_size);
     ASSERT_NULL(kaa_fixed1->destroy);
     ASSERT_EQUAL(memcmp(kaa_fixed1->buffer, plain_fixed1, plain_fixed1_size), 0);
 
@@ -394,7 +394,7 @@ static void test_fixed_move_create(void)
     kaa_bytes_t *kaa_fixed2 = kaa_fixed_move_create(plain_fixed2, plain_fixed1_size, &kaa_data_destroy);
 
     ASSERT_NOT_NULL(kaa_fixed2);
-    ASSERT_EQUAL(kaa_fixed2->size, plain_fixed1_size);
+    ASSERT_EQUAL((size_t)kaa_fixed2->size, plain_fixed1_size);
     ASSERT_EQUAL(kaa_fixed2->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_fixed2->buffer, plain_fixed1, plain_fixed1_size), 0);
 
@@ -420,7 +420,7 @@ static void test_fixed_copy_create(void)
     kaa_bytes_t *kaa_fixed1 = kaa_fixed_copy_create(plain_fixed1, plain_fixed1_size);
 
     ASSERT_NOT_NULL(kaa_fixed1);
-    ASSERT_EQUAL(kaa_fixed1->size, plain_fixed1_size);
+    ASSERT_EQUAL((size_t)kaa_fixed1->size, plain_fixed1_size);
     ASSERT_EQUAL(kaa_fixed1->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_fixed1->buffer, plain_fixed1, plain_fixed1_size), 0);
 
@@ -441,7 +441,7 @@ static void test_fixed_get_size(void)
     size_t plain_fixed1_size = sizeof(plain_fixed1) / sizeof(char);
 
     kaa_bytes_t *kaa_fixed1 = kaa_fixed_copy_create(plain_fixed1, plain_fixed1_size);
-    ASSERT_EQUAL(kaa_fixed_get_size(kaa_fixed1), kaa_fixed1->size);
+    ASSERT_EQUAL(kaa_fixed_get_size(kaa_fixed1), (size_t)kaa_fixed1->size);
 
     kaa_fixed_destroy(kaa_fixed1);
 
@@ -467,13 +467,13 @@ static void test_fixed_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_fixed_serialize(auto_avro_writer, NULL);
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_bytes_t fake_kaa_fixed = { NULL, 0, NULL };
 
@@ -481,7 +481,7 @@ static void test_fixed_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     /*
      * REAL DATA
@@ -1232,7 +1232,7 @@ static void test_array_deserialize_w_ctx(void)
     while (it) {
         kaa_bytes_t *fixed = kaa_list_get_data(it);
         ASSERT_NOT_NULL(fixed);
-        ASSERT_EQUAL(fixed->size, plain_fixed_size);
+        ASSERT_EQUAL((size_t)fixed->size, plain_fixed_size);
         ASSERT_EQUAL(memcmp(fixed->buffer, plain_fixed, plain_fixed_size), 0);
         it  = kaa_list_next(it);
     }

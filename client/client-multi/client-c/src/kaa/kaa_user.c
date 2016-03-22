@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdint.h>
 #include <string.h>
 #include "platform/stdio.h"
@@ -39,10 +41,6 @@
 #define EXTERNAL_SYSTEM_ENDPOINT_DETACH_FIELD      0x02
 
 #define USER_SYNC_ENDPOINT_ID_OPTION               0x01
-
-
-
-extern kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 
 
 typedef struct {

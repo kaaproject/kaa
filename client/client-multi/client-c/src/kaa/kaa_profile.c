@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <string.h>
 #include <stdbool.h>
 #include <inttypes.h>
@@ -35,11 +37,7 @@
 
 #define KAA_PROFILE_RESYNC_OPTION 0x1
 
-extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
-
 static kaa_service_t profile_sync_services[] = { KAA_SERVICE_PROFILE };
-
-
 
 typedef struct {
     size_t payload_size;
