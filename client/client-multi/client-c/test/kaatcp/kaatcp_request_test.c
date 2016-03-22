@@ -147,14 +147,17 @@ void test_get_request_kaasync_over_buff(void)
     char *payload = "payload";
     char kaasync_buf[100] = "";
     size_t kaasync_buf_size = 5;
+    uint16_t message_id = 5;
+    uint8_t zipped = 0;
+    uint8_t encrypted = 1;
 
-    kaatcp_fill_kaasync_message(payload, strlen(payload), 5, 0, 1, &kaasync);
-    memset(kaasync_buf, 0xEA, 100);
+    kaatcp_fill_kaasync_message(payload, strlen(payload), message_id, zipped, encrypted, &kaasync);
+    memset(kaasync_buf, 0xEA, sizeof(kaasync_buf));
 
     kaatcp_error_t rval = kaatcp_get_request_kaasync(&kaasync, kaasync_buf, &kaasync_buf_size);
     ASSERT_EQUAL(rval, KAATCP_ERR_BUFFER_NOT_ENOUGH);
 
-    for (int i = 8; i < 100; i++) {
+    for (size_t i = 8; i < sizeof(kaasync_buf); i++) {
         ASSERT_EQUAL((uint8_t)kaasync_buf[i], 0xEA);
     }
     KAA_TRACE_OUT(logger);
