@@ -1,8 +1,6 @@
 Makefile
 .zshrc
 sonar-project.properties
-src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h
-src/kaa/platform-impl/esp8266/rsa.h
 build-cc3200/
 build-clang/
 build-esp8266/

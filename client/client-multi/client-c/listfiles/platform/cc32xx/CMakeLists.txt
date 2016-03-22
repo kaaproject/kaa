@@ -70,7 +70,8 @@ set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
 
 set(KAA_BUILD_STATIC_ONLY 1)
 
-set(CC32XX_RSA_KEY ${KAA_SDK_DIR}/src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
+set(CC32XX_RSA_KEY ${CMAKE_CURRENT_BINARY_DIR}/cc32xx_rsa_key.h)
 
 execute_process(COMMAND rm ${CC32XX_RSA_KEY})
 execute_process(COMMAND java -jar ${KAA_SDK_DIR}/tools/pub_key_generator.jar ${CC32XX_RSA_KEY})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
