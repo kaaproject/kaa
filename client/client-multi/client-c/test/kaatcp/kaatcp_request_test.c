@@ -140,6 +140,29 @@ void test_kaatcp_ping(void)
     KAA_TRACE_OUT(logger);
 }
 
+void test_get_request_kaasync_over_buff(void)
+{
+    KAA_TRACE_IN(logger);
+    kaatcp_kaasync_t kaasync;
+    char *payload = "payload";
+    char kaasync_buf[100] = "";
+    size_t kaasync_buf_size = 5;
+    uint16_t message_id = 5;
+    uint8_t zipped = 0;
+    uint8_t encrypted = 1;
+
+    kaatcp_fill_kaasync_message(payload, strlen(payload), message_id, zipped, encrypted, &kaasync);
+    memset(kaasync_buf, 0xEA, sizeof(kaasync_buf));
+
+    kaatcp_error_t rval = kaatcp_get_request_kaasync(&kaasync, kaasync_buf, &kaasync_buf_size);
+    ASSERT_EQUAL(rval, KAATCP_ERR_BUFFER_NOT_ENOUGH);
+
+    for (size_t i = 8; i < sizeof(kaasync_buf); i++) {
+        ASSERT_EQUAL((uint8_t)kaasync_buf[i], 0xEA);
+    }
+    KAA_TRACE_OUT(logger);
+}
+
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
@@ -163,4 +186,5 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        KAA_TEST_CASE(kaatcp_disconnect, test_kaatcp_disconnect)
        KAA_TEST_CASE(kaatcp_kaasync, test_kaatcp_kaasync)
        KAA_TEST_CASE(kaatcp_ping, test_kaatcp_ping)
+       KAA_TEST_CASE(get_request_kaasync, test_get_request_kaasync_over_buff)
 )
