@@ -87,19 +87,12 @@ static NSDictionary *SUPPORTED_TYPES;
 
 - (void)testChannelSync {
     id <KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
-    AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
+    AbstractHttpClient *httpClient = [[HttpClientMock alloc] init];
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    
-    int32_t five = 5;
-    NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    
-    [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willReturn:data];
     
     [KeyUtils generateKeyPair];
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:nil publicKeyRef:nil remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
@@ -128,8 +121,6 @@ static NSDictionary *SUPPORTED_TYPES;
     id <KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
     AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    NSException *excption = [[NSException alloc] initWithName:@"Exception" reason:@"Exception raised" userInfo:nil];
-    [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willThrow:excption];
     
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
     [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
@@ -148,14 +139,9 @@ static NSDictionary *SUPPORTED_TYPES;
     
     [channel syncForTransportType:TRANSPORT_TYPE_BOOTSTRAP];
     [channel syncAll];
-    
-    int32_t five = 5;
-    NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
 
     [NSThread sleepForTimeInterval:1];
-    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:data];
+    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:[TestsHelper getData]];
     [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 

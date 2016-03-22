@@ -20,33 +20,7 @@
 #import "KeyUtils.h"
 #import "KeyPair.h"
 #import "MessageEncoderDecoder.h"
-
-@interface TestHttpClient : AbstractHttpClient
-
-@end
-
-
-
-@implementation TestHttpClient
-
-- (NSData *)executeHttpRequest:(NSString *)uri entity:(NSDictionary *)entity verifyResponse:(BOOL)verifyResponse {
-#pragma unused(uri, entity, verifyResponse)
-    return nil;
-}
-
-- (void)close {
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"%@ NSException raised in close method.", NSStringFromClass([self class])] userInfo:nil];
-}
-
-- (void)abort {
-}
-
-- (BOOL)canAbort {
-    return FALSE;
-}
-
-@end
-
+#import "TestsHelper.h"
 
 @interface AbstractHttpClientTest : XCTestCase
 
@@ -77,7 +51,7 @@
 }
 
 - (void)testDisableVerification {
-    TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:nil publicKeyRef:nil remoteKeyRef:nil];
+    HttpClientMock *client = [[HttpClientMock alloc] initWithURLString:@"test_url" privateKeyRef:nil publicKeyRef:nil remoteKeyRef:nil];
     [client disableVerification];
     int a = 1; int b = 2; int c = 3;
     NSMutableData *body = [NSMutableData data];
@@ -90,7 +64,7 @@
 }
 
 - (void)testSignature {
-    TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
+    HttpClientMock *client = [[HttpClientMock alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
     
     MessageEncoderDecoder *serverEncoder = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     
@@ -107,7 +81,7 @@
 - (void)testVerifyResponseFailure {
     
     @try {
-        TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
+        HttpClientMock *client = [[HttpClientMock alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
         
         int a = 1; int b = 2; int c = 3;
         NSMutableData *body = [NSMutableData data];

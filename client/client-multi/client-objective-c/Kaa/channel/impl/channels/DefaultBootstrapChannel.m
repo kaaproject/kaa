@@ -22,19 +22,12 @@
 #define CHANNEL_ID  @"default_bootstrap_channel"
 #define URL_SUFFIX  @"/BS/Sync"
 
-@interface BootstrapRunner : NSOperation
-
-@property (nonatomic, weak) DefaultBootstrapChannel *bootstrapChannel;
-
-- (instancetype)initWithChannel:(DefaultBootstrapChannel *)channel;
-
-@end
-
 @interface DefaultBootstrapChannel ()
 
-@property (nonatomic, strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
-
-- (void)processTypes:(NSDictionary *)types;
+/**
+ * <TransportType,ChannelDirection> as key-value
+ */
+@property (nonatomic, strong) NSDictionary *supportedTypes;
 
 @end
 
@@ -45,25 +38,33 @@
                failoverManager:(id<FailoverManager>)manager {
     self = [super initWithClient:client state:state failoverManager:manager];
     if (self) {
-        self.supportedTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                @(CHANNEL_DIRECTION_BIDIRECTIONAL), @(TRANSPORT_TYPE_BOOTSTRAP), nil];
+        self.supportedTypes = @{@(TRANSPORT_TYPE_BOOTSTRAP) : @(CHANNEL_DIRECTION_BIDIRECTIONAL)};
     }
     return self;
 }
 
 - (void)processTypes:(NSDictionary *)types {
     NSData *requestBodyRaw = [[self getMultiplexer] compileRequestForTypes:types];
-    NSData *decodedResponse = nil;
     @synchronized(self) {
         MessageEncoderDecoder *encoderDecoder = [[self getHttpClient] getEncoderDecoder];
         NSDictionary *requestEntity = [HttpRequestCreator createBootstrapHttpRequest:requestBodyRaw
                                                                   withEncoderDecoder:encoderDecoder];
-        NSData *responseDataRaw = [[self getHttpClient] executeHttpRequest:@""
-                                                                    entity:requestEntity
-                                                            verifyResponse:NO];
-        decodedResponse = [encoderDecoder decodeData:responseDataRaw];
+        __weak typeof(self) weakSelf = self;
+        [[self getHttpClient] executeHttpRequest:@""
+                                          entity:requestEntity
+                                  verifyResponse:NO
+                                         success:^(NSData *response) {
+                                             NSData *decodedResponse = [encoderDecoder decodeData:response];
+                                             [[weakSelf getDemultiplexer] processResponse:decodedResponse];
+                                             [weakSelf connectionEstablished];
+                                         } failure:^(NSInteger responseCode) {
+                                             if (![weakSelf isShutdown]) {
+                                                 DDLogError(@"%@ Failed to receive operation servers list, response code: %i", TAG, (int)responseCode);
+                                                 [weakSelf connectionFailedWithStatus:(int)responseCode];
+                                             }
+                                         }];
     }
-    [[self getDemultiplexer] processResponse:decodedResponse];
+    
 }
 
 - (NSString *)getId {
@@ -80,41 +81,6 @@
 
 - (NSString *)getURLSuffix {
     return URL_SUFFIX;
-}
-
-- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
-#pragma unused(types)
-    return [[BootstrapRunner alloc] initWithChannel:self];
-}
-
-@end
-
-@implementation BootstrapRunner
-
-- (instancetype)initWithChannel:(DefaultBootstrapChannel *)channel {
-    self = [super init];
-    if (self) {
-        self.bootstrapChannel = channel;
-    }
-    return self;
-}
-
-- (void)main {
-    if (self.isCancelled || self.isFinished) {
-        return;
-    }
-    @try {
-        [self.bootstrapChannel processTypes:[self.bootstrapChannel getSupportedTransportTypes]];
-        [self.bootstrapChannel connectionEstablished];
-    }
-    @catch (NSException *ex) {
-        if (![self.bootstrapChannel isShutdown]) {
-            DDLogError(@"%@ Failed to receive operation servers list: %@, reason: %@", TAG, ex.name, ex.reason);
-            [self.bootstrapChannel connectionFailedWithStatus:UNKNOWN_HTTP_STATUS];
-        } else {
-            DDLogDebug(@"%@ Failed to receive operation servers list: %@, reason: %@", TAG, ex.name, ex.reason);
-        }
-    }
 }
 
 @end

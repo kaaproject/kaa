@@ -31,25 +31,43 @@
 #import "TestsHelper.h"
 #import "TransportProtocolIdHolder.h"
 
-#pragma mark DefaultBootStrapChannelFake
+@interface HttpClientMockWithEncoder : HttpClientMock
 
-@interface DefaultBootStrapChannelFake : DefaultBootstrapChannel
+@end
+
+@implementation HttpClientMockWithEncoder
+
+- (MessageEncoderDecoder *)getEncoderDecoder {
+    MessageEncoderDecoder *crypt = mock([MessageEncoderDecoder class]);
+    @try {
+        [given([crypt decodeData:anything()]) willReturn:[TestsHelper getData]];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Error decoding data: %@, reason: %@", exception.name, exception.reason);
+    }
+    return crypt;
+}
+
+@end
+
+
+@interface DefaultBootStrapChannelMock : DefaultBootstrapChannel
 
 @property (nonatomic) NSInteger wantedNumberOfInvocations;
 
 - (instancetype)initWithClient:(AbstractKaaClient *)client
                          state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager
-  wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations;
+     wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations;
 
 @end
 
-@implementation DefaultBootStrapChannelFake
+@implementation DefaultBootStrapChannelMock
 
 - (instancetype)initWithClient:(AbstractKaaClient *)client
                          state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager
-  wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
+     wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
     self = [super initWithClient:client state:state failoverManager:manager];
     self.wantedNumberOfInvocations = wantedNumberOfInvocations;
     return self;
@@ -61,39 +79,6 @@
 
 @end
 
-#pragma mark DefaultBootStrapChannelMock
-
-@interface DefaultBootStrapChannelMock : DefaultBootStrapChannelFake
-
-@end
-
-@implementation DefaultBootStrapChannelMock
-
-- (instancetype) initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)manager wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
-    self = [super initWithClient:client state:state failoverManager:manager wantedNumberOfInvocations:wantedNumberOfInvocations];
-    return self;
-}
-
-- (AbstractHttpClient *)getHttpClient {
-    AbstractHttpClient *client = mock([AbstractHttpClient class]);
-    MessageEncoderDecoder *crypt = mock([MessageEncoderDecoder class]);
-    @try {
-        char five = 5;
-        NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
-        [data appendBytes:&five length:sizeof(five)];
-        [data appendBytes:&five length:sizeof(five)];
-        [given([crypt decodeData:anything()]) willReturn:data];
-    }
-    @catch (NSException *exception) {
-        NSLog(@"GeneralSecurityException");
-    }
-    [given([client getEncoderDecoder]) willReturn:crypt];
-    return client;
-}
-
-@end
-
-#pragma mark DefaultBootstrapChannelTest
 
 @interface DefaultBootstrapChannelTest : XCTestCase
 
@@ -116,14 +101,12 @@
 
 - (void)testChannelSync {
     id <KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
-    AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
+    AbstractHttpClient *httpClient = [[HttpClientMockWithEncoder alloc] init];
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    
-    [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willReturn:[self returnData]];
     
     [KeyUtils generateKeyPair];
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:nil publicKeyRef:nil remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
@@ -144,7 +127,7 @@
     [channel syncForTransportType:TRANSPORT_TYPE_BOOTSTRAP];
 
     [NSThread sleepForTimeInterval:1];
-    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:[self returnData]];
+    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:[TestsHelper getData]];
     [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 
@@ -152,8 +135,6 @@
     id <KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
     AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    NSException *excption = [[NSException alloc] initWithName:@"Exception" reason:@"Exception raised" userInfo:nil];
-    [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willThrow:excption];
     
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
     [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
@@ -162,7 +143,7 @@
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
     id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
-    DefaultBootStrapChannelFake *channel = [[DefaultBootStrapChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:0];
+    DefaultBootStrapChannelMock *channel = [[DefaultBootStrapChannelMock alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:0];
     [channel setMultiplexer:multiplexer];
     [channel setDemultiplexer:demultiplexer];
     [channel shutdown];
@@ -173,21 +154,12 @@
     [channel syncForTransportType:TRANSPORT_TYPE_BOOTSTRAP];
     [channel syncAll];
     
-    NSData *data = [self returnData];
     [NSThread sleepForTimeInterval:1];
-    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:data];
+    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:[TestsHelper getData]];
     [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 
 #pragma mark - Supporting methods
-
-- (NSData *)returnData {
-    char five = 5;
-    NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    return data;
-}
 
 - (id<TransportConnectionInfo>) createTestServerInfoWithServerType:(ServerType)serverType transportProtocolId:(TransportProtocolId *)TPid host:(NSString *)host port:(uint32_t)port publicKey:(NSData *)publicKey {
     ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
