@@ -26,8 +26,10 @@
 
 static kaa_logger_t *logger = NULL;
 
-void test_profile_update(void)
+void test_profile_update(void **state)
 {
+    (void)state;
+    (void) state;
     KAA_TRACE_IN(logger);
 
     char* pattern = "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3";

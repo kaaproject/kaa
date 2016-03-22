@@ -125,8 +125,9 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
 
 
 
-void test_create_bootstrap_manager(void)
+void test_create_bootstrap_manager(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -175,8 +176,9 @@ static void destroy_access_point(kaa_access_point_t * access_point)
     }
 }
 
-void test_handle_server_sync(void)
+void test_handle_server_sync(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -376,8 +378,9 @@ static kaa_error_t find_bootstrap_access_point_index(kaa_transport_protocol_id_t
     return KAA_ERR_NOT_FOUND;
 }
 
-void test_bootstrap_channel(void)
+void test_bootstrap_channel(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;

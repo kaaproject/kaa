@@ -55,8 +55,9 @@ static kaa_error_t on_configuration_updated(void *context, const kaa_root_config
     return KAA_ERR_NONE;
 }
 
-void test_create_request(void)
+void test_create_request(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t expected_size = 0;
@@ -85,8 +86,9 @@ void test_create_request(void)
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_response(void)
+void test_response(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
     const size_t response_size = kaa_aligned_size_get(KAA_CONFIGURATION_DATA_LENGTH) + sizeof(uint32_t);
     char response[response_size];
