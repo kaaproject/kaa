@@ -158,7 +158,7 @@ void test_deserializing(void)
     *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)1); // extension count
     unserialized_buffer += sizeof(uint16_t);
 
-    *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)KAA_NOTIFICATION_EXTENSION_TYPE);
+    *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)KAA_EXTENSION_NOTIFICATION);
     unserialized_buffer += sizeof(uint16_t);
     unserialized_buffer += sizeof(uint16_t); // pass by extension options
 
@@ -307,7 +307,7 @@ void test_serializing(void)
 
     kaa_serialize_info_t *info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
 
-    kaa_service_t service[] = { KAA_SERVICE_NOTIFICATION };
+    kaa_extension_id service[] = { KAA_EXTENSION_NOTIFICATION };
 
     info->services = service;
     info->services_count = 1;

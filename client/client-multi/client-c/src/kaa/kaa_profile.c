@@ -37,7 +37,7 @@
 
 #define KAA_PROFILE_RESYNC_OPTION 0x1
 
-static kaa_service_t profile_sync_services[] = { KAA_SERVICE_PROFILE };
+static kaa_extension_id profile_sync_services[] = { KAA_EXTENSION_PROFILE };
 
 typedef struct {
     size_t payload_size;
@@ -101,7 +101,7 @@ kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self)
 
     kaa_transport_channel_interface_t *channel =
             kaa_channel_manager_get_transport_channel(
-                    self->channel_manager, KAA_SERVICE_PROFILE);
+                    self->channel_manager, KAA_EXTENSION_PROFILE);
     if (!channel) {
         return KAA_ERR_NOT_FOUND;
     }
@@ -197,7 +197,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile profile client sync");
 
     kaa_error_t error_code = kaa_platform_message_write_extension_header(writer
-                                                                       , KAA_PROFILE_EXTENSION_TYPE
+                                                                       , KAA_EXTENSION_PROFILE
                                                                        , 0
                                                                        , self->extension_data->payload_size);
     KAA_RETURN_IF_ERR(error_code);

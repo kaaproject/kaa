@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,8 @@
 #ifndef KAA_PLATFORM_PROTOCOL_H_
 #define KAA_PLATFORM_PROTOCOL_H_
 
+#include <stdint.h>
+
 #include "kaa_error.h"
 #include "kaa_context.h"
 #include "kaa_common.h"
@@ -50,7 +52,7 @@ typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
  * Serialize info structure
  */
 typedef struct {
-    kaa_service_t *services;        /**< Non-empty list of services to include into the sync message */
+    kaa_extension_id *services;     /**< Non-empty list of services to include into the sync message */
     size_t services_count;          /**< Number of elements in @c services */
     kaa_buffer_alloc_fn allocator;  /**< Pointer to a buffer memory allocation function */
     void *allocator_context;        /**< Context to be passed to the @c allocator callback as @c context parameter */

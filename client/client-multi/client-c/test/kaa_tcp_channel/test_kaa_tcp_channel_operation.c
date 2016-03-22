@@ -160,11 +160,11 @@ void test_create_kaa_tcp_channel(void)
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
 
@@ -185,16 +185,16 @@ void test_create_kaa_tcp_channel(void)
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_service_t *r_supported_services;
+    kaa_extension_id *r_supported_services;
     size_t r_supported_service_count = 0;
     error_code = channel->get_supported_services(channel->context, &r_supported_services, &r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(r_supported_service_count, 4);
-    ASSERT_EQUAL(r_supported_services[0], KAA_SERVICE_PROFILE);
-    ASSERT_EQUAL(r_supported_services[1], KAA_SERVICE_USER);
-    ASSERT_EQUAL(r_supported_services[2], KAA_SERVICE_EVENT);
-    ASSERT_EQUAL(r_supported_services[3], KAA_SERVICE_LOGGING);
+    ASSERT_EQUAL(r_supported_services[0], KAA_EXTENSION_PROFILE);
+    ASSERT_EQUAL(r_supported_services[1], KAA_EXTENSION_USER);
+    ASSERT_EQUAL(r_supported_services[2], KAA_EXTENSION_EVENT);
+    ASSERT_EQUAL(r_supported_services[3], KAA_EXTENSION_LOGGING);
 
     channel->destroy(channel->context);
 
@@ -219,11 +219,11 @@ void test_kaa_tcp_channel_success_flow(void)
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -257,11 +257,11 @@ void test_kaa_tcp_channel_sync_flow(void)
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -271,13 +271,13 @@ void test_kaa_tcp_channel_sync_flow(void)
     test_check_channel_auth(channel);
 
     //Call sync
-    kaa_service_t services1[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_USER};
+    kaa_extension_id services1[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_USER};
     channel->sync_handler(channel->context, services1, 2);
 
-    kaa_service_t services2[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_EVENT};
+    kaa_extension_id services2[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_EVENT};
     channel->sync_handler(channel->context, services2, 2);
 
-    kaa_service_t services3[] = {KAA_SERVICE_LOGGING};
+    kaa_extension_id services3[] = {KAA_EXTENSION_LOGGING};
     channel->sync_handler(channel->context, services3, 1);
 
     //Check correct RD,WR operation, in this point we waiting for RD operations true
@@ -311,11 +311,11 @@ void test_kaa_tcp_channel_io_error_flow(void)
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -364,11 +364,11 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -400,7 +400,7 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     access_point_test_info.request_connect           = false;
 
     //Call sync
-    kaa_service_t services1[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_USER};
+    kaa_extension_id services1[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_USER};
     channel->sync_handler(channel->context, services1, 2);
     ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
     ASSERT_EQUAL(access_point_test_info.request_connect, false);
@@ -420,7 +420,7 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     access_point_test_info.request_connect           = false;
     access_point_test_info.auth_packet_written       = false;
 
-    kaa_service_t services2[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_EVENT};
+    kaa_extension_id services2[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_EVENT};
     channel->sync_handler(channel->context, services2, 2);
     ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
     ASSERT_EQUAL(access_point_test_info.request_connect, false);
@@ -439,7 +439,7 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     CHECK_SOCKET_RW(channel, true, true);
 
     //Third sync
-    kaa_service_t services3[] = {KAA_SERVICE_LOGGING};
+    kaa_extension_id services3[] = {KAA_EXTENSION_LOGGING};
     channel->sync_handler(channel->context, services3, 1);
 
     //Check correct RD,WR operation, in this point we waiting for RD operations true
@@ -730,10 +730,10 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 {
 
     if (info->services_count == 4
-            && info->services[0] == KAA_SERVICE_PROFILE
-            && info->services[1] == KAA_SERVICE_USER
-            && info->services[2] == KAA_SERVICE_EVENT
-            && info->services[3] == KAA_SERVICE_LOGGING) {
+            && info->services[0] == KAA_EXTENSION_PROFILE
+            && info->services[1] == KAA_EXTENSION_USER
+            && info->services[2] == KAA_EXTENSION_EVENT
+            && info->services[3] == KAA_EXTENSION_LOGGING) {
         if (info->allocator && info->allocator_context) {
             char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
             if (alloc_buffer) {

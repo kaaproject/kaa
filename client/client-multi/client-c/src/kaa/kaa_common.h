@@ -29,6 +29,20 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Kaa extensions.
+ */
+typedef enum {
+    // Don't change numbers. They are critical to platform protocol.
+    KAA_EXTENSION_BOOTSTRAP     = 0,
+    KAA_EXTENSION_META_DATA     = 1,
+    KAA_EXTENSION_PROFILE       = 2,
+    KAA_EXTENSION_USER          = 3,
+    KAA_EXTENSION_LOGGING       = 4,
+    KAA_EXTENSION_CONFIGURATION = 5,
+    KAA_EXTENSION_EVENT         = 7,
+    KAA_EXTENSION_NOTIFICATION  = 6,
+} kaa_extension_id;
 
 /*
  * Standard error handling macros
@@ -50,20 +64,6 @@ extern "C" {
 
 #define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
     do { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; } while (0)
-
-
-/**
- * @brief Types of Kaa platform services
- */
-typedef enum {
-    KAA_SERVICE_BOOTSTRAP = 0,
-    KAA_SERVICE_PROFILE = 1,
-    KAA_SERVICE_USER = 2,
-    KAA_SERVICE_EVENT = 3,
-    KAA_SERVICE_LOGGING = 4,
-    KAA_SERVICE_CONFIGURATION = 5,
-    KAA_SERVICE_NOTIFICATION = 6
-} kaa_service_t;
 
 /**
  * @brief Identifier used to uniquely represent transport protocol.

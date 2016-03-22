@@ -30,6 +30,7 @@
 #include <kaa_channel_manager.h>
 #include <kaa_platform_utils.h>
 #include <platform/kaa_client.h>
+#include <kaa_platform_common.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -53,10 +54,10 @@ bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
 kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
-        kaa_service_t service_type);
+        kaa_extension_id service_type);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status,
+kaa_error_t kaa_event_manager_create(void **event_manager_p, kaa_status_t *status,
         kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 void kaa_event_manager_destroy(kaa_event_manager_t *self);
 kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data,
@@ -163,7 +164,6 @@ kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool i
 
 kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
 
-kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
 kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status
                                           , kaa_platform_message_writer_t* writer
                                           , uint32_t request_id);

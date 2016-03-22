@@ -43,7 +43,7 @@ static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
-static kaa_event_manager_t *event_manager = NULL;
+static void *event_manager = NULL;
 
 
 
@@ -58,7 +58,7 @@ void test_kaa_create_event_manager(void)
 
     kaa_status_t* status = NULL;
     kaa_status_create(&status);
-    kaa_event_manager_t *event_manager = NULL;
+    void *event_manager = NULL;
     kaa_error_t err_code = kaa_event_manager_create(&event_manager, status, NULL, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(event_manager);
@@ -393,7 +393,7 @@ void test_event_sync_serialize(void)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_message_write_extension_header(manual_writer
-                                                           , KAA_EVENT_EXTENSION_TYPE
+                                                           , KAA_EXTENSION_EVENT
                                                            , 0x1
                                                            , event_sync_size - KAA_EXTENSION_HEADER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

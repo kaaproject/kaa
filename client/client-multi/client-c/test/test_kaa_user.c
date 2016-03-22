@@ -110,7 +110,7 @@ void test_specified_user_verifier(void)
     ASSERT_EQUAL(kaa_user_request_serialize(user_manager, writer), KAA_ERR_NONE);
 
     char *buf_cursor = buffer;
-    ASSERT_EQUAL(KAA_USER_EXTENSION_TYPE, KAA_HTONS(*(uint16_t*)buf_cursor));
+    ASSERT_EQUAL(KAA_EXTENSION_USER, KAA_HTONS(*(uint16_t*)buf_cursor));
     buf_cursor += sizeof(uint16_t);
 
     char options[] = { 0x00, 0x01 };

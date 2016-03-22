@@ -41,25 +41,25 @@
 
 #include "kaa_private.h"
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
+static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                             , KAA_EXTENSION_USER
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-                                             , KAA_SERVICE_CONFIGURATION
+                                             , KAA_EXTENSION_CONFIGURATION
 #endif
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-                                             , KAA_SERVICE_EVENT
+                                             , KAA_EXTENSION_EVENT
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                                             , KAA_SERVICE_LOGGING
+                                             , KAA_EXTENSION_LOGGING
 #endif
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-                                             , KAA_SERVICE_NOTIFICATION
+                                             , KAA_EXTENSION_NOTIFICATION
 #endif
                                              };
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 
 /* Logging constraints */
