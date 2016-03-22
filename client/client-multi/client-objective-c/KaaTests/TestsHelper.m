@@ -77,6 +77,7 @@
             verifyResponse:(BOOL)verifyResponse
                    success:(void (^)(NSData *))success
                    failure:(void (^)(NSInteger))failure {
+#pragma unused(uri, entity, verifyResponse, failure)
     success([TestsHelper getData]);
 }
 
