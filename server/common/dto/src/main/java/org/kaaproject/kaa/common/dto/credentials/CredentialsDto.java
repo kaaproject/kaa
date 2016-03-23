@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.common.dto.credentials;
 
 import java.io.Serializable;
@@ -20,54 +21,39 @@ import java.util.Arrays;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * @author Bohdan Khablenko
  * @author Andrew Shvayka
  *
  * @since v0.9.0
  */
-@JsonInclude(Include.NON_NULL)
 public final class CredentialsDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1000L;
 
-    @JsonProperty("credentialsId")
     private String id;
-
-    @JsonProperty("credentials")
-    private byte[] credentials;
-
-    @JsonProperty("status")
+    private byte[] credentialsBody;
     private CredentialsStatus status;
-    
-    public CredentialsDto() {
-        super();
-    }
 
     @Override
     public String getId() {
-        return id;
+        return this.id;
     }
 
-    @Override
     public void setId(String id) {
         this.id = id;
     }
 
-    public byte[] getCredentials() {
-        return credentials;
+    public byte[] getCredentialsBody() {
+        return this.credentialsBody;
     }
 
-    public void setCredentials(byte[] credentials) {
-        this.credentials = credentials;
+    public void setCredentialsBody(byte[] credentialsBody) {
+        this.credentialsBody = credentialsBody;
     }
 
     public CredentialsStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(CredentialsStatus status) {
@@ -78,36 +64,50 @@ public final class CredentialsDto implements HasId, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(credentials);
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + Arrays.hashCode(this.credentialsBody);
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.status == null) ? 0 : this.status.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CredentialsDto other = (CredentialsDto) obj;
-        if (!Arrays.equals(credentials, other.credentials))
+        if (!Arrays.equals(this.credentialsBody, other.credentialsBody)) {
             return false;
-        if (id == null) {
-            if (other.id != null)
+        }
+        if (this.id == null) {
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!this.id.equals(other.id)) {
             return false;
-        if (status != other.status)
+        }
+        if (this.status != other.status) {
             return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "CredentialsDto [id=" + id + ", credentials=" + Arrays.toString(credentials) + ", status=" + status + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("CredentialsDto [id=");
+        builder.append(this.id);
+        builder.append(", credentialsBody=");
+        builder.append(Arrays.toString(this.credentialsBody));
+        builder.append(", status=");
+        builder.append(this.status);
+        builder.append("]");
+        return builder.toString();
     }
-
 }

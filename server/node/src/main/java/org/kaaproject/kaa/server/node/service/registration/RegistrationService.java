@@ -13,19 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.node.service.registration;
 
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationInfoDto;
 
 /**
- * This service represent Kaa platform capabilities to provision, lookup and
- * revoke registration information. Information that is managed using this
- * service should be stored in Kaa NoSQL database. Registration information is
- * represented using {@link EndpointRegistrationInfoDto} and contains server side
- * profile body and version.
+ * This service represent the Kaa platform capabilities to provision, lookup and
+ * revoke registration information. The information that is managed using this
+ * service should be stored in an NoSQL database. Registration information is
+ * represented with instances of the {@link EndpointRegistrationInfoDto} class
+ * and contains server-side endpoint profile version and body.
  * 
  * @author Andrew Shvayka
+ * @author Bohdan Khablenko
  *
+ * @since v0.9.0
  */
 public interface RegistrationService {
 
@@ -33,9 +36,8 @@ public interface RegistrationService {
             throws RegistrationServiceException;
 
     EndpointRegistrationInfoDto lookupEndpointRegistrationInfoByEndpointId(String endpointId) throws RegistrationServiceException;
-    
+
     EndpointRegistrationInfoDto lookupEndpointRegistrationInfoByCredentialsId(String credentialsId) throws RegistrationServiceException;
 
     EndpointRegistrationInfoDto revokeEndpointRegistrationInfo(String endpointId) throws RegistrationServiceException;
-
 }
