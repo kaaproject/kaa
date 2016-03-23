@@ -107,7 +107,6 @@ int test_init(void)
     if (err) {
         return err;
     }
-    KAA_TRACE_IN(context->logger);
     listener.callback = &on_notification;
     listener.context = NULL;
     listener_2.callback = &on_notification;
@@ -138,7 +137,7 @@ int test_deinit(void)
 void test_deserializing(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(context->logger);
+
     kaa_notification_t *notification = kaa_notification_notification_create();
     const char *message = "Hello World!!!\n";
     notification->message = kaa_string_copy_create(message);
@@ -211,14 +210,12 @@ void test_deserializing(void **state)
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     notification->destroy(notification);
-
-    KAA_TRACE_OUT(context->logger);
 }
 
 void test_notification_listeners_adding_and_removing(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(context->logger);
+
     err = kaa_add_notification_listener(context->notification_manager, &listener, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
@@ -260,14 +257,12 @@ void test_notification_listeners_adding_and_removing(void **state)
 
     err = kaa_remove_optional_notification_listener(context->notification_manager, &topic_id, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
-
-    KAA_TRACE_OUT(context->logger);
 }
 
 void test_topic_list_listeners_adding_and_removing(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(context->logger);
+
     err = kaa_get_topics(context->notification_manager, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
@@ -288,27 +283,22 @@ void test_topic_list_listeners_adding_and_removing(void **state)
 
     err = kaa_remove_topic_list_listener(context->notification_manager, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
-
-    KAA_TRACE_OUT(context->logger);
 }
 
 void test_retrieving_topic_list(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(context->logger);
+
     err = kaa_get_topics(context->notification_manager, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     size_t topics_size = kaa_list_get_size(topics);
     ASSERT_EQUAL(topics_size, 1);
-
-    KAA_TRACE_OUT(context->logger);
 }
 
 void test_serializing(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(context->logger);
 
     kaa_serialize_info_t *info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
 
@@ -323,14 +313,11 @@ void test_serializing(void **state)
 
     KAA_FREE(buffer);
     KAA_FREE(info);
-
-    KAA_TRACE_OUT(context->logger);
 }
 
 void test_subscriptions(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(context->logger);
 
     err = kaa_subscribe_to_topic(context->notification_manager, &topic_id, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -351,8 +338,6 @@ void test_subscriptions(void **state)
 
     err = kaa_unsubscribe_from_topics(context->notification_manager, existing_ids, 1, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
-
-    KAA_TRACE_OUT(context->logger);
 }
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION

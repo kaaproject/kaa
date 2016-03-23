@@ -96,7 +96,6 @@ static kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t er
 void test_specified_user_verifier(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_user_manager_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
 
@@ -146,14 +145,11 @@ void test_specified_user_verifier(void **state)
     buf_cursor += kaa_aligned_size_get(strlen(USER_VERIFIER));
 
     kaa_platform_message_writer_destroy(writer);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_success_response(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     char success_response[] = {
             /*  bit 0   */   0x00, 0x00, 0x00, 0x00,    /* User attach response field. Result - success */
@@ -179,14 +175,11 @@ void test_success_response(void **state)
     ASSERT_TRUE(last_is_attached_result);
 
     kaa_platform_message_reader_destroy(reader);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_failed_response(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     char failed_response[] = {
             /*  bit 0   */   0x00, 0x00, 0x01, 0x00,    /* User attach response field. Result - success */
@@ -206,8 +199,6 @@ void test_failed_response(void **state)
     ASSERT_TRUE(is_attach_failed_invoked);
 
     kaa_platform_message_reader_destroy(reader);
-
-    KAA_TRACE_OUT(logger);
 }
 
 

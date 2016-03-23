@@ -83,7 +83,6 @@ void ping_listener(void *context)
 void test_kaatcp_parser(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaatcp_parser_handlers_t handlers = { NULL, &connack_listener, &disconnect_listener, &kaasync_listener, &ping_listener };
     kaatcp_parser_t parser;
@@ -114,8 +113,6 @@ void test_kaatcp_parser(void **state)
     ASSERT_NOT_EQUAL(disconnect_received, 0);
 
     KAA_FREE(parser.payload);
-
-    KAA_TRACE_OUT(logger);
 }
 
 int test_init(void)

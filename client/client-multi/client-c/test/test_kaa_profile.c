@@ -145,7 +145,6 @@ static kaa_transport_channel_interface_t channel = {
 void test_profile_is_set(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
 #if KAA_PROFILE_SCHEMA_VERSION > 0
     ASSERT_FALSE(kaa_profile_manager_is_profile_set(profile_manager));
@@ -158,14 +157,11 @@ void test_profile_is_set(void **state)
 #else
     ASSERT_TRUE(kaa_profile_manager_is_profile_set(profile_manager));
 #endif
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_update(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
     profile1->profile_body = kaa_string_copy_create("dummy");
@@ -196,14 +192,11 @@ void test_profile_update(void **state)
     ASSERT_TRUE(need_resync);
 
     profile2->destroy(profile2);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_sync_get_size(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
@@ -251,14 +244,11 @@ void test_profile_sync_get_size(void **state)
     avro_writer_free(writer);
     KAA_FREE(serialized_profile);
     profile->destroy(profile);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_sync_serialize(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_platform_message_writer_t *manual_writer;
@@ -339,14 +329,11 @@ void test_profile_sync_serialize(void **state)
     profile->destroy(profile);
     kaa_platform_message_writer_destroy(auto_writer);
     kaa_platform_message_writer_destroy(manual_writer);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_handle_sync(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     bool need_resync = false;
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -372,8 +359,6 @@ void test_profile_handle_sync(void **state)
     ASSERT_FALSE(need_resync);
 
     kaa_platform_message_reader_destroy(reader);
-
-    KAA_TRACE_OUT(logger);
 }
 
 static void test_profile_force_sync(void **state)

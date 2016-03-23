@@ -154,7 +154,6 @@ void test_sync_exchange(kaa_transport_channel_interface_t *channel);
 void test_create_kaa_tcp_channel(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -200,8 +199,6 @@ void test_create_kaa_tcp_channel(void **state)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 
@@ -214,7 +211,6 @@ void test_create_kaa_tcp_channel(void **state)
 void test_kaa_tcp_channel_success_flow(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -239,8 +235,6 @@ void test_kaa_tcp_channel_success_flow(void **state)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 /**
@@ -253,7 +247,6 @@ void test_kaa_tcp_channel_success_flow(void **state)
 void test_kaa_tcp_channel_sync_flow(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -294,8 +287,6 @@ void test_kaa_tcp_channel_sync_flow(void **state)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 /**
@@ -308,7 +299,6 @@ void test_kaa_tcp_channel_sync_flow(void **state)
 void test_kaa_tcp_channel_io_error_flow(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -349,8 +339,6 @@ void test_kaa_tcp_channel_io_error_flow(void **state)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 /**
@@ -362,7 +350,6 @@ void test_kaa_tcp_channel_io_error_flow(void **state)
 void test_kaa_tcp_channel_auth_double_sync_flow(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -458,8 +445,6 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void **state)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 

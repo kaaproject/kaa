@@ -68,7 +68,6 @@ void test_create_strategy(void **state)
 {
     (void)state;
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
     void *tmp_strategy = NULL;
@@ -87,15 +86,12 @@ void test_create_strategy(void **state)
     ASSERT_NOT_NULL(tmp_strategy);
 
     ext_log_upload_strategy_destroy(tmp_strategy);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_set_upload_timeout(void **state)
 {
     (void)state;
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -108,14 +104,11 @@ void test_set_upload_timeout(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(ext_log_upload_strategy_get_timeout(strategy), DEFAULT_UPLOAD_TIMEOUT);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_upload_decision_by_volume(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -144,14 +137,11 @@ void test_upload_decision_by_volume(void **state)
     log_storage_context.record_count = 0;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_upload_decision_by_count(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -180,14 +170,11 @@ void test_upload_decision_by_count(void **state)
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD + 1;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_upload_decision_by_timeout(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -214,14 +201,11 @@ void test_upload_decision_by_timeout(void **state)
 
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_noop_decision_on_failure(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -249,14 +233,11 @@ void test_noop_decision_on_failure(void **state)
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, NOOP);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_upload_decision_on_failure(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -291,8 +272,6 @@ void test_upload_decision_on_failure(void **state)
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
 int test_init(void)

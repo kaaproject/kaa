@@ -45,7 +45,6 @@ static kaa_status_t *status = NULL;
 void test_meta_extension_get_size_failed(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = kaa_meta_data_request_get_size(NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
@@ -55,7 +54,6 @@ void test_meta_extension_get_size_failed(void **state)
 void test_meta_extension_get_size(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     const size_t expected_meta_extension_size = KAA_EXTENSION_HEADER_SIZE
                                               + sizeof(uint32_t) /* request id */
@@ -73,7 +71,6 @@ void test_meta_extension_get_size(void **state)
 void test_meta_extension_serialize_failed(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     const size_t buffer_size = 6;
@@ -95,7 +92,6 @@ void test_meta_extension_serialize_failed(void **state)
 void test_meta_extension_serialize(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     size_t meta_extension_size;
     kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
