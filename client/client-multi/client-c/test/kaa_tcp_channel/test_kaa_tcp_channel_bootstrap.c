@@ -201,7 +201,7 @@ void test_create_kaa_tcp_channel(void **state)
 void test_set_access_point_full_success_bootstrap(void **state)
 {
     (void)state;
-    
+
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
