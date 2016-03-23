@@ -145,8 +145,9 @@ void test_kaatcp_ping(void **state)
     KAA_TRACE_OUT(logger);
 }
 
-void test_get_request_kaasync_over_buff(void)
+void test_get_request_kaasync_over_buff(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
     kaatcp_kaasync_t kaasync;
     char *payload = "payload";
