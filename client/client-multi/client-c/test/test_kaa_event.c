@@ -398,7 +398,7 @@ void test_event_sync_serialize(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_message_write_extension_header(manual_writer
-                                                           , KAA_EVENT_EXTENSION_TYPE
+                                                           , KAA_EXTENSION_EVENT
                                                            , 0x1
                                                            , event_sync_size - KAA_EXTENSION_HEADER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

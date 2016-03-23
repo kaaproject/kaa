@@ -70,7 +70,7 @@ void test_create_request(void **state)
     ASSERT_EQUAL(kaa_configuration_manager_request_serialize(config_manager, writer), KAA_ERR_NONE);
 
     char *cursor = writer->begin;
-    ASSERT_EQUAL(KAA_HTONS(*((uint16_t *) cursor)), KAA_CONFIGURATION_EXTENSION_TYPE);
+    ASSERT_EQUAL(KAA_HTONS(*((uint16_t *) cursor)), KAA_EXTENSION_CONFIGURATION);
     cursor += sizeof(uint32_t);
 
     ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)),  SHA_1_DIGEST_LENGTH);    // checking payload size

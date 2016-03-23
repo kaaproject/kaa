@@ -98,6 +98,8 @@ bool kaa_platform_message_is_buffer_large_enough(kaa_platform_message_reader_t *
 
 kaa_error_t kaa_platform_message_skip(kaa_platform_message_reader_t *reader, size_t size);
 
+#define KAA_ALIGNED_SIZE(s) ((s) + (KAA_ALIGNMENT - (s) % KAA_ALIGNMENT) % KAA_ALIGNMENT)
+
 static inline size_t kaa_aligned_size_get(size_t size)
 {
     return (size + (KAA_ALIGNMENT - (size % KAA_ALIGNMENT)) % KAA_ALIGNMENT);

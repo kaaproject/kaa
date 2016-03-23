@@ -207,9 +207,9 @@ kaa_error_t kaa_start(kaa_context_t *kaa_context)
     KAA_LOG_INFO(kaa_context->logger, KAA_ERR_NONE, "Going to start Kaa endpoint");
 
     kaa_transport_channel_interface_t *bootstrap_channel = kaa_channel_manager_get_transport_channel(
-            kaa_context->channel_manager, KAA_SERVICE_BOOTSTRAP);
+            kaa_context->channel_manager, KAA_EXTENSION_BOOTSTRAP);
     if (bootstrap_channel) {
-        const kaa_service_t bootstrap_service[] = { KAA_SERVICE_BOOTSTRAP };
+        const kaa_extension_id bootstrap_service[] = { KAA_EXTENSION_BOOTSTRAP };
         kaa_error_t error = bootstrap_channel->sync_handler(bootstrap_channel->context, bootstrap_service, 1);
         if (error) {
             KAA_LOG_ERROR(kaa_context->logger, error, "Failed to sync Bootstrap service. Try again later");

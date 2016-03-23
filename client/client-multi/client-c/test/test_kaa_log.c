@@ -46,14 +46,14 @@ static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 
-static const kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                                   , KAA_SERVICE_USER
-                                                   , KAA_SERVICE_CONFIGURATION
-                                                   , KAA_SERVICE_EVENT
-                                                   , KAA_SERVICE_LOGGING
-                                                   , KAA_SERVICE_NOTIFICATION
+static const kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                                   , KAA_EXTENSION_USER
+                                                   , KAA_EXTENSION_CONFIGURATION
+                                                   , KAA_EXTENSION_EVENT
+                                                   , KAA_EXTENSION_LOGGING
+                                                   , KAA_EXTENSION_NOTIFICATION
                                                     };
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 #define TEST_LOG_BUFFER  "log_record"
 
@@ -110,17 +110,17 @@ static kaa_error_t test_kaa_get_protocol_id(void *context
 }
 
 static kaa_error_t test_kaa_get_supported_services(void *context
-                                                    , kaa_service_t **supported_services
+                                                    , kaa_extension_id **supported_services
                                                     , size_t *service_count)
 {
     (void)context;
-    *supported_services = (kaa_service_t *)OPERATIONS_SERVICES;
+    *supported_services = (kaa_extension_id *)OPERATIONS_SERVICES;
     *service_count = OPERATIONS_SERVICES_COUNT;
     return KAA_ERR_NONE;
 }
 
 static kaa_error_t test_kaa_sync_handler(void *context
-                                          , const kaa_service_t services[]
+                                          , const kaa_extension_id services[]
                                           , size_t service_count)
 {
     (void)services;
@@ -346,7 +346,7 @@ void test_create_request(void **state)
     kaa_platform_message_writer_destroy(writer);
 
     char *buf_cursor = buffer;
-    ASSERT_EQUAL(KAA_LOGGING_EXTENSION_TYPE, KAA_HTONS(*(uint16_t*)buf_cursor));
+    ASSERT_EQUAL(KAA_EXTENSION_LOGGING, KAA_HTONS(*(uint16_t*)buf_cursor));
     buf_cursor += sizeof(uint16_t);
 
     char options[] = { 0x00, 0x01 };

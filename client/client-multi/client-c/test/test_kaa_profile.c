@@ -105,25 +105,25 @@ static kaa_error_t get_protocol_id(void *ctx, kaa_transport_protocol_id_t *id)
     return KAA_ERR_NONE;
 }
 static kaa_error_t get_services(void *ctx,
-                                kaa_service_t **supported_list,
+                                kaa_extension_id **supported_list,
                                 size_t *count)
 {
     (void)ctx;
     /* Only profile service is "supported" by this mock */
-    static kaa_service_t service = KAA_SERVICE_PROFILE;
+    static kaa_extension_id service = KAA_EXTENSION_PROFILE;
     *supported_list = &service;
     *count = 1;
     return KAA_ERR_NONE;
 }
 
 static kaa_error_t sync_handler(void *ctx,
-                                const kaa_service_t services[],
+                                const kaa_extension_id services[],
                                 size_t count)
 {
     (void)ctx;
 
     ASSERT_EQUAL(1, count);
-    ASSERT_EQUAL(KAA_SERVICE_PROFILE, services[0]);
+    ASSERT_EQUAL(KAA_EXTENSION_PROFILE, services[0]);
 
     mock_sync_handler_called = 1;
 
@@ -291,7 +291,7 @@ void test_profile_sync_serialize(void **state)
     uint32_t network_order_32;
 
     error_code = kaa_platform_message_write_extension_header(manual_writer
-                                                           , KAA_PROFILE_EXTENSION_TYPE
+                                                           , KAA_EXTENSION_PROFILE
                                                            , 0
                                                            , profile_sync_size - KAA_EXTENSION_HEADER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

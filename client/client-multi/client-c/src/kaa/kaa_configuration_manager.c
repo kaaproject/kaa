@@ -47,7 +47,7 @@
 
 #define KAA_CONFIGURATION_BODY_PRESENT           0x02
 
-static kaa_service_t configuration_sync_services[1] = { KAA_SERVICE_CONFIGURATION };
+static kaa_extension_id configuration_sync_services[1] = { KAA_EXTENSION_CONFIGURATION };
 
 struct kaa_configuration_manager {
     kaa_digest                           configuration_hash;
@@ -149,7 +149,7 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
 
     kaa_platform_message_writer_t tmp_writer = *writer;
-    kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_CONFIGURATION_EXTENSION_TYPE, KAA_CONFIGURATION_ALL_FLAGS, self->payload_size);
+    kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_EXTENSION_CONFIGURATION, KAA_CONFIGURATION_ALL_FLAGS, self->payload_size);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write configuration extension header");
         return KAA_ERR_WRITE_FAILED;
