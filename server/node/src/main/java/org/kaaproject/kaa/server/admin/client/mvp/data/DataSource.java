@@ -16,43 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.*;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -62,15 +35,11 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.*;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
 
@@ -282,7 +251,7 @@ public class DataSource {
     }
 
     public void generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform,
-            final AsyncCallback<String> callback) {
+                            final AsyncCallback<String> callback) {
         rpcService.generateSdk(sdkProfile, targetPlatform,
                 new DataCallback<String>(callback) {
                     @Override
@@ -632,9 +601,9 @@ public class DataSource {
                 });
     }
     
-    public void testProfileFilter(RecordField endpointProfile, RecordField serverProfile, 
-            String filterBody,
-            final AsyncCallback<Boolean> callback) {
+    public void testProfileFilter(RecordField endpointProfile, RecordField serverProfile,
+                                  String filterBody,
+                                  final AsyncCallback<Boolean> callback) {
         rpcService.testProfileFilter(endpointProfile, serverProfile, filterBody, 
                 new DataCallback<Boolean>(callback) {
                     @Override
@@ -879,7 +848,7 @@ public class DataSource {
         });
     }
     
-    public void prepareCTLSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method, 
+    public void prepareCTLSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method,
             final AsyncCallback<String> callback) {
         rpcService.prepareCTLSchemaExport(ctlSchemaId, method, new DataCallback<String>(callback) {
                     @Override
@@ -1283,6 +1252,17 @@ public class DataSource {
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
+                    }
+                });
+    }
+
+    public void sendUnicastNotification(
+            NotificationDto notification, String clientKeyHash , RecordField notificationData,
+            final AsyncCallback<EndpointNotificationDto> callback) {
+        rpcService.sendUnicastNotification(notification, clientKeyHash, notificationData,
+                new DataCallback<EndpointNotificationDto>(callback) {
+                    @Override
+                    protected void onResult(EndpointNotificationDto result) {
                     }
                 });
     }
