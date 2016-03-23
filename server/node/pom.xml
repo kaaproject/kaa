@@ -449,6 +449,14 @@
             <artifactId>jetty-annotations</artifactId>
         </dependency>
         
+        <!-- Spring integration -->
+        
+        <dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-http</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+        
     </dependencies>
 
     <build>

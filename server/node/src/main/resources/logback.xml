@@ -38,6 +38,31 @@
             <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    
+    <appender name="pafLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <if condition='isDefined("server_log_sufix")'>
+            <then>
+                 <file>${server_log_dir:-./logs}/kaa-paf${server_log_sufix}.log</file>
+            </then>
+            <else>
+                 <file>${server_log_dir:-./logs}/kaa-paf.log</file>
+            </else>    
+        </if>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${server_log_dir}/kaa-paf${server_log_sufix}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="net.paf" level="TRACE">
+    	<appender-ref ref="pafLogAppender"/>
+    </logger>
 
     <logger name="org.kaaproject.kaa" level="INFO"/>
     <logger name="org.kaaproject.kaa.metrics" level="WARN"/>
