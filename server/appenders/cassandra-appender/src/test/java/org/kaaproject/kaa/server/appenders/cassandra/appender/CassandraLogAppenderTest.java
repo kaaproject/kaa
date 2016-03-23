@@ -206,7 +206,7 @@ public class CassandraLogAppenderTest {
         header.setHeaderVersion(1);
         header.setTimestamp(System.currentTimeMillis());
 
-        CassandraServer server = new CassandraServer("127.0.0.1", 9142);
+        CassandraServer server = new CassandraServer("127.0.0.1", 9042);
         configuration = new CassandraConfig();
         configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
         configuration.setKeySpace(KEY_SPACE_NAME);

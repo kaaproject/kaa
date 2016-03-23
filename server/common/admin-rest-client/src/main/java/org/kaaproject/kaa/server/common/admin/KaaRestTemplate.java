@@ -96,9 +96,7 @@ public class KaaRestTemplate extends RestTemplate {
         while (true) {
             try {
                 return super.doExecute(url, method, requestCallback, responseExtractor);
-            } catch (RestClientException e) {
-                throw e;
-            } catch (Exception ex) {
+            } catch (ResourceAccessException ex) {
                 logger.info("Connect to ({}:{}) failed", getCurHost(), getCurPort(), ex);
                 boolean isRequestFactorySet = false;
                 while (!isRequestFactorySet) {
@@ -124,6 +122,8 @@ public class KaaRestTemplate extends RestTemplate {
                     url = updateURL(url);
                     isRequestFactorySet = true;
                 }
+            } catch (RestClientException e) {
+                throw e;
             }
         }
     }

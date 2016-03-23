@@ -16,6 +16,43 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-public class MariaDBTestRunner extends SqlTestRunner {
+import org.kaaproject.kaa.server.common.dao.DBTestRunner;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class MariaDBTestRunner extends DBTestRunner {
+
+    @Override
+    protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
+        return connection.prepareStatement("show tables from kaa;");
+    }
+
+    @Override
+    protected String getTrancateSql() {
+        return "DELETE FROM ";
+    }
+
+    @Override
+    protected void truncateTables(Set<String> tableNames, DataSource dataSource) throws SQLException {
+        if (tableNames == null || tableNames.isEmpty()) {
+            return;
+        }
+        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+            for(int i = 0; i < tableNames.size(); i++) {
+                for (String tableName : tableNames) {
+                    try {
+                        statement.execute(getTrancateSql() + tableName);
+                    }catch (SQLException ex){
+                        continue;
+                    }
+                }
+            }
+        }
+    }
 
 }
