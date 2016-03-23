@@ -42,8 +42,9 @@ static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 
 
-void test_meta_extension_get_size_failed(void)
+void test_meta_extension_get_size_failed(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = kaa_meta_data_request_get_size(NULL);
@@ -51,8 +52,9 @@ void test_meta_extension_get_size_failed(void)
 }
 
 
-void test_meta_extension_get_size(void)
+void test_meta_extension_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const size_t expected_meta_extension_size = KAA_EXTENSION_HEADER_SIZE
@@ -68,8 +70,9 @@ void test_meta_extension_get_size(void)
     ASSERT_EQUAL(expected_meta_extension_size, meta_extension_size);
 }
 
-void test_meta_extension_serialize_failed(void)
+void test_meta_extension_serialize_failed(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -89,8 +92,9 @@ void test_meta_extension_serialize_failed(void)
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_meta_extension_serialize(void)
+void test_meta_extension_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t meta_extension_size;

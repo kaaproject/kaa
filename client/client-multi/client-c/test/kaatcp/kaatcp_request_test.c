@@ -29,8 +29,9 @@ static kaa_logger_t *logger = NULL;
 
 
 
-void test_kaatcp_connect(void)
+void test_kaatcp_connect(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaatcp_connect_t connect;
@@ -56,8 +57,9 @@ void test_kaatcp_connect(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_connect_without_key(void)
+void test_kaatcp_connect_without_key(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaatcp_connect_t connect;
@@ -79,8 +81,9 @@ void test_kaatcp_connect_without_key(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_disconnect(void)
+void test_kaatcp_disconnect(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaatcp_disconnect_t disconnect;
@@ -100,8 +103,9 @@ void test_kaatcp_disconnect(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_kaasync(void)
+void test_kaatcp_kaasync(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaatcp_kaasync_t kaasync;
@@ -123,8 +127,9 @@ void test_kaatcp_kaasync(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_ping(void)
+void test_kaatcp_ping(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     char ping_buf[5];
@@ -140,8 +145,9 @@ void test_kaatcp_ping(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_get_request_kaasync_over_buff(void)
+void test_get_request_kaasync_over_buff(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
     kaatcp_kaasync_t kaasync;
     char *payload = "payload";

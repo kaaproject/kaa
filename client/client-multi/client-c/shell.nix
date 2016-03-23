@@ -5,7 +5,6 @@
 , esp8266Support ? true
 , raspberrypiSupport ? true
 , testSupport ? true
-, withCUnit ? true
 , withWerror ? false
 }:
 
@@ -91,9 +90,8 @@ in with self; with pkgs; {
       openssl
     ] ++ lib.optional posixSupport [
       openssl
-    ] ++ lib.optional withCUnit [
-      cunit
     ] ++ lib.optional testSupport [
+      cmocka
       cppcheck
       valgrind
       python

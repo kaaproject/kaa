@@ -135,8 +135,9 @@ int test_deinit(void)
     return 0;
 }
 
-void test_deserializing(void)
+void test_deserializing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     kaa_notification_t *notification = kaa_notification_notification_create();
     const char *message = "Hello World!!!\n";
@@ -214,8 +215,9 @@ void test_deserializing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_notification_listeners_adding_and_removing(void)
+void test_notification_listeners_adding_and_removing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     err = kaa_add_notification_listener(context->notification_manager, &listener, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -262,8 +264,9 @@ void test_notification_listeners_adding_and_removing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_topic_list_listeners_adding_and_removing(void)
+void test_topic_list_listeners_adding_and_removing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -289,8 +292,9 @@ void test_topic_list_listeners_adding_and_removing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_retrieving_topic_list(void)
+void test_retrieving_topic_list(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -301,8 +305,9 @@ void test_retrieving_topic_list(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_serializing(void)
+void test_serializing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
 
     kaa_serialize_info_t *info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
@@ -322,8 +327,9 @@ void test_serializing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_subscriptions(void)
+void test_subscriptions(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
 
     err = kaa_subscribe_to_topic(context->notification_manager, &topic_id, false);

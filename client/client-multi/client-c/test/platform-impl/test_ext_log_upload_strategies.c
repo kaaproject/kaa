@@ -64,8 +64,10 @@ size_t ext_log_storage_get_records_count(const void *context)
 }
 
 
-void test_create_strategy(void)
+void test_create_strategy(void **state)
 {
+    (void)state;
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -89,8 +91,10 @@ void test_create_strategy(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_set_upload_timeout(void)
+void test_set_upload_timeout(void **state)
 {
+    (void)state;
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -108,8 +112,9 @@ void test_set_upload_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_volume(void)
+void test_upload_decision_by_volume(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -143,8 +148,9 @@ void test_upload_decision_by_volume(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_count(void)
+void test_upload_decision_by_count(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -178,8 +184,9 @@ void test_upload_decision_by_count(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_timeout(void)
+void test_upload_decision_by_timeout(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -211,8 +218,9 @@ void test_upload_decision_by_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_noop_decision_on_failure(void)
+void test_noop_decision_on_failure(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -245,8 +253,9 @@ void test_noop_decision_on_failure(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_on_failure(void)
+void test_upload_decision_on_failure(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;

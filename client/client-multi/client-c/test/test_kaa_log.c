@@ -300,8 +300,9 @@ kaa_error_t ext_log_storage_destroy(void *context)
 
 
 
-void test_create_request(void)
+void test_create_request(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -377,8 +378,9 @@ void test_create_request(void)
 
 
 
-void test_response(void)
+void test_response(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -446,8 +448,9 @@ void test_response(void)
 
 
 
-void test_timeout(void)
+void test_timeout(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -502,8 +505,9 @@ void test_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_decline_timeout(void)
+void test_decline_timeout(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -590,8 +594,9 @@ void test_decline_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_max_parallel_uploads_with_log_sync(void)
+void test_max_parallel_uploads_with_log_sync(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -675,8 +680,9 @@ void test_max_parallel_uploads_with_log_sync(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_max_parallel_uploads_with_sync_all(void)
+void test_max_parallel_uploads_with_sync_all(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -878,6 +884,7 @@ static void mock_log_event_timeout_fn(void *ctx, const kaa_log_bucket_info_t *bu
 
 KAA_GROUP_SETUP(log_setters)
 {
+    (void)state;
     kaa_error_t rc;
 
     KAA_TRACE_IN(logger);
@@ -912,10 +919,12 @@ KAA_GROUP_SETUP(log_setters)
     call_is_expected    = 0;
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_setters)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     /* If tests will pass, one of storages will be destroyed.
@@ -924,11 +933,13 @@ KAA_GROUP_TEARDOWN(log_setters)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 
 KAA_TEST_CASE_EX(log_setters, set_strategy_invalid_parameters)
 {
+    (void)state;
     kaa_error_t rc;
 
     KAA_TRACE_IN(logger);
@@ -948,6 +959,7 @@ KAA_TEST_CASE_EX(log_setters, set_strategy_invalid_parameters)
 
 KAA_TEST_CASE_EX(log_setters, set_storage_invalid_parameters)
 {
+    (void)state;
     kaa_error_t rc;
     KAA_TRACE_IN(logger);
 
@@ -965,6 +977,7 @@ KAA_TEST_CASE_EX(log_setters, set_storage_invalid_parameters)
 
 KAA_TEST_CASE_EX(log_setters, set_strategy_valid_parameters)
 {
+    (void)state;
     kaa_error_t rc;
 
     KAA_TRACE_IN(logger);
@@ -983,6 +996,7 @@ KAA_TEST_CASE_EX(log_setters, set_strategy_valid_parameters)
 
 KAA_TEST_CASE_EX(log_setters, set_storage_valid_parameters)
 {
+    (void)state;
     kaa_error_t rc;
 
     KAA_TRACE_IN(logger);
@@ -1006,6 +1020,7 @@ KAA_TEST_CASE_EX(log_setters, set_storage_valid_parameters)
 
 KAA_GROUP_SETUP(log_callback_basic)
 {
+    (void)state;
     kaa_error_t error_code;
 
     KAA_TRACE_IN(logger);
@@ -1032,19 +1047,23 @@ KAA_GROUP_SETUP(log_callback_basic)
     call_is_expected    = 0;
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_callback_basic)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
     kaa_log_collector_destroy(log_collector);
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_TEST_CASE_EX(log_callback_basic, invalid_parameters)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
     kaa_log_delivery_listener_t listeners;
 
@@ -1063,6 +1082,7 @@ KAA_TEST_CASE_EX(log_callback_basic, invalid_parameters)
  * if no logs added */
 KAA_TEST_CASE_EX(log_callback_basic, valid_parameters)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
@@ -1109,6 +1129,7 @@ KAA_TEST_CASE_EX(log_callback_basic, valid_parameters)
 
 KAA_GROUP_SETUP(log_callback_with_storage)
 {
+    (void)state;
     kaa_error_t error_code;
 
     KAA_TRACE_IN(logger);
@@ -1172,10 +1193,12 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     ASSERT_NOT_NULL(test_reader);
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_callback_with_storage)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_platform_message_reader_destroy(test_reader);
@@ -1185,10 +1208,12 @@ KAA_GROUP_TEARDOWN(log_callback_with_storage)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_called)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
@@ -1235,6 +1260,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_called)
 
 KAA_TEST_CASE_EX(log_callback_with_storage, on_success_called)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
@@ -1281,6 +1307,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_success_called)
 
 KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_and_success_called)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
@@ -1335,6 +1362,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_and_success_called)
 
 KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
 {
+    (void)state;
     kaa_error_t error_code;
     size_t test_log_record_size;
 
@@ -1410,10 +1438,12 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_callback_with_storage_and_strategy)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
     test_log_record->destroy(test_log_record);
 
@@ -1427,10 +1457,12 @@ KAA_GROUP_TEARDOWN(log_callback_with_storage_and_strategy)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
+    return 0;
 }
 
 KAA_TEST_CASE_EX(log_callback_with_storage_and_strategy, on_timeout_called)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
@@ -1524,17 +1556,17 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit,
         KAA_TEST_CASE(decline_timeout, test_decline_timeout)
         KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
         KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
-        KAA_RUN_TEST(log_setters, set_strategy_invalid_parameters);
-        KAA_RUN_TEST(log_setters, set_strategy_valid_parameters);
-        KAA_RUN_TEST(log_setters, set_storage_invalid_parameters);
-        KAA_RUN_TEST(log_setters, set_storage_valid_parameters);
-        KAA_RUN_TEST(log_callback_basic, valid_parameters);
-        KAA_RUN_TEST(log_callback_basic, invalid_parameters);
-        KAA_RUN_TEST(log_callback_basic, valid_parameters);
-        KAA_RUN_TEST(log_callback_with_storage, on_success_called);
-        KAA_RUN_TEST(log_callback_with_storage, on_fail_called);
-        KAA_RUN_TEST(log_callback_with_storage, on_fail_and_success_called);
-        KAA_RUN_TEST(log_callback_with_storage_and_strategy, on_timeout_called);)
+        KAA_RUN_TEST(log_setters, set_strategy_invalid_parameters)
+        KAA_RUN_TEST(log_setters, set_strategy_valid_parameters)
+        KAA_RUN_TEST(log_setters, set_storage_invalid_parameters)
+        KAA_RUN_TEST(log_setters, set_storage_valid_parameters)
+        KAA_RUN_TEST(log_callback_basic, valid_parameters)
+        KAA_RUN_TEST(log_callback_basic, invalid_parameters)
+        KAA_RUN_TEST(log_callback_basic, valid_parameters)
+        KAA_RUN_TEST(log_callback_with_storage, on_success_called)
+        KAA_RUN_TEST(log_callback_with_storage, on_fail_called)
+        KAA_RUN_TEST(log_callback_with_storage, on_fail_and_success_called)
+        KAA_RUN_TEST(log_callback_with_storage_and_strategy, on_timeout_called))
 #else
 KAA_SUITE_MAIN(Log, test_init, test_deinit)
 #endif

@@ -52,8 +52,9 @@ static int test_deinit(void);
 
 
 
-void test_kaa_create_event_manager(void)
+void test_kaa_create_event_manager(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_status_t* status = NULL;
@@ -89,8 +90,9 @@ static kaa_error_t event_listeners_request_failed(void *context)
     return KAA_ERR_NONE;
 }
 
-void test_kaa_event_listeners_serialize_request(void)
+void test_kaa_event_listeners_serialize_request(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t expected_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t); // header + field id + reserved + listeners count
@@ -151,8 +153,9 @@ void test_kaa_event_listeners_serialize_request(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaa_event_listeners_handle_sync(void)
+void test_kaa_event_listeners_handle_sync(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint32_t extension_size = 52;
@@ -201,8 +204,9 @@ void test_kaa_event_listeners_handle_sync(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaa_event_sync_get_size(void)
+void test_kaa_event_sync_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -328,8 +332,9 @@ static kaa_error_t serialize_event(kaa_platform_message_writer_t *writer
 
 
 
-void test_event_sync_serialize(void)
+void test_event_sync_serialize(void **state)
 {
+    (void)state;
     test_deinit();
     test_init();
 
@@ -484,8 +489,9 @@ static size_t event_get_size(const char *fqn
     return size;
 }
 
-void test_event_blocks(void)
+void test_event_blocks(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     test_deinit();
@@ -546,8 +552,9 @@ void test_event_blocks(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaa_server_sync_with_event_callbacks(void)
+void test_kaa_server_sync_with_event_callbacks(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     test_deinit();

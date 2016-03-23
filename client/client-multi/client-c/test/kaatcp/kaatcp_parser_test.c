@@ -80,8 +80,9 @@ void ping_listener(void *context)
     ping_received = 1;
 }
 
-void test_kaatcp_parser(void)
+void test_kaatcp_parser(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaatcp_parser_handlers_t handlers = { NULL, &connack_listener, &disconnect_listener, &kaasync_listener, &ping_listener };

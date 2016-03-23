@@ -85,8 +85,9 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
     *needs_deallocation = false;
 }
 
-void test_create_status(void)
+void test_create_status(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_status_t *status;
@@ -98,8 +99,9 @@ void test_create_status(void)
     kaa_status_destroy(status);
 }
 
-void test_status_persistense(void)
+void test_status_persistense(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_status_t *status;

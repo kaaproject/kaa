@@ -16,15 +16,8 @@
 
 enable_testing()
 
-find_package(CUnit)
+find_package(cmocka REQUIRED)
 find_package(OpenSSL REQUIRED)
-
-set(CUNIT_LIB_NAME)
-
-if(CUNIT_FOUND)
-    set(CUNIT_LIB_NAME ${CUNIT_LIBRARIES})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TEST_CUNIT_ENABLED")
-endif()
 
 ################################################################################
 # Creates an unit test with given name and dependencies.
@@ -58,7 +51,7 @@ function(kaa_add_unit_test)
 
     add_executable(${UNIT_TEST_NAME} ${UNIT_TEST_SOURCES})
     add_test(NAME ${UNIT_TEST_NAME} COMMAND ${UNIT_TEST_NAME})
-    target_link_libraries(${UNIT_TEST_NAME} ${CUNIT_LIB_NAME})
+    target_link_libraries(${UNIT_TEST_NAME} ${CMOCKA_LIBRARIES})
 
     if(UNIT_TEST_DEPENDS)
         message("	Test dependencies: ${UNIT_TEST_DEPENDS}")
