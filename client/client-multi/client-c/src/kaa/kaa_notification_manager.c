@@ -16,6 +16,8 @@
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 
+#include "kaa_private.h"
+
 #include "kaa_notification_manager.h"
 
 #include <string.h>
@@ -231,6 +233,7 @@ static bool kaa_predicate_for_notifications(void *notif_1, void *notif_2)
 }
 static void kaa_sort_notifications_by_sqn(void *data, void *context)
 {
+    (void)context;
     kaa_topic_notifications_node_t *node = data;
     kaa_list_sort(node->notifications, &kaa_predicate_for_notifications);
 }
@@ -240,7 +243,7 @@ static void kaa_sort_notifications(kaa_list_t *notifications)
     kaa_list_for_each(kaa_list_begin(notifications), kaa_list_back(notifications), &kaa_sort_notifications_by_sqn, NULL);
 }
 
-static kaa_service_t notification_sync_services[] = { KAA_SERVICE_NOTIFICATION };
+static kaa_extension_id notification_sync_services[] = { KAA_EXTENSION_NOTIFICATION };
 
 static bool kaa_find_notification_listener_by_id(void *listener, void *context)
 {
@@ -430,7 +433,7 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
     self->writer = writer;
 
     kaa_error_t err = kaa_platform_message_write_extension_header(writer
-                                                    , KAA_NOTIFICATION_EXTENSION_TYPE
+                                                    , KAA_EXTENSION_NOTIFICATION
                                                     , KAA_CLIENT_WANTS_TO_RECEIVE_NOTIFICATIONS
                                                     , self->extension_payload_size);
     if (err) {

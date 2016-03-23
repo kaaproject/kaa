@@ -24,6 +24,7 @@
 
 void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
 {
+    (void)message_size;
     if (!buffer || !sink) {
         return;
     }

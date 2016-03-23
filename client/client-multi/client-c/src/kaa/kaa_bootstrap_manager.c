@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -30,15 +32,6 @@
 #include "utilities/kaa_log.h"
 #include "kaa_channel_manager.h"
 #include "platform/ext_kaa_failover_strategy.h"
-
-
-extern kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
-                                                         , kaa_transport_protocol_id_t *protocol_id
-                                                         , kaa_server_type_t server_type
-                                                         , kaa_access_point_t *access_point);
-
-extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
-                                                                   kaa_platform_message_writer_t* writer);
 
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
@@ -70,7 +63,7 @@ struct kaa_bootstrap_manager_t {
     failover_meta_info        failover_meta_info;
 };
 
-static kaa_service_t bootstrap_sync_services[1] = { KAA_SERVICE_BOOTSTRAP };
+static kaa_extension_id bootstrap_sync_services[1] = { KAA_EXTENSION_BOOTSTRAP };
 
 
 
@@ -115,7 +108,7 @@ static kaa_error_t do_sync(kaa_bootstrap_manager_t *self)
 
     kaa_transport_channel_interface_t *channel =
             kaa_channel_manager_get_transport_channel(
-                            self->channel_manager, KAA_SERVICE_BOOTSTRAP);
+                            self->channel_manager, KAA_EXTENSION_BOOTSTRAP);
     if (channel) {
         channel->sync_handler(channel->context, bootstrap_sync_services, 1);
         return KAA_ERR_NONE;
@@ -379,7 +372,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
                                                         , access_point_count, request_id);
 
     if (!access_point_count) {
-        kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, KAA_SERVICE_BOOTSTRAP);
+        kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, KAA_EXTENSION_BOOTSTRAP);
         kaa_transport_protocol_id_t protocol_id  = {0, 0};
         error_code = channel->get_protocol_id(channel->context, &protocol_id);
         KAA_RETURN_IF_ERR(error_code);

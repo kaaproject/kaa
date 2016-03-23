@@ -24,16 +24,12 @@
 #include "utilities/kaa_log.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"
+#include "kaa_private.h"
 
 kaa_digest test_ep_key_hash = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 kaa_digest test_profile_hash= {0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28};
 
 #define KAA_STATUS_STORAGE "status.conf"
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-extern kaa_error_t kaa_status_save(kaa_status_t *self);
-extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
 static kaa_logger_t *logger = NULL;
 
@@ -89,8 +85,9 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
     *needs_deallocation = false;
 }
 
-void test_create_status(void)
+void test_create_status(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_status_t *status;
@@ -102,8 +99,9 @@ void test_create_status(void)
     kaa_status_destroy(status);
 }
 
-void test_status_persistense(void)
+void test_status_persistense(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_status_t *status;

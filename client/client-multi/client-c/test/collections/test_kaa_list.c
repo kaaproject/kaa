@@ -15,6 +15,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <time.h>
@@ -68,8 +69,8 @@ void test_list_push_front()
     ASSERT_NOT_NULL(list);
 
     int32_t *number;
-    int node_number = 2;
-    for (int i = 0; i < node_number; ++i) {
+    size_t node_number = 2;
+    for (size_t i = 0; i < node_number; ++i) {
         number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();
@@ -124,7 +125,7 @@ void test_list_sort()
     for (uint64_t i = 0; i < node_number; ++i) {
         node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
-        node->id = (uint64_t) random();
+        node->id = (uint64_t) rand();
         kaa_list_push_back(list, node);
     }
 

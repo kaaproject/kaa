@@ -145,12 +145,12 @@ int cc32xx_binary_file_delete(const char *file_name)
     uint32_t ul_token;
     int32_t l_file_handle;
 
-    ret = sl_FsOpen((unsigned char*)file_name, FS_MODE_OPEN_READ, &ul_token, &l_file_handle);
+    ret = sl_FsOpen((const unsigned char*)file_name, FS_MODE_OPEN_READ, &ul_token, &l_file_handle);
     sl_FsClose(l_file_handle, 0, 0, 0);
     if (ret < 0)
         return -1;
 
-    ret = sl_FsDel(file_name, 0);
+    ret = sl_FsDel((const unsigned char *)file_name, 0);
     if (ret < 0)
         return -1;
 

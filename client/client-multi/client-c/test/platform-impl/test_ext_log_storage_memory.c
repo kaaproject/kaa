@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+#include <kaa_private.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -31,26 +33,15 @@
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
 
-
 #define TEST_RECORD_BUCKET_ID 1
-
-
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p, kaa_logger_t *logger);
-extern kaa_error_t ext_limited_log_storage_create(void **log_storage_context_p
-                                                , kaa_logger_t *logger
-                                                , size_t storage_size
-                                                , size_t percent_to_delete);
-extern kaa_error_t ext_log_storage_destroy(void *context);
-
-
 
 static kaa_logger_t *logger = NULL;
 
 
 
-void test_create_unlimited_storage(void)
+void test_create_unlimited_storage(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -75,8 +66,9 @@ void test_create_unlimited_storage(void)
 
 
 
-void test_create_limited_storage(void)
+void test_create_limited_storage(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -115,8 +107,9 @@ void test_create_limited_storage(void)
 
 
 
-void test_allocate_log_record_buffer(void)
+void test_allocate_log_record_buffer(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -128,12 +121,12 @@ void test_allocate_log_record_buffer(void)
     error_code = ext_log_storage_allocate_log_record_buffer(storage, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    kaa_log_record_t record1 = { NULL, 0 };
+    kaa_log_record_t record1 = { NULL, 0, 0, };
     error_code = ext_log_storage_allocate_log_record_buffer(storage, &record1);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NULL(record1.data);
 
-    kaa_log_record_t record2 = { NULL, 256 };
+    kaa_log_record_t record2 = { NULL, 256, 0, };
     error_code = ext_log_storage_allocate_log_record_buffer(storage, &record2);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(record2.data);
@@ -165,8 +158,9 @@ static kaa_error_t add_log_record(void *storage,
     return ext_log_storage_add_log_record(storage, &record);
 }
 
-void test_add_log_record(void)
+void test_add_log_record(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -199,8 +193,9 @@ void test_add_log_record(void)
 
 
 
-void test_write_next_log_record(void)
+void test_write_next_log_record(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -264,8 +259,9 @@ void test_write_next_log_record(void)
 
 
 
-void test_remove_by_bucket_id(void)
+void test_remove_by_bucket_id(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -330,8 +326,9 @@ void test_remove_by_bucket_id(void)
 
 
 
-void test_unmark_by_bucket_id(void)
+void test_unmark_by_bucket_id(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -405,8 +402,9 @@ void test_unmark_by_bucket_id(void)
 
 
 
-void test_shrink_to_size(void)
+void test_shrink_to_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;

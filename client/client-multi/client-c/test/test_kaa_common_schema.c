@@ -34,8 +34,9 @@ static kaa_logger_t *logger = NULL;
 
 
 
-static void test_string_move_create(void)
+static void test_string_move_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_NULL(kaa_string_move_create(NULL, NULL));
@@ -70,8 +71,9 @@ static void test_string_move_create(void)
 
 
 
-static void test_string_copy_create(void)
+static void test_string_copy_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_test_str1 = "test";
@@ -91,8 +93,9 @@ static void test_string_copy_create(void)
 
 
 
-static void test_string_get_size(void)
+static void test_string_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_string_get_size(NULL), 0);
@@ -111,8 +114,9 @@ static void test_string_get_size(void)
 
 
 
-static void test_string_serialize(void)
+static void test_string_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_test_str1 = "test";
@@ -127,13 +131,13 @@ static void test_string_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_string_serialize(auto_avro_writer, NULL);
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_string_t fake_kaa_str = { NULL, NULL};
 
@@ -141,7 +145,7 @@ static void test_string_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     /*
      * REAL DATA
@@ -161,8 +165,9 @@ static void test_string_serialize(void)
 
 
 
-static void test_string_deserialize(void)
+static void test_string_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_test_str1 = "test";
@@ -193,8 +198,9 @@ static void test_string_deserialize(void)
 
 
 
-static void test_bytes_move_create(void)
+static void test_bytes_move_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_bytes[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -209,7 +215,7 @@ static void test_bytes_move_create(void)
     kaa_bytes_t *kaa_bytes1 = kaa_bytes_move_create(plain_bytes1, plain_bytes1_size, NULL);
 
     ASSERT_NOT_NULL(kaa_bytes1);
-    ASSERT_EQUAL(kaa_bytes1->size, plain_bytes1_size);
+    ASSERT_EQUAL((size_t)kaa_bytes1->size, plain_bytes1_size);
     ASSERT_NULL(kaa_bytes1->destroy);
     ASSERT_EQUAL(memcmp(kaa_bytes1->buffer, plain_bytes1, plain_bytes1_size), 0);
 
@@ -223,7 +229,7 @@ static void test_bytes_move_create(void)
     kaa_bytes_t *kaa_bytes2 = kaa_bytes_move_create(plain_bytes2, plain_bytes1_size, &kaa_data_destroy);
 
     ASSERT_NOT_NULL(kaa_bytes2);
-    ASSERT_EQUAL(kaa_bytes2->size, plain_bytes1_size);
+    ASSERT_EQUAL((size_t)kaa_bytes2->size, plain_bytes1_size);
     ASSERT_EQUAL(kaa_bytes2->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_bytes2->buffer, plain_bytes1, plain_bytes1_size), 0);
 
@@ -234,8 +240,9 @@ static void test_bytes_move_create(void)
 
 
 
-static void test_bytes_copy_create(void)
+static void test_bytes_copy_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_bytes[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -249,7 +256,7 @@ static void test_bytes_copy_create(void)
     kaa_bytes_t *kaa_bytes1 = kaa_bytes_copy_create(plain_bytes1, plain_bytes1_size);
 
     ASSERT_NOT_NULL(kaa_bytes1);
-    ASSERT_EQUAL(kaa_bytes1->size, plain_bytes1_size);
+    ASSERT_EQUAL((size_t)kaa_bytes1->size, plain_bytes1_size);
     ASSERT_EQUAL(kaa_bytes1->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_bytes1->buffer, plain_bytes1, plain_bytes1_size), 0);
 
@@ -260,8 +267,9 @@ static void test_bytes_copy_create(void)
 
 
 
-static void test_bytes_get_size(void)
+static void test_bytes_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_bytes_get_size(NULL), 0);
@@ -279,8 +287,9 @@ static void test_bytes_get_size(void)
 
 
 
-static void test_bytes_serialize(void)
+static void test_bytes_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_bytes1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -296,13 +305,13 @@ static void test_bytes_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_bytes_serialize(auto_avro_writer, NULL);
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_bytes_t fake_kaa_bytes = { NULL, 0, NULL };
 
@@ -310,7 +319,7 @@ static void test_bytes_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     /*
      * REAL DATA
@@ -330,8 +339,9 @@ static void test_bytes_serialize(void)
 
 
 
-static void test_bytes_deserialize(void)
+static void test_bytes_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_bytes1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -364,8 +374,9 @@ static void test_bytes_deserialize(void)
 
 
 
-static void test_fixed_move_create(void)
+static void test_fixed_move_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_fixed[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -380,7 +391,7 @@ static void test_fixed_move_create(void)
     kaa_bytes_t *kaa_fixed1 = kaa_fixed_move_create(plain_fixed1, plain_fixed1_size, NULL);
 
     ASSERT_NOT_NULL(kaa_fixed1);
-    ASSERT_EQUAL(kaa_fixed1->size, plain_fixed1_size);
+    ASSERT_EQUAL((size_t)kaa_fixed1->size, plain_fixed1_size);
     ASSERT_NULL(kaa_fixed1->destroy);
     ASSERT_EQUAL(memcmp(kaa_fixed1->buffer, plain_fixed1, plain_fixed1_size), 0);
 
@@ -394,7 +405,7 @@ static void test_fixed_move_create(void)
     kaa_bytes_t *kaa_fixed2 = kaa_fixed_move_create(plain_fixed2, plain_fixed1_size, &kaa_data_destroy);
 
     ASSERT_NOT_NULL(kaa_fixed2);
-    ASSERT_EQUAL(kaa_fixed2->size, plain_fixed1_size);
+    ASSERT_EQUAL((size_t)kaa_fixed2->size, plain_fixed1_size);
     ASSERT_EQUAL(kaa_fixed2->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_fixed2->buffer, plain_fixed1, plain_fixed1_size), 0);
 
@@ -405,8 +416,9 @@ static void test_fixed_move_create(void)
 
 
 
-static void test_fixed_copy_create(void)
+static void test_fixed_copy_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_fixed[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -420,7 +432,7 @@ static void test_fixed_copy_create(void)
     kaa_bytes_t *kaa_fixed1 = kaa_fixed_copy_create(plain_fixed1, plain_fixed1_size);
 
     ASSERT_NOT_NULL(kaa_fixed1);
-    ASSERT_EQUAL(kaa_fixed1->size, plain_fixed1_size);
+    ASSERT_EQUAL((size_t)kaa_fixed1->size, plain_fixed1_size);
     ASSERT_EQUAL(kaa_fixed1->destroy, &kaa_data_destroy);
     ASSERT_EQUAL(memcmp(kaa_fixed1->buffer, plain_fixed1, plain_fixed1_size), 0);
 
@@ -431,8 +443,9 @@ static void test_fixed_copy_create(void)
 
 
 
-static void test_fixed_get_size(void)
+static void test_fixed_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_fixed_get_size(NULL), 0);
@@ -441,7 +454,7 @@ static void test_fixed_get_size(void)
     size_t plain_fixed1_size = sizeof(plain_fixed1) / sizeof(char);
 
     kaa_bytes_t *kaa_fixed1 = kaa_fixed_copy_create(plain_fixed1, plain_fixed1_size);
-    ASSERT_EQUAL(kaa_fixed_get_size(kaa_fixed1), kaa_fixed1->size);
+    ASSERT_EQUAL(kaa_fixed_get_size(kaa_fixed1), (size_t)kaa_fixed1->size);
 
     kaa_fixed_destroy(kaa_fixed1);
 
@@ -450,8 +463,9 @@ static void test_fixed_get_size(void)
 
 
 
-static void test_fixed_serialize(void)
+static void test_fixed_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     uint8_t plain_fixed1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -467,13 +481,13 @@ static void test_fixed_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_fixed_serialize(auto_avro_writer, NULL);
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     kaa_bytes_t fake_kaa_fixed = { NULL, 0, NULL };
 
@@ -481,7 +495,7 @@ static void test_fixed_serialize(void)
 
     ASSERT_EQUAL(auto_avro_writer->buf, auto_buffer);
     ASSERT_EQUAL(auto_avro_writer->written, 0);
-    ASSERT_EQUAL(auto_avro_writer->len, expected_size);
+    ASSERT_EQUAL((size_t)auto_avro_writer->len, expected_size);
 
     /*
      * REAL DATA
@@ -501,8 +515,9 @@ static void test_fixed_serialize(void)
 
 
 
-static void test_fixed_deserialize(void)
+static void test_fixed_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_fixed1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -535,8 +550,9 @@ static void test_fixed_deserialize(void)
 
 
 
-static void test_boolean_get_size(void)
+static void test_boolean_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -550,8 +566,9 @@ static void test_boolean_get_size(void)
 
 
 
-static void test_boolean_serialize(void)
+static void test_boolean_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int8_t boolean_value = true;
@@ -574,8 +591,9 @@ static void test_boolean_serialize(void)
 
 
 
-static void test_boolean_deserialize(void)
+static void test_boolean_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int8_t boolean_value1 = true;
@@ -600,8 +618,9 @@ static void test_boolean_deserialize(void)
 
 
 
-static void test_int_get_size(void)
+static void test_int_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -615,8 +634,9 @@ static void test_int_get_size(void)
 
 
 
-static void test_int_serialize(void)
+static void test_int_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int32_t int_value = rand();
@@ -639,8 +659,9 @@ static void test_int_serialize(void)
 
 
 
-static void test_int_deserialize(void)
+static void test_int_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int32_t int_value1 = rand();
@@ -665,8 +686,9 @@ static void test_int_deserialize(void)
 
 
 
-static void test_long_get_size(void)
+static void test_long_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -680,8 +702,9 @@ static void test_long_get_size(void)
 
 
 
-static void test_long_serialize(void)
+static void test_long_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int64_t long_value = rand();
@@ -704,8 +727,9 @@ static void test_long_serialize(void)
 
 
 
-static void test_long_deserialize(void)
+static void test_long_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int64_t long_value1 = rand();
@@ -740,8 +764,9 @@ typedef enum {
 
 
 
-static void test_enum_get_size(void)
+static void test_enum_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -755,8 +780,9 @@ static void test_enum_get_size(void)
 
 
 
-static void test_enum_serialize(void)
+static void test_enum_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     test_enum_t enum_value = (test_enum_t)rand() % TEST_VAL_5;
@@ -779,8 +805,9 @@ static void test_enum_serialize(void)
 
 
 
-static void test_enum_deserialize(void)
+static void test_enum_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     test_enum_t enum_value1 = (test_enum_t)rand() % TEST_VAL_5;
@@ -805,8 +832,9 @@ static void test_enum_deserialize(void)
 
 
 
-static void test_float_get_size(void)
+static void test_float_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -820,8 +848,9 @@ static void test_float_get_size(void)
 
 
 
-static void test_float_serialize(void)
+static void test_float_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     float float_value = rand() / rand();
@@ -844,8 +873,9 @@ static void test_float_serialize(void)
 
 
 
-static void test_float_deserialize(void)
+static void test_float_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     float float_value1 = rand() / rand();
@@ -870,8 +900,9 @@ static void test_float_deserialize(void)
 
 
 
-static void test_double_get_size(void)
+static void test_double_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -885,8 +916,9 @@ static void test_double_get_size(void)
 
 
 
-static void test_double_serialize(void)
+static void test_double_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     double double_value = rand() / rand();
@@ -909,8 +941,9 @@ static void test_double_serialize(void)
 
 
 
-static void test_double_deserialize(void)
+static void test_double_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     double double_value1 = rand() / rand();
@@ -935,8 +968,9 @@ static void test_double_deserialize(void)
 
 
 
-static void test_null_get_size(void)
+static void test_null_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -949,8 +983,9 @@ static void test_null_get_size(void)
 
 
 
-static void test_null_serialize(void)
+static void test_null_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t some_data = rand();
@@ -977,8 +1012,9 @@ static void test_null_serialize(void)
 
 
 
-static void test_null_deserialize(void)
+static void test_null_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t expected_size = rand() % 10;
@@ -995,8 +1031,9 @@ static void test_null_deserialize(void)
 
 
 
-static void test_array_get_size(void)
+static void test_array_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -1029,8 +1066,9 @@ static void test_array_get_size(void)
 
 
 
-static void test_null_array_serialize(void)
+static void test_null_array_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t empty_array_buffer_size = 1;
@@ -1050,8 +1088,9 @@ static void test_null_array_serialize(void)
 
 
 
-static void test_empty_array_serialize(void)
+static void test_empty_array_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t empty_array_buffer_size = 1;
@@ -1073,8 +1112,9 @@ static void test_empty_array_serialize(void)
 
 
 
-static void test_array_serialize(void)
+static void test_array_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_str = "data";
@@ -1130,10 +1170,12 @@ static float *create_float(void)
 
 void kaa_null_destroy(void *data)
 {
+    (void)data;
 }
 
-static void test_array_deserialize_wo_ctx(void)
+static void test_array_deserialize_wo_ctx(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t array_size = 1 + rand() % 10;
@@ -1200,8 +1242,9 @@ static void test_array_deserialize_wo_ctx(void)
 
 
 
-static void test_array_deserialize_w_ctx(void)
+static void test_array_deserialize_w_ctx(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_fixed[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -1231,7 +1274,7 @@ static void test_array_deserialize_w_ctx(void)
     while (it) {
         kaa_bytes_t *fixed = kaa_list_get_data(it);
         ASSERT_NOT_NULL(fixed);
-        ASSERT_EQUAL(fixed->size, plain_fixed_size);
+        ASSERT_EQUAL((size_t)fixed->size, plain_fixed_size);
         ASSERT_EQUAL(memcmp(fixed->buffer, plain_fixed, plain_fixed_size), 0);
         it  = kaa_list_next(it);
     }

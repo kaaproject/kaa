@@ -36,29 +36,12 @@
 #include "platform/ext_transport_channel.h"
 #include "platform/sock.h"
 
-
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_context_t *context);
-extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                              , kaa_channel_manager_t *channel_manager
-                                              , kaa_logger_t *logger);
-
-extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
-
-extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
-                                                          , kaa_platform_message_reader_t *reader
-                                                          , uint16_t extension_options
-                                                          , size_t extnsion_length);
-
-
+#include "kaa_private.h"
 
 typedef struct {
     kaa_transport_protocol_id_t protocol_info;
     kaa_access_point_t *access_point;
-    kaa_service_t* services;
+    kaa_extension_id* services;
     size_t         services_count;
     kaa_transport_context_t transport_context;
 } test_channel_context_t;
@@ -69,12 +52,12 @@ static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 
-static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_PROFILE
-                                            , KAA_SERVICE_USER
-                                            , KAA_SERVICE_EVENT
-                                            , KAA_SERVICE_LOGGING };
+static kaa_extension_id SUPPORTED_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                            , KAA_EXTENSION_USER
+                                            , KAA_EXTENSION_EVENT
+                                            , KAA_EXTENSION_LOGGING };
 
-static size_t SUPPORTED_SERVICES_COUNT = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_service_t);
+static size_t SUPPORTED_SERVICES_COUNT = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_extension_id);
 
 
 
@@ -108,7 +91,7 @@ static kaa_error_t test_get_protocol_info(void *context, kaa_transport_protocol_
 }
 
 static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
+                                             , kaa_extension_id **supported_services
                                              , size_t *service_count)
 {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
@@ -121,7 +104,7 @@ static kaa_error_t test_get_supported_services(void *context
 }
 
 static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
+                                   , const kaa_extension_id services[]
                                    , size_t service_count)
 {
     KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
@@ -142,8 +125,9 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
 
 
 
-void test_create_bootstrap_manager(void)
+void test_create_bootstrap_manager(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -192,8 +176,9 @@ static void destroy_access_point(kaa_access_point_t * access_point)
     }
 }
 
-void test_handle_server_sync(void)
+void test_handle_server_sync(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -393,8 +378,9 @@ static kaa_error_t find_bootstrap_access_point_index(kaa_transport_protocol_id_t
     return KAA_ERR_NOT_FOUND;
 }
 
-void test_bootstrap_channel(void)
+void test_bootstrap_channel(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -410,7 +396,7 @@ void test_bootstrap_channel(void)
       * TEST DATA
       */
     size_t index = rand() % KAA_BOOTSTRAP_ACCESS_POINT_COUNT;
-    kaa_service_t bootstrap_service[] = { KAA_SERVICE_BOOTSTRAP };
+    kaa_extension_id bootstrap_service[] = { KAA_EXTENSION_BOOTSTRAP };
 
     test_channel_context_t bootstrap_channel_context = { KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id
                                                        , NULL

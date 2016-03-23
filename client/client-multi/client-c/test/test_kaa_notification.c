@@ -56,18 +56,24 @@ kaa_topic_listener_t topic_listener_2;
 //-----------------------------------------------------------------------------------------------
 void on_notification(void* contextmock, uint64_t *topic_id, kaa_notification_t *notif)
 {
+    (void)contextmock;
+    (void)topic_id;
+    (void)notif;
     printf("\nNotification listener got his Notification\n\n");
     listener_has_been_notified = true;
 }
 
 void on_topic(void* contextmock, kaa_list_t *topics)
 {
+    (void)contextmock;
+    (void)topics;
     printf("\nTopic list listener got his topic list.\n\n");
 }
 
 char *allocator (void *context, size_t size)
 {
-    return (char *)KAA_MALLOC(size);
+    (void)context;
+    return KAA_MALLOC(size);
 }
 
 
@@ -129,8 +135,9 @@ int test_deinit(void)
     return 0;
 }
 
-void test_deserializing(void)
+void test_deserializing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     kaa_notification_t *notification = kaa_notification_notification_create();
     const char *message = "Hello World!!!\n";
@@ -152,7 +159,7 @@ void test_deserializing(void)
     *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)1); // extension count
     unserialized_buffer += sizeof(uint16_t);
 
-    *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)KAA_NOTIFICATION_EXTENSION_TYPE);
+    *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)KAA_EXTENSION_NOTIFICATION);
     unserialized_buffer += sizeof(uint16_t);
     unserialized_buffer += sizeof(uint16_t); // pass by extension options
 
@@ -208,8 +215,9 @@ void test_deserializing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_notification_listeners_adding_and_removing(void)
+void test_notification_listeners_adding_and_removing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     err = kaa_add_notification_listener(context->notification_manager, &listener, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -256,8 +264,9 @@ void test_notification_listeners_adding_and_removing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_topic_list_listeners_adding_and_removing(void)
+void test_topic_list_listeners_adding_and_removing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -283,8 +292,9 @@ void test_topic_list_listeners_adding_and_removing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_retrieving_topic_list(void)
+void test_retrieving_topic_list(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -295,18 +305,19 @@ void test_retrieving_topic_list(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_serializing(void)
+void test_serializing(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
 
     kaa_serialize_info_t *info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
 
-    kaa_service_t service[] = { KAA_SERVICE_NOTIFICATION };
+    kaa_extension_id service[] = { KAA_EXTENSION_NOTIFICATION };
 
     info->services = service;
     info->services_count = 1;
     info->allocator = &allocator;
-    info->allocator_context = &allocator; //mock
+    info->allocator_context = NULL;
     err = kaa_platform_protocol_serialize_client_sync(context->platform_protocol, info, &buffer, &buffer_size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
@@ -316,8 +327,9 @@ void test_serializing(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_subscriptions(void)
+void test_subscriptions(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(context->logger);
 
     err = kaa_subscribe_to_topic(context->notification_manager, &topic_id, false);
@@ -343,14 +355,14 @@ void test_subscriptions(void)
     KAA_TRACE_OUT(context->logger);
 }
 
-KAA_SUITE_MAIN(Notification, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-       ,
+KAA_SUITE_MAIN(Notification, test_init, test_deinit,
        KAA_TEST_CASE(deserializing, test_deserializing)
        KAA_TEST_CASE(removing_and_adding_notifications_listeners, test_notification_listeners_adding_and_removing)
        KAA_TEST_CASE(removing_and_adding_topic_list_listeners, test_topic_list_listeners_adding_and_removing)
        KAA_TEST_CASE(topic_list_retrieving, test_retrieving_topic_list)
        KAA_TEST_CASE(serializing, test_serializing)
-       KAA_TEST_CASE(subscriptions, test_subscriptions)
+       KAA_TEST_CASE(subscriptions, test_subscriptions))
+#else
+KAA_SUITE_MAIN(Notification, test_init, test_deinit)
 #endif
-        )
