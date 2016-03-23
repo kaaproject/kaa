@@ -101,7 +101,7 @@ typedef struct kaa_context_s {
     kaa_channel_manager_t       *channel_manager;        /**< See @link kaa_channel_manager.h @endlink. */
     kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
     kaa_user_manager_t          *user_manager;           /**< See @link kaa_user.h @endlink. */
-    void                        *event_manager;          /**< See @link kaa_event.h @endlink. */
+    kaa_event_manager_t         *event_manager;          /**< See @link kaa_event.h @endlink. */
     kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
     kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
     kaa_logger_t                *logger;                 /**< See @link kaa_log.h @endlink. */

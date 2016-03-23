@@ -57,7 +57,7 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
         kaa_extension_id service_type);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-kaa_error_t kaa_event_manager_create(void **event_manager_p, kaa_status_t *status,
+kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status,
         kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 void kaa_event_manager_destroy(kaa_event_manager_t *self);
 kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data,

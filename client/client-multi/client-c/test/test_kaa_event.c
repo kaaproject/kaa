@@ -43,7 +43,7 @@ static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
-static void *event_manager = NULL;
+static kaa_event_manager_t *event_manager = NULL;
 
 
 
@@ -59,7 +59,7 @@ void test_kaa_create_event_manager(void **state)
 
     kaa_status_t* status = NULL;
     kaa_status_create(&status);
-    void *event_manager = NULL;
+    kaa_event_manager_t *event_manager = NULL;
     kaa_error_t err_code = kaa_event_manager_create(&event_manager, status, NULL, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(event_manager);

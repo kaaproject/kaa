@@ -96,9 +96,9 @@ typedef struct {
     kaa_transport_context_t        transport_context;
     void                           *event_context;
     kaa_tcp_access_point_t         access_point;
-    kaa_extension_id                  *pending_request_services;
+    kaa_extension_id               *pending_request_services;
     size_t                         pending_request_service_count;
-    kaa_extension_id                  *supported_services;
+    kaa_extension_id               *supported_services;
     size_t                         supported_service_count;
     kaa_buffer_t                   *out_buffer;
     kaatcp_parser_t                *parser;

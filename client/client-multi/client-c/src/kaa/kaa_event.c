@@ -272,7 +272,7 @@ void kaa_event_manager_destroy(kaa_event_manager_t *self)
     }
 }
 
-kaa_error_t kaa_event_manager_create(void **context, kaa_status_t *status,
+kaa_error_t kaa_event_manager_create(kaa_event_manager_t **context, kaa_status_t *status,
     kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
     kaa_event_manager_t **event_manager_p = (kaa_event_manager_t **)context;

@@ -102,9 +102,9 @@ typedef struct {
     on_kaa_tcp_channel_event_fn    event_callback;
     void                           *event_context;
     kaa_tcp_access_point_t         access_point;
-    kaa_extension_id                  *pending_request_services;
+    kaa_extension_id               *pending_request_services;
     size_t                         pending_request_service_count;
-    kaa_extension_id                  *supported_services;
+    kaa_extension_id               *supported_services;
     size_t                         supported_service_count;
     kaa_buffer_t                   *in_buffer;
     kaa_buffer_t                   *out_buffer;
@@ -194,8 +194,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Copies supported services.
      */
-    kaa_tcp_channel->supported_services = (kaa_extension_id *)
-                    KAA_MALLOC(supported_service_count * sizeof(kaa_extension_id));
+    kaa_tcp_channel->supported_services = KAA_MALLOC(supported_service_count * sizeof(kaa_extension_id));
     if (!kaa_tcp_channel->supported_services) {
         KAA_LOG_ERROR(logger, KAA_ERR_NOMEM, "Failed to copy supported services");
         kaa_tcp_channel_destroy_context(kaa_tcp_channel);
@@ -1325,9 +1324,10 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
                                                  services,
                                                  service_count);
 
-    self->pending_request_services = (kaa_extension_id *)
-                            KAA_MALLOC(new_service_count * sizeof(kaa_extension_id));
-    KAA_RETURN_IF_NIL(self->pending_request_services, KAA_ERR_NOMEM);
+    self->pending_request_services = KAA_MALLOC(new_service_count * sizeof(kaa_extension_id));
+    if (!self->pending_request_services) {
+        return KAA_ERR_NOMEM;
+    }
 
     if (new_service_count > 0) {
         self->pending_request_service_count = new_service_count;
