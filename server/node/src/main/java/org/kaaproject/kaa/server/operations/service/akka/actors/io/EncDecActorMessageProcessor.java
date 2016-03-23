@@ -96,7 +96,7 @@ public class EncDecActorMessageProcessor {
     void decodeAndForward(ActorContext context, SessionInitMessage message) {
         try {
             sessionInitMeter.mark();
-            processSignedRequest(context, message);
+            processSessionInitRequest(context, message);
         } catch (Exception e) {
             processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
         }
@@ -177,12 +177,13 @@ public class EncDecActorMessageProcessor {
         return response;
     }
 
-    private void processSignedRequest(ActorContext context, SessionInitMessage message) throws GeneralSecurityException,
+    private void processSessionInitRequest(ActorContext context, SessionInitMessage message) throws GeneralSecurityException,
             PlatformEncDecException, InvalidSDKTokenException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
         String sdkToken = getSdkToken(request);
         if (isSDKTokenValid(sdkToken)) {
+            //TODO: fetch SDK profile
             String appToken = getAppToken(sdkToken);
             SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
                     message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken,
