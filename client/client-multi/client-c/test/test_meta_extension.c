@@ -49,8 +49,9 @@ static const size_t kaa_meta_data_request_size =
     KAA_ALIGNED_SIZE(SHA_1_DIGEST_LENGTH) +
     KAA_ALIGNED_SIZE(KAA_SDK_TOKEN_LENGTH);
 
-void test_meta_extension_serialize_failed(void)
+void test_meta_extension_serialize_failed(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -70,8 +71,9 @@ void test_meta_extension_serialize_failed(void)
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_meta_extension_serialize(void)
+void test_meta_extension_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t meta_extension_size = kaa_meta_data_request_size;

@@ -5,7 +5,6 @@
 , esp8266Support ? true
 , raspberrypiSupport ? true
 , testSupport ? true
-, withCUnit ? true
 , withWerror ? false
 }:
 
@@ -18,8 +17,6 @@ let
 
   self = rec {
     gcc-xtensa-lx106 = callPackage ./nix/gcc-xtensa-lx106 { };
-
-    esp-open-sdk = callPackage ./nix/esp-open-sdk { };
 
     esp8266-rtos-sdk = callPackage ./nix/esp8266-rtos-sdk { };
 
@@ -50,9 +47,7 @@ let
               > make -C build-${name} $(ARGS)
 
               build-${name}/Makefile: Makefile
-              > rm -rf build-${name}
-              > mkdir -p build-${name}
-              > cmake -Bbuild-${name} -H. ${cmake_options} ${pkgs.lib.optionalString withWerror "-DCMAKE_C_FLAGS=-Werror"}
+              > cmake -U * -Bbuild-${name} -H. ${cmake_options} ${pkgs.lib.optionalString withWerror "-DCMAKE_C_FLAGS=-Werror"}
             '';
     in pkgs.writeTextFile {
       name = "kaa-generic-makefile";
@@ -91,9 +86,8 @@ in with self; with pkgs; {
       openssl
     ] ++ lib.optional posixSupport [
       openssl
-    ] ++ lib.optional withCUnit [
-      cunit
     ] ++ lib.optional testSupport [
+      cmocka
       cppcheck
       valgrind
       python

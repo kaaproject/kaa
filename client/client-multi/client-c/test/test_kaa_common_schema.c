@@ -34,8 +34,9 @@ static kaa_logger_t *logger = NULL;
 
 
 
-static void test_string_move_create(void)
+static void test_string_move_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_NULL(kaa_string_move_create(NULL, NULL));
@@ -70,8 +71,9 @@ static void test_string_move_create(void)
 
 
 
-static void test_string_copy_create(void)
+static void test_string_copy_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_test_str1 = "test";
@@ -91,8 +93,9 @@ static void test_string_copy_create(void)
 
 
 
-static void test_string_get_size(void)
+static void test_string_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_string_get_size(NULL), 0);
@@ -111,8 +114,9 @@ static void test_string_get_size(void)
 
 
 
-static void test_string_serialize(void)
+static void test_string_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_test_str1 = "test";
@@ -161,8 +165,9 @@ static void test_string_serialize(void)
 
 
 
-static void test_string_deserialize(void)
+static void test_string_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_test_str1 = "test";
@@ -193,8 +198,9 @@ static void test_string_deserialize(void)
 
 
 
-static void test_bytes_move_create(void)
+static void test_bytes_move_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_bytes[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -234,8 +240,9 @@ static void test_bytes_move_create(void)
 
 
 
-static void test_bytes_copy_create(void)
+static void test_bytes_copy_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_bytes[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -260,8 +267,9 @@ static void test_bytes_copy_create(void)
 
 
 
-static void test_bytes_get_size(void)
+static void test_bytes_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_bytes_get_size(NULL), 0);
@@ -279,8 +287,9 @@ static void test_bytes_get_size(void)
 
 
 
-static void test_bytes_serialize(void)
+static void test_bytes_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_bytes1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -330,8 +339,9 @@ static void test_bytes_serialize(void)
 
 
 
-static void test_bytes_deserialize(void)
+static void test_bytes_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_bytes1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -364,8 +374,9 @@ static void test_bytes_deserialize(void)
 
 
 
-static void test_fixed_move_create(void)
+static void test_fixed_move_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_fixed[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -405,8 +416,9 @@ static void test_fixed_move_create(void)
 
 
 
-static void test_fixed_copy_create(void)
+static void test_fixed_copy_create(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t unused_fixed[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -431,8 +443,9 @@ static void test_fixed_copy_create(void)
 
 
 
-static void test_fixed_get_size(void)
+static void test_fixed_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_fixed_get_size(NULL), 0);
@@ -450,8 +463,9 @@ static void test_fixed_get_size(void)
 
 
 
-static void test_fixed_serialize(void)
+static void test_fixed_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     uint8_t plain_fixed1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -501,8 +515,9 @@ static void test_fixed_serialize(void)
 
 
 
-static void test_fixed_deserialize(void)
+static void test_fixed_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_fixed1[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };
@@ -535,8 +550,9 @@ static void test_fixed_deserialize(void)
 
 
 
-static void test_boolean_get_size(void)
+static void test_boolean_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -550,8 +566,9 @@ static void test_boolean_get_size(void)
 
 
 
-static void test_boolean_serialize(void)
+static void test_boolean_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int8_t boolean_value = true;
@@ -574,8 +591,9 @@ static void test_boolean_serialize(void)
 
 
 
-static void test_boolean_deserialize(void)
+static void test_boolean_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int8_t boolean_value1 = true;
@@ -600,8 +618,9 @@ static void test_boolean_deserialize(void)
 
 
 
-static void test_int_get_size(void)
+static void test_int_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -615,8 +634,9 @@ static void test_int_get_size(void)
 
 
 
-static void test_int_serialize(void)
+static void test_int_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int32_t int_value = rand();
@@ -639,8 +659,9 @@ static void test_int_serialize(void)
 
 
 
-static void test_int_deserialize(void)
+static void test_int_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int32_t int_value1 = rand();
@@ -665,8 +686,9 @@ static void test_int_deserialize(void)
 
 
 
-static void test_long_get_size(void)
+static void test_long_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -680,8 +702,9 @@ static void test_long_get_size(void)
 
 
 
-static void test_long_serialize(void)
+static void test_long_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int64_t long_value = rand();
@@ -704,8 +727,9 @@ static void test_long_serialize(void)
 
 
 
-static void test_long_deserialize(void)
+static void test_long_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     int64_t long_value1 = rand();
@@ -740,8 +764,9 @@ typedef enum {
 
 
 
-static void test_enum_get_size(void)
+static void test_enum_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -755,8 +780,9 @@ static void test_enum_get_size(void)
 
 
 
-static void test_enum_serialize(void)
+static void test_enum_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     test_enum_t enum_value = (test_enum_t)rand() % TEST_VAL_5;
@@ -779,8 +805,9 @@ static void test_enum_serialize(void)
 
 
 
-static void test_enum_deserialize(void)
+static void test_enum_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     test_enum_t enum_value1 = (test_enum_t)rand() % TEST_VAL_5;
@@ -805,8 +832,9 @@ static void test_enum_deserialize(void)
 
 
 
-static void test_float_get_size(void)
+static void test_float_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -820,8 +848,9 @@ static void test_float_get_size(void)
 
 
 
-static void test_float_serialize(void)
+static void test_float_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     float float_value = rand() / rand();
@@ -844,8 +873,9 @@ static void test_float_serialize(void)
 
 
 
-static void test_float_deserialize(void)
+static void test_float_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     float float_value1 = rand() / rand();
@@ -870,8 +900,9 @@ static void test_float_deserialize(void)
 
 
 
-static void test_double_get_size(void)
+static void test_double_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -885,8 +916,9 @@ static void test_double_get_size(void)
 
 
 
-static void test_double_serialize(void)
+static void test_double_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     double double_value = rand() / rand();
@@ -909,8 +941,9 @@ static void test_double_serialize(void)
 
 
 
-static void test_double_deserialize(void)
+static void test_double_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     double double_value1 = rand() / rand();
@@ -935,8 +968,9 @@ static void test_double_deserialize(void)
 
 
 
-static void test_null_get_size(void)
+static void test_null_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -949,8 +983,9 @@ static void test_null_get_size(void)
 
 
 
-static void test_null_serialize(void)
+static void test_null_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t some_data = rand();
@@ -977,8 +1012,9 @@ static void test_null_serialize(void)
 
 
 
-static void test_null_deserialize(void)
+static void test_null_deserialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t expected_size = rand() % 10;
@@ -995,8 +1031,9 @@ static void test_null_deserialize(void)
 
 
 
-static void test_array_get_size(void)
+static void test_array_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
@@ -1029,8 +1066,9 @@ static void test_array_get_size(void)
 
 
 
-static void test_null_array_serialize(void)
+static void test_null_array_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t empty_array_buffer_size = 1;
@@ -1050,8 +1088,9 @@ static void test_null_array_serialize(void)
 
 
 
-static void test_empty_array_serialize(void)
+static void test_empty_array_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t empty_array_buffer_size = 1;
@@ -1073,8 +1112,9 @@ static void test_empty_array_serialize(void)
 
 
 
-static void test_array_serialize(void)
+static void test_array_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const char *plain_str = "data";
@@ -1133,8 +1173,9 @@ void kaa_null_destroy(void *data)
     (void)data;
 }
 
-static void test_array_deserialize_wo_ctx(void)
+static void test_array_deserialize_wo_ctx(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     size_t array_size = 1 + rand() % 10;
@@ -1201,8 +1242,9 @@ static void test_array_deserialize_wo_ctx(void)
 
 
 
-static void test_array_deserialize_w_ctx(void)
+static void test_array_deserialize_w_ctx(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     const uint8_t plain_fixed[] = { 0x0, 0x1, 0x2, 0x3, 0x4 };

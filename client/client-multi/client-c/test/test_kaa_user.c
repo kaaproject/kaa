@@ -93,8 +93,9 @@ static kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t er
     return KAA_ERR_NONE;
 }
 
-void test_specified_user_verifier(void)
+void test_specified_user_verifier(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     ASSERT_EQUAL(kaa_user_manager_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
@@ -149,8 +150,9 @@ void test_specified_user_verifier(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_success_response(void)
+void test_success_response(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     char success_response[] = {
@@ -181,8 +183,9 @@ void test_success_response(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_failed_response(void)
+void test_failed_response(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     char failed_response[] = {

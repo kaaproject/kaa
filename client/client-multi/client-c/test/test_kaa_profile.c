@@ -142,8 +142,9 @@ static kaa_transport_channel_interface_t channel = {
 
 /*----------------------------------------------------------------------------*/
 
-void test_profile_is_set(void)
+void test_profile_is_set(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
 #if KAA_PROFILE_SCHEMA_VERSION > 0
@@ -161,8 +162,9 @@ void test_profile_is_set(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_update(void)
+void test_profile_update(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
@@ -198,8 +200,9 @@ void test_profile_update(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_sync_get_size(void)
+void test_profile_sync_get_size(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -252,8 +255,9 @@ void test_profile_sync_get_size(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_sync_serialize(void)
+void test_profile_sync_serialize(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
@@ -339,8 +343,9 @@ void test_profile_sync_serialize(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_handle_sync(void)
+void test_profile_handle_sync(void **state)
 {
+    (void)state;
     KAA_TRACE_IN(logger);
 
     bool need_resync = false;
@@ -371,8 +376,9 @@ void test_profile_handle_sync(void)
     KAA_TRACE_OUT(logger);
 }
 
-static void test_profile_force_sync(void)
+static void test_profile_force_sync(void **state)
 {
+    (void)state;
     kaa_error_t rc = kaa_profile_force_sync(profile_manager);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
 

@@ -192,8 +192,8 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
 /*
  * Shortcut macros for tracing through the program
  */
-#define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __FUNCTION__)
-#define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__)
+#define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __func__)
+#define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __func__)
 
 #ifdef __cplusplus
 }      /* extern "C" */
