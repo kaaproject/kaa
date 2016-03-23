@@ -157,7 +157,7 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
 
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
     kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager
-                                                                                         , KAA_SERVICE_LOGGING);
+                                                                                         , KAA_EXTENSION_LOGGING);
     if (channel) {
         self->upload_retry_ts = 0;
         kaa_transport_protocol_id_t protocol_id;

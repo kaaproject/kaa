@@ -42,7 +42,7 @@
 typedef struct {
     kaa_transport_protocol_id_t protocol_info;
     kaa_access_point_t *access_point;
-    kaa_service_t* services;
+    kaa_extension_id* services;
     size_t         services_count;
 } test_channel_context_t;
 
@@ -51,12 +51,12 @@ typedef struct {
 static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 
-static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_BOOTSTRAP
-                                            , KAA_SERVICE_PROFILE
-                                            , KAA_SERVICE_USER
-                                            , KAA_SERVICE_EVENT
-                                            , KAA_SERVICE_LOGGING };
-static const size_t supported_services_count = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_service_t);
+static kaa_extension_id SUPPORTED_SERVICES[] = { KAA_EXTENSION_BOOTSTRAP
+                                            , KAA_EXTENSION_PROFILE
+                                            , KAA_EXTENSION_USER
+                                            , KAA_EXTENSION_EVENT
+                                            , KAA_EXTENSION_LOGGING };
+static const size_t supported_services_count = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_extension_id);
 
 
 
@@ -87,7 +87,7 @@ static kaa_error_t test_get_protocol_info(void *context, kaa_transport_protocol_
 }
 
 static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
+                                             , kaa_extension_id **supported_services
                                              , size_t *service_count)
 {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
@@ -100,7 +100,7 @@ static kaa_error_t test_get_supported_services(void *context
 }
 
 static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
+                                   , const kaa_extension_id services[]
                                    , size_t service_count)
 {
     KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
@@ -230,7 +230,7 @@ void test_get_service_specific_channel(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t logging_channel_protocol_id = 0xAABBCCBB;
-    kaa_service_t logging_channel_service[] = { KAA_SERVICE_LOGGING };
+    kaa_extension_id logging_channel_service[] = { KAA_EXTENSION_LOGGING };
     test_channel_context_t logging_channel_context = { { logging_channel_protocol_id, protocol_version }
                                                       , NULL
                                                       , logging_channel_service
@@ -244,12 +244,12 @@ void test_get_service_specific_channel(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_transport_channel_interface_t *actual_channel =
-            kaa_channel_manager_get_transport_channel(channel_manager, KAA_SERVICE_LOGGING);
+            kaa_channel_manager_get_transport_channel(channel_manager, KAA_EXTENSION_LOGGING);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
     compare_channels(actual_channel, &logging_channel);
 
-    actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_SERVICE_BOOTSTRAP);
+    actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_EXTENSION_BOOTSTRAP);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
     compare_channels(actual_channel, &global_channel);
@@ -257,7 +257,7 @@ void test_get_service_specific_channel(void **state)
     error_code = kaa_channel_manager_remove_transport_channel(channel_manager, logging_channel_id);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
-    actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_SERVICE_LOGGING);
+    actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_EXTENSION_LOGGING);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
     compare_channels(actual_channel, &global_channel);
@@ -265,7 +265,7 @@ void test_get_service_specific_channel(void **state)
     error_code = kaa_channel_manager_remove_transport_channel(channel_manager, global_channel_id);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
-    actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_SERVICE_LOGGING);
+    actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_EXTENSION_LOGGING);
     ASSERT_EQUAL(actual_channel, NULL);
 
     kaa_channel_manager_destroy(channel_manager);
@@ -404,7 +404,7 @@ void test_get_bootstrap_client_sync_serialize(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_message_write_extension_header(manual_writer
-                                                           , KAA_BOOTSTRAP_EXTENSION_TYPE
+                                                           , KAA_EXTENSION_BOOTSTRAP
                                                            , 0
                                                            , (sync_size - KAA_EXTENSION_HEADER_SIZE));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

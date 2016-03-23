@@ -72,7 +72,7 @@ struct kaa_log_collector {
     last_bucket_info_t             last_bucket;
 };
 
-static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
+static const kaa_extension_id logging_sync_services[] = {KAA_EXTENSION_LOGGING};
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
 {
@@ -477,7 +477,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     char *extension_size_p = tmp_writer.current + sizeof(uint32_t); // Pointer to the extension size. Will be filled in later.
     kaa_error_t error = kaa_platform_message_write_extension_header(&tmp_writer
-                                                                  , KAA_LOGGING_EXTENSION_TYPE
+                                                                  , KAA_EXTENSION_LOGGING
                                                                   , KAA_LOGGING_RECEIVE_UPDATES_FLAG
                                                                   , 0);
     if (error) {

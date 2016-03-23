@@ -41,7 +41,7 @@
 typedef struct {
     kaa_transport_protocol_id_t protocol_info;
     kaa_access_point_t *access_point;
-    kaa_service_t* services;
+    kaa_extension_id* services;
     size_t         services_count;
     kaa_transport_context_t transport_context;
 } test_channel_context_t;
@@ -52,12 +52,12 @@ static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 
-static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_PROFILE
-                                            , KAA_SERVICE_USER
-                                            , KAA_SERVICE_EVENT
-                                            , KAA_SERVICE_LOGGING };
+static kaa_extension_id SUPPORTED_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                            , KAA_EXTENSION_USER
+                                            , KAA_EXTENSION_EVENT
+                                            , KAA_EXTENSION_LOGGING };
 
-static size_t SUPPORTED_SERVICES_COUNT = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_service_t);
+static size_t SUPPORTED_SERVICES_COUNT = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_extension_id);
 
 
 
@@ -91,7 +91,7 @@ static kaa_error_t test_get_protocol_info(void *context, kaa_transport_protocol_
 }
 
 static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
+                                             , kaa_extension_id **supported_services
                                              , size_t *service_count)
 {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
@@ -104,7 +104,7 @@ static kaa_error_t test_get_supported_services(void *context
 }
 
 static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
+                                   , const kaa_extension_id services[]
                                    , size_t service_count)
 {
     KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
@@ -389,7 +389,7 @@ void test_bootstrap_channel(void **state)
       * TEST DATA
       */
     size_t index = rand() % KAA_BOOTSTRAP_ACCESS_POINT_COUNT;
-    kaa_service_t bootstrap_service[] = { KAA_SERVICE_BOOTSTRAP };
+    kaa_extension_id bootstrap_service[] = { KAA_EXTENSION_BOOTSTRAP };
 
     test_channel_context_t bootstrap_channel_context = { KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id
                                                        , NULL

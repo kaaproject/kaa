@@ -56,7 +56,7 @@ char* allocator(void *mock_context, size_t size)
 void test_empty_log_collector_extension_count(void **state)
 {
     (void)state;
-    kaa_service_t service = KAA_SERVICE_LOGGING;
+    kaa_extension_id service = KAA_EXTENSION_LOGGING;
     info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
     info->services = &service;
     info->services_count = 1;
