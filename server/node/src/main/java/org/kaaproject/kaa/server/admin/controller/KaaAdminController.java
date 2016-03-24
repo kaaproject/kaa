@@ -56,6 +56,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -2148,6 +2149,56 @@ public class KaaAdminController {
     @ResponseStatus(HttpStatus.OK)
     public void revokeEndpointCredentials(String endpointId) throws KaaAdminServiceException {
         this.kaaAdminService.revokeEndpointCredentials(endpointId);
+    }
+
+    /**
+     * Provides security credentials, allowing the endpoint with the given
+     * credentials to interact with the application specified.
+     * */
+    @RequestMapping(value = "provisionCredentials", params = { "applicationId", "credentials" }, method = RequestMethod.POST)
+    @ResponseBody
+    public CredentialsDto provisionCredentials (
+            @RequestParam String applicationId,
+            @RequestParam String credentials)
+            throws KaaAdminServiceException {
+        //TODO: implement
+        return null;
+    }
+    
+    /**
+     * Provides registration information, allowing the endpoint with the given
+     * credentials to use this information during registration process.
+     * */
+    @RequestMapping(value = "provisionRegistrationInfo", params = { "applicationId", "credentialsId", "serverSideEPProfileVersion",
+            "serverSideEPProfileBody" }, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void provisionRegistrationInfo(
+            @RequestParam String applicationId, 
+            @RequestParam String credentialsId,
+            @RequestParam Integer serverSideEPProfileVersion, 
+            @RequestParam String serverSideEPProfileBody)
+                    throws KaaAdminServiceException {
+        // TODO: implement
+    }
+    
+    /**
+     * Revokes security credentials in corresponding credentials storage. If endpoint is already registered using specified credentials, 
+     * this API call launches asynchronous process that terminates all active sessions of corresponding endpoint.
+     * */
+    @RequestMapping(value = "revokeCredentials", params = { "credentialsId" }, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void revokeCredentials(String credentialsId) throws KaaAdminServiceException {
+        //TODO: implement
+    }
+    
+    /**
+     * Notifies Kaa cluster about revocation of security credentials. If endpoint is already registered using specified credentials, 
+     * this API call launches asynchronous process that terminates all active sessions of corresponding endpoint.
+     * */
+    @RequestMapping(value = "notifyRevoked", params = { "credentialsId" }, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void onCredentialsRevoked(String credentialsId) throws KaaAdminServiceException {
+        //TODO: implement
     }
 
     /**
