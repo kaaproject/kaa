@@ -16,8 +16,22 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
-import com.google.common.base.Charsets;
-import net.iharder.Base64;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+
+import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
@@ -133,21 +147,9 @@ import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Charsets;
 
-import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+import net.iharder.Base64;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {

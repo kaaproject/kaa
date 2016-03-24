@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import java.util.Collections;
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -30,8 +30,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import java.util.Collections;
-import java.util.List;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 public class SendNotificationActivity extends AbstractDetailsActivity<NotificationDto, SendNotificationView, SendNotificationPlace> {
 
@@ -99,8 +100,8 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
 
     @Override
     protected void editEntity(NotificationDto entity, final AsyncCallback<NotificationDto> callback) {
-        String clientKeyHash = detailsView.getClientKeyHash().getValue();
-        if(clientKeyHash == null || clientKeyHash.equals("")) {
+        String endpointKeyHash = detailsView.getEndpointKeyHash().getValue();
+        if(endpointKeyHash == null || endpointKeyHash.equals("")) {
             KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(),
                     new AsyncCallback<Void>() {
                         @Override
@@ -114,7 +115,7 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
                         }
                     });
         } else {
-            KaaAdmin.getDataSource().sendUnicastNotification(entity, clientKeyHash, detailsView.getNotificationData().getValue(),
+            KaaAdmin.getDataSource().sendUnicastNotification(entity, endpointKeyHash, detailsView.getNotificationData().getValue(),
                     new AsyncCallback<EndpointNotificationDto>() {
                         @Override
                         public void onSuccess(EndpointNotificationDto result) {
