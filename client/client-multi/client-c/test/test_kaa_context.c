@@ -28,8 +28,6 @@ static kaa_logger_t *logger = NULL;
 
 void test_create_context()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_context_t * context = NULL;
 
     kaa_error_t err_code = kaa_context_create(&context, logger);

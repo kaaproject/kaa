@@ -152,8 +152,6 @@ void test_check_bootstrap_sync(kaa_transport_channel_interface_t *channel);
 void test_create_kaa_tcp_channel(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
-
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
@@ -190,8 +188,6 @@ void test_create_kaa_tcp_channel(void **state)
 
     channel->destroy(channel->context);
 
-    KAA_TRACE_OUT(logger);
-
     KAA_FREE(channel);
 }
 
@@ -205,7 +201,6 @@ void test_create_kaa_tcp_channel(void **state)
 void test_set_access_point_full_success_bootstrap(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -225,8 +220,6 @@ void test_set_access_point_full_success_bootstrap(void **state)
 
     channel->destroy(channel->context);
 
-    KAA_TRACE_OUT(logger);
-
     KAA_FREE(channel);
 }
 
@@ -236,7 +229,6 @@ void test_set_access_point_full_success_bootstrap(void **state)
 void test_set_access_point_connecting_error(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -267,8 +259,6 @@ void test_set_access_point_connecting_error(void **state)
 
     channel->destroy(channel->context);
 
-    KAA_TRACE_OUT(logger);
-
     KAA_FREE(channel);
 }
 
@@ -281,7 +271,6 @@ void test_set_access_point_connecting_error(void **state)
 void test_set_access_point_io_error(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -331,8 +320,6 @@ void test_set_access_point_io_error(void **state)
 
     channel->destroy(channel->context);
 
-    KAA_TRACE_OUT(logger);
-
     KAA_FREE(channel);
 }
 
@@ -351,7 +338,6 @@ void test_set_access_point_io_error(void **state)
 void test_bootstrap_sync_success(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -377,8 +363,6 @@ void test_bootstrap_sync_success(void **state)
     test_check_bootstrap_sync(channel);
 
     channel->destroy(channel->context);
-
-    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }

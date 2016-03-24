@@ -55,7 +55,6 @@ static int test_deinit(void);
 void test_kaa_create_event_manager(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_status_t* status = NULL;
     kaa_status_create(&status);
@@ -66,8 +65,6 @@ void test_kaa_create_event_manager(void **state)
     kaa_event_manager_destroy(event_manager);
 
     KAA_FREE(status);
-
-    KAA_TRACE_OUT(logger);
 }
 
 static kaa_endpoint_id endpoint_id1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
@@ -93,7 +90,6 @@ static kaa_error_t event_listeners_request_failed(void *context)
 void test_kaa_event_listeners_serialize_request(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     size_t expected_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t); // header + field id + reserved + listeners count
     expected_size += sizeof(uint32_t); // request id + fqns count
@@ -149,14 +145,11 @@ void test_kaa_event_listeners_serialize_request(void **state)
     ASSERT_EQUAL(cursor, buffer + actual_size);
 
     kaa_platform_message_writer_destroy(writer);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_kaa_event_listeners_handle_sync(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     const uint32_t extension_size = 52;
     char buffer[extension_size];
@@ -200,14 +193,11 @@ void test_kaa_event_listeners_handle_sync(void **state)
     ASSERT_FALSE(is_event_listeners_cb_called);
 
     kaa_platform_message_reader_destroy(reader);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_kaa_event_sync_get_size(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     size_t expected_size = KAA_EXTENSION_HEADER_SIZE
@@ -272,8 +262,6 @@ void test_kaa_event_sync_get_size(void **state)
 
     kaa_platform_message_writer_destroy(writer);
     kaa_platform_message_reader_destroy(reader);
-
-    KAA_TRACE_OUT(logger);
 }
 
 static kaa_error_t serialize_event(kaa_platform_message_writer_t *writer
@@ -337,8 +325,6 @@ void test_event_sync_serialize(void **state)
     (void)state;
     test_deinit();
     test_init();
-
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
 
@@ -438,8 +424,6 @@ void test_event_sync_serialize(void **state)
     kaa_platform_message_writer_destroy(auto_writer);
     kaa_platform_message_reader_destroy(server_sync_reader);
     kaa_platform_message_writer_destroy(server_sync_writer);
-
-    KAA_TRACE_OUT(logger);
 }
 
 
@@ -492,7 +476,6 @@ static size_t event_get_size(const char *fqn
 void test_event_blocks(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     test_deinit();
     test_init();
@@ -548,14 +531,11 @@ void test_event_blocks(void **state)
     ASSERT_EQUAL(request_size, expected_size);
 
     kaa_platform_message_reader_destroy(server_sync_reader);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_kaa_server_sync_with_event_callbacks(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     test_deinit();
     test_init();
@@ -630,8 +610,6 @@ void test_kaa_server_sync_with_event_callbacks(void **state)
      kaa_platform_message_reader_destroy(server_sync_reader);
      kaa_platform_message_writer_destroy(server_sync_writer);
      KAA_FREE((void *) event_data);
-
-     KAA_TRACE_OUT(logger);
 }
 #endif
 

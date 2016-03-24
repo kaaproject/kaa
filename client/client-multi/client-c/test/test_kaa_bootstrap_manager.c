@@ -128,7 +128,6 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
 void test_create_bootstrap_manager(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_bootstrap_manager_t* manager = NULL;
@@ -146,8 +145,6 @@ void test_create_bootstrap_manager(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_bootstrap_manager_destroy(manager);
-
-    KAA_TRACE_OUT(logger);
 }
 
 static kaa_access_point_t *create_access_point(void)
@@ -179,7 +176,6 @@ static void destroy_access_point(kaa_access_point_t * access_point)
 void test_handle_server_sync(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_bootstrap_manager_t *bootstrap_manager = NULL;
@@ -352,8 +348,6 @@ void test_handle_server_sync(void **state)
     kaa_platform_message_writer_destroy(writer);
     kaa_bootstrap_manager_destroy(bootstrap_manager);
     kaa_context.bootstrap_manager = NULL;
-
-    KAA_TRACE_OUT(logger);
 }
 
 
@@ -381,7 +375,6 @@ static kaa_error_t find_bootstrap_access_point_index(kaa_transport_protocol_id_t
 void test_bootstrap_channel(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_bootstrap_manager_t *bootstrap_manager = NULL;

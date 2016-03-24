@@ -52,7 +52,6 @@ static const size_t kaa_meta_data_request_size =
 void test_meta_extension_serialize_failed(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     const size_t buffer_size = 6;
@@ -74,7 +73,6 @@ void test_meta_extension_serialize_failed(void **state)
 void test_meta_extension_serialize(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     size_t meta_extension_size = kaa_meta_data_request_size;
     char buffer[meta_extension_size];

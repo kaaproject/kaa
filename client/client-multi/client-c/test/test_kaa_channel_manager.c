@@ -144,7 +144,6 @@ static void compare_channels(kaa_transport_channel_interface_t *actual_channel
 void test_create_channel_manager(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
@@ -165,7 +164,6 @@ void test_create_channel_manager(void **state)
 void test_add_channel(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
@@ -210,7 +208,6 @@ void test_add_channel(void **state)
 void test_get_service_specific_channel(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
@@ -277,7 +274,6 @@ void test_get_service_specific_channel(void **state)
 void test_get_bootstrap_client_sync_size(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_error_t error_code;
     size_t expected_size = 0, actual_size = 0;
@@ -358,7 +354,6 @@ void test_get_bootstrap_client_sync_size(void **state)
 void test_get_bootstrap_client_sync_serialize(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     uint16_t channel_count = 0;
     kaa_error_t error_code;

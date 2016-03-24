@@ -88,7 +88,6 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
 void test_create_status(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_status_t *status;
     kaa_error_t err_code = kaa_status_create(&status);
@@ -102,7 +101,6 @@ void test_create_status(void **state)
 void test_status_persistense(void **state)
 {
     (void)state;
-    KAA_TRACE_IN(logger);
 
     kaa_status_t *status;
     kaa_error_t err_code = kaa_status_create(&status);
