@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.common.dto.credentials;
 
 /**
- * @author Bohdan Khablenko
  * @author Andrew Shvayka
  *
  * @since v0.9.0
  */
 public enum CredentialsStatus {
-    AVAILABLE, IN_USE, REVOKED; 
+    AVAILABLE, IN_USE, REVOKED;
 }

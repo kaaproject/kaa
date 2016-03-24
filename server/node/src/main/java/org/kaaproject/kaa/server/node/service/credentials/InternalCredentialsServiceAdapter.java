@@ -13,45 +13,55 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.node.service.credentials;
+
+import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 
 /**
- * Bridge between {@link CredentialsService} and {@link InternalCredentialsService} interfaces
- * @author ashvayka
+ * A bridge between the {@link CredentialsService} and
+ * {@link InternalCredentialsService} interfaces.
  *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v0.9.0
  */
-public class InternalCredentialsServiceAdapter implements CredentialsService {
+public final class InternalCredentialsServiceAdapter implements CredentialsService {
 
     private final String applicationId;
-    private final InternalCredentialsService service;
+    private final InternalCredentialsService credentialsService;
 
-    public InternalCredentialsServiceAdapter(String applicationId, InternalCredentialsService service) {
-        super();
+    /**
+     * Constructs an adapter for the given application.
+     *
+     * @param applicationId The application ID
+     * @param credentialsService The internal credentials service used by Kaa
+     */
+    public InternalCredentialsServiceAdapter(String applicationId, InternalCredentialsService credentialsService) {
         this.applicationId = applicationId;
-        this.service = service;
+        this.credentialsService = credentialsService;
     }
 
     @Override
     public CredentialsDto provisionCredentials(CredentialsDto credentials) throws CredentialsServiceException {
-        return service.provisionCredentials(applicationId, credentials);
+        return credentialsService.provisionCredentials(applicationId, credentials);
     }
 
     @Override
-    public CredentialsDto lookupCredentials(String credentialsId) {
-        return service.lookupCredentials(applicationId, credentialsId);
+    public Optional<CredentialsDto> lookupCredentials(String credentialsId) {
+        return credentialsService.lookupCredentials(applicationId, credentialsId);
     }
 
     @Override
     public void markCredentialsInUse(String credentialsId) throws CredentialsServiceException {
-        service.markCredentialsInUse(applicationId, credentialsId);
+        credentialsService.markCredentialsInUse(applicationId, credentialsId);
     }
 
     @Override
     public void markCredentialsRevoked(String credentialsId) throws CredentialsServiceException {
-        service.markCredentialsRevoked(applicationId, credentialsId);
+        credentialsService.markCredentialsRevoked(applicationId, credentialsId);
     }
-
-
 }

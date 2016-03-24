@@ -13,22 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.node.service.credentials;
 
 /**
- * This interface is used to communicate with external systems in order to manage credentials information 
+ * Allows each application to have a credentials service of its own.
  *
  * @author Andrew Shvayka
+ * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
 public interface CredentialsServiceFactory {
 
     /**
-     * Lookup implementation of credentials service based on application id
-     * @param applicationId
-     * @return
+     * Returns the service that is responsible for managing credentials for the
+     * specified application.
+     *
+     * @param applicationId The application ID
+     *
+     * @return The servise that is responsible for managing credentials for the
+     *         specified application.
      */
     CredentialsService getCredentialsService(String applicationId);
-    
 }

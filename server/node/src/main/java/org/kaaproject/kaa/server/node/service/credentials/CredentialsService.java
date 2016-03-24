@@ -13,13 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.node.service.credentials;
+
+import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 
 /**
- * This interface is used to communicate with external systems in order to manage credentials information 
+ * A service that communicates with an external system to manage credentials
+ * information.
  *
  * @author Bohdan Khablenko
  * @author Andrew Shvayka
@@ -27,34 +31,49 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
  * @since v0.9.0
  */
 public interface CredentialsService {
-    
+
     /**
-     * Provision credentials entry.
-     * @param credentials - credentials to provision
-     * @throws UnsupportedOperationException - in case service implementation is read-only
-     * @return provisioned credentials
+     * Provisions credentials information to the external system.
+     *
+     * @param credentials The credentials to provision
+     *
+     * @return The credentials provisioned
+     *
+     * @throws UnsupportedOperationException - if the underlying implementation
+     *             forbids credentials provisioning.
+     * @throws CredentialsServiceException - if an unexpected exception occures.
      */
     CredentialsDto provisionCredentials(CredentialsDto credentials) throws CredentialsServiceException;
 
     /**
-     * Lookup credentials entry by id.
-     * @param credentialsId - credentials to provision
-     * @return credentials or null if credentials are not found
+     * Returns the credentials by ID.
+     *
+     * @param credentialsId The credentials ID
+     *
+     * @return The credentials with the given ID
      */
-    CredentialsDto lookupCredentials(String credentialsId);
-    
+    Optional<CredentialsDto> lookupCredentials(String credentialsId);
+
     /**
-     * Update credentials status to {@link CredentialsStatus#IN_USE}
-     * @param credentialsId
-     * @throws CredentialsServiceException in case credentials are not in {@link CredentialsStatus#AVAILABLE}
+     * Sets the status of the given credentials to
+     * {@link CredentialsStatus#IN_USE}.
+     *
+     * @param credentialsId The credentials ID
+     *
+     * @throws CredentialsServiceException - if the credentials are not
+     *             {@link CredentialsStatus#AVAILABLE available}.
      */
     void markCredentialsInUse(String credentialsId) throws CredentialsServiceException;
-    
+
     /**
-     * Update credentials status to {@link CredentialsStatus#REVOKED}
-     * @param credentialsId
-     * @throws UnsupportedOperationException - in case the service implementation does not allow revocation of credentials
+     * Revokes the given credentials by setting their status to
+     * {@link CredentialsStatus#REVOKED}.
+     *
+     * @param credentialsId The credentials ID
+     *
+     * @throws UnsupportedOperationException - if the underlying implementation
+     *             forbids credentials revokation.
+     * @throws CredentialsServiceException - if an unexpected exception occures.
      */
     void markCredentialsRevoked(String credentialsId) throws CredentialsServiceException;
-    
 }
