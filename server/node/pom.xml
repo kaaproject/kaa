@@ -270,6 +270,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>1.6.4</version>
@@ -448,7 +458,6 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-annotations</artifactId>
         </dependency>
-        
     </dependencies>
 
     <build>
@@ -642,9 +651,7 @@
                                         <include>common-dao-context.xml</include>
                                         <include>common-dao-sql-context.xml</include>
                                         <include>sql-dao.properties</include>
-                                        <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                                         <include>nosql-dao.properties</include>
-                                        <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                                     </includes>
                                 </resource>
                                 <resource>

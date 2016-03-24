@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -52,6 +53,11 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationServiceImplTest.class);
 
     private static final String INCORRECT_SQL_ID = "incorrect id";
+
+    @Before
+    public void before() throws Exception {
+        clearDBData();
+    }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveConfigurationWithIncorrectIdTestFail() throws SchemaCreationException {

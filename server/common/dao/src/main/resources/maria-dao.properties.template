@@ -6,7 +6,7 @@ db_name=kaa
 dao_max_wait_time=5
 
 # specify hibernate sql dialect for mariaDB
-hibernate_dialect=org.hibernate.dialect.MySQL5Dialect
+hibernate_dialect=org.hibernate.dialect.MySQL5InnoDBDialect
 
 # specify if hibernate will format sql request
 hibernate_format_sql=false
@@ -31,5 +31,3 @@ jdbc_host_port=localhost:3306
 
 # specify jdbc database provider name
 sql_provider_name=mysql:failover
-
-
