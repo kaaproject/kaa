@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 
@@ -40,7 +41,6 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
     public void findCredentialByIdTest() {
         String id = "56f3f9acdd796a86323f04a4";
         Credentials credentials = credentialsDao.findById(id);
-        CredentialsDto credentialsDto = credentials.toDto();
-        System.out.println(credentialsDto);
+        Assert.notNull(credentials);
     }
 }

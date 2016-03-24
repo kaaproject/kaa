@@ -24,18 +24,11 @@ public class MongoCredentials implements Credentials, Serializable {
     private byte[] credentialsBody;
     @Field(CREDENTIAL_STATUS)
     private CredentialsStatus status;
-    @Version
-    private Long version;
 
     public MongoCredentials(CredentialsDto dto) {
-        this(dto, null);
-    }
-
-    public MongoCredentials(CredentialsDto dto, Long version) {
         this.id = dto.getId();
         this.credentialsBody = dto.getCredentialsBody();
         this.status = dto.getStatus();
-        this.version = version;
     }
 
     public static long getSerialVersionUID() {
@@ -55,7 +48,7 @@ public class MongoCredentials implements Credentials, Serializable {
     }
 
     public void setCredentialsBody(byte[] credentialsBody) {
-        this.credentialsBody = credentialsBody;
+        this.credentialsBody = Arrays.copyOf(credentialsBody, credentialsBody.length);
     }
 
     public CredentialsStatus getStatus() {
@@ -66,10 +59,6 @@ public class MongoCredentials implements Credentials, Serializable {
         this.status = status;
     }
 
-    @Override
-    public Long getVersion() {
-        return version;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -79,19 +68,15 @@ public class MongoCredentials implements Credentials, Serializable {
         MongoCredentials that = (MongoCredentials) o;
 
         if (!Arrays.equals(credentialsBody, that.credentialsBody)) return false;
-        if (!id.equals(that.id)) return false;
         if (status != that.status) return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + Arrays.hashCode(credentialsBody);
+        int result = Arrays.hashCode(credentialsBody);
         result = 31 * result + status.hashCode();
-        result = 31 * result + (version != null ? version.hashCode() : 0);
         return result;
     }
 
@@ -101,13 +86,7 @@ public class MongoCredentials implements Credentials, Serializable {
                 "id='" + id + '\'' +
                 ", credentialsBody=" + Arrays.toString(credentialsBody) +
                 ", status=" + status +
-                ", version=" + version +
                 '}';
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     @Override

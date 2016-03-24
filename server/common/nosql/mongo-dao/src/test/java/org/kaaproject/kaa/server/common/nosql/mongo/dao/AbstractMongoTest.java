@@ -18,11 +18,8 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
+import org.kaaproject.kaa.server.common.dao.impl.*;
+import org.kaaproject.kaa.server.common.dao.model.Credentials;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointCredentials;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
@@ -44,6 +41,8 @@ public class AbstractMongoTest extends AbstractTest {
     protected EndpointCredentialsDao<MongoEndpointCredentials> endpointCredentialsDao;
     @Autowired
     protected TopicListEntryDao<MongoTopicListEntry> topicListEntryDao;
+    @Autowired
+    protected CredentialsDao<Credentials> credentialsDao;
 
     protected EndpointConfigurationDto generateEndpointConfiguration() {
         EndpointConfigurationDto configurationDto = new EndpointConfigurationDto();

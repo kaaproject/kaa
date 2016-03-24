@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants;
 
 @Repository
-public class CredentialsMongoDao extends AbstractVersionableMongoDao<MongoCredentials, ByteBuffer> implements CredentialsDao<MongoCredentials> {
+public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, ByteBuffer> implements CredentialsDao<MongoCredentials> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CredentialsMongoDao.class);
 
@@ -49,7 +49,7 @@ public class CredentialsMongoDao extends AbstractVersionableMongoDao<MongoCreden
     }
 
     @Override
-    public MongoCredentials update(String id, CredentialsStatus status) {
+    public MongoCredentials updateStatusById(String id, CredentialsStatus status) {
         LOG.debug("Updating credentials status with ID[{}] to STATUS[{}]", id, status.toString());
         updateFirst(
                 query(where(MongoModelConstants.CREDENTIALS_ID).is(id)),

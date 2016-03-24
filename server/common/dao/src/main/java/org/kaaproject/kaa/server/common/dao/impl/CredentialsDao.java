@@ -34,7 +34,7 @@ public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer
      * @param status status to update
      * @return updated credential object
      */
-    T update(String id, CredentialsStatus status);
+    T updateStatusById(String id, CredentialsStatus status);
 
 
     /**
