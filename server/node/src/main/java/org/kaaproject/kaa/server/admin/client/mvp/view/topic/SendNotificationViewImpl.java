@@ -16,8 +16,13 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.topic;
 
-import java.util.Date;
-
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueListBox;
+import com.google.gwt.user.datepicker.client.DateBox;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
@@ -27,18 +32,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaInfoListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ValueListBox;
-import com.google.gwt.user.datepicker.client.DateBox;
+import java.util.Date;
 
 public class SendNotificationViewImpl extends BaseDetailsViewImpl implements SendNotificationView, ValueChangeHandler<RecordField> {
 
     private SchemaInfoListBox notificationSchemaInfo;
     private DateBox expiredAt;
     private RecordPanel notificationData;
+    private TextBox clientKeyHashTextBox;
     
     public SendNotificationViewImpl() {
         super(true);
@@ -67,7 +68,14 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
         expiredAt.setWidth("200px");
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, expiredAt);
-        
+        row++;
+
+        label = new Label(Utils.constants.clientKeyHash());
+        clientKeyHashTextBox = new TextBox();
+        clientKeyHashTextBox.setWidth("200px");
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, clientKeyHashTextBox);
+
         getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
         
         notificationData = new RecordPanel(new AvroWidgetsConfig.Builder().
@@ -92,6 +100,11 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
     @Override
     protected String getSubTitle() {
         return Utils.constants.notificationDetails();
+    }
+
+    @Override
+    public HasValue<String> getClientKeyHash(){
+        return clientKeyHashTextBox;
     }
     
     private void updateNotificationData(SchemaInfoDto value) {

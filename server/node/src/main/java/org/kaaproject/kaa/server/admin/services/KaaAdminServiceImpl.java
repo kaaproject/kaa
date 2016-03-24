@@ -16,22 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
-import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
-
-import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Charsets;
+import net.iharder.Base64;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
@@ -147,9 +133,21 @@ import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Charsets;
+import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import net.iharder.Base64;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -2507,6 +2505,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             unicastNotification.setEndpointKeyHash(Base64.decode(clientKeyHash.getBytes(Charsets.UTF_8)));
             unicastNotification.setNotificationDto(notification);
             return controlService.editUnicastNotification(unicastNotification);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, RecordField notificationData)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+            byte[] body = converter.encodeToJsonBytes(record);
+            return sendUnicastNotification(notification,clientKeyHash,body);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

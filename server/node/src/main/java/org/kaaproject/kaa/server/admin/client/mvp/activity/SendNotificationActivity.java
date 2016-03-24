@@ -16,10 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.Collections;
-import java.util.List;
-
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -29,9 +30,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import java.util.Collections;
+import java.util.List;
 
 public class SendNotificationActivity extends AbstractDetailsActivity<NotificationDto, SendNotificationView, SendNotificationPlace> {
 
@@ -99,18 +99,34 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
 
     @Override
     protected void editEntity(NotificationDto entity, final AsyncCallback<NotificationDto> callback) {
-        KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(), 
-                new AsyncCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        callback.onSuccess(null);
-                    }
-                    
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-                });
+        String clientKeyHash = detailsView.getClientKeyHash().getValue();
+        if(clientKeyHash == null || clientKeyHash.equals("")) {
+            KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(),
+                    new AsyncCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            callback.onSuccess(null);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        } else {
+            KaaAdmin.getDataSource().sendUnicastNotification(entity, clientKeyHash, detailsView.getNotificationData().getValue(),
+                    new AsyncCallback<EndpointNotificationDto>() {
+                        @Override
+                        public void onSuccess(EndpointNotificationDto result) {
+                            callback.onSuccess(null);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        }
     }
 
 }

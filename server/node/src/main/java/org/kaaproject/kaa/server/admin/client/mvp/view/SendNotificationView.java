@@ -16,13 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import java.util.Date;
-
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ValueListBox;
+import java.util.Date;
 
 public interface SendNotificationView extends BaseDetailsView {
 
@@ -31,5 +30,6 @@ public interface SendNotificationView extends BaseDetailsView {
     HasValue<Date> getExpiredAt();
     
     HasValue<RecordField> getNotificationData();
-    
+
+    HasValue<String> getClientKeyHash();
 }

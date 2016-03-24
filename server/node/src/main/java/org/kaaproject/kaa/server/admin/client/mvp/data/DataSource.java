@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -69,8 +69,8 @@ import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
 
@@ -1283,6 +1283,17 @@ public class DataSource {
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
+                    }
+                });
+    }
+
+    public void sendUnicastNotification(
+            NotificationDto notification, String clientKeyHash ,RecordField notificationData,
+            final AsyncCallback<EndpointNotificationDto> callback) {
+        rpcService.sendUnicastNotification(notification, clientKeyHash, notificationData,
+                new DataCallback<EndpointNotificationDto>(callback) {
+                    @Override
+                    protected void onResult(EndpointNotificationDto result) {
                     }
                 });
     }
