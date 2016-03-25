@@ -369,7 +369,7 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
                 ", profileSchemaVersion=" + profileSchemaVersion +
                 ", notificationSchemaVersion=" + notificationSchemaVersion +
                 ", logSchemaVersion=" + logSchemaVersion +
-                ", aefMapIds=" + aefMapIds != null ? Arrays.toString(aefMapIds.toArray()) : null +
+                ", aefMapIds=" + (aefMapIds != null ? Arrays.toString(aefMapIds.toArray()) : null) +
                 ", defaultVerifierToken=" + defaultVerifierToken +
                 ", createdUsername=" + createdUsername +
                 ", createdTime=" + createdTime +

@@ -67,8 +67,8 @@ extern "C" {
  * @brief Kaa logger type
  */
 #ifndef KAA_LOGGER_T
-    #define KAA_LOGGER_T
-    typedef struct kaa_logger_t             kaa_logger_t;
+#define KAA_LOGGER_T
+typedef struct kaa_logger_t             kaa_logger_t;
 #endif
 
 /**
@@ -188,12 +188,6 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
 #else
 #define KAA_LOG_TRACE_LDB(...)
 #endif
-
-/*
- * Shortcut macros for tracing through the program
- */
-#define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __FUNCTION__)
-#define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__)
 
 #ifdef __cplusplus
 }      /* extern "C" */

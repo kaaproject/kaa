@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -35,52 +37,21 @@
 #include "platform/sock.h"
 #include "kaa.h"
 
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
-extern kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status
-                                                 , kaa_platform_message_writer_t* writer
-                                                 , uint32_t request_id);
-
-extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
-                                       , kaa_context_t *context
-                                       , kaa_status_t *status);
-
 
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 
+static const size_t kaa_meta_data_request_size =
+    KAA_EXTENSION_HEADER_SIZE +
+    sizeof(uint32_t) +
+    sizeof(uint32_t) +
+    KAA_ALIGNED_SIZE(SHA_1_DIGEST_LENGTH) +
+    KAA_ALIGNED_SIZE(SHA_1_DIGEST_LENGTH) +
+    KAA_ALIGNED_SIZE(KAA_SDK_TOKEN_LENGTH);
 
-void test_meta_extension_get_size_failed(void)
+void test_meta_extension_serialize_failed(void **state)
 {
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = kaa_meta_data_request_get_size(NULL);
-    ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
-}
-
-
-void test_meta_extension_get_size(void)
-{
-    KAA_TRACE_IN(logger);
-
-    const size_t expected_meta_extension_size = KAA_EXTENSION_HEADER_SIZE
-                                              + sizeof(uint32_t) /* request id */
-                                              + sizeof(uint32_t) /* timeout */
-                                              + kaa_aligned_size_get(SHA_1_DIGEST_LENGTH)
-                                              + kaa_aligned_size_get(SHA_1_DIGEST_LENGTH)
-                                              + kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH);
-
-    size_t meta_extension_size;
-    kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_EQUAL(expected_meta_extension_size, meta_extension_size);
-}
-
-void test_meta_extension_serialize_failed(void)
-{
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
     const size_t buffer_size = 6;
@@ -93,22 +64,21 @@ void test_meta_extension_serialize_failed(void)
     error_code = kaa_meta_data_request_serialize(NULL, NULL, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)!NULL, 0);
+    error_code = kaa_meta_data_request_serialize(NULL, (kaa_platform_message_writer_t *)0x1, 0);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_meta_extension_serialize(void)
+void test_meta_extension_serialize(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
-    size_t meta_extension_size;
-    kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
+    size_t meta_extension_size = kaa_meta_data_request_size;
     char buffer[meta_extension_size];
 
     kaa_platform_message_writer_t *writer;
-    error_code = kaa_platform_message_writer_create(&writer, buffer, meta_extension_size);
+    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, meta_extension_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t expected_timeout = KAA_SYNC_TIMEOUT;
@@ -142,7 +112,7 @@ void test_meta_extension_serialize(void)
                     reader, &extension_type, &extension_options, &extension_payload);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    ASSERT_EQUAL(extension_type, KAA_META_DATA_EXTENSION_TYPE);
+    ASSERT_EQUAL(extension_type, KAA_EXTENSION_META_DATA);
     ASSERT_EQUAL(extension_options, (TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE));
     ASSERT_EQUAL(extension_payload, meta_extension_size - KAA_EXTENSION_HEADER_SIZE);
 
@@ -207,8 +177,6 @@ int test_deinit(void)
 
 
 KAA_SUITE_MAIN(MetaExtension, test_init, test_deinit,
-        KAA_TEST_CASE(meta_extension_get_size_failed, test_meta_extension_get_size_failed)
-        KAA_TEST_CASE(meta_extension_get_size, test_meta_extension_get_size)
         KAA_TEST_CASE(meta_extension_serialize_failed, test_meta_extension_serialize_failed)
         KAA_TEST_CASE(meta_extension_serialize, test_meta_extension_serialize)
 )

@@ -75,6 +75,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @After
     public void afterTest() throws IOException {
         MongoDataLoader.clearDBData();
+        clearDBData();
     }
 
     @Test

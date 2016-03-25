@@ -71,7 +71,10 @@ public class CacheTemporaryMemorizer<K, V> {
                         ft.run();
                         //the idea is not to cache permanently but only for the time of execution.
                         //thus, technically, if time of calculation >> time of external cache put -> we will run calculation maximum 2 times.
-                    }finally{
+                    } catch (Throwable e) {
+                        LOG.error("Exception catched: ", e);
+                        throw e;
+                    } finally{
                         cache.remove(key, ft);
                     }
                 }
@@ -82,6 +85,7 @@ public class CacheTemporaryMemorizer<K, V> {
                 LOG.error("Exception catched: ", e);
                 cache.remove(key, f);
             } catch (ExecutionException|InterruptedException e) {
+                LOG.error("Exception catched: ", e);
                 throw launderThrowable(e);
             }
         }

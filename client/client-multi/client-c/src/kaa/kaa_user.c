@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdint.h>
 #include <string.h>
 #include "platform/stdio.h"
@@ -39,10 +41,6 @@
 #define EXTERNAL_SYSTEM_ENDPOINT_DETACH_FIELD      0x02
 
 #define USER_SYNC_ENDPOINT_ID_OPTION               0x01
-
-
-
-extern kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 
 
 typedef struct {
@@ -90,7 +88,7 @@ typedef enum {
 
 
 
-static kaa_service_t user_sync_services[1] = {KAA_SERVICE_USER};
+static kaa_extension_id user_sync_services[1] = {KAA_EXTENSION_USER};
 
 
 static void dtor_endpoint_info(void *data)
@@ -366,7 +364,7 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client user sync");
 
     size_t size = kaa_user_request_get_size_no_header(self);
-    if (kaa_platform_message_write_extension_header(writer, KAA_USER_EXTENSION_TYPE, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
+    if (kaa_platform_message_write_extension_header(writer, KAA_EXTENSION_USER, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user extension header");
         return KAA_ERR_WRITE_FAILED;
     }

@@ -14,25 +14,51 @@
 #  limitations under the License.
 #
 
+#######################
+### Toolchain setup ###
+#######################
+
 include(CMakeForceCompiler)
 
-if(NOT DEFINED ESPRESSIF_HOME)
-    set(ESPRESSIF_HOME /opt/Espressif)
+set(ARM_GCC_COMPILER "xtensa-lx106-elf-gcc${CMAKE_EXECUTABLE_SUFFIX}")
+
+if(DEFINED ENV{ESP8266_TOOLCHAIN_PATH})
+  set(TOOLCHAIN_PATH "$ENV{ESP8266_TOOLCHAIN_PATH}")
+  message(STATUS "Toolchain path is provided: ${TOOLCHAIN_PATH}")
+else ()
+  # Check if GCC is reachable.
+  find_path(TOOLCHAIN_PATH bin/${ARM_GCC_COMPILER})
+
+  if (NOT TOOLCHAIN_PATH)
+    # Set default path.
+    set(TOOLCHAIN_PATH /opt/Espressif/crosstool-NG/builds/xtensa-lx106-elf)
+    message(STATUS "GCC not found, default path will be used")
+  endif ()
+endif ()
+
+CMAKE_FORCE_C_COMPILER(${TOOLCHAIN_PATH}/bin/xtensa-lx106-elf-gcc GNU)
+
+
+#########################
+### ESP8266 SDK setup ###
+#########################
+
+if(DEFINED ENV{ESP8266_SDK_BASE})
+    set(ESP8266_SDK_BASE $ENV{ESP8266_SDK_BASE})
+else()
+    set(ESP8266_SDK_BASE /opt/Espressif/esp-rtos-sdk)
 endif()
 
-set(ESP_TOOLCHAIN_BASE ${ESPRESSIF_HOME}/crosstool-NG/builds/xtensa-lx106-elf/bin)
+set(CMAKE_LIBRARY_PATH ${ESP8266_SDK_BASE}/lib/)
 
-set(ESP_SDK_BASE ${ESPRESSIF_HOME}/esp-rtos-sdk)
-
-CMAKE_FORCE_C_COMPILER(${ESP_TOOLCHAIN_BASE}/xtensa-lx106-elf-gcc GNU)
-
-set(CMAKE_LIBRARY_PATH ${ESP_SDK_BASE}/lib/)
-
-set(ESP8266_INCDIRS 
-    ${ESP_SDK_BASE}/extra_include ${ESP_SDK_BASE}/include
-    ${ESP_SDK_BASE}/include/lwip ${ESP_SDK_BASE}/include/lwip/ipv4
-    ${ESP_SDK_BASE}/include/lwip/ipv6 ${ESP_SDK_BASE}/include/espressif/
-    ${ESP_TOOLCHAIN_BASE}/../lib/gcc/xtensa-lx106-elf/4.8.2/include/
+set(ESP8266_INCDIRS
+    ${ESP8266_SDK_BASE}/extra_include
+    ${ESP8266_SDK_BASE}/include
+    ${ESP8266_SDK_BASE}/include/lwip
+    ${ESP8266_SDK_BASE}/include/lwip/ipv4
+    ${ESP8266_SDK_BASE}/include/lwip/ipv6
+    ${ESP8266_SDK_BASE}/include/espressif/
+    ${TOOLCHAIN_PATH}/lib/gcc/xtensa-lx106-elf/4.8.2/include/
     )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -fno-builtin -Wno-implicit-function-declaration -Os -Wpointer-arith  -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections")

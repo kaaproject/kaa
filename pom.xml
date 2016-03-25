@@ -31,8 +31,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
         <akka.version>2.4.1</akka.version>
-        <spring.version>4.0.2.RELEASE</spring.version>
-        <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
+        <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <spring.data.version>Fowler-RELEASE</spring.data.version>
         <spring.retry.version>1.1.2.RELEASE</spring.retry.version>
         <ehcache.version>2.8.1</ehcache.version>
@@ -82,7 +82,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <jline.version>2.11</jline.version>
-        <avro-ui.version>0.2.1-SNAPSHOT</avro-ui.version>
+        <avro-ui.version>0.2.1</avro-ui.version>
 
         <slf4j.version>1.7.7</slf4j.version>
         <slf4j-android.version>1.7.7</slf4j-android.version>
@@ -1018,13 +1018,11 @@ Copyright 2014-2016 CyberVision, Inc.
                 <artifactId>postgresql</artifactId>
                 <version>${pgsql.driver.ver}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
                 <artifactId>mariadb-java-client</artifactId>
                 <version>${mariadb-driver.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.oracle.kv</groupId>
                 <artifactId>oracle-nosql-client</artifactId>

@@ -27,9 +27,9 @@
 static kaa_logger_t *logger = NULL;
 
 
-void test_reallocation(void)
+void test_reallocation(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_buffer_t *buffer_ptr;
     kaa_error_t error_code;
@@ -50,8 +50,6 @@ void test_reallocation(void)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_buffer_destroy(buffer_ptr);
-
-    KAA_TRACE_OUT(logger);
 }
 
 int test_init(void)

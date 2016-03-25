@@ -78,13 +78,8 @@ struct kaa_client_t {
 
 //Forward declaration of internal functions
 kaa_error_t kaa_init_security_stuff(void);
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 /* forward declarations */
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                    , kaa_logger_t *logger);
-
 
 void print_mem_stat(kaa_client_t *kaa_client);
 /*
@@ -110,19 +105,19 @@ static size_t kaa_public_key_length;
 static char *kaa_public_key;
 static kaa_digest kaa_public_key_hash;
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
 /*
  * Define services which should be used.
  * Don't define unused services, it may cause an error.
  */
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_CONFIGURATION
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING};
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                             , KAA_EXTENSION_CONFIGURATION
+                                             , KAA_EXTENSION_USER
+                                             , KAA_EXTENSION_EVENT
+                                             , KAA_EXTENSION_LOGGING};
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 void thread_run_fn(uintptr_t arg);
 

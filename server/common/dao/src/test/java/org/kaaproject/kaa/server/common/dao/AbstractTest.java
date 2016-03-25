@@ -104,6 +104,7 @@ import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.sql.MariaDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
@@ -248,9 +249,12 @@ public class AbstractTest {
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-            } else {
+            } else if(url.contains("postgres")) {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
+            } else {
+                LOG.info("Deleting data from MariaDB database");
+                new MariaDBTestRunner().truncateTables(dataSource);
             }
         } catch (SQLException ex) {
             LOG.error("Can't delete data from databases.", ex);

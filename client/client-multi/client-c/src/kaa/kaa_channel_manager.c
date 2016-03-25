@@ -14,23 +14,19 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
-#include "platform/sock.h"
 #include "kaa_channel_manager.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
-
-
-extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
-                                                                        , kaa_transport_protocol_id_t *protocol_info);
-
-extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
-                                                                          , kaa_transport_protocol_id_t *protocol_id);
+// This header conflicts with stdio.h and should be put last
+#include "platform/sock.h"
 
 typedef struct {
     uint32_t                             channel_id;
@@ -129,7 +125,7 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
 
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
     size_t services_count = 0;
-    kaa_service_t *services = NULL;
+    kaa_extension_id *services = NULL;
     channel->get_supported_services(channel->context, &services, &services_count);
     if (services) {
         size_t i = 0;
@@ -152,7 +148,7 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
 {
     KAA_RETURN_IF_NIL(channel, false);
 
-    kaa_service_t *services;
+    kaa_extension_id *services;
     size_t service_count;
     kaa_error_t error_code = channel->get_supported_services(channel->context
                                                            , &services
@@ -161,7 +157,7 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
     if (!error_code) {
         size_t i = 0;
         for (; i < service_count; ++i) {
-            if (services[i] == KAA_SERVICE_BOOTSTRAP) {
+            if (services[i] == KAA_EXTENSION_BOOTSTRAP) {
                 return true;
             }
         }
@@ -309,12 +305,12 @@ kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *
 }
 
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                           , kaa_service_t service_type)
+                                                                           , kaa_extension_id service_type)
 {
     KAA_RETURN_IF_NIL(self, NULL);
 
     kaa_transport_channel_wrapper_t *channel_wrapper;
-    kaa_service_t *services;
+    kaa_extension_id *services;
     size_t service_count;
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);
@@ -387,7 +383,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
 
     if (self->sync_info.payload_size > 0 && self->sync_info.channel_count > 0) {
         error_code = kaa_platform_message_write_extension_header(writer
-                                                               , KAA_BOOTSTRAP_EXTENSION_TYPE
+                                                               , KAA_EXTENSION_BOOTSTRAP
                                                                , 0
                                                                , self->sync_info.payload_size);
         KAA_RETURN_IF_ERR(error_code);

@@ -65,7 +65,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
             self.remainingLength += CONNECT_SIGNATURE_LENGTH;
         }
         if (request) {
-            self.remainingLength += request.length;
+            self.remainingLength += (int32_t)request.length;
         }
         DDLogDebug(@"%@ Created Connect message: session key size: %li, signature size: %li, sync request size: %li",
                    TAG, key.length, signature.length, request.length);
@@ -77,15 +77,15 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
     [self packVariableHeader];
     if (self.aesSessionKey) {
         [self.buffer appendData:self.aesSessionKey];
-        self.bufferPosition += self.aesSessionKey.length;
+        self.bufferPosition += (int32_t)self.aesSessionKey.length;
     }
     if (self.signature) {
         [self.buffer appendData:self.signature];
-        self.bufferPosition += self.signature.length;
+        self.bufferPosition += (int32_t)self.signature.length;
     }
     if (self.syncRequest) {
         [self.buffer appendData:self.syncRequest];
-        self.bufferPosition += self.syncRequest.length;
+        self.bufferPosition += (int32_t)self.syncRequest.length;
     }
 }
 
@@ -138,7 +138,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
 }
 
 - (void)decodeSyncRequestFromInput:(NSInputStream *)input {
-    int syncRequestSize = self.buffer.length - self.bufferPosition;
+    int32_t syncRequestSize = (int32_t)(self.buffer.length - self.bufferPosition);
     if (syncRequestSize > 0) {
         uint8_t data[syncRequestSize];
         [input read:data maxLength:sizeof(data)];
@@ -162,7 +162,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
 }
 
 - (void)decodeVariableHeaderFromInput:(NSInputStream *)input {
-    int headerSize = sizeof(FIXED_HEADER_CONST);
+    int32_t headerSize = sizeof(FIXED_HEADER_CONST);
     uint8_t header[headerSize];
     [input read:header maxLength:headerSize];
     self.bufferPosition += headerSize;

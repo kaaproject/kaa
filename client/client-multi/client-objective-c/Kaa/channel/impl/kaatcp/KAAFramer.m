@@ -51,18 +51,18 @@
     [self.delegates addObject:delegate];
 }
 
-- (int)pushBytes:(NSMutableData *)data {
+- (int32_t)pushBytes:(NSMutableData *)data {
     if (!data) {
         [NSException raise:KaaTcpProtocolException format:@"%@ Received nil data", TAG];
         return -1;
     }
     
-    int used = 0;
+    int32_t used = 0;
     char *mutableData = [data mutableBytes];
     while (data.length > used) {
         if (!self.currentFrame) {
             if ((data.length - used) >= 1) { // 1 bytes minimum header length
-                int intType = mutableData[used] & 0xFF;
+                int32_t intType = mutableData[used] & 0xFF;
                 self.currentFrame = [self getFrameByType:(char) (intType >> 4)];
                 ++used;
             } else {

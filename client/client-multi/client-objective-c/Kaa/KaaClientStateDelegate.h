@@ -23,6 +23,7 @@
  * Notifies about Kaa client state changes and errors
  */
 @protocol KaaClientStateDelegate
+@optional
 
 /**
  * On successful start of Kaa client. Kaa client is successfully connected

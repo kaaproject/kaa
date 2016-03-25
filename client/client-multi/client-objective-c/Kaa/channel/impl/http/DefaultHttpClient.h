@@ -16,6 +16,16 @@
 
 #import "AbstractHttpClient.h"
 
+typedef enum {
+    HTTP_ERROR_CODE_CANT_SERIALIZE_REQUEST  = -1,
+    HTTP_ERROR_CODE_CANT_READ_RESPONSE      = -2,
+    HTTP_ERROR_CODE_CANT_VERIFY_RESPONSE    = -3,
+    HTTP_ERROR_CODE_CLIEN_IS_DOWN           = -4
+} HttpErrorCode;
+
+/**
+ * Default implementation of HTTP client.
+ */
 @interface DefaultHttpClient : AbstractHttpClient
 
 @end

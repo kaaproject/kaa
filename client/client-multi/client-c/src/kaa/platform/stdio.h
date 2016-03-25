@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,4 +36,3 @@
 #endif //ifdef ECONAIS_PLATFORM
 
 #endif /* STDIO_H_ */
-
