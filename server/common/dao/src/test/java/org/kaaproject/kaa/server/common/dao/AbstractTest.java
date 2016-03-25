@@ -68,6 +68,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -81,30 +83,32 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
+import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
+import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
-import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
+import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.Credentials;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
@@ -229,6 +233,8 @@ public class AbstractTest {
     protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
     @Autowired
     protected ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
+    @Autowired
+    protected CredentialsDao<Credentials> credentialsDao;
 
     protected Application application;
 
@@ -734,6 +740,19 @@ public class AbstractTest {
         endpointCredentials.setServerProfileVersion(serverProfileVersion);
         endpointCredentials.setServerProfileBody(serverProfileBody);
         return this.endpointVerificationService.saveEndpointCredentials(endpointCredentials);
+    }
+
+    protected CredentialsDto generateCredentials(byte[] credentialsBody, CredentialsStatus status) {
+        CredentialsDto credentialsDto = new CredentialsDto();
+        credentialsDto.setCredentialsBody(credentialsBody);
+        credentialsDto.setStatus(status);
+        Credentials saved = this.credentialsDao.save(credentialsDto);
+
+        CredentialsDto generatedCredentials = new CredentialsDto();
+        generatedCredentials.setId(saved.getId());
+        generatedCredentials.setCredentialsBody(saved.getCredentialsBody());
+        generatedCredentials.setStatus(saved.getStatus());
+        return generatedCredentials;
     }
 
     protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {

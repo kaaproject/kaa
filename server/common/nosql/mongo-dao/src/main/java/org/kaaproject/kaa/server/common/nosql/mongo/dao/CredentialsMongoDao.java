@@ -1,24 +1,21 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoCredentials;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
 import org.springframework.stereotype.Repository;
 
 import java.nio.ByteBuffer;
 
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
 public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, ByteBuffer> implements CredentialsDao<MongoCredentials> {
@@ -37,7 +34,7 @@ public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, Byte
 
     @Override
     public MongoCredentials save(CredentialsDto credentialsDto) {
-        LOG.debug("Saving{}", credentialsDto.toString());
+        LOG.debug("Saving {}", credentialsDto.toString());
         return this.save(new MongoCredentials(credentialsDto));
     }
 
