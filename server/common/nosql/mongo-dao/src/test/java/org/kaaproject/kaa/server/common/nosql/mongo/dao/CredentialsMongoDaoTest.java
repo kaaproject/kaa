@@ -47,17 +47,17 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
         CredentialsDto credentials = this.generateCredentials(CREDENTIALS_BODY, AVAILABLE);
         Credentials saved = this.credentialsDao.save(credentials);
         Assert.assertNotNull(saved);
+        Assert.assertNotNull(saved.getId());
     }
 
     @Test
     public void testFindCredentialsById() {
-        CredentialsDto credentials = this.generateCredentials(CREDENTIALS_BODY, AVAILABLE);
-        Credentials saved = this.credentialsDao.save(credentials);
+        CredentialsDto saved = this.generateCredentials(CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(saved);
 
-        Credentials finded = this.credentialsDao.findById(saved.getId());
-        Assert.assertNotNull(finded);
-        Assert.assertEquals(saved, finded);
+        Credentials founded = this.credentialsDao.findById(saved.getId());
+        Assert.assertNotNull(founded);
+        Assert.assertEquals(saved, founded);
     }
 
     @Test

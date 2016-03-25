@@ -748,10 +748,7 @@ public class AbstractTest {
         credentialsDto.setStatus(status);
         Credentials saved = this.credentialsDao.save(credentialsDto);
 
-        CredentialsDto generatedCredentials = new CredentialsDto();
-        generatedCredentials.setId(saved.getId());
-        generatedCredentials.setCredentialsBody(saved.getCredentialsBody());
-        generatedCredentials.setStatus(saved.getStatus());
+        CredentialsDto generatedCredentials = saved.toDto();
         return generatedCredentials;
     }
 
