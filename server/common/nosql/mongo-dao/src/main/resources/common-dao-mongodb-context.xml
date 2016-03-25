@@ -45,6 +45,7 @@
     <bean id="unicastNotificationDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.EndpointNotificationMongoDao"/>
     <bean id="endpointProfileDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.EndpointProfileMongoDao"/>
     <bean id="endpointRegistrationDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.EndpointRegistrationMongoDao"/>
+    <bean id="credentialsDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.CredentialsMongoDao"/>
     <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.EndpointConfigurationMongoDao"/>
     <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.EndpointUserMongoDao"/>
     <bean id="endpointUserConfigurationDao" class="org.kaaproject.kaa.server.common.nosql.mongo.dao.EndpointUserConfigurationMongoDao"/>
