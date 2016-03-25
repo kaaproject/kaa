@@ -17,14 +17,12 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.kaaproject.kaa.server.common.dao.model.EndpointCredentials;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil;
+import org.kaaproject.kaa.server.common.dao.model.EndpointRegistration;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
@@ -37,48 +35,48 @@ import com.datastax.driver.mapping.annotations.Transient;
  *
  * @since v0.9.0
  */
-@Table(name = CassandraModelConstants.EP_CREDS_BY_APP_ID_COLUMN_FAMILY_NAME)
-public class CassandraEPCredentialsByAppID implements Serializable {
+@Table(name = CassandraModelConstants.EP_REGISTRATIONS_BY_CREDENTIALS_ID_COLUMN_FAMILY_NAME)
+public final class CassandraEPRegistrationByCredentialsID implements Serializable {
 
     @Transient
     private static final long serialVersionUID = 1000L;
 
     @PartitionKey
-    @Column(name = CassandraModelConstants.EP_CREDS_BY_APP_ID_APPLICATION_ID_PROPERTY)
-    private String applicationId;
+    @Column(name = CassandraModelConstants.EP_REGISTRATION_BY_CREDENTIALS_ID_CREDENTIALS_ID_PROPERTY)
+    private String credentialsId;
 
     @ClusteringColumn
-    @Column(name = CassandraModelConstants.EP_CREDS_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY)
-    private ByteBuffer endpointKeyHashWrapper;
+    @Column(name = CassandraModelConstants.EP_REGISTRATION_BY_CREDENTIALS_ID_ENDPOINT_ID_PROPERTY)
+    private String endpointId;
 
-    public static CassandraEPCredentialsByAppID fromEndpointCredentials(EndpointCredentials endpointCredentials) {
-        String applicationId = endpointCredentials.getApplicationId();
-        ByteBuffer endpointKeyHashWrapper = CassandraDaoUtil.getByteBuffer(endpointCredentials.getEndpointKeyHash());
-        return new CassandraEPCredentialsByAppID(applicationId, endpointKeyHashWrapper);
+    public static CassandraEPRegistrationByCredentialsID fromEndpointRegistration(EndpointRegistration endpointRegistration) {
+        String credentialsId = endpointRegistration.getCredentialsId();
+        String endpointId = endpointRegistration.getEndpointId();
+        return new CassandraEPRegistrationByCredentialsID(credentialsId, endpointId);
     }
 
-    public CassandraEPCredentialsByAppID() {
+    public CassandraEPRegistrationByCredentialsID() {
     }
 
-    public CassandraEPCredentialsByAppID(String applicationId, ByteBuffer endpointKeyHashWrapper) {
-        this.applicationId = applicationId;
-        this.endpointKeyHashWrapper = endpointKeyHashWrapper;
+    public CassandraEPRegistrationByCredentialsID(String credentialsId, String endpointId) {
+        this.credentialsId = credentialsId;
+        this.endpointId = endpointId;
     }
 
-    public String getApplicationId() {
-        return this.applicationId;
+    public String getCredentialsId() {
+        return this.credentialsId;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    public void setCredentialsId(String credentialsId) {
+        this.credentialsId = credentialsId;
     }
 
-    public ByteBuffer getEndpointKeyHashWrapper() {
-        return this.endpointKeyHashWrapper;
+    public String getEndpointId() {
+        return this.endpointId;
     }
 
-    public void setEndpointKeyHashWrapper(ByteBuffer endpointKeyHashWrapper) {
-        this.endpointKeyHashWrapper = endpointKeyHashWrapper;
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
     }
 
     @Override

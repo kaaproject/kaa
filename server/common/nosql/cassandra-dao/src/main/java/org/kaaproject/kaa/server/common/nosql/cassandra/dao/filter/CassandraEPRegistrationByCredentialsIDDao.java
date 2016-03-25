@@ -16,13 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter;
 
-import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.AbstractCassandraDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPCredentialsByAppID;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPRegistrationByCredentialsID;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.springframework.stereotype.Repository;
 
@@ -36,22 +31,21 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * @since v0.9.0
  */
 @Repository
-public class CassandraEPCredentialsByAppIDDao extends AbstractCassandraDao<CassandraEPCredentialsByAppID, String> {
+public class CassandraEPRegistrationByCredentialsIDDao extends AbstractCassandraDao<CassandraEPRegistrationByCredentialsID, String> {
 
     @Override
-    protected Class<CassandraEPCredentialsByAppID> getColumnFamilyClass() {
-        return CassandraEPCredentialsByAppID.class;
+    protected Class<CassandraEPRegistrationByCredentialsID> getColumnFamilyClass() {
+        return CassandraEPRegistrationByCredentialsID.class;
     }
 
     @Override
     protected String getColumnFamilyName() {
-        return CassandraModelConstants.EP_CREDS_BY_APP_ID_COLUMN_FAMILY_NAME;
+        return CassandraModelConstants.EP_REGISTRATIONS_BY_CREDENTIALS_ID_COLUMN_FAMILY_NAME;
     }
 
-    public List<ByteBuffer> getEndpointKeyHashes(String applicationID) {
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_CREDS_BY_APP_ID_APPLICATION_ID_PROPERTY, applicationID);
+    public String getEndpointIdByCredentialsId(String credentialsId) {
+        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_BY_CREDENTIALS_ID_CREDENTIALS_ID_PROPERTY, credentialsId);
         Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
-        Stream<CassandraEPCredentialsByAppID> filterStream = this.findListByStatement(statement).stream();
-        return filterStream.map(CassandraEPCredentialsByAppID::getEndpointKeyHashWrapper).collect(Collectors.toList());
+        return this.findOneByStatement(statement).getEndpointId();
     }
 }

@@ -14,35 +14,31 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
+package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 
 /**
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public class CassandraEndpointCredentialsTest {
-
-    private static final String APPLICATION_ID = "application_id";
-    private static final byte[] ENDPOINT_KEY = "endpoint_key".getBytes();
-    private static final byte[] ENDPOINT_KEY_HASH = "endpoint_key_hash".getBytes();
+public class MongoEndpointRegistrationTest {
 
     @Test
     public void equalsVerifierTest() throws Exception {
-        EqualsVerifier.forClass(CassandraEndpointCredentials.class).suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(MongoEndpointRegistration.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 
     @Test
     public void dataConversionTest() throws Exception {
-        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto(APPLICATION_ID, ENDPOINT_KEY, ENDPOINT_KEY_HASH);
-        CassandraEndpointCredentials endpointCredentialsModel = new CassandraEndpointCredentials(endpointCredentials);
-        Assert.assertEquals(endpointCredentials, endpointCredentialsModel.toDto());
+        EndpointRegistrationDto endpointRegistrationDto = new EndpointRegistrationDto("1", "2", "3", 42, "test");
+        MongoEndpointRegistration mongoEndpointRegistration = new MongoEndpointRegistration(endpointRegistrationDto);
+        Assert.assertEquals(endpointRegistrationDto, mongoEndpointRegistration.toDto());
     }
 }

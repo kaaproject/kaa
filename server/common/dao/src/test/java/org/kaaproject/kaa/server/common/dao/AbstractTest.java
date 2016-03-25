@@ -47,7 +47,6 @@ import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
@@ -169,8 +168,6 @@ public class AbstractTest {
     protected UserConfigurationService userConfigurationService;
     @Autowired
     protected EndpointService endpointService;
-    @Autowired
-    protected EndpointVerificationService endpointVerificationService;
     @Autowired
     protected HistoryService historyService;
     @Autowired
@@ -718,26 +715,6 @@ public class AbstractTest {
         configurationDto.setSchemaVersion(configurationSchema.getVersion());
 
         return userConfigurationService.saveUserConfiguration(configurationDto);
-    }
-
-    protected EndpointCredentialsDto generateEndpointCredentials(String applicationId, byte[] endpointKey, byte[] endpointKeyHash) {
-        return this.generateEndpointCredentials(applicationId, endpointKey, endpointKeyHash, null, null);
-    }
-
-    protected EndpointCredentialsDto generateEndpointCredentials(
-            String applicationId,
-            byte[] endpointKey,
-            byte[] endpointKeyHash,
-            Integer serverProfileVersion,
-            String serverProfileBody) {
-
-        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
-        endpointCredentials.setApplicationId(applicationId);
-        endpointCredentials.setEndpointKey(endpointKey);
-        endpointCredentials.setEndpointKeyHash(endpointKeyHash);
-        endpointCredentials.setServerProfileVersion(serverProfileVersion);
-        endpointCredentials.setServerProfileBody(serverProfileBody);
-        return this.endpointVerificationService.saveEndpointCredentials(endpointCredentials);
     }
 
     protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {

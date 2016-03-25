@@ -25,7 +25,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -1679,52 +1678,6 @@ public interface ControlService {
      * @throws ControlServiceException
      */
     void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException;
-
-    /**
-     * Returns the list of endpoint security credentials for the given
-     * application.
-     *
-     * @param applicationId
-     *        The application ID
-     *
-     * @return The list of endpoint security credentials for the given
-     *         application
-     */
-    List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) throws ControlServiceException;
-
-    /**
-     * Returns the security credentials of the given endpoint.
-     *
-     * @param endpointId
-     *        The endpoint ID
-     *
-     * @return The security credentials of the given endpoint
-     *
-     * @throws ControlServiceException
-     */
-    EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException;
-
-    /**
-     * Saves the given endpoint security credentials.
-     *
-     * @param endpointCredentials
-     *        The endpoint security credentials
-     *
-     * @return The endpoint security credentials saved
-     *
-     * @throws ControlServiceException
-     */
-    EndpointCredentialsDto saveEndpointCredentials(EndpointCredentialsDto endpointCredentials) throws ControlServiceException;
-
-    /**
-     * Removes the security credentials of the given endpoint.
-     *
-     * @param endpointId
-     *        The endpoint ID
-     *
-     * @throws ControlServiceException
-     */
-    void removeEndpointCredentialsByEndpointId(String endpointId) throws ControlServiceException;
 
     /**
      * Returns a list of endpoint profiles for the endpoint user with the given external ID and tenant ID.

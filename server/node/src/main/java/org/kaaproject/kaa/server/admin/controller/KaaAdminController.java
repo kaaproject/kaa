@@ -29,7 +29,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -2108,51 +2107,6 @@ public class KaaAdminController {
 
     /**
      * Provides security credentials, allowing the endpoint with the given
-     * public key to interact with the application specified. An optional
-     * server-side endpoint profile may be assigned to the said endpoint on
-     * register.
-     *
-     * @param applicationId
-     *        The application ID
-     * @param publicKey
-     *        The endpoint public key
-     * @param serverProfileVersion
-     *        The version of the server-side endpoint profile schema
-     * @param serverProfileBody
-     *        The body of the server-side endpoint profile
-     *
-     * @return The endpoint security credentials saved
-     *
-     * @throws KaaAdminServiceException
-     */
-    @RequestMapping(value = "provideEndpointCredentials", params = { "applicationId", "publicKey" }, method = RequestMethod.POST)
-    @ResponseBody
-    public EndpointCredentialsDto provideEndpointCredentials(
-            @RequestParam String applicationId,
-            @RequestParam String publicKey,
-            @RequestParam(required = false) Integer serverProfileVersion,
-            @RequestParam(required = false) String serverProfileBody)
-            throws KaaAdminServiceException {
-
-        return this.kaaAdminService.provideEndpointCredentials(applicationId, publicKey, serverProfileVersion, serverProfileBody);
-    }
-
-    /**
-     * Revokes the security credentials of the given endpoint, removing them
-     * from the database and terminating all active connections of the said
-     * endpoint.
-     *
-     * @param endpointId
-     *        The endpoint ID
-     */
-    @RequestMapping(value = "revokeEndpointCredentials", params = { "endpointId" }, method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void revokeEndpointCredentials(String endpointId) throws KaaAdminServiceException {
-        this.kaaAdminService.revokeEndpointCredentials(endpointId);
-    }
-
-    /**
-     * Provides security credentials, allowing the endpoint with the given
      * credentials to interact with the application specified.
      * */
     @RequestMapping(value = "provisionCredentials", params = { "applicationId", "credentials" }, method = RequestMethod.POST)
@@ -2164,7 +2118,7 @@ public class KaaAdminController {
         //TODO: implement
         return null;
     }
-    
+
     /**
      * Provides registration information, allowing the endpoint with the given
      * credentials to use this information during registration process.
@@ -2180,7 +2134,7 @@ public class KaaAdminController {
                     throws KaaAdminServiceException {
         // TODO: implement
     }
-    
+
     /**
      * Revokes security credentials in corresponding credentials storage. If endpoint is already registered using specified credentials, 
      * this API call launches asynchronous process that terminates all active sessions of corresponding endpoint.
@@ -2190,7 +2144,7 @@ public class KaaAdminController {
     public void revokeCredentials(String credentialsId) throws KaaAdminServiceException {
         //TODO: implement
     }
-    
+
     /**
      * Notifies Kaa cluster about revocation of security credentials. If endpoint is already registered using specified credentials, 
      * this API call launches asynchronous process that terminates all active sessions of corresponding endpoint.
@@ -2201,40 +2155,6 @@ public class KaaAdminController {
         //TODO: implement
     }
 
-    /**
-     * Returns the security credentials of the given endpoint.
-     *
-     * @param endpointId
-     *        The endpoint ID
-     *
-     * @return The security credentials of the given endpoint
-     *
-     * @throws KaaAdminServiceException
-     */
-    @RequestMapping(value = "getEndpointCredentials", params = { "endpointId" }, method = RequestMethod.GET)
-    @ResponseBody
-    public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) throws KaaAdminServiceException {
-        return this.kaaAdminService.getEndpointCredentialsByEndpointId(endpointId);
-    }
-
-    /**
-     * Returns the list of endpoint security credentials for the given
-     * application.
-     *
-     * @param applicationId
-     *        The application ID
-     *
-     * @return The list of endpoint security credentials for the given
-     *         application
-     *
-     * @throws KaaAdminServiceException
-     */
-    @RequestMapping(value = "getEndpointCredentials", params = { "applicationId" }, method = RequestMethod.GET)
-    @ResponseBody
-    public List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) throws KaaAdminServiceException {
-        return this.kaaAdminService.getEndpointCredentialsByApplicationId(applicationId);
-    }
-     
     /**
      * Returns a list of endpoint profiles attached to the endpoint user with
      * the given external ID.

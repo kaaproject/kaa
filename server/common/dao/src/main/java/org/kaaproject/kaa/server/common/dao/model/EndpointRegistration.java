@@ -16,22 +16,25 @@
 
 package org.kaaproject.kaa.server.common.dao.model;
 
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 
 /**
+ * An endpoint registration maps existing credentials to an actual Kaa endpoint.
+ *
+ * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public interface EndpointCredentials extends ToDto<EndpointCredentialsDto> {
+public interface EndpointRegistration extends ToDto<EndpointRegistrationDto> {
 
     String getId();
 
     String getApplicationId();
 
-    byte[] getEndpointKey();
+    String getEndpointId();
 
-    byte[] getEndpointKeyHash();
+    String getCredentialsId();
 
     Integer getServerProfileVersion();
 

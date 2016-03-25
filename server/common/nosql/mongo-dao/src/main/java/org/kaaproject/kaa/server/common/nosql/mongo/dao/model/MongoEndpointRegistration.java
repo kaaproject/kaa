@@ -22,8 +22,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointCredentials;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointRegistration;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,8 +34,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
  *
  * @since v0.9.0
  */
-@Document(collection = MongoModelConstants.ENDPOINT_CREDENTIALS)
-public final class MongoEndpointCredentials implements EndpointCredentials, Serializable {
+@Document(collection = MongoModelConstants.ENDPOINT_REGISTRATION)
+public final class MongoEndpointRegistration implements EndpointRegistration, Serializable {
 
     private static final long serialVersionUID = 1000L;
 
@@ -44,32 +44,33 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     @Id
     private String id;
 
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_APPLICATION_ID)
+    @Field(MongoModelConstants.EP_REGISTRATION_APPLICATION_ID)
     private String applicationId;
 
     @Indexed
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_KEY)
-    private byte[] endpointKey;
+    @Field(MongoModelConstants.EP_REGISTRATION_ENDPOINT_ID)
+    private String endpointId;
 
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_ENDPOINT_KEY_HASH)
-    private byte[] endpointKeyHash;
+    @Indexed
+    @Field(MongoModelConstants.EP_REGISTRATION_CREDENTIALS_ID)
+    private String credentialsId;
 
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_SERVER_PROFILE_VERSION)
+    @Field(MongoModelConstants.EP_REGISTRATION_SERVER_PROFILE_VERSION)
     private Integer serverProfileVersion;
 
-    @Field(MongoModelConstants.ENDPOINT_CREDENTIALS_SERVER_PROFILE_BODY)
+    @Field(MongoModelConstants.EP_REGISTRATION_SERVER_PROFILE_BODY)
     private String serverProfileBody;
 
-    public MongoEndpointCredentials() {
+    public MongoEndpointRegistration() {
     }
 
-    public MongoEndpointCredentials(EndpointCredentialsDto endpointCredentials) {
-        this.id = endpointCredentials.getId();
-        this.applicationId = endpointCredentials.getApplicationId();
-        this.endpointKey = endpointCredentials.getEndpointKey();
-        this.endpointKeyHash = endpointCredentials.getEndpointKeyHash();
-        this.serverProfileVersion = endpointCredentials.getServerProfileVersion();
-        this.serverProfileBody = endpointCredentials.getServerProfileBody();
+    public MongoEndpointRegistration(EndpointRegistrationDto endpointRegistration) {
+        this.id = endpointRegistration.getId();
+        this.applicationId = endpointRegistration.getApplicationId();
+        this.endpointId = endpointRegistration.getEndpointId();
+        this.credentialsId = endpointRegistration.getCredentialsId();
+        this.serverProfileVersion = endpointRegistration.getServerProfileVersion();
+        this.serverProfileBody = endpointRegistration.getServerProfileBody();
     }
 
     @Override
@@ -83,13 +84,13 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     }
 
     @Override
-    public byte[] getEndpointKey() {
-        return this.endpointKey;
+    public String getEndpointId() {
+        return this.endpointId;
     }
 
     @Override
-    public byte[] getEndpointKeyHash() {
-        return this.endpointKeyHash;
+    public String getCredentialsId() {
+        return this.credentialsId;
     }
 
     @Override
@@ -103,25 +104,25 @@ public final class MongoEndpointCredentials implements EndpointCredentials, Seri
     }
 
     @Override
-    public EndpointCredentialsDto toDto() {
-        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
-        endpointCredentials.setId(this.id);
-        endpointCredentials.setApplicationId(this.applicationId);
-        endpointCredentials.setEndpointKey(this.endpointKey);
-        endpointCredentials.setEndpointKeyHash(this.endpointKeyHash);
-        endpointCredentials.setServerProfileVersion(this.serverProfileVersion);
-        endpointCredentials.setServerProfileBody(this.serverProfileBody);
-        return endpointCredentials;
+    public EndpointRegistrationDto toDto() {
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto();
+        endpointRegistration.setId(this.id);
+        endpointRegistration.setApplicationId(this.applicationId);
+        endpointRegistration.setEndpointId(this.endpointId);
+        endpointRegistration.setCredentialsId(this.credentialsId);
+        endpointRegistration.setServerProfileVersion(this.serverProfileVersion);
+        endpointRegistration.setServerProfileBody(this.serverProfileBody);
+        return endpointRegistration;
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, MongoEndpointCredentials.EXCLUDE_FIELDS);
+        return HashCodeBuilder.reflectionHashCode(this, MongoEndpointRegistration.EXCLUDE_FIELDS);
     }
 
     @Override
     public boolean equals(Object other) {
-        return EqualsBuilder.reflectionEquals(this, other, MongoEndpointCredentials.EXCLUDE_FIELDS);
+        return EqualsBuilder.reflectionEquals(this, other, MongoEndpointRegistration.EXCLUDE_FIELDS);
     }
 
     @Override

@@ -17,14 +17,14 @@
 package org.kaaproject.kaa.server.node.service.registration;
 
 /**
- * A checked exception to be thrown by {@link RegistrationService}.
+ * A checked exception to be thrown by {@link EndpointRegistrationService}.
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public class RegistrationServiceException extends Exception {
+public class EndpointRegistrationServiceException extends Exception {
 
     private static final long serialVersionUID = 1000L;
 
@@ -33,7 +33,7 @@ public class RegistrationServiceException extends Exception {
      *
      * @param cause The exception cause
      */
-    public RegistrationServiceException(Throwable cause) {
+    public EndpointRegistrationServiceException(Throwable cause) {
         super(cause);
     }
 
@@ -43,7 +43,7 @@ public class RegistrationServiceException extends Exception {
      * @param message The detail message
      * @param cause The exception cause
      */
-    public RegistrationServiceException(String message, Throwable cause) {
+    public EndpointRegistrationServiceException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -64,10 +64,6 @@
         <property name="topicListEntryDao" ref="topicListEntryDao"/>
     </bean>
 
-    <bean id="endpointVerificationService" class="org.kaaproject.kaa.server.common.dao.service.EndpointVerificationServiceImpl">
-        <property name="endpointCredentialsDao" ref="endpointCredentialsDao"/>
-    </bean>
-
     <bean id="sdkProfileService" class="org.kaaproject.kaa.server.common.dao.service.SdkProfileServiceImpl">
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>

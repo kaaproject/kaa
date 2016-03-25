@@ -38,7 +38,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -1053,40 +1052,6 @@ public class AdminClient {
 
     public UserDto editUserProfile(UserDto userDto) {
         return restTemplate.postForObject(restTemplate.getUrl() + "userProfile", userDto, UserDto.class);
-    }
-
-
-    public EndpointCredentialsDto provideEndpointCredentials(
-            String applicationId,
-            String publicKey,
-            Integer serverProfileVersion,
-            String serverProfileBody)
-                    throws Exception {
-
-        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("applicationId", applicationId);
-        parameters.add("publicKey", publicKey);
-        parameters.add("serverProfileVersion", serverProfileVersion);
-        parameters.add("serverProfileBody", serverProfileBody);
-        return this.restTemplate.postForObject(restTemplate.getUrl() + "provideEndpointCredentials", parameters, EndpointCredentialsDto.class);
-    }
-
-    public void revokeEndpointCredentials(String endpointId) throws Exception {
-        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("endpointId", endpointId);
-        this.restTemplate.postForLocation(restTemplate.getUrl() + "revokeEndpointCredentials", parameters);
-    }
-
-    public EndpointCredentialsDto getEndpointCredentialsByEndpointId(String endpointId) {
-        return this.restTemplate.getForObject(restTemplate.getUrl() + "getEndpointCredentials?endpointId=" + endpointId, EndpointCredentialsDto.class);
-    }
-
-    public List<EndpointCredentialsDto> getEndpointCredentialsByApplicationId(String applicationId) {
-        ParameterizedTypeReference<List<EndpointCredentialsDto>> typeRef = new ParameterizedTypeReference<List<EndpointCredentialsDto>>() {
-        };
-        String address = restTemplate.getUrl() + "getEndpointCredentials?applicationId=" + applicationId;
-        ResponseEntity<List<EndpointCredentialsDto>> response = this.restTemplate.exchange(address, HttpMethod.GET, null, typeRef);
-        return response.getBody();
     }
 
     public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) {

@@ -17,22 +17,22 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import org.kaaproject.kaa.common.dto.CTLDataDto;
-import org.kaaproject.kaa.common.dto.EndpointCredentialsDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointRegistrationDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointCredentials;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointRegistration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
@@ -55,7 +55,7 @@ public abstract class AbstractCassandraTest {
     @Autowired
     protected EndpointProfileDao<CassandraEndpointProfile> endpointProfileDao;
     @Autowired
-    protected EndpointCredentialsDao<CassandraEndpointCredentials> endpointCredentialsDao;
+    protected EndpointRegistrationDao<CassandraEndpointRegistration> endpointRegistrationDao;;
     @Autowired
     protected EndpointUserCassandraDao endpointUserDao;
     @Autowired
@@ -199,23 +199,19 @@ public abstract class AbstractCassandraTest {
         return UUID.randomUUID().toString();
     }
 
-    protected EndpointCredentialsDto generateEndpointCredentials(String applicationId, byte[] endpointKey, byte[] endpointKeyHash) {
-        return this.generateEndpointCredentials(applicationId, endpointKey, endpointKeyHash, null, null);
-    }
-
-    protected EndpointCredentialsDto generateEndpointCredentials(
+    protected EndpointRegistrationDto generateEndpointRegistration(
             String applicationId,
-            byte[] endpointKey,
-            byte[] endpointKeyHash,
+            String endpointId,
+            String credentialsId,
             Integer serverProfileVersion,
             String serverProfileBody) {
 
-        EndpointCredentialsDto endpointCredentials = new EndpointCredentialsDto();
-        endpointCredentials.setApplicationId(applicationId);
-        endpointCredentials.setEndpointKey(endpointKey);
-        endpointCredentials.setEndpointKeyHash(endpointKeyHash);
-        endpointCredentials.setServerProfileVersion(serverProfileVersion);
-        endpointCredentials.setServerProfileBody(serverProfileBody);
-        return this.endpointCredentialsDao.save(endpointCredentials).toDto();
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto();
+        endpointRegistration.setApplicationId(applicationId);
+        endpointRegistration.setEndpointId(endpointId);
+        endpointRegistration.setCredentialsId(credentialsId);
+        endpointRegistration.setServerProfileVersion(serverProfileVersion);
+        endpointRegistration.setServerProfileBody(serverProfileBody);
+        return this.endpointRegistrationDao.save(endpointRegistration).toDto();
     }
 }

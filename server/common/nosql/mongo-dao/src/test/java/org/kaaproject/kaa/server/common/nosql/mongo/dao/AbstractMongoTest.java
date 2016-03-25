@@ -16,21 +16,22 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import java.util.UUID;
+
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointCredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointRegistrationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointCredentials;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointRegistration;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUserConfiguration;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoTopicListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 public class AbstractMongoTest extends AbstractTest {
 
@@ -41,8 +42,6 @@ public class AbstractMongoTest extends AbstractTest {
     @Autowired
     protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
     @Autowired
-    protected EndpointCredentialsDao<MongoEndpointCredentials> endpointCredentialsDao;
-    @Autowired
     protected TopicListEntryDao<MongoTopicListEntry> topicListEntryDao;
 
     protected EndpointConfigurationDto generateEndpointConfiguration() {
@@ -50,5 +49,23 @@ public class AbstractMongoTest extends AbstractTest {
         configurationDto.setConfigurationHash(UUID.randomUUID().toString().getBytes());
         configurationDto.setConfiguration(UUID.randomUUID().toString().getBytes());
         return endpointConfigurationDao.save(new MongoEndpointConfiguration(configurationDto)).toDto();
+    }
+
+    @Autowired
+    protected EndpointRegistrationDao<MongoEndpointRegistration> endpointRegistrationDao;
+
+    /**
+     * Constructs an endpoint registration with the information provided and
+     * saves it to the database.
+     *
+     * @param applicationId The application ID
+     * @param endpointId The endpoint ID
+     * @param credentialsId The credentials ID
+     *
+     * @return The endpoint registration saved
+     */
+    protected EndpointRegistrationDto generateEndpointRegistration(String applicationId, String endpointId, String credentialsId) {
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(applicationId, endpointId, credentialsId, null, null);
+        return this.endpointRegistrationDao.save(endpointRegistration).toDto();
     }
 }
