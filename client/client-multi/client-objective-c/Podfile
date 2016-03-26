@@ -4,6 +4,7 @@
 target 'libKaa.a' do
   pod 'CocoaLumberjack'
   pod 'AFNetworking', '~> 3.x'
+  pod 'sqlite3'
 end
 
 target :KaaTests, :exclusive => true do
