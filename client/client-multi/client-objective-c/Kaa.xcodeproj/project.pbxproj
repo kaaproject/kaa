@@ -107,6 +107,11 @@
 		B86212401BE3CEAB005C5FE7 /* DefaultKaaPlatformContext.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B86229E71BE352EF0045ED0D /* DefaultKaaPlatformContext.h */; };
 		B86229E91BE352EF0045ED0D /* DefaultKaaPlatformContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B86229E71BE352EF0045ED0D /* DefaultKaaPlatformContext.h */; };
 		B86229EA1BE352EF0045ED0D /* DefaultKaaPlatformContext.m in Sources */ = {isa = PBXBuildFile; fileRef = B86229E81BE352EF0045ED0D /* DefaultKaaPlatformContext.m */; };
+		B86AB6511CA40475002B195C /* SQLiteLogStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B86AB64F1CA40475002B195C /* SQLiteLogStorage.h */; };
+		B86AB6521CA40475002B195C /* SQLiteLogStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = B86AB6501CA40475002B195C /* SQLiteLogStorage.m */; };
+		B86AB65B1CA57C4C002B195C /* SQLiteLogStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B86AB64F1CA40475002B195C /* SQLiteLogStorage.h */; };
+		B86AB65C1CA57C4C002B195C /* PersistentLogStorageConstants.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B86AB6531CA409FE002B195C /* PersistentLogStorageConstants.h */; };
+		B86AB6651CA59121002B195C /* libsqlite3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B86AB6641CA59121002B195C /* libsqlite3.a */; };
 		B87629A41B8DA6E8006AD5EF /* KaaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B87629A31B8DA6DF006AD5EF /* KaaClient.h */; };
 		B87E26041C0896BB00E47D24 /* KaaExceptions.h in Copy Files */ = {isa = PBXBuildFile; fileRef = E847D1E31C03342200147BAE /* KaaExceptions.h */; };
 		B88836201BA0930600ACAB4F /* AbstractKaaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B888361E1BA0930600ACAB4F /* AbstractKaaClient.h */; };
@@ -519,6 +524,8 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				B86AB65B1CA57C4C002B195C /* SQLiteLogStorage.h in Copy Files */,
+				B86AB65C1CA57C4C002B195C /* PersistentLogStorageConstants.h in Copy Files */,
 				B80F30FB1C737BA200A9D962 /* TopicListHashCalculator.h in Copy Files */,
 				B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */,
 				B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */,
@@ -759,6 +766,10 @@
 		B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractLogCollectorTests.m; sourceTree = "<group>"; };
 		B86229E71BE352EF0045ED0D /* DefaultKaaPlatformContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultKaaPlatformContext.h; sourceTree = "<group>"; };
 		B86229E81BE352EF0045ED0D /* DefaultKaaPlatformContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultKaaPlatformContext.m; sourceTree = "<group>"; };
+		B86AB64F1CA40475002B195C /* SQLiteLogStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteLogStorage.h; sourceTree = "<group>"; };
+		B86AB6501CA40475002B195C /* SQLiteLogStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLiteLogStorage.m; sourceTree = "<group>"; };
+		B86AB6531CA409FE002B195C /* PersistentLogStorageConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistentLogStorageConstants.h; sourceTree = "<group>"; };
+		B86AB6641CA59121002B195C /* libsqlite3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlite3.a; path = "Pods/../build/Release-iphoneos/libsqlite3.a"; sourceTree = "<group>"; };
 		B87629A31B8DA6DF006AD5EF /* KaaClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KaaClient.h; sourceTree = "<group>"; };
 		B888361E1BA0930600ACAB4F /* AbstractKaaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractKaaClient.h; sourceTree = "<group>"; };
 		B888361F1BA0930600ACAB4F /* AbstractKaaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractKaaClient.m; sourceTree = "<group>"; };
@@ -1033,6 +1044,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B86AB6651CA59121002B195C /* libsqlite3.a in Frameworks */,
 				B8EC91BF1BC4058600D3723B /* libAFNetworking.a in Frameworks */,
 				B8EC91C01BC4058600D3723B /* libCocoaLumberjack.a in Frameworks */,
 				B81935B91B15C3880053486A /* Security.framework in Frameworks */,
@@ -1150,6 +1162,7 @@
 		B836A1101C48E9E000376A6B /* log */ = {
 			isa = PBXGroup;
 			children = (
+				B86AB64E1CA40454002B195C /* sqlite */,
 				B836A1261C48E9E000376A6B /* memory */,
 				B836A12B1C48E9E000376A6B /* strategy */,
 				B836A1111C48E9E000376A6B /* AbstractLogCollector.h */,
@@ -1216,6 +1229,16 @@
 				B836A1631C48EABD00376A6B /* HttpRequestCreator.m */,
 			);
 			path = http;
+			sourceTree = "<group>";
+		};
+		B86AB64E1CA40454002B195C /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				B86AB64F1CA40475002B195C /* SQLiteLogStorage.h */,
+				B86AB6501CA40475002B195C /* SQLiteLogStorage.m */,
+				B86AB6531CA409FE002B195C /* PersistentLogStorageConstants.h */,
+			);
+			name = sqlite;
 			sourceTree = "<group>";
 		};
 		B8CCBD5D1C4664D800C26F0B /* avro */ = {
@@ -1778,6 +1801,7 @@
 		DC516A0F99C6ED7A58E70F4C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B86AB6641CA59121002B195C /* libsqlite3.a */,
 				B8EC91BD1BC4058600D3723B /* libAFNetworking.a */,
 				B8EC91BE1BC4058600D3723B /* libCocoaLumberjack.a */,
 				DF8CCE0CCC93539D61CC4CDC /* libPods-libKaa.a.a */,
@@ -1855,6 +1879,7 @@
 				B8CCBED01C4676FD00C26F0B /* NotificationCommon.h in Headers */,
 				B8CCBDBC1C46679A00C26F0B /* AbstractExecutorContext.h in Headers */,
 				B836A16D1C48EB3600376A6B /* DefaultLogUploadStrategy.h in Headers */,
+				B86AB6511CA40475002B195C /* SQLiteLogStorage.h in Headers */,
 				B8CCBE8D1C4673B500C26F0B /* UserTransport.h in Headers */,
 				B8CCBEC51C46762A00C26F0B /* UserVerifierConstants.h in Headers */,
 				B8CCBD881C4664D800C26F0B /* avro_private.h in Headers */,
@@ -2162,6 +2187,7 @@
 				B8CCBE8C1C4673B500C26F0B /* TransportProtocolIdHolder.m in Sources */,
 				B8CCBF331C4678C400C26F0B /* DefaultProfileManager.m in Sources */,
 				B8CCBE511C4673B500C26F0B /* KAAMqttFrame.m in Sources */,
+				B86AB6521CA40475002B195C /* SQLiteLogStorage.m in Sources */,
 				B8CCBDA91C4664D800C26F0B /* KAAUnion.m in Sources */,
 				B8CCBE791C4673B500C26F0B /* DefaultUserTransport.m in Sources */,
 				B836A13C1C48E9E000376A6B /* BucketRunner.m in Sources */,
@@ -2391,6 +2417,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/build/Release-iphoneos",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "$(inherited)";
@@ -2408,6 +2435,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/build/Release-iphoneos",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "$(inherited)";
