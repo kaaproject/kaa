@@ -484,8 +484,6 @@
 		B8CCC05F1C467EAB00C26F0B /* KaaTcpMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC0321C467EAB00C26F0B /* KaaTcpMessageTest.m */; };
 		B8CCC0601C467EAB00C26F0B /* MessageFactoryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC0331C467EAB00C26F0B /* MessageFactoryTest.m */; };
 		B8CCC0611C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC0351C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m */; };
-		B8CCC0621C467EAB00C26F0B /* MemBucketTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC0371C467EAB00C26F0B /* MemBucketTest.m */; };
-		B8CCC0631C467EAB00C26F0B /* MemLogStorageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC0381C467EAB00C26F0B /* MemLogStorageTest.m */; };
 		B8CCC0641C467EAB00C26F0B /* PeriodicLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC03A1C467EAB00C26F0B /* PeriodicLogUploadStrategyTest.m */; };
 		B8CCC0651C467EAB00C26F0B /* RecordCountLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC03B1C467EAB00C26F0B /* RecordCountLogUploadStrategyTest.m */; };
 		B8CCC0661C467EAB00C26F0B /* RecordCountWithTimeLimitLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCC03C1C467EAB00C26F0B /* RecordCountWithTimeLimitLogUploadStrategyTest.m */; };
@@ -500,6 +498,10 @@
 		B8EC91BF1BC4058600D3723B /* libAFNetworking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8EC91BD1BC4058600D3723B /* libAFNetworking.a */; };
 		B8EC91C01BC4058600D3723B /* libCocoaLumberjack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8EC91BE1BC4058600D3723B /* libCocoaLumberjack.a */; };
 		B8EC97931BF0992100F4B4CC /* KaaDefaults.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8A0B5111BEF65FA00105DFE /* KaaDefaults.h */; };
+		B8EE47A81CA724FB008F996A /* LogTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47A71CA724FB008F996A /* LogTestHelper.m */; };
+		B8EE47AD1CA7251D008F996A /* CommonLogStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47AA1CA7251D008F996A /* CommonLogStorageTests.m */; };
+		B8EE47AE1CA7251D008F996A /* MemBucketTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47AB1CA7251D008F996A /* MemBucketTest.m */; };
+		B8EE47AF1CA7251D008F996A /* PersistentLogStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47AC1CA7251D008F996A /* PersistentLogStorageTests.m */; };
 		B8F14E251BD8E200001D1B02 /* BaseKaaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B8F14E221BD8E200001D1B02 /* BaseKaaClient.h */; };
 		B8F14E261BD8E200001D1B02 /* BaseKaaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F14E231BD8E200001D1B02 /* BaseKaaClient.m */; };
 		B8FBD9F71B9E35B4009A2BA3 /* KaaClientPlatformContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B8FBD9F61B9E35B4009A2BA3 /* KaaClientPlatformContext.h */; };
@@ -1016,8 +1018,6 @@
 		B8CCC0321C467EAB00C26F0B /* KaaTcpMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaTcpMessageTest.m; sourceTree = "<group>"; };
 		B8CCC0331C467EAB00C26F0B /* MessageFactoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageFactoryTest.m; sourceTree = "<group>"; };
 		B8CCC0351C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DefaultLogUploadStrategyTest.m; path = ../DefaultLogUploadStrategyTest.m; sourceTree = "<group>"; };
-		B8CCC0371C467EAB00C26F0B /* MemBucketTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemBucketTest.m; sourceTree = "<group>"; };
-		B8CCC0381C467EAB00C26F0B /* MemLogStorageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemLogStorageTest.m; sourceTree = "<group>"; };
 		B8CCC03A1C467EAB00C26F0B /* PeriodicLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeriodicLogUploadStrategyTest.m; sourceTree = "<group>"; };
 		B8CCC03B1C467EAB00C26F0B /* RecordCountLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordCountLogUploadStrategyTest.m; sourceTree = "<group>"; };
 		B8CCC03C1C467EAB00C26F0B /* RecordCountWithTimeLimitLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordCountWithTimeLimitLogUploadStrategyTest.m; sourceTree = "<group>"; };
@@ -1031,6 +1031,11 @@
 		B8EC91BB1BC3E77500D3723B /* KaaClientPropertiesStateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientPropertiesStateTest.m; sourceTree = "<group>"; };
 		B8EC91BD1BC4058600D3723B /* libAFNetworking.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAFNetworking.a; path = "Pods/../build/Debug-iphoneos/libAFNetworking.a"; sourceTree = "<group>"; };
 		B8EC91BE1BC4058600D3723B /* libCocoaLumberjack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaLumberjack.a; path = "Pods/../build/Debug-iphoneos/libCocoaLumberjack.a"; sourceTree = "<group>"; };
+		B8EE47A61CA724F3008F996A /* LogTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogTestHelper.h; sourceTree = "<group>"; };
+		B8EE47A71CA724FB008F996A /* LogTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogTestHelper.m; sourceTree = "<group>"; };
+		B8EE47AA1CA7251D008F996A /* CommonLogStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonLogStorageTests.m; sourceTree = "<group>"; };
+		B8EE47AB1CA7251D008F996A /* MemBucketTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemBucketTest.m; sourceTree = "<group>"; };
+		B8EE47AC1CA7251D008F996A /* PersistentLogStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentLogStorageTests.m; sourceTree = "<group>"; };
 		B8F14E221BD8E200001D1B02 /* BaseKaaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseKaaClient.h; sourceTree = "<group>"; };
 		B8F14E231BD8E200001D1B02 /* BaseKaaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseKaaClient.m; sourceTree = "<group>"; };
 		B8FBD9F61B9E35B4009A2BA3 /* KaaClientPlatformContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaClientPlatformContext.h; sourceTree = "<group>"; };
@@ -1724,21 +1729,14 @@
 		B8CCC0341C467EAB00C26F0B /* logging */ = {
 			isa = PBXGroup;
 			children = (
-				B8CCC0361C467EAB00C26F0B /* memory */,
+				B8EE47A91CA7251D008F996A /* storage */,
 				B8CCC0391C467EAB00C26F0B /* strategies */,
 				B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */,
 				B8C794871C9337B7009469EB /* LogDeliveryCallbackTests.m */,
+				B8EE47A71CA724FB008F996A /* LogTestHelper.m */,
+				B8EE47A61CA724F3008F996A /* LogTestHelper.h */,
 			);
 			path = logging;
-			sourceTree = "<group>";
-		};
-		B8CCC0361C467EAB00C26F0B /* memory */ = {
-			isa = PBXGroup;
-			children = (
-				B8CCC0371C467EAB00C26F0B /* MemBucketTest.m */,
-				B8CCC0381C467EAB00C26F0B /* MemLogStorageTest.m */,
-			);
-			path = memory;
 			sourceTree = "<group>";
 		};
 		B8CCC0391C467EAB00C26F0B /* strategies */ = {
@@ -1785,6 +1783,16 @@
 				B8CCC0471C467EAB00C26F0B /* AbstractHttpClientTest.m */,
 			);
 			path = transport;
+			sourceTree = "<group>";
+		};
+		B8EE47A91CA7251D008F996A /* storage */ = {
+			isa = PBXGroup;
+			children = (
+				B8EE47AA1CA7251D008F996A /* CommonLogStorageTests.m */,
+				B8EE47AB1CA7251D008F996A /* MemBucketTest.m */,
+				B8EE47AC1CA7251D008F996A /* PersistentLogStorageTests.m */,
+			);
+			path = storage;
 			sourceTree = "<group>";
 		};
 		D52D551C6A09083F2656BDB7 /* Pods */ = {
@@ -2270,10 +2278,10 @@
 				B8CCC0551C467EAB00C26F0B /* DefaultOperationHttpChannelTest.m in Sources */,
 				B8CCC04F1C467EAB00C26F0B /* DefaultConfigurationTransportTest.m in Sources */,
 				B8CCC05F1C467EAB00C26F0B /* KaaTcpMessageTest.m in Sources */,
-				B8CCC0621C467EAB00C26F0B /* MemBucketTest.m in Sources */,
 				B8CCC0501C467EAB00C26F0B /* DefaultEventTransportTest.m in Sources */,
 				B8CCC0561C467EAB00C26F0B /* DefaultOperationTcpChannelTest.m in Sources */,
 				B8CCC04E1C467EAB00C26F0B /* DefaultChannelManagerTest.m in Sources */,
+				B8EE47A81CA724FB008F996A /* LogTestHelper.m in Sources */,
 				B8CCC06B1C467EAB00C26F0B /* KeyUtilsTests.m in Sources */,
 				B8CCC0511C467EAB00C26F0B /* DefaultLogTransportTest.m in Sources */,
 				B8CCC04B1C467EAB00C26F0B /* DefaultBootstrapChannelTest.m in Sources */,
@@ -2291,19 +2299,21 @@
 				B843B49E1BE67F950060519D /* TestsHelper.m in Sources */,
 				B8CCC05E1C467EAB00C26F0B /* DefaultEndpointRegistrationManagerTest.m in Sources */,
 				B8CCC05D1C467EAB00C26F0B /* EventManagerTest.m in Sources */,
+				B8EE47AF1CA7251D008F996A /* PersistentLogStorageTests.m in Sources */,
+				B8EE47AD1CA7251D008F996A /* CommonLogStorageTests.m in Sources */,
 				B8EC91BC1BC3E77500D3723B /* KaaClientPropertiesStateTest.m in Sources */,
 				B8CCC0541C467EAB00C26F0B /* DefaultOperationDataProcessorTest.m in Sources */,
 				B8CCC06C1C467EAB00C26F0B /* MessageEncoderDecoderTests.m in Sources */,
 				B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */,
 				B8CCC0611C467EAB00C26F0B /* DefaultLogUploadStrategyTest.m in Sources */,
 				B8CCC05A1C467EAB00C26F0B /* IPTransportInfoTest.m in Sources */,
+				B8EE47AE1CA7251D008F996A /* MemBucketTest.m in Sources */,
 				B8CCC0521C467EAB00C26F0B /* DefaultMetaDataTransportTest.m in Sources */,
 				B8CCC04A1C467EAB00C26F0B /* DefaultBootstrapManagerTest.m in Sources */,
 				B8CCC0641C467EAB00C26F0B /* PeriodicLogUploadStrategyTest.m in Sources */,
 				391A91A31BBE604C00DBA851 /* EndPointObjectHashTest.m in Sources */,
 				B8CCC05B1C467EAB00C26F0B /* KAASocketTest.m in Sources */,
 				B8CCC05C1C467EAB00C26F0B /* SyncTaskTest.m in Sources */,
-				B8CCC0631C467EAB00C26F0B /* MemLogStorageTest.m in Sources */,
 				B8CCC0591C467EAB00C26F0B /* DefaultUserTransportTest.m in Sources */,
 				B8CCC04C1C467EAB00C26F0B /* DefaultBootstrapDataProcessorTest.m in Sources */,
 			);
