@@ -76,7 +76,7 @@
     NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
                                                                                 URLString:urlString
                                                                                parameters:nil
-                                                                constructingBodyWithBlock:^(id <AFMultipartFormData>formData) {
+                                                                constructingBodyWithBlock:^(id<AFMultipartFormData>formData) {
                                                                     for (NSString *key in entity.allKeys) {
                                                                         [formData appendPartWithFormData:entity[key] name:key];
                                                                     }

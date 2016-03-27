@@ -61,7 +61,7 @@
 
 - (void)testProfileManager {
     
-    id <ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
+    id<ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
     TestProfileContainer *container = [[TestProfileContainer alloc] init];
     
     DefaultProfileManager *profileManager =  [[DefaultProfileManager alloc] initWithTransport:transport];

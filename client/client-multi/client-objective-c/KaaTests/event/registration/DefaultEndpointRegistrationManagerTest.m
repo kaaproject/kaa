@@ -46,7 +46,7 @@
 
 @interface DefaultEndpointRegistrationManagerTest : XCTestCase
 
-@property (nonatomic, strong) id <ExecutorContext> executorContext;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 @property (nonatomic, strong) NSOperationQueue *executor;
 
 @end
@@ -64,10 +64,10 @@
 
 - (void)testCheckUserAttachWithNoDefaultVerifier {
     @try {
-        id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+        id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
         [given([state endpointAccessToken]) willReturn:@""];
         
-        id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
+        id<UserTransport> transport = mockProtocol(@protocol(UserTransport));
         DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
         
         [manager attachUserWithId:@"verifierToken" userAccessToken:@"externalId" delegate:nil];
@@ -79,10 +79,10 @@
 }
 
 - (void)testCheckUserAttachWithCustomVerifier {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     
-    id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
+    id<UserTransport> transport = mockProtocol(@protocol(UserTransport));
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     
     [manager attachUserWithVerifierToken:@"verificationToken" userExternalId:@"externalId" userAccessToken:@"token" delegate:nil];
@@ -90,11 +90,11 @@
 }
 
 - (void)testCheckAttachEndpoint {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
-    id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
+    id<UserTransport> transport = mockProtocol(@protocol(UserTransport));
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
-    id <OnAttachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnAttachEndpointOperationDelegate));
+    id<OnAttachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnAttachEndpointOperationDelegate));
     
     EndpointAccessToken *token1 = [[EndpointAccessToken alloc] initWithToken:@"accessToken1"];
     EndpointAccessToken *token2 = [[EndpointAccessToken alloc] initWithToken:@"accessToken2"];
@@ -108,10 +108,10 @@
 }
 
 - (void)testcheckDetachEndpoint {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
-    id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
-    id <OnDetachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnDetachEndpointOperationDelegate));
+    id<UserTransport> transport = mockProtocol(@protocol(UserTransport));
+    id<OnDetachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnDetachEndpointOperationDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     [manager detachEndpointWithKeyHash:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash1"] delegate:delegate];
@@ -123,10 +123,10 @@
 }
 
 - (void)testCheckAttachUser {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     
-    id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
+    id<UserTransport> transport = mockProtocol(@protocol(UserTransport));
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     ConcreteUserAttachDelegate *delegate = [[ConcreteUserAttachDelegate alloc] init];
     [manager attachUserWithVerifierToken:@"externalId" userExternalId:@"userExternalId" userAccessToken:@"userAccessToke" delegate:delegate];
@@ -191,13 +191,13 @@
 }
 
 - (void)testCheckOnAttachedDelegate {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     UserAttachNotification *attachNotification = [[UserAttachNotification alloc] init];
     attachNotification.userExternalId = @"foo";
     attachNotification.endpointAccessToken = @"bar";
     
-    id <AttachEndpointToUserDelegate> delegate = mockProtocol(@protocol(AttachEndpointToUserDelegate));
+    id<AttachEndpointToUserDelegate> delegate = mockProtocol(@protocol(AttachEndpointToUserDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
     [manager setAttachDelegate:nil];
@@ -223,12 +223,12 @@
 }
 
 - (void)testCheckOnDetachedDelegate {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     UserDetachNotification *detachedNotification = [[UserDetachNotification alloc] init];
     detachedNotification.endpointAccessToken = @"foo";
 
-    id <DetachEndpointFromUserDelegate> delegate = mockProtocol(@protocol(DetachEndpointFromUserDelegate));
+    id<DetachEndpointFromUserDelegate> delegate = mockProtocol(@protocol(DetachEndpointFromUserDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
     [manager setDetachDelegate:nil];
