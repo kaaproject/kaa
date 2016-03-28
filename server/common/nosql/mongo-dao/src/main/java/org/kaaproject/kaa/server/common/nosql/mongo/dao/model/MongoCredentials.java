@@ -35,17 +35,19 @@ public class MongoCredentials implements Credentials, Serializable {
 
     @Id
     private String id;
+    @Field(CREDENTIALS_APPLICATION_ID)
+    private String applicationId;
     @Field(CREDENTIALS_BODY)
     private byte[] credentialsBody;
     @Field(CREDENTIAL_STATUS)
     private CredentialsStatus status;
 
     public MongoCredentials() {
-        // An empty constructor for Spring
     }
 
-    public MongoCredentials(CredentialsDto dto) {
+    public MongoCredentials(String applicationId, CredentialsDto dto) {
         this.id = dto.getId();
+        this.applicationId = applicationId;
         this.credentialsBody = Arrays.copyOf(dto.getCredentialsBody(), dto.getCredentialsBody().length);
         this.status = dto.getStatus();
     }
@@ -60,6 +62,14 @@ public class MongoCredentials implements Credentials, Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getApplicationId() {
+        return this.applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
     }
 
     public byte[] getCredentialsBody() {
@@ -78,34 +88,57 @@ public class MongoCredentials implements Credentials, Serializable {
         this.status = status;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        MongoCredentials that = (MongoCredentials) o;
-
-        if (!Arrays.equals(credentialsBody, that.credentialsBody)) return false;
-        if (status != that.status) return false;
-
-        return true;
-    }
-
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(credentialsBody);
-        result = 31 * result + status.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.applicationId == null) ? 0 : this.applicationId.hashCode());
+        result = prime * result + Arrays.hashCode(this.credentialsBody);
+        result = prime * result + ((this.status == null) ? 0 : this.status.hashCode());
         return result;
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MongoCredentials other = (MongoCredentials) obj;
+        if (this.applicationId == null) {
+            if (other.applicationId != null) {
+                return false;
+            }
+        } else if (!this.applicationId.equals(other.applicationId)) {
+            return false;
+        }
+        if (!Arrays.equals(this.credentialsBody, other.credentialsBody)) {
+            return false;
+        }
+        if (this.status != other.status) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "MongoCredential{" +
-                "id='" + id + '\'' +
-                ", credentialsBody=" + Arrays.toString(credentialsBody) +
-                ", status=" + status +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append("MongoCredentials [id=");
+        builder.append(this.id);
+        builder.append(", applicationId=");
+        builder.append(this.applicationId);
+        builder.append(", credentialsBody=");
+        builder.append(Arrays.toString(this.credentialsBody));
+        builder.append(", status=");
+        builder.append(this.status);
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override

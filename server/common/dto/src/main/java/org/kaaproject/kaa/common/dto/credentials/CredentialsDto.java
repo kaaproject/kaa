@@ -27,13 +27,22 @@ import org.kaaproject.kaa.common.dto.HasId;
  *
  * @since v0.9.0
  */
-public final class CredentialsDto implements HasId, Serializable {
+public class CredentialsDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 1000L;
 
     private String id;
     private byte[] credentialsBody;
-    private CredentialsStatus status;
+    private CredentialsStatus status = CredentialsStatus.AVAILABLE;
+
+    public CredentialsDto() {
+    }
+
+    public CredentialsDto(String id, byte[] credentialsBody, CredentialsStatus status) {
+        this.id = id;
+        this.credentialsBody = Arrays.copyOf(credentialsBody, credentialsBody.length);
+        this.status = status;
+    }
 
     @Override
     public String getId() {
