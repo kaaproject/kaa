@@ -22,6 +22,5 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 public interface Credentials extends ToDto<CredentialsDto> {
 
     String getId();
-    byte[] getCredentialsBody();
     CredentialsStatus getStatus();
 }

@@ -24,6 +24,10 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_APPLICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_STATUS_PROPERTY;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
@@ -33,10 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.nio.ByteBuffer;
-
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.CREDENTIALS_STATUS_PROPERTY;
 
 @Repository
 public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCredentials, ByteBuffer> implements CredentialsDao<CassandraCredentials> {
@@ -54,31 +54,37 @@ public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCrede
     }
 
     @Override
-    public CassandraCredentials save(CredentialsDto dto) {
-        LOG.debug("Saving {}", dto.toString());
-        return save(new CassandraCredentials(dto));
+    public CassandraCredentials save(String applicationId, CredentialsDto credentials) {
+        LOG.debug("Saving {}", credentials.toString());
+        return save(new CassandraCredentials(applicationId, credentials));
     }
 
     @Override
-    public CassandraCredentials findById(String id) {
-        LOG.debug("Searching credential by ID[{}]", id);
-        Select.Where query = select().from(getColumnFamilyName()).where(eq(CREDENTIALS_ID_PROPERTY, id));
+    public CassandraCredentials find(String applicationId, String credentialsId) {
+        LOG.debug("Searching credential by applicationID[{}] and credentialsID[{}]", applicationId, credentialsId);
+        Select.Where query = select().from(getColumnFamilyName()).
+                where(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
+                and(eq(CREDENTIALS_ID_PROPERTY, credentialsId));
         return findOneByStatement(query);
     }
 
     @Override
-    public CassandraCredentials updateStatusById(String id, CredentialsStatus status) {
-        LOG.debug("Updating credentials status with ID[{}] to STATUS[{}]", id, status.toString());
-        Update.Assignments query = update(getColumnFamilyName()).where(eq(CREDENTIALS_ID_PROPERTY, id)).
+    public CassandraCredentials updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
+        LOG.debug("Updating credentials status with applicationID[{}] and credentialsID[{}] to STATUS[{}]",
+                applicationId, credentialsId, status.toString());
+        Update.Assignments query = update(getColumnFamilyName()).where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
+                and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
                 with(set(CREDENTIALS_STATUS_PROPERTY, status.toString()));
         execute(query);
-        return findById(id);
+        return find(applicationId, credentialsId);
     }
 
     @Override
-    public void removeById(String id) {
-        LOG.debug("Deleting credential by ID[{}]", id);
-        Delete.Where query = delete().from(getColumnFamilyName()).where(eq(CREDENTIALS_ID_PROPERTY, id));
+    public void remove(String applicationId, String credentialsId) {
+        LOG.debug("Deleting credential by applicationID[{}] and credentialsID[{}]", applicationId, credentialsId);
+        Delete.Where query = delete().from(getColumnFamilyName()).
+                where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
+                and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId));
         execute(query);
     }
 }

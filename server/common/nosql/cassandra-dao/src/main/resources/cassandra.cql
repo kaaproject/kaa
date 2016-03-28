@@ -143,3 +143,11 @@ CREATE TABLE IF NOT EXISTS kaa.creds_id_ep_registration (
     creds_id text PRIMARY KEY,
     ep_id text
 );
+
+CREATE TABLE IF NOT EXISTS kaa.credentials (
+    creds_application_id text,
+    creds_id text,
+    creds_body blob,
+    creds_status text,
+    PRIMARY KEY (creds_application_id, creds_id)
+);
