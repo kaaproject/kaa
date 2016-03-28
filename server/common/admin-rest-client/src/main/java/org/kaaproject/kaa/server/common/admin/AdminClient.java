@@ -63,6 +63,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -1059,5 +1060,35 @@ public class AdminClient {
         ParameterizedTypeReference<List<EndpointProfileDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileDto>>() {};
         ResponseEntity<List<EndpointProfileDto>> response = this.restTemplate.exchange(address, HttpMethod.GET, null, typeRef);
         return response.getBody();
+    }
+
+    public CredentialsDto provisionCredentials (String applicationId, String credentials) {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationId", applicationId);
+        parameters.add("credentials", credentials);
+        return this.restTemplate.postForObject(restTemplate.getUrl() + "provisionCredentials", parameters, CredentialsDto.class);
+    }
+
+    public void provisionRegistrationInfo(String applicationId, String credentialsId, Integer serverSideEPProfileVersion, String serverSideEPProfileBody){
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationId", applicationId);
+        parameters.add("credentialsId", credentialsId);
+        parameters.add("serverSideEPProfileVersion", serverSideEPProfileVersion);
+        parameters.add("serverSideEPProfileBody", serverSideEPProfileBody);
+
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistrationInfo", parameters);
+
+    }
+
+    public void revokeCredentials(String credentialsId){
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("credentialsId", credentialsId);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "revokeCredentials", parameters);
+    }
+
+    public void onCredentialsRevoked(String credentialsId){
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("credentialsId", credentialsId);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
     }
 }
