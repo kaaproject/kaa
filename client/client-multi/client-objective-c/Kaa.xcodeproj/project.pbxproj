@@ -24,6 +24,8 @@
 		B8082F1F1CA965AD008FDE7B /* PersistentLogStorageConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = B8082F1C1CA965AD008FDE7B /* PersistentLogStorageConstants.h */; };
 		B8082F201CA965AD008FDE7B /* SQLiteLogStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B8082F1D1CA965AD008FDE7B /* SQLiteLogStorage.h */; };
 		B8082F211CA965AD008FDE7B /* SQLiteLogStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = B8082F1E1CA965AD008FDE7B /* SQLiteLogStorage.m */; };
+		B8082F3A1CA9671E008FDE7B /* PersistentLogStorageConstants.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8082F1C1CA965AD008FDE7B /* PersistentLogStorageConstants.h */; };
+		B8082F3B1CA9671E008FDE7B /* SQLiteLogStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8082F1D1CA965AD008FDE7B /* SQLiteLogStorage.h */; };
 		B80F30FB1C737BA200A9D962 /* TopicListHashCalculator.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 392356A81C56647800BCA885 /* TopicListHashCalculator.h */; };
 		B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A15E1C48EABD00376A6B /* AbstractHttpClient.h */; };
 		B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1601C48EABD00376A6B /* DefaultHttpClient.h */; };
@@ -525,6 +527,8 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				B8082F3A1CA9671E008FDE7B /* PersistentLogStorageConstants.h in Copy Files */,
+				B8082F3B1CA9671E008FDE7B /* SQLiteLogStorage.h in Copy Files */,
 				B80F30FB1C737BA200A9D962 /* TopicListHashCalculator.h in Copy Files */,
 				B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */,
 				B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */,
