@@ -1,6 +1,11 @@
 {% assign page_dir = page.dir | append: '/' | replace: '//' , '/' %}
-{% assign navtree = site.data.menu[page_dir].subitems %}
-
+{% for item in site.data.menu %}
+  {% assign key = item[0] %}
+  {% assign val = item[1] %}
+  {% if page_dir contains key %}
+    {% assign navtree = site.data.menu[key].subitems %}
+  {% endif %}  
+{% endfor %}
 
 <div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar">
               

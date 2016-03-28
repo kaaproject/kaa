@@ -1,8 +1,8 @@
-    {% assign navurl = page.nav %}
-    {% assign navurl =  page.nav | replace: '/:path' , '' %}
+    <!--{% assign navurl =  page.url | replace: '/:path' , '' %}
     {% assign navurl =  navurl | prepend: page.dir %}
-    {% assign navurl =  navurl | replace: '//' , '/' %}
+    {% assign navurl =  navurl | replace: '//' , '/' %}-->
     {% assign next_lvl = include.lvl | plus: 1 %}
+    {% assign navurl = page.url %}
     {% for item in include.nav %}
     
         {% assign key = item[0] %}
@@ -22,7 +22,7 @@
             <a class="{{ li-class }} li-{{ include.lvl }}" href="{{ val.url }}">{{ val.text }}{{ postfix }}</a>
           {% endif %}  
         </li>
-        {% if val.subitems and navurl contains val.nav %}
+        {% if val.subitems and navurl contains val.url %}
          
             {% include nav.html nav=val.subitems lvl=next_lvl %}
          

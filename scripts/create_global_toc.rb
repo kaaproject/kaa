@@ -64,8 +64,10 @@ class GlobalMenu
   # Load all markdown files and parce yaml headers to extract nav information
   ##   
   def loadDoc(key)
-    Dir.glob("#{key}/*.md") do |md_file|
-#       puts md_file
+    
+    Dir.glob("#{key}/**/index.md") do |md_file|
+      dirname = File.dirname(md_file)
+      puts dirname
       header = YAML.load(loadHeader(md_file))
       if header.has_key?('permalink')
         permalink = header['nav']
@@ -77,8 +79,8 @@ class GlobalMenu
         end
         node = createPath(path)
 #         puts permalink
-        node['url'] = header['permalink'].gsub(":path","#{key}")
-        node['nav'] = permalink
+        node['url'] = header['permalink'].gsub(":path","#{dirname}")
+        #node['nav'] = permalink
         if header.has_key?('sort_idx')
           node['_sort_idx'] = header['sort_idx']
         else
