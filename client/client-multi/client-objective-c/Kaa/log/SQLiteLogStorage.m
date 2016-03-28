@@ -47,6 +47,7 @@
 
 - (void)openDBAtPath:(NSString *)path;
 - (void)executeQuery:(NSString *)statement;
+- (sqlite3_stmt *)statementForQuery:(NSString *)query;
 
 - (void)truncateIfBucketSizeIncompatible;
 - (void)retrieveConsumedSizeAndVolume;
@@ -108,47 +109,40 @@
     @synchronized(self) {
         DDLogVerbose(@"%@ Adding new log record", TAG);
         
-        sqlite3_stmt *statement;
-        int resultCode = sqlite3_prepare(self.database, [KAA_INSERT_NEW_RECORD UTF8String], LENGTH_UNLIMITED, &statement, NULL);
+        sqlite3_stmt *statement = [self statementForQuery:KAA_INSERT_NEW_RECORD];
         
-        if (resultCode == SQLITE_OK) {
-            int64_t leftConsumedSize = self.maxBucketSize - self.currentBucketSize;
-            int64_t leftRecordCount = self.maxBucketRecordCount - self.currentRecordCount;
+        int64_t leftConsumedSize = self.maxBucketSize - self.currentBucketSize;
+        int64_t leftRecordCount = self.maxBucketRecordCount - self.currentRecordCount;
+        
+        if (leftConsumedSize < [record getSize] || leftRecordCount == 0) {
+            [self moveToNextBucket];
+        }
+        
+        sqlite3_bind_int64(statement, 1, self.currentBucketId);
+        sqlite3_bind_blob(statement, 2, [record.data bytes], (int32_t)record.data.length, SQLITE_TRANSIENT);
+        
+        if (sqlite3_step(statement) == SQLITE_DONE) {
             
-            if (leftConsumedSize < [record getSize] || leftRecordCount == 0) {
-                [self moveToNextBucket];
-            }
-            
-            sqlite3_bind_int64(statement, 1, self.currentBucketId);
-            sqlite3_bind_blob(statement, 2, [record.data bytes], (int32_t)record.data.length, SQLITE_TRANSIENT);
-            
-            if (sqlite3_step(statement) == SQLITE_DONE) {
+            int64_t insertedRowId = sqlite3_last_insert_rowid(self.database);
+            if (insertedRowId >= 0) {
+                self.currentBucketSize += [record getSize];
+                self.currentRecordCount++;
                 
-                int64_t insertedRowId = sqlite3_last_insert_rowid(self.database);
-                if (insertedRowId >= 0) {
-                    self.currentBucketSize += [record getSize];
-                    self.currentRecordCount++;
-                    
-                    self.unmarkedConsumedSize += [record getSize];
-                    self.totalRecordCount++;
-                    self.unmarkedRecordCount++;
-                    
-                    DDLogInfo(@"%@ Added a new log record, total record count: %lld unmarked record count: %lld",
-                              TAG, self.totalRecordCount, self.unmarkedRecordCount);
-                } else {
-                    DDLogWarn(@"%@ No log record was added: %lld", TAG, insertedRowId);
-                }
+                self.unmarkedConsumedSize += [record getSize];
+                self.totalRecordCount++;
+                self.unmarkedRecordCount++;
                 
+                DDLogInfo(@"%@ Added a new log record, total record count: %lld unmarked record count: %lld",
+                          TAG, self.totalRecordCount, self.unmarkedRecordCount);
             } else {
-                DDLogError(@"%@ Can't add new log record", TAG);
+                DDLogWarn(@"%@ No log record was added: %lld", TAG, insertedRowId);
             }
-            
-            sqlite3_finalize(statement);
             
         } else {
-            DDLogError(@"%@ Can't prepare query to insert record: %i", TAG, resultCode);
-            [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+            DDLogError(@"%@ Can't add new log record", TAG);
         }
+        
+        sqlite3_finalize(statement);
         
         return [[BucketInfo alloc] initWithBucketId:self.currentBucketId logCount:self.currentRecordCount];
     }
@@ -162,61 +156,49 @@
         NSMutableArray *logRecords = [NSMutableArray array];
         int32_t bucketId = 0;
         
-        sqlite3_stmt *statement;
-        int resultCode = sqlite3_prepare(self.database, [KAA_SELECT_MIN_BUCKET_ID UTF8String], LENGTH_UNLIMITED, &statement, NULL);
+        sqlite3_stmt *statement = [self statementForQuery:KAA_SELECT_MIN_BUCKET_ID];
         
-        if (resultCode == SQLITE_OK) {
-            if (sqlite3_step(statement) == SQLITE_ROW) {
-                bucketId = sqlite3_column_int(statement, 0);
-            }
-            
-            sqlite3_finalize(statement);
-        } else {
-            DDLogError(@"%@ Can't prepare select for min bucket id: %i", TAG, resultCode);
-            [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+        if (sqlite3_step(statement) == SQLITE_ROW) {
+            bucketId = sqlite3_column_int(statement, 0);
         }
+        
+        sqlite3_finalize(statement);
         
         int64_t leftBucketSize = self.maxBucketSize;
         if (bucketId > 0) {
-            resultCode = sqlite3_prepare(self.database, [KAA_SELECT_LOG_RECORDS_BY_BUCKET_ID UTF8String], LENGTH_UNLIMITED, &statement, NULL);
+            statement = [self statementForQuery:KAA_SELECT_LOG_RECORDS_BY_BUCKET_ID];
             
-            if (resultCode == SQLITE_OK) {
-                sqlite3_bind_int(statement, 1, bucketId);
+            sqlite3_bind_int(statement, 1, bucketId);
+            
+            while (sqlite3_step(statement) == SQLITE_ROW) {
+                const void *blob = sqlite3_column_blob(statement, 0);
+                int32_t blobLength = sqlite3_column_bytes(statement, 0);
                 
-                while (sqlite3_step(statement) == SQLITE_ROW) {
-                    const void *blob = sqlite3_column_blob(statement, 0);
-                    int32_t blobLength = sqlite3_column_bytes(statement, 0);
-                    
-                    [logRecords addObject:[[LogRecord alloc] initWithData:[NSData dataWithBytes:blob length:blobLength]]];
-                    
-                    leftBucketSize -= blobLength;
+                [logRecords addObject:[[LogRecord alloc] initWithData:[NSData dataWithBytes:blob length:blobLength]]];
+                
+                leftBucketSize -= blobLength;
+            }
+            sqlite3_finalize(statement);
+            
+            if ([logRecords count] > 0) {
+                
+                [self updateStateForBucketWithId:bucketId];
+                logBucket = [[LogBucket alloc] initWithBucketId:bucketId records:logRecords];
+                
+                int64_t logBucketSize = self.maxBucketSize - leftBucketSize;
+                self.unmarkedConsumedSize -= logBucketSize;
+                self.unmarkedRecordCount -= [logRecords count];
+                self.consumedMemoryMap[@(logBucket.bucketId)] = @(logBucketSize);
+                
+                if (self.currentBucketId == bucketId) {
+                    [self moveToNextBucket];
                 }
                 
-                sqlite3_finalize(statement);
+                DDLogDebug(@"%@ Created log block with id [%i], size [%lld], record count [%lld]",
+                           TAG, bucketId, logBucketSize, (int64_t)logRecords.count);
                 
-                if ([logRecords count] > 0) {
-                    
-                    [self updateStateForBucketWithId:bucketId];
-                    logBucket = [[LogBucket alloc] initWithBucketId:bucketId records:logRecords];
-                    
-                    int64_t logBucketSize = self.maxBucketSize - leftBucketSize;
-                    self.unmarkedConsumedSize -= logBucketSize;
-                    self.unmarkedRecordCount -= [logRecords count];
-                    self.consumedMemoryMap[@(logBucket.bucketId)] = @(logBucketSize);
-                    
-                    if (self.currentBucketId == bucketId) {
-                        [self moveToNextBucket];
-                    }
-                    
-                    DDLogDebug(@"%@ Created log block with id [%i], size [%lld], record count [%lld]",
-                               TAG, bucketId, logBucketSize, (int64_t)logRecords.count);
-                    
-                } else {
-                    DDLogInfo(@"%@ No unmarked log records found", TAG);
-                }
             } else {
-                DDLogError(@"%@ Can't prepare select for log records: %i", TAG, resultCode);
-                [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+                DDLogInfo(@"%@ No unmarked log records found", TAG);
             }
         } else {
             DDLogWarn(@"%@ Min bucket id < 0 [%i]", TAG, bucketId);
@@ -228,32 +210,25 @@
 
 - (void)removeBucketWithId:(int32_t)bucketId {
     @synchronized(self) {
-        sqlite3_stmt *statement;
+        sqlite3_stmt *statement = [self statementForQuery:KAA_DELETE_BY_BUCKET_ID];
         
-        int resultCode = sqlite3_prepare(self.database, [KAA_DELETE_BY_BUCKET_ID UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-        if (resultCode == SQLITE_OK) {
-            
-            sqlite3_bind_int64(statement, 1, bucketId);
-            
-            if (sqlite3_step(statement) != SQLITE_DONE) {
-                DDLogError(@"%@ Unable to remove bucket with id [%i]", TAG, bucketId);
-            }
-            
-            int removedRecordsCount = sqlite3_changes(self.database);
-            
-            if (removedRecordsCount > 0) {
-                self.totalRecordCount -= removedRecordsCount;
-                DDLogDebug(@"%@ Removed %i records from storage. Total log record count: %lld",
-                           TAG, removedRecordsCount, self.totalRecordCount);
-            } else {
-                DDLogDebug(@"%@ No records were removed from storage", TAG);
-            }
-            
-            sqlite3_finalize(statement);
-        } else {
-            DDLogError(@"%@ Can't prepare query to delete bucket with id [%i] error code: [%i]", TAG, bucketId, resultCode);
-            [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+        sqlite3_bind_int64(statement, 1, bucketId);
+        
+        if (sqlite3_step(statement) != SQLITE_DONE) {
+            DDLogError(@"%@ Unable to remove bucket with id [%i]", TAG, bucketId);
         }
+        
+        int removedRecordsCount = sqlite3_changes(self.database);
+        
+        if (removedRecordsCount > 0) {
+            self.totalRecordCount -= removedRecordsCount;
+            DDLogDebug(@"%@ Removed %i records from storage. Total log record count: %lld",
+                       TAG, removedRecordsCount, self.totalRecordCount);
+        } else {
+            DDLogDebug(@"%@ No records were removed from storage", TAG);
+        }
+        
+        sqlite3_finalize(statement);
     }
 }
 
@@ -261,37 +236,30 @@
     @synchronized(self) {
         DDLogDebug(@"%@ Rollback bucket with id [%i]", TAG, bucketId);
         
-        sqlite3_stmt *statement;
-        int resultCode = sqlite3_prepare(self.database, [KAA_RESET_BY_BUCKET_ID UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-        if (resultCode == SQLITE_OK) {
+        sqlite3_stmt *statement = [self statementForQuery:KAA_RESET_BY_BUCKET_ID];
+        
+        sqlite3_bind_int64(statement, 1, bucketId);
+        
+        if (sqlite3_step(statement) != SQLITE_DONE) {
+            DDLogError(@"%@ Unable to rollback bucket with id [%i]", TAG, bucketId);
+        }
+        
+        int resetRecordsCount = sqlite3_changes(self.database);
+        
+        if (resetRecordsCount > 0) {
+            DDLogDebug(@"%@ Reset %i records for bucket with id [%i]", TAG, resetRecordsCount, bucketId);
             
-            sqlite3_bind_int64(statement, 1, bucketId);
+            int64_t previouslyConsumedSize = [self.consumedMemoryMap[@(bucketId)] longLongValue];
+            [self.consumedMemoryMap removeObjectForKey:@(bucketId)];
             
-            if (sqlite3_step(statement) != SQLITE_DONE) {
-                DDLogError(@"%@ Unable to rollback bucket with id [%i]", TAG, bucketId);
-            }
-            
-            int resetRecordsCount = sqlite3_changes(self.database);
-            
-            if (resetRecordsCount > 0) {
-                DDLogDebug(@"%@ Reset %i records for bucket with id [%i]", TAG, resetRecordsCount, bucketId);
-
-                int64_t previouslyConsumedSize = [self.consumedMemoryMap[@(bucketId)] longLongValue];
-                [self.consumedMemoryMap removeObjectForKey:@(bucketId)];
-                
-                self.unmarkedConsumedSize += previouslyConsumedSize;
-                self.unmarkedRecordCount += resetRecordsCount;
-                
-            } else {
-                DDLogDebug(@"%@ No records were reset for bucket with id [%i]", TAG, bucketId);
-            }
-            
-            sqlite3_finalize(statement);
+            self.unmarkedConsumedSize += previouslyConsumedSize;
+            self.unmarkedRecordCount += resetRecordsCount;
             
         } else {
-            DDLogError(@"%@ Can't prepare query to rollback bucket with id [%i] error code: [%i]", TAG, bucketId, resultCode);
-            [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+            DDLogDebug(@"%@ No records were reset for bucket with id [%i]", TAG, bucketId);
         }
+        
+        sqlite3_finalize(statement);
     }
 }
 
@@ -340,47 +308,44 @@
 }
 
 - (void)executeQuery:(NSString *)query {
-    char *errMsg;
-    int resultCode = sqlite3_exec(self.database, [query UTF8String], NULL, NULL, &errMsg);
+    int resultCode = sqlite3_exec(self.database, [query UTF8String], NULL, NULL, nil);
     if (resultCode != SQLITE_OK) {
         DDLogError(@"%@ Unable to execute query: %@ error code [%i]", TAG, query, resultCode);
         [NSException raise:KaaRuntimeException format:@"Can't execute query"];
     }
 }
 
+- (sqlite3_stmt *)statementForQuery:(NSString *)query {
+    sqlite3_stmt *statement;
+    int resultCode = sqlite3_prepare(self.database, [query UTF8String], LENGTH_UNLIMITED, &statement, NULL);
+    if (resultCode != SQLITE_OK) {
+        DDLogError(@"%@ Can't prepare statement: %@; error code: %i", TAG, query, resultCode);
+        [NSException raise:KaaRuntimeException format:@"Can't prepare statement"];
+    }
+    return statement;
+}
+
 - (void)truncateIfBucketSizeIncompatible {
     int lastSavedBucketSize = 0;
     int lastSavedRecordCount = 0;
     
-    sqlite3_stmt *statement;
-    int resultCode;
-    
-    NSString *query = KAA_SELECT_STORAGE_INFO;
-    
-    resultCode = sqlite3_prepare(self.database, [query UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-    if (resultCode == SQLITE_OK) {
-        
-        DDLogVerbose(@"%@ Retrieving bucket size from storage info", TAG);
-        sqlite3_bind_text(statement, 1, [STORAGE_BUCKET_SIZE UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
-        if (sqlite3_step(statement) == SQLITE_ROW) {
-            lastSavedBucketSize = sqlite3_column_int(statement, 0);
-        }
-        sqlite3_reset(statement);
-        
-        
-        DDLogVerbose(@"%@ Retrieving record count from storage info", TAG);
-        sqlite3_bind_text(statement, 1, [STORAGE_RECORD_COUNT UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
-        if (sqlite3_step(statement) == SQLITE_ROW) {
-            lastSavedRecordCount = sqlite3_column_int(statement, 0);
-        }
-        sqlite3_finalize(statement);
-        
-    } else {
-        DDLogError(@"%@ Can't prepare select to retrieve storage info: %i", TAG, resultCode);
-        [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+    sqlite3_stmt *statement = [self statementForQuery:KAA_SELECT_STORAGE_INFO];
+   
+    DDLogVerbose(@"%@ Retrieving bucket size from storage info", TAG);
+    sqlite3_bind_text(statement, 1, [STORAGE_BUCKET_SIZE UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
+    if (sqlite3_step(statement) == SQLITE_ROW) {
+        lastSavedBucketSize = sqlite3_column_int(statement, 0);
     }
+    sqlite3_reset(statement);
     
-    //TODO: revisit why "!="
+    
+    DDLogVerbose(@"%@ Retrieving record count from storage info", TAG);
+    sqlite3_bind_text(statement, 1, [STORAGE_RECORD_COUNT UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
+    if (sqlite3_step(statement) == SQLITE_ROW) {
+        lastSavedRecordCount = sqlite3_column_int(statement, 0);
+    }
+    sqlite3_finalize(statement);
+    
     if (lastSavedBucketSize != self.maxBucketSize || lastSavedRecordCount != self.maxBucketRecordCount) {
         [self executeQuery:KAA_DELETE_ALL_DATA];
     }
@@ -390,71 +355,48 @@
 }
 
 - (void)updateStorageParam:(NSString *)param value:(int64_t)value {
-    sqlite3_stmt *statement;
+    sqlite3_stmt *statement = [self statementForQuery:KAA_UPDATE_STORAGE_INFO];
     
-    int resultCode = sqlite3_prepare(self.database, [KAA_UPDATE_STORAGE_INFO UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-    if (resultCode == SQLITE_OK) {
-        
-        sqlite3_bind_text(statement, 1, [param UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
-        sqlite3_bind_int64(statement, 2, value);
-        if (sqlite3_step(statement) != SQLITE_DONE) {
-            DDLogWarn(@"%@ Can't update storage info", TAG);
-            //TODO: raise exception?
-        }
-        
-        sqlite3_finalize(statement);
-    } else {
-        DDLogError(@"%@ Can't prepare storage update statement", TAG);
-        [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+    sqlite3_bind_text(statement, 1, [param UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
+    sqlite3_bind_int64(statement, 2, value);
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        DDLogWarn(@"%@ Can't update storage info param: %@", TAG, param);
     }
+    
+    sqlite3_finalize(statement);
 }
 
 - (void)retrieveConsumedSizeAndVolume {
     @synchronized(self) {
-        sqlite3_stmt *statement;
+        sqlite3_stmt *statement = [self statementForQuery:KAA_HOW_MANY_LOGS_IN_DB];
         
-        int resultCode = sqlite3_prepare(self.database, [KAA_HOW_MANY_LOGS_IN_DB UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-        if (resultCode == SQLITE_OK) {
-            
-            if (sqlite3_step(statement) == SQLITE_ROW) {
-                self.unmarkedRecordCount = sqlite3_column_int64(statement, 0);
-                self.totalRecordCount = self.unmarkedRecordCount;
-                self.unmarkedConsumedSize = sqlite3_column_int64(statement, 1);
-                DDLogInfo(@"%@ Retrieved record count: %lld consumed size: %lld", TAG, self.unmarkedRecordCount, self.unmarkedConsumedSize);
-            } else {
-                DDLogWarn(@"%@ Can't retrieve consumed volume and size", TAG);
-            }
-            
-            sqlite3_finalize(statement);
+        if (sqlite3_step(statement) == SQLITE_ROW) {
+            self.unmarkedRecordCount = sqlite3_column_int64(statement, 0);
+            self.totalRecordCount = self.unmarkedRecordCount;
+            self.unmarkedConsumedSize = sqlite3_column_int64(statement, 1);
+            DDLogInfo(@"%@ Retrieved record count: %lld consumed size: %lld", TAG, self.unmarkedRecordCount, self.unmarkedConsumedSize);
         } else {
-            DDLogWarn(@"%@ Unable to prepare select to retrieve consumed size and volume", TAG);
-            [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+            DDLogWarn(@"%@ Can't retrieve consumed volume and size", TAG);
         }
+        
     }
 }
 
 - (void)retrieveBucketId {
-    sqlite3_stmt *statement;
+    sqlite3_stmt *statement = [self statementForQuery:KAA_SELECT_MAX_BUCKET_ID];
 
-    int resultCode = sqlite3_prepare(self.database, [KAA_SELECT_MAX_BUCKET_ID UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-    if (resultCode == SQLITE_OK) {
-        
-        if (sqlite3_step(statement) == SQLITE_ROW) {
-            int maxBucketId = sqlite3_column_int(statement, 0);
-            if (maxBucketId == 0) {
-                DDLogDebug(@"%@ Max bucket id is 0 - seems no logs in the storage", TAG);
-            } else {
-                self.currentBucketId = ++maxBucketId;
-            }
+    if (sqlite3_step(statement) == SQLITE_ROW) {
+        int maxBucketId = sqlite3_column_int(statement, 0);
+        if (maxBucketId == 0) {
+            DDLogDebug(@"%@ Max bucket id is 0 - seems no logs in the storage", TAG);
         } else {
-            DDLogWarn(@"%@ Can't retrieve max bucket id", TAG);
+            self.currentBucketId = ++maxBucketId;
         }
-        
-        sqlite3_finalize(statement);
     } else {
-        DDLogWarn(@"%@ Unable to prepare select for max bucket id", TAG);
-        [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+        DDLogWarn(@"%@ Can't retrieve max bucket id", TAG);
     }
+    
+    sqlite3_finalize(statement);
 }
 
 - (void)resetBucketsState {
@@ -475,29 +417,23 @@
     @synchronized(self) {
         DDLogVerbose(@"%@ Updating state for bucket with id [%i]", TAG, bucketId);
         
-        sqlite3_stmt *statement;
-        int resultCode = sqlite3_prepare(self.database, [KAA_UPDATE_BUCKET_ID UTF8String], LENGTH_UNLIMITED, &statement, NULL);
-        if (resultCode == SQLITE_OK) {
-            
-            sqlite3_bind_text(statement, 1, [BUCKET_STATE_COLUMN UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
-            sqlite3_bind_int64(statement, 2, bucketId);
-            
-            if (sqlite3_step(statement) == SQLITE_ROW) {
-                int affectedRows = sqlite3_changes(self.database);
-                if (affectedRows > 0) {
-                    DDLogInfo(@"%@ Successfully updated state for bucket with id [%i] for %i records", TAG, bucketId, affectedRows);
-                } else {
-                    DDLogWarn(@"%@ No log records were updated", TAG);
-                }
+        sqlite3_stmt *statement = [self statementForQuery:KAA_UPDATE_BUCKET_ID];
+        
+        sqlite3_bind_text(statement, 1, [BUCKET_STATE_COLUMN UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
+        sqlite3_bind_int64(statement, 2, bucketId);
+        
+        if (sqlite3_step(statement) == SQLITE_ROW) {
+            int affectedRows = sqlite3_changes(self.database);
+            if (affectedRows > 0) {
+                DDLogInfo(@"%@ Successfully updated state for bucket with id [%i] for %i records", TAG, bucketId, affectedRows);
             } else {
-                DDLogWarn(@"%@ Can't update state for bucket id [%i]", TAG, bucketId);
+                DDLogWarn(@"%@ No log records were updated", TAG);
             }
-            
-            sqlite3_finalize(statement);
         } else {
-            DDLogWarn(@"%@ Unable to prepare state update for bucket with id [%i]", TAG, bucketId);
-            [NSException raise:KaaRuntimeException format:@"Can't prepare query"];
+            DDLogWarn(@"%@ Can't update state for bucket id [%i]", TAG, bucketId);
         }
+        
+        sqlite3_finalize(statement);
     }
 }
 
