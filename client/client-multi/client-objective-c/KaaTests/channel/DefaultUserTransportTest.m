@@ -35,8 +35,8 @@ static int REQUEST_ID_2 = 73;
 @implementation DefaultUserTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     [transport setClientState:clientState];
     @try {
         [transport sync];
@@ -48,9 +48,9 @@ static int REQUEST_ID_2 = 73;
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     [transport setClientState:clientState];
     [transport setChannelManager:channelManager];
     [transport sync];
@@ -64,13 +64,13 @@ static int REQUEST_ID_2 = 73;
     NSDictionary *attachedEPs = [NSDictionary dictionaryWithObject:accTok1 forKey:@(REQUEST_ID_1)];
     NSDictionary *detachedEPs = [NSDictionary dictionaryWithObject:keyHash1 forKey:@(REQUEST_ID_1)];
     
-    id <EndpointRegistrationProcessor> processor =
+    id<EndpointRegistrationProcessor> processor =
     mockProtocol(@protocol(EndpointRegistrationProcessor));
     
     [given([processor getAttachEndpointRequests]) willReturn:attachedEPs];
     [given([processor getDetachEndpointRequests]) willReturn:detachedEPs];
     
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     [transport createUserRequest];
     [transport setEndpointRegistrationProcessor:processor];
     

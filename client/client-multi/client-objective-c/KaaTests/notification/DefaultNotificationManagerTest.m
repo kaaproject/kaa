@@ -74,7 +74,7 @@
 - (void)testEmptyTopicList {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     for (Topic *t in [notificationManager getTopics]) {
@@ -86,7 +86,7 @@
 
 - (void)testTopicsAfterUpdate {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -109,7 +109,7 @@
     KaaClientProperties *prop = [TestsHelper getProperties];
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:prop];
     
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
@@ -133,7 +133,7 @@
 
 - (void)testTwiceTopicUpdate {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -167,7 +167,7 @@
 
 - (void)testAddTopicUpdateListener {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -195,12 +195,12 @@
 
 - (void)testRemoveTopicUpdateDelegate {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
-    id <NotificationTopicListDelegate> delegate1 = mockProtocol(@protocol(NotificationTopicListDelegate));
-    id <NotificationTopicListDelegate> delegate2 = mockProtocol(@protocol(NotificationTopicListDelegate));
+    id<NotificationTopicListDelegate> delegate1 = mockProtocol(@protocol(NotificationTopicListDelegate));
+    id<NotificationTopicListDelegate> delegate2 = mockProtocol(@protocol(NotificationTopicListDelegate));
     
     [notificationManager addTopicListDelegate:delegate1];
     [notificationManager addTopicListDelegate:delegate2];
@@ -218,7 +218,7 @@
 
 - (void)testGlobalNotificationDelegates {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -251,8 +251,8 @@
     
     NSArray *notificationUpdate = @[notification1, notification2];
     
-    id <NotificationDelegate> mandatoryDelegate= mockProtocol(@protocol(NotificationDelegate));
-    id <NotificationDelegate> globalDelegate = mockProtocol(@protocol(NotificationDelegate));
+    id<NotificationDelegate> mandatoryDelegate= mockProtocol(@protocol(NotificationDelegate));
+    id<NotificationDelegate> globalDelegate = mockProtocol(@protocol(NotificationDelegate));
     
     [notificationManager addNotificationDelegate:mandatoryDelegate];
     [notificationManager notificationsReceived:notificationUpdate];
@@ -275,7 +275,7 @@
 
 - (void)testNotificationDelegateOnTopic {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -308,8 +308,8 @@
     
     NSArray *notificationUpdate = @[notification1, notification2];
     
-    id <NotificationDelegate> globalDelegate= mockProtocol(@protocol(NotificationDelegate));
-    id <NotificationDelegate> topicDelegate = mockProtocol(@protocol(NotificationDelegate));
+    id<NotificationDelegate> globalDelegate= mockProtocol(@protocol(NotificationDelegate));
+    id<NotificationDelegate> topicDelegate = mockProtocol(@protocol(NotificationDelegate));
     
     [notificationManager addNotificationDelegate:globalDelegate];
     [notificationManager addNotificationDelegate:topicDelegate forTopicId:2];
@@ -330,7 +330,7 @@
 
 - (void)testAddDelegateForUnknownTopic {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -346,7 +346,7 @@
     
     [notificationManager topicsListUpdated:self.topicsArray];
     
-    id <NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
+    id<NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
     @try {
         [notificationManager addNotificationDelegate:delegate forTopicId:UNKNOWN_TOPIC_ID];
         XCTFail();
@@ -358,7 +358,7 @@
 
 - (void)testRemoveDelegateForUnknownTopic {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -374,7 +374,7 @@
     
     [notificationManager topicsListUpdated:self.topicsArray];
     
-    id <NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
+    id<NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
     @try {
         [notificationManager removeNotificationDelegate:delegate forTopicId:UNKNOWN_TOPIC_ID];
         XCTFail();
@@ -386,7 +386,7 @@
 
 - (void)testSubsribeForUnknownTopic1 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -413,7 +413,7 @@
 
 - (void)testSubsribeForUnknownTopic2 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -439,7 +439,7 @@
 
 - (void)testUnsubsribeForUnknownTopic1 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -465,7 +465,7 @@
 
 - (void)testUnsubsribeForUnknownTopic2 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -494,7 +494,7 @@
 
 - (void)testSubscribeOnMandatoryTopic1 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -519,7 +519,7 @@
 
 - (void)testSubscribeOnMandatoryTopic2 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -544,7 +544,7 @@
 
 - (void)testUnsubscribeFromMandatoryTopic1 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -569,7 +569,7 @@
 
 - (void)testUnsubscribeFromMandatoryTopic2 {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
@@ -594,7 +594,7 @@
 
 - (void)testSuccessSubscriptionToTopic {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
+    id<NotificationTransport> transport = mockProtocol(@protocol(NotificationTransport));
     
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
