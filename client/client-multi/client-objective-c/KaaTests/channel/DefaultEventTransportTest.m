@@ -32,8 +32,8 @@
 @implementation DefaultEventTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     @try {
         [transport sync];
         XCTFail();
@@ -44,10 +44,10 @@
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport setChannelManager:channelManager];
     [transport sync];
     
@@ -55,7 +55,7 @@
 }
 
 - (void)testCreateRequest {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     DefaultEventManager *manager = mockProtocol(@protocol(EventManager));
     Event *event1 = [[Event alloc] init];
     [event1 setSeqNum:1];
@@ -63,7 +63,7 @@
     [event2 setSeqNum:2];
     [given([manager pollPendingEvents]) willReturn:@[event1, event2]];
     
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport createEventRequestWithId:1];
     [transport setEventManager:manager];
     [transport createEventRequestWithId:2];
@@ -78,9 +78,9 @@
 }
 
 - (void)testOnEventResponse {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     DefaultEventManager *manager = mock([DefaultEventManager class]);
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     EventSyncResponse *response = [self getNewEmptyEventResponse];
     
     [transport onEventResponse:response];
@@ -105,11 +105,11 @@
 }
 
 - (void)testRemoveByResponseId {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     DefaultEventManager *manager = mock([DefaultEventManager class]);
     [given([manager pollPendingEvents]) willReturn:@[[[Event alloc] init], [[Event alloc] init]]];
     
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport createEventRequestWithId:1];
     [transport setEventManager:manager];
     [transport createEventRequestWithId:2];
@@ -123,7 +123,7 @@
 }
 
 - (void)testEventSequenceNumberSyncRequest {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     Event *event = [[Event alloc] init];
     event.seqNum = 1;
     NSArray *events = @[event];
@@ -131,7 +131,7 @@
     id<EventManager> manager = mockProtocol(@protocol(EventManager));
     [given([manager pollPendingEvents]) willReturn:events];
     
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport setEventManager:manager];
     
     int32_t requestId = 1;
@@ -150,7 +150,7 @@
     int restoredEventSN = 10;
     int lastEventSN = restoredEventSN - 1;
     
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState eventSequenceNumber]) willReturnInteger:restoredEventSN];
     
     Event *event1 = [[Event alloc] init];
@@ -167,7 +167,7 @@
     id<EventManager> manager = mockProtocol(@protocol(EventManager));
     [given([manager pollPendingEvents]) willReturn:events];
     
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport setEventManager:manager];
     
     int32_t requestId = 1;
@@ -196,7 +196,7 @@
 - (void)testSequenceNumberSynchronization {
     int restoredEventSN = 10;
     
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState eventSequenceNumber]) willReturnInteger:restoredEventSN];
     
     Event *event1 = [[Event alloc] init];
@@ -210,11 +210,11 @@
     
     NSArray *events1 = @[event1, event2, event3];
     
-    id <EventManager> manager1 = mockProtocol(@protocol(EventManager));
+    id<EventManager> manager1 = mockProtocol(@protocol(EventManager));
     [given([manager1 pollPendingEvents]) willReturn:events1];
     [given([manager1 peekPendingEvents]) willReturn:events1];
     
-    id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
+    id<EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport setEventManager:manager1];
     
     int requestId = 1;
@@ -246,7 +246,7 @@
     event.seqNum = synchronizedSN;
     
     NSArray *events2 = @[event];
-    id <EventManager> manager2 = mockProtocol(@protocol(EventManager));
+    id<EventManager> manager2 = mockProtocol(@protocol(EventManager));
     [given([manager2 pollPendingEvents]) willReturn:events2];
     [transport setEventManager:manager2];
     

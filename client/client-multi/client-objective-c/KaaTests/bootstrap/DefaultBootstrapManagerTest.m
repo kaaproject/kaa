@@ -153,7 +153,7 @@
 @implementation DefaultBootstrapManagerTest
 
 - (void)testReceiveOperationsServerList {
-    id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
+    id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport executorContext:nil];
     
     self.exceptionCaught = NO;
@@ -171,7 +171,7 @@
 }
 
 - (void)testOperationsServerInfoRetrieving {
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:executorContext];
     
     self.exceptionCaught = NO;
@@ -184,7 +184,7 @@
     }
     XCTAssertTrue(self.exceptionCaught);
     
-    id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
+    id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     
     //Generating pseudo bootstrap key
     [KeyUtils generateKeyPair];
@@ -216,7 +216,7 @@
     ChannelManagerMock *channelManager = [[ChannelManagerMock alloc] init];
     [manager setChannelManager:channelManager];
     
-    id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
+    id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     [manager setTransport:transport];
     
     //Generating pseudo bootstrap key

@@ -32,8 +32,8 @@
 @implementation DefaultLogTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <LogTransport> transport = [[DefaultLogTransport alloc] init];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<LogTransport> transport = [[DefaultLogTransport alloc] init];
     [transport setClientState:clientState];
     
     @try {
@@ -46,10 +46,10 @@
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     
-    id <LogTransport> transport = [[DefaultLogTransport alloc] init];
+    id<LogTransport> transport = [[DefaultLogTransport alloc] init];
     [transport setChannelManager:channelManager];
     [transport setClientState:clientState];
     [transport sync];
@@ -58,9 +58,9 @@
 }
 
 - (void)testCreateRequest {
-    id <LogProcessor> processor = mockProtocol(@protocol(LogProcessor));
+    id<LogProcessor> processor = mockProtocol(@protocol(LogProcessor));
     
-    id <LogTransport> transport = [[DefaultLogTransport alloc] init];
+    id<LogTransport> transport = [[DefaultLogTransport alloc] init];
     [transport createLogRequest];
     [transport setLogProcessor:processor];
     [transport createLogRequest];
@@ -69,8 +69,8 @@
 }
 
 - (void)testOnEventResponse {
-    id <LogProcessor> processor = mockProtocol(@protocol(LogProcessor));
-    id <LogTransport> transport = [[DefaultLogTransport alloc] init];
+    id<LogProcessor> processor = mockProtocol(@protocol(LogProcessor));
+    id<LogTransport> transport = [[DefaultLogTransport alloc] init];
     LogSyncResponse *response = [[LogSyncResponse alloc] init];
     
     [transport onLogResponse:response];

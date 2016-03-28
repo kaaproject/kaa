@@ -25,6 +25,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -1283,6 +1284,17 @@ public class DataSource {
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
+                    }
+                });
+    }
+
+    public void sendUnicastNotification(
+            NotificationDto notification, String endpointKeyHash, RecordField notificationData,
+            final AsyncCallback<EndpointNotificationDto> callback) {
+        rpcService.sendUnicastNotification(notification, endpointKeyHash, notificationData,
+                new DataCallback<EndpointNotificationDto>(callback) {
+                    @Override
+                    protected void onResult(EndpointNotificationDto result) {
                     }
                 });
     }
