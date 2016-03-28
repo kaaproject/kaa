@@ -45,7 +45,7 @@
  */
 @property (nonatomic, strong) NSMutableDictionary *consumedMemoryMap;
 
-- (void)openDB:(NSString *)dbPath;
+- (void)openDBAtPath:(NSString *)path;
 - (void)executeQuery:(NSString *)statement;
 
 - (void)truncateIfBucketSizeIncompatible;
@@ -83,7 +83,7 @@
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:dbPath]) {
             DDLogInfo(@"%@ Opening database [%@]", TAG, dbName);
-            [self openDB:dbPath];
+            [self openDBAtPath:dbPath];
         } else {
             NSError *error;
             BOOL dirCreated = [fileManager createDirectoryAtPath:appSupportDir withIntermediateDirectories:YES attributes:nil error:&error];
@@ -91,7 +91,7 @@
                 BOOL dbCreated = [fileManager createFileAtPath:dbName contents:nil attributes:nil];
                 if (dbCreated) {
                     DDLogInfo(@"%@ Database [%@] first start!", TAG, dbName);
-                    [self openDB:dbPath];
+                    [self openDBAtPath:dbPath];
                 } else {
                     DDLogError(@"%@ Database [%@] doesn't exist and couldn't be created", TAG, dbName);
                 }
@@ -318,11 +318,11 @@
     }
 }
 
-- (void)openDB:(NSString *)dbPath {
-    BOOL dbOpenResult = sqlite3_open([dbPath UTF8String], &_database) == SQLITE_OK;
+- (void)openDBAtPath:(NSString *)path {
+    BOOL dbOpenResult = sqlite3_open([path UTF8String], &_database) == SQLITE_OK;
     
     if (!dbOpenResult) {
-        DDLogError(@"%@ Failed to open database at path: %@", TAG, dbPath);
+        DDLogError(@"%@ Failed to open database at path: %@", TAG, path);
         return;
     }
     
