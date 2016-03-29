@@ -25,7 +25,7 @@
         [data appendBytes:&_1byte length:sizeof(char)];
     }
     
-    LogRecord *record = [[LogRecord alloc]initWithData:data];
+    LogRecord *record = [[LogRecord alloc] initWithData:data];
     return record;
 }
 

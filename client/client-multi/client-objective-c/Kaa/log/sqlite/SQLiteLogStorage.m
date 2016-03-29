@@ -46,14 +46,14 @@
 @property (nonatomic, strong) NSMutableDictionary *consumedMemoryMap;
 
 - (void)openDBAtPath:(NSString *)path;
-- (void)executeQuery:(NSString *)statement;
+- (void)executeQuery:(NSString *)query;
 - (sqlite3_stmt *)statementForQuery:(NSString *)query;
 
 - (void)truncateIfBucketSizeIncompatible;
 - (void)retrieveConsumedSizeAndVolume;
 - (void)retrieveBucketId;
 - (void)resetBucketsState;
-- (void)updateStorageParam:(NSString *)param value:(int64_t)value;
+- (void)updateLogStorageParam:(NSString *)param withValue:(int64_t)value;
 - (void)moveToNextBucket;
 - (void)updateStateForBucketWithId:(int32_t)bucketId;
 
@@ -106,10 +106,10 @@
         
         sqlite3_stmt *statement = [self statementForQuery:KAA_INSERT_NEW_RECORD];
         
-        int64_t leftConsumedSize = self.maxBucketSize - self.currentBucketSize;
-        int64_t leftRecordCount = self.maxBucketRecordCount - self.currentRecordCount;
+        int64_t remainingSize = self.maxBucketSize - self.currentBucketSize;
+        int64_t remainingRecordCount = self.maxBucketRecordCount - self.currentRecordCount;
         
-        if (leftConsumedSize < [record getSize] || leftRecordCount == 0) {
+        if (remainingSize < [record getSize] || remainingRecordCount == 0) {
             [self moveToNextBucket];
         }
         
@@ -289,9 +289,9 @@
         return;
     }
     
-    [self executeQuery:KAA_CREATE_LOG_TABLE];
-    [self executeQuery:KAA_CREATE_INFO_TABLE];
-    [self executeQuery:KAA_CREATE_BUCKET_ID_INDEX];
+    [self executeQuery:KAA_CREATE_LOG_TABLE_IF_NOT_EXISTS];
+    [self executeQuery:KAA_CREATE_INFO_TABLE_IF_NOT_EXISTS];
+    [self executeQuery:KAA_CREATE_BUCKET_ID_INDEX_IF_NOT_EXISTS];
     
     [self truncateIfBucketSizeIncompatible];
     [self retrieveConsumedSizeAndVolume];
@@ -345,11 +345,11 @@
         [self executeQuery:KAA_DELETE_ALL_DATA];
     }
     
-    [self updateStorageParam:STORAGE_BUCKET_SIZE value:self.maxBucketSize];
-    [self updateStorageParam:STORAGE_RECORD_COUNT value:self.maxBucketRecordCount];
+    [self updateLogStorageParam:STORAGE_BUCKET_SIZE withValue:self.maxBucketSize];
+    [self updateLogStorageParam:STORAGE_RECORD_COUNT withValue:self.maxBucketRecordCount];
 }
 
-- (void)updateStorageParam:(NSString *)param value:(int64_t)value {
+- (void)updateLogStorageParam:(NSString *)param withValue:(int64_t)value {
     sqlite3_stmt *statement = [self statementForQuery:KAA_UPDATE_STORAGE_INFO];
     
     sqlite3_bind_text(statement, 1, [param UTF8String], LENGTH_UNLIMITED, SQLITE_TRANSIENT);
@@ -363,7 +363,7 @@
 
 - (void)retrieveConsumedSizeAndVolume {
     @synchronized(self) {
-        sqlite3_stmt *statement = [self statementForQuery:KAA_HOW_MANY_LOGS_IN_DB];
+        sqlite3_stmt *statement = [self statementForQuery:KAA_GET_LOG_COUNT_IN_DB];
         
         if (sqlite3_step(statement) == SQLITE_ROW) {
             self.unmarkedRecordCount = sqlite3_column_int64(statement, 0);

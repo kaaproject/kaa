@@ -27,7 +27,7 @@
 
 - (NSArray *)storagesToTestWithBucketSize:(int64_t)bucketSize recordCount:(int32_t)recordCount {
     NSMutableArray *storagesToTest = [NSMutableArray array];
-    [storagesToTest addObject:[[MemLogStorage alloc]initWithBucketSize:bucketSize bucketRecordCount:recordCount]];
+    [storagesToTest addObject:[[MemLogStorage alloc] initWithBucketSize:bucketSize bucketRecordCount:recordCount]];
     [storagesToTest addObject:[[SQLiteLogStorage alloc] initWithDatabaseName:DEFAULT_TEST_DB_NAME
                                                                   bucketSize:bucketSize
                                                            bucketRecordCount:recordCount]];
@@ -58,10 +58,10 @@
         }
         
         LogBucket *logBucket = [storage getNextBucket];
-        XCTAssertTrue([[logBucket logRecords] count] <= maxRecordCount, @"Failue for storage: %@", [(id)storage class]);
-        XCTAssertTrue([self getLogBucketSize:logBucket] <= maxBucketSize, @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertTrue([[logBucket logRecords] count] <= maxRecordCount, @"Failure for storage: %@", [(id)storage class]);
+        XCTAssertTrue([self getLogBucketSize:logBucket] <= maxBucketSize, @"Failure for storage: %@", [(id)storage class]);
         XCTAssertEqual(insertionCount - [[logBucket logRecords] count], [[storage getStatus] getRecordCount],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         [storage close];
     }
 }
@@ -74,7 +74,7 @@
     
     for (id<LogStorage> storage in storagesToTest) {
         LogBucket *bucket = [storage getNextBucket];
-        XCTAssertNil(bucket, @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertNil(bucket, @"Failure for storage: %@", [(id)storage class]);
         [storage close];
     }
 }
@@ -96,9 +96,9 @@
         }
         
         XCTAssertTrue([[storage getStatus] getRecordCount] == insertionCount,
-                      @"Failue for storage: %@", [(id)storage class]);
+                      @"Failure for storage: %@", [(id)storage class]);
         XCTAssertTrue([[storage getStatus] getConsumedVolume] == (insertionCount * [record getSize]),
-                      @"Failue for storage: %@", [(id)storage class]);
+                      @"Failure for storage: %@", [(id)storage class]);
         [storage close];
     }
 }
@@ -121,16 +121,16 @@
         
         LogBucket *group1 = [storage getNextBucket];
         LogBucket *group2 = [storage getNextBucket];
-        XCTAssertNotEqual([group1 bucketId], [group2 bucketId], @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertNotEqual([group1 bucketId], [group2 bucketId], @"Failure for storage: %@", [(id)storage class]);
         [storage close];
     }
 }
 
 - (void)testLogRecordAdding {
-    [self helpAddingRecords:1 bucketSize:3 recordCount:1 expectedCount:1];
-    [self helpAddingRecords:4 bucketSize:3 recordCount:2 expectedCount:1];
-    [self helpAddingRecords:3 bucketSize:9 recordCount:4 expectedCount:3];
-    [self helpAddingRecords:5 bucketSize:5 recordCount:2 expectedCount:1];
+    [self helpAddingRecordCount:1 maxBucketSize:3 maxRecordCount:1 expectedCount:1];
+    [self helpAddingRecordCount:4 maxBucketSize:3 maxRecordCount:2 expectedCount:1];
+    [self helpAddingRecordCount:3 maxBucketSize:9 maxRecordCount:4 expectedCount:3];
+    [self helpAddingRecordCount:5 maxBucketSize:5 maxRecordCount:2 expectedCount:1];
 }
 
 - (void)testGetSameLogBucket {
@@ -152,7 +152,7 @@
         [storage rollbackBucketWithId:[group1 bucketId]];
         LogBucket *group2 = [storage getNextBucket];
         
-        XCTAssertTrue([[group1 logRecords] count] == [[group2 logRecords] count], @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertTrue([[group1 logRecords] count] == [[group2 logRecords] count], @"Failure for storage: %@", [(id)storage class]);
         
         NSArray *group1Array = [NSArray arrayWithArray:[group1 logRecords]];
         NSArray *group2Array = [NSArray arrayWithArray:[group2 logRecords]];
@@ -161,8 +161,8 @@
             LogRecord *expected = group1Array[i];
             LogRecord *actual = group2Array[i];
             
-            XCTAssertTrue([expected getSize] == [actual getSize], @"Failue for storage: %@", [(id)storage class]);
-            XCTAssertEqualObjects([expected data], [actual data], @"Failue for storage: %@", [(id)storage class]);
+            XCTAssertTrue([expected getSize] == [actual getSize], @"Failure for storage: %@", [(id)storage class]);
+            XCTAssertEqualObjects([expected data], [actual data], @"Failure for storage: %@", [(id)storage class]);
         }
         [storage close];
     }
@@ -194,7 +194,7 @@
         [storage removeBucketWithId:[removingBucket bucketId]];
         
         LogBucket *leftBucket = [storage getNextBucket];
-        XCTAssertTrue([[leftBucket logRecords] count] == insertionCount, @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertTrue([[leftBucket logRecords] count] == insertionCount, @"Failure for storage: %@", [(id)storage class]);
         [storage close];
     }
 }
@@ -235,7 +235,7 @@
         if (leftBucket2)
             leftSize += [[leftBucket2 logRecords] count];
         
-        XCTAssertEqual(leftSize, insertionCount, @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertEqual(leftSize, insertionCount, @"Failure for storage: %@", [(id)storage class]);
         
         [storage close];
     }
@@ -261,39 +261,39 @@
         LogBucket *logBucket = [storage getNextBucket];
         receivedCount = [self addRecordCountIfNotEmpty:receivedCount toLogBucket:logBucket];
         XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         XCTAssertEqual((insertionCount - receivedCount) * RECORD_PAYLOAD_SIZE, [[storage getStatus] getConsumedVolume],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         
         logBucket = [storage getNextBucket];
         receivedCount = [self addRecordCountIfNotEmpty:receivedCount toLogBucket:logBucket];
         XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         XCTAssertEqual((insertionCount - receivedCount) * RECORD_PAYLOAD_SIZE, [[storage getStatus] getConsumedVolume],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         
         logBucket = [storage getNextBucket];
         receivedCount = [self addRecordCountIfNotEmpty:receivedCount toLogBucket:logBucket];
         XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         XCTAssertEqual((insertionCount - receivedCount) * RECORD_PAYLOAD_SIZE, [[storage getStatus] getConsumedVolume],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         
         [storage rollbackBucketWithId:[logBucket bucketId]];
         receivedCount -= [[logBucket logRecords] count];
         XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
         XCTAssertEqual((insertionCount - receivedCount) * RECORD_PAYLOAD_SIZE, [[storage getStatus] getConsumedVolume],
-                       @"Failue for storage: %@", [(id)storage class]);
+                       @"Failure for storage: %@", [(id)storage class]);
     }
 }
 
-- (void)helpAddingRecords:(int32_t)addedCount
-               bucketSize:(int32_t)bucketSize
-              recordCount:(int32_t)recordCount
-            expectedCount:(int32_t)expectedCount {
+- (void)helpAddingRecordCount:(int32_t)addedCount
+                maxBucketSize:(int32_t)maxBucketSize
+               maxRecordCount:(int32_t)maxRecordCount
+                expectedCount:(int32_t)expectedCount {
     
-    NSArray *storagesToTest = [self storagesToTestWithBucketSize:bucketSize recordCount:recordCount];
+    NSArray *storagesToTest = [self storagesToTestWithBucketSize:maxBucketSize recordCount:maxRecordCount];
     
     for (id<LogStorage> storage in storagesToTest) {
         LogRecord *record = [LogTestHelper defaultLogRecord];
@@ -310,14 +310,14 @@
         LogBucket *group = [storage getNextBucket];
         NSArray *actualArray = [group logRecords];
         
-        XCTAssertTrue([expectedArray count] == [actualArray count], @"Failue for storage: %@", [(id)storage class]);
+        XCTAssertTrue([expectedArray count] == [actualArray count], @"Failure for storage: %@", [(id)storage class]);
         
         for (int i = 0; i < [expectedArray count]; i++) {
             LogRecord *expected = expectedArray[i];
             LogRecord *actual = actualArray[i];
             
-            XCTAssertTrue([expected getSize] == [actual getSize], @"Failue for storage: %@", [(id)storage class]);
-            XCTAssertEqualObjects([expected data], [actual data], @"Failue for storage: %@", [(id)storage class]);
+            XCTAssertTrue([expected getSize] == [actual getSize], @"Failure for storage: %@", [(id)storage class]);
+            XCTAssertEqualObjects([expected data], [actual data], @"Failure for storage: %@", [(id)storage class]);
         }
         [storage close];
     }
