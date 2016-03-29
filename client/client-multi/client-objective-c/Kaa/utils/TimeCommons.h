@@ -28,6 +28,6 @@ typedef enum {
  * Used to convert TimeUnit values
  * @return converted value or -1 if params were invalid
  */
-+ (long)convertValue:(long)value fromTimeUnit:(TimeUnit)fromUnit toTimeUnit:(TimeUnit)toUnit;
++ (int64_t)convertValue:(int64_t)value fromTimeUnit:(TimeUnit)fromUnit toTimeUnit:(TimeUnit)toUnit;
 
 @end
