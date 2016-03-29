@@ -83,7 +83,7 @@ public class CassandraCredentials implements Credentials, Serializable {
     }
 
     public void setCredentialsBody(ByteBuffer credentialsBody) {
-        this.credentialsBody = credentialsBody;
+        this.credentialsBody = credentialsBody.duplicate();
     }
 
     @Override
