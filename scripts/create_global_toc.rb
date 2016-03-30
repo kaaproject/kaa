@@ -22,7 +22,7 @@ class GlobalMenu
     @keys_kaa.each do |key|
       key = "/#{key}/"
       @versions[key] ||= {}
-      ["text","nav","url"].each do |tag|
+      ["text","url"].each do |tag|
         @versions[key][tag] = @root[key][tag]
       end
       @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
@@ -63,24 +63,20 @@ class GlobalMenu
   ##  
   # Load all markdown files and parce yaml headers to extract nav information
   ##   
-  def loadDoc(key)
-    
+  def loadDoc(key)   
     Dir.glob("#{key}/**/index.md") do |md_file|
       dirname = File.dirname(md_file)
-      puts dirname
       header = YAML.load(loadHeader(md_file))
       if header.has_key?('permalink')
-        permalink = header['nav']
-        path = permalink.split('/')
-        permalink = permalink.gsub(":path","#{key}")
+        url = md_file.gsub("/index.md","")
+        url = url.gsub("#{key}","")
+        #url = url.gsub("//","/")
+        path = url.split('/')
+        path[0] = "/#{key}/"
         path.delete_if{|k| k.empty?}
-        if path[0] == ":path"
-          path[0] = "/#{key}/"
-        end
+        #puts "path", path
         node = createPath(path)
-#         puts permalink
         node['url'] = header['permalink'].gsub(":path","#{dirname}")
-        #node['nav'] = permalink
         if header.has_key?('sort_idx')
           node['_sort_idx'] = header['sort_idx']
         else
