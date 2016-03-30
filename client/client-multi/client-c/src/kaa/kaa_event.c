@@ -122,6 +122,21 @@ struct kaa_event_manager_t {
 
 static kaa_extension_id event_sync_services[1] = { KAA_EXTENSION_EVENT };
 
+
+kaa_error_t kaa_extension_event_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t error = kaa_event_manager_create(&kaa_context->event_manager, kaa_context->status->status_instance,
+        kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->event_manager;
+    return error;
+}
+
+kaa_error_t kaa_extension_event_deinit(void *context)
+{
+    kaa_event_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
 static void destroy_event_listener_request(void *request_p)
 {
     KAA_RETURN_IF_NIL(request_p,);
@@ -256,6 +271,7 @@ static bool transaction_search_by_id_predicate(void *trx_p, void *context)
     return (matcher && trx) ? ((*matcher) == trx->id) : false;
 }
 
+/** @deprecated Use kaa_extension_event_deinit(). */
 void kaa_event_manager_destroy(kaa_event_manager_t *self)
 {
     if (self) {
@@ -272,6 +288,7 @@ void kaa_event_manager_destroy(kaa_event_manager_t *self)
     }
 }
 
+/** @deprecated Use kaa_extension_event_init(). */
 kaa_error_t kaa_event_manager_create(kaa_event_manager_t **context, kaa_status_t *status,
     kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {

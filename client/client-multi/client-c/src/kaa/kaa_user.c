@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,6 +90,19 @@ typedef enum {
 
 static kaa_extension_id user_sync_services[1] = {KAA_EXTENSION_USER};
 
+kaa_error_t kaa_extension_user_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t error = kaa_user_manager_create(&kaa_context->user_manager, kaa_context->status->status_instance,
+            kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->user_manager;
+    return error;
+}
+
+kaa_error_t kaa_extension_user_deinit(void *context)
+{
+    kaa_user_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
 
 static void dtor_endpoint_info(void *data)
 {
@@ -159,6 +172,7 @@ static user_info_t *create_user_info(const char *external_id, const char *user_a
     return user_info;
 }
 
+/** @deprecated Use kaa_extension_user_init(). */
 kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p
                                   , kaa_status_t *status
                                   , kaa_channel_manager_t *channel_manager
@@ -185,6 +199,7 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_user_deinit(). */
 void kaa_user_manager_destroy(kaa_user_manager_t *self)
 {
     if (self) {

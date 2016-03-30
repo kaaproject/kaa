@@ -94,6 +94,22 @@ typedef struct {
     kaa_topic_listener_t listener;
 } kaa_topic_listener_wrapper_t;
 
+kaa_error_t kaa_extension_notification_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t error = kaa_notification_manager_create(&kaa_context->notification_manager,
+        kaa_context->status->status_instance,
+        kaa_context->channel_manager,
+        kaa_context->logger);
+    *context = kaa_context->notification_manager;
+    return error;
+}
+
+kaa_error_t kaa_extension_notification_deinit(void *context)
+{
+    kaa_notification_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
 static void shift_and_sub_extension(kaa_platform_message_reader_t *reader, uint32_t *extension_length, size_t size)
 {
     KAA_RETURN_IF_NIL2(reader, extension_length,);
@@ -504,6 +520,7 @@ static void destroy_optional_listeners_wrapper(void *data)
     KAA_FREE(wrapper);
 }
 
+/** @deprecated Use kaa_extension_notification_deinit(). */
 void kaa_notification_manager_destroy(kaa_notification_manager_t *self)
 {
     KAA_RETURN_IF_NIL(self,);
@@ -519,6 +536,7 @@ void kaa_notification_manager_destroy(kaa_notification_manager_t *self)
     KAA_FREE(self);
 }
 
+/** @deprecated Use kaa_extension_notification_init(). */
 kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
                                           , kaa_channel_manager_t *channel_manager
                                           , kaa_logger_t *logger)

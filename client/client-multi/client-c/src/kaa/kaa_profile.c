@@ -55,15 +55,30 @@ struct kaa_profile_manager_t {
     kaa_profile_extension_data_t *extension_data;
 };
 
+kaa_error_t kaa_extension_profile_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_profile_manager_create(&kaa_context->profile_manager,
+        kaa_context->status->status_instance,
+        kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->profile_manager;
+    return result;
+}
+
+kaa_error_t kaa_extension_profile_deinit(void *context)
+{
+    kaa_profile_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
 
 static bool resync_is_required(kaa_profile_manager_t *self)
 {
     return self->need_resync || self->status->profile_needs_resync;
 }
 
-/**
+/*
  * PUBLIC FUNCTIONS
  */
+/** @deprecated Use kaa_extension_profile_init(). */
 kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
@@ -122,6 +137,7 @@ bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self)
 
 
 
+/** @deprecated Use kaa_extension_profile_deinit(). */
 void kaa_profile_manager_destroy(kaa_profile_manager_t *self)
 {
     if (self) {
