@@ -1069,12 +1069,13 @@ public class AdminClient {
         return this.restTemplate.postForObject(restTemplate.getUrl() + "provideCredentials", parameters, CredentialsDto.class);
     }
 
-    public void provideRegistration(String applicationId, String credentialsId){
+    public void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody){
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationId", applicationId);
         parameters.add("credentialsId", credentialsId);
+        parameters.add("serverProfileVersion", serverProfileVersion);
+        parameters.add("serverProfileBody", serverProfileBody);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "provideRegistration", parameters);
-
     }
 
     public void revokeCredentials(String applicationId, String credentialsId){
