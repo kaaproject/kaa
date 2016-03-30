@@ -47,6 +47,8 @@ import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.FailoverStrategy;
 import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.transport.TransportException;
@@ -237,8 +239,9 @@ public class DefaultBootstrapManagerTest {
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        FailoverStrategy strategy = new DefaultFailoverStrategy(1, 1, 1, TimeUnit.MILLISECONDS);
         FailoverManager failoverManager =
-                spy(new DefaultFailoverManager(channelManager, executorContext, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
+                spy(new DefaultFailoverManager(channelManager, executorContext, strategy, 1, TimeUnit.MILLISECONDS));
 
         manager.setChannelManager(channelManager);
         manager.setFailoverManager(failoverManager);

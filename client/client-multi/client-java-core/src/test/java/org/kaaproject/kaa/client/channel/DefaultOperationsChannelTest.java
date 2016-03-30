@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.AbstractKaaClient;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.FailoverStrategy;
 import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.client.context.ExecutorContext;
@@ -170,7 +172,8 @@ public class DefaultOperationsChannelTest {
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
         ExecutorContext context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        FailoverManager flManager = new DefaultFailoverManager(manager, context, 100, 1, 1, 1, TimeUnit.MILLISECONDS);
+        FailoverStrategy failoverStrategy = new DefaultFailoverStrategy(1, 1, 1, TimeUnit.MILLISECONDS);
+        FailoverManager flManager = new DefaultFailoverManager(manager, context, failoverStrategy, 100, TimeUnit.MILLISECONDS);
         FailoverManager failoverManager = Mockito.spy(flManager);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),

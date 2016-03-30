@@ -22,6 +22,8 @@ import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.FailoverStrategy;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -50,7 +52,8 @@ public class DefaultFailoverManagerTest {
         channelManager = Mockito.mock(KaaChannelManager.class);
         context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS, BOOTSTRAP_RETRY_PERIOD, 1, 1, TimeUnit.MILLISECONDS);
+        FailoverStrategy failoverStrategy = new DefaultFailoverStrategy(BOOTSTRAP_RETRY_PERIOD, 1, 1, TimeUnit.MILLISECONDS);
+        failoverManager = new DefaultFailoverManager(channelManager, context, failoverStrategy, RESOLUTION_TIMEOUT_MS, TimeUnit.MILLISECONDS);
         resolutionProgressMap = Mockito.spy(new HashMap<ServerType, DefaultFailoverManager.AccessPointIdResolution>());
         ReflectionTestUtils.setField(failoverManager, "resolutionProgressMap", resolutionProgressMap);
     }
