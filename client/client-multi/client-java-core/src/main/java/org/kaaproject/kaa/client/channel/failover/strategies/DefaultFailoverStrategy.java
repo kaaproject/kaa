@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel.failover;
+package org.kaaproject.kaa.client.channel.failover.strategies;
 
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverDecision.FailoverAction;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision.FailoverAction;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

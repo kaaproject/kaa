@@ -14,16 +14,13 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel.impl;
+package org.kaaproject.kaa.client.channel.failover;
 
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.failover.DefaultFailoverStrategy;
-import org.kaaproject.kaa.client.channel.failover.FailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

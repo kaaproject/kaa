@@ -14,10 +14,10 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel.failover;
+package org.kaaproject.kaa.client.channel.failover.strategies;
 
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,8 +33,8 @@ public interface FailoverStrategy {
      *
      * @return decision which is meant to resolve the failover.
      *
-     * @see org.kaaproject.kaa.client.channel.FailoverDecision
-     * @see org.kaaproject.kaa.client.channel.FailoverStatus
+     * @see FailoverDecision
+     * @see FailoverStatus
      */
     FailoverDecision onFailover(FailoverStatus failoverStatus);
 
