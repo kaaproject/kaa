@@ -14,21 +14,21 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.node.service.credentials;
+package org.kaaproject.kaa.server.common.dao;
 
 import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 
 /**
- * The interface {@link InternalCredentialsService} is an internal sibling of
- * {@link CredentialsService}.
+ * A service to manage security credentials.
  *
  * In general, each application has its own independent credentials service used
  * as a bridge to some external system. Since Kaa acts as such a system by
  * default, a single credentials service is enough to be used across all
- * applications. Its methods require an additonal parameter, though, namely an
+ * applications. Its methods require an additonal parameter, though, namely the
  * application ID.
  *
  * @author Andrew Shvayka
@@ -36,42 +36,39 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
  *
  * @since v0.9.0
  */
-public interface InternalCredentialsService {
+public interface CredentialsService {
 
     /**
-     * Provisions credentials information to the internal system.
+     * Provides credentials information to the internal system.
      * 
+     * @param applicationId The application ID
      * @param credentials The credentials to provision
      *
-     * @return The credentials provisioned
+     * @return The credentials provided
      *
      * @throws CredentialsServiceException - if an unexpected exception occures.
-     *
-     * @see CredentialsService#provisionCredentials(CredentialsDto)
      */
-    CredentialsDto provisionCredentials(String applicationId, CredentialsDto credentials) throws CredentialsServiceException;
+    CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials) throws CredentialsServiceException;
 
     /**
      * Returns the credentials by ID.
      *
+     * @param applicationId The application ID
      * @param credentialsId The credentials ID
      *
      * @return The credentials with the given ID
-     *
-     * @see CredentialsService#lookupCredentials(String)
      */
-    Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId);
+    Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId) throws CredentialsServiceException;
 
     /**
      * Sets the status of the given credentials to
      * {@link CredentialsStatus#IN_USE}.
      *
+     * @param applicationId The application ID
      * @param credentialsId The credentials ID
      *
      * @throws CredentialsServiceException - if the credentials are not
-     *             {@link CredentialsStatus#AVAILABLE available}.
-     *
-     * @see CredentialsService#markCredentialsInUse(String)
+     *             {@link CredentialsStatus#AVAILABLE}.
      */
     void markCredentialsInUse(String applicationId, String credentialsId) throws CredentialsServiceException;
 
@@ -79,11 +76,10 @@ public interface InternalCredentialsService {
      * Revokes the given credentials by setting their status to
      * {@link CredentialsStatus#REVOKED}.
      *
+     * @param applicationId The application ID
      * @param credentialsId The credentials ID
      *
      * @throws CredentialsServiceException - if an unexpected exception occures.
-     *
-     * @see CredentialsService#markCredentialsRevoked(String)
      */
     void markCredentialsRevoked(String applicationId, String credentialsId) throws CredentialsServiceException;
 }

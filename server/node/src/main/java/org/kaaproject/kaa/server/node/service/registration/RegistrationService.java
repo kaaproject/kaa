@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.node.service.registration;
 import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 
 /**
  * A service to manage endpoint registrations.
@@ -28,7 +29,7 @@ import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
  *
  * @since v0.9.0
  */
-public interface EndpointRegistrationService {
+public interface RegistrationService {
 
     /**
      * Saves the given endpoint registration.

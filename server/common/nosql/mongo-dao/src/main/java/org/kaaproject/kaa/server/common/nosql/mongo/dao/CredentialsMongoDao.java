@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
@@ -58,15 +59,15 @@ public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, Byte
     }
 
     @Override
-    public MongoCredentials find(String applicationId, String credentialsId) {
+    public Optional<MongoCredentials> find(String applicationId, String credentialsId) {
         LOG.debug("Searching for credentials by application ID [{}] and credentials ID [{}]", applicationId, credentialsId);
         Query query = Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(credentialsId)
                 .and(MongoModelConstants.APPLICATION_ID).is(applicationId));
-        return this.findOne(query);
+        return Optional.ofNullable(this.findOne(query));
     }
 
     @Override
-    public MongoCredentials updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
+    public Optional<MongoCredentials> updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
         LOG.debug("Settings status [{}] for credentials [{}] in application [{}]", status.toString(), credentialsId, applicationId);
         updateFirst(
                 Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(credentialsId).and(MongoModelConstants.APPLICATION_ID).is(applicationId)),

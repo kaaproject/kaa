@@ -20,6 +20,7 @@ import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.AVAILA
 import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.REVOKED;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -61,9 +62,9 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
 
-        Credentials found = this.credentialsDao.find(APPLICATION_ID, saved.getId());
-        Assert.assertNotNull(found);
-        Assert.assertEquals(saved, found.toDto());
+        Optional<Credentials> found = this.credentialsDao.find(APPLICATION_ID, saved.getId());
+        Assert.assertTrue(found.isPresent());
+        Assert.assertEquals(saved, found.map(Credentials::toDto).get());
     }
 
     @Test
@@ -72,9 +73,9 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
 
-        Credentials updated = this.credentialsDao.updateStatus(APPLICATION_ID, credentials.getId(), REVOKED);
-        Assert.assertNotNull(updated);
-        Assert.assertEquals(REVOKED, updated.getStatus());
+        Optional<Credentials> updated = this.credentialsDao.updateStatus(APPLICATION_ID, credentials.getId(), REVOKED);
+        Assert.assertTrue(updated.isPresent());
+        Assert.assertEquals(REVOKED, updated.get().getStatus());
     }
 
     @Test
@@ -84,7 +85,7 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
         Assert.assertNotNull(credentials.getId());
 
         this.credentialsDao.remove(APPLICATION_ID, credentials.getId());
-        Credentials removed = this.credentialsDao.find(APPLICATION_ID, credentials.getId());
-        Assert.assertNull(removed);
+        Optional<Credentials> removed = this.credentialsDao.find(APPLICATION_ID, credentials.getId());
+        Assert.assertFalse(removed.isPresent());
     }
 }
