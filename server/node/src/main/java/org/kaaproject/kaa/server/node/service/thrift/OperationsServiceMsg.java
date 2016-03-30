@@ -24,37 +24,44 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfil
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 
 public class OperationsServiceMsg {
     private final ThriftUnicastNotificationMessage unicastNotificationMsg;
     private final ThriftServerProfileUpdateMessage serverProfileUpdateMsg;
     private final ThriftEntityRouteMessage entityRouteMsg;
+    private final ThriftEndpointDeregistrationMessage endpointDeregistrationMsg;
     private final UserConfigurationUpdate userConfigurationUpdateMsg;
 
     private OperationsServiceMsg(ThriftUnicastNotificationMessage unicastNotificationMsg,
             ThriftServerProfileUpdateMessage serverProfileUpdateMsg, ThriftEntityRouteMessage entityRouteMsg,
-            UserConfigurationUpdate userConfigurationUpdateMsg) {
+            UserConfigurationUpdate userConfigurationUpdateMsg, ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
         super();
         this.unicastNotificationMsg = unicastNotificationMsg;
         this.serverProfileUpdateMsg = serverProfileUpdateMsg;
         this.entityRouteMsg = entityRouteMsg;
+        this.endpointDeregistrationMsg = endpointDeregistrationMsg;
         this.userConfigurationUpdateMsg = userConfigurationUpdateMsg;
     }
 
     public static OperationsServiceMsg fromServerProfileUpdateMessage(ThriftServerProfileUpdateMessage serverProfileUpdateMsg) {
-        return new OperationsServiceMsg(null, serverProfileUpdateMsg, null, null);
+        return new OperationsServiceMsg(null, serverProfileUpdateMsg, null, null, null);
     }
 
     public static OperationsServiceMsg fromNotification(ThriftUnicastNotificationMessage unicastNotificationMsg) {
-        return new OperationsServiceMsg(unicastNotificationMsg, null, null, null);
+        return new OperationsServiceMsg(unicastNotificationMsg, null, null, null, null);
     }
 
     public static OperationsServiceMsg fromRoute(ThriftEntityRouteMessage entityRouteMsg) {
-        return new OperationsServiceMsg(null, null, entityRouteMsg, null);
+        return new OperationsServiceMsg(null, null, entityRouteMsg, null, null);
     }
 
     public static OperationsServiceMsg fromUpdate(UserConfigurationUpdate userConfigurationUpdateMsg) {
-        return new OperationsServiceMsg(null, null, null, userConfigurationUpdateMsg);
+        return new OperationsServiceMsg(null, null, null, userConfigurationUpdateMsg, null);
+    }
+
+    public static OperationsServiceMsg fromDeregistration(ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
+        return new OperationsServiceMsg(null, null, null, null, endpointDeregistrationMsg);
     }
 
     public ThriftUnicastNotificationMessage getUnicastNotificationMsg() {
@@ -71,6 +78,10 @@ public class OperationsServiceMsg {
 
     public ThriftEntityRouteMessage getEntityRouteMsg() {
         return entityRouteMsg;
+    }
+    
+    public ThriftEndpointDeregistrationMessage getEndpointDeregistrationMsg() {
+        return endpointDeregistrationMsg;
     }
 
     public static void dispatch(Iface client, List<OperationsServiceMsg> messages) throws TException {

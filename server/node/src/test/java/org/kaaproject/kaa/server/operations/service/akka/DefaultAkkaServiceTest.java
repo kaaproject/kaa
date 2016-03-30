@@ -730,7 +730,7 @@ public class DefaultAkkaServiceTest {
 
         EndpointAddress address = new EndpointAddress(applicationDto.getTenantId(), applicationDto.getApplicationToken(),
                 EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
-        ActorClassifier classifier = new ActorClassifier(true);
+        ActorClassifier classifier =  ActorClassifier.GLOBAL;
         // TODO: replace nulls with values
         ThriftUnicastNotificationMessage msg = new ThriftUnicastNotificationMessage(null, null, UNICAST_NOTIFICATION_ID);
         clusterServiceListener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(address, classifier, msg));

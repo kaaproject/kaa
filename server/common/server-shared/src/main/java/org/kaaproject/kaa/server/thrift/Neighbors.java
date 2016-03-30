@@ -46,7 +46,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     private static final Logger LOG = LoggerFactory.getLogger(Neighbors.class);
 
     private final KaaThriftService serviceType;
-    
+
     private final ConcurrentMap<String, NeighborConnection<T, V>> neigbors;
 
     private final int maxNumberNeighborConnections;
@@ -83,6 +83,20 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
             }
         } else {
             LOG.warn("Can't find server for id {}", getServerID(info));
+        }
+    }
+
+    public void brodcastMessage(V msg) {
+        brodcastMessages(Collections.singleton(msg));
+    }
+
+    public void brodcastMessages(Collection<V> msgs) {
+        for (NeighborConnection<T, V> neighbor : neigbors.values()) {
+            try {
+                neighbor.sendMessages(msgs);
+            } catch (InterruptedException e) {
+                LOG.warn("Failed to send message to {}", neighbor.getId());
+            }
         }
     }
 
@@ -127,7 +141,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     public static String getServerID(ConnectionInfo info) {
         return getServerID(KaaThriftService.OPERATIONS_SERVICE, info);
     }
-    
+
     /**
      * Build server ID from ConnectionInfo object.
      *

@@ -1672,12 +1672,11 @@ public interface ControlService {
     /**
      * Removes the given endpoint profile from the database.
      *
-     * @param endpointId
-     *        The endpoint ID
+     * @param endpointProfile The endpoint profile
      *
      * @throws ControlServiceException
      */
-    void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException;
+    void removeEndpointProfile(EndpointProfileDto endpointProfile) throws ControlServiceException;
 
     /**
      * Returns a list of endpoint profiles for the endpoint user with the given external ID and tenant ID.

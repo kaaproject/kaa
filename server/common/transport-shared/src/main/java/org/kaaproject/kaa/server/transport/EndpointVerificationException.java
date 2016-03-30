@@ -1,9 +1,8 @@
 package org.kaaproject.kaa.server.transport;
 
 /**
- * An exception thrown by the server if an endpoint tries to connect with an SDK
- * configured to verify endpoint security credentials and fails the verification
- * process.
+ * An exception thrown by the server if the verification process fails while
+ * endpoint setup connection to the server.
  *
  * @author Bohdan Khablenko
  *
@@ -18,15 +17,5 @@ public class EndpointVerificationException extends Exception {
      */
     public EndpointVerificationException() {
         super();
-    }
-
-    /**
-     * Constructs a new exception with the specified detail message.
-     *
-     * @param message
-     *        The detail message
-     */
-    public EndpointVerificationException(String message) {
-        super(message);
     }
 }
