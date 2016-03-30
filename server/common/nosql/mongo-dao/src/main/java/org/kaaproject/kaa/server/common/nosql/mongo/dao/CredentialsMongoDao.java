@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import java.nio.ByteBuffer;
+
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
@@ -28,11 +30,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.nio.ByteBuffer;
-
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
+/**
+ * @author Artur Joshi
+ * @author Bohdan Khablenko
+ *
+ * @since v0.9.0
+ */
 @Repository
 public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, ByteBuffer> implements CredentialsDao<MongoCredentials> {
 
@@ -49,31 +52,33 @@ public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, Byte
     }
 
     @Override
-    public MongoCredentials save(CredentialsDto credentialsDto) {
-        LOG.debug("Saving {}", credentialsDto.toString());
-        return this.save(new MongoCredentials(credentialsDto));
+    public MongoCredentials save(String applicationId, CredentialsDto credentials) {
+        LOG.debug("Saving credentials [{}] for application [{}]", credentials.toString(), applicationId);
+        return this.save(new MongoCredentials(applicationId, credentials));
     }
 
     @Override
-    public MongoCredentials findById(String id) {
-        LOG.debug("Searching credential by ID[{}]", id);
-        Query query = Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(id));
+    public MongoCredentials find(String applicationId, String credentialsId) {
+        LOG.debug("Searching for credentials by application ID [{}] and credentials ID [{}]", applicationId, credentialsId);
+        Query query = Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(credentialsId)
+                .and(MongoModelConstants.APPLICATION_ID).is(applicationId));
         return this.findOne(query);
     }
 
     @Override
-    public MongoCredentials updateStatusById(String id, CredentialsStatus status) {
-        LOG.debug("Updating credentials status with ID[{}] to STATUS[{}]", id, status.toString());
+    public MongoCredentials updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
+        LOG.debug("Settings status [{}] for credentials [{}] in application [{}]", status.toString(), credentialsId, applicationId);
         updateFirst(
-                query(where(MongoModelConstants.CREDENTIALS_ID).is(id)),
+                Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(credentialsId).and(MongoModelConstants.APPLICATION_ID).is(applicationId)),
                 Update.update(MongoModelConstants.CREDENTIAL_STATUS, status));
-        return findById(id);
+        return this.find(applicationId, credentialsId);
     }
 
     @Override
-    public void removeById(String id) {
-        LOG.debug("Deleting credential by ID[{}]", id);
-        Query query = Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(id));
+    public void remove(String applicationId, String credentialsId) {
+        LOG.debug("Removing credentials [{}] from application [{}]", credentialsId, applicationId);
+        Query query = Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(credentialsId)
+                .and(MongoModelConstants.APPLICATION_ID).is(applicationId));
         this.remove(query);
     }
 }

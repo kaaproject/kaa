@@ -139,6 +139,7 @@ public class MongoModelConstants {
      * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoCredentials}
      */
     public static final String CREDENTIALS = "credentials";
+    public static final String CREDENTIALS_APPLICATION_ID = APPLICATION_ID;
     public static final String CREDENTIALS_ID = ID;
     public static final String CREDENTIALS_BODY = "credentials_body";
     public static final String CREDENTIAL_STATUS = "credentials_status";

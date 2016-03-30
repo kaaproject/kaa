@@ -723,11 +723,11 @@ public class AbstractTest {
         return userConfigurationService.saveUserConfiguration(configurationDto);
     }
 
-    protected CredentialsDto generateCredentials(byte[] credentialsBody, CredentialsStatus status) {
+    protected CredentialsDto generateCredentials(String applicationId, byte[] credentialsBody, CredentialsStatus status) {
         CredentialsDto credentialsDto = new CredentialsDto();
         credentialsDto.setCredentialsBody(credentialsBody);
         credentialsDto.setStatus(status);
-        Credentials saved = this.credentialsDao.save(credentialsDto);
+        Credentials saved = this.credentialsDao.save(applicationId, credentialsDto);
 
         CredentialsDto generatedCredentials = saved.toDto();
         return generatedCredentials;

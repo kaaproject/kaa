@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CredentialsMongoDaoTest extends AbstractMongoTest {
     private static final byte[] CREDENTIALS_BODY = "credentials_body".getBytes();
+    private static final String APPLICATION_ID = "application_id";
 
     @BeforeClass
     public static void init() throws Exception {
@@ -40,34 +41,34 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void testFindCredentialsById() {
-        CredentialsDto saved = this.generateCredentials(CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto saved = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
 
-        Credentials found = this.credentialsDao.findById(saved.getId());
+        Credentials found = this.credentialsDao.find(APPLICATION_ID, saved.getId());
         Assert.assertNotNull(found);
         Assert.assertEquals(saved, found.toDto());
     }
 
     @Test
     public void testUpdateStatus() {
-        CredentialsDto credentials = this.generateCredentials(CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto credentials = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
 
-        Credentials updated = this.credentialsDao.updateStatusById(credentials.getId(), REVOKED);
+        Credentials updated = this.credentialsDao.updateStatus(APPLICATION_ID, credentials.getId(), REVOKED);
         Assert.assertNotNull(updated);
         Assert.assertEquals(REVOKED, updated.getStatus());
     }
 
     @Test
     public void testRemoveCredentials() {
-        CredentialsDto credentials = this.generateCredentials(CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto credentials = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
 
-        this.credentialsDao.removeById(credentials.getId());
-        Credentials removed = this.credentialsDao.findById(credentials.getId());
+        this.credentialsDao.remove(APPLICATION_ID, credentials.getId());
+        Credentials removed = this.credentialsDao.find(APPLICATION_ID, credentials.getId());
         Assert.assertNull(removed);
     }
 }

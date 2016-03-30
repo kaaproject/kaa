@@ -22,40 +22,13 @@ import org.kaaproject.kaa.server.common.dao.model.Credentials;
 
 import java.nio.ByteBuffer;
 
-/**
- * The interface Credentials dao
- * @param <T> the type parameter
- */
 public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer> {
 
-    /**
-     * Saves given dto
-     * @param dto
-     * @return
-     */
-    T save(CredentialsDto dto);
+    T save(String applicationId, CredentialsDto credentials);
 
+    T find(String applicationId, String credentialsId);
 
-    /**
-     * Find credential by id
-     * @param id the credential id
-     * @return credential object
-     */
-    T findById(String id);
+    T updateStatus(String applicationId, String credentialsId, CredentialsStatus status);
 
-
-    /**
-     * Updates credential's status by id
-     * @param id credential's id to be updated
-     * @param status status to update
-     * @return updated credential object
-     */
-    T updateStatusById(String id, CredentialsStatus status);
-
-
-    /**
-     * Removes credential by id
-     * @param id credential id to be deleted
-     */
-    void removeById(String id);
+    void remove(String applicationId, String credentialsId);
 }
