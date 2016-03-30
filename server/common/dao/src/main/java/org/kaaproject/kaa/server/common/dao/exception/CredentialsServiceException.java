@@ -14,17 +14,18 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.node.service.registration;
+package org.kaaproject.kaa.server.common.dao.exception;
 
 /**
- * A checked exception to be thrown by {@link EndpointRegistrationService}.
+ * A checked exception to be thrown by
+ * {@link org.kaaproject.kaa.server.common.dao.CredentialsService}.
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public class EndpointRegistrationServiceException extends Exception {
+public final class CredentialsServiceException extends Exception {
 
     private static final long serialVersionUID = 1000L;
 
@@ -33,7 +34,7 @@ public class EndpointRegistrationServiceException extends Exception {
      *
      * @param cause The exception cause
      */
-    public EndpointRegistrationServiceException(Throwable cause) {
+    public CredentialsServiceException(Throwable cause) {
         super(cause);
     }
 
@@ -43,7 +44,7 @@ public class EndpointRegistrationServiceException extends Exception {
      * @param message The detail message
      * @param cause The exception cause
      */
-    public EndpointRegistrationServiceException(String message, Throwable cause) {
+    public CredentialsServiceException(String message, Throwable cause) {
         super(message, cause);
     }
 }

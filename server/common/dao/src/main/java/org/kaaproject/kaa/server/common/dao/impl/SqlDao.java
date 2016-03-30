@@ -25,7 +25,7 @@ public interface SqlDao<T> extends Dao<T, String> {
     /**
      * Re-read object from database.
      *
-     * @param object
+     * @param object The object to refresh
      */
     void refresh(Object object);
 
@@ -56,7 +56,7 @@ public interface SqlDao<T> extends Dao<T, String> {
     /**
      * Build lock request with the given {@link org.hibernate.LockOptions} object
      *
-     * @param lockOptions
+     * @param lockOptions The lock options to use
      * @return the {@link org.hibernate.Session.LockRequest} object.
      */
     Session.LockRequest lockRequest(LockOptions lockOptions);

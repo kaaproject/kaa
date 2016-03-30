@@ -46,6 +46,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -421,4 +422,9 @@ public interface KaaAdminService extends RemoteService {
     
     List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException;
 
+    CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException;
+
+    void revokeCredentials(String applicationId, String credentialsId) throws KaaAdminServiceException;
+
+    void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
 }
