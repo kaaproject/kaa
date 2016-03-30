@@ -23,22 +23,15 @@
 #define CHANNEL_ID  @"default_operations_http_channel"
 #define URL_SUFFIX  @"/EP/Sync"
 
-@interface OperationRunner : NSOperation
-
-@property (nonatomic, weak) DefaultOperationHttpChannel *operationChannel;
-@property (nonatomic, strong) NSDictionary *operationTypes;
-
-- (instancetype)initWithChannel:(DefaultOperationHttpChannel *)channel types:(NSDictionary *)types;
-
-@end
-
 @interface DefaultOperationHttpChannel ()
 
-@property (nonatomic, strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
-
-- (void)processTypes:(NSDictionary *)types;
+/**
+ * <TransportType, ChannelDirection> as key-value
+ */
+@property (nonatomic, strong) NSDictionary *supportedTypes;
 
 @end
+
 
 @implementation DefaultOperationHttpChannel
 
@@ -47,28 +40,32 @@
                failoverManager:(id<FailoverManager>)manager {
     self = [super initWithClient:client state:state failoverManager:manager];
     if (self) {
-        self.supportedTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                @(CHANNEL_DIRECTION_UP),
-                                @(TRANSPORT_TYPE_EVENT),
-                                @(CHANNEL_DIRECTION_UP),
-                                @(TRANSPORT_TYPE_LOGGING), nil];
+        self.supportedTypes = @{@(TRANSPORT_TYPE_EVENT) : @(CHANNEL_DIRECTION_UP),
+                                @(TRANSPORT_TYPE_LOGGING) : @(CHANNEL_DIRECTION_UP)};
     }
     return self;
 }
 
 - (void)processTypes:(NSDictionary *)types {
     NSData *requestBodyRaw = [[self getMultiplexer] compileRequestForTypes:types];
-    NSData *decodedResponse = nil;
     @synchronized(self) {
         MessageEncoderDecoder *encoderDecoder = [[self getHttpClient] getEncoderDecoder];
         NSDictionary *requestEntity = [HttpRequestCreator createOperationHttpRequest:requestBodyRaw
                                                                   withEncoderDecoder:encoderDecoder];
-        NSData *responseDataRaw = [[self getHttpClient] executeHttpRequest:@""
-                                                                    entity:requestEntity
-                                                            verifyResponse:NO];
-        decodedResponse = [encoderDecoder decodeData:responseDataRaw];
+        __weak typeof(self) weakSelf = self;
+        [[self getHttpClient] executeHttpRequest:@""
+                                          entity:requestEntity
+                                  verifyResponse:NO
+                                         success:^(NSData *response){
+                                             NSData *decodedResponse = [encoderDecoder decodeData:response];
+                                             [[weakSelf getDemultiplexer] processResponse:decodedResponse];
+                                             [weakSelf connectionEstablished];
+                                         }
+                                         failure:^(NSInteger responseCode) {
+                                             DDLogError(@"%@ Failed to receive response from the operation server: %i", TAG, (int)responseCode);
+                                             [weakSelf connectionFailedWithStatus:(int)responseCode];
+                                         }];
     }
-    [[self getDemultiplexer] processResponse:decodedResponse];
 }
 
 - (NSString *)getId {
@@ -83,44 +80,8 @@
     return self.supportedTypes;
 }
 
-- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
-    return [[OperationRunner alloc] initWithChannel:self types:types];
-}
-
 - (NSString *)getURLSuffix {
     return URL_SUFFIX;
-}
-
-@end
-
-@implementation OperationRunner
-
-- (instancetype)initWithChannel:(DefaultOperationHttpChannel *)channel types:(NSDictionary *)types {
-    self = [super init];
-    if (self) {
-        self.operationChannel = channel;
-        self.operationTypes = types;
-    }
-    return self;
-}
-
-- (void)main {
-    if (self.isCancelled || self.isFinished) {
-        return;
-    }
-    
-    @try {
-        [self.operationChannel processTypes:self.operationTypes];
-        [self.operationChannel connectionEstablished];
-    }
-    @catch (NSException *ex) {
-        DDLogError(@"%@ Failed to receive response from the operation: %@, reason: %@", TAG, ex.name, ex.reason);
-        if ([ex.name isEqualToString:KaaTransportException]) {
-            [self.operationChannel connectionFailedWithStatus:[ex.reason intValue]];
-        } else {
-            [self.operationChannel connectionFailedWithStatus:UNKNOWN_HTTP_STATUS];
-        }
-    }
 }
 
 @end

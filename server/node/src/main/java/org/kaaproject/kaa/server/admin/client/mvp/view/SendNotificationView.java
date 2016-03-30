@@ -31,5 +31,6 @@ public interface SendNotificationView extends BaseDetailsView {
     HasValue<Date> getExpiredAt();
     
     HasValue<RecordField> getNotificationData();
-    
+
+    HasValue<String> getEndpointKeyHash();
 }

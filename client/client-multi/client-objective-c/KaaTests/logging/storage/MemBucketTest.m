@@ -17,6 +17,7 @@
 #import <XCTest/XCTest.h>
 #import <Foundation/Foundation.h>
 #import "MemBucket.h"
+#import "LogTestHelper.h"
 
 @interface MemBucketTest : XCTestCase
 
@@ -37,12 +38,12 @@
     int32_t curSize = 0;
     int32_t curRecordCount = 0;
     
-    LogRecord *record = [self getLogRecord];
+    LogRecord *record = [LogTestHelper defaultLogRecord];
     
     while ((curSize + [record getSize] <= maxSize) && (curRecordCount < maxRecordCount)) {
         XCTAssertTrue([bucket addRecord:record]);
         curRecordCount++;
-        curSize += 3;
+        curSize += RECORD_PAYLOAD_SIZE;
     }
     
     XCTAssertFalse([bucket addRecord:record]);
@@ -50,20 +51,8 @@
 
 - (void)addRecordsCount:(NSInteger)recordCount toBucket:(MemBucket *)bucket {
     while (recordCount-- > 0) {
-        [bucket addRecord:[self getLogRecord]];
+        [bucket addRecord:[LogTestHelper defaultLogRecord]];
     }
-}
-
-- (LogRecord *)getLogRecord {
-    char _1byte = 0;
-    int DATA_SIZE = 3;
-    NSMutableData *data = [[NSMutableData alloc] initWithCapacity:DATA_SIZE];
-    for (int i = 0; i < DATA_SIZE; i++) {
-        [data appendBytes:&_1byte length:sizeof(char)];
-    }
-    
-    LogRecord *record = [[LogRecord alloc]initWithData:data];
-    return record;
 }
 
 @end

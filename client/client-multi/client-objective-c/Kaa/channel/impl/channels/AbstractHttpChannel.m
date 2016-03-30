@@ -99,7 +99,10 @@
             }
         }
         if (self.executor) {
-            [self.executor addOperation:[self createChannelRunnerWithTypes:typeMap]];
+            __weak typeof(self) weakSelf = self;
+            [self.executor addOperationWithBlock:^{
+                [weakSelf processTypes:typeMap];
+            }];
         } else {
             DDLogError(@"%@ No executor found for channel with id: %@", TAG, [self getId]);
         }
@@ -122,7 +125,10 @@
             return;
         }
         if (self.currentServer) {
-            [self.executor addOperation:[self createChannelRunnerWithTypes:[self getSupportedTransportTypes]]];
+            __weak typeof(self) weakSelf = self;
+            [self.executor addOperationWithBlock:^{
+                [weakSelf processTypes:[weakSelf getSupportedTransportTypes]];
+            }];
         } else {
             self.lastConnectionFailed = YES;
             DDLogWarn(@"%@ Can't sync. Server is nil", TAG);
@@ -168,9 +174,9 @@
             self.currentServer = [[IPTransportInfo alloc] initWithTransportInfo:server];
             NSString *url = [NSString stringWithFormat:@"%@%@", [self.currentServer getUrl], [self getURLSuffix]];
             self.kaaHttpClient = [self.kaaClient createHttpClientWithURLString:url
-                                                              privateKeyRef:[self.kaaState privateKey]
-                                                               publicKeyRef:[self.kaaState publicKey]
-                                                               remoteKey:[self.currentServer getPublicKey]];
+                                                                 privateKeyRef:[self.kaaState privateKey]
+                                                                  publicKeyRef:[self.kaaState publicKey]
+                                                                     remoteKey:[self.currentServer getPublicKey]];
             if (self.lastConnectionFailed && !self.isPaused) {
                 self.lastConnectionFailed = NO;
                 [self syncAll];
@@ -273,10 +279,9 @@
     return self.kaaHttpClient;
 }
 
-- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
+- (void)processTypes:(NSDictionary *)types {
 #pragma unused(types)
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
-    return nil;
 }
 
 - (NSString *)getURLSuffix {

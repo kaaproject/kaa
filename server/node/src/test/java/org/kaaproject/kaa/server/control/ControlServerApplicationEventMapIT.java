@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.springframework.web.client.ResourceAccessException;
 
 /**
  * The Class ControlServerApplicationEventMapIT.
@@ -90,7 +91,7 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
      *
      * @throws Exception the exception
      */
-    @Test  //(expected = ControlThriftException.class)
+    @Test
     public void testUpdateApplicationEventFamilyMap() throws Exception {
         final ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
         checkBadRequest(new TestRestCall() {

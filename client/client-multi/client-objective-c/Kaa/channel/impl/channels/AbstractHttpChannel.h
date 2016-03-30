@@ -20,8 +20,6 @@
 #import "KaaClientState.h"
 #import "AbstractHttpClient.h"
 
-#define UNKNOWN_HTTP_STATUS -1
-
 @interface AbstractHttpChannel : NSObject <KaaDataChannel>
 
 @property (nonatomic, readonly) volatile BOOL isShutdown;
@@ -44,6 +42,6 @@
 
 - (AbstractHttpClient *)getHttpClient;
 
-- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types;
+- (void)processTypes:(NSDictionary *)types;
 
 @end

@@ -204,7 +204,7 @@
             }
             
             [topic serialize:writer];
-            [encodedData appendBytes:writer->buf length:writer->written];
+            [encodedData appendBytes:writer->buf length:(NSUInteger)writer->written];
             avro_writer_free(writer);
         }
         NSData *base64Encoded = [self.base64 encodeBase64:encodedData];

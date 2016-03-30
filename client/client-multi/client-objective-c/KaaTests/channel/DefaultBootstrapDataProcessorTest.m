@@ -33,7 +33,7 @@
 
 - (void)testRequestCreation {
     DefaultBootstrapDataProcessor *processor = [[DefaultBootstrapDataProcessor alloc] init];
-    id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
+    id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     [given([transport createResolveRequest]) willReturn:[self getNewSyncRequest]];
     [processor setBootstrapTransport:transport];
     XCTAssertNotNil([processor compileRequestForTypes:nil]);
@@ -47,7 +47,7 @@
 
 - (void)testResponse {
     DefaultBootstrapDataProcessor *processor = [[DefaultBootstrapDataProcessor alloc] init];
-    id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
+    id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     [processor setBootstrapTransport:transport];
     SyncResponse *response = [self getNewSyncResponse];
     NSArray *mdArray = [NSArray array];
@@ -63,7 +63,7 @@
 
 - (void)testNullResponse {
     DefaultBootstrapDataProcessor *processor = [[DefaultBootstrapDataProcessor alloc] init];
-    id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
+    id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     [processor setBootstrapTransport:transport];
     [processor processResponse:nil];
     [verifyCount(transport, times(0)) onResolveResponse:anything()];

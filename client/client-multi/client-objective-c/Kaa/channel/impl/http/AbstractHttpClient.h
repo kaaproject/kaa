@@ -37,7 +37,11 @@
 
 //NOTE: methods below are abstract
 
-- (NSData *)executeHttpRequest:(NSString *)uri entity:(NSDictionary *)entity verifyResponse:(BOOL)verifyResponse;
+- (void)executeHttpRequest:(NSString *)uri
+                    entity:(NSDictionary *)entity
+            verifyResponse:(BOOL)verifyResponse
+                   success:(void (^)(NSData *response))success
+                   failure:(void (^)(NSInteger responseCode))failure;
 - (void)close;
 - (void)abort;
 - (BOOL)canAbort;

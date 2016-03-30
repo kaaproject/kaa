@@ -1886,7 +1886,7 @@ public class KaaAdminController {
 
     /**
      * Send unicast notification, with information from specific file, to the
-     * client identified by clientKeyHash.
+     * client identified by endpointKeyHash.
      *
      * @param notification
      *            the notification
@@ -1901,7 +1901,7 @@ public class KaaAdminController {
     @RequestMapping(value = "sendUnicastNotification", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
     public EndpointNotificationDto sendUnicastNotification(@RequestPart("notification") NotificationDto notification,
-            @RequestPart("clientKeyHash") String clientKeyHash, @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
+            @RequestPart("endpointKeyHash") String clientKeyHash, @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return kaaAdminService.sendUnicastNotification(notification, clientKeyHash, data);
     }

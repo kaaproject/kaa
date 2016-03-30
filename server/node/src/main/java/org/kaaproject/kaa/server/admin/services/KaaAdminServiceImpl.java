@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;
-import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.StaleObjectStateException;
@@ -2514,6 +2513,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, RecordField notificationData)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+            byte[] body = converter.encodeToJsonBytes(record);
+            return sendUnicastNotification(notification,clientKeyHash,body);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
@@ -2590,7 +2603,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkEventClassFamilyId(eventClassFamilyId);
             String schema = new String(data);
-            validateSchema(schema);
+            validateSchema(schema, false);
 
             EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(storedEventClassFamily);
@@ -2763,22 +2776,26 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private void setSchema(AbstractSchemaDto schemaDto, byte[] data) throws KaaAdminServiceException {
         String schema = new String(data);
-        validateRecordSchema(schema);
+        validateRecordSchema(schema, false);
         schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
     }
 
-    private Schema validateSchema(String avroSchema) throws KaaAdminServiceException {
-        Schema.Parser parser = new Schema.Parser();
+    private Schema validateSchema(String avroSchema, boolean isCtl) throws KaaAdminServiceException {
         try {
-            return parser.parse(avroSchema);
-        } catch (SchemaParseException spe) {
+            if (isCtl) {
+                return CTLSchemaParser.parseStringCtlSchema(avroSchema);
+            } else {
+                Schema.Parser parser = new Schema.Parser();
+                return parser.parse(avroSchema);
+            }
+        } catch (Exception spe) {
             LOG.error("Exception catched: ", spe);
             throw new KaaAdminServiceException(spe.getMessage(), ServiceErrorCode.INVALID_SCHEMA);
         }
     }
     
-    private void validateRecordSchema(String avroSchema) throws KaaAdminServiceException {
-        Schema schema = validateSchema(avroSchema);
+    private void validateRecordSchema(String avroSchema, boolean isCtl) throws KaaAdminServiceException {
+        Schema schema = validateSchema(avroSchema, isCtl);
         validateRecordSchema(schema);
     }
     
@@ -3350,7 +3367,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkCTLSchemaReadScope(getCurrentUser().getTenantId(), applicationId);
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
-            validateRecordSchema(avroSchema);
+            validateRecordSchema(avroSchema, true);
             SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId);
             RecordField form = converter.createSchemaFormFromSchema(avroSchema);
             if (form.getVersion() == null) {

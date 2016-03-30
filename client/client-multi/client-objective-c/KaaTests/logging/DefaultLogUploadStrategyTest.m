@@ -39,6 +39,7 @@
 @implementation NoTimeoutLogCollector
 
 - (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId {
+#pragma unused(bucketId)
     //NOTE: method stub to avoid removing buckets from timeout tracking
 }
 

@@ -47,7 +47,7 @@ public abstract class DBTestRunner {
         return tableNames;
     }
 
-    private void truncateTables(Set<String> tableNames, DataSource dataSource) throws SQLException {
+    protected void truncateTables(Set<String> tableNames, DataSource dataSource) throws SQLException {
         if (tableNames == null || tableNames.isEmpty()) {
             return;
         }

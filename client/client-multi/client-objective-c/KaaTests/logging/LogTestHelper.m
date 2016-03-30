@@ -14,27 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common;
+#import "LogTestHelper.h"
 
-/*
- * This code is automatically generated. In order to change content of this class edit Version.template file 
- */
+@implementation LogTestHelper
 
-/**
- * The Class Version provides access to useful project version information.
- * This information is populated during pre-compilation phase.
- */
-public final class Version {
-
-    /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.8.1-SNAPSHOT";
-    
-    /** The Constant COMMIT_HASH. */
-    public static final String COMMIT_HASH = "";
-
-    /**
-     * Instantiates a new version.
-     */
-    private Version(){
++ (LogRecord *)defaultLogRecord {
+    char _1byte = 0;
+    NSMutableData *data = [[NSMutableData alloc] initWithCapacity:RECORD_PAYLOAD_SIZE];
+    for (int i = 0; i < RECORD_PAYLOAD_SIZE; i++) {
+        [data appendBytes:&_1byte length:sizeof(char)];
     }
+    
+    LogRecord *record = [[LogRecord alloc] initWithData:data];
+    return record;
 }
+
+@end

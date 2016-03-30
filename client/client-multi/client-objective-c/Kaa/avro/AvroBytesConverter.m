@@ -32,7 +32,7 @@
         return nil;
     }
     [object serialize:writer];
-    NSData *bytes = [NSData dataWithBytes:writer->buf length:writer->written];
+    NSData *bytes = [NSData dataWithBytes:writer->buf length:(NSUInteger)writer->written];
     avro_writer_free(writer);
     if (buffer) {
         free(buffer);

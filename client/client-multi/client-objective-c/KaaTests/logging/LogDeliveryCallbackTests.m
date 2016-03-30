@@ -47,10 +47,12 @@
 }
 
 - (void)onLogDeliveryFailureWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
     [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
 }
 
 - (void)onLogDeliveryTimeoutWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
     [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
 }
 
@@ -106,6 +108,7 @@
     self.logCollector.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
     
     [self.logCollector onLogResponse:response];
+    [NSThread sleepForTimeInterval:0.5];
     [verifyCount(delegate, times(1)) onLogDeliverySuccessWithBucketInfo:bucketInfo];
     
 
@@ -113,6 +116,7 @@
     self.logCollector.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
     
     [self.logCollector onLogResponse:response];
+    [NSThread sleepForTimeInterval:0.5];
     [verifyCount(delegate, times(1)) onLogDeliveryFailureWithBucketInfo:bucketInfo];
     
     

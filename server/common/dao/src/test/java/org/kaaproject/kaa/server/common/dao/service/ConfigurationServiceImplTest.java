@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -52,6 +53,11 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationServiceImplTest.class);
 
     private static final String INCORRECT_SQL_ID = "incorrect id";
+
+    @Before
+    public void before() throws Exception {
+        clearDBData();
+    }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveConfigurationWithIncorrectIdTestFail() throws SchemaCreationException {
@@ -108,7 +114,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         List<ConfigurationDto> configurations = generateConfigurationDto(null, null, 1, false, false);
         ConfigurationDto configurationDto = configurationService.findConfigurationById(configurations.get(0).getId());
         configurationDto.setId(null);
-        configurationDto.setSchemaId(configurationDto.getApplicationId());
+        configurationDto.setSchemaId(100500 + "");
         configurationService.saveConfiguration(configurationDto);
     }
 
@@ -296,11 +302,13 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, 1).get(0);
         EndpointGroupDto group = generateEndpointGroupDto(schemaDto.getApplicationId());
         generateConfigurationDto(schemaDto.getId(), group.getId(), 1, true, false);
-        ChangeConfigurationNotification notification = configurationService.deleteConfigurationRecord(schemaDto.getId(), group.getId(), null);
+        ChangeConfigurationNotification notification = configurationService.deleteConfigurationRecord(schemaDto.getId(), group.getId(),
+                null);
         Assert.assertNotNull(notification);
         ConfigurationDto configurationDto = notification.getConfigurationDto();
         Assert.assertEquals(UpdateStatus.DEPRECATED, configurationDto.getStatus());
-        StructureRecordDto<ConfigurationDto> records = configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaDto.getId(), group.getId());
+        StructureRecordDto<ConfigurationDto> records = configurationService
+                .findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaDto.getId(), group.getId());
         Assert.assertNull(records.getInactiveStructureDto());
         Assert.assertEquals(UpdateStatus.DEPRECATED, records.getActiveStructureDto().getStatus());
     }
@@ -311,7 +319,8 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         ConfigurationSchemaDto schema = generateConfSchemaDto(id, 1).get(0);
         EndpointGroupDto group = generateEndpointGroupDto(id);
         generateConfigurationDto(schema.getId(), group.getId(), 1, true, false);
-        List<ConfigurationRecordDto> records = (List<ConfigurationRecordDto>) configurationService.findAllConfigurationRecordsByEndpointGroupId(group.getId(), false);
+        List<ConfigurationRecordDto> records = (List<ConfigurationRecordDto>) configurationService
+                .findAllConfigurationRecordsByEndpointGroupId(group.getId(), false);
         Assert.assertNotNull(records);
         Assert.assertEquals(1, records.size());
         ConfigurationDto activeConfiguration = records.get(0).getActiveStructureDto();
@@ -326,7 +335,8 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         EndpointGroupDto group = generateEndpointGroupDto(schema.getApplicationId());
         ConfigurationDto activeConfig = generateConfigurationDto(schema.getId(), group.getId(), 1, true, false).get(0);
         ConfigurationDto inactiveConfig = generateConfigurationDto(schema.getId(), group.getId(), 1, false, false).get(0);
-        StructureRecordDto<ConfigurationDto> record = configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schema.getId(), group.getId());
+        StructureRecordDto<ConfigurationDto> record = configurationService
+                .findConfigurationRecordBySchemaIdAndEndpointGroupId(schema.getId(), group.getId());
         Assert.assertEquals(activeConfig, record.getActiveStructureDto());
         Assert.assertEquals(inactiveConfig, record.getInactiveStructureDto());
     }
