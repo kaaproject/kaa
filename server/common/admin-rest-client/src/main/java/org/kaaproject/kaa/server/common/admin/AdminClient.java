@@ -1062,26 +1062,24 @@ public class AdminClient {
         return response.getBody();
     }
 
-    public CredentialsDto provisionCredentials (String applicationId, String credentials) {
+    public CredentialsDto provideCredentials (String applicationId, String credentialsBody) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationId", applicationId);
-        parameters.add("credentials", credentials);
-        return this.restTemplate.postForObject(restTemplate.getUrl() + "provisionCredentials", parameters, CredentialsDto.class);
+        parameters.add("credentialsBody", credentialsBody);
+        return this.restTemplate.postForObject(restTemplate.getUrl() + "provideCredentials", parameters, CredentialsDto.class);
     }
 
-    public void provisionRegistrationInfo(String applicationId, String credentialsId, Integer serverSideEPProfileVersion, String serverSideEPProfileBody){
+    public void provideRegistration(String applicationId, String credentialsId){
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationId", applicationId);
         parameters.add("credentialsId", credentialsId);
-        parameters.add("serverSideEPProfileVersion", serverSideEPProfileVersion);
-        parameters.add("serverSideEPProfileBody", serverSideEPProfileBody);
-
-        this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistrationInfo", parameters);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "provideRegistration", parameters);
 
     }
 
-    public void revokeCredentials(String credentialsId){
+    public void revokeCredentials(String applicationId, String credentialsId){
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationId", applicationId);
         parameters.add("credentialsId", credentialsId);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "revokeCredentials", parameters);
     }
