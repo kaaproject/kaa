@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
 @Repository
 public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCredentials, ByteBuffer> implements CredentialsDao<CassandraCredentials> {
@@ -60,16 +61,16 @@ public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCrede
     }
 
     @Override
-    public CassandraCredentials find(String applicationId, String credentialsId) {
+    public Optional<CassandraCredentials> find(String applicationId, String credentialsId) {
         LOG.debug("Searching credential by applicationID[{}] and credentialsID[{}]", applicationId, credentialsId);
         Select.Where query = select().from(getColumnFamilyName()).
                 where(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
                 and(eq(CREDENTIALS_ID_PROPERTY, credentialsId));
-        return findOneByStatement(query);
+        return Optional.ofNullable(this.findOneByStatement(query));
     }
 
     @Override
-    public CassandraCredentials updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
+    public Optional<CassandraCredentials> updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
         LOG.debug("Updating credentials status with applicationID[{}] and credentialsID[{}] to STATUS[{}]",
                 applicationId, credentialsId, status.toString());
         Update.Assignments query = update(getColumnFamilyName()).where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).

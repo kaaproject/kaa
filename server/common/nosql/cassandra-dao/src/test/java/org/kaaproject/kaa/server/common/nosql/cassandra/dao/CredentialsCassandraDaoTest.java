@@ -21,9 +21,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraCredentials;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Optional;
+
 import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.AVAILABLE;
 import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.REVOKED;
 
@@ -43,9 +47,9 @@ public class CredentialsCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
 
-        Credentials found = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
-        Assert.assertNotNull(found);
-        Assert.assertEquals(saved, found.toDto());
+        Optional<CassandraCredentials> found = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
+        Assert.assertTrue(found.isPresent());
+        Assert.assertEquals(saved, found.map(Credentials::toDto).get());
     }
 
     @Test
@@ -55,9 +59,9 @@ public class CredentialsCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
 
-        Credentials updated = this.credentialsDao.updateStatus(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID, REVOKED);
-        Assert.assertNotNull(updated);
-        Assert.assertEquals(REVOKED, updated.getStatus());
+        Optional<CassandraCredentials> updated = this.credentialsDao.updateStatus(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID, REVOKED);
+        Assert.assertTrue(updated.isPresent());
+        Assert.assertEquals(REVOKED, updated.get().getStatus());
     }
 
     @Test
@@ -68,7 +72,7 @@ public class CredentialsCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertNotNull(credentials.getId());
 
         this.credentialsDao.remove(CREDENTIALS_APPLICATION_ID, credentials.getId());
-        Credentials removed = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
-        Assert.assertNull(removed);
+        Optional<CassandraCredentials> removed = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
+        Assert.assertFalse(removed.isPresent());
     }
 }
