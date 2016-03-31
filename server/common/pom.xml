@@ -49,6 +49,7 @@
         <module>server-shared</module>
         <module>transport-shared</module>
         <module>verifier-shared</module>
+        <module>paf-shared</module>
     </modules>
     <dependencyManagement>
         <dependencies>

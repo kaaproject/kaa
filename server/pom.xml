@@ -40,6 +40,7 @@
         <module>appenders</module>
         <module>transports</module>
         <module>verifiers</module>
+        <module>paf-adapters</module>
     </modules>
 
     <profiles>

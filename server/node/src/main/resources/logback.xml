@@ -60,7 +60,11 @@
         </encoder>
     </appender>
 
-    <logger name="net.paf" level="TRACE">
+    <logger name="org.kaaproject.kaa.server.common.paf" level="TRACE">
+    	<appender-ref ref="pafLogAppender"/>
+    </logger>
+    
+    <logger name="org.kaaproject.kaa.server.paf" level="TRACE">
     	<appender-ref ref="pafLogAppender"/>
     </logger>
 
