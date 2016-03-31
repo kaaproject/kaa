@@ -1,6 +1,6 @@
 # Kaa Docker image
 
-This readme contain information about Kaa Docker image deployment.
+This readme contains information about Kaa Docker image deployment.
 
 Default environments that comes in this package is:
   - Fully functional Kaa cluster (1x Kaa node, 1x Zookeeper node, 1x Z
@@ -11,7 +11,7 @@ Default environments that comes in this package is:
     - MongoDB
   - Single Kaa node, that can be deployed to an existing cluster
 
-Base image configuration is done using next environment variables:
+Base image configuration is done using the following environment variables:
 
 | Variable name      | Sample values                    | Description                                                      |
 |--------------------|----------------------------------|------------------------------------------------------------------|
