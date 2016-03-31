@@ -14,78 +14,65 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.nosql.mongo.dao;
+package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.AVAILABLE;
-import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.REVOKED;
-
-import java.io.IOException;
-import java.util.Optional;
-
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraCredentials;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Optional;
+
+import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.AVAILABLE;
+import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.REVOKED;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/mongo-dao-test-context.xml")
+@ContextConfiguration(locations = "/cassandra-client-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class CredentialsMongoDaoTest extends AbstractMongoTest {
+public class CredentialsCassandraDaoTest extends AbstractCassandraTest {
+
+    private static final String CREDENTIALS_ID = "credential_id";
+    private static final String CREDENTIALS_APPLICATION_ID = "application_id";
     private static final byte[] CREDENTIALS_BODY = "credentials_body".getBytes();
-    private static final String APPLICATION_ID = "application_id";
-
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
-
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
-
-    @After
-    public void afterTest() throws IOException {
-        MongoDataLoader.clearDBData();
-    }
 
     @Test
     public void testFindCredentialsById() {
-        CredentialsDto saved = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto saved = this.generateCredentials(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID,
+                CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
 
-        Optional<Credentials> found = this.credentialsDao.find(APPLICATION_ID, saved.getId());
+        Optional<CassandraCredentials> found = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
         Assert.assertTrue(found.isPresent());
         Assert.assertEquals(saved, found.map(Credentials::toDto).get());
     }
 
     @Test
     public void testUpdateStatus() {
-        CredentialsDto credentials = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto credentials = this.generateCredentials(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID,
+                CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
 
-        Optional<Credentials> updated = this.credentialsDao.updateStatus(APPLICATION_ID, credentials.getId(), REVOKED);
+        Optional<CassandraCredentials> updated = this.credentialsDao.updateStatus(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID, REVOKED);
         Assert.assertTrue(updated.isPresent());
         Assert.assertEquals(REVOKED, updated.get().getStatus());
     }
 
     @Test
     public void testRemoveCredentials() {
-        CredentialsDto credentials = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto credentials = this.generateCredentials(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID,
+                CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
 
-        this.credentialsDao.remove(APPLICATION_ID, credentials.getId());
-        Optional<Credentials> removed = this.credentialsDao.find(APPLICATION_ID, credentials.getId());
+        this.credentialsDao.remove(CREDENTIALS_APPLICATION_ID, credentials.getId());
+        Optional<CassandraCredentials> removed = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
         Assert.assertFalse(removed.isPresent());
     }
 }

@@ -58,8 +58,15 @@
 
     <!-- Kaa Node Service -->
 
-    <bean id="kaaNodeInitializationService"
-        class="org.kaaproject.kaa.server.node.service.initialization.KaaNodeInitializationService" />
+    <bean id="kaaNodeInitializationService" class="org.kaaproject.kaa.server.node.service.initialization.KaaNodeInitializationService" />
+
+    <bean id="registrationService" class="org.kaaproject.kaa.server.node.service.registration.DefaultRegistrationService">
+        <constructor-arg ref="endpointRegistrationService"/>
+    </bean>
+
+    <bean id="credentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.DefaultCredentialsServiceLocator">
+        <constructor-arg ref="credentialsService"/>
+    </bean>
 
     <!-- Control Service -->
 

@@ -19,20 +19,20 @@ package org.kaaproject.kaa.server.node.service.credentials;
 import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 
 /**
- * A bridge between the {@link CredentialsService} and
- * {@link InternalCredentialsService} interfaces.
+ * A bridge between the actual interface and the internal Kaa implementation.
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public final class InternalCredentialsServiceAdapter implements CredentialsService {
+public final class CredentialsServiceAdapter implements CredentialsService {
 
     private final String applicationId;
-    private final InternalCredentialsService credentialsService;
+    private final org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService;
 
     /**
      * Constructs an adapter for the given application.
@@ -40,18 +40,18 @@ public final class InternalCredentialsServiceAdapter implements CredentialsServi
      * @param applicationId The application ID
      * @param credentialsService The internal credentials service used by Kaa
      */
-    public InternalCredentialsServiceAdapter(String applicationId, InternalCredentialsService credentialsService) {
+    public CredentialsServiceAdapter(String applicationId, org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
         this.applicationId = applicationId;
         this.credentialsService = credentialsService;
     }
 
     @Override
-    public CredentialsDto provisionCredentials(CredentialsDto credentials) throws CredentialsServiceException {
-        return credentialsService.provisionCredentials(applicationId, credentials);
+    public CredentialsDto provideCredentials(CredentialsDto credentials) throws CredentialsServiceException {
+        return credentialsService.provideCredentials(applicationId, credentials);
     }
 
     @Override
-    public Optional<CredentialsDto> lookupCredentials(String credentialsId) {
+    public Optional<CredentialsDto> lookupCredentials(String credentialsId) throws CredentialsServiceException {
         return credentialsService.lookupCredentials(applicationId, credentialsId);
     }
 

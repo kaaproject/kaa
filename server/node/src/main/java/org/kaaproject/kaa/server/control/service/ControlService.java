@@ -50,6 +50,7 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -1675,7 +1676,7 @@ public interface ControlService {
      * @param endpointId
      *        The endpoint ID
      *
-     * @throws ControlServiceException
+     * @throws ControlServiceException - if an exception occures.
      */
     void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException;
 
@@ -1691,4 +1692,52 @@ public interface ControlService {
      */
     List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException;
 
+    /**
+     * Provides security credentials, allowing an endpoint that uses them to
+     * interact with the specified application.
+     *
+     * @param applicationId The application ID to allow interaction with
+     * @param credentialsBody The security credentials to save
+     *
+     * @return The security credentials saved
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws ControlServiceException;
+
+    /**
+     * Returns credentials by application ID and credentials ID.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The credentials ID
+     *
+     * @return The credentials found
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    CredentialsDto getCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+
+    /**
+     * Revokes security credentials from the corresponding credentials storage.
+     * Also launches an asynchronous process to terminate all active sessions of
+     * the endpoint that uses these credentials.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The credentials ID
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void revokeCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+
+    /**
+     * Binds credentials to the server-side endpoint profile specified.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The ID of the credentials to bind
+     * @param serverProfileVersion The server-side endpoint profile version
+     * @param serverProfileBody The server-side endpoint profile body
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
 }

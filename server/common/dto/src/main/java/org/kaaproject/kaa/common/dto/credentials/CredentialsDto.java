@@ -21,6 +21,8 @@ import java.util.Arrays;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Bohdan Khablenko
  * @author Andrew Shvayka
@@ -31,15 +33,16 @@ public class CredentialsDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 1000L;
 
+    @JsonProperty("credentialsId")
     private String id;
+
     private byte[] credentialsBody;
     private CredentialsStatus status = CredentialsStatus.AVAILABLE;
 
     public CredentialsDto() {
     }
 
-    public CredentialsDto(String id, byte[] credentialsBody, CredentialsStatus status) {
-        this.id = id;
+    public CredentialsDto(byte[] credentialsBody, CredentialsStatus status) {
         this.credentialsBody = Arrays.copyOf(credentialsBody, credentialsBody.length);
         this.status = status;
     }

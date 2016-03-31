@@ -21,14 +21,53 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
 
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
+/**
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @param <T> A specific security credentials type
+ */
 public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer> {
 
+    /**
+     * Saves the given security credentials for the given application.
+     *
+     * @param applicationId The application ID
+     * @param credentials The security credentials to save
+     *
+     * @return The security credentials saved
+     */
     T save(String applicationId, CredentialsDto credentials);
 
-    T find(String applicationId, String credentialsId);
+    /**
+     * Returns the security credentials with the given ID.
+     *
+     * @param applicationId The application ID to search credentials for
+     * @param credentialsId The security credentials ID
+     *
+     * @return The security credentials with the given ID
+     */
+    Optional<T> find(String applicationId, String credentialsId);
 
-    T updateStatus(String applicationId, String credentialsId, CredentialsStatus status);
+    /**
+     * Updates the status of the security credentials with the given ID.
+     *
+     * @param applicationId The application ID to update credentials for
+     * @param credentialsId The security credentials ID
+     * @param status The credentials status to set
+     *
+     * @return The security credentials with the status updated
+     */
+    Optional<T> updateStatus(String applicationId, String credentialsId, CredentialsStatus status);
 
+    /**
+     * Removes the security credentials with the given ID from the application
+     * specified.
+     *
+     * @param applicationId The application ID to remove credentials from
+     * @param credentialsId The secuity credentials ID
+     */
     void remove(String applicationId, String credentialsId);
 }

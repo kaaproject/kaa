@@ -86,4 +86,12 @@
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>
 
+    <bean id="endpointRegistrationService" class="org.kaaproject.kaa.server.common.dao.service.EndpointRegistrationServiceImpl">
+        <constructor-arg ref="endpointRegistrationDao"/>
+    </bean>
+
+    <bean id="credentialsService" class="org.kaaproject.kaa.server.common.dao.service.CredentialsServiceImpl">
+        <constructor-arg ref="credentialsDao"/>
+    </bean>
+
 </beans>

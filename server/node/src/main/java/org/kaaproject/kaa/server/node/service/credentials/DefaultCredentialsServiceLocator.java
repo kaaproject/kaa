@@ -17,33 +17,24 @@
 package org.kaaproject.kaa.server.node.service.credentials;
 
 /**
- * A checked exception to be thrown by {@link CredentialsService}.
+ * The default implementation of the {@link CredentialsServiceLocator}
+ * interface.
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public final class CredentialsServiceException extends Exception {
+public final class DefaultCredentialsServiceLocator implements CredentialsServiceLocator {
 
-    private static final long serialVersionUID = 1000L;
+    private final org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService;
 
-    /**
-     * Constructs a new exception with the specified cause.
-     *
-     * @param cause The exception cause
-     */
-    public CredentialsServiceException(Throwable cause) {
-        super(cause);
+    public DefaultCredentialsServiceLocator(org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
+        this.credentialsService = credentialsService;
     }
 
-    /**
-     * Constructs a new exception with the specified cause and detail message.
-     *
-     * @param message The detail message
-     * @param cause The exception cause
-     */
-    public CredentialsServiceException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public CredentialsService getCredentialsService(String applicationId) {
+        return new CredentialsServiceAdapter(applicationId, this.credentialsService);
     }
 }

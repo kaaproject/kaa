@@ -36,6 +36,7 @@ import java.util.Set;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -80,6 +81,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -3584,6 +3587,55 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
         } catch (Exception cause) {
             throw new IllegalArgumentException("Invalid server-side endpoint profile body provided!");
+        }
+    }
+
+    @Override
+    public CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            return this.controlService.provideCredentials(applicationId, credentialsBody);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void revokeCredentials(String applicationId, String credentialsId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId) != null, "No credentials with the given ID found!");
+            this.controlService.revokeCredentials(applicationId, credentialsId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void provideRegistration(
+            String applicationId,
+            String credentialsId,
+            Integer serverProfileVersion,
+            String serverProfileBody)
+                    throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            CredentialsDto credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials != null, "No credentials with the given ID found!");
+            Validate.isTrue(credentials.getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
+            if (serverProfileVersion != null && serverProfileBody != null) {
+                ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
+                this.validateServerProfile(serverProfileSchema, serverProfileBody);
+            } else if (serverProfileVersion != null || serverProfileBody != null) {
+                String missingParameter = (serverProfileVersion == null ? "schema version" : "body");
+                String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
+                throw new IllegalArgumentException(message);
+            }
+            this.controlService.provideRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
         }
     }
 }

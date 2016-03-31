@@ -22,6 +22,8 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
@@ -36,6 +38,9 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpo
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraCredentials;
+import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
+import org.kaaproject.kaa.server.common.dao.model.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.ByteBuffer;
@@ -62,6 +67,8 @@ public abstract class AbstractCassandraTest {
     protected NotificationDao<CassandraNotification> notificationDao;
     @Autowired
     protected TopicListEntryDao<CassandraTopicListEntry> topicListEntryDao;
+    @Autowired
+    protected CredentialsDao<CassandraCredentials> credentialsDao;
 
     protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
@@ -213,5 +220,17 @@ public abstract class AbstractCassandraTest {
         endpointRegistration.setServerProfileVersion(serverProfileVersion);
         endpointRegistration.setServerProfileBody(serverProfileBody);
         return this.endpointRegistrationDao.save(endpointRegistration).toDto();
+    }
+
+    protected CredentialsDto generateCredentials(String applicationId, String credentialsId,
+                                                 byte[] credentialsBody, CredentialsStatus status) {
+        CredentialsDto credentialsDto = new CredentialsDto();
+        credentialsDto.setId(credentialsId);
+        credentialsDto.setCredentialsBody(credentialsBody);
+        credentialsDto.setStatus(status);
+        Credentials saved = this.credentialsDao.save(applicationId, credentialsDto);
+
+        CredentialsDto generatedCredentials = saved.toDto();
+        return generatedCredentials;
     }
 }

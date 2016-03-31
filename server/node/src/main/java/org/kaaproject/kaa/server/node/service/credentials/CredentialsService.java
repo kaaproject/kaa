@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 
 /**
  * A service that communicates with an external system to manage credentials
@@ -33,17 +34,17 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 public interface CredentialsService {
 
     /**
-     * Provisions credentials information to the external system.
+     * Provide credentials information to the external system.
      *
      * @param credentials The credentials to provision
      *
-     * @return The credentials provisioned
+     * @return The credentials provided
      *
      * @throws UnsupportedOperationException - if the underlying implementation
      *             forbids credentials provisioning.
      * @throws CredentialsServiceException - if an unexpected exception occures.
      */
-    CredentialsDto provisionCredentials(CredentialsDto credentials) throws CredentialsServiceException;
+    CredentialsDto provideCredentials(CredentialsDto credentials) throws CredentialsServiceException;
 
     /**
      * Returns the credentials by ID.
@@ -51,8 +52,10 @@ public interface CredentialsService {
      * @param credentialsId The credentials ID
      *
      * @return The credentials with the given ID
+     *
+     * @throws CredentialsServiceException - if an unexpected exception occures.
      */
-    Optional<CredentialsDto> lookupCredentials(String credentialsId);
+    Optional<CredentialsDto> lookupCredentials(String credentialsId) throws CredentialsServiceException;
 
     /**
      * Sets the status of the given credentials to
@@ -61,7 +64,7 @@ public interface CredentialsService {
      * @param credentialsId The credentials ID
      *
      * @throws CredentialsServiceException - if the credentials are not
-     *             {@link CredentialsStatus#AVAILABLE available}.
+     *             {@link CredentialsStatus#AVAILABLE}.
      */
     void markCredentialsInUse(String credentialsId) throws CredentialsServiceException;
 

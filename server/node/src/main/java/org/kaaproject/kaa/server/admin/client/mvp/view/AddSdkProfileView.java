@@ -23,7 +23,6 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
 
@@ -31,7 +30,6 @@ public interface AddSdkProfileView extends BaseDetailsView {
 
     HasValue<String> getName();
 
-    CheckBox getVerifyEndpointCredentialsFlag();
     ValueListBox<VersionDto> getConfigurationSchemaVersion();
     ValueListBox<VersionDto> getProfileSchemaVersion();
     ValueListBox<VersionDto> getNotificationSchemaVersion();
