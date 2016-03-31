@@ -213,4 +213,13 @@ public class CassandraModelConstants {
     public static final String EP_REGISTRATIONS_BY_CREDENTIALS_ID_COLUMN_FAMILY_NAME = "creds_id_ep_registration";
     public static final String EP_REGISTRATION_BY_CREDENTIALS_ID_CREDENTIALS_ID_PROPERTY = EP_REGISTRATION_CREDENTIALS_ID_PROPERTY;
     public static final String EP_REGISTRATION_BY_CREDENTIALS_ID_ENDPOINT_ID_PROPERTY = EP_REGISTRATION_ENDPOINT_ID_PROPERTY;
+
+    /**
+     * Cassandra Credentials constants
+     */
+    public static final String CREDENTIALS_COLUMN_FAMILY_NAME = "credentials";
+    public static final String CREDENTIALS_APPLICATION_ID_PROPERTY = "creds_application_id";
+    public static final String CREDENTIALS_ID_PROPERTY = "creds_id";
+    public static final String CREDENTIALS_BODY_PROPERTY = "creds_body";
+    public static final String CREDENTIALS_STATUS_PROPERTY = "creds_status";
 }
