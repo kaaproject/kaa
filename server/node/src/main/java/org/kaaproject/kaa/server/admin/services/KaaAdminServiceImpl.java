@@ -82,6 +82,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -3621,7 +3622,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             this.checkApplicationId(applicationId);
-            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId) != null, "No credentials with the given ID found!");
+            CredentialsDto credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials != null, "No credentials with the given ID found!");
+            Validate.isTrue(credentials.getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
             if (serverProfileVersion != null && serverProfileBody != null) {
                 ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
                 this.validateServerProfile(serverProfileSchema, serverProfileBody);

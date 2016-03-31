@@ -2140,8 +2140,8 @@ public class KaaAdminController {
     public void provideRegistration(
             @RequestParam String applicationId,
             @RequestParam String credentialsId,
-            @RequestParam(required = false) Integer serverProfileVersion,
-            @RequestParam(required = false) String serverProfileBody)
+            @RequestParam Integer serverProfileVersion,
+            @RequestParam String serverProfileBody)
                     throws KaaAdminServiceException {
         this.kaaAdminService.provideRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
     }
