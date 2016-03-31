@@ -14,18 +14,18 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.node.service.registration;
+package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
+import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointRegistrationDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -37,22 +37,26 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @since v0.9.0
  */
-@Service
 @Transactional
 public final class EndpointRegistrationServiceImpl implements EndpointRegistrationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointRegistrationServiceImpl.class);
 
-    @Autowired
-    private EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao;
+    private final EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao;
+
+    public EndpointRegistrationServiceImpl(EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao) {
+        this.endpointRegistrationDao = endpointRegistrationDao;
+    }
 
     @Override
     public EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException {
         try {
             Validate.notNull(endpointRegistration, "Invalid endpoint registration provided!");
+            String credentialsId = endpointRegistration.getCredentialsId();
+            Validate.isTrue(this.findEndpointRegistrationByCredentialsId(credentialsId) == null, "The endpoint registration already exists!");
             return this.endpointRegistrationDao.save(endpointRegistration).toDto();
         } catch (Exception cause) {
-            LOG.error("An unexpected exception occured while searching for endpoint registration!", cause);
+            LOG.error("An unexpected exception occured while saving endpoint registration!", cause);
             throw new EndpointRegistrationServiceException(cause);
         }
     }
@@ -61,8 +65,7 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
     public Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException {
         try {
             Validate.notBlank(endpointId, "Invalid endpoint ID provided!");
-            Optional<EndpointRegistration> endpointRegistration = this.endpointRegistrationDao.findByEndpointId(endpointId);
-            return endpointRegistration.isPresent() ? Optional.of(endpointRegistration.get().toDto()) : Optional.ofNullable(null);
+            return this.endpointRegistrationDao.findByEndpointId(endpointId).map(EndpointRegistration::toDto);
         } catch (Exception cause) {
             LOG.error("An unexpected exception occured while searching for endpoint registration!", cause);
             throw new EndpointRegistrationServiceException(cause);
@@ -73,8 +76,7 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
     public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId) throws EndpointRegistrationServiceException {
         try {
             Validate.notBlank(credentialsId, "Invalid credentials ID provided!");
-            Optional<EndpointRegistration> endpointRegistration = this.endpointRegistrationDao.findByCredentialsId(credentialsId);
-            return endpointRegistration.isPresent() ? Optional.of(endpointRegistration.get().toDto()) : Optional.ofNullable(null);
+            return this.endpointRegistrationDao.findByCredentialsId(credentialsId).map(EndpointRegistration::toDto);
         } catch (Exception cause) {
             LOG.error("An unexpected exception occured while searching for endpoint registration!", cause);
             throw new EndpointRegistrationServiceException(cause);

@@ -72,6 +72,9 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -94,6 +97,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
+import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
@@ -106,6 +110,8 @@ import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
@@ -130,6 +136,7 @@ import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
 import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
@@ -238,6 +245,12 @@ public class DefaultControlService implements ControlService {
 
     @Autowired
     private CTLService ctlService;
+
+    @Autowired
+    private CredentialsServiceLocator credentialsServiceLocator;
+
+    @Autowired
+    private EndpointRegistrationService endpointRegistrationService;
 
     /** The neighbor connections size. */
     @Value("#{properties[max_number_neighbor_connections]}")
@@ -2220,5 +2233,55 @@ public class DefaultControlService implements ControlService {
         nf.setActorClassifier(ThriftActorClassifier.APPLICATION);
         neighbors.brodcastMessage(OperationsServiceMsg.fromDeregistration(nf));
     }
-    
+
+    @Override
+    public CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws ControlServiceException {
+        CredentialsDto credentials = new CredentialsDto(credentialsBody.getBytes(), CredentialsStatus.AVAILABLE);
+        try {
+            return this.credentialsServiceLocator.getCredentialsService(applicationId).provideCredentials(credentials);
+        } catch (CredentialsServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while saving credentials [{0}]", credentials);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public CredentialsDto getCredentials(String applicationId, String credentialsId) throws ControlServiceException {
+        try {
+            return this.credentialsServiceLocator.getCredentialsService(applicationId).lookupCredentials(credentialsId).orElse(null);
+        } catch (CredentialsServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while searching for credentials by ID [{0}]", credentialsId);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public void revokeCredentials(String applicationId, String credentialsId) throws ControlServiceException {
+        try {
+            this.credentialsServiceLocator.getCredentialsService(applicationId).markCredentialsRevoked(credentialsId);
+        } catch (CredentialsServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while revoking credentials by ID [{0}]", credentialsId);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public void provideRegistration(
+            String applicationId,
+            String credentialsId,
+            Integer serverProfileVersion,
+            String serverProfileBody)
+                    throws ControlServiceException {
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(applicationId, credentialsId, null, serverProfileVersion, serverProfileBody);
+        try {
+            this.endpointRegistrationService.saveEndpointRegistration(endpointRegistration);
+        } catch (EndpointRegistrationServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while saving endpoint registration [{0}]", endpointRegistration);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
 }

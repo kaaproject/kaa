@@ -56,6 +56,7 @@ public class MongoCredentials implements Credentials, Serializable {
         return serialVersionUID;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -72,6 +73,7 @@ public class MongoCredentials implements Credentials, Serializable {
         this.applicationId = applicationId;
     }
 
+    @Override
     public byte[] getCredentialsBody() {
         return credentialsBody;
     }
@@ -80,6 +82,7 @@ public class MongoCredentials implements Credentials, Serializable {
         this.credentialsBody = Arrays.copyOf(credentialsBody, credentialsBody.length);
     }
 
+    @Override
     public CredentialsStatus getStatus() {
         return status;
     }

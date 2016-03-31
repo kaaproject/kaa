@@ -16,24 +16,24 @@
 
 package org.kaaproject.kaa.server.node.service.credentials;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
- * The default implementation of the {@link CredentialsServiceFactory} used by
- * Kaa in order to utilize {@link InternalCredentialsService}.
+ * Allows each application to have a credentials service of its own.
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
  * @since v0.9.0
  */
-public final class InternalCredentialsServiceFactory implements CredentialsServiceFactory {
+public interface CredentialsServiceLocator {
 
-    @Autowired
-    private InternalCredentialsService credentialsService;
-
-    @Override
-    public CredentialsService getCredentialsService(String applicationId) {
-        return new InternalCredentialsServiceAdapter(applicationId, this.credentialsService);
-    }
+    /**
+     * Returns the service that is responsible for managing credentials for the
+     * specified application.
+     *
+     * @param applicationId The application ID
+     *
+     * @return The service that is responsible for managing credentials for the
+     *         specified application.
+     */
+    CredentialsService getCredentialsService(String applicationId);
 }
