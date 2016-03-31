@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.client.channel.failover;
 
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 
 /**
  * Manager is responsible for managing current server's failover/connection events
@@ -66,4 +67,11 @@ public interface FailoverManager {
      * @see FailoverStatus
      */
     FailoverDecision onFailover(FailoverStatus failoverStatus);
+
+    /**
+     * @param failoverStrategy strategy that will be used to resolve failovers.
+     *
+     * @see org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy
+     */
+    void setFailoverStrategy(FailoverStrategy failoverStrategy);
 }

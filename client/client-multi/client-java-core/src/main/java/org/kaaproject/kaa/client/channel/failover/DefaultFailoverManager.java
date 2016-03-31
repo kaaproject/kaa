@@ -162,6 +162,15 @@ public class DefaultFailoverManager implements FailoverManager {
     }
 
     @Override
+    public void setFailoverStrategy(FailoverStrategy failoverStrategy) {
+        if (failoverStrategy == null) {
+            throw new IllegalArgumentException("Failover strategy can't be null");
+        }
+
+        this.failoverStrategy = failoverStrategy;
+    }
+
+    @Override
     public synchronized FailoverDecision onFailover(FailoverStatus failoverStatus) {
         AccessPointIdResolution accessPointIdResolution = null;
         long resolutionTime = System.currentTimeMillis();
