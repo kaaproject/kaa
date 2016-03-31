@@ -724,16 +724,13 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
             && info->services[1] == KAA_EXTENSION_USER
             && info->services[2] == KAA_EXTENSION_EVENT
             && info->services[3] == KAA_EXTENSION_LOGGING) {
-        if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
-            if (alloc_buffer) {
-                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-                *buffer = alloc_buffer;
-                *buffer_size = sizeof(CONNECT_PACK);
-                return KAA_ERR_NONE;
-            }
+        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+        if (alloc_buffer) {
+            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+            *buffer = alloc_buffer;
+            *buffer_size = sizeof(CONNECT_PACK);
+            return KAA_ERR_NONE;
         }
-
     }
 
     return KAA_ERR_BADPARAM;

@@ -136,7 +136,6 @@ static kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *se
 static inline uint32_t get_uint32_t(const char *buffer);
 static kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *self);
 static kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self, kaa_extension_id *service, size_t services_count);
-static char* kaa_tcp_write_pending_services_allocator_fn(void *context, size_t buffer_size);
 static kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t *self);
 static kaa_error_t kaa_tcp_channel_disconnect_internal(kaa_tcp_channel_t *self, kaatcp_disconnect_reason_t return_code);
 
@@ -740,8 +739,6 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     kaa_serialize_info_t serialize_info;
     serialize_info.services = self->supported_services;
     serialize_info.services_count = self->supported_service_count;
-    serialize_info.allocator = kaa_tcp_write_pending_services_allocator_fn;
-    serialize_info.allocator_context = (void*) self;
 
     char *sync_buffer = NULL;
     size_t sync_size = 0;
@@ -1035,8 +1032,6 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
     kaa_serialize_info_t serialize_info;
     serialize_info.services = service;
     serialize_info.services_count = services_count;
-    serialize_info.allocator = kaa_tcp_write_pending_services_allocator_fn;
-    serialize_info.allocator_context = (void*) self;
 
     char *sync_buffer = NULL;
     size_t sync_size = 0;
@@ -1100,21 +1095,6 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
 
     return error_code;
 }
-
-
-
-
-/*
- * Memory allocator for kaa_platform_protocol_serialize_client_sync() method.
- */
-char *kaa_tcp_write_pending_services_allocator_fn(void *context, size_t buffer_size)
-{
-    KAA_RETURN_IF_NIL2(context, buffer_size, NULL);
-    char *buffer = (char *) KAA_MALLOC(buffer_size);
-    return buffer;
-}
-
-
 
 /*
  * Send Ping request message

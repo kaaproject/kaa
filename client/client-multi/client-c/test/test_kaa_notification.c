@@ -70,13 +70,6 @@ void on_topic(void* contextmock, kaa_list_t *topics)
     printf("\nTopic list listener got his topic list.\n\n");
 }
 
-char *allocator (void *context, size_t size)
-{
-    (void)context;
-    return KAA_MALLOC(size);
-}
-
-
 char *buffer = NULL;
 size_t buffer_size = 0;
 
@@ -306,8 +299,6 @@ void test_serializing(void **state)
 
     info->services = service;
     info->services_count = 1;
-    info->allocator = &allocator;
-    info->allocator_context = NULL;
     err = kaa_platform_protocol_serialize_client_sync(context->platform_protocol, info, &buffer, &buffer_size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
