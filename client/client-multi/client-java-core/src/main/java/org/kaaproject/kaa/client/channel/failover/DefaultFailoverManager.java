@@ -145,6 +145,8 @@ public class DefaultFailoverManager implements FailoverManager {
             return;
         }
 
+        failoverStrategy.onRecover(connectionInfo);
+
         AccessPointIdResolution accessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
         if (accessPointIdResolution == null) {
             LOG.trace("Server hasn't been set yet (failover resolution has happened), so a new server: {} can't be connected", connectionInfo);

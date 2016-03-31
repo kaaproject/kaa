@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client.channel.failover.strategies;
 
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
 import org.kaaproject.kaa.client.channel.failover.FailoverDecision.FailoverAction;
 import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
@@ -75,6 +76,11 @@ public class DefaultFailoverStrategy implements FailoverStrategy {
             default:
                 return new FailoverDecision(FailoverAction.NOOP);
         }
+    }
+
+    @Override
+    public void onRecover(TransportConnectionInfo connectionInfo) {
+        LOG.debug("SDK recovered after failover with connection info: {}", connectionInfo);
     }
 
     @Override

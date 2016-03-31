@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client.channel.failover.strategies;
 
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
 import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 
@@ -37,6 +38,15 @@ public interface FailoverStrategy {
      * @see FailoverStatus
      */
     FailoverDecision onFailover(FailoverStatus failoverStatus);
+
+    /**
+     * Needs to be invoked once client recovered after failover.
+     *
+     * @param connectionInfo server information
+     *
+     * @see org.kaaproject.kaa.client.channel.TransportConnectionInfo
+     */
+    void onRecover(TransportConnectionInfo connectionInfo);
 
     /**
      * Use the {@link #getTimeUnit()} method to get current time unit.
