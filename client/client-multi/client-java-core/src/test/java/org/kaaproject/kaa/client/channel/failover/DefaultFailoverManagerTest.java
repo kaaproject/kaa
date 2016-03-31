@@ -142,6 +142,10 @@ public class DefaultFailoverManagerTest {
         FailoverDecision decision = failoverManager.onFailover(incomingStatus);
         Mockito.verify(failoverStrategy, Mockito.times(1)).onFailover(incomingStatus);
         Assert.assertNotNull(decision);
+
+        TransportConnectionInfo connectionInfo = Mockito.mock(TransportConnectionInfo.class);
+        failoverManager.onServerConnected(connectionInfo);
+        Mockito.verify(failoverStrategy, Mockito.times(1)).onRecover(connectionInfo);
     }
 
     private TransportConnectionInfo mockForTransportConnectionInfo(int accessPointId) {
