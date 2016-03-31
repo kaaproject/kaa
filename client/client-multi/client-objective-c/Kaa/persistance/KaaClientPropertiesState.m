@@ -150,6 +150,15 @@
             }
         } else {
             DDLogInfo(@"%@ First SDK start!", TAG);
+            
+            if (![fileManager fileExistsAtPath:storage]) {
+                NSError *error;
+                BOOL dirCreated = [fileManager createDirectoryAtPath:storage withIntermediateDirectories:YES attributes:nil error:&error];
+                if (!dirCreated) {
+                    DDLogError(@"%@ Creating directory for client state: %@", TAG, error);
+                }
+            }
+            
             [self setPropertiesHash:properties.propertiesHash];
         }
     }
@@ -231,12 +240,14 @@
     self.state[TOPIC_LIST_HASH] = @(_topicListHash);
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *backup = [NSString stringWithFormat:@"%@_bckp", self.stateFileLocation];
-    BOOL backupResult = [fileManager copyItemAtPath:self.stateFileLocation toPath:backup error:nil];
-    DDLogDebug(@"%@ Backup created: %d", TAG, backupResult);
+    if ([fileManager fileExistsAtPath:self.stateFileLocation]) {
+        NSString *backup = [NSString stringWithFormat:@"%@_bckp", self.stateFileLocation];
+        BOOL backupResult = [fileManager copyItemAtPath:self.stateFileLocation toPath:backup error:nil];
+        DDLogDebug(@"%@ Backup created: %d", TAG, backupResult);
+    }
     
-    BOOL result = [self.state writeToFile:self.stateFileLocation atomically:YES];
-    DDLogDebug(@"%@ Persist finished with result: %d", TAG, result);
+    BOOL peristResult = [self.state writeToFile:self.stateFileLocation atomically:YES];
+    DDLogDebug(@"%@ Persist finished. Result: %d", TAG, peristResult);
 }
 
 - (NSString *)refreshEndpointAccessToken {
