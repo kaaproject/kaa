@@ -30,9 +30,9 @@ then
     help
 fi
 
-if [ -z ${MAX_LOG_LEVEL} ]
+if [ -z ${MAX_LOG_LEVEL+x} ]
 then
-    MAX_LOG_LEVEL=6;
+    MAX_LOG_LEVEL=6
 fi
 
 DEBUG_ENABLED=1
