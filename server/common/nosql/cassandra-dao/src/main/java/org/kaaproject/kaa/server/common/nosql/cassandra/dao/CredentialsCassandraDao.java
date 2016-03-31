@@ -42,7 +42,7 @@ import java.util.Optional;
 @Repository
 public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCredentials, ByteBuffer> implements CredentialsDao<CassandraCredentials> {
 
-    private static Logger LOG = LoggerFactory.getLogger(CredentialsCassandraDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CredentialsCassandraDao.class);
 
     @Override
     protected Class<CassandraCredentials> getColumnFamilyClass() {

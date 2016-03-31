@@ -20,12 +20,14 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
@@ -49,7 +51,7 @@ public class CassandraCredentials implements Credentials, Serializable {
     @Column(name = CREDENTIALS_BODY_PROPERTY)
     private ByteBuffer cassandraCredentialsBody;
     @Column(name = CREDENTIALS_STATUS_PROPERTY)
-    private String credentialStatus;
+    private String cassandraCredentialsStatus;
 
     public CassandraCredentials() {
     }
@@ -58,7 +60,7 @@ public class CassandraCredentials implements Credentials, Serializable {
         this.applicationId = applicationId;
         this.id = dto.getId();
         this.cassandraCredentialsBody = getByteBuffer(dto.getCredentialsBody());
-        this.credentialStatus = dto.getStatus().toString();
+        this.cassandraCredentialsStatus = dto.getStatus().toString();
     }
 
     @Override
@@ -66,17 +68,19 @@ public class CassandraCredentials implements Credentials, Serializable {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
+    @Override
+    public byte[] getCredentialsBody() {
+        byte[] buffer = cassandraCredentialsBody.array();
+        return Arrays.copyOf(buffer, buffer.length);
     }
 
     @Override
-    public byte[] getCredentialsBody() {
-        return cassandraCredentialsBody.array();
+    public CredentialsStatus getStatus() {
+        return CredentialsStatus.valueOf(cassandraCredentialsStatus);
+    }
+
+    public String getApplicationId() {
+        return this.applicationId;
     }
 
     public void setApplicationId(String applicationId) {
@@ -84,24 +88,24 @@ public class CassandraCredentials implements Credentials, Serializable {
     }
 
     public ByteBuffer getCassandraCredentialsBody() {
-        return cassandraCredentialsBody;
+        return ByteBuffer.wrap(this.getCredentialsBody());
     }
 
     public void setCassandraCredentialsBody(ByteBuffer cassandraCredentialsBody) {
-        this.cassandraCredentialsBody = cassandraCredentialsBody.duplicate();
+        byte[] buffer = cassandraCredentialsBody.array();
+        this.cassandraCredentialsBody = ByteBuffer.wrap(Arrays.copyOf(buffer, buffer.length));
     }
 
-    @Override
-    public CredentialsStatus getStatus() {
-        return CredentialsStatus.valueOf(credentialStatus);
+    public String getCassandraCredentialsStatus() {
+        return this.cassandraCredentialsStatus;
     }
 
-    public String getCredentialStatus() {
-        return credentialStatus;
+    public void setCassandraCredentialsStatus(String cassandraCredentialsStatus) {
+        this.cassandraCredentialsStatus = cassandraCredentialsStatus;
     }
 
-    public void setCredentialStatus(String status) {
-        this.credentialStatus = status;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -112,7 +116,7 @@ public class CassandraCredentials implements Credentials, Serializable {
         CassandraCredentials that = (CassandraCredentials) o;
 
         if (!applicationId.equals(that.applicationId)) return false;
-        if (!credentialStatus.equals(that.credentialStatus)) return false;
+        if (!cassandraCredentialsStatus.equals(that.cassandraCredentialsStatus)) return false;
         if (!cassandraCredentialsBody.equals(that.cassandraCredentialsBody)) return false;
 
         return true;
@@ -122,7 +126,7 @@ public class CassandraCredentials implements Credentials, Serializable {
     public int hashCode() {
         int result = applicationId.hashCode();
         result = 31 * result + cassandraCredentialsBody.hashCode();
-        result = 31 * result + credentialStatus.hashCode();
+        result = 31 * result + cassandraCredentialsStatus.hashCode();
         return result;
     }
 
@@ -131,8 +135,8 @@ public class CassandraCredentials implements Credentials, Serializable {
         return "CassandraCredentials{" +
                 "applicationId='" + applicationId + '\'' +
                 ", id='" + id + '\'' +
-                ", cassandraCredentialsBody=" + cassandraCredentialsBody +
-                ", credentialStatus='" + credentialStatus + '\'' +
+                ", credentialsBody=" + cassandraCredentialsBody +
+                ", status='" + cassandraCredentialsStatus + '\'' +
                 '}';
     }
 
@@ -141,7 +145,7 @@ public class CassandraCredentials implements Credentials, Serializable {
         CredentialsDto credentialsDto = new CredentialsDto();
         credentialsDto.setId(id);
         credentialsDto.setCredentialsBody(getBytes(cassandraCredentialsBody));
-        credentialsDto.setStatus(CredentialsStatus.valueOf(credentialStatus));
+        credentialsDto.setStatus(CredentialsStatus.valueOf(cassandraCredentialsStatus));
         return credentialsDto;
     }
 }

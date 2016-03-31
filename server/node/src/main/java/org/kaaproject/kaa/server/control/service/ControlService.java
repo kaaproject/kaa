@@ -63,7 +63,6 @@ import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 
 /**
@@ -1738,7 +1737,7 @@ public interface ControlService {
      * @param serverProfileVersion The server-side endpoint profile version
      * @param serverProfileBody The server-side endpoint profile body
      *
-     * @throws KaaAdminServiceException - if an exception occures.
+     * @throws ControlServiceException - if an exception occures.
      */
     void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
 }
