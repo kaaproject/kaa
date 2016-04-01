@@ -150,9 +150,9 @@ Add official PostgreSQL repository.
    Install MariaDB 5.5 for Ubuntu 14.04 64-bit.
 
    ```bash
-    $ sudo apt-get install software-properties-common
-    $ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-    $ sudo add-apt-repository 'deb [arch=amd64,i386] http://ftp.hosteurope.de/mirror/mariadb.org/repo/10.1/ubuntu trusty main'
+    sudo apt-get install software-properties-common
+    sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
+    sudo add-apt-repository 'deb [arch=amd64,i386] http://ftp.hosteurope.de/mirror/mariadb.org/repo/5.5/ubuntu trusty main'
    ```
 
    Once the key is imported and the repository added you can install MariaDB with:
@@ -164,16 +164,34 @@ Add official PostgreSQL repository.
 
    During the installation process you will be asked to configure the root password for the MariaDB, enter "admin".
 
+   ![alt text](mariadbpassword.png "mariadb instalation password promt")
+
+   You can check if the MariaDB server is running by executing the following command.
+
+   ```bash
+    $ sudo netstat -ntlp | grep 3306
+    
+    tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      7386/mysqld
+   ```
+
+   For more details, please refer to the [official page](https://mariadb.org/).
+
    Connect to the mariadb-server by executing the following command.
 
    ```bash
     $ mysql -u root -padmin
    ```
 
+   Create new user for database by executing the following command.
+
+   ```bash
+    MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
+   ```
+
    Create the Kaa database by executing the following command.
 
    ```bash
-   MariaDB [(none)]> create database kaa;
+    MariaDB [(none)]> CREATE DATABASE kaa;
    ```
 
 5. Install [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.6/).  
@@ -388,33 +406,55 @@ Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
    Add MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (name it MariaDB.repo or something similar).
 
    ```bash
-    # MariaDB 10.1 CentOS repository list - created 2016-03-31 15:28 UTC
+    # MariaDB 5.5 CentOS repository list - created 2016-04-01 10:22 UTC
     # http://mariadb.org/mariadb/repositories/
     [mariadb]
     name = MariaDB
-    baseurl = http://yum.mariadb.org/10.1/centos6-amd64
+    baseurl = http://yum.mariadb.org/5.5/centos6-amd64
     gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
     gpgcheck=1
+   ```
+   Then execute folowing commands
+
+   ```bash
+    $ sudo yum -y update
+    $ sudo service mysqld stop
+    $ sudo yum -y remove mysql-server mysql
    ```
 
    With the repo file in place you can now install MariaDB like so:
 
    ```bash
     $ sudo yum install MariaDB-server MariaDB-client
+    $ sudo service mysql start
    ```
 
-   During the installation process you will be asked to configure the root password for the MariaDB, enter "admin".
+   You can check if the MariaDB server is running by executing the following command.
+
+   ```bash
+    $ sudo netstat -ntlp | grep 3306
+    
+    tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      7386/mysqld
+   ```
+
+   For more details, please refer to the [official page](https://mariadb.org/).
 
    Connect to the mariadb-server by executing the following command.
 
    ```bash
-    $ mysql -u root -padmin
+    $ mysql
+   ```
+
+   Create new user for database by executing the following command.
+
+   ```bash
+    MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
    ```
 
    Create the Kaa database by executing the following command.
 
    ```bash
-   MariaDB [(none)]> create database kaa;
+    MariaDB [(none)]> CREATE DATABASE kaa;
    ```
 
 5. Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.5/).
