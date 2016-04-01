@@ -2,19 +2,42 @@
 html, body {
    height: 100%;
    font-family:Open Sans;
-   color:#555555;
+   color:#000000;
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
   height: 100%;
   font-family:Open Sans;
 }
+
+/* Table options */
+
+table, th, td {
+   border: 1px solid black;
+}
+
+table {
+    width: 75%;
+}
+
+th, td {
+    padding: 15px;
+    vertical-align: center;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2}
+
+th {
+    background-color: #444444;
+    color: white;
+}
+ 
 .nav {
    font-family:Open Sans;
    font-size:13px;
 }
 
 a {
-  color:#222222;
+  color:#fca04d;
 }
 
 a:hover {

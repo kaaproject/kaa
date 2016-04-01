@@ -1,22 +1,19 @@
-    {% assign navurl = page.nav %}
-    <!--{% assign navurl = page.nav | prepend: page.path %}-->
-    {% assign navurl =  page.nav | replace: '/:path' , '' %}
-    {% assign navurl =  navurl | prepend: page.dir %}
+    {% assign navurl = page.url %}
     {% assign selected_url = . %}
     {% assign selected_item = "Kaa releases" %}
-   <!-- {% for item in site.data.versions %}
+    {% for item in site.data.versions %}
         {% assign key = item[0] %}
         {% assign val = item[1] %}
         {% if navurl contains val.url %}
             {% assign selected_url = val.url %}
             {% assign selected_item = val.text %}
         {% endif %}
-    {% endfor %}-->
-    
-    {% if site.data.versions[page.dir] %}
+    {% endfor %}
+    {% assign page.ver = selected_url %}
+    <!--{% if site.data.versions[page.dir] %}
         {% assign selected_url  = site.data.versions[page.dir].url %}
         {% assign selected_item = site.data.versions[page.dir].text %}
-    {% endif %}
+    {% endif %}-->
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ selected_item }}<span class="caret"/></a>
     <ul  class="dropdown-menu">
     {% for item in include.nav %}
