@@ -93,4 +93,15 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
             throw new EndpointRegistrationServiceException(cause);
         }
     }
+
+    @Override
+    public void removeEndpointRegistrationById(String registrationId) throws EndpointRegistrationServiceException {
+        try {
+            Validate.notBlank(registrationId, "Invalid registration ID provided!");
+            this.endpointRegistrationDao.removeById(registrationId);
+        } catch (Exception cause) {
+            LOG.error("An unexpected exception occured while removing endpoint registration!", cause);
+            throw new EndpointRegistrationServiceException(cause);
+        }
+    }
 }

@@ -2172,11 +2172,10 @@ public class KaaAdminController {
      *
      * @throws KaaAdminServiceException - if an exception occures.
      */
-    @RequestMapping(value = "notifyRevoked", params = { "credentialsId" }, method = RequestMethod.POST)
+    @RequestMapping(value = "notifyRevoked", params = { "applicationId", "credentialsId" }, method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void onCredentialsRevoked(String credentialsId) throws KaaAdminServiceException {
-        // TODO: Needs implementation!
-        throw new UnsupportedOperationException("This method lacks implementation!");
+    public void onCredentialsRevoked(String applicationId, String credentialsId) throws KaaAdminServiceException {
+        this.kaaAdminService.onCredentialsRevoked(applicationId, credentialsId);
     }
 
     /**
