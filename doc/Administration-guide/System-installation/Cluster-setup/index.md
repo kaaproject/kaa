@@ -23,7 +23,7 @@ On every of them we had succesfully instaled kaa and everithing that left it is 
 To set up claster it is necessary to edit next properties:
  
  | Property name | Example values | Description | File location | 
- |---------------|----------------|-------------|---------------|
+ |-------------- |--------------- |------------ |-------------- |
  | control_server_enabled | true/false | Determines whether control server enabled on this node or not | /usr/lib/kaa-node/conf/kaa-node.properties |
  | bootstrap_server_enabled | true/false | Determines whether bootstrap server enabled on this node or not  | /usr/lib/kaa-node/conf/kaa-node.properties |
  | operations_server_enabled | true/false | Determines whether operations server enabled on this node or not | /usr/lib/kaa-node/conf/kaa-node.properties |
@@ -65,17 +65,17 @@ Kaa-node transport properties, in this properties we need to specifie IP address
  # The Control Server notifies every Operations/Bootstrap Server on most data updates via a Thrift-based protocol.
 
  # Thrift server host
- thrift_host=localhost
+ thrift_host=<ip_of_current_machine>
 
  # Interface that will be reported by all transports
- transport_public_interface=localhost
+ transport_public_interface=<ip_of_current_machine>
 ```
 
 Kaa zookeeper hosts - list of all zookeeper services on nodes.
 
 ```bash
  # Zookeeper service url list.
- zk_host_port_list=localhost:2181
+ zk_host_port_list=<zookeeper_ip>:<zookeeper_port>
 ```
 
 For every node insert node id in file ```/var/lib/zookeeper/myid```. The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing else. The id must be unique within the ensemble and should have a value between 1 and 255. For example we have 3 nodes so we will have next values 1, 2, 3. For more details visit this [documentation page](https://zookeeper.apache.org/doc/r3.3.2/zookeeperAdmin.html#sc_zkMulitServerSetup).
@@ -84,17 +84,17 @@ Configure SQL database host and port ```/usr/lib/kaa-node/conf/dao.properties```
 
 ```bash
  # specify jdbc database host
- jdbc_host=localhost
+ jdbc_host=<postgresql_ip>
  
  # specify jdbc database post
- jdbc_port=5432
+ jdbc_port=<postgresql_port>
 ```
 
 and ```/usr/lib/kaa-node/conf/admin-dao.properties```
 
 ```bash
  # specify jdbc database url
- jdbc_url=jdbc:postgresql://localhost:5432/kaa
+ jdbc_url=jdbc:postgresql://<postgresql_ip>:<postgresql_port>/kaa
 ```
 
 Select NoSQL database ```mongo``` or ```cassandra```in ```/usr/lib/kaa-node/conf/dao.properties``` file.
@@ -109,14 +109,14 @@ Setup Cassandra host ip ```/usr/lib/kaa-node/conf/common-dao-cassandra.propertie
 
 ```bash
  # Specify node list
-node_list=127.0.0.1:9042
+node_list=<cassandra_database_ip>:<cassandra_database_port>
 ```
 
 Setup MongoDB host IP ```/usr/lib/kaa-node/conf/common-dao-mongodb.properties```
 
 ```bash
  # list of mongodb nodes, possible to use multiply servers
- servers=localhost:27017
+ servers=<mongo_database_ip>:<mongo_database_port>
 ```
 
 After all 
