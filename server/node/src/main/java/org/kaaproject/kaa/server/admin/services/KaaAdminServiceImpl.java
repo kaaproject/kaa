@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.avro.Schema;
@@ -3605,7 +3606,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public void revokeCredentials(String applicationId, String credentialsId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId) != null, "No credentials with the given ID found!");
+            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId).isPresent(), "No credentials with the given ID found!");
             this.controlService.revokeCredentials(applicationId, credentialsId);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
@@ -3622,9 +3623,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             this.checkApplicationId(applicationId);
-            CredentialsDto credentials = this.controlService.getCredentials(applicationId, credentialsId);
-            Validate.isTrue(credentials != null, "No credentials with the given ID found!");
-            Validate.isTrue(credentials.getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
             if (serverProfileVersion != null && serverProfileBody != null) {
                 ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
                 this.validateServerProfile(serverProfileSchema, serverProfileBody);

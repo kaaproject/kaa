@@ -82,6 +82,7 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -104,11 +105,9 @@ import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.MariaDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.model.Credentials;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
@@ -231,8 +230,6 @@ public class AbstractTest {
     protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
     @Autowired
     protected ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
-    @Autowired
-    protected CredentialsDao<Credentials> credentialsDao;
 
     protected Application application;
 
@@ -721,16 +718,6 @@ public class AbstractTest {
         configurationDto.setSchemaVersion(configurationSchema.getVersion());
 
         return userConfigurationService.saveUserConfiguration(configurationDto);
-    }
-
-    protected CredentialsDto generateCredentials(String applicationId, byte[] credentialsBody, CredentialsStatus status) {
-        CredentialsDto credentialsDto = new CredentialsDto();
-        credentialsDto.setCredentialsBody(credentialsBody);
-        credentialsDto.setStatus(status);
-        Credentials saved = this.credentialsDao.save(applicationId, credentialsDto);
-
-        CredentialsDto generatedCredentials = saved.toDto();
-        return generatedCredentials;
     }
 
     protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {

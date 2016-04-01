@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Andrew Shvayka
@@ -28,11 +29,12 @@ import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServic
  *
  * @since v0.9.0
  */
+@Service
 public final class DefaultRegistrationService implements RegistrationService {
 
-    private final EndpointRegistrationService endpointRegistrationService;
+    private EndpointRegistrationService endpointRegistrationService;
 
-    public DefaultRegistrationService(EndpointRegistrationService endpointRegistrationService) {
+    public void setEndpointRegistrationService(EndpointRegistrationService endpointRegistrationService) {
         this.endpointRegistrationService = endpointRegistrationService;
     }
 

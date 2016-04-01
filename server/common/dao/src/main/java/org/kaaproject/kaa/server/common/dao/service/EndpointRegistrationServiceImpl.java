@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointRegistrationDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -37,14 +38,15 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @since v0.9.0
  */
+@Service
 @Transactional
 public final class EndpointRegistrationServiceImpl implements EndpointRegistrationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointRegistrationServiceImpl.class);
 
-    private final EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao;
+    private EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao;
 
-    public EndpointRegistrationServiceImpl(EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao) {
+    public void setEndpointRegistrationDao(EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao) {
         this.endpointRegistrationDao = endpointRegistrationDao;
     }
 

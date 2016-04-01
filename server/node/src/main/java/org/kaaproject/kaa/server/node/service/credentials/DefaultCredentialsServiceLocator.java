@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.node.service.credentials;
 
+import org.springframework.stereotype.Service;
+
 /**
  * The default implementation of the {@link CredentialsServiceLocator}
  * interface.
@@ -25,11 +27,12 @@ package org.kaaproject.kaa.server.node.service.credentials;
  *
  * @since v0.9.0
  */
+@Service
 public final class DefaultCredentialsServiceLocator implements CredentialsServiceLocator {
 
-    private final org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService;
+    private org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService;
 
-    public DefaultCredentialsServiceLocator(org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
+    public void setCredentialsService(org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
         this.credentialsService = credentialsService;
     }
 
