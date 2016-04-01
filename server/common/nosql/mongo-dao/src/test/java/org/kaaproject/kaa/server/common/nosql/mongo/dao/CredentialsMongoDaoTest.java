@@ -57,7 +57,7 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
     }
 
     @Test
-    public void testFindCredentialsById() {
+    public void testFindCredentialsById() throws Exception {
         CredentialsDto saved = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(saved);
         Assert.assertNotNull(saved.getId());
@@ -68,7 +68,7 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
     }
 
     @Test
-    public void testUpdateStatus() {
+    public void testUpdateStatus() throws Exception {
         CredentialsDto credentials = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());
@@ -79,7 +79,7 @@ public class CredentialsMongoDaoTest extends AbstractMongoTest {
     }
 
     @Test
-    public void testRemoveCredentials() {
+    public void testRemoveCredentials() throws Exception {
         CredentialsDto credentials = this.generateCredentials(APPLICATION_ID, CREDENTIALS_BODY, AVAILABLE);
         Assert.assertNotNull(credentials);
         Assert.assertNotNull(credentials.getId());

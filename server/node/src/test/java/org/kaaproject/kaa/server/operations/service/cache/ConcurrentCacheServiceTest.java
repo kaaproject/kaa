@@ -667,10 +667,6 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             }
         });
 
-        assertNull(cacheService.getEndpointKey(publicKeyHash2));
-        verify(endpointService, times(0)).findEndpointProfileByKeyHash(publicKeyHash2.getData());
-        reset(endpointService);
-
         cacheService.putEndpointKey(publicKeyHash2, publicKey2);
         assertEquals(publicKey2, cacheService.getEndpointKey(publicKeyHash2));
         verify(endpointService, times(0)).findEndpointProfileByKeyHash(publicKeyHash2.getData());

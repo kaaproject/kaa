@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.control.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
@@ -1715,7 +1716,7 @@ public interface ControlService {
      *
      * @throws ControlServiceException - if an exception occures.
      */
-    CredentialsDto getCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+    Optional<CredentialsDto> getCredentials(String applicationId, String credentialsId) throws ControlServiceException;
 
     /**
      * Revokes security credentials from the corresponding credentials storage.

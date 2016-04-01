@@ -28,6 +28,7 @@ import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -37,14 +38,15 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @since v0.9.0
  */
+@Service
 @Transactional
 public class CredentialsServiceImpl implements CredentialsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointRegistrationServiceImpl.class);
 
-    private final CredentialsDao<Credentials> credentialsDao;
+    private CredentialsDao<Credentials> credentialsDao;
 
-    public CredentialsServiceImpl(CredentialsDao<Credentials> credentialsDao) {
+    public void setCredentialsDao(CredentialsDao<Credentials> credentialsDao) {
         this.credentialsDao = credentialsDao;
     }
 

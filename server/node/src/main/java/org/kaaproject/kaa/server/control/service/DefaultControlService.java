@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PreDestroy;
 
@@ -2239,9 +2240,9 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public CredentialsDto getCredentials(String applicationId, String credentialsId) throws ControlServiceException {
+    public Optional<CredentialsDto> getCredentials(String applicationId, String credentialsId) throws ControlServiceException {
         try {
-            return this.credentialsServiceLocator.getCredentialsService(applicationId).lookupCredentials(credentialsId).orElse(null);
+            return this.credentialsServiceLocator.getCredentialsService(applicationId).lookupCredentials(credentialsId);
         } catch (CredentialsServiceException cause) {
             String message = MessageFormat.format("An unexpected exception occured while searching for credentials by ID [{0}]", credentialsId);
             LOG.error(message, cause);
