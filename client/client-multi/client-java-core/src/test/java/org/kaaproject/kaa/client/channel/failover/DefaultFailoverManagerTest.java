@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.channel.failover;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
@@ -46,14 +45,13 @@ public class DefaultFailoverManagerTest {
     private Map<ServerType, DefaultFailoverManager.AccessPointIdResolution> resolutionProgressMap;
     private DefaultFailoverManager failoverManager;
     private ExecutorContext context;
-    private FailoverStrategy failoverStrategy;
 
     @Before
     public void setUp() {
         channelManager = Mockito.mock(KaaChannelManager.class);
         context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        failoverStrategy = Mockito.spy(new DefaultFailoverStrategy(BOOTSTRAP_RETRY_PERIOD, 1, 1, TimeUnit.MILLISECONDS));
+        FailoverStrategy failoverStrategy = new DefaultFailoverStrategy(BOOTSTRAP_RETRY_PERIOD, 1, 1, TimeUnit.MILLISECONDS);
         failoverManager = new DefaultFailoverManager(channelManager, context, failoverStrategy, RESOLUTION_TIMEOUT_MS, TimeUnit.MILLISECONDS);
         resolutionProgressMap = Mockito.spy(new HashMap<ServerType, DefaultFailoverManager.AccessPointIdResolution>());
         ReflectionTestUtils.setField(failoverManager, "resolutionProgressMap", resolutionProgressMap);
@@ -134,18 +132,6 @@ public class DefaultFailoverManagerTest {
                 Mockito.verify(accessPointIdResolutionSpy, Mockito.timeout(BOOTSTRAP_RETRY_PERIOD * 2).times(1)).setCurResolution(null);
             }
         }).start();
-    }
-
-    @Test
-    public void failoverStrategyTest() {
-        FailoverStatus incomingStatus = FailoverStatus.BOOTSTRAP_SERVERS_NA;
-        FailoverDecision decision = failoverManager.onFailover(incomingStatus);
-        Mockito.verify(failoverStrategy, Mockito.times(1)).onFailover(incomingStatus);
-        Assert.assertNotNull(decision);
-
-        TransportConnectionInfo connectionInfo = Mockito.mock(TransportConnectionInfo.class);
-        failoverManager.onServerConnected(connectionInfo);
-        Mockito.verify(failoverStrategy, Mockito.times(1)).onRecover(connectionInfo);
     }
 
     private TransportConnectionInfo mockForTransportConnectionInfo(int accessPointId) {
