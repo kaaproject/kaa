@@ -482,7 +482,7 @@ void test_timeout(void **state)
     error_code = kaa_logging_request_serialize(log_collector, writer);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    sleep(TEST_TIMEOUT);
+    sleep(TEST_TIMEOUT + 1);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -538,7 +538,7 @@ void test_decline_timeout(void **state)
     error_code = kaa_logging_request_serialize(log_collector, writer);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    sleep(TEST_TIMEOUT);
+    sleep(TEST_TIMEOUT + 1);
 
     uint16_t bucket_id = *((uint16_t *)(request_buffer + KAA_EXTENSION_HEADER_SIZE));
     bucket_id = KAA_NTOHS(bucket_id);
@@ -1431,7 +1431,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage_and_strategy, on_timeout_called)
     rc = kaa_logging_request_serialize(log_collector, test_writer);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
 
-    sleep(TEST_TIMEOUT);
+    sleep(TEST_TIMEOUT + 1);
 
     rc = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
