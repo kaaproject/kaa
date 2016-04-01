@@ -59,11 +59,11 @@ public class AbstractMongoTest extends AbstractTest {
     protected CredentialsDao<Credentials> credentialsDao;
 
     /**
-     * Constructs secutiy credentials with the information provided and saves it
+     * Constructs security credentials with the information provided and saves it
      * to the database.
      * 
      * @param applicationId The application ID
-     * @param credentialsBody The actual secirity credentials
+     * @param credentialsBody The actual security credentials
      * @param status The security credentials status
      * @return The security credentials saved
      */
