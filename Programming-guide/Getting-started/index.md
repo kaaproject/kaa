@@ -19,7 +19,6 @@ sort_idx: 10
   - [Create notification topic](#create-notification-topic)
   - [Create notification](#create-notification)
 - [Further reading](#further-reading)
-- [Attachments:](#attachments)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
