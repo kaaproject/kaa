@@ -149,18 +149,11 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             break;
         }
         case KAA_EXTENSION_PROFILE: {
-            bool need_resync = false;
-            err_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
-                                                     , &need_resync);
-            if (err_code) {
-                KAA_LOG_ERROR(self->logger, err_code, "Failed to read 'need_resync' flag");
-            }
-
-            if (!err_code && need_resync) {
-                err_code = kaa_profile_request_get_size(self->kaa_context->profile_manager
-                                                      , &extension_size);
+            err_code = kaa_profile_request_get_size(self->kaa_context->profile_manager, &extension_size);
+            if (!err_code) {
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated profile extension size %u", extension_size);
             }
+
             break;
         }
         case KAA_EXTENSION_USER: {

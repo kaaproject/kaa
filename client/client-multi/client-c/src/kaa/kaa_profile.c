@@ -165,7 +165,15 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
 
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size)
 {
-    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+    // TODO(KAA-982): Use asserts
+    if (!self || !expected_size) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    if (!resync_is_required(self)) {
+        *expected_size = 0;
+        return KAA_ERR_NONE;
+    }
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // profile body size
