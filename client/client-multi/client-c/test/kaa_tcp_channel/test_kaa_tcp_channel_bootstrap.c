@@ -178,7 +178,7 @@ void test_create_kaa_tcp_channel(void **state)
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_extension_id *r_supported_services;
+    const kaa_extension_id *r_supported_services;
     size_t r_supported_service_count = 0;
     error_code = channel->get_supported_services(channel->context,&r_supported_services,&r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

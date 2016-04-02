@@ -115,7 +115,7 @@ typedef struct {
 } kaa_tcp_channel_t;
 
 static kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info);
-static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_extension_id **supported_services, size_t *service_count);
+static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, const kaa_extension_id **supported_services, size_t *service_count);
 static kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_extension_id services[], size_t service_count);
 static kaa_error_t kaa_tcp_channel_destroy_context(void *context);
 static kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context);
@@ -328,7 +328,7 @@ kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_trans
 /*
  * Return supported services list
  */
-kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_extension_id **supported_services, size_t *service_count) {
+kaa_error_t kaa_tcp_channel_get_supported_services(void * context, const kaa_extension_id **supported_services, size_t *service_count) {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
 

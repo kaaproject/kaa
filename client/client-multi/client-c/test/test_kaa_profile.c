@@ -105,13 +105,13 @@ static kaa_error_t get_protocol_id(void *ctx, kaa_transport_protocol_id_t *id)
     return KAA_ERR_NONE;
 }
 static kaa_error_t get_services(void *ctx,
-                                kaa_extension_id **supported_list,
+                                const kaa_extension_id **supported_list,
                                 size_t *count)
 {
     (void)ctx;
     /* Only profile service is "supported" by this mock */
-    static kaa_extension_id service = KAA_EXTENSION_PROFILE;
-    *supported_list = &service;
+    static const kaa_extension_id services[] = { KAA_EXTENSION_PROFILE };
+    *supported_list = services;
     *count = 1;
     return KAA_ERR_NONE;
 }
@@ -131,13 +131,13 @@ static kaa_error_t sync_handler(void *ctx,
 }
 
 static kaa_transport_channel_interface_t channel = {
-        .context = NULL,
-        .destroy = NULL,
-        .sync_handler = sync_handler,
-        .init = init_channel,
-        .set_access_point = set_access_point,
-        .get_protocol_id = get_protocol_id,
-        .get_supported_services = get_services,
+    .context = NULL,
+    .destroy = NULL,
+    .sync_handler = sync_handler,
+    .init = init_channel,
+    .set_access_point = set_access_point,
+    .get_protocol_id = get_protocol_id,
+    .get_supported_services = get_services,
 };
 
 /*----------------------------------------------------------------------------*/

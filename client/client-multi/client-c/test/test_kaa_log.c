@@ -109,12 +109,12 @@ static kaa_error_t test_kaa_get_protocol_id(void *context
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t test_kaa_get_supported_services(void *context
-                                                    , kaa_extension_id **supported_services
-                                                    , size_t *service_count)
+static kaa_error_t test_kaa_get_supported_services(void *context,
+        const kaa_extension_id **supported_services,
+        size_t *service_count)
 {
     (void)context;
-    *supported_services = (kaa_extension_id *)OPERATIONS_SERVICES;
+    *supported_services = OPERATIONS_SERVICES;
     *service_count = OPERATIONS_SERVICES_COUNT;
     return KAA_ERR_NONE;
 }
