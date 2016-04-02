@@ -21,12 +21,9 @@
 #define MPU_FREQUENCY 80000000
 
 static long long milliTimer = 1;
-static long      secTimer   = 1;
 
 static void sysTickIntHandler(void)
 {
-    if (milliTimer / 1000 > secTimer)
-        ++secTimer;
     ++milliTimer;
 }
 
@@ -52,5 +49,5 @@ long long cc32xx_clock_getms(void)
 long cc32xx_time(void)
 {
     cc32xx_init_timer();
-    return secTimer;
+    return milliTimer / 1000;
 }

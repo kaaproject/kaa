@@ -57,18 +57,18 @@ typedef unsigned int uint32;
 
 static kaa_digest kaa_public_key_hash;
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 /*
 * Define services which should be used.
 * Don't define unused services, it may cause an error.
 */
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_CONFIGURATION
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING};
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                             , KAA_EXTENSION_CONFIGURATION
+                                             , KAA_EXTENSION_USER
+                                             , KAA_EXTENSION_EVENT
+                                             , KAA_EXTENSION_LOGGING};
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 /* Logging constraints */
 #define MAX_LOG_COUNT           SIZE_MAX
@@ -262,11 +262,6 @@ void kaa_client_destroy(kaa_client_t *self)
         return;
 
     self->controler = NULL;
-
-    if (self->channel.context) {
-        self->channel.destroy(self->channel.context);
-        self->channel.context = NULL;
-    }
 
     if (self->channel.context) {
         self->channel.destroy(self->channel.context);

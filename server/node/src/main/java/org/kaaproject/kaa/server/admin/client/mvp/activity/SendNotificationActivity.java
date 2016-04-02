@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -99,18 +100,34 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
 
     @Override
     protected void editEntity(NotificationDto entity, final AsyncCallback<NotificationDto> callback) {
-        KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(), 
-                new AsyncCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        callback.onSuccess(null);
-                    }
-                    
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-                });
+        String endpointKeyHash = detailsView.getEndpointKeyHash().getValue();
+        if(endpointKeyHash == null || endpointKeyHash.equals("")) {
+            KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(),
+                    new AsyncCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            callback.onSuccess(null);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        } else {
+            KaaAdmin.getDataSource().sendUnicastNotification(entity, endpointKeyHash, detailsView.getNotificationData().getValue(),
+                    new AsyncCallback<EndpointNotificationDto>() {
+                        @Override
+                        public void onSuccess(EndpointNotificationDto result) {
+                            callback.onSuccess(null);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        }
     }
 
 }

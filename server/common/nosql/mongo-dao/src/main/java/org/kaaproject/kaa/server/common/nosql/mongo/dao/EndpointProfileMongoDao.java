@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
@@ -25,6 +26,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -225,8 +227,8 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
         LOG.debug("Update server endpoint profile for endpoint with key hash {}, schema version is {}", keyHash, version);
         updateFirst(
                 query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
-                update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
-                        .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
+                update(EP_SERVER_PROFILE_PROPERTY, MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(serverProfile)))
+                .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

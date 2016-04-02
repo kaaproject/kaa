@@ -35,7 +35,7 @@
         n >>= 7;
     }
     len++;
-    return len;
+    return (size_t)len;
 }
 
 - (size_t)getStringSize:(NSString *)data {
@@ -63,7 +63,7 @@
     char *buffer;
     int64_t size;
     avro_binary_encoding.read_bytes(reader, &buffer, &size);
-    return [NSData dataWithBytes:buffer length:size];
+    return [NSData dataWithBytes:buffer length:(NSUInteger)size];
 }
 
 - (void)serializeBytes:(NSData *)data to:(avro_writer_t)writer {
@@ -217,7 +217,7 @@
                        target:(id)target {
     int64_t size;
     avro_binary_encoding.read_long(reader, &size);
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:size];
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:(NSUInteger)size];
     if (size != 0 && [(target ? target : self) respondsToSelector:deserializeFunc]) {
         if (size < 0) {
             int64_t temp;

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 #  Copyright 2014-2016 CyberVision, Inc.
 #
@@ -18,7 +18,7 @@
 
 RUN_DIR=`pwd`
 
-function help {
+help() {
     echo "Choose one of the following: {build|install|clean}"
     exit 1
 }

@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,8 @@
 #include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform/ext_kaa_failover_strategy.h"
 
+#include "kaa_private.h"
+
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_CONNECTED = 0,
     KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED
@@ -40,25 +42,25 @@ typedef enum {
     KAA_CLIENT_CHANNEL_TYPE_OPERATIONS
 } kaa_client_channel_type_t;
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
+static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                             , KAA_EXTENSION_USER
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-                                             , KAA_SERVICE_CONFIGURATION
+                                             , KAA_EXTENSION_CONFIGURATION
 #endif
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-                                             , KAA_SERVICE_EVENT
+                                             , KAA_EXTENSION_EVENT
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                                             , KAA_SERVICE_LOGGING
+                                             , KAA_EXTENSION_LOGGING
 #endif
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-                                             , KAA_SERVICE_NOTIFICATION
+                                             , KAA_EXTENSION_NOTIFICATION
 #endif
                                              };
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 /* Logging constraints */
 #define MAX_LOG_COUNT           SIZE_MAX
@@ -92,20 +94,13 @@ static kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_
 static kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client);
 static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                  , kaa_logger_t *logger);
-
-kaa_error_t kaa_log_collector_init(kaa_client_t *client);
-#endif
-
 #define KAA_RETURN_IF_ERR_MSG(E, msg) \
         { if(E) { printf("Error %i. \"%s\"\n",(E), (msg)); return (E); } }
 
 
 kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {
+    (void)fd;
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
 
     if (event_type == SOCKET_DISCONNECTED) {
@@ -116,6 +111,7 @@ kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t even
 }
 
 kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) {
+    (void)props;
     KAA_RETURN_IF_NIL(client, KAA_ERR_BADPARAM);
 
     kaa_error_t error_code = KAA_ERR_NONE;
@@ -273,7 +269,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
 
     while (kaa_client->operate) {
         if (kaa_client->external_process) {
-            if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
+            if (KAA_TIME() - kaa_client->external_process_last_call >= (kaa_time_t)kaa_client->external_process_max_delay) {
                 kaa_client->external_process(kaa_client->external_process_context);
             }
             kaa_client->external_process_last_call = KAA_TIME();
@@ -464,4 +460,3 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
     return error_code;
 }
 #endif
-

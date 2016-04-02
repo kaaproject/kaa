@@ -16,19 +16,19 @@
 
 #import "TimeCommons.h"
 
-#define SEC_TO_MIN(x)   (long)((double)(x) / 60.0)
-#define SEC_TO_MS(x)    (long)((x) * 1000)
+#define SEC_TO_MIN(x)   (int64_t)((double)(x) / 60.0)
+#define SEC_TO_MS(x)    (int64_t)((x) * 1000)
 
-#define MS_TO_SEC(x)    (long)((double)(x) / 1000)
-#define MS_TO_MIN(x)    (long)(SEC_TO_MIN(MS_TO_SEC(x)))
+#define MS_TO_SEC(x)    (int64_t)((double)(x) / 1000)
+#define MS_TO_MIN(x)    (int64_t)(SEC_TO_MIN(MS_TO_SEC(x)))
 
-#define MIN_TO_SEC(x)   (long)((x) * 60)
-#define MIN_TO_MS(x)    (long)(SEC_TO_MS(MIN_TO_SEC(x)))
+#define MIN_TO_SEC(x)   (int64_t)((x) * 60)
+#define MIN_TO_MS(x)    (int64_t)(SEC_TO_MS(MIN_TO_SEC(x)))
 
 @implementation TimeUtils
 
-+ (long)convertValue:(long)value fromTimeUnit:(TimeUnit)fromUnit toTimeUnit:(TimeUnit)toUnit {
-    long result = -1;
++ (int64_t)convertValue:(int64_t)value fromTimeUnit:(TimeUnit)fromUnit toTimeUnit:(TimeUnit)toUnit {
+    int64_t result = -1;
     if (value < 0) {
         return -1;
     }

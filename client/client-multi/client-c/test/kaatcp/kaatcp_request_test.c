@@ -29,9 +29,9 @@ static kaa_logger_t *logger = NULL;
 
 
 
-void test_kaatcp_connect(void)
+void test_kaatcp_connect(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaatcp_connect_t connect;
     char *session_key = "session_key";
@@ -52,13 +52,11 @@ void test_kaatcp_connect(void)
     ASSERT_EQUAL(memcmp(connect_buf + 20, session_key, strlen(session_key)), 0);
     ASSERT_EQUAL(memcmp(connect_buf + 20 + strlen(session_key), signature, strlen(signature)), 0);
     ASSERT_EQUAL(memcmp(connect_buf + 20 + strlen(session_key) + strlen(signature), payload, strlen(payload)), 0);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_connect_without_key(void)
+void test_kaatcp_connect_without_key(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaatcp_connect_t connect;
     char *payload = "payload";
@@ -75,13 +73,11 @@ void test_kaatcp_connect_without_key(void)
     ASSERT_EQUAL(connect_buf_size, 27);
     ASSERT_EQUAL(memcmp(connect_buf, checkConnectHeader, 20), 0);
     ASSERT_EQUAL(memcmp(connect_buf + 20, payload, strlen(payload)), 0);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_disconnect(void)
+void test_kaatcp_disconnect(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaatcp_disconnect_t disconnect;
     kaatcp_error_t rval = kaatcp_fill_disconnect_message(KAATCP_DISCONNECT_BAD_REQUEST, &disconnect);
@@ -96,13 +92,11 @@ void test_kaatcp_disconnect(void)
 
     unsigned char disconnect_message[] = { 0xE0, 0x02, 0x00, 0x01 };
     ASSERT_EQUAL(memcmp(disconnect_message, disconnect_buf, 4), 0);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_kaasync(void)
+void test_kaatcp_kaasync(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaatcp_kaasync_t kaasync;
     char *payload = "payload";
@@ -119,13 +113,11 @@ void test_kaatcp_kaasync(void)
     ASSERT_EQUAL(kaasync_buf_size,  21);
     ASSERT_EQUAL(memcmp(kaasync_message, kaasync_buf, 14),  0);
     ASSERT_EQUAL(memcmp(kaasync_buf + 14, payload, 7),  0);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_ping(void)
+void test_kaatcp_ping(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     char ping_buf[5];
     size_t ping_buf_size = 5;
@@ -136,8 +128,29 @@ void test_kaatcp_ping(void)
 
     ASSERT_EQUAL(ping_buf_size,  2);
     ASSERT_EQUAL(memcmp(ping_buf, ping_message, 2), 0);
+}
 
-    KAA_TRACE_OUT(logger);
+void test_get_request_kaasync_over_buff(void **state)
+{
+    (void)state;
+
+    kaatcp_kaasync_t kaasync;
+    char *payload = "payload";
+    char kaasync_buf[100] = "";
+    size_t kaasync_buf_size = 5;
+    uint16_t message_id = 5;
+    uint8_t zipped = 0;
+    uint8_t encrypted = 1;
+
+    kaatcp_fill_kaasync_message(payload, strlen(payload), message_id, zipped, encrypted, &kaasync);
+    memset(kaasync_buf, 0xEA, sizeof(kaasync_buf));
+
+    kaatcp_error_t rval = kaatcp_get_request_kaasync(&kaasync, kaasync_buf, &kaasync_buf_size);
+    ASSERT_EQUAL(rval, KAATCP_ERR_BUFFER_NOT_ENOUGH);
+
+    for (size_t i = 8; i < sizeof(kaasync_buf); i++) {
+        ASSERT_EQUAL((uint8_t)kaasync_buf[i], 0xEA);
+    }
 }
 
 int test_init(void)
@@ -163,4 +176,5 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        KAA_TEST_CASE(kaatcp_disconnect, test_kaatcp_disconnect)
        KAA_TEST_CASE(kaatcp_kaasync, test_kaatcp_kaasync)
        KAA_TEST_CASE(kaatcp_ping, test_kaatcp_ping)
+       KAA_TEST_CASE(get_request_kaasync, test_get_request_kaasync_over_buff)
 )

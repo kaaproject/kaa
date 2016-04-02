@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
+#include "kaa_private.h"
 #include "ext_log_upload_strategies.h"
 #include "../../platform/ext_log_upload_strategy.h"
 #include "../../platform/ext_transport_channel.h"
@@ -114,7 +115,7 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
 
     if (self->upload_retry_ts) {
-        if (KAA_TIME() >= self->upload_retry_ts) {
+        if (KAA_TIME() >= (kaa_time_t)self->upload_retry_ts) {
             // force upload after retry timeout has elapsed
             self->upload_retry_ts = 0;
             decision = UPLOAD;
@@ -122,7 +123,7 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
         return decision;
     }
 
-    if ((self->type & 0x04) && KAA_TIME() >= self->timeout) {
+    if ((self->type & 0x04) && KAA_TIME() >= (kaa_time_t)self->timeout) {
         decision = UPLOAD;
         self->timeout = KAA_TIME() + self->upload_timeout;
     } else if ((self->type & 0x01) && ext_log_storage_get_total_size(log_storage_context) >= self->threshold_volume) {
@@ -156,7 +157,7 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
 
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
     kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager
-                                                                                         , KAA_SERVICE_LOGGING);
+                                                                                         , KAA_EXTENSION_LOGGING);
     if (channel) {
         self->upload_retry_ts = 0;
         kaa_transport_protocol_id_t protocol_id;
@@ -201,7 +202,7 @@ kaa_error_t ext_log_upload_strategy_change_strategy(void *strategy, uint8_t type
     return KAA_ERR_NONE;
 }
 
-extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
+bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
 {
     KAA_RETURN_IF_NIL(strategy, KAA_ERR_BADPARAM);
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)strategy;

@@ -145,7 +145,7 @@ static kaatcp_error_t kaatcp_parser_process_byte(kaatcp_parser_t *parser, uint8_
             parser->payload = ptr;
             parser->payload_buffer_size = parser->message_length;
         } else
-            return KAA_ERR_NOMEM;
+            return (kaatcp_error_t)KAA_ERR_NOMEM;
     }
 
     return KAATCP_ERR_NONE;

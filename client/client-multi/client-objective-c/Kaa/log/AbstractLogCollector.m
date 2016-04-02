@@ -23,6 +23,8 @@
 #import "KaaLogging.h"
 #import "LogCollector.h"
 
+#pragma clang diagnostic ignored "-Wprotocol"
+
 #define TAG @"AbstractLogCollector >>>"
 
 @interface AbstractLogCollector () <LogFailoverCommand>
@@ -46,11 +48,10 @@
 
 @interface TimeoutOperation : NSOperation
 
-@property (nonatomic) int64_t timeout;
 @property (nonatomic, weak) AbstractLogCollector *logCollector;
 @property (nonatomic, strong) LogBucket *timeoutBucket;
 
-- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout bucket:(LogBucket *)bucket;
+- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector bucket:(LogBucket *)bucket;
 
 @end
 
@@ -120,9 +121,12 @@
     request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 data:logs];
     
     DDLogInfo(@"%@ Adding following bucket id [%i] for timeout tracking", TAG, bucket.bucketId);
-    NSOperation *timeoutOperation = [[TimeoutOperation alloc] initWithLogCollector:self
-                                                                           timeout:[self.strategy getTimeout]
-                                                                          bucket:bucket];
+    NSOperation *timeoutOperation = [[TimeoutOperation alloc] initWithLogCollector:self bucket:bucket];
+    
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)([self.strategy getTimeout] * NSEC_PER_SEC));
+    dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{
+        [timeoutOperation start];
+    });
     
     [self.timeoutsLock lock];
     self.timeouts[@(bucket.bucketId)] = timeoutOperation;
@@ -146,16 +150,17 @@
 
                     if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                         [self.storage removeBucketWithId:status.requestId];
-                        if (self.logDeliveryDelegate) {
-                            [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                                [weakSelf.logDeliveryDelegate onLogDeliverySuccessWithBucketInfo:bucketInfo];
-                            }];
-                        }
                         
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                             [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
                         }];
                         
+                        if (self.logDeliveryDelegate) {
+                            [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                                [weakSelf.logDeliveryDelegate onLogDeliverySuccessWithBucketInfo:bucketInfo];
+                            }];
+                        }
+
                     } else {
                         [self.storage rollbackBucketWithId:status.requestId];
                         
@@ -317,7 +322,8 @@
 
 - (void)retryLogUploadWithDelay:(int32_t)delay {
     __weak typeof(self)weakSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), [self.executorContext getSheduledExecutor], ^{
+    dispatch_time_t dispatchDelay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC));
+    dispatch_after(dispatchDelay, [self.executorContext getSheduledExecutor], ^{
         [weakSelf uploadIfNeeded];
     });
 }
@@ -334,29 +340,21 @@
 
 @implementation TimeoutOperation
 
-- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout bucket:(LogBucket *)bucket {
+- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector bucket:(LogBucket *)bucket {
     self = [super init];
     if (self) {
         self.logCollector = logCollector;
-        self.timeout = timeout;
         self.timeoutBucket = bucket;
     }
     return self;
 }
 
 - (void)main {
-    if (self.isFinished && self.isCancelled) {
-        DDLogDebug(@"%@ Timeout check worker for bucket: %i was interrupted before start", TAG, self.timeoutBucket.bucketId);
-        return;
-    }
-    
-    [NSThread sleepForTimeInterval:self.timeout];
     
     if (!self.isFinished && !self.isCancelled) {
         [self.logCollector checkDeliveryTimeoutForBucketId:self.timeoutBucket.bucketId];
-        
     } else {
-        DDLogDebug(@"%@ Timeout check worker for bucket: %i was interrupted after delay", TAG, self.timeoutBucket.bucketId);
+        DDLogDebug(@"%@ Timeout operation for bucket: %i was interrupted", TAG, self.timeoutBucket.bucketId);
     }
 }
 

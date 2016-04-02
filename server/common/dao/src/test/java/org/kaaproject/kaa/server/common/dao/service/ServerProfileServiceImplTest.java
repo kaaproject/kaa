@@ -117,7 +117,7 @@ public class ServerProfileServiceImplTest extends AbstractTest {
     public void testSaveServerProfile() {
         ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
         EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
-        EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), schemaDto.getVersion(), "New profile body");
+        EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), schemaDto.getVersion(), TEST_PROFILE_BODY);
         Assert.assertArrayEquals(ep.getEndpointKeyHash(), updated.getEndpointKeyHash());
         Assert.assertNotEquals(ep.getServerProfileBody(), updated.getServerProfileBody());
         Assert.assertEquals(ep.getServerProfileVersion(), updated.getServerProfileVersion());

@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include "platform/platform.h"
 #include "platform/sock.h"
 #include <stdbool.h>
@@ -21,8 +23,6 @@
 
 #include "kaa_common.h"
 #include "utilities/kaa_mem.h"
-
-
 
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
                                              , char *buf

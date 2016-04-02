@@ -41,7 +41,7 @@
     <bean class="org.springframework.retry.annotation.RetryConfiguration" />
     
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
-    <util:properties id="dao" location="classpath:dao_test.properties"/>
+    <util:properties id="sql_dao" location="classpath:dao_test.properties"/>
     <util:properties id="mongo" location="classpath:mongo_test.properties"/>
 
     <import resource="classpath:common-dao-sql-test-context.xml" />

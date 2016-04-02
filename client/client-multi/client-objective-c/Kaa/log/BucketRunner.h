@@ -23,7 +23,7 @@
  */
 @interface BucketRunner : NSOperation
 
-@property (nonatomic, readonly) int64_t runnerId;
+@property (nonatomic, readonly) int32_t runnerId;
 
 - (BOOL)isRunnerDone;
 

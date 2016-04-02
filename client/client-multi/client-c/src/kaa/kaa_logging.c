@@ -16,6 +16,8 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
+#include "kaa_private.h"
+
 #include <string.h>
 #include <inttypes.h>
 #include <sys/types.h>
@@ -37,8 +39,6 @@
 
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
-
-extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
 
 typedef enum {
     LOGGING_RESULT_SUCCESS = 0x00,
@@ -72,7 +72,7 @@ struct kaa_log_collector {
     last_bucket_info_t             last_bucket;
 };
 
-static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
+static const kaa_extension_id logging_sync_services[] = {KAA_EXTENSION_LOGGING};
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
 {
@@ -477,7 +477,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     char *extension_size_p = tmp_writer.current + sizeof(uint32_t); // Pointer to the extension size. Will be filled in later.
     kaa_error_t error = kaa_platform_message_write_extension_header(&tmp_writer
-                                                                  , KAA_LOGGING_EXTENSION_TYPE
+                                                                  , KAA_EXTENSION_LOGGING
                                                                   , KAA_LOGGING_RECEIVE_UPDATES_FLAG
                                                                   , 0);
     if (error) {
@@ -571,6 +571,9 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
                                          , uint16_t extension_options
                                          , size_t extension_length)
 {
+    // Only used for logging
+    (void)extension_options;
+    (void)extension_length;
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received logging server sync: options 0, payload size %u", extension_length);
@@ -635,7 +638,7 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 }
 
 
-extern void ext_log_upload_timeout(kaa_log_collector_t *self)
+void ext_log_upload_timeout(kaa_log_collector_t *self)
 {
     if (!is_timeout(self)
             || ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context)) {

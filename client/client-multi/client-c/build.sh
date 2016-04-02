@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 #  Copyright 2014-2016 CyberVision, Inc.
 #
@@ -15,10 +15,12 @@
 #  limitations under the License.
 #
 
+# Exits immediately if error occurs
+set -e
 
 RUN_DIR=`pwd`
 
-function help {
+help() {
     echo "Choose one of the following: {build|install|test|clean}"
     exit 1
 }
@@ -28,96 +30,83 @@ then
     help
 fi
 
+if [ -z ${MAX_LOG_LEVEL+x} ]
+then
+    MAX_LOG_LEVEL=6
+fi
+
 DEBUG_ENABLED=1
 UNITTESTS_COMPILE=0
-MAX_LOG_LEVEL=6
 COLLECT_COVERAGE=0
 
-function prepare_build {
+prepare_build() {
     mkdir -p build;
     cd build;
-    cmake -DKAA_DEBUG_ENABLED=$DEBUG_ENABLED -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE ..;
+    cmake -DKAA_DEBUG_ENABLED=$DEBUG_ENABLED -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE .. -DCMAKE_C_FLAGS="-Werror";
     cd ..
 }
 
-function build {
-    cd build && make && cd ..
-}
-
-function execute_tests {
+build() {
     cd build
-    FAILUTE_COUNTER=0
-    FAILED_TESTS=""
-    for test in test_*
-    do
-        echo -e "Starting test $test"
-        ./$test
-        TEST_RESULT=$?
-        echo -e "Test $test finished"
-        if [ $TEST_RESULT -ne 0 ]
-        then
-            FAILUTE_COUNTER=$((FAILUTE_COUNTER + 1))
-            FAILED_TESTS="$test\n$FAILED_TESTS"
-        fi
-    done
-    if [[ -f ../gcovr ]]
-    then
-        chmod +x ../gcovr
-        ../gcovr -d -x -f ".*" -e ".*(test|avro|gen).*" -o ./gcovr-report.xml -v > ./gcovr.log
-    fi
-    if [ "$FAILUTE_COUNTER" -ne "0" ]
-    then
-        echo -e "\n$FAILUTE_COUNTER TEST(S) FAILED:\n$FAILED_TESTS"
-    else
-        echo -e "\nTESTS WERE SUCCESSFULLY PASSED\n"
-    fi
+    make
     cd ..
-    
 }
 
-function check_installed_software {
-    RATS_VERSION="$(rats -h)"
-    if [[ $RATS_VERSION = RATS* ]] 
+execute_tests() {
+    cd build
+    ctest --output-on-failure .
+    cd ..
+}
+
+check_installed_software() {
+    if hash rats 2>/dev/null
     then
         RATS_INSTALLED=1
     else
+        echo "Rats is not installed, skipping..."
         RATS_INSTALLED=0
     fi
-    
-    CPPCHECK_VERSION="$(cppcheck --version)"
-    if [[ $CPPCHECK_VERSION = Cppcheck* ]] 
+
+    if hash cppcheck 2>/dev/null
     then
-        CPPCHECK_INTSALLED=1
+        CPPCHECK_INSTALLED=1
     else
         CPPCHECK_INSTALLED=0
+        echo "cppcheck not installed, skipping..."
     fi
-    
-    VALGRIND_VERSION="$(valgrind --version)"
-    if [[ $VALGRIND_VERSION = valgrind* ]] 
+
+
+    if hash valgrind 2>/dev/null
     then
         VALGRIND_INSTALLED=1
     else
         VALGRIND_INSTALLED=0
+        echo "valgrind not installed, skipping..."
     fi
 }
 
-function run_valgrind {
-    echo "Starting valgrind..." 
+run_valgrind() {
+    echo "Starting valgrind..."
     cd build
-    if [[ ! -d valgrindReports ]]
+    if [ ! -d valgrindReports ]
     then
         mkdir valgrindReports
     fi
-    for test in test_*
-    do
-        valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v --log-file=./valgrind.log --xml=yes --xml-file=./valgrindReports/$test.memreport.xml ./$test
-        chmod 0666 ./valgrindReports/$test.memreport.xml
-    done
+
+    # CMake supports running memory checker (like valgrind) only as a step
+    # of CDash.
+    # Calling valgrind externally in relation to CTest is viable workaround.
+    # Possibly, this will be moved someday into the Kaa build system in a form
+    # of a cmake script.
+    valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v \
+    --log-file=valgrind.log --xml=yes --xml-file=valgrindReports/%p.memreport.xml \
+    ctest --output-on-failure
+
     cd ..
     echo "Valgrind analysis finished."
 }
 
-function run_cppcheck {
+run_cppcheck() {
     echo "Starting Cppcheck..."
     cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build/cppcheck_.xml > build/cppcheck.log
     sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build/cppcheck_.xml > build/cppcheck.xml
@@ -125,36 +114,34 @@ function run_cppcheck {
     echo "Cppcheck analysis finished."
 }
 
-function run_rats {
+run_rats() {
     echo "Starting RATS..."
     rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
     echo "RATS analysis finished."
 }
 
-function run_analysis {
+run_analysis() {
     check_installed_software
-    if [[ VALGRIND_INSTALLED -eq 1 ]]
-    then
+
+    if [ $VALGRIND_INSTALLED -eq 1 ]; then
         run_valgrind
     fi
-    
-    if [[ CPPCHECK_INTSALLED -eq 1 ]]
-    then
+
+    if [ $CPPCHECK_INSTALLED -eq 1 ]; then
         run_cppcheck
     fi
-    
-    if [[ RATS_INSTALLED -eq 1 ]]
-    then
+
+    if [ $RATS_INSTALLED -eq 1 ]; then
         run_rats
     fi
-} 
+}
 
-function clean {
-    if [[ -d build ]]
+clean() {
+    if [ -d build ]
     then
         cd build
-        if [[ -f Makefile ]]
-        then 
+        if [ -f Makefile ]
+        then
             make clean
         fi
         cd .. && rm -r build
@@ -168,7 +155,7 @@ case "$cmd" in
     build)
         COLLECT_COVERAGE=0
         UNITTESTS_COMPILE=0
-        prepare_build &&
+        prepare_build
         build
     ;;
 
@@ -179,16 +166,16 @@ case "$cmd" in
     test)
         COLLECT_COVERAGE=1
         UNITTESTS_COMPILE=1
-        prepare_build &&
-        build &&
-        execute_tests &&
+        prepare_build
+        build
+        execute_tests
         run_analysis
     ;;
 
     clean)
         clean
     ;;
-    
+
     *)
         help
     ;;
