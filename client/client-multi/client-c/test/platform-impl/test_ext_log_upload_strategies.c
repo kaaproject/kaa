@@ -240,7 +240,7 @@ void test_upload_decision_on_failure(void **state)
     (void)state;
 
     kaa_error_t error_code = KAA_ERR_NONE;
-    
+
     size_t DEFAULT_RETRY_PERIOD = 1;
     size_t DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
     size_t DEFAULT_UPLOAD_COUNT_THRESHOLD  = 64;
