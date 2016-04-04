@@ -553,13 +553,8 @@ public class CTLServiceImpl implements CTLService {
                 ObjectNode dependency = (ObjectNode) node;
                 String fqn = dependency.get(FQN).getTextValue();
                 Integer version = dependency.get(VERSION).getIntValue();
-                CTLSchemaDto child = this.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
+                CTLSchemaDto child = this.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
                         fqn, version, parent.getMetaInfo().getTenantId(), parent.getMetaInfo().getApplicationId());
-                if (child == null) { // Not found within the application scope
-                    String tenantId = parent.getMetaInfo().getTenantId();
-                    String applicationId = null; // Search within the tenant scope then
-                    child = this.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
-                }
                 Validate.notNull(child, MessageFormat.format("The dependency [{0}] was not found!", fqn));
                 this.recursiveShallowExport(files, child);
             }
