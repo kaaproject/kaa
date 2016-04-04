@@ -197,7 +197,7 @@ void test_upload_decision_by_timeout(void **state)
 
     log_storage_context.upload_timeout = DEFAULT_UPLOAD_TIMEOUT_THRESHOLD + 1;
 
-    sleep(1);
+    sleep(DEFAULT_UPLOAD_TIMEOUT_THRESHOLD);
 
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
@@ -241,7 +241,7 @@ void test_upload_decision_on_failure(void **state)
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    size_t DEFAULT_RETRY_PERIOD            = 2;
+    size_t DEFAULT_RETRY_PERIOD = 1;
     size_t DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
     size_t DEFAULT_UPLOAD_COUNT_THRESHOLD  = 64;
 
