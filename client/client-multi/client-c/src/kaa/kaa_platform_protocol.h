@@ -19,7 +19,7 @@
  * @brief Kaa binary platform level protocol implementation
  * (<a href="https://docs.kaaproject.org/display/KAA/Binary+platform+protocol">org.kaaproject.protocol.platform.binary</a>).
  *
- * Supplies API for serializing client sync messages to Operations server and processing server sync messages.
+ * Supplies API for serializing client and server sync messages.
  */
 
 #ifndef KAA_PLATFORM_PROTOCOL_H_
@@ -36,18 +36,13 @@
 extern "C" {
 #endif
 
+#ifndef KAA_PLATFORM_PRTOCOL_T
+#define KAA_PLATFORM_PRTOCOL_T
 /**
  * Kaa platform protocol state structure
  */
-#ifndef KAA_PLATFORM_PRTOCOL_T
-# define KAA_PLATFORM_PRTOCOL_T
-    typedef struct kaa_platform_protocol_t  kaa_platform_protocol_t;
+typedef struct kaa_platform_protocol_t kaa_platform_protocol_t;
 #endif
-
-/**
- * Buffer allocation callback
- */
-typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
 
 /**
  * Serialize info structure
@@ -58,37 +53,34 @@ typedef struct {
 } kaa_serialize_info_t;
 
 /**
- * @brief Constructs a sync request for the specified list of services based on the current state of Kaa context and
- * serializes it into the buffer returned by the allocator function.
+ * @brief Constructs a sync request for the specified list of services
+ * based on the current state of Kaa context and serializes it into
+ * the buffer returned by the allocator function.
  *
- * The required buffer size only becomes known after compiling a non-serialized sync request structure. Thus, the
- * function expects the memory allocation callback, @c allocator, to return a buffer of the requested size. It is
- * perfectly acceptable to return a pointer to a previously allocated buffer (even on the stack) if its size is sufficient.
- *
- * @param[in]  self              Pointer to a @link kaa_platform_protocol_t @endlink instance.
- * @param[in]  info              Pointer to a @link kaa_serialize_info_t @endlink instance.
- * @param[out] buffer            The buffer with serialized data.
- * @param[out] buffer_size       The buffer's actual size.
+ * @param[in]  self        Pointer to a @link kaa_platform_protocol_t @endlink instance.
+ * @param[in]  info        Pointer to a @link kaa_serialize_info_t @endlink instance.
+ * @param[out] buffer      The buffer with serialized data.
+ * @param[out] buffer_size The buffer's actual size.
  *
  * @return Error code.
  */
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size);
+kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self,
+        const kaa_serialize_info_t *info,
+        char **buffer,
+        size_t *buffer_size);
 
 /**
  * @brief Processes downstream data received from Operations server.
  *
- * @param[in] self              Pointer to a @link kaa_platform_protocol_t @endlink instance.
- * @param[in] buffer            Pointer to a data buffer for processing received from Operations server.
- * @param[in] buffer_size       Size of @c buffer.
+ * @param[in] self        Pointer to a @link kaa_platform_protocol_t @endlink instance.
+ * @param[in] buffer      Pointer to a data buffer for processing received from server.
+ * @param[in] buffer_size Size of @c buffer.
  *
  * @return Error code.
  */
-kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
-                                                    , const char *buffer
-                                                    , size_t buffer_size);
+kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self,
+        const char *buffer,
+        size_t buffer_size);
 
 #ifdef __cplusplus
 }      /* extern "C" */
