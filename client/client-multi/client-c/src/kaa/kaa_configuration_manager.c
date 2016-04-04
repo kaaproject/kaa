@@ -59,6 +59,21 @@ struct kaa_configuration_manager {
     size_t                               payload_size;
 };
 
+kaa_error_t kaa_extension_configuration_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_configuration_manager_create(&kaa_context->configuration_manager,
+        kaa_context->channel_manager,
+        kaa_context->status->status_instance,
+        kaa_context->logger);
+    *context = kaa_context->configuration_manager;
+    return result;
+}
+
+kaa_error_t kaa_extension_configuration_deinit(void *context)
+{
+    kaa_configuration_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
 
 static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const char *buffer, size_t buffer_size)
 {
@@ -72,6 +87,7 @@ static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const cha
 }
 
 
+/** @deprecated Use kaa_extension_configuration_init(). */
 kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_channel_manager_t *channel_manager, kaa_status_t *status, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL3(configuration_manager_p, status, logger, KAA_ERR_BADPARAM);
@@ -119,6 +135,7 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
 
 
 
+/** @deprecated Use kaa_extension_configuration_deinit(). */
 void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self)
 {
     if (self) {

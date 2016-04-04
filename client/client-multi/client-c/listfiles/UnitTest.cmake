@@ -224,3 +224,15 @@ kaa_add_unit_test(NAME test_kaa_reallocation
         test/utilities/test_kaa_reallocation.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
+
+kaa_add_unit_test(NAME test_kaa_extension
+        SOURCES
+        test/test_kaa_extension.c src/kaa/kaa_extension.c
+        INC_DIRS
+        test/kaa_extension src/kaa)
+
+kaa_add_unit_test(NAME test_kaa_extension_private
+        SOURCES
+        test/test_kaa_extension_private.c src/kaa/kaa_extension.c
+        INC_DIRS
+        src/kaa)

@@ -178,7 +178,7 @@ void test_create_kaa_tcp_channel(void **state)
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_extension_id *r_supported_services;
+    const kaa_extension_id *r_supported_services;
     size_t r_supported_service_count = 0;
     error_code = channel->get_supported_services(channel->context,&r_supported_services,&r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -698,16 +698,13 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 
     if (info->services_count == 1
             && info->services[0] == KAA_EXTENSION_BOOTSTRAP) {
-        if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
-            if (alloc_buffer) {
-                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-                *buffer = alloc_buffer;
-                *buffer_size = sizeof(CONNECT_PACK);
-                return KAA_ERR_NONE;
-            }
+        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+        if (alloc_buffer) {
+            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+            *buffer = alloc_buffer;
+            *buffer_size = sizeof(CONNECT_PACK);
+            return KAA_ERR_NONE;
         }
-
     }
 
     return KAA_ERR_BADPARAM;

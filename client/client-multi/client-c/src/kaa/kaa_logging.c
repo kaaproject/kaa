@@ -74,6 +74,20 @@ struct kaa_log_collector {
 
 static const kaa_extension_id logging_sync_services[] = {KAA_EXTENSION_LOGGING};
 
+kaa_error_t kaa_extension_logging_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t error = kaa_log_collector_create(&kaa_context->log_collector, kaa_context->status->status_instance,
+        kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->log_collector;
+    return error;
+}
+
+kaa_error_t kaa_extension_logging_deinit(void *context)
+{
+    kaa_log_collector_destroy(context);
+    return KAA_ERR_NONE;
+}
+
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
 {
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
@@ -199,6 +213,7 @@ static bool is_upload_allowed(kaa_log_collector_t *self)
     return true;
 }
 
+/** @deprecated Use kaa_extension_logging_deinit(). */
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
     KAA_RETURN_IF_NIL(self, );
@@ -210,6 +225,7 @@ void kaa_log_collector_destroy(kaa_log_collector_t *self)
 
 
 
+/** @deprecated Use kaa_extension_logging_init(). */
 kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
                                    , kaa_status_t *status
                                    , kaa_channel_manager_t *channel_manager

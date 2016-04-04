@@ -44,10 +44,8 @@ static kaa_context_t* kaa_context= NULL;
 static kaa_serialize_info_t *info = NULL;
 char *buffer = NULL;
 size_t buffer_size = 0;
-static void *mock = NULL;
 
-
-char* allocator(void *mock_context, size_t size)
+char *allocator(void *mock_context, size_t size)
 {
     (void)mock_context;
     return KAA_MALLOC(size);
@@ -60,8 +58,6 @@ void test_empty_log_collector_extension_count(void **state)
     info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
     info->services = &service;
     info->services_count = 1;
-    info->allocator = &allocator;
-    info->allocator_context = mock;
 
     void *log_storage_context         = NULL;
     void *log_upload_strategy_context = NULL;

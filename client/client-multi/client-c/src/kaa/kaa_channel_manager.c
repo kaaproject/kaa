@@ -125,7 +125,7 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
 
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
     size_t services_count = 0;
-    kaa_extension_id *services = NULL;
+    const kaa_extension_id *services = NULL;
     channel->get_supported_services(channel->context, &services, &services_count);
     if (services) {
         size_t i = 0;
@@ -148,7 +148,7 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
 {
     KAA_RETURN_IF_NIL(channel, false);
 
-    kaa_extension_id *services;
+    const kaa_extension_id *services;
     size_t service_count;
     kaa_error_t error_code = channel->get_supported_services(channel->context
                                                            , &services
@@ -310,7 +310,7 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
     KAA_RETURN_IF_NIL(self, NULL);
 
     kaa_transport_channel_wrapper_t *channel_wrapper;
-    kaa_extension_id *services;
+    const kaa_extension_id *services;
     size_t service_count;
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);

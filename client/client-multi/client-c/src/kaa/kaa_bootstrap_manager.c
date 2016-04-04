@@ -65,7 +65,18 @@ struct kaa_bootstrap_manager_t {
 
 static kaa_extension_id bootstrap_sync_services[1] = { KAA_EXTENSION_BOOTSTRAP };
 
+kaa_error_t kaa_extension_bootstrap_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_bootstrap_manager_create((kaa_bootstrap_manager_t **)context, kaa_context);
+    kaa_context->bootstrap_manager = *context;
+    return result;
+}
 
+kaa_error_t kaa_extension_bootstrap_deinit(void *context)
+{
+    kaa_bootstrap_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
 
 static void destroy_access_point(void *data)
 {
@@ -188,6 +199,7 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_manager_init(). */
 kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
@@ -208,6 +220,7 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_manager_deinit(). */
 void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self)
 {
     KAA_RETURN_IF_NIL(self,);

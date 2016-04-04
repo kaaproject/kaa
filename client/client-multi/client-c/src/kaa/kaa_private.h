@@ -176,6 +176,26 @@ kaa_error_t ext_limited_log_storage_create(void **log_storage_context_p, kaa_log
     size_t storage_size, size_t percent_to_delete);
 kaa_error_t ext_log_storage_destroy(void *context);
 
+struct kaa_status_holder_t {
+    kaa_status_t *status_instance;
+};
+
+kaa_error_t kaa_extension_bootstrap_init(kaa_context_t *kaa_context, void **context);
+kaa_error_t kaa_extension_profile_init(kaa_context_t *kaa_context, void **context);
+kaa_error_t kaa_extension_event_init(kaa_context_t *kaa_context, void **context);
+kaa_error_t kaa_extension_logging_init(kaa_context_t *kaa_context, void **context);
+kaa_error_t kaa_extension_configuration_init(kaa_context_t *kaa_context, void **context);
+kaa_error_t kaa_extension_notification_init(kaa_context_t *kaa_context, void **context);
+kaa_error_t kaa_extension_user_init(kaa_context_t *kaa_context, void **context);
+
+kaa_error_t kaa_extension_bootstrap_deinit(void *context);
+kaa_error_t kaa_extension_profile_deinit(void *context);
+kaa_error_t kaa_extension_event_deinit(void *context);
+kaa_error_t kaa_extension_logging_deinit(void *context);
+kaa_error_t kaa_extension_configuration_deinit(void *context);
+kaa_error_t kaa_extension_notification_deinit(void *context);
+kaa_error_t kaa_extension_user_deinit(void *context);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

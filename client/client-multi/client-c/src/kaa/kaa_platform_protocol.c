@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -149,18 +149,11 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             break;
         }
         case KAA_EXTENSION_PROFILE: {
-            bool need_resync = false;
-            err_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager
-                                                     , &need_resync);
-            if (err_code) {
-                KAA_LOG_ERROR(self->logger, err_code, "Failed to read 'need_resync' flag");
-            }
-
-            if (!err_code && need_resync) {
-                err_code = kaa_profile_request_get_size(self->kaa_context->profile_manager
-                                                      , &extension_size);
+            err_code = kaa_profile_request_get_size(self->kaa_context->profile_manager, &extension_size);
+            if (!err_code) {
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated profile extension size %u", extension_size);
             }
+
             break;
         }
         case KAA_EXTENSION_USER: {
@@ -345,13 +338,16 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 
 
 
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size)
+kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self, const kaa_serialize_info_t *info,
+        char **buffer, size_t *buffer_size)
 {
-    KAA_RETURN_IF_NIL4(self, info, buffer, buffer_size, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL3(info->allocator, info->services, info->services_count, KAA_ERR_BADDATA);
+    if (!self || !info || !buffer || !buffer_size) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    if (!info->services || info->services_count == 0) {
+        return KAA_ERR_BADDATA;
+    }
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing client sync...");
 
@@ -361,7 +357,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
 
-    *buffer = info->allocator(info->allocator_context, *buffer_size);
+    *buffer = KAA_MALLOC(*buffer_size);
     if (*buffer) {
         self->request_id++;
         error = kaa_client_sync_serialize(self, info->services, info->services_count, *buffer, buffer_size);
