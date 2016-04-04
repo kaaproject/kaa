@@ -224,7 +224,8 @@ kaa_add_unit_test(NAME test_kaa_reallocation
         test/utilities/test_kaa_reallocation.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
-        
+
+# KAA-985
 #kaa_add_unit_test(NAME test_kaa_tcp_channel_operation
 #        SOURCES
 #        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
@@ -232,8 +233,16 @@ kaa_add_unit_test(NAME test_kaa_reallocation
 #        DEPENDS
 #        kaac ${OPENSSL_LIBRARIES})
 
-kaa_add_unit_test(NAME test_kaa_channel_manager
-        SOURCES
-        test/test_kaa_channel_manager.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+# KAA-989
+#kaa_add_unit_test(NAME test_kaa_bootstrap_manager
+#        SOURCES
+#        test/test_kaa_bootstrap_manager.c
+#        DEPENDS
+#        kaac ${OPENSSL_LIBRARIES})
+
+# KAA-988
+#kaa_add_unit_test(NAME test_kaa_channel_manager
+#        SOURCES
+#        test/test_kaa_channel_manager.c
+#        DEPENDS
+#        kaac ${OPENSSL_LIBRARIES})

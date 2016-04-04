@@ -184,15 +184,11 @@ void test_add_channel(void **state)
     kaa_transport_channel_interface_t expected_channel;
     test_create_channel_interface(&expected_channel, &channel_context);
     
-    //uint32_t channel_id;
-    
-    uint32_t channel_id = 0;
-    kaa_transport_channel_interface_t transport_context;
-    
-    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &transport_context, &channel_id);
+    uint32_t channel_id;
+    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &expected_channel, &channel_id);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &transport_context, &channel_id);
+    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &expected_channel, &channel_id);
     ASSERT_EQUAL(error_code, KAA_ERR_ALREADY_EXISTS);
 
     kaa_transport_channel_interface_t *actual_channel =
@@ -200,7 +196,7 @@ void test_add_channel(void **state)
                                 channel_manager, rand() % supported_services_count);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
 
-    compare_channels(actual_channel, &transport_context);
+    compare_channels(actual_channel, &expected_channel);
 
     error_code = kaa_channel_manager_remove_transport_channel(channel_manager, channel_id);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
