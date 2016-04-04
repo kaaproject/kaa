@@ -28,12 +28,15 @@ static const char test_ep_key[20] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9
 
 void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 }
 
 void ext_status_store(const char *buffer, size_t buffer_size)
 {
-
+    (void)buffer;
+    (void)buffer_size;
 }
 
 void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
@@ -51,11 +54,13 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
 
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 }
 
 void ext_configuration_store(const char *buffer, size_t buffer_size)
 {
-
+    (void)buffer;
+    (void)buffer_size;
 }
-

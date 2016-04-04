@@ -18,6 +18,7 @@
  * @file test_kaa_tcp_channel_operation.c
  */
 
+#define _POSIX_C_SOURCE 200112L
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -70,27 +71,27 @@ static void reset_access_point_test_info()
 
 static kaa_logger_t *logger = NULL;
 
-static char CONNACK[] = {0x20, 0x02, 0x00, 0x01};
+static uint8_t CONNACK[] = {0x20, 0x02, 0x00, 0x01};
 
-static char DISCONNECT_NONE[] = {0xE0, 0x02, 0x00, 0x00};
+static uint8_t DISCONNECT_NONE[] = {0xE0, 0x02, 0x00, 0x00};
 
-static char KAASYNC_OP_SERV[] = {0xf0, 0x0e, 0x00, 0x06, 'K', 'a','a','t','c','p',
+static uint8_t KAASYNC_OP_SERV[] = {0xf0, 0x0e, 0x00, 0x06, 'K', 'a','a','t','c','p',
                                  0x01, 0x00, 0x00, 0x11, 0x34, 0x45};
 
-static char KAASYNC_OP[] = {0xF0, 0x13, 0x00, 0x06, 'K', 'a','a','t','c','p',
+static uint8_t KAASYNC_OP[] = {0xF0, 0x13, 0x00, 0x06, 'K', 'a','a','t','c','p',
                                    0x01, 0x00, 0x01, 0x10, 'K', 'a','a','t','c','p', 0x00};
 
 static char *KAASYNC_OP_MESSAGE = "Kaatcp";
 
-static char DISCONNECT_MESSAGE[] = {0xE0, 0x02, 0x00, 0x00};
+static uint8_t DISCONNECT_MESSAGE[] = {0xE0, 0x02, 0x00, 0x00};
 
-static char CONNECT_HEAD[] = {0x35, 0x46};
-static char CONNECT_PACK[] = {0x34, 0x45};
+static uint8_t CONNECT_HEAD[] = {0x35, 0x46};
+static uint8_t CONNECT_PACK[] = {0x34, 0x45};
 
-static char DESTINATION_SOCKADDR[]   = {0x02, 0x00, 0x26, 0xa0, 0xc0, 0xa8, 0x4d, 0x02,
+static uint8_t DESTINATION_SOCKADDR[]   = {0x02, 0x00, 0x26, 0xa0, 0xc0, 0xa8, 0x4d, 0x02,
                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-static char CONNECTION_DATA[]   = { 0x00, 0x00, 0x01, 0x26, 0x30, 0x82, 0x01, 0x22,
+static uint8_t CONNECTION_DATA[]   = { 0x00, 0x00, 0x01, 0x26, 0x30, 0x82, 0x01, 0x22,
                                     0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86,
                                     0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00, 0x03,
                                     0x82, 0x01, 0x0F, 0x00, 0x30, 0x82, 0x01, 0x0A,
@@ -151,20 +152,20 @@ void test_sync_exchange(kaa_transport_channel_interface_t *channel);
 /*
  * Test channel creation and destroy.
  */
-void test_create_kaa_tcp_channel(void)
+void test_create_kaa_tcp_channel(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
 
@@ -185,22 +186,20 @@ void test_create_kaa_tcp_channel(void)
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_service_t *r_supported_services;
+    kaa_extension_id *r_supported_services;
     size_t r_supported_service_count = 0;
     error_code = channel->get_supported_services(channel->context, &r_supported_services, &r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(r_supported_service_count, 4);
-    ASSERT_EQUAL(r_supported_services[0], KAA_SERVICE_PROFILE);
-    ASSERT_EQUAL(r_supported_services[1], KAA_SERVICE_USER);
-    ASSERT_EQUAL(r_supported_services[2], KAA_SERVICE_EVENT);
-    ASSERT_EQUAL(r_supported_services[3], KAA_SERVICE_LOGGING);
+    ASSERT_EQUAL(r_supported_services[0], KAA_EXTENSION_PROFILE);
+    ASSERT_EQUAL(r_supported_services[1], KAA_EXTENSION_USER);
+    ASSERT_EQUAL(r_supported_services[2], KAA_EXTENSION_EVENT);
+    ASSERT_EQUAL(r_supported_services[3], KAA_EXTENSION_LOGGING);
 
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 
@@ -210,20 +209,20 @@ void test_create_kaa_tcp_channel(void)
  *  2. Authorize, send CONNECT and receive CONACK
  *  3. Receive Disconnect message, check connection drop and notify Bootstrap of AP failure
  */
-void test_kaa_tcp_channel_success_flow(void)
+void test_kaa_tcp_channel_success_flow(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -237,8 +236,6 @@ void test_kaa_tcp_channel_success_flow(void)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 /**
@@ -248,20 +245,20 @@ void test_kaa_tcp_channel_success_flow(void)
  *  3. Call Sync for EVENT than EVENT,LOGGING, check send SYNC for EVENT,LOGGING, receive SYNC.
  *  4. Receive Disconnect message, check connection drop and notify Bootstrap manager of AP failure
  */
-void test_kaa_tcp_channel_sync_flow(void)
+void test_kaa_tcp_channel_sync_flow(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -271,13 +268,13 @@ void test_kaa_tcp_channel_sync_flow(void)
     test_check_channel_auth(channel);
 
     //Call sync
-    kaa_service_t services1[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_USER};
+    kaa_extension_id services1[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_USER};
     channel->sync_handler(channel->context, services1, 2);
 
-    kaa_service_t services2[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_EVENT};
+    kaa_extension_id services2[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_EVENT};
     channel->sync_handler(channel->context, services2, 2);
 
-    kaa_service_t services3[] = {KAA_SERVICE_LOGGING};
+    kaa_extension_id services3[] = {KAA_EXTENSION_LOGGING};
     channel->sync_handler(channel->context, services3, 1);
 
     //Check correct RD,WR operation, in this point we waiting for RD operations true
@@ -291,8 +288,6 @@ void test_kaa_tcp_channel_sync_flow(void)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 /**
@@ -302,20 +297,20 @@ void test_kaa_tcp_channel_sync_flow(void)
  *  4. Imitate IO error on read.
  *  5. check disconnect notification
  */
-void test_kaa_tcp_channel_io_error_flow(void)
+void test_kaa_tcp_channel_io_error_flow(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -345,8 +340,6 @@ void test_kaa_tcp_channel_io_error_flow(void)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 /**
@@ -355,20 +348,20 @@ void test_kaa_tcp_channel_io_error_flow(void)
  * 2. Call sync several times before authorization complete, check that CONNECT is generated only once.
  * 3. Disconnect.
  */
-void test_kaa_tcp_channel_auth_double_sync_flow(void)
+void test_kaa_tcp_channel_auth_double_sync_flow(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t operation_services[] = {
-            KAA_SERVICE_PROFILE,
-            KAA_SERVICE_USER,
-            KAA_SERVICE_EVENT,
-            KAA_SERVICE_LOGGING};
+    kaa_extension_id operation_services[] = {
+            KAA_EXTENSION_PROFILE,
+            KAA_EXTENSION_USER,
+            KAA_EXTENSION_EVENT,
+            KAA_EXTENSION_LOGGING};
 
     error_code = kaa_tcp_channel_create(channel, logger, operation_services, 4);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -400,7 +393,7 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     access_point_test_info.request_connect           = false;
 
     //Call sync
-    kaa_service_t services1[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_USER};
+    kaa_extension_id services1[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_USER};
     channel->sync_handler(channel->context, services1, 2);
     ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
     ASSERT_EQUAL(access_point_test_info.request_connect, false);
@@ -420,7 +413,7 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     access_point_test_info.request_connect           = false;
     access_point_test_info.auth_packet_written       = false;
 
-    kaa_service_t services2[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_EVENT};
+    kaa_extension_id services2[] = {KAA_EXTENSION_PROFILE, KAA_EXTENSION_EVENT};
     channel->sync_handler(channel->context, services2, 2);
     ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
     ASSERT_EQUAL(access_point_test_info.request_connect, false);
@@ -439,7 +432,7 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     CHECK_SOCKET_RW(channel, true, true);
 
     //Third sync
-    kaa_service_t services3[] = {KAA_SERVICE_LOGGING};
+    kaa_extension_id services3[] = {KAA_EXTENSION_LOGGING};
     channel->sync_handler(channel->context, services3, 1);
 
     //Check correct RD,WR operation, in this point we waiting for RD operations true
@@ -453,8 +446,6 @@ void test_kaa_tcp_channel_auth_double_sync_flow(void)
     channel->destroy(channel->context);
 
     KAA_FREE(channel);
-
-    KAA_TRACE_OUT(logger);
 }
 
 
@@ -570,7 +561,7 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
     access_point.id = 10;
-    access_point.connection_data = CONNECTION_DATA;
+    access_point.connection_data = (char *)CONNECTION_DATA;
     access_point.connection_data_len = sizeof(CONNECTION_DATA);
 
     reset_access_point_test_info();
@@ -603,6 +594,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                                                        , kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type)
 {
+    (void)self;
     ASSERT_EQUAL(protocol_id->id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_id->version, 1);
     ASSERT_EQUAL(type, KAA_SERVER_OPERATIONS);
@@ -612,6 +604,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
 kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {
+    (void)context;
     if (fd != access_point_test_info.fd) {
         return KAA_ERR_BADPARAM;
     }
@@ -714,6 +707,8 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , const char *buffer
                                                     , size_t buffer_size)
 {
+    (void)self;
+    (void)buffer_size;
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_BADPARAM);
 
     if (!memcmp(buffer, KAASYNC_OP_MESSAGE, strlen(KAASYNC_OP_MESSAGE))) {
@@ -728,12 +723,13 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
                                                       , char **buffer
                                                       , size_t *buffer_size)
 {
-
+    (void)self;
+    (void)buffer_size;
     if (info->services_count == 4
-            && info->services[0] == KAA_SERVICE_PROFILE
-            && info->services[1] == KAA_SERVICE_USER
-            && info->services[2] == KAA_SERVICE_EVENT
-            && info->services[3] == KAA_SERVICE_LOGGING) {
+            && info->services[0] == KAA_EXTENSION_PROFILE
+            && info->services[1] == KAA_EXTENSION_USER
+            && info->services[2] == KAA_EXTENSION_EVENT
+            && info->services[3] == KAA_EXTENSION_LOGGING) {
         if (info->allocator && info->allocator_context) {
             char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
             if (alloc_buffer) {
@@ -768,6 +764,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_soc
 
 ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
 {
+    (void)resolve_listener;
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
         return RET_STATE_BUFFER_NOT_ENOUGH;
@@ -825,6 +822,7 @@ kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read)
 {
+    (void)buffer_size;
     KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
 
     if (fd != access_point_test_info.fd) {

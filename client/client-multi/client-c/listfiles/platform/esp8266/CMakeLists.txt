@@ -14,7 +14,8 @@
 #  limitations under the License.
 #
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM")
+# esp8266-rtos-sdk has some warnings, so we put -Wno-comment and -Wno-pedantic to suppress them
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM -Wno-comment -Wno-pedantic")
 
 set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 
@@ -47,4 +48,5 @@ set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS})
 set(KAA_BUILD_STATIC_ONLY 1)
 
 execute_process(COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/tools/pub_key_generator.jar
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-impl/esp8266/rsa.h)
+                ${CMAKE_CURRENT_BINARY_DIR}/rsa.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})

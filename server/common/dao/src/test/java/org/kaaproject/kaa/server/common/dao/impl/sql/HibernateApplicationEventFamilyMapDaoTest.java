@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -95,7 +96,12 @@ public class HibernateApplicationEventFamilyMapDaoTest extends HibernateAbstract
         ids.add(applicationEventFamilyMaps.get(0).getId().toString());
         ids.add(applicationEventFamilyMaps.get(1).getId().toString());
         List<ApplicationEventFamilyMap> found = applicationEventFamilyMapDao.findByIds(ids);
+        sortList(found);
         Assert.assertEquals(applicationEventFamilyMaps, found);
+    }
+
+    private void sortList(List<ApplicationEventFamilyMap> found){
+        found.sort((o1, o2) -> (int) (o1.getId()-o2.getId()));
     }
 
     @Test

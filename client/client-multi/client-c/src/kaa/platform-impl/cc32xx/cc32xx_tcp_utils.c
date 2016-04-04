@@ -53,6 +53,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolv
                                                                 , kaa_sockaddr_t *result
                                                                 , kaa_socklen_t *result_size)
 {
+    (void)resolve_listener;
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
         return RET_STATE_BUFFER_NOT_ENOUGH;

@@ -15,6 +15,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <time.h>
@@ -46,8 +47,6 @@ static uint64_t test_kaa_list_hash(void *node)
 
 void test_list_create()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
@@ -56,20 +55,16 @@ void test_list_create()
     ASSERT_NULL(kaa_list_back(list));
 
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_list_push_front()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
     int32_t *number;
-    int node_number = 2;
-    for (int i = 0; i < node_number; ++i) {
+    size_t node_number = 2;
+    for (size_t i = 0; i < node_number; ++i) {
         number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();
@@ -84,14 +79,10 @@ void test_list_push_front()
     ASSERT_EQUAL((*(int32_t *)kaa_list_get_data(kaa_list_begin(list))), *number);
 
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_list_push_back()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
@@ -108,14 +99,10 @@ void test_list_push_back()
     ASSERT_EQUAL((*(int32_t *)kaa_list_get_data(kaa_list_back(list))), *number);
 
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_list_sort()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
@@ -124,7 +111,7 @@ void test_list_sort()
     for (uint64_t i = 0; i < node_number; ++i) {
         node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
-        node->id = (uint64_t) random();
+        node->id = (uint64_t) rand();
         kaa_list_push_back(list, node);
     }
 
@@ -141,14 +128,10 @@ void test_list_sort()
         next = kaa_list_next(it);
     }
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 static void test_list_empty_sort()
 {
-    KAA_TRACE_IN(logger);
-
     /* Purpose of this test is to show that no crash occur if
      * list was initially empty.
      */
@@ -157,15 +140,11 @@ static void test_list_empty_sort()
     ASSERT_NOT_NULL(list);
     kaa_list_sort(list, &test_kaa_list_predicate);
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 
 void test_list_hash()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
@@ -185,8 +164,6 @@ void test_list_hash()
     ASSERT_EQUAL(kaa_list_hash(list,&test_kaa_list_hash),-974344717);
 
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 void test_process_data(int32_t *value, int32_t *new_value)
@@ -196,8 +173,6 @@ void test_process_data(int32_t *value, int32_t *new_value)
 
 void test_list_for_each()
 {
-    KAA_TRACE_IN(logger);
-
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
@@ -220,8 +195,6 @@ void test_list_for_each()
     }
 
     kaa_list_destroy(list, NULL);
-
-    KAA_TRACE_OUT(logger);
 }
 
 int test_init()

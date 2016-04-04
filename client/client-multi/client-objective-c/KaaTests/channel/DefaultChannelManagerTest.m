@@ -56,7 +56,7 @@
 }
 
 - (void)testNullBootStrapServer {
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     @try {
         DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:nil context:nil];
         XCTAssertNil(channel);
@@ -68,7 +68,7 @@
 }
 
 - (void)testEmptyBootstrapServer {
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     @try {
         DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:[[NSDictionary alloc] init] context:nil];
         XCTAssertNil(channel);
@@ -94,20 +94,20 @@
     [KeyUtils generateKeyPair];
     NSDictionary *bootstrapServers = [NSDictionary dictionaryWithObject:@[[self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]]] forKey:[TransportProtocolIdHolder HTTPTransportID]];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id <KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
     [channelManager addChannel:channel];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     [channelManager onTransportConnectionInfoUpdated:server];
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
@@ -127,18 +127,18 @@
 
 - (void)testAddBootstrapChannel {
     [KeyUtils generateKeyPair];
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     NSDictionary *bootstrapServers = [NSDictionary dictionaryWithObject:@[server] forKey:[TransportProtocolIdHolder HTTPTransportID]];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id <KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
     
@@ -155,17 +155,17 @@
 }
 
 - (void)testOperationServerFailed {
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id <KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:[self getDefaultBootstrapServers] context:nil];
+    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:[self getDefaultBootstrapServers] context:nil];
     [channelManager addChannel:channel];
     
-    id <TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     [channelManager onTransportConnectionInfoUpdated:opServer];
     
     [channelManager onServerFailedWithConnectionInfo:opServer];
@@ -174,23 +174,23 @@
 
 - (void)testBootstrapServerFailed {
     [KeyUtils generateKeyPair];
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
-    id <TransportConnectionInfo> server1 = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost2" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server1 = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost2" port:9889 publicKey:[KeyUtils getPublicKey]];
     NSDictionary *bootstrapServers = [NSDictionary dictionaryWithObject:@[server, server1] forKey:[TransportProtocolIdHolder HTTPTransportID]];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue setMaxConcurrentOperationCount:1];
     [given([executorContext getSheduledExecutor]) willReturn:[queue underlyingQueue]];
-    id <KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:executorContext];
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:executorContext];
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     
     [channelManager addChannel:channel];
@@ -209,18 +209,18 @@
 
 - (void)testSingleBootstrapServerFailed {
     [KeyUtils generateKeyPair];
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     NSDictionary *bootstrapServers = [NSDictionary dictionaryWithObject:@[server] forKey:[TransportProtocolIdHolder HTTPTransportID]];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id <KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
     
@@ -232,7 +232,7 @@
 - (void)testRemoveHttpLpChannel {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
 
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     
     NSDictionary *typesForChannel2 =
     [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
@@ -243,37 +243,37 @@
                                           @(TRANSPORT_TYPE_CONFIGURATION),
                                           @(TRANSPORT_TYPE_NOTIFICATION),
                                           @(TRANSPORT_TYPE_EVENT)]];
-    id <KaaDataChannel> channel1 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel1 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel1 getSupportedTransportTypes]) willReturn:typesForChannel2];
     [given([channel1 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel1 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel1 getId]) willReturn:@"mock_channel1"];
     
-    id <KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel2 getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel2 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel2 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel2 getId]) willReturn:@"mock_channel2"];
     
-    id <KaaDataChannel> channel3 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel3 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel3 getSupportedTransportTypes]) willReturn:typesForChannel2];
     [given([channel3 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel3 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel3 getId]) willReturn:@"mock_channel3"];
     
-    id <KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     
     [channelManager addChannel:channel1];
     [channelManager addChannel:channel2];
     
-    id <TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     
     [channelManager onTransportConnectionInfoUpdated:opServer];
 
-    id <TransportConnectionInfo> opServer2 = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> opServer2 = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     
     [channelManager onTransportConnectionInfoUpdated:opServer2];
     
@@ -282,7 +282,7 @@
     
     [channelManager removeChannel:channel2];
     
-    id <TransportConnectionInfo> opServer3 = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> opServer3 = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 publicKey:[KeyUtils getPublicKey]];
     [channelManager addChannel:channel3];
     [channelManager onTransportConnectionInfoUpdated:opServer3];
     
@@ -292,14 +292,14 @@
 - (void)testConnectivityChecker {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     TransportProtocolId *type = [TransportProtocolIdHolder TCPTransportID];
-    id <KaaDataChannel> channel1 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel1 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel1 getTransportProtocolId]) willReturn:type];
     [given([channel1 getId]) willReturn:@"Channel1"];
-    id <KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel2 getTransportProtocolId]) willReturn:type];
     [given([channel2 getId]) willReturn:@"Channel2"];
     
@@ -313,7 +313,7 @@
     [verifyCount(channel1, times(1)) setConnectivityChecker:checker];
     [verifyCount(channel2, times(1)) setConnectivityChecker:checker];
     
-    id <KaaDataChannel> channel3 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel3 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel3 getTransportProtocolId]) willReturn:type];
     [given([channel3 getId]) willReturn:@"Channel3"];
     
@@ -324,7 +324,7 @@
 - (void)testUpdateForSpecifiedTransport {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types = [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
@@ -332,12 +332,12 @@
                                                       forKeys:@[@(TRANSPORT_TYPE_CONFIGURATION),
                                                                 @(TRANSPORT_TYPE_LOGGING)]];
     
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
     [given([channel getId]) willReturn:@"channel1"];
     
-    id <KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel2 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel2 getSupportedTransportTypes]) willReturn:types];
     [given([channel2 getId]) willReturn:@"channel2"];
@@ -351,7 +351,7 @@
 - (void)testNegativeUpdateForSpecifiedTransport {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
@@ -359,7 +359,7 @@
                                           @(CHANNEL_DIRECTION_UP)]
                                 forKeys:@[@(TRANSPORT_TYPE_CONFIGURATION),
                                           @(TRANSPORT_TYPE_LOGGING)]];
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
     @try {
@@ -374,7 +374,7 @@
 - (void)testShutdown {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
@@ -382,7 +382,7 @@
                                           @(CHANNEL_DIRECTION_UP)]
                                 forKeys:@[@(TRANSPORT_TYPE_CONFIGURATION),
                                           @(TRANSPORT_TYPE_LOGGING)]];
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
     [given([channel getId]) willReturn:@"channel1"];
@@ -401,13 +401,13 @@
 - (void)testPauseAfterAdd {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
                                 forKey:@(TRANSPORT_TYPE_CONFIGURATION)];
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
     [given([channel getId]) willReturn:@"channel1"];
@@ -420,13 +420,13 @@
 - (void)testPauseAfterSet {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
                                 forKey:@(TRANSPORT_TYPE_CONFIGURATION)];
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
     [given([channel getId]) willReturn:@"channel1"];
@@ -439,13 +439,13 @@
 - (void)testResume {
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
-    id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
                                 forKey:@(TRANSPORT_TYPE_CONFIGURATION)];
-    id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
+    id<KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
     [given([channel getId]) willReturn:@"channel1"];
@@ -462,7 +462,7 @@
 
 - (NSDictionary *)getDefaultBootstrapServers {
     [KeyUtils generateKeyPair];
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     NSDictionary *dictionary = [NSDictionary dictionaryWithObject:@[server] forKey:[TransportProtocolIdHolder HTTPTransportID]];
     return dictionary;
 }

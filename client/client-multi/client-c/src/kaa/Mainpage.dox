@@ -74,23 +74,23 @@
     @endcode
 
     <b>To communicate with Kaa servers, at least one transport channel must be added for both Bootstrap server and Operations server.</b><br>
-    You may use the reference implementation (\link kaa_tcp_channel_create \endlink) or provide your own channel 
+    You may use the reference implementation (\link kaa_tcp_channel_create \endlink) or provide your own channel
     (for more details see \c kaa_transport_channel_interface_t):
     @code
         #include <kaa_channel_manager.h>
         #include <platform/ext_transport_channel.h>
         #include <platform-impl/kaa_tcp_channel.h>
 
-        kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
+        kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
 
-        const size_t BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+        const size_t BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
-        kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                               , KAA_SERVICE_USER
-                                               , KAA_SERVICE_EVENT
-                                               , KAA_SERVICE_LOGGING };
+        kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                               , KAA_EXTENSION_USER
+                                               , KAA_EXTENSION_EVENT
+                                               , KAA_EXTENSION_LOGGING };
 
-        const size_t OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+        const size_t OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
         kaa_transport_channel_interface_t *bootstrap_channel;
         kaa_transport_channel_interface_t *operations_channel;

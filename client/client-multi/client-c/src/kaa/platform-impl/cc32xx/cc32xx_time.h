@@ -22,7 +22,7 @@
 
 typedef long kaa_time_t;
 
-#define KAA_TIME() (kaa_time_t)cc32xx_time()
+#define KAA_TIME() ((kaa_time_t)cc32xx_time())
 
 long cc32xx_time(void);
 long long cc32xx_clock_getms(void);

@@ -44,19 +44,19 @@
         <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql" />
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.hbm2ddl.auto">#{dao[hibernate_hbm2ddl_auto]}</prop>
-                <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
-                <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
-                <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+                <prop key="hibernate.hbm2ddl.auto">#{sql_dao[hibernate_hbm2ddl_auto]}</prop>
+                <prop key="hibernate.dialect">#{sql_dao[hibernate_dialect]}</prop>
+                <prop key="hibernate.format_sql">#{sql_dao[hibernate_format_sql]}</prop>
+                <prop key="hibernate.show_sql">#{sql_dao[hibernate_show_sql]}</prop>
             </props>
         </property>
     </bean>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="#{dao[jdbc_driver_className]}" />
-        <property name="url" value="jdbc:h2:mem:#{dao[jdbc_host]};DATABASE_TO_UPPER=true" />
-        <property name="username" value="#{dao[jdbc_username]}" />
-        <property name="password" value="#{dao[jdbc_password]}" />
+        <property name="driverClassName" value="#{sql_dao[jdbc_driver_className]}" />
+        <property name="url" value="jdbc:h2:mem:#{sql_dao[jdbc_host]};DATABASE_TO_UPPER=true" />
+        <property name="username" value="#{sql_dao[jdbc_username]}" />
+        <property name="password" value="#{sql_dao[jdbc_password]}" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

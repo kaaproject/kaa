@@ -40,7 +40,7 @@
     
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
 
-    <util:properties id="dao" location="classpath:dao_test.properties"/>
+    <util:properties id="sql_dao" location="classpath:dao_test.properties"/>
 
     <import resource="classpath:common-dao-test-context.xml" />
     <import resource="classpath:cassandra-client-test-context.xml" />

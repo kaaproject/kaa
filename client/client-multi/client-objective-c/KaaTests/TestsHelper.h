@@ -18,6 +18,7 @@
 #import "TransportProtocolId.h"
 #import "EndpointGen.h"
 #import "KaaClientProperties.h"
+#import "AbstractHttpClient.h"
 #import <XCTest/XCTest.h>
 
 #define KAATestEqual(a, b)\
@@ -39,7 +40,15 @@ if (![(a) isEqual:(b)]) {\
 
 + (KaaClientProperties *)getProperties;
 
++ (NSData *)getData;
+
 @end
+
+
+@interface HttpClientMock : AbstractHttpClient
+
+@end
+
 
 /** 
  * XCTestLog class category to swizzle logging. Needed to stop test crashes.

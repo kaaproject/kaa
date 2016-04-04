@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -25,9 +27,6 @@
 #include "kaa_status.h"
 #include "kaa_defaults.h"
 #include "utilities/kaa_mem.h"
-
-
-extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
 
 /*
  * KAA Status persistent content:

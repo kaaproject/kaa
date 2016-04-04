@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <string.h>
 #include <stdbool.h>
 #include <inttypes.h>
@@ -35,11 +37,7 @@
 
 #define KAA_PROFILE_RESYNC_OPTION 0x1
 
-extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
-
-static kaa_service_t profile_sync_services[] = { KAA_SERVICE_PROFILE };
-
-
+static kaa_extension_id profile_sync_services[] = { KAA_EXTENSION_PROFILE };
 
 typedef struct {
     size_t payload_size;
@@ -103,7 +101,7 @@ kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self)
 
     kaa_transport_channel_interface_t *channel =
             kaa_channel_manager_get_transport_channel(
-                    self->channel_manager, KAA_SERVICE_PROFILE);
+                    self->channel_manager, KAA_EXTENSION_PROFILE);
     if (!channel) {
         return KAA_ERR_NOT_FOUND;
     }
@@ -199,7 +197,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile profile client sync");
 
     kaa_error_t error_code = kaa_platform_message_write_extension_header(writer
-                                                                       , KAA_PROFILE_EXTENSION_TYPE
+                                                                       , KAA_EXTENSION_PROFILE
                                                                        , 0
                                                                        , self->extension_data->payload_size);
     KAA_RETURN_IF_ERR(error_code);
@@ -282,6 +280,9 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
                                          , uint16_t extension_options
                                          , size_t extension_length)
 {
+    // Only used for logging
+    (void)extension_options;
+    (void)extension_length;
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync: options %u, payload size %zu", extension_options, extension_length);

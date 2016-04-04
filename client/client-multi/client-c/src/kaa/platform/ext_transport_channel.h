@@ -88,10 +88,10 @@ typedef kaa_error_t (*kaa_get_protocol_id_fn)(void *context
  * @param[in,out]   service_count         Number of the supported services.
  * @return                                Error code.
  *
- * @see kaa_service_t
+ * @see kaa_extension_id
  */
 typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
-                                                   , kaa_service_t **supported_services
+                                                   , kaa_extension_id **supported_services
                                                    , size_t *service_count);
 
 
@@ -104,10 +104,10 @@ typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
  * @param[in]   service_count    Number of services.
  * @return                       Error code.
  *
- * @see kaa_service_t
+ * @see kaa_extension_id
  */
 typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
-                                         , const kaa_service_t services[]
+                                         , const kaa_extension_id services[]
                                          , size_t service_count);
 
 

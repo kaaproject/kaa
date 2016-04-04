@@ -102,10 +102,10 @@ kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, kaatcp_m
         } while (payload_size);
 
         *size = payload_size + header_size;
-        return KAA_ERR_NONE;
+        return (kaatcp_error_t)KAA_ERR_NONE;
     }
 
-    return KAA_ERR_BADPARAM;
+    return (kaatcp_error_t)KAA_ERR_BADPARAM;
 
 }
 
@@ -275,7 +275,7 @@ kaatcp_error_t kaatcp_get_request_kaasync(const kaatcp_kaasync_t *message, char 
 {
     KAA_RETURN_IF_NIL3(message, buf, buf_size, KAATCP_ERR_BAD_PARAM);
 
-    //TODO cursor is not checked to out of buff_size
+    size_t first_buf_size = *buf_size;
     char *cursor = NULL;
     kaatcp_error_t rval = kaatcp_get_kaasync_header(&message->sync_header
                                                   , message->sync_request_size
@@ -285,11 +285,13 @@ kaatcp_error_t kaatcp_get_request_kaasync(const kaatcp_kaasync_t *message, char 
     KAA_RETURN_IF_ERR(rval);
 
     if (message->sync_request) {
-        memcpy(cursor, message->sync_request, message->sync_request_size);
-        cursor += message->sync_request_size;
+        if (cursor + message->sync_request_size <= buf + first_buf_size) {
+            memcpy(cursor, message->sync_request, message->sync_request_size);
+            cursor += message->sync_request_size;
+        }
     }
     *buf_size = cursor - buf;
-    return KAATCP_ERR_NONE;
+    return first_buf_size < *buf_size ? KAATCP_ERR_BUFFER_NOT_ENOUGH : KAATCP_ERR_NONE;
 }
 
 
