@@ -36,6 +36,8 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 
+#include <kaa_extension.h>
+
 /** Resync flag indicating that profile manager should be resynced */
 #define KAA_PROFILE_RESYNC_FLAG     0x1
 
@@ -123,101 +125,32 @@ void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self)
 
 
 
-static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
-                                          , const kaa_extension_id services[]
-                                          , size_t services_count
-                                          , size_t *expected_size)
+static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self,
+        const kaa_extension_id *extensions,
+        const size_t extension_count,
+        size_t *expected_size)
 {
-    KAA_RETURN_IF_NIL4(self, services, services_count, expected_size, KAA_ERR_BADPARAM);
+    // Should we really check that extension_count != 0?
+    if (!self || !extensions || !expected_size || extension_count == 0) {
+        return KAA_ERR_BADPARAM;
+    }
 
-    *expected_size = KAA_PROTOCOL_MESSAGE_HEADER_SIZE;
+    *expected_size = KAA_PROTOCOL_MESSAGE_HEADER_SIZE + kaa_meta_data_request_size;
 
-    size_t extension_size = kaa_meta_data_request_size;
+    for (size_t i = 0; i < extension_count; ++i) {
+        size_t extension_size = 0;
 
-    *expected_size += extension_size;
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated meta extension size %u", extension_size);
-
-    kaa_error_t err_code = KAA_ERR_NONE;
-    while (!err_code && services_count--) {
-        switch (services[services_count]) {
-        case KAA_EXTENSION_BOOTSTRAP: {
-            err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
-                                                                    , &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated bootstrap extension size %u", extension_size);
-            }
-            break;
-        }
-        case KAA_EXTENSION_PROFILE: {
-            err_code = kaa_profile_request_get_size(self->kaa_context->profile_manager, &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated profile extension size %u", extension_size);
-            }
-
-            break;
-        }
-        case KAA_EXTENSION_USER: {
-            err_code = kaa_user_request_get_size(self->kaa_context->user_manager
-                                               , &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated user extension size %u", extension_size);
-            }
-            break;
-        }
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-        case KAA_EXTENSION_EVENT: {
-            err_code = kaa_event_request_get_size(self->kaa_context->event_manager
-                                                , &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated event extension size %u", extension_size);
-            }
-            break;
-        }
-#endif
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-        case KAA_EXTENSION_LOGGING: {
-            err_code = kaa_logging_request_get_size(self->kaa_context->log_collector
-                                                , &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated logging extension size %u", extension_size);
-            }
-            break;
-        }
-#endif
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-        case KAA_EXTENSION_CONFIGURATION: {
-            err_code = kaa_configuration_manager_get_size(self->kaa_context->configuration_manager
-                                                , &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated configuration extension size %u", extension_size);
-            }
-            break;
-        }
-#endif
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-        case KAA_EXTENSION_NOTIFICATION: {
-            err_code = kaa_notification_manager_get_size(self->kaa_context->notification_manager
-                                                , &extension_size);
-            if (!err_code) {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated notification extension size %u", extension_size);
-            }
-            break;
-        }
-#endif
-        default:
-            extension_size = 0;
-            break;
+        kaa_error_t error = kaa_extension_request_get_size(extensions[i], &extension_size);
+        if (error && error != KAA_ERR_NOT_FOUND) {
+            KAA_LOG_ERROR(self->logger, error,
+                    "Failed to query extension size for %u", extensions[i]);
+            return error;
         }
 
         *expected_size += extension_size;
     }
 
-    if (err_code) {
-        KAA_LOG_ERROR(self->logger, err_code, "Failed to query extension size in %u service"
-                                                                , services[services_count]);
-    }
-
-    return err_code;
+    return KAA_ERR_NONE;
 }
 
 

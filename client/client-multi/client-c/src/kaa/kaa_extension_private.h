@@ -38,12 +38,14 @@ static struct kaa_extension kaa_extension_bootstrap = {
     .id = KAA_EXTENSION_BOOTSTRAP,
     .init = kaa_extension_bootstrap_init,
     .deinit = kaa_extension_bootstrap_deinit,
+    .request_get_size = kaa_extension_bootstrap_request_get_size,
 };
 
 static struct kaa_extension kaa_extension_profile = {
     .id = KAA_EXTENSION_PROFILE,
     .init = kaa_extension_profile_init,
     .deinit = kaa_extension_profile_deinit,
+    .request_get_size = kaa_extension_profile_request_get_size,
 };
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
@@ -51,6 +53,7 @@ static struct kaa_extension kaa_extension_event = {
     .id = KAA_EXTENSION_EVENT,
     .init = kaa_extension_event_init,
     .deinit = kaa_extension_event_deinit,
+    .request_get_size = kaa_extension_event_request_get_size,
 };
 #endif
 
@@ -59,6 +62,7 @@ static struct kaa_extension kaa_extension_logging = {
     .id = KAA_EXTENSION_LOGGING,
     .init = kaa_extension_logging_init,
     .deinit = kaa_extension_logging_deinit,
+    .request_get_size = kaa_extension_logging_request_get_size,
 };
 #endif
 
@@ -67,6 +71,7 @@ static struct kaa_extension kaa_extension_configuration = {
     .id = KAA_EXTENSION_CONFIGURATION,
     .init = kaa_extension_configuration_init,
     .deinit = kaa_extension_configuration_deinit,
+    .request_get_size = kaa_extension_configuration_request_get_size,
 };
 #endif
 
@@ -75,6 +80,7 @@ static struct kaa_extension kaa_extension_notification = {
     .id = KAA_EXTENSION_NOTIFICATION,
     .init = kaa_extension_notification_init,
     .deinit = kaa_extension_notification_deinit,
+    .request_get_size = kaa_extension_notification_request_get_size,
 };
 #endif
 
@@ -82,6 +88,7 @@ static struct kaa_extension kaa_extension_user = {
     .id = KAA_EXTENSION_USER,
     .init = kaa_extension_user_init,
     .deinit = kaa_extension_user_deinit,
+    .request_get_size = kaa_extension_user_request_get_size,
 };
 
 // I'm not sure in what order they should be, so just kept order from

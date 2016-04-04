@@ -104,6 +104,11 @@ kaa_error_t kaa_extension_user_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_user_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_user_request_get_size(context, expected_size);
+}
+
 static void dtor_endpoint_info(void *data)
 {
     KAA_RETURN_IF_NIL(data, );

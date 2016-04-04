@@ -110,6 +110,11 @@ kaa_error_t kaa_extension_notification_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_notification_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_notification_manager_get_size(context, expected_size);
+}
+
 static void shift_and_sub_extension(kaa_platform_message_reader_t *reader, uint32_t *extension_length, size_t size)
 {
     KAA_RETURN_IF_NIL2(reader, extension_length,);

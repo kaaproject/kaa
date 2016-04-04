@@ -73,3 +73,18 @@ kaa_error_t kaa_extension_logging_deinit(void *context) { (void)context; return 
 kaa_error_t kaa_extension_configuration_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_notification_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_user_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
+
+kaa_error_t kaa_extension_bootstrap_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_profile_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_event_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_logging_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_configuration_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_notification_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_user_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }

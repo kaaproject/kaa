@@ -78,6 +78,12 @@ kaa_error_t kaa_extension_bootstrap_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_bootstrap_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_channel_manager_bootstrap_request_get_size(
+            ((kaa_bootstrap_manager_t *)context)->channel_manager, expected_size);
+}
+
 static void destroy_access_point(void *data)
 {
     KAA_RETURN_IF_NIL(data,);

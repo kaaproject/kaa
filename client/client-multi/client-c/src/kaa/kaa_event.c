@@ -137,6 +137,11 @@ kaa_error_t kaa_extension_event_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_event_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_event_request_get_size(context, expected_size);
+}
+
 static void destroy_event_listener_request(void *request_p)
 {
     KAA_RETURN_IF_NIL(request_p,);

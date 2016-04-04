@@ -88,6 +88,11 @@ kaa_error_t kaa_extension_logging_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_logging_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_logging_request_get_size(context, expected_size);
+}
+
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
 {
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
