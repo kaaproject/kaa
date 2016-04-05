@@ -30,7 +30,7 @@ import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.channel.EventTransport;
-import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
@@ -42,9 +42,10 @@ import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.UserTransport;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
-import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
@@ -572,6 +573,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public void setLogDeliveryListener(LogDeliveryListener listener) {
         logCollector.setLogDeliveryListener(listener);
+    }
+
+    @Override
+    public void setFailoverStrategy(FailoverStrategy failoverStrategy) {
+        failoverManager.setFailoverStrategy(failoverStrategy);
     }
 
     protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {
