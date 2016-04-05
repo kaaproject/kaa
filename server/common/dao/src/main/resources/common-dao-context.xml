@@ -87,11 +87,11 @@
     </bean>
 
     <bean id="endpointRegistrationService" class="org.kaaproject.kaa.server.common.dao.service.EndpointRegistrationServiceImpl">
-        <constructor-arg ref="endpointRegistrationDao"/>
+        <property name="endpointRegistrationDao" ref="endpointRegistrationDao"/>
     </bean>
 
     <bean id="credentialsService" class="org.kaaproject.kaa.server.common.dao.service.CredentialsServiceImpl">
-        <constructor-arg ref="credentialsDao"/>
+        <property name="credentialsDao" ref="credentialsDao"/>
     </bean>
 
 </beans>

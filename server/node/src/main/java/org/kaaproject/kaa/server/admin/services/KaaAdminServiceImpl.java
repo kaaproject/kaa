@@ -3637,9 +3637,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             this.checkApplicationId(applicationId);
-            CredentialsDto credentials = this.controlService.getCredentials(applicationId, credentialsId).orElse(null);
-            Validate.isTrue(credentials != null, "No credentials with the given ID found!");
-            Validate.isTrue(credentials.getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
             if (serverProfileVersion != null && serverProfileBody != null) {
                 ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
                 this.validateServerProfile(serverProfileSchema, serverProfileBody);

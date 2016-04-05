@@ -2168,6 +2168,7 @@ public class KaaAdminController {
      * call launches an asynchronous process to terminate all active sessions of
      * the corresponding endpoint.
      *
+     * @param applicationId The application ID
      * @param credentialsId The credentials ID
      *
      * @throws KaaAdminServiceException - if an exception occures.

@@ -15,7 +15,15 @@ public class EndpointVerificationException extends Exception {
     /**
      * Constructs a new exception with no detail message.
      */
-    public EndpointVerificationException() {
-        super();
+    public EndpointVerificationException(String msg) {
+        super(msg);
     }
+    
+    /**
+     * Constructs a new exception with no detail message.
+     */
+    public EndpointVerificationException(Exception e) {
+        super(e);
+    }
+
 }

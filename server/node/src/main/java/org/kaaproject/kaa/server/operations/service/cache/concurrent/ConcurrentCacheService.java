@@ -771,6 +771,20 @@ public class ConcurrentCacheService implements CacheService {
 
         });
     }
+    
+    @Override
+    @Cacheable("appIds")
+    public String getApplicationIdByAppToken(String key) {
+        return appTokenMemorizer.compute(key, new Computable<String, String>() {
+
+            @Override
+            public String compute(String key) {
+                LOG.debug("Fetching result for token id");
+                ApplicationDto appDto = applicationService.findAppByApplicationToken(key);
+                return appDto != null ? appDto.getId() : null;
+            }
+        });
+    }
 
     /**
      * Put endpoint key.
