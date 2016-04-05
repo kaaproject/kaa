@@ -75,9 +75,8 @@ kaa_error_t kaa_buffer_reallocate_space(kaa_buffer_t *buffer_p, size_t size)
 {
     KAA_RETURN_IF_NIL(buffer_p, KAA_ERR_BADPARAM);
     size_t locked_space    = buffer_p->current - buffer_p->begin;
-    size_t free_space      = buffer_p->end     - buffer_p->current;
     size_t total_space     = buffer_p->end     - buffer_p->begin;
-    size_t new_buffer_size = size - free_space + locked_space;
+    size_t new_buffer_size = size + locked_space;
     char *ptr;
 
     if (total_space >= new_buffer_size)

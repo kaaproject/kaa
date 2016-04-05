@@ -68,7 +68,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
             self.remainingLength += (int32_t)request.length;
         }
         DDLogDebug(@"%@ Created Connect message: session key size: %li, signature size: %li, sync request size: %li",
-                   TAG, key.length, signature.length, request.length);
+                   TAG, (long)key.length, (long)signature.length, (long)request.length);
     }
     return self;
 }

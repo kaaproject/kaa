@@ -14,23 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view;
+#import <Foundation/Foundation.h>
+#import "LogRecord.h"
 
-import java.util.Date;
+#define DEFAULT_TEST_DB_NAME @"test_kaa_logs.db"
+#define RECORD_PAYLOAD_SIZE (3)
 
-import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ValueListBox;
+@interface LogTestHelper : NSObject
 
-public interface SendNotificationView extends BaseDetailsView {
++ (LogRecord *)defaultLogRecord;
 
-    ValueListBox<SchemaInfoDto> getNotificationSchemaInfo();
-    
-    HasValue<Date> getExpiredAt();
-    
-    HasValue<RecordField> getNotificationData();
-
-    HasValue<String> getEndpointKeyHash();
-}
+@end

@@ -1,5 +1,6 @@
+#!/bin/sh
 #
-#  Copyright 2016 CyberVision, Inc.
+#  Copyright 2014-2016 CyberVision, Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,16 +15,16 @@
 #  limitations under the License.
 #
 
-language: python
-python: "3.4"
-sudo: required
-dist: trusty
-install: |
-  cd client/client-multi/client-c
-  ./scripts/install.sh --arg cc3200Support false
-  . $HOME/.nix-profile/etc/profile.d/nix.sh
-  cd ../../..
+# SYNOPSIS
+#     srcformat.sh [FILE]...
+#
+# DESCRIPTION
+#     This script formats given source FILES according code style.
 
-script: |
-  cd client/client-multi/client-c
-  ./scripts/build.sh --arg cc3200Support false
+
+STYLE="--style=1tbs --indent=spaces=4 --pad-header --align-pointer=name --indent-preproc-block --indent-switches"
+
+if [ -z "$@" ]; then echo "You must specify source files"; exit 1; fi
+
+astyle $STYLE $@
+
