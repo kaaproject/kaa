@@ -11,19 +11,15 @@ package org.kaaproject.kaa.server.transport;
 public class EndpointVerificationException extends Exception {
 
     private static final long serialVersionUID = 1000L;
-
-    /**
-     * Constructs a new exception with no detail message.
-     */
-    public EndpointVerificationException(String msg) {
-        super(msg);
-    }
     
-    /**
-     * Constructs a new exception with no detail message.
-     */
-    public EndpointVerificationException(Exception e) {
-        super(e);
+    private final EndpointVerificationError error;
+    
+    public EndpointVerificationException(EndpointVerificationError error, String msg) {
+        super(msg);
+        this.error = error;
     }
 
+    public EndpointVerificationError getError() {
+        return error;
+    }
 }
