@@ -67,6 +67,7 @@
 		B8211DFD1CB42CBB0071E83C /* DefaultFailoverManager.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8211DE51CB3E5130071E83C /* DefaultFailoverManager.h */; };
 		B8211DFE1CB42CBB0071E83C /* FailoverDecision.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8211DE71CB3E5130071E83C /* FailoverDecision.h */; };
 		B8211DFF1CB42CBB0071E83C /* FailoverManager.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8211DE91CB3E5130071E83C /* FailoverManager.h */; };
+		B8211E021CB42DEE0071E83C /* FailoverStrategyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8211E011CB42DEE0071E83C /* FailoverStrategyTests.m */; };
 		B824A1EF1B1452C50076C753 /* Kaa.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B824A1EE1B1452C50076C753 /* Kaa.h */; };
 		B824A1F11B1452C50076C753 /* Kaa.m in Sources */ = {isa = PBXBuildFile; fileRef = B824A1F01B1452C50076C753 /* Kaa.m */; };
 		B824A1F71B1452C50076C753 /* libKaa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B824A1EB1B1452C50076C753 /* libKaa.a */; };
@@ -728,6 +729,7 @@
 		B8211DF11CB3E5B30071E83C /* FailoverStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FailoverStrategy.h; sourceTree = "<group>"; };
 		B8211DF21CB3E5CF0071E83C /* DefaultFailoverStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultFailoverStrategy.h; sourceTree = "<group>"; };
 		B8211DF31CB3E5CF0071E83C /* DefaultFailoverStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultFailoverStrategy.m; sourceTree = "<group>"; };
+		B8211E011CB42DEE0071E83C /* FailoverStrategyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FailoverStrategyTests.m; sourceTree = "<group>"; };
 		B824A1EB1B1452C50076C753 /* libKaa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKaa.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B824A1EE1B1452C50076C753 /* Kaa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kaa.h; sourceTree = "<group>"; };
 		B824A1F01B1452C50076C753 /* Kaa.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Kaa.m; sourceTree = "<group>"; };
@@ -1112,6 +1114,14 @@
 				B8211DF31CB3E5CF0071E83C /* DefaultFailoverStrategy.m */,
 			);
 			path = strategies;
+			sourceTree = "<group>";
+		};
+		B8211E001CB42DEE0071E83C /* failover */ = {
+			isa = PBXGroup;
+			children = (
+				B8211E011CB42DEE0071E83C /* FailoverStrategyTests.m */,
+			);
+			path = failover;
 			sourceTree = "<group>";
 		};
 		B824A1E21B1452C50076C753 = {
@@ -1708,6 +1718,7 @@
 		B8CCC01A1C467EAB00C26F0B /* channel */ = {
 			isa = PBXGroup;
 			children = (
+				B8211E001CB42DEE0071E83C /* failover */,
 				B8CCC01B1C467EAB00C26F0B /* DefaultBootstrapChannelTest.m */,
 				B8CCC01C1C467EAB00C26F0B /* DefaultBootstrapDataProcessorTest.m */,
 				B8CCC01D1C467EAB00C26F0B /* DefaultBootstrapTransportTest.m */,
@@ -2303,6 +2314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B8211E021CB42DEE0071E83C /* FailoverStrategyTests.m in Sources */,
 				B8CCC0581C467EAB00C26F0B /* DefaultRedirectionTransportTest.m in Sources */,
 				B8CCC06D1C467EAB00C26F0B /* AbstractHttpClientTest.m in Sources */,
 				B8CCC0491C467EAB00C26F0B /* AvroUtilsTests.m in Sources */,
