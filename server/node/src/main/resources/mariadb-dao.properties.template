@@ -1,5 +1,5 @@
 # specify hibernate sql dialect
-hibernate_dialect=org.hibernate.dialect.MySQL5Dialect
+hibernate_dialect=org.hibernate.dialect.MySQL5InnoDBDialect
 
 # specify if hibernate will format sql request
 hibernate_format_sql=false

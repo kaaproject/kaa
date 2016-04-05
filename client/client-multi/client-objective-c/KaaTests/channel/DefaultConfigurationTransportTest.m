@@ -34,8 +34,8 @@
 @implementation DefaultConfigurationTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     [transport setClientState:clientState];
     
     @try {
@@ -48,10 +48,10 @@
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     
-    id <ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
+    id<ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     [transport setChannelManager:channelManager];
     [transport setClientState:clientState];
     [transport sync];
@@ -60,10 +60,10 @@
 }
 
 - (void)testCreateRequest {
-    id <ConfigurationHashContainer> hashContainer = mockProtocol(@protocol(ConfigurationHashContainer));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<ConfigurationHashContainer> hashContainer = mockProtocol(@protocol(ConfigurationHashContainer));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     
-    id <ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
+    id<ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     [transport createConfigurationRequest];
     [transport setConfigurationHashContainer:hashContainer];
     [transport createConfigurationRequest];
@@ -77,16 +77,16 @@
 }
 
 - (void)testOnConfigurationResponse {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <SchemaProcessor> schemaProcessor = mockProtocol(@protocol(SchemaProcessor));
-    id <ConfigurationProcessor> configProcessor = mockProtocol(@protocol(ConfigurationProcessor));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<SchemaProcessor> schemaProcessor = mockProtocol(@protocol(SchemaProcessor));
+    id<ConfigurationProcessor> configProcessor = mockProtocol(@protocol(ConfigurationProcessor));
     
     ConfigurationSyncResponse *response = [[ConfigurationSyncResponse alloc] init];
     [response setResponseStatus:SYNC_RESPONSE_STATUS_DELTA];
     
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
     
-    id <ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
+    id<ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     [transport setChannelManager:channelManager];
     [transport onConfigurationResponse:response];
     [transport setClientState:clientState];

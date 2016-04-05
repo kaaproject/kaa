@@ -32,8 +32,8 @@
 @implementation DefaultBootstrapTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
     [transport setClientState:clientState];
     @try {
         [transport sync];
@@ -45,9 +45,9 @@
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
     [transport setChannelManager:channelManager];
     [transport setClientState:clientState];
     [transport sync];
@@ -56,9 +56,9 @@
 }
 
 - (void)testCreateRequest {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
     [transport setChannelManager:channelManager];
     [transport createResolveRequest];
     [transport setClientState:clientState];
@@ -66,8 +66,8 @@
 }
 
 - (void)testOnBootstrapResponse {
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
-    id <BootstrapManager> manager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<BootstrapManager> manager = mockProtocol(@protocol(BootstrapManager));
     
     SyncResponse *response = [self getNewSyncResponse];
     NSArray *mdArray = [NSArray array];

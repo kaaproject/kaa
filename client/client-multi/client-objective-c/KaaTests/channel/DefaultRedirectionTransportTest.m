@@ -30,8 +30,8 @@
 @implementation DefaultRedirectionTransportTest
 
 - (void)testOnRedirectionReponse {
-    id <BootstrapManager> manager = mockProtocol(@protocol(BootstrapManager));
-    id <RedirectionTransport> transport = [[DefaultRedirectionTransport alloc] init];
+    id<BootstrapManager> manager = mockProtocol(@protocol(BootstrapManager));
+    id<RedirectionTransport> transport = [[DefaultRedirectionTransport alloc] init];
     RedirectSyncResponse *response = [[RedirectSyncResponse alloc] init];
     [transport onRedirectionResponse:response];
     [transport setBootstrapManager:manager];

@@ -1123,7 +1123,13 @@
 
     <profiles>
         <profile>
-            <id>mariadb-admin</id>
+            <id>mariadb-dao</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                </dependency>
+            </dependencies>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -1152,7 +1158,7 @@
             </build>
         </profile>
         <profile>
-            <id>postgresql-admin</id>
+            <id>postgresql-dao</id>
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>

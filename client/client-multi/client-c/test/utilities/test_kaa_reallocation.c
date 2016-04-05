@@ -48,6 +48,14 @@ void test_reallocation(void **state)
 
     error_code = kaa_buffer_lock_space(buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    
+    // Test reallocation with free space already in the buffer
+    error_code = kaa_buffer_reallocate_space(buffer_ptr, BUFFER_SIZE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_buffer_reallocate_space(buffer_ptr, BUFFER_SIZE*2);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_buffer_lock_space(buffer_ptr, BUFFER_SIZE*2);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_buffer_destroy(buffer_ptr);
 }

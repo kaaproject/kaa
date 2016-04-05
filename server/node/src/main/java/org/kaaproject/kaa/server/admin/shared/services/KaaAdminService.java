@@ -285,6 +285,8 @@ public interface KaaAdminService extends RemoteService {
 
     List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException;
 
+    EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, RecordField notificationData) throws KaaAdminServiceException;
+
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws KaaAdminServiceException;
 
     EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException;

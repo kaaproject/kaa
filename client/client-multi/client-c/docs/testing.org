@@ -1,0 +1,134 @@
+#+TITLE: Testing Tutorial
+#+AUTHOR: Alexey Shmalko
+#+OPTIONS: toc:nil
+
+We use [[https://cmocka.org/][cmocka]] testing framework for the C SDK. It has [[https://api.cmocka.org/modules.html][good documentation]] on various topics, and we encourage you to read it. This document's purpose is to give you a quick introduction into cmocka and some Kaa-related details.
+
+{note}
+The macros in ~test/kaa_test.h~ are not intended to be used; they were part of the previous test setup and will be removed later.
+{note}
+
+* First test
+  Create the following C file in the ~test/~ directory (e.g., ~test/test_nothing.c~).
+
+  #+begin_src c
+    /*  Copyright boilerplate */
+    #include "kaa_test.h"
+
+    static void test_nothing(void **state)
+    {
+        (void)state;
+
+        assert_true(false);
+    }
+
+    int main(void)
+    {
+        const struct CMUnitTest tests[] = {
+            cmocka_unit_test(test_nothing),
+        };
+
+        return cmocka_run_group_tests(tests, NULL, NULL);
+    }
+  #+end_src
+
+  That is the simplest test; it defines a single test case (=test_nothing()=) and creates a test group. However, it doesn't run yet.
+
+  To add the test to the global test suite, open ~listfiles/UnitTest.cmake~ and append the following:
+  #+begin_src cmake
+    kaa_add_unit_test(NAME test_nothing
+            SOURCES
+            test/test_nothing.c)
+  #+end_src
+
+  Now you must see a test failure if you run ~./build.sh test~.
+
+* Testing real code
+  The best way to test a feature is to isolate it. A good example is a list implementation -- it isn't tied to any other Kaa feature and can be tested independently.
+
+  We create a test executable which consists of our test code and list implementation. Add to ~listfiles/UnitTest.cmake~:
+  #+begin_src cmake
+    kaa_add_unit_test(NAME my_test_list
+            SOURCES
+            test/my_test_list.c
+            src/kaa/collections/kaa_list.c
+            INC_DIRS
+            src/kaa)
+  #+end_src
+
+  That creates new test executable (~my_test_list~) that consists of ~test/my_test_list.c~ and ~src/kaa/collections/kaa_list.c~; we also add ~src/kaa~ to include directories so ~kaa_list.c~ can find its include files.
+
+  It's time to write a real test (~test/my_test_list.c~):
+  #+begin_src c
+    /*  Copyright boilerplate */
+    #include <collections/kaa_list.h>
+
+    #include "kaa_test.h"
+
+    static void test_list_create(void **state)
+    {
+        (void)state;
+        kaa_list_t *list = kaa_list_create();
+
+        assert_int_equal(0, kaa_list_get_size(list));
+        assert_null(kaa_list_begin(list));
+        assert_null(kaa_list_back(list));
+
+        kaa_list_destroy(list, NULL);
+    }
+
+    static void test_list_push_front(void **state)
+    {
+        (void)state;
+        kaa_list_t *list = kaa_list_create();
+
+        int a = 3;
+        int b = 5;
+
+        kaa_list_push_front(list, &a);
+        kaa_list_push_front(list, &b);
+
+        assert_int_equal(2, kaa_list_get_size(list));
+        assert_ptr_equal(&b, kaa_list_begin(list));
+        assert_ptr_equal(&a, kaa_list_back(list));
+
+        kaa_list_destroy(list, NULL);
+    }
+
+    int main(void)
+    {
+        const struct CMUnitTest tests[] = {
+            cmocka_unit_test(test_create),
+            cmocka_unit_test(test_push_front),
+        };
+
+        return cmocka_run_group_tests(tests, NULL, NULL);
+    }
+  #+end_src
+
+  We've created two test cases and added them to the test suite.
+
+* Mocking
+  Not all modules are isolated as ~kaa_list~; some, however, have few dependencies and it's easy to replace them with our own implementation that aids testing.
+
+  I don't see a good target for mocking demonstration here at Kaa; all tests are either not mocked or require too much mocking. So I won't bother with making up an example and will point you to the [[https://lwn.net/Articles/558106/][Unit testing with mock objects in C]] article at LWN.
+
+* Not mocking
+  Some features are too hard to isolate. In that case it's ok to link to the whole kaa client library and call public API. That's what happens with most tests in the current set. (They were converted from another test framework and weren't fully adapted yet.)
+
+  In example, here's how it's done for ~test_meta_extension~:
+  #+begin_src cmake
+    kaa_add_unit_test(NAME test_meta_extension
+          SOURCES
+          test/test_meta_extension.c
+          test/kaa_test_external.c
+          DEPENDS
+          kaac ${OPENSSL_LIBRARIES})
+  #+end_src
+
+  Note that we include ~test/kaa_test_external.c~; that's an implementation of the platform layer for testing. (It does almost nothing, however.)
+
+* Further reading
+  In addition to that, cmocka supports groups, setup, teardown, detecting memory leaks, and other cool things. You should really read [[https://api.cmocka.org/modules.html][the documentation]].
+
+  For more info on [[https://en.wikipedia.org/wiki/Test-driven_development][test-driven development]] in general and testing for embedded systems in particular, we recommend [[https://pragprog.com/book/jgade/test-driven-development-for-embedded-c][Test Driven Development for Embedded C]] by James W. Grenning -- it has many examples of testing, isolating features and mocking.

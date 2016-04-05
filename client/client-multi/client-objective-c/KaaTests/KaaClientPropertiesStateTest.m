@@ -29,6 +29,15 @@
 
 - (void)setUp {
     [super setUp];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *storage = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
+    NSError *error;
+    BOOL dirRemoved = [fileManager removeItemAtPath:storage error:&error];
+    if (!dirRemoved) {
+        NSLog(@"Can't remove Application Support directory!");
+    }
+    
     self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
 }
 

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.topic;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.ui.TextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
@@ -34,11 +35,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.datepicker.client.DateBox;
 
+
 public class SendNotificationViewImpl extends BaseDetailsViewImpl implements SendNotificationView, ValueChangeHandler<RecordField> {
 
     private SchemaInfoListBox notificationSchemaInfo;
     private DateBox expiredAt;
     private RecordPanel notificationData;
+    private TextBox endpointKeyHashTextBox;
     
     public SendNotificationViewImpl() {
         super(true);
@@ -67,7 +70,14 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
         expiredAt.setWidth("200px");
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, expiredAt);
-        
+        row++;
+
+        label = new Label(Utils.constants.endpointKeyHash());
+        endpointKeyHashTextBox = new TextBox();
+        endpointKeyHashTextBox.setWidth("200px");
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, endpointKeyHashTextBox);
+
         getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
         
         notificationData = new RecordPanel(new AvroWidgetsConfig.Builder().
@@ -92,6 +102,11 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
     @Override
     protected String getSubTitle() {
         return Utils.constants.notificationDetails();
+    }
+
+    @Override
+    public HasValue<String> getEndpointKeyHash(){
+        return endpointKeyHashTextBox;
     }
     
     private void updateNotificationData(SchemaInfoDto value) {

@@ -14,23 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view;
+#import <Foundation/Foundation.h>
+#import "LogStorage.h"
 
-import java.util.Date;
+/**
+ * Persistent log storage that uses SQLite to store all added records.
+ */
+@interface SQLiteLogStorage : NSObject <LogStorage, LogStorageStatus>
 
-import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
+- (instancetype)initWithBucketSize:(int64_t)bucketSize
+                 bucketRecordCount:(int32_t)bucketRecordCount;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ValueListBox;
+- (instancetype)initWithDatabaseName:(NSString *)dbName
+                          bucketSize:(int64_t)bucketSize
+                   bucketRecordCount:(int32_t)bucketRecordCount;
 
-public interface SendNotificationView extends BaseDetailsView {
-
-    ValueListBox<SchemaInfoDto> getNotificationSchemaInfo();
-    
-    HasValue<Date> getExpiredAt();
-    
-    HasValue<RecordField> getNotificationData();
-
-    HasValue<String> getEndpointKeyHash();
-}
+@end
