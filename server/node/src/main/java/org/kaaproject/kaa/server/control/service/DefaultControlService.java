@@ -122,6 +122,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -1391,7 +1392,7 @@ public class DefaultControlService implements ControlService {
             ThriftUnicastNotificationMessage nf = new ThriftUnicastNotificationMessage();
             nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
                     ByteBuffer.wrap(notificationDto.getEndpointKeyHash())));
-            nf.setActorClassifier(new ThriftActorClassifier(true));
+            nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
             nf.setNotificationId(notificationDto.getId());
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sending message {} to [{}]", nf, Neighbors.getServerID(server.getConnectionInfo()));
@@ -1417,7 +1418,7 @@ public class DefaultControlService implements ControlService {
             ThriftServerProfileUpdateMessage nf = new ThriftServerProfileUpdateMessage();
             nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
                     ByteBuffer.wrap(endpointProfileDto.getEndpointKeyHash())));
-            nf.setActorClassifier(new ThriftActorClassifier(true));
+            nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sending message {} to [{}]", nf, Neighbors.getServerID(server.getConnectionInfo()));
             }
@@ -2223,8 +2224,15 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException {
-        this.endpointService.removeEndpointProfileByKeyHash(endpointId.getBytes());
+    public void removeEndpointProfile(EndpointProfileDto endpointProfile) throws ControlServiceException {
+        byte[] endpointKeyHash = endpointProfile.getEndpointKeyHash();
+        this.endpointService.removeEndpointProfileByKeyHash(endpointKeyHash);
+        ApplicationDto appDto = getApplication(endpointProfile.getApplicationId());
+        ThriftEndpointDeregistrationMessage nf = new ThriftEndpointDeregistrationMessage();
+        nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
+                ByteBuffer.wrap(endpointKeyHash)));
+        nf.setActorClassifier(ThriftActorClassifier.APPLICATION);
+        neighbors.brodcastMessage(OperationsServiceMsg.fromDeregistration(nf));
     }
 
     @Override
@@ -2254,8 +2262,39 @@ public class DefaultControlService implements ControlService {
     public void revokeCredentials(String applicationId, String credentialsId) throws ControlServiceException {
         try {
             this.credentialsServiceLocator.getCredentialsService(applicationId).markCredentialsRevoked(credentialsId);
+            onCredentailsRevoked(applicationId, credentialsId);
         } catch (CredentialsServiceException cause) {
             String message = MessageFormat.format("An unexpected exception occured while revoking credentials by ID [{0}]", credentialsId);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public void onCredentailsRevoked(String applicationId, String credentialsId) throws ControlServiceException {
+        LOG.debug("[{}] Lookup registration information based on credentials ID [{}]", applicationId, credentialsId);
+        try {
+            Optional<EndpointRegistrationDto> endpointRegistrationOptional = endpointRegistrationService
+                    .findEndpointRegistrationByCredentialsId(credentialsId);
+            if (endpointRegistrationOptional.isPresent()) {
+                EndpointRegistrationDto endpointRegistration = endpointRegistrationOptional.get();
+                LOG.debug("[{}] Found endpoint registration information [{}]", applicationId, endpointRegistration);
+                if (endpointRegistration.getEndpointId() != null) {
+                    ApplicationDto appDto = getApplication(endpointRegistration.getApplicationId());
+                    ThriftEndpointDeregistrationMessage nf = new ThriftEndpointDeregistrationMessage();
+                    nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(),
+                            ThriftClusterEntityType.ENDPOINT, ByteBuffer.wrap(Base64Util.decode(endpointRegistration.getEndpointId()))));
+                    nf.setActorClassifier(ThriftActorClassifier.APPLICATION);
+                    neighbors.brodcastMessage(OperationsServiceMsg.fromDeregistration(nf));
+                }
+                endpointRegistrationService.removeEndpointRegistrationById(endpointRegistration.getId());
+                LOG.debug("[{}] endpoint registration information [{}] removed", applicationId, endpointRegistration);
+            } else {
+                LOG.debug("[{}] No endpoint registration information provisioned for credentials ID [{}]", applicationId, credentialsId);
+            }
+        } catch (EndpointRegistrationServiceException cause) {
+            String message = MessageFormat.format(
+                    "An unexpected exception occured while lookup registration information based on credentails ID [{0}]", credentialsId);
             LOG.error(message, cause);
             throw new ControlServiceException(cause);
         }

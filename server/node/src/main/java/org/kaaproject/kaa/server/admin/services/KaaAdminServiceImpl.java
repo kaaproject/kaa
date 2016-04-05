@@ -3607,7 +3607,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             this.checkApplicationId(applicationId);
             return this.controlService.provideCredentials(applicationId, credentialsBody);
@@ -3618,13 +3618,27 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public void revokeCredentials(String applicationId, String credentialsId) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId).isPresent(), "No credentials with the given ID found!");
             this.controlService.revokeCredentials(applicationId, credentialsId);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
+    }
+    
+
+    @Override
+    public void onCredentialsRevoked(String applicationId, String credentialsId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() == CredentialsStatus.REVOKED, "Credentails with the given ID are not revoked!");
+            this.controlService.onCredentailsRevoked(applicationId, credentials.get().getId());
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }        
     }
 
     @Override

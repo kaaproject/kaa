@@ -1674,12 +1674,11 @@ public interface ControlService {
     /**
      * Removes the given endpoint profile from the database.
      *
-     * @param endpointId
-     *        The endpoint ID
+     * @param endpointProfile The endpoint profile
      *
      * @throws ControlServiceException - if an exception occures.
      */
-    void removeEndpointProfileByEndpointId(String endpointId) throws ControlServiceException;
+    void removeEndpointProfile(EndpointProfileDto endpointProfile) throws ControlServiceException;
 
     /**
      * Returns a list of endpoint profiles for the endpoint user with the given external ID and tenant ID.
@@ -1729,6 +1728,19 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     void revokeCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+    
+    /**
+     * Notifies the Kaa cluster about security credentials revocation. If an
+     * endpoint is already registered with the specified credentials, this API
+     * call launches an asynchronous process to terminate all active sessions of
+     * the corresponding endpoint.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The credentials ID
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void onCredentailsRevoked(String applicationId, String credentialsId) throws ControlServiceException;
 
     /**
      * Binds credentials to the server-side endpoint profile specified.

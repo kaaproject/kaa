@@ -91,7 +91,7 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
     private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
         operationsService.syncServerProfile(appToken, endpointKey, key); 
         ThriftServerProfileUpdateMessage localMsg = new ThriftServerProfileUpdateMessage(thriftMsg);
-        localMsg.setActorClassifier(new ThriftActorClassifier(false));
+        localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
         dispatchMsg(context, localMsg, (nodeId, msg) -> {
             clusterService.sendServerProfileUpdateMessage(nodeId, msg);
         });
@@ -99,7 +99,7 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
 
     private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
         ThriftUnicastNotificationMessage localMsg = new ThriftUnicastNotificationMessage(thriftMsg);
-        localMsg.setActorClassifier(new ThriftActorClassifier(false));
+        localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
         dispatchMsg(context, localMsg, (nodeId, msg) -> {
             clusterService.sendUnicastNotificationMessage(nodeId, msg);
         });
@@ -108,7 +108,7 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
     private <T> void dispatchMsg(ActorContext context, T localMsg, BiConsumer<String, T> f) {
         for (EndpointClusterAddress address : routes.getLocalRoutes()) {
             LOG.info("Forwarding {} to local endpoint actor {}", localMsg, address);
-            ThriftEndpointActorMsg<T> msg = new ThriftEndpointActorMsg<T>(address.toEndpointAddress(), new ActorClassifier(false), localMsg);
+            ThriftEndpointActorMsg<T> msg = new ThriftEndpointActorMsg<T>(address.toEndpointAddress(), ActorClassifier.LOCAL, localMsg);
             context.parent().tell(msg, context.self());
         }
         for (EndpointClusterAddress address : routes.getRemoteRoutes()) {

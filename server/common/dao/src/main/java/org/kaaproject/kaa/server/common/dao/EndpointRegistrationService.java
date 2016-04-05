@@ -38,7 +38,7 @@ public interface EndpointRegistrationService {
      *
      * @return The endpoint registration saved
      *
-     * @throws EndpointRegistrationServiceException - if an exception occures.
+     * @throws EndpointRegistrationServiceException - if an exception occurs.
      */
     EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException;
 
@@ -49,7 +49,7 @@ public interface EndpointRegistrationService {
      *
      * @return The endpoint registration found
      *
-     * @throws EndpointRegistrationServiceException - if an exception occures.
+     * @throws EndpointRegistrationServiceException - if an exception occurs.
      */
     Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException;
 
@@ -60,7 +60,7 @@ public interface EndpointRegistrationService {
      *
      * @return The endpoint registration found
      *
-     * @throws EndpointRegistrationServiceException - if an exception occures.
+     * @throws EndpointRegistrationServiceException - if an exception occurs.
      */
     Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId) throws EndpointRegistrationServiceException;
 
@@ -69,7 +69,16 @@ public interface EndpointRegistrationService {
      *
      * @param endpointId The endpoint ID
      *
-     * @throws EndpointRegistrationServiceException - if an exception occures.
+     * @throws EndpointRegistrationServiceException - if an exception occurs.
      */
     void removeEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException;
+    
+    /**  
+     * Removes the endpoint registration by the registration ID specified.
+     *
+     * @param registrationId The registration ID
+     *
+     * @throws EndpointRegistrationServiceException - if an exception occurs.
+     */    
+    void removeEndpointRegistrationById(String registrationId) throws EndpointRegistrationServiceException;
 }

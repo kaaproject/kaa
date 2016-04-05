@@ -42,7 +42,8 @@ public class Disconnect extends MqttFrame {
     public enum DisconnectReason {
         NONE((byte)0x00),
         BAD_REQUEST((byte)0x01),
-        INTERNAL_ERROR((byte)0x02);
+        INTERNAL_ERROR((byte)0x02),
+        CREDENTIALS_REVOKED((byte)0x03);
 
         private byte reason;
 
@@ -110,13 +111,13 @@ public class Disconnect extends MqttFrame {
     @Override
     protected void decode() throws KaaTcpProtocolException {
         byte code = buffer.get(1);
-        if (code == DisconnectReason.NONE.getReason()) {
-            reason = DisconnectReason.NONE;
-        } else if(code == DisconnectReason.BAD_REQUEST.getReason()) {
-            reason = DisconnectReason.BAD_REQUEST;
-        } else if(code == DisconnectReason.INTERNAL_ERROR.getReason()) {
-            reason = DisconnectReason.INTERNAL_ERROR;
+        for(DisconnectReason tmp : DisconnectReason.values()){
+            if(code == tmp.getReason()){
+                reason = tmp;
+                return;
+            }
         }
+        throw new KaaTcpProtocolException("Unknown disconnect reason!");
     }
 
     /* (non-Javadoc)

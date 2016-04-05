@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global.GlobalEndpointActorCreator;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActorCreator;
@@ -43,6 +44,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.End
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ThriftEndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
@@ -220,16 +222,44 @@ public class ApplicationActor extends UntypedActor {
         EndpointAddress address = message.getAddress();
         EndpointObjectHash endpointId = EndpointObjectHash.fromBytes(address.getEntityId());
         ActorClassifier classifier = message.getClassifier();
-        EndpointActorMD actorMD;
-        if (classifier.isGlobalActor()) {
-            actorMD = globalEndpointSessions.get(endpointId);
-        } else {
-            actorMD = localEndpointSessions.get(endpointId);
+        if (classifier == ActorClassifier.APPLICATION) {
+            boolean processed = false;
+            if (message instanceof ThriftEndpointActorMsg<?>) {
+                processed = processCommonThriftEndpointActorMsg(endpointId, (ThriftEndpointActorMsg<?>) message);
+            }
+            if (!processed) {
+                LOG.warn("[{}] Failed to lookup processor for endpoint msg {}.", endpointId, message);
+            }
+        } else
+
+        {
+            EndpointActorMD actorMD = null;
+            if (classifier == ActorClassifier.GLOBAL) {
+                actorMD = globalEndpointSessions.get(endpointId);
+            } else if (classifier == ActorClassifier.LOCAL) {
+                actorMD = localEndpointSessions.get(endpointId);
+            }
+            if (actorMD != null) {
+                actorMD.actorRef.tell(message, context().self());
+            } else {
+                LOG.warn("[{}] Failed to lookup {} actor for endpoint.", endpointId, classifier.name());
+            }
         }
-        if (actorMD != null) {
-            actorMD.actorRef.tell(message, context().self());
+    }
+    
+    private boolean processCommonThriftEndpointActorMsg(EndpointObjectHash endpointId, ThriftEndpointActorMsg<?> msg) {
+        if (msg.getMsg() instanceof ThriftEndpointDeregistrationMessage) {
+            forwardMessageQuietly(globalEndpointSessions.get(endpointId), msg);
+            forwardMessageQuietly(localEndpointSessions.get(endpointId), msg);
+            throw new RuntimeException("TODO: remove key from hash");
         } else {
-            LOG.warn("[{}] Failed to lookup {} actor for endpoint.", endpointId, classifier.isGlobalActor() ? "global" : "local");
+            return false;
+        }
+    }
+    
+    private void forwardMessageQuietly(EndpointActorMD actorMD, Object msg) {
+        if (actorMD != null) {
+            actorMD.actorRef.tell(msg, context().self());
         }
     }
 
@@ -448,9 +478,10 @@ public class ApplicationActor extends UntypedActor {
             String endpointActorId = LocalEndpointActorCreator.generateActorKey();
             LOG.debug("[{}] Creating actor with endpointKey: {}", appToken, endpointActorId);
             String globalActorNodeId = getGlobalEndpointActorNodeId(endpointKey);
-            actorMD = new LocalEndpointActorMD(context().actorOf(
-                    Props.create(new LocalEndpointActorCreator(context, endpointActorId, message.getAppToken(), message.getKey()))
-                            .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId, globalActorNodeId);
+            actorMD = new LocalEndpointActorMD(context()
+                    .actorOf(Props.create(new LocalEndpointActorCreator(context, endpointActorId, message.getAppToken(), message.getKey()))
+                            .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId),
+                    endpointActorId, globalActorNodeId);
             localEndpointSessions.put(message.getKey(), actorMD);
             endpointActorMap.put(endpointActorId, message.getKey());
             context().watch(actorMD.actorRef);
@@ -488,9 +519,10 @@ public class ApplicationActor extends UntypedActor {
         if (actorMD == null) {
             String endpointActorId = GlobalEndpointActorCreator.generateActorKey();
             LOG.debug("[{}] Creating global endpoint actor for endpointKey: {}", appToken, endpointKey);
-            actorMD = new GlobalEndpointActorMD(context().actorOf(
-                    Props.create(new GlobalEndpointActorCreator(context, endpointActorId, appToken, endpointKey)).withDispatcher(
-                            ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
+            actorMD = new GlobalEndpointActorMD(
+                    context().actorOf(Props.create(new GlobalEndpointActorCreator(context, endpointActorId, appToken, endpointKey))
+                            .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId),
+                    endpointActorId);
             globalEndpointSessions.put(endpointKey, actorMD);
             context().watch(actorMD.actorRef);
         }

@@ -2168,15 +2168,15 @@ public class KaaAdminController {
      * call launches an asynchronous process to terminate all active sessions of
      * the corresponding endpoint.
      *
+     * @param applicationId The application ID
      * @param credentialsId The credentials ID
      *
      * @throws KaaAdminServiceException - if an exception occures.
      */
-    @RequestMapping(value = "notifyRevoked", params = { "credentialsId" }, method = RequestMethod.POST)
+    @RequestMapping(value = "notifyRevoked", params = { "applicationId", "credentialsId" }, method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void onCredentialsRevoked(String credentialsId) throws KaaAdminServiceException {
-        // TODO: Needs implementation!
-        throw new UnsupportedOperationException("This method lacks implementation!");
+    public void onCredentialsRevoked(String applicationId, String credentialsId) throws KaaAdminServiceException {
+        this.kaaAdminService.onCredentialsRevoked(applicationId, credentialsId);
     }
 
     /**

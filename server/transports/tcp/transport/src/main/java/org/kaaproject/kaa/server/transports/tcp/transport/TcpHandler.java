@@ -104,6 +104,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
             if (e instanceof GeneralSecurityException || e instanceof IOException ||
                     e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
                 responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
+            } else if (e instanceof EndpointVerificationException) {
+                responses[0] = new Disconnect(DisconnectReason.CREDENTIALS_REVOKED);
             } else {
                 responses[0] = new Disconnect(DisconnectReason.INTERNAL_ERROR);
             }
