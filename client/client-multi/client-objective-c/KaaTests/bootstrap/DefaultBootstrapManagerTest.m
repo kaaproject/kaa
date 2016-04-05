@@ -30,6 +30,7 @@
 #import "KeyPair.h"
 #import "DefaultFailoverManager.h"
 #import "TestsHelper.h"
+#import "DefaultFailoverStrategy.h"
 
 #pragma mark - ChannelManagerMock
 
@@ -195,7 +196,8 @@
     [opQue setMaxConcurrentOperationCount:1];
     ChannelManagerMock *channelManager = [[ChannelManagerMock alloc] init];
     [given([executorContext getSheduledExecutor]) willReturn:[opQue underlyingQueue]];
-    DefaultFailoverManager *failoverManager = [[DefaultFailoverManager alloc] initWithChannelManager:channelManager context:executorContext failureResolutionTimeout:1 bootstrapServersRetryPeriod:1 operationsServersRetryPeriod:1 noConnectivityRetryPeriod:1 timeUnit:TIME_UNIT_MILLISECONDS];
+    id<FailoverStrategy> strategy = [[DefaultFailoverStrategy alloc] initWithBootstrapServersRetryPeriod:1 operationsServersRetryPeriod:1 noConnectivityRetryPeriod:1 timeUnit:TIME_UNIT_MILLISECONDS];
+    DefaultFailoverManager *failoverManager = [[DefaultFailoverManager alloc] initWithChannelManager:channelManager context:executorContext failoverStrategy:strategy failureResolutionTimeout:1 timeUnit:TIME_UNIT_MILLISECONDS];
     
     [manager setChannelManager:channelManager];
     [manager setFailoverManager:failoverManager];

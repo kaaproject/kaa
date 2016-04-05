@@ -16,15 +16,14 @@
 
 #import "DefaultFailoverManager.h"
 #import "KaaLogging.h"
+#import "DefaultFailoverStrategy.h"
+#import "KaaExceptions.h"
 
-#define TAG @"DefaultFailoverManager >>>"
+static const NSString *logTag = @"DefaultFailoverManager >>>";
 
-// all timeout values are specified in seconds
-#define DEFAULT_FAILURE_RESOLUTION_TIMEOUT      (10)
-#define DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD  (2)
-#define DEFAULT_OPERATION_SERVERS_RETRY_PERIOD  (2)
-#define DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD    (5)
-#define DEFAULT_TIME_UNIT                       TIME_UNIT_SECONDS
+static const int64_t kDefaultFailureResolutionTimeout = 10;
+static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
+
 
 @interface Resolution : NSOperation
 
@@ -38,7 +37,7 @@
 @interface AccessPointIdResolution : NSObject
 
 @property (nonatomic, readonly) int accessPointId;
-@property (nonatomic) long resolutionTime;          //in milliseconds
+@property (nonatomic) int64_t resolutionTimeMillis;
 @property (nonatomic, strong) Resolution *resolution;
 
 - (instancetype)initWithAccessId:(int)accessId resolution:(Resolution *)resolution;
@@ -47,10 +46,8 @@
 
 @interface DefaultFailoverManager ()
 
+@property (nonatomic, strong) id<FailoverStrategy> failoverStrategy;
 @property (nonatomic) int64_t failureResolutionTimeout;
-@property (nonatomic) int64_t bootstrapServersRetryPeriod;
-@property (nonatomic) int64_t operationsServersRetryPeriod;
-@property (nonatomic) int64_t noConnectivityRetryPeriod;
 @property (nonatomic) TimeUnit  timeUnit;
 
 @property (nonatomic, strong) id<KaaChannelManager> kaaChannelMgr;
@@ -67,28 +64,22 @@
 - (instancetype)initWithChannelManager:(id<KaaChannelManager>)channelMgr context:(id<ExecutorContext>)context {
     return [self initWithChannelManager:channelMgr
                                 context:context
-               failureResolutionTimeout:DEFAULT_FAILURE_RESOLUTION_TIMEOUT
-            bootstrapServersRetryPeriod:DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD
-           operationsServersRetryPeriod:DEFAULT_OPERATION_SERVERS_RETRY_PERIOD
-              noConnectivityRetryPeriod:DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD
-                               timeUnit:DEFAULT_TIME_UNIT];
+                       failoverStrategy:[[DefaultFailoverStrategy alloc] init]
+               failureResolutionTimeout:kDefaultFailureResolutionTimeout
+                               timeUnit:kDefaultTimeUnit];
 }
 
 - (instancetype)initWithChannelManager:(id<KaaChannelManager>)channelMgr
                                context:(id<ExecutorContext>)context
-              failureResolutionTimeout:(int64_t)frTimeout
-           bootstrapServersRetryPeriod:(int64_t)btRetryPeriod
-          operationsServersRetryPeriod:(int64_t)opRetryPeriod
-             noConnectivityRetryPeriod:(int64_t)noConnRetryPeriod
+                      failoverStrategy:(id<FailoverStrategy>)failoverStrategy
+              failureResolutionTimeout:(int64_t)failureResolutionTimeout
                               timeUnit:(TimeUnit)timeUnit {
     self = [super init];
     if (self) {
         self.kaaChannelMgr = channelMgr;
         self.executorContext = context;
-        self.failureResolutionTimeout = frTimeout;
-        self.bootstrapServersRetryPeriod = btRetryPeriod;
-        self.operationsServersRetryPeriod = opRetryPeriod;
-        self.noConnectivityRetryPeriod = noConnRetryPeriod;
+        self.failoverStrategy = failoverStrategy;
+        self.failureResolutionTimeout = failureResolutionTimeout;
         self.timeUnit = timeUnit;
         
         self.resolutionProgressMap = [NSMutableDictionary dictionary];
@@ -99,30 +90,30 @@
 - (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
     if (!connectionInfo) {
-        DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", TAG);
+        DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", logTag);
         return;
     } else {
-        DDLogInfo(@"%@ Server [%i, %i] failed", TAG, [connectionInfo serverType], [connectionInfo accessPointId]);
+        DDLogInfo(@"%@ Server [%i, %i] failed", logTag, [connectionInfo serverType], [connectionInfo accessPointId]);
     }
     
     @synchronized(self) {
         long currentResolutionTime = -1;
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
         if (pointResolution) {
-            currentResolutionTime = pointResolution.resolutionTime;
+            currentResolutionTime = pointResolution.resolutionTimeMillis;
             if (pointResolution.accessPointId == [connectionInfo accessPointId]
                 && pointResolution.resolution
                 && ([[NSDate date] timeIntervalSince1970] * 1000) < currentResolutionTime) {
-                DDLogDebug(@"%@ Resolution is in progress for %@ server", TAG, connectionInfo);
+                DDLogDebug(@"%@ Resolution is in progress for %@ server", logTag, connectionInfo);
                 return;
             } else if (pointResolution.resolution) {
-                DDLogVerbose(@"%@ Cancelling old resolution: %@", TAG, pointResolution);
+                DDLogVerbose(@"%@ Cancelling old resolution: %@", logTag, pointResolution);
                 [self cancelCurrentFailResolution:pointResolution];
             }
         }
         
         DDLogVerbose(@"%@ Next fail resolution will be available in [delay:%lli timeunit:%i]",
-                     TAG, self.failureResolutionTimeout, self.timeUnit);
+                     logTag, self.failureResolutionTimeout, self.timeUnit);
         
         Resolution *resolution = [[Resolution alloc] initWithManager:self info:connectionInfo];
         
@@ -136,12 +127,12 @@
         
         [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo];
         
-        long updatedResolutionTime = pointResolution ?  pointResolution.resolutionTime : currentResolutionTime;
+        long updatedResolutionTime = pointResolution ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
         AccessPointIdResolution *newPointResolution =
         [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:resolution];
         
         if (updatedResolutionTime != currentResolutionTime) {
-            newPointResolution.resolutionTime = updatedResolutionTime;
+            newPointResolution.resolutionTimeMillis = updatedResolutionTime;
         }
         
         self.resolutionProgressMap[@([connectionInfo serverType])] = newPointResolution;
@@ -151,10 +142,10 @@
 - (void)onServerChangedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
     if (!connectionInfo) {
-        DDLogWarn(@"%@ Server has changed, but its connection info is nil, can't resolve", TAG);
+        DDLogWarn(@"%@ Server has changed, but its connection info is nil, can't resolve", logTag);
         return;
     } else {
-        DDLogVerbose(@"%@ Server [%i, %i] has changed", TAG, [connectionInfo serverType], [connectionInfo accessPointId]);
+        DDLogVerbose(@"%@ Server [%i, %i] has changed", logTag, [connectionInfo serverType], [connectionInfo accessPointId]);
     }
     
     @synchronized(self) {
@@ -166,121 +157,89 @@
             self.resolutionProgressMap[serverTypeKey] = newPointResolution;
         } else if (pointResolution.accessPointId != [connectionInfo accessPointId]) {
             if (pointResolution.resolution) {
-                DDLogVerbose(@"%@ Cancelling fail resolution: %@", TAG, pointResolution);
+                DDLogVerbose(@"%@ Cancelling fail resolution: %@", logTag, pointResolution);
                 [self cancelCurrentFailResolution:pointResolution];
             }
             AccessPointIdResolution *newPointResolution =
             [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:nil];
             self.resolutionProgressMap[serverTypeKey] = newPointResolution;
         } else {
-            DDLogDebug(@"%@ Same server [%@] is used, nothing has changed", TAG, connectionInfo);
+            DDLogDebug(@"%@ Same server [%@] is used, nothing has changed", logTag, connectionInfo);
         }
     }
 }
 
 - (void)onServerConnectedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
-    DDLogVerbose(@"%@ Server %@ has connected", TAG, connectionInfo);
+    DDLogVerbose(@"%@ Server %@ has connected", logTag, connectionInfo);
     if (!connectionInfo) {
-        DDLogWarn(@"%@ Server connection info is nil, can't resolve", TAG);
+        DDLogWarn(@"%@ Server connection info is nil, can't resolve", logTag);
         return;
     }
+    
+    [self.failoverStrategy onRecoverWithConnectionInfo:connectionInfo];
     
     @synchronized(self) {
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
         if (!pointResolution) {
             DDLogVerbose(@"%@ Server hasn't been set (failover resolution has happened), new server %@ can't be connected",
-                         TAG, connectionInfo);
+                         logTag, connectionInfo);
         } else if (pointResolution.resolution && pointResolution.accessPointId == [connectionInfo accessPointId]) {
-            DDLogVerbose(@"%@ Cancelling fail resolution: %@", TAG, pointResolution);
+            DDLogVerbose(@"%@ Cancelling fail resolution: %@", logTag, pointResolution);
             [self cancelCurrentFailResolution:pointResolution];
         } else if (pointResolution.resolution) {
             DDLogDebug(@"%@ Connection for outdated accessPointId: %i was received - ignoring. New accessPointId: %i",
-                       TAG, [connectionInfo accessPointId], pointResolution.accessPointId);
+                       logTag, [connectionInfo accessPointId], pointResolution.accessPointId);
         } else {
             DDLogVerbose(@"%@ There is no current resolution in progress, connected to the same server: %@",
-                         TAG, connectionInfo);
+                         logTag, connectionInfo);
         }
     }
 }
 
 - (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
     
-    DDLogInfo(@"%@ Applying failover strategy for status: %i", TAG, status);
+    DDLogVerbose(@"%@ Applying failover decision for status: %i", logTag, status);
 
     @synchronized(self) {
-        NSNumber *serverTypeKey = nil;
+        AccessPointIdResolution *accessPointIdResolution = nil;
+        int64_t resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
+
         switch (status) {
             case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
-            {
-                serverTypeKey = @(SERVER_BOOTSTRAP);
-                AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
-                int64_t period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
-                if (btResolution) {
-                    btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000 + period;
-                }
-                return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
-                                              retryPeriodInMilliseconds:period];
-            }
-                break;
             case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
-            {
-                serverTypeKey = @(SERVER_BOOTSTRAP);
-                AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
-                int64_t period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
-                if (btResolution) {
-                    btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000 + period;
-                }
-                return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
-                                              retryPeriodInMilliseconds:period];
-            }
+                accessPointIdResolution = self.resolutionProgressMap[@(SERVER_BOOTSTRAP)];
+                resolutionTime += [TimeUtils convertValue:[self.failoverStrategy bootstrapServersRetryPeriod]
+                                             fromTimeUnit:[self.failoverStrategy timeUnit]
+                                               toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
             case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
-            {
-                serverTypeKey = @(SERVER_BOOTSTRAP);
-                AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
-                if (btResolution) {
-                    btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
-                }
-                int64_t period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
-                return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
-                                              retryPeriodInMilliseconds:period];
-            }
+                accessPointIdResolution = self.resolutionProgressMap[@(SERVER_BOOTSTRAP)];
                 break;
             case FAILOVER_STATUS_OPERATION_SERVERS_NA:
-            {
-                serverTypeKey = @(SERVER_OPERATIONS);
-                AccessPointIdResolution *opResolution = self.resolutionProgressMap[serverTypeKey];
-                int64_t period = [TimeUtils convertValue:self.operationsServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
-                if (opResolution) {
-                    opResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000 + period;
-                }
-                return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
-                                              retryPeriodInMilliseconds:period];
-            }
+                accessPointIdResolution = self.resolutionProgressMap[@(SERVER_OPERATIONS)];
+                resolutionTime += [TimeUtils convertValue:[self.failoverStrategy operationsServersRetryPeriod]
+                                             fromTimeUnit:[self.failoverStrategy timeUnit]
+                                               toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
             case FAILOVER_STATUS_NO_CONNECTIVITY:
-            {
-                int64_t period = [TimeUtils convertValue:self.noConnectivityRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
-                return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
-                                              retryPeriodInMilliseconds:period];
-            }
-                break;
-            default:
-                return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_NOOP];
                 break;
         }
+        
+        if (accessPointIdResolution) {
+            accessPointIdResolution.resolutionTimeMillis = resolutionTime;
+        }
+        
+        return [self.failoverStrategy decisionOnFailoverStatus:status];
     }
+}
+
+- (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy {
+    if (!failoverStrategy) {
+        [NSException raise:KaaRuntimeException format:@"Failover strategy can't be nil!"];
+    }
+    
+    _failoverStrategy = failoverStrategy;
 }
 
 - (void)cancelCurrentFailResolution:(AccessPointIdResolution *)pointResolution {
@@ -288,7 +247,7 @@
         [pointResolution.resolution cancel];
         pointResolution.resolution = nil;
     } else {
-        DDLogVerbose(@"%@ Current resolution is nil, can't cancel", TAG);
+        DDLogVerbose(@"%@ Current resolution is nil, can't cancel", logTag);
     }
 }
 
@@ -309,7 +268,7 @@
 
 - (void)main {
     if (!self.isCancelled || !self.isFinished) {
-        DDLogDebug(@"%@ Removing server %@ from resolution map for type: %i", TAG, self.info, [self.info serverType]);
+        DDLogDebug(@"%@ Removing server %@ from resolution map for type: %i", logTag, self.info, [self.info serverType]);
         [self.failoverManager.resolutionProgressMap removeObjectForKey:@([self.info serverType])];
     }
 }
@@ -325,7 +284,7 @@
     if (self) {
         _accessPointId = accessId;
         self.resolution = resolution;
-        self.resolutionTime = NSIntegerMax;
+        self.resolutionTimeMillis = NSIntegerMax;
     }
     return self;
 }
@@ -355,8 +314,8 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"AccessPointIdResolution [accessPointId:%i resolutionTime:%li resolution:%@]",
-            self.accessPointId, self.resolutionTime, self.resolution];
+    return [NSString stringWithFormat:@"AccessPointIdResolution [accessPointId:%i resolutionTime:%lld resolution:%@]",
+            self.accessPointId, self.resolutionTimeMillis, self.resolution];
 }
 
 @end
