@@ -99,14 +99,14 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
     @synchronized(self) {
         long currentResolutionTime = -1;
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
-        if (pointResolution) {
+        if (pointResolution != nil) {
             currentResolutionTime = pointResolution.resolutionTimeMillis;
             if (pointResolution.accessPointId == [connectionInfo accessPointId]
-                && pointResolution.resolution
+                && pointResolution.resolution != nil
                 && ([[NSDate date] timeIntervalSince1970] * 1000) < currentResolutionTime) {
                 DDLogDebug(@"%@ Resolution is in progress for %@ server", logTag, connectionInfo);
                 return;
-            } else if (pointResolution.resolution) {
+            } else if (pointResolution.resolution != nil) {
                 DDLogVerbose(@"%@ Cancelling old resolution: %@", logTag, pointResolution);
                 [self cancelCurrentFailResolution:pointResolution];
             }
@@ -127,7 +127,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
         
         [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo];
         
-        long updatedResolutionTime = pointResolution ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
+        long updatedResolutionTime = pointResolution != nil ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
         AccessPointIdResolution *newPointResolution =
         [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:resolution];
         
@@ -141,7 +141,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
 
 - (void)onServerChangedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
-    if (!connectionInfo) {
+    if (connectionInfo == nil) {
         DDLogWarn(@"%@ Server has changed, but its connection info is nil, can't resolve", logTag);
         return;
     } else {
@@ -151,12 +151,12 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
     @synchronized(self) {
         NSNumber *serverTypeKey = @([connectionInfo serverType]);
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
-        if (!pointResolution) {
+        if (pointResolution == nil) {
             AccessPointIdResolution *newPointResolution =
             [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:nil];
             self.resolutionProgressMap[serverTypeKey] = newPointResolution;
         } else if (pointResolution.accessPointId != [connectionInfo accessPointId]) {
-            if (pointResolution.resolution) {
+            if (pointResolution.resolution != nil) {
                 DDLogVerbose(@"%@ Cancelling fail resolution: %@", logTag, pointResolution);
                 [self cancelCurrentFailResolution:pointResolution];
             }
@@ -172,7 +172,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
 - (void)onServerConnectedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
     DDLogVerbose(@"%@ Server %@ has connected", logTag, connectionInfo);
-    if (!connectionInfo) {
+    if (connectionInfo == nil) {
         DDLogWarn(@"%@ Server connection info is nil, can't resolve", logTag);
         return;
     }
@@ -181,13 +181,13 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
     
     @synchronized(self) {
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
-        if (!pointResolution) {
+        if (pointResolution == nil) {
             DDLogVerbose(@"%@ Server hasn't been set (failover resolution has happened), new server %@ can't be connected",
                          logTag, connectionInfo);
-        } else if (pointResolution.resolution && pointResolution.accessPointId == [connectionInfo accessPointId]) {
+        } else if (pointResolution.resolution != nil && pointResolution.accessPointId == [connectionInfo accessPointId]) {
             DDLogVerbose(@"%@ Cancelling fail resolution: %@", logTag, pointResolution);
             [self cancelCurrentFailResolution:pointResolution];
-        } else if (pointResolution.resolution) {
+        } else if (pointResolution.resolution != nil) {
             DDLogDebug(@"%@ Connection for outdated accessPointId: %i was received - ignoring. New accessPointId: %i",
                        logTag, [connectionInfo accessPointId], pointResolution.accessPointId);
         } else {
@@ -226,7 +226,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
                 break;
         }
         
-        if (accessPointIdResolution) {
+        if (accessPointIdResolution != nil) {
             accessPointIdResolution.resolutionTimeMillis = resolutionTime;
         }
         
@@ -235,7 +235,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
 }
 
 - (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy {
-    if (!failoverStrategy) {
+    if (failoverStrategy == nil) {
         [NSException raise:KaaRuntimeException format:@"Failover strategy can't be nil!"];
     }
     
@@ -243,7 +243,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
 }
 
 - (void)cancelCurrentFailResolution:(AccessPointIdResolution *)pointResolution {
-    if (pointResolution.resolution) {
+    if (pointResolution.resolution != nil) {
         [pointResolution.resolution cancel];
         pointResolution.resolution = nil;
     } else {
@@ -291,7 +291,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
 
 - (NSUInteger)hash {
     NSUInteger result = self.accessPointId;
-    return 31 * result + (self.resolution ? [self.resolution hash] : 0);
+    return 31 * result + (self.resolution != nil ? [self.resolution hash] : 0);
 }
 
 - (BOOL)isEqual:(id)object {
