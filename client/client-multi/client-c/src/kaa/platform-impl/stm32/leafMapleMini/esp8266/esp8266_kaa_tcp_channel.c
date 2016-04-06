@@ -736,17 +736,13 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
 
-    kaa_serialize_info_t serialize_info;
-    serialize_info.services = self->supported_services;
-    serialize_info.services_count = self->supported_service_count;
-
-    char *sync_buffer = NULL;
+    uint8_t *sync_buffer = NULL;
     size_t sync_size = 0;
 
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
-                                                           , &serialize_info
-                                                           , &sync_buffer
-                                                           , &sync_size);
+    error_code = kaa_platform_protocol_alloc_serialize_client_sync(
+            self->transport_context.kaa_context->platform_protocol,
+            self->supported_services, self->supported_service_count,
+            &sync_buffer, &sync_size);
 
     KAA_LOG_INFO(self->logger, error_code, "Kaa TCP channel [0x%08X] going to send CONNECT message (%zu bytes)"
                                                                                 , self->access_point.id, sync_size);

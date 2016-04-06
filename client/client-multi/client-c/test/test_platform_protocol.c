@@ -44,10 +44,6 @@ void test_empty_log_collector_extension_count(void **state)
     kaa_context_t *kaa_context = *state;
 
     kaa_extension_id services[] = { KAA_EXTENSION_LOGGING };
-    kaa_serialize_info_t info = {
-        .services = services,
-        .services_count = 1,
-    };
 
     void *log_storage_context = NULL;
     void *log_upload_strategy_context = NULL;
@@ -70,9 +66,10 @@ void test_empty_log_collector_extension_count(void **state)
             log_upload_strategy_context, &constraints);
     assert_int_equal(KAA_ERR_NONE, error_code);
 
-    char *buffer = NULL;
+    uint8_t *buffer = NULL;
     size_t buffer_size = 0;
-    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, &info,
+    error_code = kaa_platform_protocol_alloc_serialize_client_sync(kaa_context->platform_protocol,
+            services, 1,
             &buffer, &buffer_size);
     assert_int_equal(KAA_ERR_NONE, error_code);
 

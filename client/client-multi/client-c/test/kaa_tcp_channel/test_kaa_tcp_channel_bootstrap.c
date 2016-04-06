@@ -522,7 +522,7 @@ kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_eve
 
 
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
-                                                    , const char *buffer
+                                                    , const uint8_t *buffer
                                                     , size_t buffer_size)
 {
     (void)self;
@@ -689,16 +689,15 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
 }
 
 
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size)
+kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
+        const kaa_extension_id *services, size_t services_count,
+        uint8_t **buffer, size_t *buffer_size)
 {
     (void)self;
 
-    if (info->services_count == 1
-            && info->services[0] == KAA_EXTENSION_BOOTSTRAP) {
-        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+    if (services_count == 1
+            && services[0] == KAA_EXTENSION_BOOTSTRAP) {
+        uint8_t *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
         if (alloc_buffer) {
             memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
             *buffer = alloc_buffer;

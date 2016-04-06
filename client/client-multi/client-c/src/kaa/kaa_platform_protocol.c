@@ -164,12 +164,11 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self,
     return KAA_ERR_NONE;
 }
 
-// TODO: make buffer uint8_t
 static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self,
-        const kaa_extension_id services[], size_t services_count, char* buffer, size_t *size)
+        const kaa_extension_id services[], size_t services_count, uint8_t *buffer, size_t *size)
 {
     kaa_platform_message_writer_t *writer = NULL;
-    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
+    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, (char *)buffer, *size);
     if (error_code) {
         return error_code;
     }
@@ -185,7 +184,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self,
 
     uint16_t *extension_count_p = (uint16_t *)writer->current;
     writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
-    // TODO: assert KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE == sizeof(uint16_t)
+    // TODO: static assert KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE == sizeof(uint16_t)
 
     error_code = kaa_meta_data_request_serialize(self, writer, self->request_id);
     if (error_code) {
@@ -314,38 +313,36 @@ fail:
     return error_code;
 }
 
-// TODO: make buffer uint8_t
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self,
-        const kaa_serialize_info_t *info, char **buffer, size_t *buffer_size)
+        const kaa_extension_id *services, size_t services_count,
+        uint8_t *buffer, size_t *buffer_size)
 {
-    if (!self || !info || !buffer || !buffer_size) {
+    if (!self || !buffer_size) {
         return KAA_ERR_BADPARAM;
     }
 
-    if (!info->services || info->services_count == 0) {
+    if (!services || services_count == 0) {
         return KAA_ERR_BADDATA;
     }
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing client sync...");
-
-    *buffer_size = 0;
-    kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count,
-            buffer_size);
+    size_t required_buffer_size = 0;
+    kaa_error_t error = kaa_client_sync_get_size(self, services, services_count,
+            &required_buffer_size);
     if (error) {
+        KAA_LOG_ERROR(self->logger, error, "Failed to get required buffer size");
         return error;
     }
 
-    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE,
-            "Going to request sync buffer (size %zu)", *buffer_size);
-
-    *buffer = KAA_MALLOC(*buffer_size);
-    if (!*buffer) {
-        return KAA_ERR_NOMEM;
+    if (*buffer_size < required_buffer_size || !buffer) {
+        *buffer_size = required_buffer_size;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
     }
+    *buffer_size = required_buffer_size;
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing client sync...");
 
     self->request_id++;
-    error = kaa_client_sync_serialize(self, info->services, info->services_count,
-            *buffer, buffer_size);
+    error = kaa_client_sync_serialize(self, services, services_count, buffer, buffer_size);
     if (error) {
         self->request_id--;
         return error;
@@ -359,7 +356,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 }
 
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self,
-        const char *buffer, size_t buffer_size)
+        const uint8_t *buffer, size_t buffer_size)
 {
     if (!self || !buffer || buffer_size == 0) {
         return KAA_ERR_BADPARAM;
@@ -369,7 +366,8 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
             "Server sync received: payload size '%zu'", buffer_size);
 
     kaa_platform_message_reader_t *reader = NULL;
-    kaa_error_t error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
+    kaa_error_t error_code = kaa_platform_message_reader_create(&reader,
+            (const char *)buffer, buffer_size);
     if (error_code) {
         return error_code;
     }
@@ -525,4 +523,34 @@ fail:
     kaa_platform_message_reader_destroy(reader);
 
     return error_code;
+}
+
+kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
+        const kaa_extension_id *services, size_t services_count,
+        uint8_t **buffer, size_t *buffer_size)
+{
+    if (!self || !buffer || !buffer_size) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    if (!services || services_count == 0) {
+        return KAA_ERR_BADDATA;
+    }
+
+    *buffer_size = 0;
+    kaa_error_t error = kaa_platform_protocol_serialize_client_sync(self, services, services_count,
+            NULL, buffer_size);
+    // TODO(982): assert error != KAA_ERR_NONE
+    if (error != KAA_ERR_BUFFER_IS_NOT_ENOUGH) {
+        return error;
+    }
+
+    *buffer = KAA_MALLOC(*buffer_size);
+    if (!*buffer) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "No memory for buffer");
+        return KAA_ERR_NOMEM;
+    }
+
+    return kaa_platform_protocol_serialize_client_sync(self, services, services_count,
+            *buffer, buffer_size);
 }
