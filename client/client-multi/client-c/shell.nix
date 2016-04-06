@@ -106,6 +106,7 @@ in with self; with pkgs; {
       kaa-generic-makefile
       cmake
       self.astyle
+      maven
     ] ++ lib.optional clangSupport [
       clang
       openssl

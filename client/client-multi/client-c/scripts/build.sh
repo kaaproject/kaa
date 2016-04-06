@@ -14,8 +14,11 @@
 #  limitations under the License.
 #
 
-#! /bin/sh
+#!/bin/sh
 
 set -e
-nix-shell $@ --pure --run "make"
-nix-shell $@ --pure --run "./build.sh test"
+set -v
+
+mvn apache-rat:check
+make
+./build.sh test
