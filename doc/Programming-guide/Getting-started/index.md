@@ -6,18 +6,21 @@ nav: /:path/Programming-guide/Getting-started/
 sort_idx: 10
 ---
 
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
 - [Installation and configuration](#installation-and-configuration)
 - [Your first Kaa application](#your-first-kaa-application)
-  - [Add application](#add-application)
+  - [Adding application](#adding-application)
   - [Create notification schema](#create-notification-schema)
   - [Generate SDK](#generate-sdk)
   - [Sample client application](#sample-client-application)
   - [Create notification topic](#create-notification-topic)
   - [Create notification](#create-notification)
+- [Next Steps](#next-steps)
 - [Further reading](#further-reading)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -26,11 +29,11 @@ This section provides guidance on how to create your first Kaa application that 
 
 # Installation and configuration
 
-Before you start using the Kaa framework, you need to install it. You can install Kaa in the [single node](Single-node-installation) mode or [distributed ](../../Administration-guide/System-installation/Cluster-setup)mode. The installation procedure is described in [Installation guide](../../Administration-guide/System-installation).
+Before you start using the Kaa framework, you need to install it. You can install Kaa in the [single node]({{root_url}}Administration-guide/System-installation/Single-node-installation/) mode or [distributed ]({{root_url}}Administration-guide/System-installation/Cluster-setup)mode. The installation procedure is described in [Installation guide]({{root_url}}Administration-guide/System-installation).
 
 However, we recommend that you start exploring Kaa using Sandbox. Kaa Sandbox is an easy-to-use virtual environment that includes all the components that you need in order to learn Kaa, build a proof of concept and test your own applications locally. Sandbox also includes demo client applications.
 
-The Sandbox setup procedure is straightforward and can be done instantly. See [Sandbox guide](Sandbox) for details.
+The Sandbox setup procedure is straightforward and can be done instantly. See [Sandbox installation video](https://www.youtube.com/watch?v=ynbxcRdgXFU) for details.
 
 # Your first Kaa application
 
@@ -54,17 +57,17 @@ The application that you have created in the previous step already includes the 
 * Create the _schema.json_ file on your PC with the following schema definition:      
 
 ```json
-{
-  "type": "record",
-  "name": "Notification",
-  "namespace": "org.kaaproject.kaa.schema.example",
-  "fields": [
     {
-      "name": "message",
-      "type": "string"
+      "type": "record",
+      "name": "Notification",
+      "namespace": "org.kaaproject.kaa.schema.example",
+      "fields": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
     }
-  ]
-}
 ```
 
 * Open the admin UI in your browser ( [http://127.0.0.1:8080](http://127.0.0.1:8080/) ) and log in as a tenant developer (user/password: devuser/devuser123).
@@ -98,7 +101,7 @@ Note that in this example we are generating the SDK based on the default configu
 
 Once you have downloaded the SDK, you can use it in your sample project. The following code block illustrates a simple desktop java application that will receive notifications from the Kaa server and display them on the console.
 
-**NOTE**: After generating the C/C++/Objective-C SDKs, you need to [build them]() before creating the application.
+**NOTE**: After generating the C/C++/Objective-C SDKs, you need to build them before creating the application.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
@@ -167,7 +170,7 @@ Once you have downloaded the SDK, you can use it in your sample project. The fol
         }
     }
 ```
-</div><div id="Cpp" class="tab-pane fade in active" markdown="1">
+</div><div id="Cpp" class="tab-pane fade" markdown="1">
 ```C
     #include <cstdint>
     #include <iostream>
@@ -430,13 +433,13 @@ Once the notification is sent, you can see the following output in the applicati
 
 **Congratulations with your first Kaa application!**
 
-## Next steps
-To create a real-world IoT solution, you will most likely need to implement more features into your application. Kaa provides you with practically everything you might need. The following overview will help you grasp the scope of Kaa capabilities as well as get familiar with the essential documentation, such as [Programming guide]() and [Administration UI]() guide.
+# Next steps
+To create a real-world IoT solution, you will most likely need to implement more features into your application. Kaa provides you with practically everything you might need. The following overview will help you grasp the scope of Kaa capabilities as well as get familiar with the essential documentation, such as [Programming guide]({{root_url}}Programming-guide) and [Administration UI]() guide.
 
 **Profiling and grouping**
 During a new endpoint registration, Kaa creates an associated _endpoint profile_ for the endpoint. An endpoint profile is basically some meaningful information about the endpoint which may be useful for specific applications. Profiles may contain things like an OS version, amount of RAM, average battery life, type of network connection, device operation mode – virtually anything. An endpoint profile structure in Kaa is configured using a client-side endpoint [profile schema](). Based on the defined profile schema, Kaa generates an object model to operate against the client side and handles data marshaling all the way to the database. Whenever the client updates its profile information, the endpoint SDK automatically sends these updates to the server as soon as the connection becomes available.
 
-For programming practice, see [collecting endpoint profiles]().
+For programming practice, see [collecting endpoint profiles]({{root_url}}Programming-guide/Key-system-features/Endpoint-profiling/).
 
 The information collected in an endpoint’s profile can be used to group endpoints into independently managed entities called _endpoint groups_. On the back end, Kaa provides a [profile filtering language]() for defining the criteria for group membership. An endpoint can belong to any number of groups. Grouping endpoints can be used, for example, to send targeted notifications or adjust software behavior by applying group-specific configuration overrides.
 
@@ -478,7 +481,7 @@ Use the following guides and references to make the most of Kaa.
 
 | Guide                                                          | What it is for                                                                                                                                                                                           |
 |----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Design reference](Design-reference)                           | Use this reference to learn about features and capabilities of Kaa ([Endpoint profiling](Endpoint-profiling), [Events](Events), [Notifications](Notifications), [Logging](Logging), and other features). |
+| [Key system features]({{root_url}}Programming-guide/Key-system-features/)                           | Use this reference to learn about features and capabilities of Kaa ([Endpoint profiling](Endpoint-profiling), [Events](Events), [Notifications](Notifications), [Logging](Logging), and other features). |
 | [Sandbox](Sandbox)                                             | Use this guide to try out Kaa in a private environment with demo applications.                                                                                                                           |
-| [Development environment setup](Development-environment-setup) | Use this guide to set up necessary environment for installing and programming Kaa.                                                                                                                       |
-| [Installation guide](Installation-guide)                       | Use this guide to install and configure Kaa either on a single Linux node or in a cluster environment.                                                                                                    |
+| [Installation guide]({{root_url}}Administration-guide/System-installation)                       | Use this guide to install and configure Kaa either on a single Linux node or in a cluster environment.                                                                                                    |
+| [Contribute To Kaa]({{root_url}}Customization-guide/How-to-contribute/)                       | Use this guide to learn how to contribute to Kaa project and which code/documentation style conventions we adhere to.                                                                                                   |
