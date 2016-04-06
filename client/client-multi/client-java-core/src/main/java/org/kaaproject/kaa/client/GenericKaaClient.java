@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -599,4 +600,11 @@ public interface GenericKaaClient {
      * @see     org.kaaproject.kaa.client.logging.LogDeliveryListener
      */
     void setLogDeliveryListener(LogDeliveryListener listener);
+
+    /**
+     * @param failoverStrategy strategy that will be used to resolve failovers.
+     *
+     * @see org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy
+     */
+    void setFailoverStrategy(FailoverStrategy failoverStrategy);
 }

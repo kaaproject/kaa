@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel;
+package org.kaaproject.kaa.client.channel.failover;
 
 /**
  * Enum which describes status of the current failover state. Managed by
