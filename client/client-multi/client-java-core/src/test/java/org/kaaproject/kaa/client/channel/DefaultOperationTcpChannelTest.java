@@ -31,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;

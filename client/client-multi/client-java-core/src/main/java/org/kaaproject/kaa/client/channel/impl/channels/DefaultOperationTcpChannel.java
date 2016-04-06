@@ -31,9 +31,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;

@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel;
+package org.kaaproject.kaa.client.channel.failover;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * Class that describes a decision which is made by a failover manager,
  * which corresponds to a failover strategy
- * @see org.kaaproject.kaa.client.channel.FailoverManager
+ * @see FailoverManager
  */
 public class FailoverDecision {
     private final FailoverAction action;
