@@ -26,11 +26,13 @@
     return self;
 }
 
-- (instancetype)initWithFailoverAction:(FailoverAction)failoverAction retryPeriodInMilliseconds:(int64_t)retryPeriod {
+- (instancetype)initWithFailoverAction:(FailoverAction)failoverAction
+                           retryPeriod:(int64_t)retryPeriod
+                              timeUnit:(TimeUnit)timeUnit {
     self = [super init];
     if (self) {
         _failoverAction = failoverAction;
-        _retryPeriod = retryPeriod;
+        _retryPeriod = [TimeUtils convertValue:retryPeriod fromTimeUnit:timeUnit toTimeUnit:TIME_UNIT_MILLISECONDS];
     }
     return self;
 }

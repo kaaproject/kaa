@@ -66,20 +66,24 @@ static const int64_t kDefaultTimeUnit = TIME_UNIT_SECONDS;
     switch (status) {
         case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
             return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
-                                          retryPeriodInMilliseconds:_bootstrapServersRetryPeriod];
+                                                        retryPeriod:_bootstrapServersRetryPeriod
+                                                           timeUnit:_timeUnit];
         case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
             return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
-                                          retryPeriodInMilliseconds:_bootstrapServersRetryPeriod];
+                                                        retryPeriod:_bootstrapServersRetryPeriod
+                                                           timeUnit:_timeUnit];
         case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
             return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
-                                          retryPeriodInMilliseconds:_bootstrapServersRetryPeriod];
+                                                        retryPeriod:_bootstrapServersRetryPeriod
+                                                           timeUnit:_timeUnit];
         case FAILOVER_STATUS_OPERATION_SERVERS_NA:
             return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
-                                          retryPeriodInMilliseconds:_operationsServersRetryPeriod];
+                                                        retryPeriod:_operationsServersRetryPeriod
+                                                           timeUnit:_timeUnit];
         case FAILOVER_STATUS_NO_CONNECTIVITY:
             return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
-                                          retryPeriodInMilliseconds:_noConnectivityRetryPeriod];
-            
+                                                        retryPeriod:_noConnectivityRetryPeriod
+                                                           timeUnit:_timeUnit];            
         default:
             return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_NOOP];
     }
