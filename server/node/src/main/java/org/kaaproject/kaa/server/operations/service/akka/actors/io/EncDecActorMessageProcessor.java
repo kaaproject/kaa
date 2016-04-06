@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
@@ -52,6 +51,7 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
+import org.kaaproject.kaa.server.transport.EndpointVerificationError;
 import org.kaaproject.kaa.server.transport.EndpointVerificationException;
 import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
@@ -234,15 +234,15 @@ public class EncDecActorMessageProcessor {
                 Optional<CredentialsDto> credentailsLookupResult = credentialsService.lookupCredentials(credentialsId);
                 if (!credentailsLookupResult.isPresent()) {
                     LOG.info("[{}] Credentials with id: [{}] not found!", appToken, credentialsId);
-                    throw new EndpointVerificationException("Credentials not found!");
+                    throw new EndpointVerificationException(EndpointVerificationError.NOT_FOUND, "Credentials not found!");
                 }
                 CredentialsDto credentials = credentailsLookupResult.get();
                 if (credentials.getStatus() == CredentialsStatus.REVOKED) {
                     LOG.info("[{}] Credentials with id: [{}] was already revoked!", appToken, credentialsId);
-                    throw new EndpointVerificationException("Credentials was revoked!");
+                    throw new EndpointVerificationException(EndpointVerificationError.REVOKED, "Credentials was revoked!");
                 } else if (credentials.getStatus() == CredentialsStatus.IN_USE) {
                     LOG.info("[{}] Credentials with id: [{}] are already in use!", appToken, credentialsId);
-                    throw new EndpointVerificationException("Credentials are already in use!");
+                    throw new EndpointVerificationException(EndpointVerificationError.IN_USE, "Credentials are already in use!");
                 } else {
                     credentialsService.markCredentialsInUse(credentialsId);
                     EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto();
@@ -261,13 +261,13 @@ public class EncDecActorMessageProcessor {
                     registrationService.saveEndpointRegistration(endpointRegistration);
                 } else if (!endpointId.equals(endpointRegistration.getEndpointId())) {
                     LOG.info("[{}] Credentials with id: [{}] are already in use!", appToken, credentialsId);
-                    throw new EndpointVerificationException("Credentials are already in use!");
+                    throw new EndpointVerificationException(EndpointVerificationError.IN_USE, "Credentials are already in use!");
                 }
             }
             LOG.debug("[{}] Succesfully validated endpoint information: [{}]", appToken, credentialsId);
         } catch (CredentialsServiceException e) {
             LOG.info("[{}] Failed to lookup credentials info with id: [{}]", appToken, credentialsId, e);
-            throw new EndpointVerificationException(e);
+            throw new RuntimeException(e);
         } catch (EndpointRegistrationServiceException e) {
             LOG.info("[{}] Failed to lookup registration info with id: [{}]", appToken, credentialsId, e);
             throw new RuntimeException(e);

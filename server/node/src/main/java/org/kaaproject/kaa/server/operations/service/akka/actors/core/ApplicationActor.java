@@ -230,9 +230,7 @@ public class ApplicationActor extends UntypedActor {
             if (!processed) {
                 LOG.warn("[{}] Failed to lookup processor for endpoint msg {}.", endpointId, message);
             }
-        } else
-
-        {
+        } else {
             EndpointActorMD actorMD = null;
             if (classifier == ActorClassifier.GLOBAL) {
                 actorMD = globalEndpointSessions.get(endpointId);

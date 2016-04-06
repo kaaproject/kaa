@@ -19,6 +19,7 @@
 #import "KaaChannelManager.h"
 #import "ExecutorContext.h"
 #import "TimeCommons.h"
+#import "FailoverStrategy.h"
 
 @interface DefaultFailoverManager : NSObject <FailoverManager>
 
@@ -26,10 +27,8 @@
 
 - (instancetype)initWithChannelManager:(id<KaaChannelManager>)channelMgr
                                context:(id<ExecutorContext>)context
-              failureResolutionTimeout:(int64_t)frTimeout
-           bootstrapServersRetryPeriod:(int64_t)btRetryPeriod
-          operationsServersRetryPeriod:(int64_t)opRetryPeriod
-             noConnectivityRetryPeriod:(int64_t)noConnRetryPeriod
+                      failoverStrategy:(id<FailoverStrategy>)failoverStrategy
+              failureResolutionTimeout:(int64_t)failureResolutionTimeout
                               timeUnit:(TimeUnit)timeUnit;
 
 @end
