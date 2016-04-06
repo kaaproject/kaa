@@ -37,11 +37,11 @@
 
 - (void)onRecoverWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     [super onRecoverWithConnectionInfo:connectionInfo];
-    _wantedNumberOfInvocationsOnRecover++;
+    self.wantedNumberOfInvocationsOnRecover++;
 }
 
 - (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
-    _wantedNumberOfInvocationsOnFailure++;
+    self.wantedNumberOfInvocationsOnFailure++;
     return [super decisionOnFailoverStatus:status];
 }
 
