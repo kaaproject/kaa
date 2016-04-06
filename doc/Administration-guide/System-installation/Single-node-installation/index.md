@@ -6,14 +6,7 @@ nav: /:path/Administration-guide/System-installation/Single-node-installation
 sort_idx: 20
 ---
 
-# Single node installation guide
-
-
 * [Introduction](#introduction)
-* [Kaa requirements and supported versions](#kaa-requirements-and-supported-versions)
-  * [Supported OS](#supported-os)
-  * [System requirements](#system-requirements)
-  * [Third party components](#third-party-components)
 * [Installation steps](#installation-steps)
   * [Third party components instalation](#third-party-components-instalation)
   * [Kaa server components](#kaa-server-components)
@@ -23,40 +16,10 @@ sort_idx: 20
   * [Network interface configuration](#network-interface-configuration)
   * [Firewall rules configuration](#firewall-rules-configuration)
 * [Startup steps](#startup-steps)
-* [Further reading](#further-reading)
 
 ## Introduction
 
-This guide describes installation and configuration of Kaa components on a single Linux node. If this is the first time you use Kaa, we recommend that you [Getting-started] the evaluation using the [Kaa-Sandbox] instead of attempting manual installation described in this guide. The Kaa Sandbox emulates a single-node Kaa installation which comes already pre-configured so that you could instantly start developing applications. Additionally, the Kaa Sandbox provides a number of demo applications for you to play with and learn by example.
-
-## Kaa requirements and supported versions
-
-### Supported OS
-
-Kaa supports the following operating system families and provides installation packages for each of them.
-
-* Ubuntu and Debian systems
-* Red Hat/CentOS/Oracle 5 or Red Hat 6 systems
-
-Please note that the instructions from this guide were tested on Ubuntu 14.04 and Centos 6.7\. Instructions for other OS may have minor differences.
-
-### System requirements
-
-To use Kaa, your system must meet the following minimum system requirements.
-
-* 64-bit OS
-* 4 Gb RAM
-
-### Third party components
-
-Kaa requires the following third party components to be installed and configured.
-
-* [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Kaa has been tested on JDK 8\.
-* [PostgreSQL 9.4](http://www.postgresql.org/download/). Kaa has been tested on the latest production release of PostgreSQL.
-* [MariaDB 5.5](https://mariadb.org/download/). Kaa has been tested on the latest production release of MariaDB.
-* [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.5/). Kaa requires ZooKeeper for coordination of server components.
-
-Kaa also requires [MongoDB 2.6.9](http://www.mongodb.org/downloads) or [Cassandra 2.2.5](http://cassandra.apache.org/download/) as a NoSQL database. The installation steps for third-party components are provided in the following section.
+This guide describes installation and configuration of Kaa components on a single Linux node.
 
 ## Installation steps
 
@@ -632,7 +595,7 @@ Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
 
 ### Kaa server components
 
-To install Kaa you will need to [download](http://www.kaaproject.org/download-kaa/) pre-built packages or [build](Building-Kaa-server-from-source) them from the [source code](https://github.com/kaaproject/kaa). We will use pre-built packages in this guide.
+To install Kaa you will need to [download](http://www.kaaproject.org/download-kaa/) pre-built packages or [build](../Planning-your-deployment#building-kaa-from-source) them from the [source code](https://github.com/kaaproject/kaa). We will use pre-built packages in this guide.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Ubuntu1">Ubuntu 14.04</a></li>
@@ -776,14 +739,4 @@ $ cat * | grep ERROR
 
 Open Admin UI in a web browser: [http://YOUR\_SERVER\_HOST:8080/kaaAdmin]. This will open a web page that will request to enter the Kaa administrator login and password information. This is one time operation.
 
-## Further reading
-
-Use the following guides and references to make the most of Kaa.
-
-[Administration UI guide](#) Use this guide to start working with the Kaa web UI.
-
-[Programming guide](#) Use this guide to create your own Kaa applications.
-
 ---
-
-Copyright (c) 2014-2016, [CyberVision, Inc.](http://www.cybervisiontech.com/)
