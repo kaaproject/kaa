@@ -103,6 +103,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
                     ApplicationViewImpl.this.fireChanged();
                 }
             });
+            this.credentialsServiceName.setWidth("100%");
 
             Label label = new Label(Utils.constants.credentialsService());
             label.addStyleName(this.avroUiStyle.requiredField());
@@ -115,7 +116,10 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
     @Override
     protected void resetImpl() {
         applicationName.setValue("");
-        credentialsServiceName.setValue("");
+
+        if (this.credentialsServiceName != null) {
+            this.credentialsServiceName.setValue("");
+        }
     }
 
     @Override
@@ -128,6 +132,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
         return applicationName;
     }
 
+    @Override
     public ValueListBox<String> getCredentialsServiceName() {
         return this.credentialsServiceName;
     }
