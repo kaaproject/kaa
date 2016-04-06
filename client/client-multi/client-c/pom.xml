@@ -72,22 +72,33 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/gcovr.log</exclude>
-                        <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/.*</exclude>
                         <exclude>**/*.log</exclude>
-                        <exclude>**/build/**</exclude>
-                        <exclude>**/gcovr</exclude>
-			            <!-- SHA implementation from RFC 3174 -->
-			            <exclude>**/platform-impl/common/sha1.h</exclude>
-			            <exclude>**/sha1.c</exclude>
-			            <exclude>**/snprintf.c</exclude>
+
+                        <exclude>build/gcovr-report.xml</exclude>
+
+                        <!-- SHA implementation from RFC 3174 -->
+                        <exclude>src/kaa/platform-impl/common/sha1.h</exclude>
+                        <exclude>src/kaa/platform-impl/common/sha1.c</exclude>
+
+                        <exclude>src/kaa/platform-impl/esp8266/snprintf.c</exclude>
+
+                        <exclude>gcovr</exclude>
+
+                        <exclude>docs/</exclude>
+                        <exclude>nix/astyle/max_indent.patch</exclude>
+
+                        <!-- Temporary build files -->
+                        <exclude>build/</exclude>
+                        <exclude>build-*/</exclude>
+                        <exclude>Makefile</exclude>
+                        <exclude>Doxyfile</exclude>
                     </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    
+
     <profiles>
         <profile>
             <id>license</id>

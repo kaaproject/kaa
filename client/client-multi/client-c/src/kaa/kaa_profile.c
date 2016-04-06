@@ -280,6 +280,9 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
                                          , uint16_t extension_options
                                          , size_t extension_length)
 {
+    // Only used for logging
+    (void)extension_options;
+    (void)extension_length;
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync: options %u, payload size %zu", extension_options, extension_length);

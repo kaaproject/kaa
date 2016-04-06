@@ -1,5 +1,6 @@
+#!/bin/sh
 #
-#  Copyright 2016 CyberVision, Inc.
+#  Copyright 2014-2016 CyberVision, Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,11 +15,16 @@
 #  limitations under the License.
 #
 
-#! /bin/sh
+# SYNOPSIS
+#     srcformat.sh [FILE]...
+#
+# DESCRIPTION
+#     This script formats given source FILES according code style.
 
-set -e
-curl https://nixos.org/nix/install | sh
-. $HOME/.nix-profile/etc/profile.d/nix.sh
-sudo mkdir /etc/nix
-sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'
-nix-shell -Q $@ --pure --run true
+
+STYLE="--style=1tbs --indent=spaces=4 --pad-header --align-pointer=name --indent-preproc-block --indent-switches"
+
+if [ -z "$@" ]; then echo "You must specify source files"; exit 1; fi
+
+astyle $STYLE $@
+

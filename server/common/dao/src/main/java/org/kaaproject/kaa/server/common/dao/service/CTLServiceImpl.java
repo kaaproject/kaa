@@ -39,6 +39,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -552,8 +553,9 @@ public class CTLServiceImpl implements CTLService {
                 ObjectNode dependency = (ObjectNode) node;
                 String fqn = dependency.get(FQN).getTextValue();
                 Integer version = dependency.get(VERSION).getIntValue();
-                CTLSchemaDto child = this.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
+                CTLSchemaDto child = this.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
                         fqn, version, parent.getMetaInfo().getTenantId(), parent.getMetaInfo().getApplicationId());
+                Validate.notNull(child, MessageFormat.format("The dependency [{0}] was not found!", fqn));
                 this.recursiveShallowExport(files, child);
             }
         }

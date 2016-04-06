@@ -18,16 +18,12 @@ language: python
 python: "3.4"
 sudo: required
 dist: trusty
-install: |
-  if test -n "$(git diff --name-only ${TRAVIS_COMMIT_RANGE/.../..} -- client/client-multi/client-c)"; then
-    cd client/client-multi/client-c &&
-    ./scripts/install.sh --arg cc3200Support false &&
-    . $HOME/.nix-profile/etc/profile.d/nix.sh &&
-    cd ../../..
-  fi
+install:
+  - cd client/client-multi/client-c
+  - ./scripts/setup.sh --arg cc3200Support false
+  - . $HOME/.nix-profile/etc/profile.d/nix.sh
+  - cd ../../..
 
-script: |
-  if test -n "$(git diff --name-only ${TRAVIS_COMMIT_RANGE/.../..} -- client/client-multi/client-c)"; then
-    cd client/client-multi/client-c &&
-    ./scripts/build.sh --arg cc3200Support false
-  fi
+script:
+  - cd client/client-multi/client-c
+  - nix-shell --arg cc3200Support false --pure --run ./scripts/build.sh

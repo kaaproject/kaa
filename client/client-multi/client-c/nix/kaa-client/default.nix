@@ -18,6 +18,9 @@
 , writeTextFile
 , cmake
 
+, astyle ? null
+, maven ? null
+
 , clang ? null
 , openssl ? null
 
@@ -97,6 +100,8 @@ in stdenv.mkDerivation {
   buildInputs = [
     kaa-generic-makefile
     cmake
+    astyle
+    maven
   ] ++ lib.optional clangSupport [
     clang
     openssl

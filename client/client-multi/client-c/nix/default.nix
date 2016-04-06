@@ -43,6 +43,14 @@ let
     gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
 
     kaa-client = callPackage ./kaa-client { };
+
+    astyle = pkgs.astyle.overrideDerivation (self: {
+      sourceRoot = "astyle";
+      preBuild = ''
+        cd build/${if self.stdenv.cc.isClang then "clang" else "gcc"}
+      '';
+      patches = [ ./astyle/max_indent.patch ];
+    });
   };
 
 in self
