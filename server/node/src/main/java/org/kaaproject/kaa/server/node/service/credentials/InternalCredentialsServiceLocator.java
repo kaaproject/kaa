@@ -13,27 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.kaaproject.kaa.server.node.service.credentials;
 
-/**
- * Allows each application to have a credentials service of its own.
- *
- * @author Andrew Shvayka
- * @author Bohdan Khablenko
- *
- * @since v0.9.0
- */
-public interface CredentialsServiceLocator {
+public class InternalCredentialsServiceLocator implements CredentialsServiceLocator {
 
-    /**
-     * Returns the service that is responsible for managing credentials for the
-     * specified application.
-     *
-     * @param applicationId The application ID
-     *
-     * @return The service that is responsible for managing credentials for the
-     *         specified application.
-     */
-    CredentialsService getCredentialsService(String applicationId);
+    private final org.kaaproject.kaa.server.common.dao.CredentialsService service;
+    
+    public InternalCredentialsServiceLocator(org.kaaproject.kaa.server.common.dao.CredentialsService service) {
+        super();
+        this.service = service;
+    }
+
+    @Override
+    public CredentialsService getCredentialsService(String applicationId) {
+        return new CredentialsServiceAdapter(applicationId, service);
+    }
+
 }

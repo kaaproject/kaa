@@ -63,8 +63,19 @@
     <bean id="registrationService" class="org.kaaproject.kaa.server.node.service.registration.DefaultRegistrationService">
         <property name="endpointRegistrationService" ref="endpointRegistrationService"/>
     </bean>
-
-    <bean id="credentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.DefaultCredentialsServiceLocator"/>
+    
+    <bean id="trustfulCredentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.InternalCredentialsServiceLocator">
+        <constructor-arg ref="trustfulCredentialsService"/>
+    </bean>
+    
+    <bean id="internalCredentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.InternalCredentialsServiceLocator">
+        <constructor-arg ref="internalCredentialsService"/>
+    </bean>
+    
+    <util:map id="credentialsServiceLocatorMap">
+        <entry key="Trustful" value-ref="trustfulCredentialsServiceLocator"/>
+        <entry key="Internal" value-ref="internalCredentialsServiceLocator"/>
+    </util:map>
 
     <!-- Control Service -->
 
@@ -130,6 +141,5 @@
     <bean id="metricsService" class="org.kaaproject.kaa.server.operations.service.metrics.DefaultMerticsService" init-method="startReport" destroy-method="stopReport">
         <property name="enabled" value="#{properties[metrics_enabled]}"/>
     </bean>
-
 
 </beans>

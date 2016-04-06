@@ -30,6 +30,7 @@ import org.kaaproject.kaa.server.operations.service.notification.NotificationDel
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -84,6 +85,7 @@ public class AkkaContext {
     private EndpointUserService endpointUserService;
     
     @Autowired
+    @Qualifier("rootCredentialsServiceLocator")
     private CredentialsServiceLocator credentialsServiceLocator;
     
     @Autowired

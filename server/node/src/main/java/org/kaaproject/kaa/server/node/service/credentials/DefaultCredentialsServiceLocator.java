@@ -16,18 +16,17 @@
 
 package org.kaaproject.kaa.server.node.service.credentials;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,32 +38,36 @@ import org.springframework.stereotype.Service;
  *
  * @since v0.9.0
  */
-@Service
-public final class DefaultCredentialsServiceLocator implements CredentialsServiceLocator {
+@Service("rootCredentialsServiceLocator")
+public final class DefaultCredentialsServiceLocator implements CredentialsServiceLocator, CredentialsServiceRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCredentialsServiceLocator.class);
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    public static final String DEFAULT_CREDENTIALS_SERVICE_NAME = "Trustful";
 
     @Autowired
     private ApplicationService applicationService;
+
+    @Resource
+    private Map<String, CredentialsServiceLocator> credentialsServiceLocatorMap;
 
     @Override
     public CredentialsService getCredentialsService(String applicationId) {
         String serviceName = this.applicationService.findAppById(applicationId).getCredentialsServiceName();
         if (StringUtils.isBlank(serviceName)) {
-            serviceName = StringUtils.uncapitalize(TrustfulCredentialsService.class.getSimpleName());
+            serviceName = DEFAULT_CREDENTIALS_SERVICE_NAME;
             LOG.debug("No credentials service configured for application [{}], using [{}]", applicationId, serviceName);
         }
-        return new CredentialsServiceAdapter(applicationId, this.applicationContext.getBean(serviceName,
-            org.kaaproject.kaa.server.common.dao.CredentialsService.class));
+        CredentialsServiceLocator locator = credentialsServiceLocatorMap.get(serviceName);
+        if (locator == null) {
+            throw new IllegalStateException("Can't find credentials service factory for name: " + serviceName);
+        } else {
+            return locator.getCredentialsService(applicationId);
+        }
     }
 
     @Override
     public List<String> getCredentialsServiceNames() {
-        Map<String, org.kaaproject.kaa.server.common.dao.CredentialsService> beans =
-            this.applicationContext.getBeansOfType(org.kaaproject.kaa.server.common.dao.CredentialsService.class);
-        return beans.keySet().stream().flatMap(name -> Arrays.stream(this.applicationContext.getAliases(name))).collect(Collectors.toList());
+        return this.credentialsServiceLocatorMap.keySet().stream().sorted().collect(Collectors.toList());
     }
 }
