@@ -221,5 +221,14 @@ public class Utils {
             return "Unknown";
         }
     }
+
+    public static String getSchemaIdFromUrl(String path) {
+        String[] pathArray = path.split("&");
+        return pathArray[pathArray.length - 1].split("=")[1];
+    }
+
+    public static String getEndpointGroupIdFromUrl(String path) {
+        return path.split("&")[1].split("=")[1];
+    }
    
 }

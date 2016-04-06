@@ -28,7 +28,9 @@ public interface ServletParams {
     public static final String CTL_EXPORT_KEY_PARAMETER = "ctlExportKey";
     public static final String ENDPOINT_KEY_PARAMETER = "endpointKey";
     public static final String PROFILE_TYPE_PARAMETER = "profileType";
-    
+
+    public static final String CONFIGURATION_SCHEMA_ID = "schemaId";
+    public static final String ENDPOINT_GROUP_ID = "endGroupId";
     public static enum ProfileType {        
         CLIENT,
         SERVER        

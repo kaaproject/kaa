@@ -22,6 +22,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
@@ -48,9 +49,9 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class BaseStructView<T extends AbstractStructureDto, V> extends FlexTable implements InputEventHandler {
 
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
-    
+
     private HasErrorMessage hasErrorMessage;
-    
+
     private Label dateTimeCreatedLabel;
     private SizedTextBox createdDateTime;
     private Label authorLabel;
@@ -72,11 +73,12 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
     private Button saveButton;
     private Button activateButton;
     private Button deactivateButton;
+    private Button downloadConfigurationButton;
 
     private boolean active;
 
     private Label bodyLabel;
-    
+
     private HorizontalPanel buttonsPanel;
 
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
@@ -87,13 +89,13 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
     }
 
     private void init() {
-        
+
         getColumnFormatter().setWidth(0, "400px");
         getColumnFormatter().setWidth(1, "400px");
-        
+
         // IE workaround
         getColumnFormatter().getElement(2).setAttribute("width", "0px");
-        
+
         FlexTable dateTable = new FlexTable();
         FlexTable userTable = new FlexTable();
 
@@ -168,7 +170,7 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
 
         detailsTable.getColumnFormatter().setWidth(0, "200px");
         detailsTable.getColumnFormatter().setWidth(1, "600px");
-        
+
         // IE workaround
         detailsTable.getColumnFormatter().getElement(2).setAttribute("width", "0px");
 
@@ -189,7 +191,7 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
             bodyLabel.setWidth("200px");
             ((Widget)body).setWidth("600px");
             detailsTable.setWidget(1, 0, bodyLabel);
-            detailsTable.setWidget(1, 1, (Widget)body);            
+            detailsTable.setWidget(1, 1, (Widget)body);
             detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
         } else {
             detailsTable.setWidget(1, 0, (Widget)body);
@@ -206,9 +208,11 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         saveButton = new Button(Utils.constants.save());
         activateButton = new Button(Utils.constants.activate());
         deactivateButton = new Button(Utils.constants.deactivate());
+        downloadConfigurationButton = new Button(Utils.constants.downloadConfiguration());
         buttonsPanel.add(saveButton);
         buttonsPanel.add(activateButton);
         buttonsPanel.add(deactivateButton);
+        buttonsPanel.add(downloadConfigurationButton);
 
         description.setFocus(true);
 
@@ -218,28 +222,38 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
                 updateSaveButton(false, false);
             }
         });
+
+        downloadConfigurationButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                String url = Window.Location.getHref();
+                Window.open("/kaaAdmin/servlet/kaaConfigurationDownloadServlet?schemaId=" + Utils.getSchemaIdFromUrl(url) +
+                                "&endGroupId=" + Utils.getEndpointGroupIdFromUrl(url),
+                        "_blank", "status=0,toolbar=0,menubar=0,location=0");
+            }
+        });
     }
-    
+
     protected void prependButton(Button button) {
         buttonsPanel.insert(button, 0);
     }
-    
+
     protected void addButton(Button button) {
         buttonsPanel.add(button);
     }
-    
+
     protected abstract HasValue<V> createBody(HasErrorMessage hasErrorMessage);
-    
+
     protected abstract boolean hasLabel();
-    
+
     protected abstract void setBodyReadOnly(boolean readOnly);
-    
+
     protected abstract void setBodyValue(T struct);
-    
+
     protected abstract HandlerRegistration addBodyChangeHandler();
-    
+
     protected abstract boolean validateBody();
-    
+
     protected abstract void onShown();
 
     public void reset() {
@@ -263,10 +277,10 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         body.setValue(null);
         saveButton.setVisible(false);
         activateButton.setVisible(false);
-        deactivateButton.setVisible(false);        
+        deactivateButton.setVisible(false);
         if (hasLabel()) {
             bodyLabel.removeStyleName(REQUIRED);
-        }        
+        }
         description.getTextArea().setReadOnly(true);
         setBodyReadOnly(true);
 
