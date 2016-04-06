@@ -17,7 +17,7 @@
 #import "DefaultFailoverStrategy.h"
 #import "KaaLogging.h"
 
-static const NSString *logTag = @"DefaultFailoverStrategy >>>";
+static  NSString *const logTag = @"DefaultFailoverStrategy >>>";
 
 static const int64_t kDefaultBootstrapServersRetryPeriod = 2;
 static const int64_t kDefaultOperationsServersRetryPeriod = 2;

@@ -19,7 +19,7 @@
 #import "DefaultFailoverStrategy.h"
 #import "KaaExceptions.h"
 
-static const NSString *logTag = @"DefaultFailoverManager >>>";
+static NSString *const logTag = @"DefaultFailoverManager >>>";
 
 static const int64_t kDefaultFailureResolutionTimeout = 10;
 static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
