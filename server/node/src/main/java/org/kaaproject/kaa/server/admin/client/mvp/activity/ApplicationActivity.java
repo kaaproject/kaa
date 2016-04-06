@@ -16,17 +16,21 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 public class ApplicationActivity
         extends
@@ -77,11 +81,32 @@ public class ApplicationActivity
         }
         detailsView.getApplicationName().setValue(entity.getName());
 
+        ValueListBox<String> serviceNames = this.detailsView.getCredentialsServiceName();
+        if (serviceNames != null) {
+            KaaAdmin.getDataSource().getCredentialsServiceNames(new AsyncCallback<List<String>>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    Utils.handleException(caught, ApplicationActivity.this.detailsView);
+                }
+
+                @Override
+                public void onSuccess(List<String> result) {
+                    ApplicationActivity.this.detailsView.getCredentialsServiceName().setAcceptableValues(result);
+                }
+            });
+            String serviceName = this.entity.getCredentialsServiceName();
+            if (!"".equals(serviceName) && serviceName != null) {
+                serviceNames.setValue(serviceName);
+                serviceNames.setEnabled(false);
+            }
+        }
     }
 
     @Override
     protected void onSave() {
         entity.setName(detailsView.getApplicationName().getValue());
+        entity.setCredentialsServiceName(detailsView.getCredentialsServiceName().getValue());
     }
 
     @Override

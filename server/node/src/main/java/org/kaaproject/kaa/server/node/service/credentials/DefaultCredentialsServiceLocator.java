@@ -16,6 +16,16 @@
 
 package org.kaaproject.kaa.server.node.service.credentials;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,14 +40,28 @@ import org.springframework.stereotype.Service;
 @Service
 public final class DefaultCredentialsServiceLocator implements CredentialsServiceLocator {
 
-    private org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService;
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCredentialsServiceLocator.class);
 
-    public void setCredentialsService(org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
-        this.credentialsService = credentialsService;
-    }
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private ApplicationService applicationService;
 
     @Override
     public CredentialsService getCredentialsService(String applicationId) {
-        return new CredentialsServiceAdapter(applicationId, this.credentialsService);
+        String serviceName = this.applicationService.findAppById(applicationId).getCredentialsServiceName();
+        if (StringUtils.isBlank(serviceName)) {
+            serviceName = StringUtils.uncapitalize(TrustfulCredentialsService.class.getSimpleName());
+            LOG.debug("No credentials service configured for application [{}], using [{}]", applicationId, serviceName);
+        }
+        return new CredentialsServiceAdapter(applicationId, this.applicationContext.getBean(serviceName,
+            org.kaaproject.kaa.server.common.dao.CredentialsService.class));
+    }
+
+    @Override
+    public List<String> getCredentialsServiceNames() {
+        Class<?> type = org.kaaproject.kaa.server.common.dao.CredentialsService.class;
+        return Arrays.asList(this.applicationContext.getBeanNamesForType(type));
     }
 }

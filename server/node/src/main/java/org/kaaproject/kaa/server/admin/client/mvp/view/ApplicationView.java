@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface ApplicationView extends BaseDetailsView {
 
@@ -26,6 +27,8 @@ public interface ApplicationView extends BaseDetailsView {
 //    HasValue<String> getApplicationKey();
 
     HasValue<String> getApplicationToken();
+
+    ValueListBox<String> getCredentialsServiceName();
 
     HasClickHandlers getGenerateSdkButton();
 

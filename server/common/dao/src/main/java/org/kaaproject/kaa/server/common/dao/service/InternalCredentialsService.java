@@ -40,9 +40,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class CredentialsServiceImpl implements CredentialsService {
+public class InternalCredentialsService implements CredentialsService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointRegistrationServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InternalCredentialsService.class);
 
     private CredentialsDao<Credentials> credentialsDao;
 

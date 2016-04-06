@@ -3667,4 +3667,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
+
+    @Override
+    public List<String> getCredentialsServiceNames() throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            return this.controlService.getCredentialsServiceNames();
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
 }

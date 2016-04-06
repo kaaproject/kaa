@@ -1753,4 +1753,13 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
+
+    /**
+     * Returns the names of credentials services configured.
+     *
+     * @return The names of credentials services configured
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    List<String> getCredentialsServiceNames() throws ControlServiceException;
 }
