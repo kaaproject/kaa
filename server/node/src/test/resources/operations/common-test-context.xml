@@ -93,7 +93,5 @@
         <property name="endpointRegistrationService" ref="endpointRegistrationService"/>
     </bean>
 
-    <bean id="credentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.DefaultCredentialsServiceLocator">
-        <property name="credentialsService" ref="credentialsService"/>
-    </bean>
+    <bean id="credentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.DefaultCredentialsServiceLocator"/>
 </beans>

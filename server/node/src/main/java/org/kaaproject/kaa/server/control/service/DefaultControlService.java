@@ -2316,4 +2316,9 @@ public class DefaultControlService implements ControlService {
             throw new ControlServiceException(cause);
         }
     }
+
+    @Override
+    public List<String> getCredentialsServiceNames() throws ControlServiceException {
+        return this.credentialsServiceLocator.getCredentialsServiceNames();
+    }
 }

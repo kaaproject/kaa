@@ -19,6 +19,7 @@ package org.kaaproject.kaa.client.channel.failover;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision.FailoverAction;
 import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
 import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.context.ExecutorContext;

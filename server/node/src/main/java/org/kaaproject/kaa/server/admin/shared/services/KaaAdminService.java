@@ -431,4 +431,6 @@ public interface KaaAdminService extends RemoteService {
     void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
 
     void onCredentialsRevoked(String applicationId, String credentialsId) throws KaaAdminServiceException;
+
+    List<String> getCredentialsServiceNames() throws KaaAdminServiceException;
 }

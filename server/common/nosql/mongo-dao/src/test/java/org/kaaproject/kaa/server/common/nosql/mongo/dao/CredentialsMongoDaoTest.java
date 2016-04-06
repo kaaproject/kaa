@@ -38,6 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "/mongo-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CredentialsMongoDaoTest extends AbstractMongoTest {
+
     private static final byte[] CREDENTIALS_BODY = "credentials_body".getBytes();
     private static final String APPLICATION_ID = "application_id";
 
