@@ -25,6 +25,7 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlI
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.kaaproject.kaa.common.Constants;

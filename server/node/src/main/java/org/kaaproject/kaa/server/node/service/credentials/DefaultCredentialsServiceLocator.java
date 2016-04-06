@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.node.service.credentials;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -61,7 +63,8 @@ public final class DefaultCredentialsServiceLocator implements CredentialsServic
 
     @Override
     public List<String> getCredentialsServiceNames() {
-        Class<?> type = org.kaaproject.kaa.server.common.dao.CredentialsService.class;
-        return Arrays.asList(this.applicationContext.getBeanNamesForType(type));
+        Map<String, org.kaaproject.kaa.server.common.dao.CredentialsService> beans =
+            this.applicationContext.getBeansOfType(org.kaaproject.kaa.server.common.dao.CredentialsService.class);
+        return beans.keySet().stream().flatMap(name -> Arrays.stream(this.applicationContext.getAliases(name))).collect(Collectors.toList());
     }
 }
