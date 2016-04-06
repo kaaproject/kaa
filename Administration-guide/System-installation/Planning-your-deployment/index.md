@@ -7,10 +7,11 @@ sort_idx: 10
 ---
 
 * [Introduction](#introduction)
-* [Fetching source code](#fetching-source-code)
-* [Build artifacts](#build-artifacts)
+* [Building Kaa from source](#building-kaa-from-source)
+  * [Fetching source code](#fetching-source-code)
+  * [Build artifacts](#build-artifacts)
 * [Installing Kaa](#installing-kaa)
-* [AWS deployment preparation](#aws)
+* [AWS deployment preparation](#aws-deployment-preparation)
 * [Performance monitoring](#performance-monitoring)
   * [Accessing performance information](#accessing-performance-information)
   * [Performance metrics description](#performance-metrics-description)
@@ -19,23 +20,20 @@ sort_idx: 10
     * [Thread system](#thread-system)
     * [Remote connections](#remote-connections)
   * [Third-party component metrics](#third-party-component-metrics)
-* [Installing Kaa flume agents](#installing-kaa-flume-agents)
-  * [Third party  components](#third-party-components)
-  * [Install Kaa flume agents](#install-kaa-flume-agents)
-  * [Set up Kaa flume source agent](#setup-kaa-flume-source-agent)
-  * [Set up Kaa flume sink agent](#set-up-kaa-flume-sink-agent)
-  * [Start Kaa flume agents](#start-kaa-flume-agents)
-  * [Validate/troubleshoot Kaa flume agents](#validate/troubleshoot-kaa-flume-agents)
+* [Storring custome shemas](#storring-custome-shemas)
+* [Third-party components](#third-party-components)
+* [Throubleshooting](#throubleshooting)
 
 ## Introduction
 
-This guide describes different ways of installation and deployment of kaa platform
+This page describes common ways to setup and deploy your kaa instance and its environment and also some best practices.
 
-This page describes how to build the Kaa server from the source code available on [GitHub](https://github.com/kaaproject/kaa).
+## Building Kaa from source
 
-Before building the Kaa server from source, ensure that Oracle JDK 8 and Apache Maven are installed on your machine.
+This paragraph describes how to build the Kaa server from the source code available on [GitHub](https://github.com/kaaproject/kaa).
+Before building the Kaa server from source, ensure that [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and [Apache Maven](https://maven.apache.org/) are installed on your machine.
 
-## Fetching source code
+### Fetching source code
 
 It is allowed to use any Git client to fetch the Kaa source code from the repository.
 
@@ -88,12 +86,12 @@ The following command can be used to browse the Kaa node build artifacts in case
 
 ## Installing Kaa
 
-1. Single node installation
-2. Node claster setup
-3. AWS deployment.
+You can deploy kaa server as a single node or as multy node claster, for more details refer to corresponding pages:
 
+* [Single node installation](../Single-node-installation)
+* [Node claster setup](../Cluster-setup)
 
-## AWS
+## AWS deployment preparation
 
 To launch the Kaa sanbox on Amazon Elastic Compute Cloud (Amazon EC2), go through the following steps.
 
@@ -196,133 +194,26 @@ The metrics described in this section are available in the org.kaaproject.kaa.me
   
 ### Third-party component metrics
 
-The JMX metrics for the third-party components used by Kaa, such as the Java MongoDB driver or Ehcache, can be observed in their respective domains.<br/>
+The JMX metrics for the third-party components used by Kaa, such as the Java MongoDB driver or Ehcache, can be observed in their respective domains.
 
-## Installing Kaa flume agents
+## Storring shemas
 
-### Third party  components
+Our best practices is to provide all schemas next to source code, covered by some version control system (VCS).
+Also if you need to compile some of your scmemas or you need to serialize data by some cshema you can refer to [Apache Avro](https://avro.apache.org/docs/1.7.7/index.html) documentation.
 
-Kaa flume agents require the following third party components to be installed and configured.
+## Third-party components
 
-* [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Kaa flume agents have been tested with JDK 7.
-* [Apache flume NG 1.5](https://flume.apache.org/download.html) and higher. Kaa flume agents have been tested with [Cloudera Flume NG v.1.6.0](http://www.cloudera.com/content/www/en-us/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_flume_package_install.html).
+### SQL database
 
-### Install Kaa flume agents
+SQL database instance is used to store metadata about tenants, applications, endpoint groups, etc. This information is shared between endpoints, thus it's volume does not scale and it can be efficiently stored in modern SQL databases. To support high availability of Kaa cluster, SQL database should be also deployed in cluster mode.
 
-Depending on the target operating system that you are using, perform the following installation steps.
+Kaa supports two SQL databases at the moment: PostgresSQL and MariaDB. If you planning to use kaa in a suingle node instance we recomend you to use PostgreSQL and MariaDB for multy node claster becouse of better clusterization capabilities of MariaDB.
 
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Debian1">Ubuntu/Debian</a></li>
-  <li><a data-toggle="tab" href="#RPM1">Red Hat/Red Hat 6/CentOS/Oracle 5</a></li>
-</ul>
-<div class="tab-content">
-<div id="Debian1" class="tab-pane fade in active" markdown="1" ><br/>
+### NoSQL database
 
-1. Download the latest debian packages from the [Kaa download page](http://www.kaaproject.org/download-kaa/).
-2. Install the Kaa flume package by executing the following command.
+NoSQL database instance is used to store information about endpoint profiles, notifications, configurations, etc. The volume of this information scales linearly with amount of endpoints that are managed using particular Kaa cluster instance. NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines. Kaa support Apache Cassandra and MongoDB as a NoSQL database at the moment. The choose between MongoDB and Apache Cassandra depends only on your specific data analysis needs.
 
-   ```bash
-    sudo dpkg -i kaa-flume-x.y.z.deb
-   ```
+## Throubleshooting
 
-</div><div id="RPM1" class="tab-pane fade" markdown="1" ><br/>
-
-1. Download the latest rpm packages from [Kaa download page](http://www.kaaproject.org/download-kaa/).
-2. Install the Kaa flume package by executing the following command.
-
-   ```bash
-    sudo rpm -i kaa-flume-x.y.z.rpm
-   ```
-
-</div></div><br/>
-
-After installing the Kaa flume package, you have to install and configure the Kaa flume source agent and Kaa flume sink agent. 
-
-### Set up Kaa flume source agent
-
-To install and configure the Kaa flume source agent, perform the following steps.
-
-1. Enter the following command in the shell:
-
-   ```bash
-    sudo kaa-flume install source
-   ```
-
-2. Follow the installation instructions. You will be prompted to enter basic information. Enter the values shown in the following example after the colon (":") character.
-
-   ```bash
-    $ [INPUT] Please specify Kaa Flume Source Instance Name [default: 'default']: instance1
-    $ [INPUT] Please specify Kaa Flume Source Host Name [default: 'localhost']: 10.2.3.93
-    $ [INPUT] Please specify Kaa Flume Source Port: 7060
-    $ [INPUT] Please specify Target Kaa Flume Sinks Count: 1
-    $ [INPUT] Please specify Target Kaa Flume Sink 1 Host Name: 10.2.3.93
-    $ [INPUT] Please specify Target Kaa Flume Sink 1 Port: 7070
-   ```
-
-### Set up Kaa flume sink agent
-
-To install and configure the Kaa flume sink agent, perform the following steps.
-
-1. Enter the following command in the shell.
-
-   ```bash
-    sudo kaa-flume install sink
-   ```
-
-2. Follow the installation instructions. You will be prompted to enter basic information. Enter the values shown in the following example after the colon (":") character.
-
-   ```bash
-    $ [INPUT] Please specify Kaa Sink Host Name: 10.2.3.93
-    $ [INPUT] Please specify Kaa Sink Port: 7070
-    $ [INPUT] Please specify Name node [host:port] or nameservice name: 10.2.3.93:8020
-    $ [INPUT] Please specify HDFS root path [default: 'logs']: {press enter to use default location}
-    $ [INPUT] Please specify Avro schema source type [rest|local] [default: 'rest']: {press enter to use Kaa REST API as Avro schema source for log events}
-   ```
-
-3. Enter information necessary to locate the schema source.   
-This information depends on the Avro schema source type that you have specified in the previous step.
-
-   * If you have specified the "rest" schema source type, enter the following:
-
-   ```bash
-    $ [INPUT] Please specify Kaa Admin Rest API host: 10.2.3.93
-    $ [INPUT] Please specify Kaa Admin Rest API port [default: '8080']: 8080
-    $ [INPUT] Please specify Kaa Admin User: devuser {user should have 'Tenant developer' or 'Tenant user' authority}
-    $ [INPUT] Please specify Kaa Admin Password: devuser123
-   ```
-
-   * If you have specified the "local" schema source type, enter the following:
-
-   ```bash
-    $ [INPUT] Please specify Absolute path to local schema files: {specify absolute path to directory with schema files}
-   ```
-
-Please see the following additional information.
-
-> Schema files should be stored using the following pattern:<br/>
-> _{path to local schema files}_/_{application token}_/schema\_v_{log schema version}_<br/><br/>
-> where:<br/><br/>
-> _{application token}_ - the application token for logs collection. It can be obtained from Kaa admin web UI.<br/>
-> _{log schema version}_ - the version of the log schema within the application. It can be obtained from Kaa admin web UI.<br/>
-> File _schema\_v{log schema version}_ should contain an avro log schema for the specified version in the text format.
-
-Now that you have installed and configured the Kaa flume agents, you are ready to start them.
-
-### Start Kaa flume agents
-
-* To start the Kaa flume source, enter the following command in the shell.
-
-```bash
- sudo service kaa-flume-source-{source instance name} start
-```
-
-* To start the Kaa flume sink, enter the following command in the shell.
-
-```bash
- sudo service kaa-flume-sink start
-```
-
-### Validate/troubleshoot Kaa flume agents
-
-To validate the installation of Kaa flume agents, see the logs located at ```/var/log/flume-ng/```. If the agents were installed and configured correctly, the logs should not contain any exceptions or errors.
+Common issues covered in this [guide](../Troubleshooting).
 

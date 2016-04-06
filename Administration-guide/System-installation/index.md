@@ -61,7 +61,7 @@ To lern how to create kaa-node claster refer to [Node claster setup](Cluster-set
 
 ### AWS deployment.
 
-You can either install Kaa server as described on this page or run it on [Amazon EC2](Planning-your-deployment/#aws).
+You can either install Kaa server as described on this page or run it on [Amazon EC2](Planning-your-deployment/#aws-deployment-preparation).
 
 ### Planning your deployment
 
