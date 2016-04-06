@@ -95,11 +95,7 @@ public class ApplicationActivity
                     ApplicationActivity.this.detailsView.getCredentialsServiceName().setAcceptableValues(result);
                 }
             });
-            String serviceName = this.entity.getCredentialsServiceName();
-            if (!"".equals(serviceName) && serviceName != null) {
-                serviceNames.setValue(serviceName);
-                serviceNames.setEnabled(false);
-            }
+            serviceNames.setValue(this.entity.getCredentialsServiceName());
         }
     }
 
