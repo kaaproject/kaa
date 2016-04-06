@@ -33,7 +33,7 @@
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
-    <context:component-scan base-package="org.kaaproject.kaa.server.operations" />
+    <context:component-scan base-package="org.kaaproject.kaa.server.node, org.kaaproject.kaa.server.operations" />
 
     <import resource="classpath:mongo-dao-test-context.xml" />
 
@@ -93,5 +93,16 @@
         <property name="endpointRegistrationService" ref="endpointRegistrationService"/>
     </bean>
 
-    <bean id="credentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.DefaultCredentialsServiceLocator"/>
+    <bean id="trustfulCredentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.InternalCredentialsServiceLocator">
+        <constructor-arg ref="trustfulCredentialsService"/>
+    </bean>
+    
+    <bean id="internalCredentialsServiceLocator" class="org.kaaproject.kaa.server.node.service.credentials.InternalCredentialsServiceLocator">
+        <constructor-arg ref="internalCredentialsService"/>
+    </bean>
+    
+    <util:map id="credentialsServiceLocatorMap">
+        <entry key="Trustful" value-ref="trustfulCredentialsServiceLocator"/>
+        <entry key="Internal" value-ref="internalCredentialsServiceLocator"/>
+    </util:map>
 </beans>

@@ -138,6 +138,7 @@ import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceRegistry;
 import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
@@ -146,6 +147,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -248,8 +250,12 @@ public class DefaultControlService implements ControlService {
     private CTLService ctlService;
 
     @Autowired
+    @Qualifier("rootCredentialsServiceLocator")
     private CredentialsServiceLocator credentialsServiceLocator;
-
+    
+    @Autowired
+    private CredentialsServiceRegistry credentialsServiceRegistry;
+    
     @Autowired
     private EndpointRegistrationService endpointRegistrationService;
 
@@ -2319,6 +2325,6 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public List<String> getCredentialsServiceNames() throws ControlServiceException {
-        return this.credentialsServiceLocator.getCredentialsServiceNames();
+        return this.credentialsServiceRegistry.getCredentialsServiceNames();
     }
 }
