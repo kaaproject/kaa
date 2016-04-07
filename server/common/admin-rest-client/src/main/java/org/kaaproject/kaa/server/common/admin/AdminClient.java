@@ -305,6 +305,14 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {
+        };
+        ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "topicsByAppToken/" + applicationToken, HttpMethod.GET, null,
+                typeRef);
+        return entity.getBody();
+    }
+
     public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {
         };
@@ -407,11 +415,23 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "schemaVersions/" + applicationId, SchemaVersions.class);
     }
 
+    public SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "schemaVersionsByAppToken/" + applicationToken, SchemaVersions.class);
+    }
+
     public List<ConfigurationSchemaDto> getConfigurationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {
         };
         ResponseEntity<List<ConfigurationSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "configurationSchemas/" + applicationId,
                 HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<ConfigurationSchemaDto> getConfigurationSchemasByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {
+        };
+        ResponseEntity<List<ConfigurationSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "configurationSchemasByAppToken/" +
+                        applicationToken, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -431,10 +451,26 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<ServerProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<ServerProfileSchemaDto>>() {
+        };
+        ResponseEntity<List<ServerProfileSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "serverProfileSchemasByAppToken/" +
+                        applicationToken, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public List<NotificationSchemaDto> getNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<NotificationSchemaDto>> typeRef = new ParameterizedTypeReference<List<NotificationSchemaDto>>() {
         };
         ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "notificationSchemas/" + applicationId,
+                HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<NotificationSchemaDto> getNotificationSchemasByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<NotificationSchemaDto>> typeRef = new ParameterizedTypeReference<List<NotificationSchemaDto>>() {
+        };
+        ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "notificationSchemasByAppToken/" + applicationToken,
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
@@ -447,11 +483,27 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public List<VersionDto> getUserNotificationSchemasByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<VersionDto>> typeRef = new ParameterizedTypeReference<List<VersionDto>>() {
+        };
+        ResponseEntity<List<VersionDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "userNotificationSchemasByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public List<LogSchemaDto> getLogSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<LogSchemaDto>> typeRef = new ParameterizedTypeReference<List<LogSchemaDto>>() {
         };
         ResponseEntity<List<LogSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "logSchemas/" + applicationId, HttpMethod.GET, null,
                 typeRef);
+        return entity.getBody();
+    }
+
+    public List<LogSchemaDto> getLogSchemasByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<LogSchemaDto>> typeRef = new ParameterizedTypeReference<List<LogSchemaDto>>() {
+        };
+        ResponseEntity<List<LogSchemaDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "logSchemasByAppToken/" + applicationToken, HttpMethod.GET,
+                null, typeRef);
         return entity.getBody();
     }
 
@@ -494,6 +546,14 @@ public class AdminClient {
         };
         ResponseEntity<List<EndpointGroupDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "endpointGroups/" + applicationId, HttpMethod.GET,
                 null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<EndpointGroupDto> getEndpointGroupsByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<EndpointGroupDto>> typeRef = new ParameterizedTypeReference<List<EndpointGroupDto>>() {
+        };
+        ResponseEntity<List<EndpointGroupDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "endpointGroupsByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -687,6 +747,14 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<ApplicationEventFamilyMapDto>> typeRef = new ParameterizedTypeReference<List<ApplicationEventFamilyMapDto>>() {
+        };
+        ResponseEntity<List<ApplicationEventFamilyMapDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "applicationEventMapsByAppToken/" +
+                        applicationToken, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<EcfInfoDto>> typeRef = new ParameterizedTypeReference<List<EcfInfoDto>>() {
         };
@@ -695,11 +763,27 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<EcfInfoDto>> typeRef = new ParameterizedTypeReference<List<EcfInfoDto>>() {
+        };
+        ResponseEntity<List<EcfInfoDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "vacantEventClassFamiliesByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<AefMapInfoDto>> typeRef = new ParameterizedTypeReference<List<AefMapInfoDto>>() {
         };
         ResponseEntity<List<AefMapInfoDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "eventClassFamilies/" + applicationId, HttpMethod.GET,
                 null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<AefMapInfoDto>> typeRef = new ParameterizedTypeReference<List<AefMapInfoDto>>() {
+        };
+        ResponseEntity<List<AefMapInfoDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "eventClassFamiliesByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -719,6 +803,14 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public List<LogAppenderDto> getLogAppendersByAppToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<LogAppenderDto>> typeRef = new ParameterizedTypeReference<List<LogAppenderDto>>() {
+        };
+        ResponseEntity<List<LogAppenderDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "logAppendersByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public void deleteLogAppender(String logAppenderId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("logAppenderId", logAppenderId);
@@ -733,6 +825,14 @@ public class AdminClient {
         ParameterizedTypeReference<List<UserVerifierDto>> typeRef = new ParameterizedTypeReference<List<UserVerifierDto>>() {
         };
         ResponseEntity<List<UserVerifierDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "userVerifiers/" + applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<UserVerifierDto> getUserVerifiersByApplicationToken(String applicationToken) {
+        ParameterizedTypeReference<List<UserVerifierDto>> typeRef = new ParameterizedTypeReference<List<UserVerifierDto>>() {
+        };
+        ResponseEntity<List<UserVerifierDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "userVerifiersByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -768,6 +868,14 @@ public class AdminClient {
         };
         ResponseEntity<List<SdkProfileDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "sdkProfiles/" + applicationId, HttpMethod.GET, null,
                 typeRef);
+        return entity.getBody();
+    }
+
+    public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws Exception {
+        ParameterizedTypeReference<List<SdkProfileDto>> typeRef = new ParameterizedTypeReference<List<SdkProfileDto>>() {
+        };
+        ResponseEntity<List<SdkProfileDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "sdkProfilesByAppToken/" + applicationToken,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 

@@ -98,11 +98,18 @@ public class LogSchemaServiceImplTest extends AbstractTest {
         
         Assert.assertNotNull(dto);
     }
-    
+
     @Test
     public void findLogSchemaVersionsByApplicationIdTest() {
         List<VersionDto> schemas = logSchemaService.findLogSchemaVersionsByApplicationId(applicationDto.getId());
-        
+
+        Assert.assertEquals(1, schemas.size());
+    }
+
+    @Test
+    public void findLogSchemaVersionsByApplicationTokenTest() {
+        List<VersionDto> schemas = logSchemaService.findLogSchemaVersionsByApplicationToken(applicationDto.getApplicationToken());
+
         Assert.assertEquals(1, schemas.size());
     }
 }

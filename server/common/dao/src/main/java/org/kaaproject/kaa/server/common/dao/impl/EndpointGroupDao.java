@@ -35,6 +35,14 @@ public interface EndpointGroupDao<T> extends SqlDao<T> {
     List<T> findByApplicationId(String applicationId);
 
     /**
+     * Find endpoint group by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list of endpoint group
+     */
+    List<T> findByApplicationToken(String applicationToken);
+
+    /**
      *  Find endpoint group by application id and weight.
      *  This method used for validation. For one application can be
      *  used unique group weight

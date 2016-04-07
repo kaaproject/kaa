@@ -33,6 +33,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
@@ -53,6 +54,22 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<EndpointProf
             LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(schemas.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", appId, schemas.size());
+        }
+        return schemas;
+    }
+
+    @Override
+    public List<EndpointProfileSchema> findByApplicationToken(String appToken) {
+        List<EndpointProfileSchema> schemas = Collections.emptyList();
+        LOG.debug("Searching profile schemas by application token [{}] ", appToken);
+        if (isNotBlank(appToken)) {
+            schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appToken, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appToken, schemas.size());
         }
         return schemas;
     }

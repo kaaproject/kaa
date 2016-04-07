@@ -54,4 +54,12 @@ public class HibernateSdkKeyDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, loaded.size());
         Assert.assertEquals(saved, loaded.get(0));
     }
+
+    @Test
+    public void findSdkProfilesByApplicationTokenTest() {
+        SdkProfile saved = this.generateSdkProfile(null, null);
+        List<SdkProfile> loaded = sdkProfileDao.findSdkProfileByApplicationToken(saved.getApplication().getApplicationToken());
+        Assert.assertEquals(1, loaded.size());
+        Assert.assertEquals(saved, loaded.get(0));
+    }
 }

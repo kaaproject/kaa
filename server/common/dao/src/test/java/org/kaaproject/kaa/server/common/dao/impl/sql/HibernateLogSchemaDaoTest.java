@@ -50,6 +50,21 @@ public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
     }
 
     @Test
+    public void findByApplicationTokenTest() {
+        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
+        Assert.assertNotNull(logSchema);
+        List<LogSchema> schemaList = logSchemaDao.findByApplicationToken(logSchema.getApplication().getApplicationToken());
+        Assert.assertNotNull(schemaList);
+        LogSchema found = null;
+        for (LogSchema schema : schemaList) {
+            if (schema.getId().equals(logSchema.getId())) {
+                found = schema;
+            }
+        }
+        Assert.assertEquals(logSchema, found);
+    }
+
+    @Test
     public void findByAppIdAndVersionTest() {
         LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
         Assert.assertNotNull(logSchema);

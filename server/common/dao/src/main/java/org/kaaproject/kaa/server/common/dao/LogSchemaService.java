@@ -37,12 +37,28 @@ public interface LogSchemaService {
     List<LogSchemaDto> findLogSchemasByAppId(String applicationId);
 
     /**
+     * Find log schemas by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list of log schemas
+     */
+    List<LogSchemaDto> findLogSchemasByAppToken(String applicationToken);
+
+    /**
      * Find all Log Schema versions for Application with specific id
      *
      * @param applicationId the id of Application
      * @return List of Log Schema versions
      */
     List<VersionDto> findLogSchemaVersionsByApplicationId(String applicationId);
+
+    /**
+     * Find all Log Schema versions for Application with specific application token
+     *
+     * @param applicationToken the application token
+     * @return List of Log Schema versions
+     */
+    List<VersionDto> findLogSchemaVersionsByApplicationToken(String applicationToken);
 
     /**
      * Find log schema by id.

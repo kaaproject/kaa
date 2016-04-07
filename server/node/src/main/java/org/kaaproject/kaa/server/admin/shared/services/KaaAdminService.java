@@ -132,6 +132,8 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
 
     public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
@@ -139,6 +141,8 @@ public interface KaaAdminService extends RemoteService {
     public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 
     public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException;
+
+    public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws KaaAdminServiceException;
 
     public SdkProfileViewDto getSdkProfileView(String sdkProfileId) throws KaaAdminServiceException;
 
@@ -166,6 +170,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException;
 
     public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchema) throws KaaAdminServiceException;
@@ -178,6 +184,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException;
 
     public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema, byte[] schema) throws KaaAdminServiceException;
@@ -188,7 +196,11 @@ public interface KaaAdminService extends RemoteService {
 
     public List<NotificationSchemaDto> getNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+
+    public List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
 
     public List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -202,6 +214,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public LogSchemaDto getLogSchema(String logSchemaId) throws KaaAdminServiceException;
 
     public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException;
@@ -213,6 +227,8 @@ public interface KaaAdminService extends RemoteService {
     public LogSchemaDto editLogSchemaForm(LogSchemaDto logSchema) throws KaaAdminServiceException;
 
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws KaaAdminServiceException;
+
+    public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
 
     public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws KaaAdminServiceException;
 
@@ -260,6 +276,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<TopicDto> getTopicsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
 
     public List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
@@ -298,15 +316,23 @@ public interface KaaAdminService extends RemoteService {
 
     public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws KaaAdminServiceException;
 
     public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws KaaAdminServiceException;
 
     public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException;
 
+    public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public List<LogAppenderDto> getLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public List<LogAppenderDto> getLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException;
 
     public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException;
 
@@ -319,6 +345,8 @@ public interface KaaAdminService extends RemoteService {
     public LogAppenderDto editLogAppenderForm(LogAppenderDto appender) throws KaaAdminServiceException;
 
     public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException;
 
     public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException;
 
@@ -334,6 +362,8 @@ public interface KaaAdminService extends RemoteService {
 
     public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
 
+    public List<UserVerifierDto> getUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException;
+
     public UserVerifierDto getUserVerifier(String userVerifierId) throws KaaAdminServiceException;
 
     public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException;
@@ -345,6 +375,8 @@ public interface KaaAdminService extends RemoteService {
     public UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier) throws KaaAdminServiceException;
 
     public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
+
+    public List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException;
 
     public UserVerifierDto getRestUserVerifier(String userVerifierId) throws KaaAdminServiceException;
 
@@ -400,7 +432,9 @@ public interface KaaAdminService extends RemoteService {
     public String prepareCTLSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method) throws KaaAdminServiceException;
     
     public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
-    
+
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public List<SchemaInfoDto> getServerProfileSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
      
     public List<SchemaInfoDto> getServerProfileSchemaInfosByEndpointKey(String endpointKeyHash) throws KaaAdminServiceException;

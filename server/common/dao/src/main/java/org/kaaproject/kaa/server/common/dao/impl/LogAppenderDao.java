@@ -21,11 +21,20 @@ import java.util.List;
 public interface LogAppenderDao<T> extends SqlDao<T> {
 
     /**
+     * Find all Log Appenders with specific application id
      *
      * @param   appId the app id
      * @return  the list of log appenders
      */
     List<T> findByAppId(String appId);
+
+    /**
+     * Find all Log Appenders with specific application token
+     *
+     * @param   appToken the app token
+     * @return  the list of log appenders
+     */
+    List<T> findByAppToken(String appToken);
 
     /**
      * Find log appenders by application id and schema version

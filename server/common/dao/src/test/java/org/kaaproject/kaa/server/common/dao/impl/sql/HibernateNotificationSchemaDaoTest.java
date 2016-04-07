@@ -50,6 +50,14 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
     }
 
     @Test
+    public void testFindNotificationSchemasByAppToken() throws Exception {
+        Application application = generateApplication(null);
+        List<NotificationSchema> schemas = generateNotificationSchema(application, 1, null);
+        List<NotificationSchema> found = notificationSchemaDao.findNotificationSchemasByAppToken(application.getApplicationToken());
+        Assert.assertEquals(schemas, found);
+    }
+
+    @Test
     public void testRemoveNotificationSchemasByAppId() throws Exception {
         Application application = generateApplication(null);
         generateNotificationSchema(application, 1, null);
@@ -64,6 +72,15 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
         List<NotificationSchema> userSchemas = generateNotificationSchema(application, 2, NotificationTypeDto.USER);
         generateNotificationSchema(application, 3, NotificationTypeDto.SYSTEM);
         List<NotificationSchema> found = notificationSchemaDao.findNotificationSchemasByAppIdAndType(application.getStringId(), NotificationTypeDto.USER);
+        Assert.assertEquals(userSchemas, found);
+    }
+
+    @Test
+    public void testFindNotificationSchemasByAppTokenAndType() throws Exception {
+        Application application = generateApplication(null);
+        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 2, NotificationTypeDto.USER);
+        generateNotificationSchema(application, 3, NotificationTypeDto.SYSTEM);
+        List<NotificationSchema> found = notificationSchemaDao.findNotificationSchemasByAppTokenAndType(application.getApplicationToken(), NotificationTypeDto.USER);
         Assert.assertEquals(userSchemas, found);
     }
 

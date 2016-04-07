@@ -33,6 +33,14 @@ public interface ConfigurationSchemaDao<T> extends SqlDao<T> {
     List<T> findByApplicationId(String applicationId);
 
     /**
+     * Find configuration schemas by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list of configuration schemas
+     */
+    List<T> findByApplicationToken(String applicationToken);
+
+    /**
      * Find latest configuration schema by application id.
      *
      * @param applicationId the application id

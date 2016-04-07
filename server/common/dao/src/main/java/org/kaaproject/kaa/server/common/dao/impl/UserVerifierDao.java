@@ -29,6 +29,14 @@ public interface UserVerifierDao<T> extends Dao<T, String> {
     List<T> findByAppId(String appId);
 
     /**
+     * Find user verifiers by application token
+     *
+     * @param appToken the application token
+     * @return the list of user verifiers
+     */
+    List<T> findByAppToken(String appToken);
+
+    /**
      * Find user verifier by application id and verifier token
      *
      * @param appId         the application id

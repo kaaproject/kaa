@@ -46,6 +46,17 @@ public class HibernateEndpointProfileSchemaDaoTest extends HibernateAbstractTest
     }
 
     @Test
+    public void findByApplicationToken() {
+        List<EndpointProfileSchema> schemas = generateProfSchema(null, 3);
+        Assert.assertEquals(3, schemas.size());
+        EndpointProfileSchema schema  = schemas.get(0);
+        Application app = schema.getApplication();
+        List<EndpointProfileSchema> found = profileSchemaDao.findByApplicationToken(app.getApplicationToken());
+        Assert.assertEquals(3, found.size());
+        Assert.assertEquals(schemas, found);
+    }
+
+    @Test
     public void findByAppIdAndVersion() {
         List<EndpointProfileSchema> schemas = generateProfSchema(null, 4);
         Assert.assertEquals(4, schemas.size());

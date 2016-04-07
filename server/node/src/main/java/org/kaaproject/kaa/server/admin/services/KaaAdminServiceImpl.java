@@ -733,6 +733,32 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+
+            SchemaVersions schemaVersions = new SchemaVersions();
+
+            List<VersionDto> configurationSchemaVersions = controlService.getConfigurationSchemaVersionsByApplicationToken(applicationToken);
+            schemaVersions.setConfigurationSchemaVersions(configurationSchemaVersions);
+
+            List<VersionDto> profileSchemaVersions = controlService.getProfileSchemaVersionsByApplicationToken(applicationToken);
+            schemaVersions.setProfileSchemaVersions(profileSchemaVersions);
+
+            List<VersionDto> notificationSchemaVersions = controlService.getNotificationSchemaVersionsByApplicationToken(applicationToken);
+            schemaVersions.setNotificationSchemaVersions(notificationSchemaVersions);
+
+            List<VersionDto> logSchemaVersions = controlService.getLogSchemaVersionsByApplicationToken(applicationToken);
+            schemaVersions.setLogSchemaVersions(logSchemaVersions);
+
+            return schemaVersions;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -783,6 +809,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             this.checkApplicationId(applicationId);
             return controlService.getSdkProfilesByApplicationId(applicationId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getSdkProfilesByApplicationToken(applicationToken);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
@@ -1003,6 +1040,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getProfileSchemasByApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1098,6 +1146,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkApplicationId(applicationId);
             return controlService.getServerProfileSchemasByApplicationId(applicationId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getServerProfileSchemasByApplicationToken(applicationToken);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1332,6 +1391,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getConfigurationSchemasByApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1409,11 +1479,33 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.findNotificationSchemasByAppTokenAndType(applicationToken, NotificationTypeDto.USER);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(applicationId);
             return controlService.getUserNotificationSchemasByAppId(applicationId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getUserNotificationSchemasByAppToken(applicationToken);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1520,6 +1612,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getLogSchemasByApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public LogSchemaDto getLogSchema(String logSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1617,6 +1720,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkApplicationId(applicationId);
             return controlService.getEndpointGroupsByApplicationId(applicationId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getEndpointGroupsByApplicationToken(applicationToken);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2080,6 +2194,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getTopicByAppToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -2193,6 +2318,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<LogAppenderDto> getLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(appToken);
+            return controlService.getLogAppendersByApplicationToken(appToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -2271,6 +2407,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException {
+        List<LogAppenderDto> logAppenders = getLogAppendersByApplicationToken(appToken);
+        for (LogAppenderDto logAppender : logAppenders) {
+            setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+        }
+        return logAppenders;
+    }
+
+    @Override
     public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
         LogAppenderDto logAppender = getLogAppender(appenderId);
         setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
@@ -2297,6 +2442,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkApplicationId(appId);
             return controlService.getUserVerifiersByApplicationId(appId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<UserVerifierDto> getUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(appToken);
+            return controlService.getUserVerifiersByApplicationToken(appToken);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2374,6 +2530,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     @Override
     public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException {
         List<UserVerifierDto> userVerifiers = getUserVerifiersByApplicationId(appId);
+        for (UserVerifierDto userVerifier : userVerifiers) {
+            setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+        }
+        return userVerifiers;
+    }
+
+    @Override
+    public List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException {
+        List<UserVerifierDto> userVerifiers = getUserVerifiersByApplicationToken(appToken);
         for (UserVerifierDto userVerifier : userVerifiers) {
             setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
         }
@@ -2645,6 +2810,18 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getApplicationEventFamilyMapsByApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -2690,11 +2867,33 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getVacantEventClassFamiliesByApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(applicationId);
             return controlService.getEventClassFamiliesByApplicationId(applicationId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationToken(applicationToken);
+            return controlService.getEventClassFamiliesByApplicationToken(applicationToken);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2958,7 +3157,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
         return scope;
     }
-    
+
     private void checkCTLSchemaReadScope(String tenantId, String applicationId) throws KaaAdminServiceException {
         AuthUserDto currentUser = getCurrentUser();
         CTLSchemaScopeDto scope = detectScope(tenantId, applicationId);
@@ -3083,7 +3282,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());

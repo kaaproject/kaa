@@ -66,6 +66,15 @@ public interface EndpointService {
     List<EndpointGroupDto> findEndpointGroupsByAppId(String applicationId);
 
     /**
+     * Find endpoint groups by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the list
+     */
+    List<EndpointGroupDto> findEndpointGroupsByAppToken(String applicationToken);
+
+    /**
      * Find endpoint group by id.
      *
      * @param id

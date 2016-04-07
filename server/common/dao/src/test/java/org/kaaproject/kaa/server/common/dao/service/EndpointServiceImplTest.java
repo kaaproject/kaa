@@ -69,6 +69,16 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertEquals(2, groups.size());;
     }
 
+    @Test
+    public void findEndpointGroupsByAppTokenTest() {
+        ApplicationDto application = generateApplicationDto();
+        EndpointGroupDto group = generateEndpointGroupDto(application.getId());
+        List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppToken(application.getApplicationToken());
+        Assert.assertNotNull(groups);
+        Assert.assertFalse(groups.isEmpty());
+        Assert.assertEquals(2, groups.size());;
+    }
+
     @Test(expected = IncorrectParameterException.class)
     public void findEndpointGroupByIdTest() {
         EndpointGroupDto group = generateEndpointGroupDto(null);

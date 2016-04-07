@@ -103,12 +103,28 @@ public interface NotificationService {
     List<VersionDto> findUserNotificationSchemasByAppId(String applicationId);
 
     /**
+     * Find user notification schemas by app token.
+     *
+     * @param applicationToken the application token
+     * @return the list
+     */
+    List<VersionDto> findUserNotificationSchemasByAppToken(String applicationToken);
+
+    /**
      * Find notification schema versions by app id.
      *
      * @param applicationId the application id
      * @return the list
      */
     List<VersionDto> findNotificationSchemaVersionsByAppId(String applicationId);
+
+    /**
+     * Find notification schema versions by app token.
+     *
+     * @param applicationToken the application token
+     * @return the list
+     */
+    List<VersionDto> findNotificationSchemaVersionsByAppToken(String applicationToken);
 
     /**
      * Removes the notification schemas by app id.
@@ -138,6 +154,15 @@ public interface NotificationService {
      * @return the list
      */
     List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type);
+
+    /**
+     * Find notification schemas by app token and type.
+     *
+     * @param appToken the app token
+     * @param type the type
+     * @return the list
+     */
+    List<NotificationSchemaDto> findNotificationSchemasByAppTokenAndType(String appToken, NotificationTypeDto type);
 
     /**
      * Find notification schema by app id and type and version.

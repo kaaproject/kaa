@@ -53,6 +53,14 @@ public interface TopicService {
     List<TopicDto> findTopicsByAppId(String appId);
 
     /**
+     * Find topics by application token.
+     *
+     * @param appToken the application token
+     * @return the list of topics
+     */
+    List<TopicDto> findTopicsByAppToken(String appToken);
+
+    /**
      * Find topics by application id and type.
      *
      * @param appId the application id

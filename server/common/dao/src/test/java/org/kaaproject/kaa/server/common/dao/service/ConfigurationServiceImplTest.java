@@ -44,6 +44,7 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
+import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -368,6 +369,17 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         Assert.assertEquals(versions.get(0).getVersion(), 1);
         Assert.assertEquals(versions.get(1).getVersion(), 2);
     }
+
+    /*@Test 2
+    public void findConfigurationSchemaVersionsByAppTokenTest() {
+        ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, 1).get(0);
+        //Application application = schemaDto.
+        List<VersionDto> versions = configurationService.findConfigurationSchemaVersionsByAppToken(schemaDto.getApplicationId());
+        Assert.assertFalse(versions.isEmpty());
+        Assert.assertEquals(2, versions.size());
+        Assert.assertEquals(versions.get(0).getVersion(), 1);
+        Assert.assertEquals(versions.get(1).getVersion(), 2);
+    }*/
 
     @Test(expected = IncorrectParameterException.class)
     public void validateConfigurationWithoutGroupIdTest() {

@@ -31,6 +31,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN_PROPERTY;
 
 @Repository
@@ -57,6 +58,24 @@ public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
             LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", appId, appenders.size());
+        }
+        return appenders;
+    }
+
+    @Override
+    public List<UserVerifier> findByAppToken(String appToken) {
+        List<UserVerifier> appenders = Collections.emptyList();
+        LOG.debug("Searching user verifiers by application token [{}]", appToken);
+        if (isNotBlank(appToken)) {
+            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.and(
+                            Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken))
+            );
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appToken, Arrays.toString(appenders.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appToken, appenders.size());
         }
         return appenders;
     }

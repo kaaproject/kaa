@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao.service;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +53,26 @@ public class LogSchemaServiceImpl implements LogSchemaService {
     }
 
     @Override
+    public List<LogSchemaDto> findLogSchemasByAppToken(String applicationToken) {
+        validateString(applicationToken, "Can't find log schemas. Invalid application token: " + applicationToken);
+        return convertDtoList(logSchemaDao.findByApplicationToken(applicationToken));
+    }
+
+    @Override
     public List<VersionDto> findLogSchemaVersionsByApplicationId(String applicationId) {
         validateId(applicationId, "Can't find log schemas. Invalid application id: " + applicationId);
         List<LogSchema> logSchemas = logSchemaDao.findByApplicationId(applicationId);
+        List<VersionDto> schemas = new ArrayList<>();
+        for (LogSchema logSchema : logSchemas) {
+            schemas.add(logSchema.toVersionDto());
+        }
+        return schemas;
+    }
+
+    @Override
+    public List<VersionDto> findLogSchemaVersionsByApplicationToken(String applicationToken) {
+        validateId(applicationToken, "Can't find log schemas. Invalid application token: " + applicationToken);
+        List<LogSchema> logSchemas = logSchemaDao.findByApplicationToken(applicationToken);
         List<VersionDto> schemas = new ArrayList<>();
         for (LogSchema logSchema : logSchemas) {
             schemas.add(logSchema.toVersionDto());

@@ -45,7 +45,7 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implements Serializable {
 
     private static final long serialVersionUID = 3185049875063895954L;
-    
+
     @Column(name = CTL_SCHEMA_META_INFO_FQN)
     private String fqn;
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -53,7 +53,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     private Tenant tenant;
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = CTL_SCHEMA_META_INFO_APPLICATION_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_APPLICATION_FK))
-    private Application application;    
+    private Application application;
 
     public CTLSchemaMetaInfo() {
     }

@@ -51,6 +51,12 @@ public class UserVerifierServiceImpl implements UserVerifierService {
     }
 
     @Override
+    public List<UserVerifierDto> findUserVerifiersByAppToken(String appToken) {
+        LOG.debug("Find user verifiers by application token [{}]", appToken);
+        return convertDtoList(userVerifierDao.findByAppToken(appToken));
+    }
+
+    @Override
     public UserVerifierDto findUserVerifiersByAppIdAndVerifierToken(String appId, String verifierToken) {
         LOG.debug("Find user verifier by application id [{}] and verifier token [{}]", appId, verifierToken);
         return getDto(userVerifierDao.findByAppIdAndVerifierToken(appId, verifierToken));

@@ -56,14 +56,25 @@ public interface SdkProfileService {
 
     /**
      * Returns a list of SDK profiles for an application with the given
-     * identifier.
+     * application id.
      *
-     * @param applicationId An application identifier
+     * @param applicationId An application id
      *
      * @return A list of SDK profiles for an application with the given
-     *         identifier
+     *         application id
      */
     List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId);
+
+    /**
+     * Returns a list of SDK profiles for an application with the given
+     * application token.
+     *
+     * @param applicationToken An application token
+     *
+     * @return A list of SDK profiles for an application with the given
+     *         application token
+     */
+    List<SdkProfileDto> findSdkProfilesByApplicationToken(String applicationToken);
 
     /**
      * Removes an SDK profile from the database by its identifier.

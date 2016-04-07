@@ -34,6 +34,14 @@ public interface LogSchemaDao<T> extends SqlDao<T> {
     List<T> findByApplicationId(String applicationId);
 
     /**
+     * Find all Log Schemas for Application with specific application token
+     *
+     * @param applicationToken the application token
+     * @return List of Log Schemas
+     */
+    List<T> findByApplicationToken(String applicationToken);
+
+    /**
      * Find Log Schema by application id and version.
      *
      * @param applicationId the application id

@@ -31,6 +31,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
 
@@ -56,6 +57,22 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
             LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", appId, appenders.size());
+        }
+        return appenders;
+    }
+
+    @Override
+    public List<LogAppender> findByAppToken(String appToken) {
+        LOG.debug("Searching log appenders by application token [{}]", appToken);
+        List<LogAppender> appenders = Collections.emptyList();
+        if (isNotBlank(appToken)) {
+            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appToken, Arrays.toString(appenders.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appToken, appenders.size());
         }
         return appenders;
     }

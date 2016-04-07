@@ -61,6 +61,7 @@ public class DaoConstants {
     public static final String SERVER_PROFILE_SCHEMA_VERSION_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
     public static final String ENDPOINT_GROUP_REFERENCE = ENDPOINT_GROUP_ALIAS + "." + ID_PROPERTY;
     public static final String APPLICATION_REFERENCE = APPLICATION_ALIAS + "." + ID_PROPERTY;
+    public static final String APPLICATION_TOKEN_REFERENCE = APPLICATION_ALIAS + "." + APPLICATION_TOKEN_PROPERTY;
     public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
     public static final String CONFIGURATION_SCHEMA_REFERENCE = CONFIGURATION_SCHEMA_ALIAS + "." + ID_PROPERTY;
     public static final String ECF_REFERENCE = ECF_ALIAS + "." + ID_PROPERTY;

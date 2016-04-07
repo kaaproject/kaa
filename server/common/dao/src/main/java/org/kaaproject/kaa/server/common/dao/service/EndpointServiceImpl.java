@@ -108,6 +108,13 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     @Transactional
+    public List<EndpointGroupDto> findEndpointGroupsByAppToken(String applicationToken) {
+        validateString(applicationToken, "Can't find endpoint groups by application token. Incorrect application token" + applicationToken);
+        return convertDtoList(endpointGroupDao.findByApplicationToken(applicationToken));
+    }
+
+    @Override
+    @Transactional
     public EndpointGroupDto findEndpointGroupById(String id) {
         validateSqlId(id, "Can't find endpoint group by id. Incorrect id " + id);
         return getDto(endpointGroupDao.findById(id));

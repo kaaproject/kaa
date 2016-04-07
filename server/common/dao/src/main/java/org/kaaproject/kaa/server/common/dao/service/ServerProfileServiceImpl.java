@@ -21,6 +21,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.util.List;
 
@@ -96,7 +97,13 @@ public class ServerProfileServiceImpl implements ServerProfileService {
         validateSqlId(appId, "Incorrect application id.");
         return convertDtoList(serverProfileSchemaDao.findByAppId(appId));
     }
-    
+
+    @Override
+    public List<ServerProfileSchemaDto> findServerProfileSchemasByAppToken(String appToken) {
+        validateString(appToken, "Incorrect application token.");
+        return convertDtoList(serverProfileSchemaDao.findByAppToken(appToken));
+    }
+
     @Override
     public ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) {
         validateSqlId(appId, "Can't find server profile schema. Invalid application id: " + appId);

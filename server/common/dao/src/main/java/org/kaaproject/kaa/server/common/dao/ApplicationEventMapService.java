@@ -36,6 +36,14 @@ public interface ApplicationEventMapService {
     List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationId(String applicationId);
 
     /**
+     * Find Application Event Family Maps by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list of found application event family maps
+     */
+    List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationToken(String applicationToken);
+
+    /**
      * Find Application Event Family Maps by ids.
      *
      * @param ids the Application Event Family Maps ids
@@ -68,12 +76,28 @@ public interface ApplicationEventMapService {
     List<EcfInfoDto> findVacantEventClassFamiliesByApplicationId(String applicationId);
 
     /**
+     * Find Vacant Event Class Families by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list of found Event Class Families
+     */
+    List<EcfInfoDto> findVacantEventClassFamiliesByApplicationToken(String applicationToken);
+
+    /**
      * Find Event Class Families by application id.
      *
      * @param applicationId the application id
      * @return the list of found Event Class Families
      */
     List<AefMapInfoDto> findEventClassFamiliesByApplicationId(String applicationId);
+
+    /**
+     * Find Event Class Families by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list of found Event Class Families
+     */
+    List<AefMapInfoDto> findEventClassFamiliesByApplicationToken(String applicationToken);
 
     /**
      * Find Application Event Family Maps by Event Class Family id and version.

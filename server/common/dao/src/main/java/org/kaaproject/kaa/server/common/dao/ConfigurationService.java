@@ -150,12 +150,28 @@ public interface ConfigurationService {
     List<ConfigurationSchemaDto> findConfSchemasByAppId(String applicationId);
 
     /**
+     * Find conf schemas by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list
+     */
+    List<ConfigurationSchemaDto> findConfSchemasByAppToken(String applicationToken);
+
+    /**
      * Find configuration schema versions by application id.
      *
      * @param applicationId the application id
      * @return the list
      */
     List<VersionDto> findConfigurationSchemaVersionsByAppId(String applicationId);
+
+    /**
+     * Find configuration schema versions by application token.
+     *
+     * @param applicationToken the application token
+     * @return the list
+     */
+    List<VersionDto> findConfigurationSchemaVersionsByAppToken(String applicationToken);
 
     /**
      * Find latest configuration schema by application id and schema version.

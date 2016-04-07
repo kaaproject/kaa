@@ -41,6 +41,19 @@ public class ControlServerLogAppenderIT extends AbstractTestControlServer {
     }
 
     /**
+     * Gets the log appenders by application token test.
+     *
+     * @return the log appenders by application token test
+     * @throws Exception the exception
+     */
+    @Test
+    public void getLogAppendersByApplicationTokenTest() throws Exception {
+        LogAppenderDto appenderDto = createLogAppender(null, null);
+        List<LogAppenderDto> found = client.getLogAppendersByAppToken(appenderDto.getApplicationToken());
+        Assert.assertEquals(1, found.size());
+    }
+
+    /**
      * Gets the log appenders by id test.
      *
      * @return the log appenders by id test

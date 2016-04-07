@@ -60,6 +60,17 @@ public class ProfileServiceImplTest extends AbstractTest {
     }
 
     @Test
+    public void findProfileSchemasByAppTokenTest() {
+        int profSchemaCount = 2;
+        int profSchemaWithDefaultCount = profSchemaCount + 1;
+        ApplicationDto application = generateApplicationDto(null);
+        generateProfSchemaDto(application.getTenantId(), application.getId(), profSchemaCount);
+        List<EndpointProfileSchemaDto> schemas = profileService.findProfileSchemasByAppToken(application.getApplicationToken());
+        Assert.assertNotNull(schemas);
+        Assert.assertEquals(profSchemaWithDefaultCount, schemas.size());
+    }
+
+    @Test
     public void findProfileSchemaByIdTest() {
         String schemaId = generateProfSchemaDto(null, null, 1).get(0).getId();
         EndpointProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
@@ -285,6 +296,16 @@ public class ProfileServiceImplTest extends AbstractTest {
     public void findProfileSchemaVersionsByAppIdTest() {
         String applicationId = generateApplicationDto(null).getId();
         List<VersionDto> versions = profileService.findProfileSchemaVersionsByAppId(applicationId);
+        Assert.assertNotNull(versions);
+        Assert.assertFalse(versions.isEmpty());
+        Assert.assertEquals(1, versions.size());
+        Assert.assertSame(0, versions.get(0).getVersion());
+    }
+
+    @Test
+    public void findProfileSchemaVersionsByAppTokenTest() {
+        String applicationToken = generateApplicationDto(null).getApplicationToken();
+        List<VersionDto> versions = profileService.findProfileSchemaVersionsByAppToken(applicationToken);
         Assert.assertNotNull(versions);
         Assert.assertFalse(versions.isEmpty());
         Assert.assertEquals(1, versions.size());

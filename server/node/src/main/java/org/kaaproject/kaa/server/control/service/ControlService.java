@@ -280,6 +280,17 @@ public interface ControlService {
     List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the configuration schemas by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the configuration schemas by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Gets the configuration schema.
      *
      * @param configurationSchemaId
@@ -311,6 +322,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the profile schemas by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the profile schemas by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the profile schema.
@@ -357,6 +379,17 @@ public interface ControlService {
      *          the control service exception
      */
     List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the server profile schemas by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the server profile schemas by application token
+     * @throws ControlServiceException
+     *          the control service exception
+     */
+    List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the server profile schema.
@@ -416,6 +449,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the endpoint groups by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the endpoint groups by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the endpoint group.
@@ -762,6 +806,17 @@ public interface ControlService {
     List<VersionDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the user notification schemas by app token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the user notification schemas by app token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<VersionDto> getUserNotificationSchemasByAppToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Find notification schemas by app id and type.
      *
      * @param applicationId
@@ -773,6 +828,20 @@ public interface ControlService {
      *             the control service exception
      */
     List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String applicationId, NotificationTypeDto type)
+            throws ControlServiceException;
+
+    /**
+     * Find notification schemas by app token and type.
+     *
+     * @param applicationToken
+     *            the application token
+     * @param type
+     *            the type
+     * @return the list
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<NotificationSchemaDto> findNotificationSchemasByAppTokenAndType(String applicationToken, NotificationTypeDto type)
             throws ControlServiceException;
 
     /**
@@ -796,6 +865,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the log schemas by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the log schemas by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the log schema.
@@ -888,6 +968,17 @@ public interface ControlService {
     List<TopicDto> getTopicByAppId(String appId) throws ControlServiceException;
 
     /**
+     * Gets the topic by app token.
+     *
+     * @param appToken
+     *            the app token
+     * @return the topic by app token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<TopicDto> getTopicByAppToken(String appToken) throws ControlServiceException;
+
+    /**
      * Gets the topic by endpoint group id.
      *
      * @param endpointGroupId
@@ -964,6 +1055,17 @@ public interface ControlService {
     List<VersionDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the configuration schema versions by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the configuration schema versions by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<VersionDto> getConfigurationSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Gets the profile schema versions by application id.
      *
      * @param applicationId
@@ -973,6 +1075,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<VersionDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the profile schema versions by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the profile schema versions by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<VersionDto> getProfileSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the notification schema versions by application id.
@@ -986,6 +1099,17 @@ public interface ControlService {
     List<VersionDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the notification schema versions by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the notification schema versions by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<VersionDto> getNotificationSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Gets the log schema versions by application id.
      *
      * @param applicationId
@@ -995,6 +1119,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<VersionDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the log schema versions by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the log schema versions by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<VersionDto> getLogSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Edits the event class family.
@@ -1095,6 +1230,17 @@ public interface ControlService {
     List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the application event family maps by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the application event family maps by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Gets the vacant event class families by application id.
      *
      * @param applicationId
@@ -1106,6 +1252,17 @@ public interface ControlService {
     List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the vacant event class families by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the vacant event class families by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Gets the event class families by application id.
      *
      * @param applicationId
@@ -1115,6 +1272,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the event class families by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the event class families by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the endpoint users.
@@ -1161,6 +1329,17 @@ public interface ControlService {
     List<LogAppenderDto> getLogAppendersByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets the log appenders by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the log appenders by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<LogAppenderDto> getLogAppendersByApplicationToken(String applicationToken) throws ControlServiceException;
+
+    /**
      * Gets the log appender.
      *
      * @param logAppenderId
@@ -1202,6 +1381,17 @@ public interface ControlService {
      *             the control service exception
      */
     List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the user verifiers by application token.
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the user verifiers by application token
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<UserVerifierDto> getUserVerifiersByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      * Gets the user verifier.
@@ -1628,6 +1818,16 @@ public interface ControlService {
      *             the control service exception
      */
     List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     *
+     * @param applicationToken
+     *            the application token
+     * @return the list sdk profile dto
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws ControlServiceException;
 
     /**
      *

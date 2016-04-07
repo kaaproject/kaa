@@ -33,6 +33,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
@@ -57,6 +58,22 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
             LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(schemas.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", applicationId, schemas.size());
+        }
+        return schemas;
+    }
+
+    @Override
+    public List<LogSchema> findByApplicationToken(String applicationToken) {
+        LOG.debug("Find versions by application token [{}] ", applicationToken);
+        List<LogSchema> schemas = null;
+        if (isNotBlank(applicationToken)) {
+            schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.eq(APPLICATION_TOKEN_REFERENCE, applicationToken));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", applicationToken, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", applicationToken, schemas.size());
         }
         return schemas;
     }

@@ -30,11 +30,20 @@ public interface SdkProfileDao<T> extends Dao<T, String> {
     public T findSdkProfileByToken(String token);
 
     /**
-     * Returns a list of SDK profiles for an application with the given identifier.
+     * Returns a list of SDK profiles for an application with the given application id.
      *
-     * @param applicationId An application identifier
+     * @param applicationId An application id
      *
-     * @return A list of SDK profiles for an application with the given identifier
+     * @return A list of SDK profiles for an application with the given application id
      */
     public List<T> findSdkProfileByApplicationId(String applicationId);
+
+    /**
+     * Returns a list of SDK profiles for an application with the given application token.
+     *
+     * @param applicationToken An application token
+     *
+     * @return A list of SDK profiles for an application with the given application token
+     */
+    public List<T> findSdkProfileByApplicationToken(String applicationToken);
 }

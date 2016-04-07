@@ -36,7 +36,15 @@ public interface ServerProfileSchemaDao<T> extends SqlDao<T> {
      * @return the list of server profile schemas for corresponding application.
      */
     List<T> findByAppId(String appId);
-    
+
+    /**
+     * Find server profile schemas with given application token.
+     *
+     * @param appToken the application token
+     * @return the list of server profile schemas for corresponding application.
+     */
+    List<T> findByAppToken(String appToken);
+
     /**
      * Find server profile schema by application id and version.
      *

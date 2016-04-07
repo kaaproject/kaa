@@ -488,6 +488,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getConfigurationSchemasByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws ControlServiceException {
+        return configurationService.findConfSchemasByAppToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getConfigurationSchema(java.lang.String)
@@ -525,6 +536,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
         return profileService.findProfileSchemasByAppId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getProfileSchemasByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(String applicationToken) throws ControlServiceException {
+        return profileService.findProfileSchemasByAppToken(applicationToken);
     }
 
     /*
@@ -571,6 +593,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
         return serverProfileService.findServerProfileSchemasByAppId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getServerProfileSchemasByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationToken(String applicationToken) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchemasByAppToken(applicationToken);
     }
 
     /*
@@ -633,6 +666,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException {
         return endpointService.findEndpointGroupsByAppId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getEndpointGroupsByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken) throws ControlServiceException {
+        return endpointService.findEndpointGroupsByAppToken(applicationToken);
     }
 
     /*
@@ -1180,6 +1224,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getUserNotificationSchemasByAppToken(java.lang.String)
+     */
+    @Override
+    public List<VersionDto> getUserNotificationSchemasByAppToken(String applicationToken) throws ControlServiceException {
+        return notificationService.findUserNotificationSchemasByAppToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * findNotificationSchemasByAppIdAndType(java.lang.String,
@@ -1189,6 +1244,19 @@ public class DefaultControlService implements ControlService {
     public List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String applicationId, NotificationTypeDto type)
             throws ControlServiceException {
         return notificationService.findNotificationSchemasByAppIdAndType(applicationId, type);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * findNotificationSchemasByAppTokenAndType(java.lang.String,
+     * org.kaaproject.kaa.common.dto.NotificationTypeDto)
+     */
+    @Override
+    public List<NotificationSchemaDto> findNotificationSchemasByAppTokenAndType(String applicationToken, NotificationTypeDto type)
+            throws ControlServiceException {
+        return notificationService.findNotificationSchemasByAppTokenAndType(applicationToken, type);
     }
 
     /*
@@ -1212,6 +1280,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws ControlServiceException {
         return logSchemaService.findLogSchemasByAppId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getLogSchemasByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws ControlServiceException {
+        return logSchemaService.findLogSchemasByAppToken(applicationToken);
     }
 
     /*
@@ -1306,6 +1385,18 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<TopicDto> getTopicByAppId(String appId) throws ControlServiceException {
         return topicService.findTopicsByAppId(appId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.control.service.ControlService#getTopicByAppToken
+     * (java.lang.String)
+     */
+    @Override
+    public List<TopicDto> getTopicByAppToken(String appToken) throws ControlServiceException {
+        return topicService.findTopicsByAppToken(appToken);
     }
 
     /*
@@ -1443,6 +1534,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getConfigurationSchemaVersionsByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<VersionDto> getConfigurationSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException {
+        return configurationService.findConfigurationSchemaVersionsByAppToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getProfileSchemaVersionsByApplicationId(java.lang.String)
@@ -1450,6 +1552,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<VersionDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
         return profileService.findProfileSchemaVersionsByAppId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getProfileSchemaVersionsByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<VersionDto> getProfileSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException {
+        return profileService.findProfileSchemaVersionsByAppToken(applicationToken);
     }
 
     /*
@@ -1465,6 +1578,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getNotificationSchemaVersionsByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<VersionDto> getNotificationSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException {
+        return notificationService.findNotificationSchemaVersionsByAppToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getLogSchemaVersionsByApplicationId(java.lang.String)
@@ -1472,6 +1596,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<VersionDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
         return logSchemaService.findLogSchemaVersionsByApplicationId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getLogSchemaVersionsByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<VersionDto> getLogSchemaVersionsByApplicationToken(String applicationToken) throws ControlServiceException {
+        return logSchemaService.findLogSchemaVersionsByApplicationToken(applicationToken);
     }
 
     /*
@@ -1572,6 +1707,18 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getApplicationEventFamilyMapsByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken)
+            throws ControlServiceException {
+        return applicationEventMapService.findApplicationEventFamilyMapsByApplicationToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getVacantEventClassFamiliesByApplicationId(java.lang.String)
@@ -1583,6 +1730,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getVacantEventClassFamiliesByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws ControlServiceException {
+        return applicationEventMapService.findVacantEventClassFamiliesByApplicationToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getEventClassFamiliesByApplicationId(java.lang.String)
@@ -1590,6 +1748,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException {
         return applicationEventMapService.findEventClassFamiliesByApplicationId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getEventClassFamiliesByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws ControlServiceException {
+        return applicationEventMapService.findEventClassFamiliesByApplicationToken(applicationToken);
     }
 
     /**
@@ -1733,6 +1902,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getLogAppendersByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<LogAppenderDto> getLogAppendersByApplicationToken(String applicationToken) throws ControlServiceException {
+        return logAppenderService.findAllAppendersByAppToken(applicationToken);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see
      * org.kaaproject.kaa.server.control.service.ControlService#getLogAppender
@@ -1801,6 +1981,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) throws ControlServiceException {
         return userVerifierService.findUserVerifiersByAppId(applicationId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getUserVerifiersByApplicationToken(java.lang.String)
+     */
+    @Override
+    public List<UserVerifierDto> getUserVerifiersByApplicationToken(String applicationToken) throws ControlServiceException {
+        return userVerifierService.findUserVerifiersByAppToken(applicationToken);
     }
 
     /*
@@ -2005,6 +2196,11 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) {
         return sdkProfileService.findSdkProfilesByApplicationId(applicationId);
+    }
+
+    @Override
+    public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) {
+        return sdkProfileService.findSdkProfilesByApplicationToken(applicationToken);
     }
 
     @Override

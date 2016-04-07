@@ -47,6 +47,17 @@ public class HibernateConfigurationSchemaDaoTest extends HibernateAbstractTest {
     }
 
     @Test
+    public void findByApplicationTokenTest() {
+        List<ConfigurationSchema> schemas = generateConfSchema(null, 3);
+        Assert.assertEquals(3, schemas.size());
+        ConfigurationSchema schema  = schemas.get(0);
+        Application app = schema.getApplication();
+        List<ConfigurationSchema> found = configurationSchemaDao.findByApplicationToken(app.getApplicationToken());
+        Assert.assertEquals(3, found.size());
+        Assert.assertEquals(schemas, found);
+    }
+
+    @Test
     public void findLatestByApplicationIdTest() {
         List<ConfigurationSchema> schemas = generateConfSchema(null, 4);
         Assert.assertEquals(4, schemas.size());
