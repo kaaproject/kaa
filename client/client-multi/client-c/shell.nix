@@ -52,6 +52,14 @@ let
     # };
     gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
 
+    astyle = pkgs.astyle.overrideDerivation (self: {
+      sourceRoot = "astyle";
+      preBuild = ''
+        cd build/${if self.stdenv.cc.isClang then "clang" else "gcc"}
+      '';
+      patches = [ ./nix/astyle/max_indent.patch ];
+    });
+
     kaa-generic-makefile =
       let
         target = enable: name: cmake_options:
@@ -97,6 +105,8 @@ in with self; with pkgs; {
     buildInputs = [
       kaa-generic-makefile
       cmake
+      self.astyle
+      maven
     ] ++ lib.optional clangSupport [
       clang
       openssl
