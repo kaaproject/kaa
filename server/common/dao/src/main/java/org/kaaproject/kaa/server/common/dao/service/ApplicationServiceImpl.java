@@ -163,7 +163,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 throw new IncorrectParameterException("Can't save/update application with null name");
             }
             Application checkApplication = applicationDao.findByNameAndTenantId(applicationDto.getName(), applicationDto.getTenantId());
-            if (checkApplication != null) {
+            if (checkApplication != null && !Objects.equals(checkApplication.getStringId(), applicationDto.getId())) {
                 throw new IncorrectParameterException("Can't save application with same name within one tenant");
             }
             if (isNotBlank(applicationDto.getId())) {

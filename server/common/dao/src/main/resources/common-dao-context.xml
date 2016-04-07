@@ -100,6 +100,4 @@
     <bean id="trustfulCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService"/>
     <alias name="trustfulCredentialsService" alias="Trustful Credentials Service"/>
 
-    <bean id="trustfulCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService"/>
-
 </beans>
