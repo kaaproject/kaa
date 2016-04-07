@@ -942,6 +942,10 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                                                                                 , channel->access_point.id);
             channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
             kaa_tcp_channel_authorize(channel);
+        } else if (message.return_code == (uint16_t) KAATCP_CONNACK_NOT_REGISTERED) {
+            kaa_context_set_status_registered(channel->transport_context.kaa_context, false);
+            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "KAA TCP channel [0x%08x] received KAATCP_CONNACK_NOT_REGISTERED"
+                                                                                , channel->access_point.id);
         } else {
             KAA_LOG_WARN(channel->logger, KAA_ERR_BAD_STATE, "Kaa TCP channel [0x%08X] authorization failed, code %d"
                                                                                 , channel->access_point.id, message.return_code);
