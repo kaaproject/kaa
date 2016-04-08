@@ -1232,7 +1232,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                         }
                     }
                     if (notification_size) {
-                        avro_reader_t avro_reader = avro_reader_memory(reader->current, notification_size);
+                        avro_reader_t avro_reader = avro_reader_memory((const char *)reader->current, notification_size);
                         if (!avro_reader) {
                             return KAA_ERR_NOMEM;
                         }

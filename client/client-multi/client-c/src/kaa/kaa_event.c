@@ -706,7 +706,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         if (kaa_list_get_size(self->event_listeners_requests)) {
             *((uint8_t *) writer->current) = EVENT_LISTENERS_FIELD;
             writer->current += sizeof(uint16_t); // field id + reserved
-            char *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
+            uint8_t *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
             writer->current += sizeof(uint16_t);
 
             uint16_t listeners_count = 0;
@@ -787,7 +787,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         callback = self->global_event_callback;
 
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
-        const char* event_data = reader->current;
+        const uint8_t *event_data = reader->current;
         kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(event_data_size));
         if (error) {
              KAA_LOG_ERROR(self->logger, error, "Failed to read event data, size %u", event_data_size);
@@ -796,7 +796,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
-            (*callback)(event_fqn, event_data, event_data_size, self->event_source);
+            (*callback)(event_fqn, (const char *)event_data, event_data_size, self->event_source);
     } else if (callback) {
         (*callback)(event_fqn, NULL, 0, self->event_source);
     }
@@ -893,7 +893,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 
     while (extension_length > 0) {
         uint8_t field_id = 0;
-        const char *field_id_pos = reader->current;
+        const uint8_t *field_id_pos = reader->current;
 
         kaa_error_t error = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
         if (error) {

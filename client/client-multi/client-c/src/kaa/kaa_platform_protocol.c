@@ -168,7 +168,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self,
         const kaa_extension_id services[], size_t services_count, uint8_t *buffer, size_t *size)
 {
     kaa_platform_message_writer_t *writer = NULL;
-    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, (char *)buffer, *size);
+    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     if (error_code) {
         return error_code;
     }
@@ -367,7 +367,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
 
     kaa_platform_message_reader_t *reader = NULL;
     kaa_error_t error_code = kaa_platform_message_reader_create(&reader,
-            (const char *)buffer, buffer_size);
+            buffer, buffer_size);
     if (error_code) {
         return error_code;
     }

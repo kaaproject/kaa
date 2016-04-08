@@ -204,7 +204,7 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
             reader->current += sizeof(uint32_t);
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration body, size '%u' ", body_size);
-            const char* body = reader->current;
+            const uint8_t *body = reader->current;
             kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(body_size));
             if (error) {
                  KAA_LOG_ERROR(self->logger, error, "Failed to read configuration body, size %u", body_size);
@@ -217,18 +217,18 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
             if (self->root_record)
                 self->root_record->destroy(self->root_record);
 
-            self->root_record = kaa_configuration_manager_deserialize(body, body_size);
+            self->root_record = kaa_configuration_manager_deserialize((const char *)body, body_size);
             if (!self->root_record) {
                 KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to deserialize configuration body, size %u", body_size);
                 return KAA_ERR_READ_FAILED;
             }
 
-            kaa_error_t err = ext_calculate_sha_hash(body, body_size, self->configuration_hash);
+            kaa_error_t err = ext_calculate_sha_hash((const char *)body, body_size, self->configuration_hash);
             if (err) {
                 KAA_LOG_WARN(self->logger, err, "Failed to calculate configuration body hash");
                 return err;
             }
-            ext_configuration_store(body, body_size);
+            ext_configuration_store((const char *)body, body_size);
 #endif
             if (self->root_receiver.on_configuration_updated)
                 self->root_receiver.on_configuration_updated(self->root_receiver.context, self->root_record);

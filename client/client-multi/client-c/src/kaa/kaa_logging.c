@@ -496,7 +496,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     kaa_platform_message_writer_t tmp_writer = *writer;
 
-    char *extension_size_p = tmp_writer.current + sizeof(uint32_t); // Pointer to the extension size. Will be filled in later.
+    uint8_t *extension_size_p = tmp_writer.current + sizeof(uint32_t); // Pointer to the extension size. Will be filled in later.
     kaa_error_t error = kaa_platform_message_write_extension_header(&tmp_writer
                                                                   , KAA_EXTENSION_LOGGING
                                                                   , KAA_LOGGING_RECEIVE_UPDATES_FLAG
@@ -506,9 +506,9 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         return KAA_ERR_WRITE_FAILED;
     }
 
-    char *bucket_id_p = tmp_writer.current;
+    uint8_t *bucket_id_p = tmp_writer.current;
     tmp_writer.current += sizeof(uint16_t);
-    char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
+    uint8_t *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
 
     uint16_t bucket_id;
@@ -528,11 +528,11 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     while (!error && bucket_size > sizeof(uint32_t) && records_count < max_log_count) {
         size_t record_len = 0;
-        error = ext_log_storage_write_next_record(self->log_storage_context
-                                                , tmp_writer.current + sizeof(uint32_t)
-                                                , bucket_size - sizeof(uint32_t)
-                                                , &bucket_id
-                                                , &record_len);
+        error = ext_log_storage_write_next_record(self->log_storage_context,
+                (char *)tmp_writer.current + sizeof(uint32_t),
+                bucket_size - sizeof(uint32_t),
+                &bucket_id,
+                &record_len);
         switch (error) {
         case KAA_ERR_NONE:
             if (!first_bucket) {
