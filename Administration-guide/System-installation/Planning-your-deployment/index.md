@@ -20,9 +20,9 @@ sort_idx: 10
     * [Thread system](#thread-system)
     * [Remote connections](#remote-connections)
   * [Third-party component metrics](#third-party-component-metrics)
-* [Storring custome shemas](#storring-custome-shemas)
+* [Storing custom schemas](#storing-custom-schemas)
 * [Third-party components](#third-party-components)
-* [Throubleshooting](#throubleshooting)
+* [Troubleshooting](#troubleshooting)
 
 ## Introduction
 
@@ -86,14 +86,14 @@ The following command can be used to browse the Kaa node build artifacts in case
 
 ## Installing Kaa
 
-You can deploy kaa server as a single node or as multy node claster, for more details refer to corresponding pages:
+You can deploy kaa server as a single node or as multi node cluster, for more details refer to corresponding pages:
 
 * [Single node installation](../Single-node-installation)
-* [Node claster setup](../Cluster-setup)
+* [Node cluster setup](../Cluster-setup)
 
 ## AWS deployment preparation
 
-To launch the Kaa sanbox on Amazon Elastic Compute Cloud (Amazon EC2), go through the following steps.
+To launch the Kaa sandbox on Amazon Elastic Compute Cloud (Amazon EC2), go through the following steps.
 
 1. Launch the AMI using the links in the following table:
 
@@ -196,10 +196,10 @@ The metrics described in this section are available in the org.kaaproject.kaa.me
 
 The JMX metrics for the third-party components used by Kaa, such as the Java MongoDB driver or Ehcache, can be observed in their respective domains.
 
-## Storring shemas
+## Storing custom schemas
 
 Our best practices is to provide all schemas next to source code, covered by some version control system (VCS).
-Also if you need to compile some of your scmemas or you need to serialize data by some cshema you can refer to [Apache Avro](https://avro.apache.org/docs/1.7.7/index.html) documentation.
+Also if you need to compile some of your schemas or you need to serialize data by some schema you can refer to [Apache Avro](https://avro.apache.org/docs/1.7.7/index.html) documentation.
 
 ## Third-party components
 
@@ -207,13 +207,13 @@ Also if you need to compile some of your scmemas or you need to serialize data b
 
 SQL database instance is used to store metadata about tenants, applications, endpoint groups, etc. This information is shared between endpoints, thus it's volume does not scale and it can be efficiently stored in modern SQL databases. To support high availability of Kaa cluster, SQL database should be also deployed in cluster mode.
 
-Kaa supports two SQL databases at the moment: PostgresSQL and MariaDB. If you planning to use kaa in a suingle node instance we recomend you to use PostgreSQL and MariaDB for multy node claster becouse of better clusterization capabilities of MariaDB.
+Kaa supports two SQL databases at the moment: PostgresSQL and MariaDB. If you planning to use kaa in a single node instance we recommend you to use PostgreSQL and MariaDB for multi node cluster because of better clusterization capabilities of MariaDB.
 
 ### NoSQL database
 
 NoSQL database instance is used to store information about endpoint profiles, notifications, configurations, etc. The volume of this information scales linearly with amount of endpoints that are managed using particular Kaa cluster instance. NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines. Kaa support Apache Cassandra and MongoDB as a NoSQL database at the moment. The choose between MongoDB and Apache Cassandra depends only on your specific data analysis needs.
 
-## Throubleshooting
+## Troubleshooting
 
 Common issues covered in this [guide](../Troubleshooting).
 
