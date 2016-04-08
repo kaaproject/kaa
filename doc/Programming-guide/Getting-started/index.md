@@ -94,7 +94,7 @@ By default, outgoing mail settings are not configured for Admin UI. To target Ad
 
 ### Networking
 
-By default, Kaa Sandbox components are accessible from the localhost. But if you  want to share KaaSandbox in the local network  you need to reconfigure the network interface for this virtual machine. Once the virtual box is available to devices on your local/test network, you need to change Sandbox host/IP on [web UI](#kaa-sandbox-web-ui) or execute the script on Sandbox.
+By default, Kaa Sandbox components are accessible from a host machine. But if you want to share Kaa Sandbox in the local network you need to reconfigure the network interface for this virtual machine in [Bridge mode](https://www.virtualbox.org/manual/ch06.html#network_bridged). Once the virtual box is available to devices on your local/test network, you need to change Sandbox host/IP on [web UI](#kaa-sandbox-web-ui) or execute the script on Sandbox.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Sandbox-web-ui">Sandbox web UI</a></li>
