@@ -30,3 +30,10 @@ void ext_status_store(const char *buffer, size_t buffer_size)
 {
     cc32xx_binary_file_store(KAA_STATUS_STORAGE, buffer, buffer_size);
 }
+
+void ext_status_delete()
+{
+    cc32xx_binary_file_delete(KAA_STATUS_STORAGE);
+}
+
+
