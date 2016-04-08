@@ -9,16 +9,16 @@ sort_idx: 30
 * [Introduction](#introduction)
 * [Cluster configuration](#cluster-configuration)
   * [List of properties](#list-of-properties)
-  * [Kaa-nede configuration](#kaa-nede-configuration)
+  * [Kaa-node configuration](#kaa-node-configuration)
   * [Zookeeper configuration](#zookeeper-configuration)
   * [SQL database configuration](#sql-database-configuration)
-  * [NoSQL database configuration](#no-sql-database-configuration)
+  * [NoSQL database configuration](#nosql-database-configuration)
 
 ## Introduction
 
-This page describes how to setup and configure kaa-mode claster.
+This page describes how to setup and configure kaa-mode cluster.
 
-In general claster setup is similar to [single noode setup](../Single-node-installation), exept few details. We need atleast 3 nodes to create a reliable cluster. For simplisity in this tutorial we will be using single instance of SQL and NoSQL databases, so this tutorial doesn't cover such tems like setting up Cassandra, MongoDB od PostgresSql claster setup. So let say that we have 3 nodes with Ubuntu 14.04 installed on each of them.
+In general cluster setup is similar to [single node setup](../Single-node-installation), except few details. We need at least 3 nodes to create a reliable cluster. For simplicity in this tutorial we will be using single instance of SQL and NoSQL databases, so this tutorial doesn't cover such themes like setting up Cassandra, MongoDB or PostgresSql cluster setup. Let us assume that we have 3 nodes with Ubuntu 14.04 installed on each of them.
 
 ```bash
 node1 172.1.1.1
@@ -26,15 +26,15 @@ node2 172.2.2.2
 node3 172.3.3.3
 ```
 
-On node1 we will setup our SQL (PostgreSql) and NoSQl (MongoDB) databases and on each of them will be running zookeeper.
+On node1 we will setup our SQL (PostgreSql) and NoSQl (MongoDB) databases and run Zookeeper.
 
-On every of them we had succesfully instaled kaa and everithing that left it is to cinfigure kaa-node services.
+On every of them we had successfully installed kaa and everything that left it is to configure kaa-node services.
 
 ## Cluster configuration
 
 ### List of properties
 
-To set up claster it is necessary to edit next properties:
+To set up cluster it is necessary to edit next properties:
  
  | Property name             | Example values                   | Description                                                      | File location                                                                      | 
  |-------------------------- |--------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -52,16 +52,15 @@ To set up claster it is necessary to edit next properties:
 <br/>
 After Kaa installation on Ubuntu/Debian OS (deb packages), configuration files for each Kaa component will be extracted into the ```/usr/lib/kaa-{component-name}/conf``` or ```/etc/kaa-{component-name}/conf``` directories. We are interested in 3 configuration files.
 
-### Kaa-nede configuration
+### Kaa-node configuration
 
-Before starting configuration stop kaa-node service byu executing next command
+Before starting configuration stop kaa-node service by executing next command
 
 ```bash
  $ sudo service kaa-node stop
 ```
 
-Kaa services (bootstrap, control or operations) on our node by editing corresponding properties in 
-```/usr/lib/kaa-node/conf/kaa-node.properties``` file.
+Kaa services (bootstrap, control or operations) can be enabled or disabled on our node by editing corresponding properties in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file.
 
 ```bash
 # Specifies if Control Server is enabled.
@@ -74,7 +73,7 @@ bootstrap_server_enabled=true
 operations_server_enabled=true
 ```
 
-Kaa-node transport properties, in this properties we need to specifie IP address of current node.
+Kaa-node transport properties, in this properties we need to specify IP address of current node.
 
 ```bash
  # The Control Server notifies every Operations/Bootstrap Server on most data updates via a Thrift-based protocol.
@@ -116,7 +115,7 @@ Kaa zookeeper hosts - list of all zookeeper services on nodes.
  zk_host_port_list=<zookeeper_ip>:<zookeeper_port>
 ```
 
-So assuming that we peek standard zookeepr port (2181) for all of our nodes and on every of them is running zookeeper our configurations would look like this
+So assuming that we peek standard zookeeper port (2181) for all of our nodes and on every of them is running zookeeper our configurations would look like this
 
 ```bash
  # node1
@@ -161,7 +160,7 @@ Configure SQL database host and port ```/usr/lib/kaa-node/conf/dao.properties```
  jdbc_port=<postgresql_port>
 ```
 
-Cofigurations for all three nodes wold look like this
+Configurations for all three nodes wold look like this
 
 ```bash
  jdbc_host=172.1.1.1
@@ -204,7 +203,7 @@ Setup MongoDB host IP ```/usr/lib/kaa-node/conf/common-dao-mongodb.properties```
  servers=<mongo_database_ip>:<mongo_database_port>
 ```
 
-Assuming that we peek standart MongoDB port, for all three nodes property would look like this
+Assuming that we peek standard MongoDB port, for all three nodes property would look like this
 
 ```bash
  servers=172.1.1.1:27017
@@ -217,7 +216,7 @@ Setup Cassandra host ip ```/usr/lib/kaa-node/conf/common-dao-cassandra.propertie
 node_list=<cassandra_database_ip>:<cassandra_database_port>
 ```
 
-Assuming that we peek standart Cassandra port, for all three nodes property would look like this
+Assuming that we peek standard Cassandra port, for all three nodes property would look like this
 
 ```bash
  servers=172.1.1.1:9042
