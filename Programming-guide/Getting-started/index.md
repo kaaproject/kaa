@@ -79,7 +79,7 @@ The current version of Kaa Sandbox supports [Oracle VirtualBox 4.2+](https://www
 Please take into account the following known issues and limitations of Kaa Sandbox.
 
 * Without the SMTP server configured, you will not be able to create new users. See the [Outgoing mail settings section](#outgoing-mail-settings) for more details.
-* Demo applications are available for download, however, they do not work properly due to the default sandbox networking configuration. To proceed with the demo applications, you need to configure the network as described in [Networking section](#networking).
+
 
 ### Troubleshooting
 
@@ -94,10 +94,10 @@ By default, outgoing mail settings are not configured for Admin UI. To target Ad
 
 ### Networking
 
-By default, Kaa Sandbox components are not accessible from the host network. Port forwarding is configured only for your local machine in order to give you ssh and web access. Thus, to explore demo applications you need to reconfigure the network interface for this virtual machine. Once the virtual box is available to devices on your local/test network, you need to change Sandbox host/IP on [web UI](#kaa-sandbox-web-ui) or execute the script on Sandbox.
+By default, Kaa Sandbox components are accessible from the localhost. But if you  want to share KaaSandbox in the local network  you need to reconfigure the network interface for this virtual machine. Once the virtual box is available to devices on your local/test network, you need to change Sandbox host/IP on [web UI](#kaa-sandbox-web-ui) or execute the script on Sandbox.
 
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Sandbox-web-ui">Sandbox web ui</a></li>
+  <li class="active"><a data-toggle="tab" href="#Sandbox-web-ui">Sandbox web UI</a></li>
   <li><a data-toggle="tab" href="#Console">Console</a></li>
 </ul>
 
