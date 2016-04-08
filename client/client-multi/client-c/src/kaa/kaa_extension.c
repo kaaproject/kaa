@@ -111,3 +111,15 @@ kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected
 
     return kaa_extensions[idx]->request_get_size(kaa_extension_contexts[idx], expected_size);
 }
+
+kaa_error_t kaa_extension_request_serialize(kaa_extension_id id, uint8_t *buffer, size_t *size,
+        bool *sync_needed)
+{
+    size_t idx = extension_id_to_idx(id);
+    if (idx == EXTENSION_NOT_FOUND) {
+        return KAA_ERR_NOT_FOUND;
+    }
+
+    return kaa_extensions[idx]->request_serialize(kaa_extension_contexts[idx], buffer, size,
+            sync_needed);
+}

@@ -24,6 +24,7 @@
 #include <kaa_common.h>
 #include <kaa_error.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,6 +71,37 @@ struct kaa_extension {
      * @c 0 @p expected_size if you have nothing to say.
      */
     kaa_error_t (*request_get_size)(void *context, size_t *expected_size);
+
+    /**
+     * Serialize request.
+     *
+     * @note @p buffer may be @c NULL. In that case the function must
+     * return the required size of the buffer in @p size.
+     *
+     * @param[in]     context     The context of the extension, as returned
+     *                            by init().
+     *
+     * @param[out]    buffer      Serialized request.
+     *
+     * @param[in,out] size        Size of the buffer. The function must
+     *                            set to the actual size used (or required).
+     *
+     * @param[out]    sync_needed Extension must set it to @c true if
+     *                            it requires * syncing. If set to @c false,
+     *                            the extension's buffer is ignored and not
+     *                            synced.
+     *
+     * @return Error code.
+     *
+     * @retval KAA_ERR_BUFFER_IS_NOT_ENOUGH Should be returned if @p
+     * size is smaller than needed.
+     *
+     * @note Error codes other than @c KAA_ERR_NONE will result in
+     * abort of transaction; extension must set @p sync_needed to
+     * @c false if extension has nothing to say.
+     */
+    kaa_error_t (*request_serialize)(void *context, uint8_t *buffer, size_t *size,
+            bool *sync_needed);
 };
 
 /**
@@ -126,6 +158,15 @@ kaa_error_t kaa_extension_deinit_all(void);
  * @retval KAA_ERR_NOT_FOUND Extension was not found.
  */
 kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected_size);
+
+
+/**
+ * A proxy for kaa_extension::request_serialize().
+ *
+ * @retval KAA_ERR_NOT_FOUND Extension was not found.
+ */
+kaa_error_t kaa_extension_request_serialize(kaa_extension_id id, uint8_t *buffer, size_t *size,
+        bool *sync_needed);
 
 #ifdef __cplusplus
 }

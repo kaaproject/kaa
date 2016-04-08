@@ -237,6 +237,78 @@ static void test_kaa_extension_request_get_size_fail(void **state)
     assert_int_equal(KAA_ERR_NOMEM, kaa_extension_request_get_size(FAKE_EXTENSION1_ID, &size));
 }
 
+static void test_kaa_extension_request_serialize_not_found(void **state)
+{
+    (void)state;
+
+    assert_int_equal(KAA_ERR_NOT_FOUND,
+            kaa_extension_request_serialize(BAD_EXTENSION_ID, NULL, NULL, NULL));
+}
+
+static void test_kaa_extension_request_serialize_ok(void **state)
+{
+    // TODO
+    (void)state;
+    int fake_context1, fake_context2, fake_context3;
+    uint8_t buffer;
+    size_t size = 0;
+    bool sync_needed = true;
+
+    kaa_extension_set_context(FAKE_EXTENSION1_ID, &fake_context1);
+    expect_string(called, name, "fake_request_serialize1");
+    expect_value(fake_request_serialize1, context, &fake_context1);
+    expect_value(fake_request_serialize1, buffer, &buffer);
+    will_return(fake_request_serialize1, 143);
+    will_return(fake_request_serialize1, true);
+    will_return(fake_request_serialize1, KAA_ERR_NONE);
+    assert_int_equal(KAA_ERR_NONE,
+            kaa_extension_request_serialize(FAKE_EXTENSION1_ID, &buffer, &size, &sync_needed));
+    assert_int_equal(143, size);
+    assert_true(sync_needed);
+
+    kaa_extension_set_context(FAKE_EXTENSION2_ID, &fake_context2);
+    expect_string(called, name, "fake_request_serialize2");
+    expect_value(fake_request_serialize2, context, &fake_context2);
+    expect_value(fake_request_serialize2, buffer, &buffer);
+    will_return(fake_request_serialize2, 512);
+    will_return(fake_request_serialize2, false);
+    will_return(fake_request_serialize2, KAA_ERR_NONE);
+    assert_int_equal(KAA_ERR_NONE,
+            kaa_extension_request_serialize(FAKE_EXTENSION2_ID, &buffer, &size, &sync_needed));
+    assert_int_equal(512, size);
+    assert_false(sync_needed);
+
+    kaa_extension_set_context(FAKE_EXTENSION3_ID, &fake_context3);
+    expect_string(called, name, "fake_request_serialize3");
+    expect_value(fake_request_serialize3, context, &fake_context3);
+    expect_value(fake_request_serialize3, buffer, &buffer);
+    will_return(fake_request_serialize3, 0);
+    will_return(fake_request_serialize3, true);
+    will_return(fake_request_serialize3, KAA_ERR_NONE);
+    assert_int_equal(KAA_ERR_NONE,
+            kaa_extension_request_serialize(FAKE_EXTENSION3_ID, &buffer, &size, &sync_needed));
+    assert_int_equal(0, size);
+    assert_true(sync_needed);
+}
+
+static void test_kaa_extension_request_serialize_fail(void **state)
+{
+    (void)state;
+    size_t size = 0;
+    bool sync_needed = true;
+    uint8_t buffer;
+
+    kaa_extension_set_context(FAKE_EXTENSION1_ID, NULL);
+    expect_string(called, name, "fake_request_serialize1");
+    expect_value(fake_request_serialize1, buffer, &buffer);
+    expect_value(fake_request_serialize1, context, NULL);
+    will_return(fake_request_serialize1, 0);
+    will_return(fake_request_serialize1, true);
+    will_return(fake_request_serialize1, KAA_ERR_NOMEM);
+    assert_int_equal(KAA_ERR_NOMEM,
+            kaa_extension_request_serialize(FAKE_EXTENSION1_ID, &buffer, &size, &sync_needed));
+}
+
 int main(void)
 {
     // Note that this kaa_extensions is a different instance from
@@ -261,6 +333,10 @@ int main(void)
         cmocka_unit_test(test_kaa_extension_request_get_size_not_found),
         cmocka_unit_test(test_kaa_extension_request_get_size_ok),
         cmocka_unit_test(test_kaa_extension_request_get_size_fail),
+
+        cmocka_unit_test(test_kaa_extension_request_serialize_not_found),
+        cmocka_unit_test(test_kaa_extension_request_serialize_ok),
+        cmocka_unit_test(test_kaa_extension_request_serialize_fail),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
@@ -340,11 +416,45 @@ static kaa_error_t fake_request_get_size3(void *context, size_t *expected_size)
     return mock_type(kaa_error_t);
 }
 
+static kaa_error_t fake_request_serialize1(void *context, uint8_t *buffer, size_t *size,
+        bool *sync_needed)
+{
+    called("fake_request_serialize1");
+    check_expected_ptr(context);
+    check_expected_ptr(buffer);
+    *size = mock_type(size_t);
+    *sync_needed = mock_type(bool);
+    return mock_type(kaa_error_t);
+}
+
+static kaa_error_t fake_request_serialize2(void *context, uint8_t *buffer, size_t *size,
+        bool *sync_needed)
+{
+    called("fake_request_serialize2");
+    check_expected_ptr(context);
+    check_expected_ptr(buffer);
+    *size = mock_type(size_t);
+    *sync_needed = mock_type(bool);
+    return mock_type(kaa_error_t);
+}
+
+static kaa_error_t fake_request_serialize3(void *context, uint8_t *buffer, size_t *size,
+        bool *sync_needed)
+{
+    called("fake_request_serialize3");
+    check_expected_ptr(context);
+    check_expected_ptr(buffer);
+    *size = mock_type(size_t);
+    *sync_needed = mock_type(bool);
+    return mock_type(kaa_error_t);
+}
+
 const struct kaa_extension fake_extension1 = {
     .id = FAKE_EXTENSION1_ID,
     .init = fake_init1,
     .deinit = fake_deinit1,
     .request_get_size = fake_request_get_size1,
+    .request_serialize = fake_request_serialize1,
 };
 
 const struct kaa_extension fake_extension2 = {
@@ -352,6 +462,7 @@ const struct kaa_extension fake_extension2 = {
     .init = fake_init2,
     .deinit = fake_deinit2,
     .request_get_size = fake_request_get_size2,
+    .request_serialize = fake_request_serialize2,
 };
 
 const struct kaa_extension fake_extension3 = {
@@ -359,4 +470,5 @@ const struct kaa_extension fake_extension3 = {
     .init = fake_init3,
     .deinit = fake_deinit3,
     .request_get_size = fake_request_get_size3,
+    .request_serialize = fake_request_serialize3,
 };
