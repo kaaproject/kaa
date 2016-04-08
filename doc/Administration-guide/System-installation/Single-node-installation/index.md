@@ -8,7 +8,7 @@ sort_idx: 20
 
 * [Introduction](#introduction)
 * [Installation steps](#installation-steps)
-  * [Third party components instalation](#third-party-components-instalation)
+  * [Third party components installation](#third-party-components-instalation)
   * [Kaa server components](#kaa-server-components)
 * [Configuration steps](#configuration-steps)
   * [SQL database configuration](#sql-database-configuration)
@@ -23,9 +23,9 @@ This guide describes installation and configuration of Kaa components on a singl
 
 ## Installation steps
 
-### Third party components instalation
+### Third party components installation
 
-Refer to the folowing guides for more details
+Refer to the following guides for more details
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Ubuntu">Ubuntu 14.04</a></li>
@@ -46,7 +46,7 @@ Refer to the folowing guides for more details
    ```
 
 2. Install [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  
-   Add java apt repository. This repository is not official; for a different way to install Oracle JDK, see the [official page](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+   Add java apt repository. This repository is not official, for a different way to install Oracle JDK, see the [official page](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
    ```bash
    $ sudo add-apt-repository ppa:webupd8team/java
@@ -127,7 +127,7 @@ Add official PostgreSQL repository.
 
    During the installation process you will be asked to configure the root password for the MariaDB, enter "admin".
 
-   ![alt text](mariadbpassword.png "mariadb instalation password promt")
+   ![alt text](mariadbpassword.png "mariadb installation password promt")
 
    You can check if the MariaDB server is running by executing the following command.
 
@@ -284,10 +284,32 @@ Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
 
 3. Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ).
 
-   Exclude old PostgreSQL from the default repository.
+   Exclude old PostgreSQL from the default repository, append a line ```exclude=postgresql*``` to the sections **[base]** and **[updates]**.
 
    ```bash
     $ sudo nano /etc/yum.repos.d/CentOS-Base.repo
+
+    ...
+
+    [base]
+    name=CentOS-$releasever - Base
+    mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+    #baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+    gpgcheck=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+    exclude=postgresql*
+
+    ...
+
+    [updates]
+    name=CentOS-$releasever - Updates
+    mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
+    #baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+    gpgcheck=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+    exclude=postgresql*
+    
+    ...
    ```
 
    Install PostgreSQL 9.4 PGDG file for CentOS 6 64-bit.
