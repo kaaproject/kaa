@@ -40,71 +40,89 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
 {
     KAA_RETURN_IF_NIL2(context_p, logger, KAA_ERR_BADPARAM);
 
-    kaa_context_t *context = KAA_MALLOC(sizeof(*context));
+    kaa_context_t *context = KAA_CALLOC(1, sizeof(*context));
     KAA_RETURN_IF_NIL(context, KAA_ERR_NOMEM);
 
     context->logger = logger;
 
     kaa_error_t error = KAA_ERR_NONE;
-    context->status = KAA_MALLOC(sizeof(*context->status));
-    if (!context->status)
+    context->status = KAA_CALLOC(1, sizeof(*context->status));
+    if (!context->status) {
         error = KAA_ERR_NOMEM;
+    }
 
-    if (!error)
+    if (!error) {
         error = kaa_status_create(&context->status->status_instance);
+    }
 
-    if (!error)
+    if (!error) {
         error = kaa_platform_protocol_create(&context->platform_protocol, context,
                                              context->status->status_instance);
+    }
 
-    if (!error)
+    if (!error) {
         error = kaa_channel_manager_create(&context->channel_manager, context);
+    }
 
-    if (!error)
+
+    if (!error) {
         error = kaa_bootstrap_manager_create(&context->bootstrap_manager, context);
+    }
 
-    if (!error)
+
+    if (!error) {
         error = kaa_profile_manager_create(&context->profile_manager, context->status->status_instance,
                                            context->channel_manager, context->logger);
+    }
 
-    if (!error)
+    if (!error) {
         error = kaa_failover_strategy_create(&context->failover_strategy, logger);
+    }
+
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    if (!error)
+   if (!error) {
         error = kaa_event_manager_create(&context->event_manager, context->status->status_instance,
                                          context->channel_manager, context->logger);
+    }
+
 #else
     context->event_manager = NULL;
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    if (!error)
+    if (!error) {
         error = kaa_log_collector_create(&context->log_collector, context->status->status_instance,
                                          context->channel_manager, context->logger);
+    }
+
 #else
     context->log_collector = NULL;
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-    if (!error)
+    if (!error) {
         error = kaa_configuration_manager_create(&context->configuration_manager, context->channel_manager,
                                                  context->status->status_instance, context->logger);
+    }
+
 #else
     context->configuration_manager = NULL;
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-    if (!error)
+    if (!error) {
         error = kaa_notification_manager_create(&context->notification_manager, context->status->status_instance,
                                                 context->channel_manager, context->logger);
+    }
 #else
     context->notification_manager = NULL;
 #endif
 
-    if (!error)
+    if (!error) {
         error = kaa_user_manager_create(&context->user_manager, context->status->status_instance,
                                         context->channel_manager, context->logger);
+    }
 
 
     if (error) {
