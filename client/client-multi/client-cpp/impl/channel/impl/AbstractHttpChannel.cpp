@@ -63,29 +63,30 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
                                               reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
         }
     } catch (HttpTransportException& e) {
+        KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: %3%")
+                     % currentServer_->getHost() % currentServer_->getPort() % e.getHttpStatusCode());
+        context_.getStatus().setRegistered(false);
+        context_.getStatus().save();
+
+        KaaFailoverReason reason;
         switch (e.getHttpStatusCode()) {
         case HttpStatusCode::UNAUTHORIZED:
-            KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: bad credentials. Going to re-register...")
-                                                            % currentServer_->getHost() % currentServer_->getPort());
-            context_.getStatus().setRegistered(false);
-            context_.getStatus().save();
-            setServer(currentServer_);
+            reason = KaaFailoverReason::ENDPOINT_NOT_REGISTERED;
+            break;
+        case HttpStatusCode::FORBIDDEN:
+            reason = KaaFailoverReason::CREDENTIALS_REVOKED;
             break;
         default:
-            KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
-                    % currentServer_->getHost() % currentServer_->getPort() % e.what());
-            onServerFailed();
+            reason = KaaFailoverReason::BOOTSTRAP_SERVERS_NA;
             break;
         }
-    } catch (std::exception& e) {
-        KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
-            % currentServer_->getHost() % currentServer_->getPort() % e.what());
-        onServerFailed();
+
+        onServerFailed(reason);
     }
 }
 
 
-void AbstractHttpChannel::onServerFailed()
+void AbstractHttpChannel::onServerFailed(KaaFailoverReason reason)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
@@ -97,7 +98,7 @@ void AbstractHttpChannel::onServerFailed()
     KAA_UNLOCK(lockInternal);
     KAA_MUTEX_UNLOCKED("channelGuard_");
 
-    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_), reason);
 }
 
 void AbstractHttpChannel::sync(TransportType type)

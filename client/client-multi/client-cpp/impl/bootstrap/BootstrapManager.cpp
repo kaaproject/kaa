@@ -55,7 +55,7 @@ BootstrapManager::OperationsServers BootstrapManager::getOPSByAccessPointId(std:
     return servers;
 }
 
-void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protocolId)
+void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason reason)
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
@@ -66,9 +66,11 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
         OperationsServers::iterator nextOperationIterator = (lastServerIt->second)+1;
         if (nextOperationIterator != serverIt->second.end()) {
             KAA_LOG_INFO(boost::format("New server [%1%] will be user for %2%")
-                                            % (*nextOperationIterator)->getAccessPointId()
-                                            % LoggingUtils::TransportProtocolIdToString(protocolId));
+                                       % (*nextOperationIterator)->getAccessPointId()
+                                       % LoggingUtils::TransportProtocolIdToString(protocolId));
+
             lastOperationsServers_[protocolId] = nextOperationIterator;
+
             if (channelManager_ != nullptr) {
                 channelManager_->onTransportConnectionInfoUpdated(*(nextOperationIterator));
             } else {
@@ -76,9 +78,9 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
             }
         } else {
             KAA_LOG_WARN(boost::format("Failed to find server for channel %1%.")
-                                            % LoggingUtils::TransportProtocolIdToString(protocolId));
+                         % LoggingUtils::TransportProtocolIdToString(protocolId));
 
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::OPERATION_SERVERS_NA);
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
             switch (decision.getAction()) {
                 case FailoverStrategyAction::NOOP:
                     KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -87,7 +89,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                 {
                     std::size_t period = decision.getRetryPeriod();
                     KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
-                            "according to failover strategy decision.") % period);
+                                               "according to failover strategy decision.") % period);
                     retryTimer_.stop();
                     retryTimer_.start(period, [&] { receiveOperationsServerList(); });
                     break;
@@ -140,7 +142,9 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 {
     if (operationsServers.empty()) {
         KAA_LOG_WARN("Received empty operations server list");
-        FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_OPERATION_SERVERS_RECEIVED);
+
+        KaaFailoverReason failoverReason = KaaFailoverReason::NO_OPERATION_SERVERS_RECEIVED;
+        FailoverStrategyDecision decision = failoverStrategy_->onFailover(failoverReason);
         switch (decision.getAction()) {
         case FailoverStrategyAction::NOOP:
             KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -156,7 +160,8 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
         }
         case FailoverStrategyAction::USE_NEXT_BOOTSTRAP:
             KAA_LOG_WARN("Try next bootstrap server.");
-            channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer());
+            channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer(),
+                                            failoverReason);
             break;
         case FailoverStrategyAction::STOP_APP:
             KAA_LOG_WARN("Stopping application according to failover strategy decision!");
@@ -220,4 +225,3 @@ void BootstrapManager::notifyChannelManangerAboutServer(const OperationsServers&
 }
 
 }
-
