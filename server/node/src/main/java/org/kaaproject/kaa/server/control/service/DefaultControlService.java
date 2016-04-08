@@ -123,7 +123,6 @@ import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
-import org.kaaproject.kaa.server.control.service.paf.ControlPafService;
 import org.kaaproject.kaa.server.control.service.schema.SchemaLibraryGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
@@ -172,9 +171,6 @@ public class DefaultControlService implements ControlService {
      */
     private static final String CTL_LIBRARY_EXPORT_TEMPLATE = "{0}.v{1}";
     
-    @Autowired
-    private ControlPafService pafService;
-
     /** The user service. */
     @Autowired
     private UserService userService;

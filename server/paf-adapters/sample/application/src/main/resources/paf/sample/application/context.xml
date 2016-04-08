@@ -34,17 +34,18 @@
 	<context:annotation-config/>
 	<context:property-placeholder />
 
-    <bean id="applicationProcessor" 
-          class="org.kaaproject.kaa.server.paf.adapters.sample.application.SamplePafApplicationProcessor">
-        <property name="applicationId" value="${applicationId}" />
+    <bean id="applicationInboundChannel" 
+          class="org.kaaproject.kaa.server.paf.adapters.sample.application.SamplePafApplicationInboundChannel">
+        <property name="applicationPath" value="${applicationPath}" />
     </bean>
-
-	<int:channel id="applicationRequestChannel"/>
-
-    <int:service-activator 
-    	input-channel="applicationRequestChannel" 
-    	ref="applicationProcessor" 
-    	method="onMessage"
-    	/>
+    
+    <bean id="applicationProfileRouter" 
+   	      class="org.kaaproject.kaa.server.common.paf.shared.application.DefaultPafApplicationProfileRouter">
+   		<property name="resolutionRequired" value="false"/>
+   	</bean>
+   	
+   	<int:router ref="applicationProfileRouter" 
+   	            input-channel="applicationInboundChannel" 
+   	            default-output-channel="nullChannel"/>
 
 </beans>

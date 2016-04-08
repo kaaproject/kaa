@@ -53,54 +53,59 @@
             id="httpInbound" 
             request-channel="requestChannel"
 	    	supported-methods="GET"
-	    	path="/process/{appId}/{entId}"
-	    	payload-expression="#cookies.JSESSIONID.value + '|' + #pathVariables.appId + '|' + #pathVariables.entId"
+	    	request-payload-type="byte[]"
+	    	path="/process/{appRoute}/{appProfileRoute}/{endpointId}"
+	    	payload-expression="(#cookies.JSESSIONID.value + '|' + #pathVariables.appRoute + '|' + #pathVariables.appProfileRoute + '|' + #pathVariables.endpointId).getBytes()"
 	    	reply-channel="replyChannel"
+	    	error-channel="errorChannel"
    	/>
    	
-    <bean id="adapter" 
-    	  class="org.kaaproject.kaa.server.paf.adapters.sample.system.SamplePafAdapter"/>
+   <int:channel id="replyChannel"/>	
    	
-   	<int:service-activator 
-   		input-channel="requestChannel" 
-   		output-channel="adapterOutputChannel" 
-   		ref="adapter" 
-   		method="onMessage"/>
-
+   <bean id="errorAdapter" 
+    	  class="org.kaaproject.kaa.server.paf.adapters.sample.system.SamplePafErrorAdapter"/>
+    	  
+   <int:transformer input-channel="errorChannel"
+   		output-channel="replyChannel"
+		ref="errorAdapter" 
+		method="transform"/>
+		
+	<int:channel id="systemReplyChannel"/>
+	
+	<bean id="outboundAdapter" 
+    	  class="org.kaaproject.kaa.server.paf.adapters.sample.system.SamplePafOutboundAdapter"/>
+    	  
+    <int:transformer input-channel="systemReplyChannel"
+		output-channel="replyChannel"
+		ref="outboundAdapter" 
+		method="transform"/>
+   	
+    <bean id="inboundAdapter" 
+    	  class="org.kaaproject.kaa.server.paf.adapters.sample.system.SamplePafInboundAdapter"/>
+    	  
+    <int:transformer input-channel="requestChannel"
+		output-channel="resolverChannel"
+		ref="inboundAdapter" 
+		method="transform"/>
+		
+    <bean id="resolver" 
+          class="org.kaaproject.kaa.server.paf.adapters.sample.common.SampleConfigurableResolver">
+    </bean>
+    
+    <int:service-activator 
+    	input-channel="resolverChannel" 
+    	ref="resolver" 
+    	method="onMessage"
+    	output-channel="applicationRouterChannel" 
+    />		
+ 
    	<bean id="applicationRouter" 
-   	      class="org.kaaproject.kaa.server.paf.adapters.sample.system.SamplePafApplicationRouter">
+   	      class="org.kaaproject.kaa.server.common.paf.shared.system.DefaultPafApplicationRouter">
    		<property name="resolutionRequired" value="false"/>
    	</bean>
    	
    	<int:router ref="applicationRouter" 
-   	            input-channel="adapterOutputChannel" 
+   	            input-channel="applicationRouterChannel" 
    	            default-output-channel="nullChannel"/>
-    	
-    <int:channel id="requestChannel">
-    	<int:interceptors>
-        	<int:wire-tap channel="logger"/>
-    	</int:interceptors>
-	</int:channel>
 	
-	<int:channel id="applicationReplyChannel">
-    	<int:interceptors>
-        	<int:wire-tap channel="logger"/>
-    	</int:interceptors>
-	</int:channel>
-	
-	<int:transformer input-channel="applicationReplyChannel"
-		output-channel="replyChannel"
-		expression="payload + ' and systemId ' + '#{environment['systemId']}'"/>
-	
-	<int:channel id="replyChannel">
-    	<int:interceptors>
-        	<int:wire-tap channel="logger"/>
-    	</int:interceptors>
-	</int:channel>
-	
-	<int:logging-channel-adapter 
-		id="logger" 
-		logger-name="org.kaaproject.kaa.server.paf.adapters.sample.system" 
-		level="DEBUG"/>
-
 </beans>

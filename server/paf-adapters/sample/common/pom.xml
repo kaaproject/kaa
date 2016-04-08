@@ -41,6 +41,10 @@
             <groupId>org.kaaproject.kaa.server.common.paf-shared</groupId>
             <artifactId>application</artifactId>
         </dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>                      
     </dependencies>
 
 

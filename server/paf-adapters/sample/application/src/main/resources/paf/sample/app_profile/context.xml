@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     Copyright 2014-2016 CyberVision, Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+    xsi:schemaLocation="
+            http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/integration
+        	http://www.springframework.org/schema/integration/spring-integration-4.2.xsd">
+
+    <!-- Node configuration from properties file -->
+
+	<context:annotation-config/>
+	<context:property-placeholder />
+
+    <bean id="applicationProfileInboundChannel" 
+          class="org.kaaproject.kaa.server.paf.adapters.sample.application.SamplePafApplicationProfileInboundChannel">
+        <property name="applicationProfilePath" value="${applicationProfilePath}" />
+    </bean>
+    
+    <bean id="endpointRegistrationRouter" 
+   	      class="org.kaaproject.kaa.server.common.paf.shared.application.DefaultPafEndpointRegistrationRouter">
+   		<property name="resolutionRequired" value="false"/>
+   		<property name="registrationChannel" ref="registrationProcessorChannel"/>
+   		<property name="extensionChannel" ref="extensionComposerChannel"/>
+   	</bean>
+   	
+   	<int:channel id="registrationProcessorChannel"/>
+   	<int:channel id="extensionComposerChannel"/>
+   	   	
+   	<int:router ref="endpointRegistrationRouter"
+   	            input-channel="applicationProfileInboundChannel" 
+   	            default-output-channel="nullChannel"/>
+   	            
+   	<bean id="registrationProcessor" 
+          class="org.kaaproject.kaa.server.paf.adapters.sample.application.SamplePafRegistrationProcessor">
+    </bean>
+    
+    <int:service-activator 
+    	input-channel="registrationProcessorChannel" 
+    	ref="registrationProcessor" 
+    	method="onMessage"
+    	output-channel="applicationProfileInboundChannel" 
+    	/>
+	
+    <bean id="extensionComposer" 
+          class="org.kaaproject.kaa.server.paf.adapters.sample.application.SamplePafExtensionComposer">
+    </bean>
+    
+    <int:service-activator 
+    	input-channel="extensionComposerChannel" 
+    	ref="extensionComposer" 
+    	method="onMessage"
+    	/>
+
+</beans>

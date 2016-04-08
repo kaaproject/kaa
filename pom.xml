@@ -920,6 +920,11 @@ Copyright 2014-2016 CyberVision, Inc.
 				<artifactId>spring-integration-http</artifactId>
 				<version>${spring.version}</version>
 			</dependency>            
+	        <dependency>
+	            <groupId>org.springframework.integration</groupId>
+	            <artifactId>spring-integration-core</artifactId>
+	            <version>${spring.version}</version>
+	        </dependency>   			
             <dependency>
                 <groupId>com.couchbase.client</groupId>
                 <artifactId>java-client</artifactId>

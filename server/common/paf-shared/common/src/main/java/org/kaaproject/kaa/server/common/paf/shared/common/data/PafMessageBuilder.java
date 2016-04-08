@@ -24,25 +24,25 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.util.Assert;
 
-public final class PafMessageBuilder<T> {
+public final class PafMessageBuilder {
 
-    private final T payload;
+    private final byte[] payload;
 
     private MessageHeaderAccessor headerAccessor;
     private PafMetadata metaData;
 
-    private PafMessageBuilder(Message<T> originalMessage) {
+    private PafMessageBuilder(Message<byte[]> originalMessage) {
         Assert.notNull(originalMessage, "Message must not be null");
         this.payload = originalMessage.getPayload();
         this.headerAccessor = new MessageHeaderAccessor(originalMessage);
         if (originalMessage instanceof PafMessage) {
-            this.metaData = ((PafMessage<T>)originalMessage).getMetaData();
+            this.metaData = ((PafMessage)originalMessage).getMetaData();
         } else {
             this.metaData = new PafMetadata();
         }
     }
 
-    private PafMessageBuilder(T payload, MessageHeaderAccessor accessor, PafMetadata metaData) {
+    private PafMessageBuilder(byte[] payload, MessageHeaderAccessor accessor, PafMetadata metaData) {
         Assert.notNull(payload, "Payload must not be null");
         Assert.notNull(accessor, "MessageHeaderAccessor must not be null");
         Assert.notNull(metaData, "MetaData must not be null");
@@ -56,7 +56,7 @@ public final class PafMessageBuilder<T> {
      * Set the message headers to use by providing a {@code MessageHeaderAccessor}.
      * @param accessor the headers to use
      */
-    public PafMessageBuilder<T> setHeaders(MessageHeaderAccessor accessor) {
+    public PafMessageBuilder setHeaders(MessageHeaderAccessor accessor) {
         Assert.notNull(accessor, "MessageHeaderAccessor must not be null");
         this.headerAccessor = accessor;
         return this;
@@ -66,7 +66,7 @@ public final class PafMessageBuilder<T> {
      * Set the value for the given header name. If the provided value is {@code null},
      * the header will be removed.
      */
-    public PafMessageBuilder<T> setHeader(String headerName, Object headerValue) {
+    public PafMessageBuilder setHeader(String headerName, Object headerValue) {
         this.headerAccessor.setHeader(headerName, headerValue);
         return this;
     }
@@ -75,7 +75,7 @@ public final class PafMessageBuilder<T> {
      * Set the value for the given header name only if the header name is not already
      * associated with a value.
      */
-    public PafMessageBuilder<T> setHeaderIfAbsent(String headerName, Object headerValue) {
+    public PafMessageBuilder setHeaderIfAbsent(String headerName, Object headerValue) {
         this.headerAccessor.setHeaderIfAbsent(headerName, headerValue);
         return this;
     }
@@ -85,14 +85,14 @@ public final class PafMessageBuilder<T> {
      * the array may contain simple matching patterns for header names. Supported pattern
      * styles are: "xxx*", "*xxx", "*xxx*" and "xxx*yyy".
      */
-    public PafMessageBuilder<T> removeHeaders(String... headerPatterns) {
+    public PafMessageBuilder removeHeaders(String... headerPatterns) {
         this.headerAccessor.removeHeaders(headerPatterns);
         return this;
     }
     /**
      * Remove the value for the given header name.
      */
-    public PafMessageBuilder<T> removeHeader(String headerName) {
+    public PafMessageBuilder removeHeader(String headerName) {
         this.headerAccessor.removeHeader(headerName);
         return this;
     }
@@ -102,7 +102,7 @@ public final class PafMessageBuilder<T> {
      * existing values. Use { {@link #copyHeadersIfAbsent(Map)} to avoid overwriting
      * values. Note that the 'id' and 'timestamp' header values will never be overwritten.
      */
-    public PafMessageBuilder<T> copyHeaders(Map<String, ?> headersToCopy) {
+    public PafMessageBuilder copyHeaders(Map<String, ?> headersToCopy) {
         this.headerAccessor.copyHeaders(headersToCopy);
         return this;
     }
@@ -111,47 +111,41 @@ public final class PafMessageBuilder<T> {
      * Copy the name-value pairs from the provided Map. This operation will <em>not</em>
      * overwrite any existing values.
      */
-    public PafMessageBuilder<T> copyHeadersIfAbsent(Map<String, ?> headersToCopy) {
+    public PafMessageBuilder copyHeadersIfAbsent(Map<String, ?> headersToCopy) {
         this.headerAccessor.copyHeadersIfAbsent(headersToCopy);
         return this;
     }
 
-    public PafMessageBuilder<T> setReplyChannel(MessageChannel replyChannel) {
+    public PafMessageBuilder setReplyChannel(MessageChannel replyChannel) {
         this.headerAccessor.setReplyChannel(replyChannel);
         return this;
     }
 
-    public PafMessageBuilder<T> setReplyChannelName(String replyChannelName) {
+    public PafMessageBuilder setReplyChannelName(String replyChannelName) {
         this.headerAccessor.setReplyChannelName(replyChannelName);
         return this;
     }
 
-    public PafMessageBuilder<T> setErrorChannel(MessageChannel errorChannel) {
+    public PafMessageBuilder setErrorChannel(MessageChannel errorChannel) {
         this.headerAccessor.setErrorChannel(errorChannel);
         return this;
     }
 
-    public PafMessageBuilder<T> setErrorChannelName(String errorChannelName) {
+    public PafMessageBuilder setErrorChannelName(String errorChannelName) {
         this.headerAccessor.setErrorChannelName(errorChannelName);
         return this;
     }
     
-    public PafMessageBuilder<T> setMetadata(PafMetadata metaData) {
+    public PafMessageBuilder setMetadata(PafMetadata metaData) {
         Assert.notNull(metaData, "MetaData must not be null");
         this.metaData = metaData;
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public PafMessage<T> build() {
+    public PafMessage build() {
         MessageHeaders headersToUse = this.headerAccessor.toMessageHeaders();
-        if (this.payload instanceof Throwable) {
-            return (PafMessage<T>) new PafErrorMessage((Throwable) this.payload, 
-                    headersToUse, this.metaData);
-        }
-        else {
-            return new PafMessage<T>(this.payload, headersToUse, this.metaData);
-        }
+        return new PafMessage(this.payload, headersToUse, this.metaData);
     }
 
 
@@ -161,16 +155,16 @@ public final class PafMessageBuilder<T> {
      * also be used as the payload for the new message.
      * @param message the Message from which the payload and all headers will be copied
      */
-    public static <T> PafMessageBuilder<T> fromMessage(Message<T> message) {
-        return new PafMessageBuilder<T>(message);
+    public static PafMessageBuilder fromMessage(Message<byte[]> message) {
+        return new PafMessageBuilder(message);
     }
 
     /**
      * Create a new builder for a message with the given payload.
      * @param payload the payload
      */
-    public static <T> PafMessageBuilder<T> withPayload(T payload) {
-        return new PafMessageBuilder<T>(payload, new MessageHeaderAccessor(), new PafMetadata());
+    public static PafMessageBuilder withPayload(byte[] payload) {
+        return new PafMessageBuilder(payload, new MessageHeaderAccessor(), new PafMetadata());
     }
 
     /**
@@ -184,18 +178,12 @@ public final class PafMessageBuilder<T> {
      * @return the created message
      */
     @SuppressWarnings("unchecked")
-    public static <T> PafMessage<T> createMessage(T payload, 
+    public static PafMessage createMessage(byte[] payload, 
             MessageHeaders messageHeaders, PafMetadata metaData) {
         Assert.notNull(payload, "Payload must not be null");
         Assert.notNull(messageHeaders, "MessageHeaders must not be null");
         Assert.notNull(metaData, "MetaData must not be null");
-        if (payload instanceof Throwable) {
-            return (PafMessage<T>) new PafErrorMessage((Throwable) payload, 
-                    messageHeaders, metaData);
-        }
-        else {
-            return new PafMessage<T>(payload, messageHeaders, metaData);
-        }
+        return new PafMessage(payload, messageHeaders, metaData);
     }
 
 }

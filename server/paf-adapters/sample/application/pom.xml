@@ -45,7 +45,11 @@
             <groupId>org.kaaproject.kaa.server.paf-adapters.sample</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
-        </dependency>            
+        </dependency>      
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>              
     </dependencies>
 
 

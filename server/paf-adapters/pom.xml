@@ -38,7 +38,7 @@
 
     <modules>
         <module>sample</module>
-        <module>gt300</module>
+        <module>trackair</module>
     </modules>
 
 </project>

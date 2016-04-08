@@ -6,6 +6,8 @@ public interface SessionContext {
     
     SessionType getSessionType();
     
+    EndpointId getEndpointId();
+    
     void onMessage(OutboundSessionMessage message);
     
     void onControlMessage(SessionControlMessage controlMessage);

@@ -21,24 +21,16 @@ import java.util.EventListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.kaaproject.kaa.server.common.paf.shared.system.PafInterface;
+import org.kaaproject.kaa.server.common.paf.shared.system.AbstractPafInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.DispatcherServlet;
 
-public class SampleHttpPafInterface implements PafInterface, InitializingBean, DisposableBean, ApplicationContextAware {
+public class SampleHttpPafInterface extends AbstractPafInterface {
     
     private static final Logger LOG = LoggerFactory.getLogger(SampleHttpPafInterface.class);
 
     private String sysId;
-
-    private ApplicationContext appContext;
-    
     private int httpPort;
     
     private SampleWebContextLoader contextLoader;
@@ -59,12 +51,7 @@ public class SampleHttpPafInterface implements PafInterface, InitializingBean, D
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.appContext = applicationContext;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    protected void onInit() throws Exception {
         LOG.info("System PAF [{}] Loaded dynamically!", sysId);
         LOG.info("[{}] Http port: {}", sysId, httpPort);
         
@@ -79,17 +66,20 @@ public class SampleHttpPafInterface implements PafInterface, InitializingBean, D
         webAppContext.addServlet(holder, "/*");
         
         server.setHandler(webAppContext);
-        
+    } 
+    
+    @Override
+    protected void doStart() {
         try {
             server.start();
             LOG.info("HTTP server started on port {}", httpPort);
         } catch (Exception e) {
             LOG.error("Error starting HTTP Server!", e);
         }
-    } 
+    }
 
     @Override
-    public void destroy() throws Exception {
+    protected void doStop() {
         try {
             LOG.info("Stopping HTTP Server...");
             server.stop();

@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.paf.shared.common.context;
 
 import org.kaaproject.kaa.server.common.paf.shared.common.data.PafMessage;
+import org.kaaproject.kaa.server.common.paf.shared.context.EndpointId;
 import org.kaaproject.kaa.server.common.paf.shared.context.OutboundSessionMessage;
 import org.kaaproject.kaa.server.common.paf.shared.context.SessionContext;
 import org.kaaproject.kaa.server.common.paf.shared.context.SessionControlMessage;
@@ -24,12 +25,12 @@ import org.kaaproject.kaa.server.common.paf.shared.context.SessionId;
 import org.kaaproject.kaa.server.common.paf.shared.context.SessionType;
 import org.springframework.messaging.MessageChannel;
 
-public abstract class AbstractPafSessionContext<T> implements SessionContext {
+public abstract class AbstractPafSessionContext implements SessionContext {
 
-    protected final PafMessage<T> sourceMessage;
+    protected final PafMessage sourceMessage;
     protected final MessageChannel replyChannel;
 
-    public AbstractPafSessionContext(PafMessage<T> sourceMessage, MessageChannel replyChannel) {
+    public AbstractPafSessionContext(PafMessage sourceMessage, MessageChannel replyChannel) {
         super();
         this.sourceMessage = sourceMessage;
         this.replyChannel = replyChannel;
@@ -44,21 +45,26 @@ public abstract class AbstractPafSessionContext<T> implements SessionContext {
     public SessionType getSessionType() {
         return sourceMessage.getSessionType();
     }
+    
+    @Override
+    public EndpointId getEndpointId() {
+        return sourceMessage.getEndpointId();
+    }
 
     @Override
     public void onMessage(OutboundSessionMessage message) {
-        PafMessage<T> replyMessage =  processOutboundMessage(message);
+        PafMessage replyMessage =  processOutboundMessage(message);
         replyChannel.send(replyMessage);
     }
 
     @Override
     public void onControlMessage(SessionControlMessage controlMessage) {
-        PafMessage<T> replyControlMessage =  processControlMessage(controlMessage);
+        PafMessage replyControlMessage =  processControlMessage(controlMessage);
         replyChannel.send(replyControlMessage);
     }
     
-    protected abstract PafMessage<T> processOutboundMessage(OutboundSessionMessage outboundMessage); 
+    protected abstract PafMessage processOutboundMessage(OutboundSessionMessage outboundMessage); 
     
-    protected abstract PafMessage<T> processControlMessage(SessionControlMessage controlMessage); 
+    protected abstract PafMessage processControlMessage(SessionControlMessage controlMessage); 
     
 }

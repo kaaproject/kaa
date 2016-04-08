@@ -23,22 +23,31 @@ import org.kaaproject.kaa.server.common.paf.shared.context.OutboundSessionMessag
 import org.kaaproject.kaa.server.common.paf.shared.context.SessionControlMessage;
 import org.springframework.messaging.MessageChannel;
 
-public class SamplePafSessionContext extends AbstractPafSessionContext<String> {
+public class SamplePafSessionContext extends AbstractPafSessionContext {
 
-    public SamplePafSessionContext(PafMessage<String> message, MessageChannel replyChannel) {
+    public SamplePafSessionContext(PafMessage message, MessageChannel replyChannel) {
         super(message, replyChannel);
     }
 
     @Override
-    protected PafMessage<String> processOutboundMessage(OutboundSessionMessage outboundMessage) {
-        return PafMessageBuilder.createMessage(
-                outboundMessage.replyPayload(), 
-                sourceMessage.getHeaders(),
-                sourceMessage.getMetaData());
+    protected PafMessage processOutboundMessage(OutboundSessionMessage outboundMessage) {
+        if (outboundMessage.getEndpointRegistrationResult() != null) {
+            PafMessage message = PafMessageBuilder.createMessage(
+                    sourceMessage.getPayload(), 
+                    sourceMessage.getHeaders(),
+                    sourceMessage.getMetaData());
+            message.setRegistrationResult(outboundMessage.getEndpointRegistrationResult());
+            return message;
+        } else {
+            return PafMessageBuilder.createMessage(
+                    outboundMessage.replyPayload(), 
+                    sourceMessage.getHeaders(),
+                    sourceMessage.getMetaData());
+        }
     }
 
     @Override
-    protected PafMessage<String> processControlMessage(SessionControlMessage controlMessage) {
+    protected PafMessage processControlMessage(SessionControlMessage controlMessage) {
         // TODO Auto-generated method stub
         return null;
     }

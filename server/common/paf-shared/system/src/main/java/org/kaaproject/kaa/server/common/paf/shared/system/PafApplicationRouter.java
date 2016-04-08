@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.common.paf.shared.system;
 
-public interface PafApplicationRouter {
-
+public interface PafApplicationRouter  {
     
 }
