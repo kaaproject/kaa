@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
-import com.google.gwt.thirdparty.json.JSONArray;
-import com.google.gwt.thirdparty.json.JSONException;
-import com.google.gwt.thirdparty.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,23 +49,5 @@ public class ServletUtils {
         } catch (UnsupportedEncodingException ence) {
             LOG.error("Exception catched: ", ence);
         }
-    }
-
-    public static String convertUuid(String json) {
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(json);
-            JSONArray array = jsonObject.getJSONObject("AddressList").getJSONArray("array");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject currentObject = (JSONObject) array.get(i);
-                currentObject.remove("__uuid");
-                currentObject.put("__uuid", "null");
-            }
-            jsonObject.remove("__uuid");
-            jsonObject.put("__uuid", "null");
-        } catch (JSONException e) {
-            LOG.error("Exception handled: ", e);
-        }
-        return jsonObject.toString().replaceAll("\"null\"", "null");
     }
 }

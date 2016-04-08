@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
-import com.google.gwt.thirdparty.json.JSONArray;
-import com.google.gwt.thirdparty.json.JSONException;
-import com.google.gwt.thirdparty.json.JSONObject;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
@@ -53,7 +50,6 @@ public class ConfigurationDownloadServlet extends HttpServlet implements Servlet
 
         ConfigurationRecordDto dto = configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
         String body = dto.getActiveStructureDto().getBody();
-        body = ServletUtils.convertUuid(body);
         resp.setContentType("application/octet-stream");
         resp.setHeader("Content-Disposition:", "attachment;filename=configurationSchema.txt");
         resp.setBufferSize(BUFFER);
