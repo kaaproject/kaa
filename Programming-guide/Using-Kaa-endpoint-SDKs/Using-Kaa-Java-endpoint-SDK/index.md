@@ -21,6 +21,7 @@ sort_idx: 40
 
 # Minimum Requirements
 
+For using Java endpoint SDK you need to have at least 80 Mb RAM.
 
 # Using endpoint SDK in your appication
 
