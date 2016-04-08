@@ -11,14 +11,14 @@ sort_idx: 20
 * [Third party components](#third-party-components)
 * [Installing Kaa](#installing-kaa)
   * [Single node installation](#single-node-installation)
-  * [Node claster setup](#node-claster-setup)
+  * [Node cluster setup](#node-cluster-setup)
   * [AWS deployment](#aws-deployment)
   * [Planning your deployment](#planning-your-deployment)
-* [Throubleshooting](#throubleshooting)
+* [Troubleshooting](#troubleshooting)
 
 ## Introduction
 
-This guide overview over kaa platform instalation.
+This guide overview over kaa platform installation.
 
 ## System requirements
 
@@ -49,15 +49,15 @@ Kaa also requires [MongoDB 2.6.9](http://www.mongodb.org/downloads) or [Cassandr
 
 ## Installing Kaa
 
-Kaa platform provides you several options for kaa-node server instalation, for more detail on how to install your kaa server please refer to next sections.
+Kaa platform provides you several options for kaa-node server installation, for more detail on how to install your kaa server please refer to next sections.
 
 ### Single node installation
 
 If you need to install and configure Kaa components on a single Linux node refer to [Single node installation](Single-node-installation) documentation page.
 
-### Node claster setup
+### Node cluster setup
 
-To lern how to create kaa-node claster refer to [Node claster setup](Cluster-setup) documentation page.
+To learn how to create kaa-node cluster refer to [Node cluster setup](Cluster-setup) documentation page.
 
 ### AWS deployment.
 
@@ -67,6 +67,6 @@ You can either install Kaa server as described on this page or run it on [Amazon
 
 For more information about environment setup please refet to [Planning your deployment](Planning-your-deployment/) documentation page.
 
-## Throubleshooting
+## Troubleshooting
 
 Common issues covered in this [guide](../Troubleshooting).
