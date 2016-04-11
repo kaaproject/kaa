@@ -95,7 +95,9 @@
     <bean id="internalCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.InternalCredentialsService">
         <property name="credentialsDao" ref="credentialsDao"/>
     </bean>
+    <alias name="internalCredentialsService" alias="Internal Credentials Service"/>
 
     <bean id="trustfulCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService"/>
+    <alias name="trustfulCredentialsService" alias="Trustful Credentials Service"/>
 
 </beans>

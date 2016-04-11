@@ -16,10 +16,9 @@
 
 package org.kaaproject.kaa.server.node.service.credentials;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -56,8 +55,8 @@ public final class DefaultCredentialsServiceLocator implements CredentialsServic
     public CredentialsService getCredentialsService(String applicationId) {
         String serviceName = this.applicationService.findAppById(applicationId).getCredentialsServiceName();
         if (StringUtils.isBlank(serviceName)) {
-            LOG.debug("No credentials service configured for application [{}], using [{}]", applicationId, serviceName);
             serviceName = DEFAULT_CREDENTIALS_SERVICE_NAME;
+            LOG.debug("No credentials service configured for application [{}], using [{}]", applicationId, serviceName);
         }
         CredentialsServiceLocator locator = credentialsServiceLocatorMap.get(serviceName);
         if (locator == null) {
@@ -69,8 +68,6 @@ public final class DefaultCredentialsServiceLocator implements CredentialsServic
 
     @Override
     public List<String> getCredentialsServiceNames() {
-        List<String> result = new ArrayList<>(credentialsServiceLocatorMap.keySet());
-        Collections.sort(result);
-        return result;
+        return this.credentialsServiceLocatorMap.keySet().stream().sorted().collect(Collectors.toList());
     }
 }

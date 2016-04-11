@@ -57,6 +57,8 @@ public interface CredentialsService {
      * @param credentialsId The credentials ID
      *
      * @return The credentials with the given ID
+     *
+     * @throws CredentialsServiceException - if an unexpected exception occures.
      */
     Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId) throws CredentialsServiceException;
 
