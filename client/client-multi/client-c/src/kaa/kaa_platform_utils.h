@@ -18,6 +18,8 @@
 #ifndef KAA_PLATFORM_UTILS_H_
 #define KAA_PLATFORM_UTILS_H_
 
+#include <stddef.h>
+#include <stdint.h>
 
 #include "kaa_error.h"
 #include "kaa_platform_common.h"

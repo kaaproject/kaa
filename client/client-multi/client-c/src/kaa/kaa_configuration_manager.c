@@ -75,6 +75,11 @@ kaa_error_t kaa_extension_configuration_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_configuration_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_configuration_manager_get_size(context, expected_size);
+}
+
 static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const char *buffer, size_t buffer_size)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, NULL);

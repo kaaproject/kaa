@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2016 CyberVision, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 #include <kaa_extension.h>
 #include <kaa_common.h>
 
@@ -73,3 +88,18 @@ kaa_error_t kaa_extension_logging_deinit(void *context) { (void)context; return 
 kaa_error_t kaa_extension_configuration_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_notification_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_user_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
+
+kaa_error_t kaa_extension_bootstrap_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_profile_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_event_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_logging_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_configuration_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_notification_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_user_request_get_size(void *self, size_t *expected_size)
+{ (void)self; (void)expected_size; return KAA_ERR_NONE; }

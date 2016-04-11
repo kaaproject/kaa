@@ -40,7 +40,7 @@ kaa_notification_listener_t listener;
 kaa_notification_listener_t listener_2;
 kaa_logger_t* logger;
 
-char* buffer_pointer = NULL;
+uint8_t *buffer_pointer = NULL;
 kaa_list_t *topics = NULL;
 uint64_t topic_id;
 
@@ -48,7 +48,7 @@ uint32_t id,id2;
 kaa_error_t err = 0;
 size_t size = 0;
 
-char *pointer_to_sqn = NULL;
+uint8_t *pointer_to_sqn = NULL;
 
 bool listener_has_been_notified = false;
 kaa_topic_listener_t topic_listener;
@@ -70,7 +70,7 @@ void on_topic(void* contextmock, kaa_list_t *topics)
     printf("\nTopic list listener got his topic list.\n\n");
 }
 
-char *buffer = NULL;
+uint8_t *buffer = NULL;
 size_t buffer_size = 0;
 
 /* We should remove status file after running the test, because
@@ -140,7 +140,7 @@ void test_deserializing(void **state)
                                           + sizeof(uint32_t) /* Notification sqn */ + sizeof(uint16_t) + sizeof(uint16_t) /* Notification type + uid length */+ sizeof (uint32_t) /* notification body size*/ + sizeof (uint64_t) /*Topic Id*/
                                           + /*Not unicast notifications*/ + kaa_aligned_size_get(notification->get_size(notification)));
 
-    char *unserialized_buffer = (char *)KAA_MALLOC(size);
+    uint8_t *unserialized_buffer = KAA_MALLOC(size);
     ASSERT_NOT_NULL(unserialized_buffer);
     buffer_pointer = unserialized_buffer;
     memset(unserialized_buffer, 0, size);
@@ -195,7 +195,7 @@ void test_deserializing(void **state)
     *(uint64_t *)unserialized_buffer = KAA_HTONLL((uint64_t)22);
     unserialized_buffer += sizeof(uint64_t);
 
-    avro_writer_t avro_writer = avro_writer_memory(unserialized_buffer, notification->get_size(notification));
+    avro_writer_t avro_writer = avro_writer_memory((const char *)unserialized_buffer, notification->get_size(notification));
     notification->serialize(avro_writer, notification);
     err = kaa_platform_protocol_process_server_sync(context->platform_protocol, buffer_pointer, size);
     avro_writer_free(avro_writer);
@@ -293,17 +293,13 @@ void test_serializing(void **state)
 {
     (void)state;
 
-    kaa_serialize_info_t *info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
-
     kaa_extension_id service[] = { KAA_EXTENSION_NOTIFICATION };
 
-    info->services = service;
-    info->services_count = 1;
-    err = kaa_platform_protocol_serialize_client_sync(context->platform_protocol, info, &buffer, &buffer_size);
+    err = kaa_platform_protocol_alloc_serialize_client_sync(context->platform_protocol, service, 1,
+            &buffer, &buffer_size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     KAA_FREE(buffer);
-    KAA_FREE(info);
 }
 
 void test_subscriptions(void **state)

@@ -101,3 +101,13 @@ kaa_error_t kaa_extension_deinit_all(void)
 
     return result;
 }
+
+kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected_size)
+{
+    size_t idx = extension_id_to_idx(id);
+    if (idx == EXTENSION_NOT_FOUND) {
+        return KAA_ERR_NOT_FOUND;
+    }
+
+    return kaa_extensions[idx]->request_get_size(kaa_extension_contexts[idx], expected_size);
+}

@@ -70,6 +70,12 @@ kaa_error_t kaa_extension_profile_deinit(void *context)
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_profile_request_get_size(void *context,
+        size_t *expected_size)
+{
+    return kaa_profile_request_get_size(context, expected_size);
+}
+
 static bool resync_is_required(kaa_profile_manager_t *self)
 {
     return self->need_resync || self->status->profile_needs_resync;

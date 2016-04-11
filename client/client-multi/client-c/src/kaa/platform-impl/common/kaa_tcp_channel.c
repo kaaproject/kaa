@@ -983,9 +983,9 @@ void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *m
 
     if (!zipped && !encrypted) {
         kaa_error_t error_code =
-                kaa_platform_protocol_process_server_sync(channel->transport_context.kaa_context->platform_protocol
-                                                        , message->sync_request
-                                                        , message->sync_request_size);
+                kaa_platform_protocol_process_server_sync(
+                        channel->transport_context.kaa_context->platform_protocol,
+                        (const uint8_t *)message->sync_request, message->sync_request_size);
         if (error_code)
             KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel [0x%08X] failed to process server sync"
                                                                                     , channel->access_point.id);
@@ -1080,17 +1080,16 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     size_t buffer_size = 0;
     size_t request_size = 0;
 
-    kaa_serialize_info_t serialize_info;
-    serialize_info.services = self->supported_services;
-    serialize_info.services_count = self->supported_service_count;
-
-    char *sync_buffer = NULL;
+    uint8_t *sync_buffer = NULL;
     size_t sync_size = 0;
 
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
-                                                           , &serialize_info
-                                                           , &sync_buffer
-                                                           , &sync_size);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calling kaa_platform_protocol_alloc_serialize_client_sync");
+    error_code = kaa_platform_protocol_alloc_serialize_client_sync(
+            self->transport_context.kaa_context->platform_protocol,
+            self->supported_services,
+            self->supported_service_count,
+            &sync_buffer,
+            &sync_size);
 
     KAA_LOG_TRACE(self->logger, error_code, "Kaa TCP channel [0x%08X] going to send CONNECT message (%zu bytes)"
                                                                                 , self->access_point.id, sync_size);
@@ -1118,7 +1117,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     kaatcp_error_t kaatcp_error_code =
             kaatcp_fill_connect_message(KAA_TCP_CHANNEL_MAX_TIMEOUT
                                       , KAA_PLATFORM_PROTOCOL_ID
-                                      , sync_buffer
+                                      , (char *)sync_buffer
                                       , sync_size
                                       , self->encryption.aes_session_key
                                       , self->encryption.aes_session_key_size
@@ -1479,24 +1478,22 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
     KAA_RETURN_IF_NIL2(service, services_count, KAA_ERR_NONE);
 
     char *buffer = NULL;
-    char *sync_buffer = NULL;
+    uint8_t *sync_buffer = NULL;
     size_t sync_size = 0;
     size_t buffer_size = 0;
     bool zipped = false;
     bool encrypted = false;
     kaatcp_kaasync_t kaa_sync_message;
-    kaa_serialize_info_t serialize_info;
 
     kaa_error_t error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
 
-    serialize_info.services = service;
-    serialize_info.services_count = services_count;
-
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
-                                                           , &serialize_info
-                                                           , &sync_buffer
-                                                           , &sync_size);
+    error_code = kaa_platform_protocol_alloc_serialize_client_sync(
+            self->transport_context.kaa_context->platform_protocol,
+            service,
+            services_count,
+            &sync_buffer,
+            &sync_size);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] serialized client sync (%zu bytes)"
                                                                         , self->access_point.id, sync_size);
@@ -1520,7 +1517,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
         return error_code;
     }
 
-    kaatcp_error_t parser_error_code = kaatcp_fill_kaasync_message(sync_buffer
+    kaatcp_error_t parser_error_code = kaatcp_fill_kaasync_message((char *)sync_buffer
                                                                   , sync_size
                                                                   , self->message_id++
                                                                   , zipped

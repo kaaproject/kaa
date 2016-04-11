@@ -22,6 +22,8 @@
 #define FAKE_EXTENSION2_ID 5
 #define FAKE_EXTENSION3_ID 17
 
+#define BAD_EXTENSION_ID 3
+
 static void test_kaa_extension_get_wrong_extension(void **state)
 {
     (void)state;
@@ -184,6 +186,57 @@ static void test_kaa_extension_deinit_all_fail(void **state)
     assert_int_equal(KAA_ERR_NOMEM, kaa_extension_deinit_all());
 }
 
+static void test_kaa_extension_request_get_size_not_found(void **state)
+{
+    (void)state;
+
+    assert_int_equal(KAA_ERR_NOT_FOUND, kaa_extension_request_get_size(BAD_EXTENSION_ID, NULL));
+}
+
+static void test_kaa_extension_request_get_size_ok(void **state)
+{
+    (void)state;
+    int fake_context1, fake_context2, fake_context3;
+    size_t size = 0;
+
+    kaa_extension_set_context(FAKE_EXTENSION1_ID, &fake_context1);
+    expect_string(called, name, "fake_request_get_size1");
+    expect_value(fake_request_get_size1, context, &fake_context1);
+    will_return(fake_request_get_size1, 143);
+    will_return(fake_request_get_size1, KAA_ERR_NONE);
+    assert_int_equal(KAA_ERR_NONE, kaa_extension_request_get_size(FAKE_EXTENSION1_ID, &size));
+    assert_int_equal(143, size);
+
+    kaa_extension_set_context(FAKE_EXTENSION2_ID, &fake_context2);
+    expect_string(called, name, "fake_request_get_size2");
+    expect_value(fake_request_get_size2, context, &fake_context2);
+    will_return(fake_request_get_size2, 512);
+    will_return(fake_request_get_size2, KAA_ERR_NONE);
+    assert_int_equal(KAA_ERR_NONE, kaa_extension_request_get_size(FAKE_EXTENSION2_ID, &size));
+    assert_int_equal(512, size);
+
+    kaa_extension_set_context(FAKE_EXTENSION3_ID, &fake_context3);
+    expect_string(called, name, "fake_request_get_size3");
+    expect_value(fake_request_get_size3, context, &fake_context3);
+    will_return(fake_request_get_size3, 0);
+    will_return(fake_request_get_size3, KAA_ERR_NONE);
+    assert_int_equal(KAA_ERR_NONE, kaa_extension_request_get_size(FAKE_EXTENSION3_ID, &size));
+    assert_int_equal(0, size);
+}
+
+static void test_kaa_extension_request_get_size_fail(void **state)
+{
+    (void)state;
+    size_t size = 0;
+
+    kaa_extension_set_context(FAKE_EXTENSION1_ID, NULL);
+    expect_string(called, name, "fake_request_get_size1");
+    expect_value(fake_request_get_size1, context, NULL);
+    will_return(fake_request_get_size1, 0);
+    will_return(fake_request_get_size1, KAA_ERR_NOMEM);
+    assert_int_equal(KAA_ERR_NOMEM, kaa_extension_request_get_size(FAKE_EXTENSION1_ID, &size));
+}
+
 int main(void)
 {
     // Note that this kaa_extensions is a different instance from
@@ -204,6 +257,10 @@ int main(void)
 
         cmocka_unit_test(test_kaa_extension_deinit_all_ok),
         cmocka_unit_test(test_kaa_extension_deinit_all_fail),
+
+        cmocka_unit_test(test_kaa_extension_request_get_size_not_found),
+        cmocka_unit_test(test_kaa_extension_request_get_size_ok),
+        cmocka_unit_test(test_kaa_extension_request_get_size_fail),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
@@ -259,20 +316,47 @@ static kaa_error_t fake_deinit3(void *context)
     return mock_type(kaa_error_t);
 }
 
+static kaa_error_t fake_request_get_size1(void *context, size_t *expected_size)
+{
+    called("fake_request_get_size1");
+    check_expected_ptr(context);
+    *expected_size = mock_type(size_t);
+    return mock_type(kaa_error_t);
+}
+
+static kaa_error_t fake_request_get_size2(void *context, size_t *expected_size)
+{
+    called("fake_request_get_size2");
+    check_expected_ptr(context);
+    *expected_size = mock_type(size_t);
+    return mock_type(kaa_error_t);
+}
+
+static kaa_error_t fake_request_get_size3(void *context, size_t *expected_size)
+{
+    called("fake_request_get_size3");
+    check_expected_ptr(context);
+    *expected_size = mock_type(size_t);
+    return mock_type(kaa_error_t);
+}
+
 const struct kaa_extension fake_extension1 = {
     .id = FAKE_EXTENSION1_ID,
     .init = fake_init1,
     .deinit = fake_deinit1,
+    .request_get_size = fake_request_get_size1,
 };
 
 const struct kaa_extension fake_extension2 = {
     .id = FAKE_EXTENSION2_ID,
     .init = fake_init2,
     .deinit = fake_deinit2,
+    .request_get_size = fake_request_get_size2,
 };
 
 const struct kaa_extension fake_extension3 = {
     .id = FAKE_EXTENSION3_ID,
     .init = fake_init3,
     .deinit = fake_deinit3,
+    .request_get_size = fake_request_get_size3,
 };
