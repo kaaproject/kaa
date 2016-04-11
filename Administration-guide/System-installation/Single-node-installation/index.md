@@ -25,7 +25,9 @@ This guide describes installation and configuration of Kaa components on a singl
 
 ### Third party components installation
 
-Refer to the following guides for more details
+Refer to the following guides for more details.
+
+Kaa requires the following third party components to be installed and configured. For more information refer to [required third party](../#third-party-components) list.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Ubuntu">Ubuntu 14.04</a></li>
@@ -66,7 +68,7 @@ Refer to the following guides for more details
    javac 1.8.0_66
    ```
 
-3. Install [PostgreSQL 9.4](http://www.postgresql.org/download/).  
+3. Install [PostgreSQL 9.4](http://www.postgresql.org/download/) (Optional, you may install [MariaDB 5.5](https://mariadb.org/download/) instead).  
 Add official PostgreSQL repository.
 
    ```bash
@@ -108,7 +110,7 @@ Add official PostgreSQL repository.
    CREATE DATABASE kaa;
    ```
 
-4. Install [MariaDB 5.5](https://mariadb.org/download/)
+4. Install [MariaDB 5.5](https://mariadb.org/download/) (Optional, you may install [PostgreSQL 9.4](http://www.postgresql.org/download/) instead).
 
    Install MariaDB 5.5 for Ubuntu 14.04 64-bit.
 
@@ -282,7 +284,7 @@ Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
     Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
    ```
 
-3. Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ).
+3. Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ) (Optional, you may install [MariaDB 5.5](https://mariadb.org/download/) instead).
 
    Exclude old PostgreSQL from the default repository, append a line ```exclude=postgresql*``` to the sections **[base]** and **[updates]**.
 
@@ -385,7 +387,7 @@ Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
     Starting postgresql-9.4 service:                           [  OK  ]
    ```
 
-4. Install [MariaDB 5.5](https://mariadb.org/download/)
+4. Install [MariaDB 5.5](https://mariadb.org/download/) (Optional, you may install [PostgreSQL 9.4](http://www.postgresql.org/download/) instead).
 
    Install MariaDB 5.5 for CentOS 6.7 64-bit.
    Add MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (name it MariaDB.repo or something similar).
@@ -662,7 +664,7 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
 
 ### SQL database configuration
 
-Check that the PostgreSQL password is up to date in the server configuration files.
+Check that the PostgreSQL or MariaDB password is up to date in the server configuration files.
 
 ```bash
 $ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_password
