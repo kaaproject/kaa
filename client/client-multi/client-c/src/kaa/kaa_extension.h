@@ -104,6 +104,29 @@ struct kaa_extension {
      */
     kaa_error_t (*request_serialize)(void *context, uint32_t request_id,
             uint8_t *buffer, size_t *size, bool *sync_needed);
+
+    /**
+     * Extension's action in response to the server's sync message.
+     *
+     * @param[in] context    The extension context, as returned by init().
+     *
+     * @param[in] request_id The id of the request server is responding.
+     *
+     * @param[in] extension_options
+     * @parblock
+     * Protocol-dependent options.
+     *
+     * @note Don't rely on it, as it may be removed in the future.
+     * @endparblock
+     *
+     * @param[in] buffer     The message.
+     *
+     * @param[in] size       Size of the @p buffer.
+     *
+     * @return Error code.
+     */
+    kaa_error_t (*server_sync)(void *context, uint32_t request_id,
+            uint16_t extension_options, const uint8_t *buffer, size_t size);
 };
 
 /**
@@ -169,6 +192,14 @@ kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected
  */
 kaa_error_t kaa_extension_request_serialize(kaa_extension_id id, uint32_t request_id,
         uint8_t *buffer, size_t *size, bool *sync_needed);
+
+/**
+ * A proxy for kaa_extension::server_sync().
+ *
+ * @retval KAA_ERR_NOT_FOUND Extension was not found.
+ */
+kaa_error_t kaa_extension_server_sync(kaa_extension_id id, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
 
 #ifdef __cplusplus
 }

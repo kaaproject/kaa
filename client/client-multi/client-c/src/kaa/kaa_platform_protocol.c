@@ -316,6 +316,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
         }
 
         /* Do not resync unless it is requested by the metadata extension */
+
         // TODO: do profile_needs_resync must be set inside of loop?
         self->status->profile_needs_resync = false;
 
