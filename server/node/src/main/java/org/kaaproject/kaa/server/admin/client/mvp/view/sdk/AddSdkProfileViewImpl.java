@@ -88,7 +88,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         int row = 0;
         Widget label = new Label(Utils.constants.name());
         label.addStyleName(REQUIRED);
-        name = new KaaAdminSizedTextBox(15);
+        name = new KaaAdminSizedTextBox(256);
         name.addInputHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, name);

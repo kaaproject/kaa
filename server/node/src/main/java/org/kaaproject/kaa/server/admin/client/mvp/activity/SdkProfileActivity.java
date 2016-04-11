@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
@@ -63,7 +64,13 @@ public class SdkProfileActivity extends
     @Override
     protected void onEntityRetrieved() {
         detailsView.getSdkProfileToken().setValue(entity.getSdkProfile().getToken());
-        detailsView.getSdkName().setValue(entity.getSdkProfile().getName());
+
+        String name = this.entity.getSdkProfile().getName();
+        SizedTextBox nameContainer = this.detailsView.getSdkName();
+        final int maxNameLength = 32;
+        nameContainer.setValue(Utils.abbreviateText(name, maxNameLength));
+        nameContainer.setTitle(name.length() > maxNameLength ? name : "");
+
         detailsView.getSdkAuthor().setValue(entity.getSdkProfile().getCreatedUsername());
         detailsView.getSdkDateCreated().setValue(Utils.millisecondsToDateString(
                 entity.getSdkProfile().getCreatedTime()));

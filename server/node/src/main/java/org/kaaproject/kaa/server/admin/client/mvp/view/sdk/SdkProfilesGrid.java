@@ -54,7 +54,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                 new StringValueProvider<SdkProfileDto>() {
                     @Override
                     public String getValue(SdkProfileDto item) {
-                        return item.getName();
+                        return Utils.abbreviateText(item.getName(), 8);
                     }
                 }, 40);
 
@@ -110,7 +110,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                 new StringValueProvider<SdkProfileDto>() {
                     @Override
                     public String getValue(SdkProfileDto item) {
-                        return item.getToken();
+                        return Utils.abbreviateText(item.getToken(), 16);
                     }
                 }, 80);
 
