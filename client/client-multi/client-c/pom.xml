@@ -181,20 +181,7 @@
                         <artifactId>doxygen-maven-plugin</artifactId>
                         <version>1.0.1</version>
                         <configuration>
-                            <projectName>${project.artifactId}</projectName>
-                            <projectNumber>${project.version}</projectNumber>
-                            <allexternals>false</allexternals>
-                            <alphabeticalIndex>true</alphabeticalIndex>
-                            <extractAll>true</extractAll>
-                            <extractStatic>true</extractStatic>
-                            <recursive>true</recursive>
-                            <haveGraph>true</haveGraph>
-                            <generateHtml>true</generateHtml>
-                            <generateLatex>false</generateLatex>
-                            <filePatterns>*.h *.dox</filePatterns>
-                            <inputDirectory>${basedir}/src</inputDirectory>
-                            <outputDirectory>${basedir}/target/apidocs</outputDirectory>
-                            <excludePatterns>*/src/gen/* */test/* */src/avro_src/*</excludePatterns>
+                            <configurationFile>Doxyfile</configurationFile>
                         </configuration>
                         <executions>
                             <execution>
