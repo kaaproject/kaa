@@ -132,16 +132,13 @@ void test_create_bootstrap_manager(void **state)
     kaa_error_t error_code;
     kaa_bootstrap_manager_t* manager = NULL;
 
-    error_code = kaa_bootstrap_manager_create(NULL, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(NULL, &kaa_context);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_bootstrap_manager_create(&manager, NULL, logger);
+    error_code = kaa_bootstrap_manager_create(&manager, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_bootstrap_manager_create(&manager, channel_manager, NULL);
-    ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = kaa_bootstrap_manager_create(&manager, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(&manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_bootstrap_manager_destroy(manager);
@@ -181,7 +178,7 @@ void test_handle_server_sync(void **state)
     kaa_bootstrap_manager_t *bootstrap_manager = NULL;
 
 
-    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_context.bootstrap_manager = bootstrap_manager;
@@ -192,15 +189,18 @@ void test_handle_server_sync(void **state)
     kaa_transport_protocol_id_t protocol2 = { 2, 1 };
     kaa_transport_protocol_id_t protocol3 = { 465, 564 };
 
-    test_channel_context_t protocol1_channel_context = { protocol1, NULL, SUPPORTED_SERVICES, SUPPORTED_SERVICES_COUNT };
+    test_channel_context_t protocol1_channel_context = { protocol1, NULL, SUPPORTED_SERVICES,
+                                                         SUPPORTED_SERVICES_COUNT, {NULL} };
     kaa_transport_channel_interface_t protocol1_channel;
     test_create_channel_interface(&protocol1_channel, &protocol1_channel_context);
 
-    test_channel_context_t protocol2_channel_context = { protocol2, NULL, SUPPORTED_SERVICES, SUPPORTED_SERVICES_COUNT };
+    test_channel_context_t protocol2_channel_context = { protocol2, NULL, SUPPORTED_SERVICES,
+                                                         SUPPORTED_SERVICES_COUNT, {NULL} };
     kaa_transport_channel_interface_t protocol2_channel;
     test_create_channel_interface(&protocol2_channel, &protocol2_channel_context);
 
-    test_channel_context_t protocol3_channel_context = { protocol3, NULL, SUPPORTED_SERVICES, SUPPORTED_SERVICES_COUNT };
+    test_channel_context_t protocol3_channel_context = { protocol3, NULL, SUPPORTED_SERVICES,
+                                                         SUPPORTED_SERVICES_COUNT, {NULL} };
     kaa_transport_channel_interface_t protocol3_channel;
     test_create_channel_interface(&protocol3_channel, &protocol3_channel_context);
 
@@ -380,7 +380,7 @@ void test_bootstrap_channel(void **state)
     kaa_bootstrap_manager_t *bootstrap_manager = NULL;
 
 
-    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_context.bootstrap_manager = bootstrap_manager;
@@ -394,7 +394,8 @@ void test_bootstrap_channel(void **state)
     test_channel_context_t bootstrap_channel_context = { KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id
                                                        , NULL
                                                        , bootstrap_service
-                                                       , 1 };
+                                                       , 1
+                                                       , {NULL} };
     kaa_transport_channel_interface_t bootstrap_channel;
     test_create_channel_interface(&bootstrap_channel, &bootstrap_channel_context);
 
@@ -476,12 +477,16 @@ int test_deinit(void)
 }
 
 
-
+#if KAA_BOOTSTRAP_ACCESS_POINT > 0
 KAA_SUITE_MAIN(Bootstrap, test_init, test_deinit,
         KAA_TEST_CASE(create_bootstrap_manager, test_create_bootstrap_manager)
         KAA_TEST_CASE(handle_server_sync, test_handle_server_sync)
-#if KAA_BOOTSTRAP_ACCESS_POINT_COUNT > 0
-       KAA_TEST_CASE(test_bootstrap_channel, test_bootstrap_channel)
-#endif
+        KAA_TEST_CASE(test_bootstrap_channel, test_bootstrap_channel)
 )
+#else
+KAA_SUITE_MAIN(Bootstrap, test_init, test_deinit,
+        KAA_TEST_CASE(create_bootstrap_manager, test_create_bootstrap_manager)
+        KAA_TEST_CASE(handle_server_sync, test_handle_server_sync)
+)
+#endif
 
