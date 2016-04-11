@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control.service.sdk;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,8 @@ import java.util.TreeMap;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
+import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
+import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,6 +180,21 @@ public class SchemaUtil {
                 break;
             default:
                 break;
+        }
+    }
+
+    public static Collection<JavaDynamicBean> compileAvroSchema(Schema avroSchema) {
+        try {
+            LOG.debug("Compiling {}", avroSchema);
+            Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(Collections.singletonList(avroSchema));
+            List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(avroSchema, uniqueSchemas);
+            JavaDynamicCompiler compiler = new JavaDynamicCompiler();
+            compiler.init();
+            return compiler.compile(javaSources);
+        } catch (Exception cause) {
+            LOG.error(MessageFormat.format("Failed to compile {0}", avroSchema), cause);
+            String userMessage = "Failed to compile the schema. Please, ensure the schema body is correct";
+            throw new IllegalArgumentException(userMessage, cause);
         }
     }
 }

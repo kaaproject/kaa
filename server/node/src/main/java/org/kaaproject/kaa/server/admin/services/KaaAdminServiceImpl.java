@@ -130,6 +130,7 @@ import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.operations.service.filter.DefaultFilterEvaluator;
 import org.kaaproject.kaa.server.operations.service.filter.el.GenericRecordPropertyAccessor;
 import org.slf4j.Logger;
@@ -2800,6 +2801,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     private void validateRecordSchema(Schema schema) throws KaaAdminServiceException {
+        SchemaUtil.compileAvroSchema(schema);
         if (schema.getType() != Schema.Type.RECORD) {
             throw new KaaAdminServiceException("Schema " + schema.getFullName() + " is not a record schema!", ServiceErrorCode.INVALID_SCHEMA);
         }
