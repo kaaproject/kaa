@@ -16,7 +16,7 @@ sort_idx: 30
 
 ## Introduction
 
-This page describes how to setup and configure kaa-mode cluster.
+This page describes how to setup and configure kaa-node cluster.
 
 In general cluster setup is similar to [single node setup](../Single-node-installation), except few details. We need at least 3 nodes to create a reliable cluster. For simplicity in this tutorial we will be using single instance of SQL and NoSQL databases, so this tutorial doesn't cover such themes like setting up Cassandra, MongoDB or PostgresSql cluster setup. Let us assume that we have 3 nodes with Ubuntu 14.04 installed on each of them.
 
@@ -28,7 +28,7 @@ node3 172.3.3.3
 
 On node1 we will setup our SQL (PostgreSql) and NoSQl (MongoDB) databases and run Zookeeper.
 
-On every of them we had successfully installed kaa and everything that left it is to configure kaa-node services.
+On every of them we had successfully installed kaa and everything that left is to configure kaa-node services.
 
 ## Cluster configuration
 
@@ -54,13 +54,13 @@ After Kaa installation on Ubuntu/Debian OS (deb packages), configuration files f
 
 ### Kaa-node configuration
 
-Before starting configuration stop kaa-node service by executing next command
+Stop kaa-node service before starting configuration by executing next command:
 
 ```bash
  $ sudo service kaa-node stop
 ```
 
-Kaa services (bootstrap, control or operations) can be enabled or disabled on our node by editing corresponding properties in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file.
+Kaa services (bootstrap, control or operations) can be enabled or disabled on node by editing corresponding properties in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file.
 
 ```bash
 # Specifies if Control Server is enabled.
@@ -115,17 +115,17 @@ Kaa zookeeper hosts - list of all zookeeper services on nodes.
  zk_host_port_list=<zookeeper_ip>:<zookeeper_port>
 ```
 
-So assuming that we peek standard zookeeper port (2181) for all of our nodes and on every of them is running zookeeper our configurations would look like this
+We assume that zookeeper with default port (2181) is running on every node. Configuration would look as follow:
 
 ```bash
  # node1
- zk_host_port_list=172.1.1.1:2181
+ zk_host_port_list=172.1.1.1:2181,172.2.2.2:2181,172.3.3.3:2181
 
  # node2
- zk_host_port_list=172.2.2.2:2181
+ zk_host_port_list=172.2.2.2:2181,172.1.1.1:2181,172.3.3.3:2181
 
  # node3
- zk_host_port_list=172.3.3.3:2181
+ zk_host_port_list=172.3.3.3:2181,172.2.2.2:2181,172.1.1.1:2181
 ```
 
 For every node insert node id in file ```/var/lib/zookeeper/myid```. The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing else. The id must be unique within the ensemble and should have a value between 1 and 255. For example we have 3 nodes so we will have next values 1, 2, 3. For more details visit this [documentation page](https://zookeeper.apache.org/doc/r3.3.2/zookeeperAdmin.html#sc_zkMulitServerSetup).
