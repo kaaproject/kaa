@@ -175,6 +175,18 @@ kaa_error_t kaa_extension_event_request_serialize(void *context, uint32_t reques
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_event_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_event_handle_server_sync(context, &reader, extension_options, size, request_id);
+}
+
 static void destroy_event_listener_request(void *request_p)
 {
     KAA_RETURN_IF_NIL(request_p,);

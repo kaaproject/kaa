@@ -120,6 +120,20 @@ kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint32_t re
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_bootstrap_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_bootstrap_manager_handle_server_sync(context, &reader, extension_options, size);
+}
+
 static void destroy_access_point(void *data)
 {
     KAA_RETURN_IF_NIL(data,);

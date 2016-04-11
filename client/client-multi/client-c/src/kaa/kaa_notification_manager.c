@@ -150,6 +150,21 @@ kaa_error_t kaa_extension_notification_request_serialize(void *context, uint32_t
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_notification_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+    (void)extension_options;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_notification_manager_handle_server_sync(context, &reader, size);
+}
+
 static void shift_and_sub_extension(kaa_platform_message_reader_t *reader, uint32_t *extension_length, size_t size)
 {
     KAA_RETURN_IF_NIL2(reader, extension_length,);

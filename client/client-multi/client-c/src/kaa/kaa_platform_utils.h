@@ -46,6 +46,9 @@ typedef struct {
 #define KAA_MESSAGE_WRITER(buffer, len) \
     (kaa_platform_message_writer_t){ (buffer), (buffer), (buffer) + (len) }
 
+#define KAA_MESSAGE_READER(buffer, len) \
+    (kaa_platform_message_reader_t){ (buffer), (buffer), (buffer) + (len) }
+
 /**
  * @deprecated Use @ref KAA_MESSAGE_WRITER instead -- it doesn't allocate memory.
  */
@@ -75,6 +78,9 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
 
 
 
+/**
+ * @deprecated Use @ref KAA_MESSAGE_READER instead -- it doesn't allocate memory.
+ */
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
                                              , const uint8_t *buffer
                                              , size_t len);

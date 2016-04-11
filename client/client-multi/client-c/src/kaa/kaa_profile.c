@@ -120,6 +120,20 @@ kaa_error_t kaa_extension_profile_request_serialize(void *context, uint32_t requ
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_extension_profile_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_profile_handle_server_sync(context, &reader, extension_options, size);
+}
+
 /*
  * PUBLIC FUNCTIONS
  */

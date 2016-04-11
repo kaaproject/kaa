@@ -40,6 +40,7 @@ static struct kaa_extension kaa_extension_bootstrap = {
     .deinit = kaa_extension_bootstrap_deinit,
     .request_get_size = kaa_extension_bootstrap_request_get_size,
     .request_serialize = kaa_extension_bootstrap_request_serialize,
+    .server_sync = kaa_extension_bootstrap_server_sync,
 };
 
 static struct kaa_extension kaa_extension_profile = {
@@ -48,6 +49,7 @@ static struct kaa_extension kaa_extension_profile = {
     .deinit = kaa_extension_profile_deinit,
     .request_get_size = kaa_extension_profile_request_get_size,
     .request_serialize = kaa_extension_profile_request_serialize,
+    .server_sync = kaa_extension_profile_server_sync,
 };
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
@@ -57,6 +59,7 @@ static struct kaa_extension kaa_extension_event = {
     .deinit = kaa_extension_event_deinit,
     .request_get_size = kaa_extension_event_request_get_size,
     .request_serialize = kaa_extension_event_request_serialize,
+    .server_sync = kaa_extension_event_server_sync,
 };
 #endif
 
@@ -67,6 +70,7 @@ static struct kaa_extension kaa_extension_logging = {
     .deinit = kaa_extension_logging_deinit,
     .request_get_size = kaa_extension_logging_request_get_size,
     .request_serialize = kaa_extension_logging_request_serialize,
+    .server_sync = kaa_extension_logging_server_sync,
 };
 #endif
 
@@ -77,6 +81,7 @@ static struct kaa_extension kaa_extension_configuration = {
     .deinit = kaa_extension_configuration_deinit,
     .request_get_size = kaa_extension_configuration_request_get_size,
     .request_serialize = kaa_extension_configuration_request_serialize,
+    .server_sync = kaa_extension_configuration_server_sync,
 };
 #endif
 
@@ -87,6 +92,7 @@ static struct kaa_extension kaa_extension_notification = {
     .deinit = kaa_extension_notification_deinit,
     .request_get_size = kaa_extension_notification_request_get_size,
     .request_serialize = kaa_extension_notification_request_serialize,
+    .server_sync = kaa_extension_notification_server_sync,
 };
 #endif
 
@@ -96,6 +102,7 @@ static struct kaa_extension kaa_extension_user = {
     .deinit = kaa_extension_user_deinit,
     .request_get_size = kaa_extension_user_request_get_size,
     .request_serialize = kaa_extension_user_request_serialize,
+    .server_sync = kaa_extension_user_server_sync,
 };
 
 // I'm not sure in what order they should be, so just kept order from

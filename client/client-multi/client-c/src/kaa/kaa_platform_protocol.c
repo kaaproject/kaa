@@ -167,35 +167,31 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self,
 static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self,
         const kaa_extension_id services[], size_t services_count, uint8_t *buffer, size_t *size)
 {
-    kaa_platform_message_writer_t *writer = NULL;
-    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
-    if (error_code) {
-        return error_code;
-    }
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
 
     uint16_t total_services_count = services_count + 1 /* Meta extension */;
 
-    error_code = kaa_platform_message_header_write(writer,
+    kaa_error_t error_code = kaa_platform_message_header_write(&writer,
             KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write the client sync header");
         goto fail;
     }
 
-    uint16_t *extension_count_p = (uint16_t *)writer->current;
-    writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
+    uint16_t *extension_count_p = (uint16_t *)writer.current;
+    writer.current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
     // TODO: static assert KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE == sizeof(uint16_t)
 
-    error_code = kaa_meta_data_request_serialize(self, writer, self->request_id);
+    error_code = kaa_meta_data_request_serialize(self, &writer, self->request_id);
     if (error_code) {
         goto fail;
     }
 
     while (!error_code && services_count--) {
-        size_t size_required = writer->end - writer->current;
+        size_t size_required = writer.end - writer.current;
         bool need_resync = false;
         error_code = kaa_extension_request_serialize(services[services_count],
-                self->request_id, writer->current, &size_required, &need_resync);
+                self->request_id, writer.current, &size_required, &need_resync);
         if (error_code) {
             KAA_LOG_ERROR(self->logger, error_code,
                     "Failed to serialize the '%d' extension", services[services_count]);
@@ -207,15 +203,13 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self,
             continue;
         }
 
-        writer->current += size_required;
+        writer.current += size_required;
     }
 
     *extension_count_p = KAA_HTONS(total_services_count);
-    *size = writer->current - writer->begin;
+    *size = writer.current - writer.begin;
 
 fail:
-    kaa_platform_message_writer_destroy(writer);
-
     return error_code;
 }
 
@@ -271,19 +265,14 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE,
             "Server sync received: payload size '%zu'", buffer_size);
 
-    kaa_platform_message_reader_t *reader = NULL;
-    kaa_error_t error_code = kaa_platform_message_reader_create(&reader,
-            buffer, buffer_size);
-    if (error_code) {
-        return error_code;
-    }
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, buffer_size);
 
     uint32_t protocol_id = 0;
     uint16_t protocol_version = 0;
     uint16_t extension_count = 0;
 
-    error_code = kaa_platform_message_header_read(reader, &protocol_id, &protocol_version,
-            &extension_count);
+    kaa_error_t error_code = kaa_platform_message_header_read(&reader,
+            &protocol_id, &protocol_version, &extension_count);
     if (error_code) {
         goto fail;
     }
@@ -303,132 +292,81 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     }
 
     uint32_t request_id = 0;
-    uint16_t extension_type = 0;
-    uint16_t extension_options = 0;
-    uint32_t extension_length = 0;
 
-    while (kaa_platform_message_is_buffer_large_enough(reader, KAA_PROTOCOL_MESSAGE_HEADER_SIZE)) {
+    while (kaa_platform_message_is_buffer_large_enough(&reader, KAA_PROTOCOL_MESSAGE_HEADER_SIZE)) {
 
-        error_code = kaa_platform_message_read_extension_header(reader, &extension_type,
+        uint16_t extension_type;
+        uint16_t extension_options;
+        uint32_t extension_length;
+        error_code = kaa_platform_message_read_extension_header(&reader, &extension_type,
                 &extension_options, &extension_length);
         if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code, "Failed to read extension header");
             goto fail;
         }
 
         /* Do not resync unless it is requested by the metadata extension */
 
-        // TODO: do profile_needs_resync must be set inside of loop?
+        // TODO: must profile_needs_resync be set inside of the loop?
         self->status->profile_needs_resync = false;
 
-        switch (extension_type) {
-            case KAA_EXTENSION_BOOTSTRAP: {
-                error_code = kaa_bootstrap_manager_handle_server_sync(
-                        self->kaa_context->bootstrap_manager,
-                        reader, extension_options, extension_length);
-                break;
+        if (extension_type == KAA_EXTENSION_META_DATA) {
+            error_code = kaa_platform_message_read(&reader, &request_id, sizeof(request_id));
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to read meta data (request_id)");
+                goto fail;
             }
 
-            case KAA_EXTENSION_META_DATA: {
-                error_code = kaa_platform_message_read(reader, &request_id, sizeof(request_id));
-                if (error_code) {
-                    break;
-                }
+            request_id = KAA_NTOHL(request_id);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync request id %u", request_id);
 
-                request_id = KAA_NTOHL(request_id);
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync request id %u", request_id);
+            /* Check if managers needs resync */
 
-                /* Check if managers needs resync */
-
-                uint32_t resync_request;
-                error_code = kaa_platform_message_read(reader,
-                        &resync_request, sizeof(resync_request));
-                if (error_code) {
-                    break;
-                }
-
-                resync_request = KAA_NTOHL(resync_request);
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE,
-                        "Server resync request %u", resync_request);
-
-                if (resync_request & KAA_PROFILE_RESYNC_FLAG) {
-                    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Profile resync is requested");
-                    self->status->profile_needs_resync = true;
-                    error_code = kaa_profile_force_sync(self->kaa_context->profile_manager);
-                }
-
-                break;
+            uint32_t resync_request;
+            error_code = kaa_platform_message_read(&reader,
+                    &resync_request, sizeof(resync_request));
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to read meta data (resync_request)");
+                goto fail;
             }
 
-            case KAA_EXTENSION_PROFILE: {
-                error_code = kaa_profile_handle_server_sync(self->kaa_context->profile_manager,
-                        reader, extension_options, extension_length);
-                break;
-            }
+            resync_request = KAA_NTOHL(resync_request);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE,
+                    "Server resync request %u", resync_request);
 
-            case KAA_EXTENSION_USER: {
-                error_code = kaa_user_handle_server_sync(self->kaa_context->user_manager,
-                        reader, extension_options, extension_length);
-                break;
+            if (resync_request & KAA_PROFILE_RESYNC_FLAG) {
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Profile resync is requested");
+                self->status->profile_needs_resync = true;
+                error_code = kaa_profile_force_sync(self->kaa_context->profile_manager);
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to force-sync profile");
             }
+        } else {
+            error_code = kaa_extension_server_sync(extension_type, request_id,
+                    extension_options, reader.current, extension_length);
+            reader.current += extension_length;
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-            case KAA_EXTENSION_LOGGING: {
-                error_code = kaa_logging_handle_server_sync(self->kaa_context->log_collector,
-                        reader, extension_options, extension_length);
-                break;
-            }
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-            case KAA_EXTENSION_EVENT: {
-                error_code = kaa_event_handle_server_sync(self->kaa_context->event_manager,
-                        reader, extension_options, extension_length, request_id);
-                break;
-            }
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-            case KAA_EXTENSION_CONFIGURATION: {
-                error_code = kaa_configuration_manager_handle_server_sync(
-                        self->kaa_context->configuration_manager,
-                        reader, extension_options, extension_length);
-                break;
-            }
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-            case KAA_EXTENSION_NOTIFICATION: {
-                error_code = kaa_notification_manager_handle_server_sync(
-                        self->kaa_context->notification_manager,
-                        reader, extension_length);
-                break;
-            }
-#endif
-
-            default:
+            if (error_code == KAA_ERR_NOT_FOUND) {
                 KAA_LOG_WARN(self->logger, KAA_ERR_UNSUPPORTED,
                         "Unsupported extension received (type = %u)", extension_type);
-                break;
-        }
-
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code,
-                    "Server sync is corrupted. Failed to read extension with type %u",
-                    extension_type);
-            goto fail;
+                error_code = KAA_ERR_NONE;
+            } else if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code,
+                        "Server sync is corrupted. Failed to read extension with type %u",
+                        extension_type);
+                goto fail;
+            }
         }
     }
 
     error_code = kaa_status_save(self->status);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to save status");
+        goto fail;
     }
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync successfully processed");
 
 fail:
-    kaa_platform_message_reader_destroy(reader);
-
     return error_code;
 }
 
