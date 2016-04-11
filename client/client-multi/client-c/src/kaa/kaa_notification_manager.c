@@ -115,6 +115,41 @@ kaa_error_t kaa_extension_notification_request_get_size(void *context, size_t *e
     return kaa_notification_manager_get_size(context, expected_size);
 }
 
+kaa_error_t kaa_extension_notification_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_notification_manager_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_notification_manager_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
 static void shift_and_sub_extension(kaa_platform_message_reader_t *reader, uint32_t *extension_length, size_t size)
 {
     KAA_RETURN_IF_NIL2(reader, extension_length,);

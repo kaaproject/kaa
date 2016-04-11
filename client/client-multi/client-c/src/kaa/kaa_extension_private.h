@@ -39,6 +39,7 @@ static struct kaa_extension kaa_extension_bootstrap = {
     .init = kaa_extension_bootstrap_init,
     .deinit = kaa_extension_bootstrap_deinit,
     .request_get_size = kaa_extension_bootstrap_request_get_size,
+    .request_serialize = kaa_extension_bootstrap_request_serialize,
 };
 
 static struct kaa_extension kaa_extension_profile = {
@@ -46,6 +47,7 @@ static struct kaa_extension kaa_extension_profile = {
     .init = kaa_extension_profile_init,
     .deinit = kaa_extension_profile_deinit,
     .request_get_size = kaa_extension_profile_request_get_size,
+    .request_serialize = kaa_extension_profile_request_serialize,
 };
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
@@ -54,6 +56,7 @@ static struct kaa_extension kaa_extension_event = {
     .init = kaa_extension_event_init,
     .deinit = kaa_extension_event_deinit,
     .request_get_size = kaa_extension_event_request_get_size,
+    .request_serialize = kaa_extension_event_request_serialize,
 };
 #endif
 
@@ -63,6 +66,7 @@ static struct kaa_extension kaa_extension_logging = {
     .init = kaa_extension_logging_init,
     .deinit = kaa_extension_logging_deinit,
     .request_get_size = kaa_extension_logging_request_get_size,
+    .request_serialize = kaa_extension_logging_request_serialize,
 };
 #endif
 
@@ -72,6 +76,7 @@ static struct kaa_extension kaa_extension_configuration = {
     .init = kaa_extension_configuration_init,
     .deinit = kaa_extension_configuration_deinit,
     .request_get_size = kaa_extension_configuration_request_get_size,
+    .request_serialize = kaa_extension_configuration_request_serialize,
 };
 #endif
 
@@ -81,6 +86,7 @@ static struct kaa_extension kaa_extension_notification = {
     .init = kaa_extension_notification_init,
     .deinit = kaa_extension_notification_deinit,
     .request_get_size = kaa_extension_notification_request_get_size,
+    .request_serialize = kaa_extension_notification_request_serialize,
 };
 #endif
 
@@ -89,6 +95,7 @@ static struct kaa_extension kaa_extension_user = {
     .init = kaa_extension_user_init,
     .deinit = kaa_extension_user_deinit,
     .request_get_size = kaa_extension_user_request_get_size,
+    .request_serialize = kaa_extension_user_request_serialize,
 };
 
 // I'm not sure in what order they should be, so just kept order from

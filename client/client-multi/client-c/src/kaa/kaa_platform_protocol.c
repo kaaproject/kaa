@@ -192,116 +192,22 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self,
     }
 
     while (!error_code && services_count--) {
-        switch (services[services_count]) {
-            case KAA_EXTENSION_BOOTSTRAP: {
-                error_code = kaa_bootstrap_manager_bootstrap_request_serialize(
-                        self->kaa_context->bootstrap_manager, writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the bootstrap extension");
-                }
-                break;
-            }
-
-            case KAA_EXTENSION_PROFILE: {
-                bool need_resync = false;
-                error_code = kaa_profile_need_profile_resync(self->kaa_context->profile_manager,
-                        &need_resync);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to read profile's 'need_resync' flag");
-                    break;
-                }
-
-                if (!need_resync) {
-                    --total_services_count;
-                    break;
-                }
-
-                error_code = kaa_profile_request_serialize(self->kaa_context->profile_manager,
-                        writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the profile extension");
-                }
-                break;
-            }
-
-            case KAA_EXTENSION_USER: {
-                error_code = kaa_user_request_serialize(self->kaa_context->user_manager, writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the user extension");
-                }
-                break;
-            }
-
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-            case KAA_EXTENSION_EVENT: {
-                error_code = kaa_event_request_serialize(self->kaa_context->event_manager,
-                        self->request_id, writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the event extension");
-                }
-                break;
-            }
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-            case KAA_EXTENSION_LOGGING: {
-                bool need_resync = false;
-                error_code = kaa_logging_need_logging_resync(self->kaa_context->log_collector,
-                        &need_resync);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to read logging's 'need_resync' flag");
-                    break;
-                }
-
-                if (!need_resync) {
-                    --total_services_count;
-                    break;
-                }
-
-                error_code = kaa_logging_request_serialize(self->kaa_context->log_collector,
-                        writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the logging extension");
-                }
-                break;
-            }
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-            case KAA_EXTENSION_CONFIGURATION: {
-                error_code = kaa_configuration_manager_request_serialize(
-                        self->kaa_context->configuration_manager, writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the configuration extension");
-                }
-                break;
-            }
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-            case KAA_EXTENSION_NOTIFICATION: {
-                error_code = kaa_notification_manager_request_serialize(
-                        self->kaa_context->notification_manager, writer);
-                if (error_code) {
-                    KAA_LOG_ERROR(self->logger, error_code,
-                            "Failed to serialize the configuration extension");
-                }
-                break;
-            }
-#endif
-
-            default:
-                --total_services_count;
-                break;
+        size_t size_required = writer->end - writer->current;
+        bool need_resync = false;
+        error_code = kaa_extension_request_serialize(services[services_count],
+                self->request_id, writer->current, &size_required, &need_resync);
+        if (error_code) {
+            KAA_LOG_ERROR(self->logger, error_code,
+                    "Failed to serialize the '%d' extension", services[services_count]);
+            continue;
         }
+
+        if (!need_resync) {
+            --total_services_count;
+            continue;
+        }
+
+        writer->current += size_required;
     }
 
     *extension_count_p = KAA_HTONS(total_services_count);

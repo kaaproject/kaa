@@ -81,6 +81,8 @@ struct kaa_extension {
      * @param[in]     context     The context of the extension, as returned
      *                            by init().
      *
+     * @param[in]     request_id  The id of the currently serializing request.
+     *
      * @param[out]    buffer      Serialized request.
      *
      * @param[in,out] size        Size of the buffer. The function must
@@ -100,8 +102,8 @@ struct kaa_extension {
      * abort of transaction; extension must set @p sync_needed to
      * @c false if extension has nothing to say.
      */
-    kaa_error_t (*request_serialize)(void *context, uint8_t *buffer, size_t *size,
-            bool *sync_needed);
+    kaa_error_t (*request_serialize)(void *context, uint32_t request_id,
+            uint8_t *buffer, size_t *size, bool *sync_needed);
 };
 
 /**
@@ -165,8 +167,8 @@ kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected
  *
  * @retval KAA_ERR_NOT_FOUND Extension was not found.
  */
-kaa_error_t kaa_extension_request_serialize(kaa_extension_id id, uint8_t *buffer, size_t *size,
-        bool *sync_needed);
+kaa_error_t kaa_extension_request_serialize(kaa_extension_id id, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *sync_needed);
 
 #ifdef __cplusplus
 }

@@ -103,3 +103,25 @@ kaa_error_t kaa_extension_notification_request_get_size(void *self, size_t *expe
 { (void)self; (void)expected_size; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_user_request_get_size(void *self, size_t *expected_size)
 { (void)self; (void)expected_size; return KAA_ERR_NONE; }
+
+kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_profile_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_event_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_logging_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_configuration_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_notification_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_user_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }

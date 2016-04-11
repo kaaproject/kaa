@@ -81,6 +81,45 @@ static bool resync_is_required(kaa_profile_manager_t *self)
     return self->need_resync || self->status->profile_needs_resync;
 }
 
+kaa_error_t kaa_extension_profile_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = resync_is_required(context);
+    if (!*need_resync) {
+        *size = 0;
+        return KAA_ERR_NONE;
+    }
+
+    size_t size_needed;
+    kaa_error_t error = kaa_profile_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_profile_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
 /*
  * PUBLIC FUNCTIONS
  */
