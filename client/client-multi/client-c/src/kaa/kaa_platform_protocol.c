@@ -57,6 +57,12 @@ struct kaa_platform_protocol_t
     uint32_t       request_id;
 };
 
+/**
+ * That's a function that aids transition to the new interface. Its
+ * usages should be removed.
+ */
+static kaa_error_t get_extension_request_size(kaa_extension_id id, size_t *size);
+
 kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self,
         kaa_platform_message_writer_t *writer, uint32_t request_id)
 {
@@ -151,7 +157,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self,
     for (size_t i = 0; i < extension_count; ++i) {
         size_t extension_size = 0;
 
-        kaa_error_t error = kaa_extension_request_get_size(extensions[i], &extension_size);
+        kaa_error_t error = get_extension_request_size(extensions[i], &extension_size);
         if (error && error != KAA_ERR_NOT_FOUND) {
             KAA_LOG_ERROR(self->logger, error,
                     "Failed to query extension size for %u", extensions[i]);
@@ -398,4 +404,19 @@ kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_proto
 
     return kaa_platform_protocol_serialize_client_sync(self, services, services_count,
             *buffer, buffer_size);
+}
+
+static kaa_error_t get_extension_request_size(kaa_extension_id id, size_t *size)
+{
+    bool need_resync;
+    kaa_error_t error = kaa_extension_request_serialize(id, 0, NULL, size, &need_resync);
+    if (error == KAA_ERR_BUFFER_IS_NOT_ENOUGH) {
+        error = KAA_ERR_NONE;
+    }
+
+    if (!need_resync) {
+        *size = 0;
+    }
+
+    return error;
 }

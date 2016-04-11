@@ -59,20 +59,6 @@ struct kaa_extension {
     kaa_error_t (*deinit)(void *context);
 
     /**
-     * The size of request.
-     *
-     * @param[in]  context       The context of extension. It was returned in
-     *                           init().
-     * @param[out] extected_size The size of request.
-     * @return Error code.
-     *
-     * @note Error codes other than @c KAA_ERR_NONE will result in
-     * abort of transaction; it's better to return @c KAA_ERR_NONE and
-     * @c 0 @p expected_size if you have nothing to say.
-     */
-    kaa_error_t (*request_get_size)(void *context, size_t *expected_size);
-
-    /**
      * Serialize request.
      *
      * @note @p buffer may be @c NULL. In that case the function must
@@ -176,14 +162,6 @@ kaa_error_t kaa_extension_init_all(struct kaa_context_s *kaa_context);
  * unspecified which error code is returned.
  */
 kaa_error_t kaa_extension_deinit_all(void);
-
-/**
- * A proxy for kaa_extension::request_get_size().
- *
- * @retval KAA_ERR_NOT_FOUND Extension was not found.
- */
-kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected_size);
-
 
 /**
  * A proxy for kaa_extension::request_serialize().

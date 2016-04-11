@@ -160,14 +160,6 @@ kaa_error_t kaa_extension_configuration_deinit(void *context);
 kaa_error_t kaa_extension_notification_deinit(void *context);
 kaa_error_t kaa_extension_user_deinit(void *context);
 
-kaa_error_t kaa_extension_bootstrap_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_profile_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_event_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_logging_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_configuration_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_notification_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_user_request_get_size(void *context, size_t *expected_size);
-
 kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint32_t request_id,
         uint8_t *buffer, size_t *size, bool *need_resync);
 kaa_error_t kaa_extension_profile_request_serialize(void *context, uint32_t request_id,
