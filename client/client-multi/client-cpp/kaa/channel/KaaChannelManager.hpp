@@ -50,7 +50,8 @@ public:
     virtual IDataChannelPtr getChannelByTransportType(TransportType type);
     virtual IDataChannelPtr getChannel(const std::string& channelId);
 
-    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo);
+    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason);
+
     virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo);
 
     virtual void clearChannelList();

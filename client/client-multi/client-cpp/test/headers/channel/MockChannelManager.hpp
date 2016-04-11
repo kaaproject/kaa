@@ -18,7 +18,7 @@
 #define MOCKCHANNELMANAGER_HPP_
 
 #include "kaa/channel/IKaaChannelManager.hpp"
-
+#include "kaa/failover/IFailoverStrategy.hpp"
 #include "headers/channel/MockDataChannel.hpp"
 
 namespace kaa {
@@ -49,7 +49,11 @@ public:
     }
 
     virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr server) { ++onGetChannelByTransportType_; }
-    virtual void onServerFailed(ITransportConnectionInfoPtr server) { ++onServerFailed_; }
+    virtual void onServerFailed(ITransportConnectionInfoPtr server,
+                                KaaFailoverReason reason = KaaFailoverReason::NO_CONNECTIVITY)
+    {
+        ++onServerFailed_;
+    }
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) { ++onFailOverStrategyChange_;}
     virtual void clearChannelList() { ++onClearChannelList_; }
 
