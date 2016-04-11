@@ -21,7 +21,6 @@ sort_idx: 10
     * [Remote connections](#remote-connections)
   * [Third-party component metrics](#third-party-component-metrics)
 * [Storing custom schemas](#storing-custom-schemas)
-* [Third-party components](#third-party-components)
 * [Troubleshooting](#troubleshooting)
 
 ## Introduction
@@ -200,18 +199,6 @@ The JMX metrics for the third-party components used by Kaa, such as the Java Mon
 
 Our best practices is to provide all schemas next to source code, covered by some version control system (VCS).
 Also if you need to compile some of your schemas or you need to serialize data by some schema you can refer to [Apache Avro](https://avro.apache.org/docs/1.7.7/index.html) documentation.
-
-## Third-party components
-
-### SQL database
-
-SQL database instance is used to store metadata about tenants, applications, endpoint groups, etc. This information is shared between endpoints, thus it's volume does not scale and it can be efficiently stored in modern SQL databases. To support high availability of Kaa cluster, SQL database should be also deployed in cluster mode.
-
-Kaa supports two SQL databases at the moment: PostgresSQL and MariaDB. If you planning to use kaa in a single node instance we recommend you to use PostgreSQL and MariaDB for multi node cluster because of better clusterization capabilities of MariaDB.
-
-### NoSQL database
-
-NoSQL database instance is used to store information about endpoint profiles, notifications, configurations, etc. The volume of this information scales linearly with amount of endpoints that are managed using particular Kaa cluster instance. NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines. Kaa support Apache Cassandra and MongoDB as a NoSQL database at the moment. The choose between MongoDB and Apache Cassandra depends only on your specific data analysis needs.
 
 ## Troubleshooting
 
