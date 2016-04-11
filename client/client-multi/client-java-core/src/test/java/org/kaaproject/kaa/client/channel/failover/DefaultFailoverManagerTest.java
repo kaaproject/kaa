@@ -63,7 +63,7 @@ public class DefaultFailoverManagerTest {
         failoverManager.onServerConnected(transportConnectionInfo);
 
         failoverManager.onServerChanged(transportConnectionInfo);
-        failoverManager.onServerFailed(transportConnectionInfo);
+        failoverManager.onServerFailed(transportConnectionInfo, FailoverStatus.NO_CONNECTIVITY);
         DefaultFailoverManager.AccessPointIdResolution accessPointIdResolutionSpy = spyForResolutionMap(transportConnectionInfo);
         failoverManager.onServerConnected(transportConnectionInfo);
         Mockito.verify(accessPointIdResolutionSpy, Mockito.times(1)).setCurResolution(Mockito.any(Future.class));
@@ -82,7 +82,7 @@ public class DefaultFailoverManagerTest {
                 new DefaultFailoverManager.AccessPointIdResolution(info.getAccessPointId(), null));
 
         TransportConnectionInfo info2 = mockForTransportConnectionInfo(2);
-        failoverManager.onServerFailed(info);
+        failoverManager.onServerFailed(info, FailoverStatus.NO_CONNECTIVITY);
         DefaultFailoverManager.AccessPointIdResolution accessPointIdResolutionSpy = spyForResolutionMap(info);
         failoverManager.onServerChanged(info2);
         Mockito.verify(accessPointIdResolutionSpy, Mockito.times(1)).setCurResolution(null);
@@ -94,12 +94,12 @@ public class DefaultFailoverManagerTest {
     public void onServerFailedTest() throws InterruptedException {
         TransportConnectionInfo info = mockForTransportConnectionInfo(1);
 
-        failoverManager.onServerFailed(null);
+        failoverManager.onServerFailed(null, FailoverStatus.NO_CONNECTIVITY);
         Mockito.verify(resolutionProgressMap, Mockito.never()).put(Mockito.any(ServerType.class),
                 Mockito.any(DefaultFailoverManager.AccessPointIdResolution.class));
 
-        failoverManager.onServerFailed(info);
-        Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info);
+        failoverManager.onServerFailed(info, FailoverStatus.NO_CONNECTIVITY);
+        Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info, FailoverStatus.NO_CONNECTIVITY);
         Mockito.verify(context, Mockito.times(1)).getScheduledExecutor();
 
         ArgumentCaptor<DefaultFailoverManager.AccessPointIdResolution> argument =
@@ -110,21 +110,21 @@ public class DefaultFailoverManagerTest {
         Mockito.verify(resolutionProgressMap, Mockito.timeout(RESOLUTION_TIMEOUT_MS * 2).times(1)).remove(info.getServerType());
 
         TransportConnectionInfo info2 = mockForTransportConnectionInfo(2, ServerType.BOOTSTRAP);
-        failoverManager.onServerFailed(info2);
+        failoverManager.onServerFailed(info2, FailoverStatus.NO_CONNECTIVITY);
         final DefaultFailoverManager.AccessPointIdResolution accessPointIdResolutionSpy = spyForResolutionMap(info2);
-        failoverManager.onServerFailed(info2);
+        failoverManager.onServerFailed(info2, FailoverStatus.NO_CONNECTIVITY);
         Mockito.verify(accessPointIdResolutionSpy, Mockito.never()).setCurResolution(null);
 
         info2 = mockForTransportConnectionInfo(3, ServerType.BOOTSTRAP);
-        failoverManager.onServerFailed(info2);
-        Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info2);
+        failoverManager.onServerFailed(info2, FailoverStatus.NO_CONNECTIVITY);
+        Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info2, FailoverStatus.NO_CONNECTIVITY);
 
         Mockito.reset(accessPointIdResolutionSpy);
         failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
-        failoverManager.onServerFailed(info2);
+        failoverManager.onServerFailed(info2, FailoverStatus.NO_CONNECTIVITY);
         Mockito.verify(accessPointIdResolutionSpy, Mockito.never()).setCurResolution(null);
         Thread.sleep(BOOTSTRAP_RETRY_PERIOD * 2);
-        failoverManager.onServerFailed(info2);
+        failoverManager.onServerFailed(info2, FailoverStatus.NO_CONNECTIVITY);
 
         new Thread(new Runnable() {
             @Override

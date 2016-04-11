@@ -64,7 +64,7 @@ public class DefaultFailoverManager implements FailoverManager {
     }
 
     @Override
-    public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo) {
+    public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo, FailoverStatus status) {
         if (connectionInfo == null) {
             LOG.warn("Server failed, but connection info is null, can't resolve");
             return;
@@ -99,7 +99,7 @@ public class DefaultFailoverManager implements FailoverManager {
             }
         }, failureResolutionTimeout, timeUnit);
 
-        channelManager.onServerFailed(connectionInfo);
+        channelManager.onServerFailed(connectionInfo, status);
 
         long updatedResolutionTime = currentAccessPointIdResolution != null ? currentAccessPointIdResolution.getResolutionTime() : currentResolutionTime;
 

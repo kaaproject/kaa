@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.AbstractKaaClient;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
 import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
@@ -201,7 +202,7 @@ public class DefaultOperationsChannelTest {
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
-        Mockito.verify(failoverManager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
+        Mockito.verify(failoverManager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class), Mockito.any(FailoverStatus.class));
     }
 
     @Test

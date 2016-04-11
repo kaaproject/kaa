@@ -47,6 +47,7 @@ import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
 import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
@@ -99,7 +100,7 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public void onServerFailed(TransportConnectionInfo server) {
+        public void onServerFailed(TransportConnectionInfo server, FailoverStatus status) {
 
         }
 
@@ -201,7 +202,7 @@ public class DefaultBootstrapManagerTest {
         boolean exception = false;
         try {
             manager.receiveOperationsServerList();
-            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -219,7 +220,7 @@ public class DefaultBootstrapManagerTest {
 
         boolean exception = false;
         try {
-            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -247,7 +248,7 @@ public class DefaultBootstrapManagerTest {
         manager.setFailoverManager(failoverManager);
         manager.setTransport(transport);
         manager.onProtocolListUpdated(list);
-        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
         assertTrue(channelManager.isServerUpdated());
         assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 

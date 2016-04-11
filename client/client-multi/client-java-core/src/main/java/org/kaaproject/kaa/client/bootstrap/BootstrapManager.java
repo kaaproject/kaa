@@ -22,6 +22,7 @@ import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
@@ -45,7 +46,7 @@ public interface BootstrapManager {
      * @param transportId of the transport protocol.
      * @see TransportProtocolId
      */
-    void useNextOperationsServer(TransportProtocolId transportId);
+    void useNextOperationsServer(TransportProtocolId transportId, FailoverStatus status);
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.

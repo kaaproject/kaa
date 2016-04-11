@@ -30,6 +30,7 @@ import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.client.logging.memory.MemLogStorage;
@@ -305,7 +306,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         public void switchAccessPoint() {
             TransportConnectionInfo server = channelManager.getActiveServer(TransportType.LOGGING);
             if (server != null) {
-                failoverManager.onServerFailed(server);
+                failoverManager.onServerFailed(server, FailoverStatus.OPERATION_SERVERS_NA);
             } else {
                 LOG.warn("Failed to switch Operation server. No channel is used for logging transport");
             }

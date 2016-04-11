@@ -547,8 +547,8 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void clean() {
-        state.setProperty(IS_REGISTERED, Boolean.FALSE.toString());
-        state.setProperty(NEED_PROFILE_RESYNC, Boolean.FALSE.toString());
+        setRegistered(false);
+        setIfNeedProfileResync(false);
         saveFileDelete(stateFileLocation);
         saveFileDelete(stateFileLocation + "_bckp");
         hasUpdate = true;

@@ -285,7 +285,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     @Override
-    public synchronized void onServerFailed(final TransportConnectionInfo server) {
+    public synchronized void onServerFailed(final TransportConnectionInfo server, FailoverStatus status) {
         if (isShutdown) {
             LOG.warn("Can't process server failure. Channel manager is down");
             return;
@@ -331,7 +331,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 }
             } else {
                 LOG.trace("Can't find next bootstrap server");
-                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
+                FailoverDecision decision = failoverManager.onFailover(status);
                 switch (decision.getAction()) {
                     case NOOP:
                         LOG.warn("No operation is performed according to failover strategy decision");
@@ -356,7 +356,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 }
             }
         } else {
-            bootstrapManager.useNextOperationsServer(server.getTransportId());
+            bootstrapManager.useNextOperationsServer(server.getTransportId(), status);
         }
     }
 
