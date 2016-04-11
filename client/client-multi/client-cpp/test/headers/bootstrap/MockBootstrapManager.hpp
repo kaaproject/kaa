@@ -18,13 +18,16 @@
 #define MOCKBOOTSTRAPMANAGER_HPP_
 
 #include "kaa/bootstrap/IBootstrapManager.hpp"
+#include "kaa/failover/IFailoverStrategy.hpp"
 
 namespace kaa {
 
 class MockBootstrapManager: public IBootstrapManager {
     virtual void receiveOperationsServerList() {}
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {}
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId) {}
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId,
+                                         KaaFailoverReason reason = KaaFailoverReason::NO_CONNECTIVITY) {}
+
     virtual void useNextOperationsServerByAccessPointId(std::int32_t id) {}
 
     virtual void setTransport(IBootstrapTransport* transport) {}

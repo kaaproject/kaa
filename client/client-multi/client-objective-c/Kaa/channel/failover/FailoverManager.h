@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import "TransportConnectionInfo.h"
 #import "FailoverDecision.h"
+#import "FailoverStrategy.h"
 
 /**
  * Manager responsible for managing current server's failover/connection events
@@ -49,6 +50,14 @@
  * @return Decision which is meant to resolve the failover.
  */
 - (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status;
+
+/**
+ *
+ * @param failoverStrategy strategy that will be used to resolve failovers.
+ *
+ * @see FailoverStrategy
+ */
+- (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy;
 
 @end
 

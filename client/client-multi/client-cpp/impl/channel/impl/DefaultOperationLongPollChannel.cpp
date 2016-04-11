@@ -151,7 +151,8 @@ void DefaultOperationLongPollChannel::executeTask()
         KAA_MUTEX_LOCKED("conditionMutex_");
         KAA_CONDITION_NOTIFY_ALL(waitCondition_);
         if (isServerFailed) {
-            channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+            channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_),
+                                            KaaFailoverReason::NO_CONNECTIVITY);
         }
         return;
     }

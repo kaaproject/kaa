@@ -369,7 +369,8 @@ void LogCollector::switchAccessPoint()
     if (logChannel && logChannel->getServer()) {
         if (timeoutAccessPointId_ == logChannel->getServer()->getAccessPointId()) {
             KAA_LOG_WARN("Try to switch to another Operations server...");
-            channelManager_->onServerFailed(logChannel->getServer());
+            channelManager_->onServerFailed(logChannel->getServer(),
+                                            KaaFailoverReason::OPERATION_SERVERS_NA);
         }
     } else {
         KAA_LOG_ERROR("Can't find LOGGING data channel");
@@ -429,4 +430,3 @@ void LogCollector::removeBucketInfo(std::int32_t id)
 }
 
 }  // namespace kaa
-

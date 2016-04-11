@@ -14,7 +14,10 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel;
+package org.kaaproject.kaa.client.channel.failover;
+
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 
 /**
  * Manager is responsible for managing current server's failover/connection events
@@ -60,8 +63,15 @@ public interface FailoverManager {
      *
      * @return decision which is meant to resolve the failover.
      *
-     * @see org.kaaproject.kaa.client.channel.FailoverDecision
-     * @see org.kaaproject.kaa.client.channel.FailoverStatus
+     * @see FailoverDecision
+     * @see FailoverStatus
      */
     FailoverDecision onFailover(FailoverStatus failoverStatus);
+
+    /**
+     * @param failoverStrategy strategy that will be used to resolve failovers.
+     *
+     * @see org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy
+     */
+    void setFailoverStrategy(FailoverStrategy failoverStrategy);
 }

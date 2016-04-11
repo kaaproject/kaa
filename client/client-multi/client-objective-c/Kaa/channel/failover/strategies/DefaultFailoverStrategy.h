@@ -14,16 +14,18 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.client.channel;
+#import <Foundation/Foundation.h>
+#import "FailoverStrategy.h"
+#import "TimeCommons.h"
 
 /**
- * Enum which describes status of the current failover state. Managed by
- * a failover strategy
+ * Default implementation of FailoverStrategy.
  */
-public enum FailoverStatus {
-    BOOTSTRAP_SERVERS_NA,
-    CURRENT_BOOTSTRAP_SERVER_NA,
-    OPERATION_SERVERS_NA,
-    NO_OPERATION_SERVERS_RECEIVED,
-    NO_CONNECTIVITY
-}
+@interface DefaultFailoverStrategy : NSObject <FailoverStrategy>
+
+- (instancetype)initWithBootstrapServersRetryPeriod:(int64_t)bootstrapServersRetryPeriod
+                       operationsServersRetryPeriod:(int64_t)operationsServersRetryPeriod
+                          noConnectivityRetryPeriod:(int64_t)noConnectivityRetryPeriod
+                                           timeUnit:(TimeUnit)timeUnit;
+
+@end

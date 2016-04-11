@@ -35,7 +35,7 @@ public:
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void receiveOperationsServerList();
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId);
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason reason);
     virtual void useNextOperationsServerByAccessPointId(std::int32_t id);
     virtual void setTransport(IBootstrapTransport* transport);
     virtual void setChannelManager(IKaaChannelManager* manager);

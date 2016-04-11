@@ -99,7 +99,7 @@ public:
 
     void openConnection();
     void closeConnection();
-    void onServerFailed();
+    void onServerFailed(KaaFailoverReason failoverReason = KaaFailoverReason::NO_CONNECTIVITY);
 
 private:
     static const std::uint16_t PING_TIMEOUT;

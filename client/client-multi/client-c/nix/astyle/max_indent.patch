@@ -1,0 +1,11 @@
+--- astyle/src/astyle_main.cpp	2014-12-11 16:42:25.000000000 +0200
++++ astyle/src/astyle_main_modified.cpp	2016-04-05 17:06:35.950834439 +0300
+@@ -2792,7 +2792,7 @@
+ 		string maxIndentParam = getParam(arg, "M", "max-instatement-indent=");
+ 		if (maxIndentParam.length() > 0)
+ 			maxIndent = atoi(maxIndentParam.c_str());
+-		if (maxIndent < 40)
++		if (maxIndent < 0)
+ 			isOptionError(arg, errorInfo);
+ 		else if (maxIndent > 120)
+ 			isOptionError(arg, errorInfo);

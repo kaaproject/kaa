@@ -47,8 +47,10 @@ public:
      *
      * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
      * @see ChannelType
+     *
+     * @param failoverReason The reason why failover occured.
      */
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId) = 0;
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason failoverReason) = 0;
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.

@@ -24,8 +24,9 @@ namespace kaa {
 #include "kaa/transport/TransportException.hpp"
 
 enum HttpStatusCode {
-    OK = 200,
-    UNAUTHORIZED = 401
+    OK           = 200,
+    UNAUTHORIZED = 401,
+    FORBIDDEN    = 403,
 };
 
 class HttpTransportException: public TransportException {
