@@ -124,14 +124,12 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             /* In case when we received new topic list, we need to remove
              * outdated subscription commands.
              */
-            for (auto subscription = subscriptions_.begin(); subscription != subscriptions_.end(); subscription++) {
+            subscriptions_.remove_if([&](SubscriptionCommand &subscription) {
                  auto topicIsAvailable = std::find_if(topics.begin(), topics.end(), [&](Topic &topic)
-                                                      { return topic.id == subscription->topicId; });
+                                                      { return topic.id == subscription.topicId; });
 
-                 if (topicIsAvailable == topics.end()) {
-                     subscriptions_.erase(subscription);
-                 }
-            }
+                 return topicIsAvailable == topics.end();
+            });
         }
     }
     /* Add/remove valid subscriptions */
