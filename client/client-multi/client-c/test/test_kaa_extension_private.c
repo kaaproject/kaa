@@ -39,47 +39,20 @@ int main(void)
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
 
-static kaa_error_t stub(struct kaa_context_s *kaa_context, void **context)
-{
-    (void)kaa_context;
-    (void)context;
-    return KAA_ERR_NONE;
-}
-
 kaa_error_t kaa_extension_bootstrap_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
-
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_profile_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
-
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_event_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
-
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_logging_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
-
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_configuration_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
-
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_notification_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
-
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_user_init(struct kaa_context_s *kaa_context, void **context)
-{
-    return stub(kaa_context, context);
-}
+{ (void)kaa_context; (void)context; return KAA_ERR_NONE; }
 
 kaa_error_t kaa_extension_bootstrap_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_profile_deinit(void *context) { (void)context; return KAA_ERR_NONE; }
@@ -103,3 +76,47 @@ kaa_error_t kaa_extension_notification_request_get_size(void *self, size_t *expe
 { (void)self; (void)expected_size; return KAA_ERR_NONE; }
 kaa_error_t kaa_extension_user_request_get_size(void *self, size_t *expected_size)
 { (void)self; (void)expected_size; return KAA_ERR_NONE; }
+
+kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_profile_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_event_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_logging_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_configuration_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_notification_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_user_request_serialize(void *context, uint8_t *buffer, size_t *size,
+        bool *need_resync)
+{ (void)context; (void)buffer; (void)size; (void)need_resync; return KAA_ERR_NONE; }
+
+kaa_error_t kaa_extension_bootstrap_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_profile_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_event_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_logging_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_configuration_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_notification_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }
+kaa_error_t kaa_extension_user_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{ (void)context; (void)request_id; (void)extension_options; (void)buffer; (void)size; return KAA_ERR_NONE; }

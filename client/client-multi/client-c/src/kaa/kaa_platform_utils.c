@@ -25,7 +25,7 @@
 #include "utilities/kaa_mem.h"
 
 kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
-                                             , char *buf
+                                             , uint8_t *buf
                                              , size_t len)
 {
     KAA_RETURN_IF_NIL3(writer_p, buf, len, KAA_ERR_BADPARAM);
@@ -148,7 +148,7 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
 }
 
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
-                                             , const char *buffer
+                                             , const uint8_t *buffer
                                              , size_t len)
 {
     KAA_RETURN_IF_NIL3(reader_p, buffer, len, KAA_ERR_BADPARAM);

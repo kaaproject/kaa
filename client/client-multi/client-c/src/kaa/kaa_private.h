@@ -32,6 +32,13 @@
 #include <platform/kaa_client.h>
 #include <kaa_platform_common.h>
 #include <stdint.h>
+#include <kaa_context.h>
+#include <kaa_profile.h>
+#include <kaa_notification_manager.h>
+#include <platform/ext_kaa_failover_strategy.h>
+#include <kaa_configuration_manager.h>
+#include <utilities/kaa_log.h>
+#include <kaa_logging.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,16 +76,14 @@ kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
 kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn,
     kaa_event_callback_t callback);
 
-kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
-kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
 #endif
 
 kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context);
 
 void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
 
-kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p, kaa_context_t *context,
-        kaa_status_t *status);
+kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p,
+        kaa_logger_t *logger, kaa_status_t *status);
 void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self);
 
 kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
@@ -97,9 +102,6 @@ kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
         , kaa_server_type_t server_type
         , kaa_access_point_t *access_point);
 
-kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
-        kaa_platform_message_writer_t* writer);
-
 kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
         , kaa_transport_protocol_id_t *protocol_info);
 
@@ -108,19 +110,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(
     kaa_transport_protocol_id_t *protocol_id);
 
 
-kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer);
-
-kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
-                                                          , kaa_platform_message_reader_t *reader
-                                                          , uint16_t extension_options
-                                                          , size_t extension_length);
-
-kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
-kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-
 kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
-kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
-kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa_status_t *status,
@@ -128,21 +118,15 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p, kaa
 void kaa_log_collector_destroy(kaa_log_collector_t *self);
 kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result);
-kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
-kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p,
         kaa_channel_manager_t *channel_manager, kaa_status_t *status, kaa_logger_t *logger);
 void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
-kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
-kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self, kaa_platform_message_writer_t *writer);
-kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
 #endif
 
 kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
@@ -155,11 +139,6 @@ kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered);
 
 kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
-
-kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status
-                                          , kaa_platform_message_writer_t* writer
-                                          , uint32_t request_id);
-
 
 void ext_log_upload_timeout(kaa_log_collector_t *self);
 bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
@@ -188,15 +167,41 @@ kaa_error_t kaa_extension_configuration_deinit(void *context);
 kaa_error_t kaa_extension_notification_deinit(void *context);
 kaa_error_t kaa_extension_user_deinit(void *context);
 
-kaa_error_t kaa_extension_bootstrap_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_profile_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_event_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_logging_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_configuration_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_notification_request_get_size(void *context, size_t *expected_size);
-kaa_error_t kaa_extension_user_request_get_size(void *context, size_t *expected_size);
+kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
+kaa_error_t kaa_extension_profile_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
+kaa_error_t kaa_extension_event_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
+kaa_error_t kaa_extension_logging_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
+kaa_error_t kaa_extension_configuration_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
+kaa_error_t kaa_extension_notification_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
+kaa_error_t kaa_extension_user_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync);
 
-/* All these are deprecated now */
+kaa_error_t kaa_extension_bootstrap_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+kaa_error_t kaa_extension_profile_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+kaa_error_t kaa_extension_event_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+kaa_error_t kaa_extension_logging_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+kaa_error_t kaa_extension_configuration_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+kaa_error_t kaa_extension_notification_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+kaa_error_t kaa_extension_user_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
+
+/* ALL FUNCTIONS BELOW ARE DEPRECATED
+ *
+ * They should be removed once we move extensions out of the core.
+ */
+
 kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
@@ -205,6 +210,31 @@ kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self
 kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 
+kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id,
+        kaa_platform_message_writer_t *writer);
+kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
+        kaa_platform_message_writer_t* writer);
+kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self,
+        kaa_platform_message_writer_t* writer);
+kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
+kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self,
+        kaa_platform_message_writer_t* writer);
+kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self,
+        kaa_platform_message_writer_t *writer);
+kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self,
+        kaa_platform_message_writer_t *writer);
+kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self,
+        kaa_platform_message_writer_t *writer);
+kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status,
+        kaa_platform_message_writer_t* writer, uint32_t request_id);
+
+kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
+kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
+kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 #ifdef __cplusplus
 }
 #endif // __cplusplus

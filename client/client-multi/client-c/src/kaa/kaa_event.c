@@ -142,6 +142,51 @@ kaa_error_t kaa_extension_event_request_get_size(void *context, size_t *expected
     return kaa_event_request_get_size(context, expected_size);
 }
 
+kaa_error_t kaa_extension_event_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_extension_event_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_event_request_serialize(context, request_id, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_event_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_event_handle_server_sync(context, &reader, extension_options, size, request_id);
+}
+
 static void destroy_event_listener_request(void *request_p)
 {
     KAA_RETURN_IF_NIL(request_p,);
@@ -706,7 +751,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         if (kaa_list_get_size(self->event_listeners_requests)) {
             *((uint8_t *) writer->current) = EVENT_LISTENERS_FIELD;
             writer->current += sizeof(uint16_t); // field id + reserved
-            char *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
+            uint8_t *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
             writer->current += sizeof(uint16_t);
 
             uint16_t listeners_count = 0;
@@ -787,7 +832,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         callback = self->global_event_callback;
 
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
-        const char* event_data = reader->current;
+        const uint8_t *event_data = reader->current;
         kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(event_data_size));
         if (error) {
              KAA_LOG_ERROR(self->logger, error, "Failed to read event data, size %u", event_data_size);
@@ -796,7 +841,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
-            (*callback)(event_fqn, event_data, event_data_size, self->event_source);
+            (*callback)(event_fqn, (const char *)event_data, event_data_size, self->event_source);
     } else if (callback) {
         (*callback)(event_fqn, NULL, 0, self->event_source);
     }
@@ -893,7 +938,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 
     while (extension_length > 0) {
         uint8_t field_id = 0;
-        const char *field_id_pos = reader->current;
+        const uint8_t *field_id_pos = reader->current;
 
         kaa_error_t error = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
         if (error) {

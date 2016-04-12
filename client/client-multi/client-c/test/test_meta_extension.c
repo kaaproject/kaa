@@ -55,7 +55,7 @@ void test_meta_extension_serialize_failed(void **state)
 
     kaa_error_t error_code;
     const size_t buffer_size = 6;
-    char buffer[buffer_size];
+    uint8_t buffer[buffer_size];
     kaa_platform_message_writer_t *writer;
 
     error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
@@ -75,7 +75,7 @@ void test_meta_extension_serialize(void **state)
     (void)state;
 
     size_t meta_extension_size = kaa_meta_data_request_size;
-    char buffer[meta_extension_size];
+    uint8_t buffer[meta_extension_size];
 
     kaa_platform_message_writer_t *writer;
     kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, meta_extension_size);
@@ -94,7 +94,7 @@ void test_meta_extension_serialize(void **state)
     kaa_context_t *context = NULL;
     kaa_init(&context);
     kaa_platform_protocol_t *protocol = NULL;
-    kaa_platform_protocol_create(&protocol, context, status);
+    kaa_platform_protocol_create(&protocol, context->logger, status);
 
     error_code = kaa_meta_data_request_serialize(protocol, writer, 1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

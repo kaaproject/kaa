@@ -24,6 +24,7 @@
 #include <kaa_common.h>
 #include <kaa_error.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,18 +59,60 @@ struct kaa_extension {
     kaa_error_t (*deinit)(void *context);
 
     /**
-     * The size of request.
+     * Serialize request.
      *
-     * @param[in]  context       The context of extension. It was returned in
-     *                           init().
-     * @param[out] extected_size The size of request.
+     * @note @p buffer may be @c NULL. In that case the function must
+     * return the required size of the buffer in @p size.
+     *
+     * @param[in]     context     The context of the extension, as returned
+     *                            by init().
+     *
+     * @param[in]     request_id  The id of the currently serializing request.
+     *
+     * @param[out]    buffer      Serialized request.
+     *
+     * @param[in,out] size        Size of the buffer. The function must
+     *                            set to the actual size used (or required).
+     *
+     * @param[out]    sync_needed Extension must set it to @c true if
+     *                            it requires syncing. If set to @c false,
+     *                            the extension's buffer is ignored and not
+     *                            synced.
+     *
      * @return Error code.
      *
+     * @retval KAA_ERR_BUFFER_IS_NOT_ENOUGH Should be returned if @p
+     * size is smaller than needed.
+     *
      * @note Error codes other than @c KAA_ERR_NONE will result in
-     * abort of transaction; it's better to return @c KAA_ERR_NONE and
-     * @c 0 @p expected_size if you have nothing to say.
+     * abort of transaction; extension must set @p sync_needed to
+     * @c false if extension has nothing to say.
      */
-    kaa_error_t (*request_get_size)(void *context, size_t *expected_size);
+    kaa_error_t (*request_serialize)(void *context, uint32_t request_id,
+            uint8_t *buffer, size_t *size, bool *sync_needed);
+
+    /**
+     * Extension's action in response to the server's sync message.
+     *
+     * @param[in] context    The extension context, as returned by init().
+     *
+     * @param[in] request_id The id of the request server is responding.
+     *
+     * @param[in] extension_options
+     * @parblock
+     * Protocol-dependent options.
+     *
+     * @note Don't rely on it, as it may be removed in the future.
+     * @endparblock
+     *
+     * @param[in] buffer     The message.
+     *
+     * @param[in] size       Size of the @p buffer.
+     *
+     * @return Error code.
+     */
+    kaa_error_t (*server_sync)(void *context, uint32_t request_id,
+            uint16_t extension_options, const uint8_t *buffer, size_t size);
 };
 
 /**
@@ -121,11 +164,20 @@ kaa_error_t kaa_extension_init_all(struct kaa_context_s *kaa_context);
 kaa_error_t kaa_extension_deinit_all(void);
 
 /**
- * A proxy for kaa_extension::request_get_size().
+ * A proxy for kaa_extension::request_serialize().
  *
  * @retval KAA_ERR_NOT_FOUND Extension was not found.
  */
-kaa_error_t kaa_extension_request_get_size(kaa_extension_id id, size_t *expected_size);
+kaa_error_t kaa_extension_request_serialize(kaa_extension_id id, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *sync_needed);
+
+/**
+ * A proxy for kaa_extension::server_sync().
+ *
+ * @retval KAA_ERR_NOT_FOUND Extension was not found.
+ */
+kaa_error_t kaa_extension_server_sync(kaa_extension_id id, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size);
 
 #ifdef __cplusplus
 }

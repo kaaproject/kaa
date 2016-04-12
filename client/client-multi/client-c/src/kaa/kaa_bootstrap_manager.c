@@ -84,6 +84,56 @@ kaa_error_t kaa_extension_bootstrap_request_get_size(void *context, size_t *expe
             ((kaa_bootstrap_manager_t *)context)->channel_manager, expected_size);
 }
 
+kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_channel_manager_bootstrap_request_get_size(
+            ((kaa_bootstrap_manager_t *)context)->channel_manager, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_bootstrap_manager_bootstrap_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_bootstrap_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_bootstrap_manager_handle_server_sync(context, &reader, extension_options, size);
+}
+
 static void destroy_access_point(void *data)
 {
     KAA_RETURN_IF_NIL(data,);

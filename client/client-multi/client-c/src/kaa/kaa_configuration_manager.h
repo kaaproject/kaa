@@ -25,10 +25,8 @@ extern "C" {
 #endif
 
 
-#ifndef KAA_CONFIGURATION_MANAGER_T
-#define KAA_CONFIGURATION_MANAGER_T
-    typedef struct kaa_configuration_manager kaa_configuration_manager_t;
-#endif
+struct kaa_configuration_manager_t;
+typedef struct kaa_configuration_manager_t kaa_configuration_manager_t;
 
 
 

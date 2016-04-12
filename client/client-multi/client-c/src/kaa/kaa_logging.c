@@ -57,7 +57,7 @@ typedef struct {
     uint16_t  id;                   /**< Bucket id. */
 } last_bucket_info_t;
 
-struct kaa_log_collector {
+struct kaa_log_collector_t {
     kaa_log_bucket_constraints_t   bucket_size;
     void                           *log_storage_context;
     void                           *log_upload_strategy_context;
@@ -91,6 +91,64 @@ kaa_error_t kaa_extension_logging_deinit(void *context)
 kaa_error_t kaa_extension_logging_request_get_size(void *context, size_t *expected_size)
 {
     return kaa_logging_request_get_size(context, expected_size);
+}
+
+kaa_error_t kaa_extension_logging_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = false;
+    kaa_error_t error = kaa_logging_need_logging_resync(context, need_resync);
+    if (error) {
+        return error;
+    }
+
+    if (!*need_resync) {
+        *size = 0;
+        return KAA_ERR_NONE;
+    }
+
+    size_t size_needed;
+    error = kaa_logging_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_logging_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_logging_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_logging_handle_server_sync(context, &reader, extension_options, size);
 }
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
@@ -496,7 +554,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     kaa_platform_message_writer_t tmp_writer = *writer;
 
-    char *extension_size_p = tmp_writer.current + sizeof(uint32_t); // Pointer to the extension size. Will be filled in later.
+    uint8_t *extension_size_p = tmp_writer.current + sizeof(uint32_t); // Pointer to the extension size. Will be filled in later.
     kaa_error_t error = kaa_platform_message_write_extension_header(&tmp_writer
                                                                   , KAA_EXTENSION_LOGGING
                                                                   , KAA_LOGGING_RECEIVE_UPDATES_FLAG
@@ -506,9 +564,9 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         return KAA_ERR_WRITE_FAILED;
     }
 
-    char *bucket_id_p = tmp_writer.current;
+    uint8_t *bucket_id_p = tmp_writer.current;
     tmp_writer.current += sizeof(uint16_t);
-    char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
+    uint8_t *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
 
     uint16_t bucket_id;
@@ -528,11 +586,11 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     while (!error && bucket_size > sizeof(uint32_t) && records_count < max_log_count) {
         size_t record_len = 0;
-        error = ext_log_storage_write_next_record(self->log_storage_context
-                                                , tmp_writer.current + sizeof(uint32_t)
-                                                , bucket_size - sizeof(uint32_t)
-                                                , &bucket_id
-                                                , &record_len);
+        error = ext_log_storage_write_next_record(self->log_storage_context,
+                (char *)tmp_writer.current + sizeof(uint32_t),
+                bucket_size - sizeof(uint32_t),
+                &bucket_id,
+                &record_len);
         switch (error) {
         case KAA_ERR_NONE:
             if (!first_bucket) {

@@ -115,6 +115,56 @@ kaa_error_t kaa_extension_notification_request_get_size(void *context, size_t *e
     return kaa_notification_manager_get_size(context, expected_size);
 }
 
+kaa_error_t kaa_extension_notification_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_notification_manager_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_notification_manager_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_notification_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+    (void)extension_options;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_notification_manager_handle_server_sync(context, &reader, size);
+}
+
 static void shift_and_sub_extension(kaa_platform_message_reader_t *reader, uint32_t *extension_length, size_t size)
 {
     KAA_RETURN_IF_NIL2(reader, extension_length,);
@@ -1232,7 +1282,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                         }
                     }
                     if (notification_size) {
-                        avro_reader_t avro_reader = avro_reader_memory(reader->current, notification_size);
+                        avro_reader_t avro_reader = avro_reader_memory((const char *)reader->current, notification_size);
                         if (!avro_reader) {
                             return KAA_ERR_NOMEM;
                         }

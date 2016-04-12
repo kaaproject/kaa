@@ -35,13 +35,11 @@ extern "C" {
 #endif
 
 
-#ifndef KAA_LOG_COLLECTOR_T
-# define KAA_LOG_COLLECTOR_T
-    /**
-     * Private log collector structure.
-     */
-    typedef struct kaa_log_collector        kaa_log_collector_t;
-#endif
+/**
+ * Private log collector structure.
+ */
+struct kaa_log_collector_t;
+typedef struct kaa_log_collector_t kaa_log_collector_t;
 
 /**
  * @brief Log record info.

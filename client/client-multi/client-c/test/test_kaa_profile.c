@@ -48,7 +48,7 @@ static kaa_profile_manager_t *profile_manager = NULL;
 
 
 #define TEST_PUB_KEY_SIZE 20
-static const char test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
+static const uint8_t test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 
 
 
@@ -274,7 +274,7 @@ void test_profile_sync_serialize(void **state)
     error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer[profile_sync_size];
+    uint8_t buffer[profile_sync_size];
     error_code = kaa_platform_message_writer_create(&manual_writer, buffer, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -314,7 +314,7 @@ void test_profile_sync_serialize(void **state)
     error_code = kaa_platform_message_write_aligned(manual_writer, access_token, access_token_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer2[profile_sync_size];
+    uint8_t buffer2[profile_sync_size];
     error_code = kaa_platform_message_writer_create(&auto_writer, buffer2, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -340,7 +340,7 @@ void test_profile_handle_sync(void **state)
     uint16_t extension_options = 0x1; /* Need resync */
 
     const size_t buffer_size = 6;
-    char buffer[buffer_size];
+    uint8_t buffer[buffer_size];
     kaa_platform_message_reader_t *reader;
     error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

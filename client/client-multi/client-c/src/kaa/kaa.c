@@ -60,7 +60,7 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
         goto exit;
     }
 
-    error = kaa_platform_protocol_create(&context->platform_protocol, context,
+    error = kaa_platform_protocol_create(&context->platform_protocol, context->logger,
             context->status->status_instance);
     if (error) {
         goto exit;
