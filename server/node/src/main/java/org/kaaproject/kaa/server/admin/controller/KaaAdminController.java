@@ -782,11 +782,34 @@ public class KaaAdminController {
      * 
      * @return CTL schema info
      */
+    @Deprecated
     @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
     @ResponseBody
     public CTLSchemaDto saveCTLSchema(@RequestParam String body, @RequestParam(required = false) String tenantId,
             @RequestParam(required = false) String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.saveCTLSchema(body, tenantId, applicationId);
+    }
+
+    /**
+     * Saves a CTL schema.
+     *
+     * @param body
+     *            the ctl body
+     * @param applicationToken
+     *            the application token
+     * @param tenantId
+     *            id of the tenant
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     *
+     * @return CTL schema info
+     */
+    @RequestMapping(value = "CTL/appToken/saveSchema", params = { "body" }, method = RequestMethod.POST)
+    @ResponseBody
+    public CTLSchemaDto saveCTLSchemaWithAppToken(@RequestParam String body, @RequestParam(required = false) String tenantId,
+                                      @RequestParam(required = false) String applicationToken) throws KaaAdminServiceException {
+        return kaaAdminService.saveCTLSchemaWithAppToken(body, tenantId, applicationToken);
     }
 
     /**
@@ -804,12 +827,37 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
+    @Deprecated
     @RequestMapping(value = "CTL/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(@RequestParam String fqn, @RequestParam int version, 
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(@RequestParam String fqn, @RequestParam int version,
             @RequestParam(required = false) String tenantId,
             @RequestParam(required = false) String applicationId) throws KaaAdminServiceException {
         kaaAdminService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+    }
+
+    /**
+     * Removes a CTL schema by its fully qualified name and version number.
+     *
+     * @param fqn
+     *            the fqn
+     * @param version
+     *            the version
+     * @param tenantId
+     *            id of the tenant
+     * @param applicationToken
+     *            the application token
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "CTL/appToken/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(@RequestParam String fqn, @RequestParam int version,
+                                                                       @RequestParam(required = false) String tenantId,
+                                                                       @RequestParam(required = false) String applicationToken)
+            throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
     }
 
     /**
@@ -829,14 +877,42 @@ public class KaaAdminController {
      * 
      * @return CTL schema info
      */
+    @Deprecated
     @RequestMapping(value = "CTL/getSchema", params = { "fqn", "version" }, method = RequestMethod.GET)
     @ResponseBody
-    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(@RequestParam String fqn, 
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(@RequestParam String fqn,
             @RequestParam int version,
             @RequestParam(required = false) String tenantId,
             @RequestParam(required = false) String applicationId)
             throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+    }
+
+    /**
+     * Retrieves a CTL schema by its fully qualified name and version number.
+     *
+     * @param fqn
+     *            the fqn
+     * @param version
+     *            the version
+     * @param tenantId
+     *            id of the tenant
+     * @param applicationToken
+     *            the application token
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     *
+     * @return CTL schema info
+     */
+    @RequestMapping(value = "CTL/appToken/getSchema", params = { "fqn", "version" }, method = RequestMethod.GET)
+    @ResponseBody
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(@RequestParam String fqn,
+            @RequestParam int version,
+            @RequestParam(required = false) String tenantId,
+            @RequestParam(required = false) String applicationToken)
+            throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
     }
 
     /**
@@ -870,16 +946,41 @@ public class KaaAdminController {
      *             the kaa admin service exception
      * 
      * @return true if CTL schema with same fqn is already exists in other scope
-     */
+    */
+    @Deprecated
     @RequestMapping(value = "CTL/checkFqn", params = { "fqn" }, method = RequestMethod.GET)
     @ResponseBody
-    public boolean checkFqnExists(@RequestParam String fqn, 
+    public boolean checkFqnExists(@RequestParam String fqn,
                 @RequestParam(required = false) String tenantId,
                 @RequestParam(required = false) String applicationId)
     throws KaaAdminServiceException {
         return kaaAdminService.checkFqnExists(fqn, tenantId, applicationId);
     }
-    
+
+    /**
+     * Checks if CTL schema with same fqn is already exists in the sibling application.
+     *
+     * @param fqn
+     *            the fqn
+     * @param tenantId
+     *            id of the tenant
+     * @param applicationToken
+     *            the application token
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     *
+     * @return true if CTL schema with same fqn is already exists in other scope
+     */
+    @RequestMapping(value = "CTL/appToken/checkFqn", params = { "fqn" }, method = RequestMethod.GET)
+    @ResponseBody
+    public boolean checkFqnExistsWithAppToken(@RequestParam String fqn,
+                @RequestParam(required = false) String tenantId,
+                @RequestParam(required = false) String applicationToken)
+            throws KaaAdminServiceException {
+        return kaaAdminService.checkFqnExistsWithAppToken(fqn, tenantId, applicationToken);
+    }
+
     /**
      * Update existing CTL schema meta info scope by the given CTL schema meta info object.
      *
@@ -934,10 +1035,27 @@ public class KaaAdminController {
      *             the kaa admin service exception
      * @return CTL schema metadata list
      */
+    @Deprecated
     @RequestMapping(value = "CTL/getApplicationSchemas/{applicationId}", method = RequestMethod.GET)
     @ResponseBody
     public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(@PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getApplicationLevelCTLSchemas(applicationId);
+    }
+
+    /**
+     * Retrieves a list of available CTL schemas for application.
+     *
+     * @param applicationToken
+     *            the application token
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     * @return CTL schema metadata list
+     */
+    @RequestMapping(value = "CTL/appToken/getApplicationSchemas/{applicationToken}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(@PathVariable String applicationToken) throws KaaAdminServiceException {
+        return kaaAdminService.getApplicationLevelCTLSchemasByAppToken(applicationToken);
     }
 
     /**
@@ -962,13 +1080,54 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
+    @Deprecated
     @RequestMapping(value = "CTL/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void exportCTLSchema(@RequestParam String fqn, @RequestParam int version, @RequestParam String method, 
+    public void exportCTLSchema(@RequestParam String fqn, @RequestParam int version, @RequestParam String method,
             @RequestParam(required = false) String applicationId, 
             HttpServletRequest request, HttpServletResponse response) throws KaaAdminServiceException {
         try {
             FileData output = kaaAdminService.exportCTLSchema(fqn, version, applicationId, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
+            ServletUtils.prepareDisposition(request, response, output.getFileName());
+            response.setContentType(output.getContentType());
+            response.setContentLength(output.getFileData().length);
+            response.setBufferSize(BUFFER);
+            response.getOutputStream().write(output.getFileData());
+            response.flushBuffer();
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    /**
+     * Exports a CTL schema and, depending on the export method specified, all
+     * of its dependencies.
+     *
+     * @param fqn
+     *            - the schema fqn
+     * @param version
+     *            - the schema version
+     * @param method
+     *            - the schema export method
+     * @param applicationToken
+     *            the application token
+     * @param request
+     *            - the http request
+     * @param response
+     *            - the http response
+     *
+     * @see CTLSchemaExportMethod
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "CTL/appToken/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void exportCTLSchemaByAppToken(@RequestParam String fqn, @RequestParam int version, @RequestParam String method,
+                                @RequestParam(required = false) String applicationToken,
+                                HttpServletRequest request, HttpServletResponse response) throws KaaAdminServiceException {
+        try {
+            FileData output = kaaAdminService.exportCTLSchemaByAppToken(fqn, version, applicationToken, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
             ServletUtils.prepareDisposition(request, response, output.getFileName());
             response.setContentType(output.getContentType());
             response.setContentLength(output.getFileData().length);

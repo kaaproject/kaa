@@ -924,7 +924,7 @@ public class AdminClient {
         FileData data = restTemplate.execute(restTemplate.getUrl() + "sdk", HttpMethod.POST, request, extractor);
         return data;
     }
-    
+
     public FileData downloadCtlSchema(CTLSchemaDto ctlSchemaDto, CTLSchemaExportMethod method) {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
@@ -938,6 +938,18 @@ public class AdminClient {
         return restTemplate.execute(restTemplate.getUrl() + "CTL/exportSchema", HttpMethod.POST, request, extractor);
     }
 
+    public FileData downloadCtlSchemaByAppToken(CTLSchemaDto ctlSchemaDto, CTLSchemaExportMethod method, String appToken) {
+        FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("fqn", ctlSchemaDto.getMetaInfo().getFqn());
+        parameters.add("version", Integer.toString(ctlSchemaDto.getVersion()));
+        if (ctlSchemaDto.getMetaInfo().getApplicationId() != null) {
+            parameters.add("applicationToken", appToken);
+        }
+        parameters.add("method", method.name());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        return restTemplate.execute(restTemplate.getUrl() + "CTL/appToken/exportSchema", HttpMethod.POST, request, extractor);
+    }
 
     public void flushSdkCache() throws Exception {
         restTemplate.postForLocation(restTemplate.getUrl() + "flushSdkCache", null);
@@ -1088,6 +1100,18 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "CTL/saveSchema", params, CTLSchemaDto.class);
     }
 
+    public CTLSchemaDto saveCTLSchemaWithAppToken(String body, String tenantId, String applicationToken) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("body", body);
+        if (tenantId != null) {
+            params.add("tenantId", tenantId);
+        }
+        if (applicationToken != null) {
+            params.add("applicationToken", applicationToken);
+        }
+        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/appToken/saveSchema", params, CTLSchemaDto.class);
+    }
+
     public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
                                                                     Integer version,
                                                                     String tenantId,
@@ -1104,6 +1128,22 @@ public class AdminClient {
         restTemplate.postForLocation(restTemplate.getUrl() + "CTL/deleteSchema", params);
     }
 
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String fqn,
+                                                                       Integer version,
+                                                                       String tenantId,
+                                                                       String applicationToken) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("fqn", fqn);
+        params.add("version", version);
+        if (tenantId != null) {
+            params.add("tenantId", tenantId);
+        }
+        if (applicationToken!= null) {
+            params.add("applicationToken", applicationToken);
+        }
+        restTemplate.postForLocation(restTemplate.getUrl() + "CTL/appToken/deleteSchema", params);
+    }
+
     public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) {
         if (tenantId != null && applicationId != null) {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}&applicationId={applicationId}", CTLSchemaDto.class, fqn, version, tenantId, applicationId);
@@ -1111,6 +1151,18 @@ public class AdminClient {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}", CTLSchemaDto.class, fqn, version, tenantId);
         } else {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
+        }
+    }
+
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(String fqn, Integer version, String tenantId, String applicationToken) {
+        if (tenantId != null && applicationToken != null) {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/appToken/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}" +
+                    "&applicationToken={applicationToken}", CTLSchemaDto.class, fqn, version, tenantId, applicationToken);
+        }else if (tenantId != null) {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/appToken/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}",
+                    CTLSchemaDto.class, fqn, version, tenantId);
+        } else {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/appToken/getSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
         }
     }
 
@@ -1126,6 +1178,17 @@ public class AdminClient {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}", Boolean.class, fqn, tenantId);
         } else {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/checkFqn?fqn={fqn}", Boolean.class, fqn);
+        }
+    }
+
+    public boolean checkFqnExistsWithAppToken(String fqn, String tenantId, String applicationToken) {
+        if (tenantId != null && applicationToken != null) {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/appToken/checkFqn?fqn={fqn}&tenantId={tenantId}&applicationToken={applicationToken}",
+                    Boolean.class, fqn, tenantId, applicationToken);
+        } else if (tenantId != null) {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/appToken/checkFqn?fqn={fqn}&tenantId={tenantId}", Boolean.class, fqn, tenantId);
+        } else {
+            return restTemplate.getForObject(restTemplate.getUrl() + "CTL/appToken/checkFqn?fqn={fqn}", Boolean.class, fqn);
         }
     }
 
@@ -1150,7 +1213,16 @@ public class AdminClient {
     public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "CTL/getApplicationSchemas/" + applicationId, HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "CTL/getApplicationSchemas/" +
+                applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(String applicationToken) {
+        ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
+        };
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "CTL/appToken/getApplicationSchemas/" +
+                applicationToken, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
