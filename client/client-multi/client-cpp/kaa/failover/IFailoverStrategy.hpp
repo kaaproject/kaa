@@ -22,17 +22,19 @@
 
 namespace kaa {
 
-enum class Failover {
-    BOOTSTRAP_SERVERS_NA = 0, /*!< No accessible bootstrap servers. */
+enum class KaaFailoverReason {
+    BOOTSTRAP_SERVERS_NA = 0,   /*!< No accessible bootstrap servers. */
     NO_OPERATION_SERVERS_RECEIVED,
     OPERATION_SERVERS_NA,
     CURRENT_BOOTSTRAP_SERVER_NA,
-    NO_CONNECTIVITY
+    NO_CONNECTIVITY,
+    ENDPOINT_NOT_REGISTERED,
+    CREDENTIALS_REVOKED,
 };
 
 enum class FailoverStrategyAction {
-    NOOP = 0, /*!< Nothing to be done. */
-    RETRY,    /*!< Initiate log upload. */
+    NOOP = 0,                   /*!< Nothing to be done. */
+    RETRY,                      /*!< Initiate log upload. */
     USE_NEXT_BOOTSTRAP,
     USE_NEXT_OPERATIONS,
     STOP_APP
@@ -48,12 +50,12 @@ public:
         : action_(action), retryPeriod_(0) {}
 
 	FailoverStrategyAction getAction() const {
-        return action_;
-    }
+            return action_;
+        }
 
-    std::size_t getRetryPeriod() const {
-        return retryPeriod_;
-    }
+        std::size_t getRetryPeriod() const {
+            return retryPeriod_;
+        }
 
 private:
 	FailoverStrategyAction action_;
@@ -63,7 +65,7 @@ private:
 class IFailoverStrategy {
 public:
 
-	virtual FailoverStrategyDecision onFailover(Failover failover) = 0;
+	virtual FailoverStrategyDecision onFailover(KaaFailoverReason failover) = 0;
 
 	virtual ~IFailoverStrategy() {}
 

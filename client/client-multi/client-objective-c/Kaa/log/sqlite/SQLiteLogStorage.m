@@ -374,6 +374,7 @@
             DDLogWarn(@"%@ Can't retrieve consumed volume and size", TAG);
         }
         
+        sqlite3_finalize(statement);
     }
 }
 

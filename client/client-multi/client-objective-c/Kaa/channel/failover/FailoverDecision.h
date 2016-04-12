@@ -15,6 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "TimeCommons.h"
 
 /**
  * Enum which describes status of the current failover state.
@@ -46,9 +47,15 @@ typedef enum  {
 @interface FailoverDecision : NSObject
 
 @property(nonatomic, readonly) FailoverAction failoverAction;
+
+/**
+ * Retry period in milliseconds.
+ */
 @property(nonatomic, readonly) int64_t retryPeriod;
 
 - (instancetype)initWithFailoverAction:(FailoverAction)failoverAction;
-- (instancetype)initWithFailoverAction:(FailoverAction)failoverAction retryPeriodInMilliseconds:(int64_t)retryPeriod;
+- (instancetype)initWithFailoverAction:(FailoverAction)failoverAction
+                           retryPeriod:(int64_t)retryPeriod
+                              timeUnit:(TimeUnit)timeUnit;
 
 @end

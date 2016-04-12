@@ -18,6 +18,10 @@
 , writeTextFile
 , cmake
 
+, maven ? null
+, astyle ? null
+, doxygen ? null
+
 , clang ? null
 , openssl ? null
 
@@ -41,6 +45,7 @@
 , esp8266Support ? true
 , raspberrypiSupport ? true
 , testSupport ? true
+, withTooling ? true
 , withWerror ? false
 }:
 
@@ -97,6 +102,10 @@ in stdenv.mkDerivation {
   buildInputs = [
     kaa-generic-makefile
     cmake
+  ] ++ lib.optional withTooling [
+    maven
+    astyle
+    doxygen
   ] ++ lib.optional clangSupport [
     clang
     openssl

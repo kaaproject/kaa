@@ -412,6 +412,10 @@
     [self.endpointRegistrationManager setDetachDelegate:delegate];
 }
 
+- (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy {
+    [self.failoverManager setFailoverStrategy:failoverStrategy];
+}
+
 - (NSOperationQueue *)getLifeCycleExecutor {
     return [[self.context getExecutorContext] getLifeCycleExecutor];
 }

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import javax.annotation.Generated;
 
-import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;

@@ -22,6 +22,7 @@ args@
 , raspberrypiSupport ? null
 , testSupport ? null
 , withWerror ? null
+, withTooling ? null
 }:
 
 let pkgs = import ./nix { };

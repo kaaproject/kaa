@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,6 +50,11 @@ void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocatio
  *
  */
 void ext_status_store(const char *buffer, size_t buffer_size);
+
+/**
+ * @brief Deletes a status storage.
+ */
+void ext_status_delete(void);
 
 #ifdef __cplusplus
 }      /* extern "C" */

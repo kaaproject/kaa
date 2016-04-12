@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -420,6 +420,10 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
                                                    , uint16_t extension_options
                                                    , size_t extension_length)
 {
+    // Only used for logging
+    (void)extension_options;
+    (void)extension_length;
+
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received bootstrap server sync: options %u, payload size %u", extension_options, extension_length);
 

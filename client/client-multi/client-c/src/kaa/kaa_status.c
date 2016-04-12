@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,7 +62,7 @@
         memcpy(TO, FROM, SIZE); \
         TO += SIZE
 
-// TODO: discuss/implement a failover, when storage is somehow broken
+// TODO KAA-845: discuss/implement a failover, when storage is somehow broken
 kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
 {
     KAA_RETURN_IF_NIL(kaa_status_p, KAA_ERR_BADPARAM);

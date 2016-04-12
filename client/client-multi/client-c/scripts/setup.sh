@@ -14,9 +14,11 @@
 #  limitations under the License.
 #
 
-#! /bin/sh
+#!/bin/sh
 
 set -e
+set -v
+
 curl https://nixos.org/nix/install | sh
 . $HOME/.nix-profile/etc/profile.d/nix.sh
 sudo mkdir /etc/nix

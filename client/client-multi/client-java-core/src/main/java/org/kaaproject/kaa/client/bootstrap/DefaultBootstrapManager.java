@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;

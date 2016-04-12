@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,8 +25,6 @@
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 
-static kaa_logger_t *logger = NULL;
-
 typedef struct {
     uint64_t id;
 } test_list_node_t;
@@ -45,7 +43,7 @@ static uint64_t test_kaa_list_hash(void *node)
 }
 
 
-void test_list_create()
+static void test_list_create()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -57,7 +55,7 @@ void test_list_create()
     kaa_list_destroy(list, NULL);
 }
 
-void test_list_push_front()
+static void test_list_push_front()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -81,7 +79,7 @@ void test_list_push_front()
     kaa_list_destroy(list, NULL);
 }
 
-void test_list_push_back()
+static void test_list_push_back()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -101,7 +99,7 @@ void test_list_push_back()
     kaa_list_destroy(list, NULL);
 }
 
-void test_list_sort()
+static void test_list_sort()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -143,7 +141,7 @@ static void test_list_empty_sort()
 }
 
 
-void test_list_hash()
+static void test_list_hash()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -166,12 +164,12 @@ void test_list_hash()
     kaa_list_destroy(list, NULL);
 }
 
-void test_process_data(int32_t *value, int32_t *new_value)
+static void test_process_data(int32_t *value, int32_t *new_value)
 {
     *value = *new_value;
 }
 
-void test_list_for_each()
+static void test_list_for_each()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -197,26 +195,18 @@ void test_list_for_each()
     kaa_list_destroy(list, NULL);
 }
 
-int test_init()
+static int test_init(void)
 {
     srand(time(NULL));
-
-    kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    if (error || !logger)
-        return error;
-
     return 0;
 }
 
-int test_deinit(void)
+static int test_deinit(void)
 {
-    kaa_log_destroy(logger);
-
     return 0;
 }
 
-KAA_SUITE_MAIN(List, test_init, test_deinit
-        ,
+KAA_SUITE_MAIN(List, test_init, test_deinit,
         KAA_TEST_CASE(list_create, test_list_create)
         KAA_TEST_CASE(list_push_front, test_list_push_front)
         KAA_TEST_CASE(list_push_back, test_list_push_back)

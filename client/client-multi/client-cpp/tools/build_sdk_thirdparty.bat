@@ -77,7 +77,7 @@ goto :eof
  )
 
  7z x -y -obotan_archive botan-1.11.28.tar.gz
- 7z x -y -o. botan_archive\botan-1.11.28.tar.gz
+ 7z x -y -o. botan_archive\botan-1.11.28.tar
 
  cd %BOTAN_SRC%
 

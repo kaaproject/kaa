@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -982,13 +982,13 @@ void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *m
     uint8_t encrypted = message->sync_header.flags & KAA_SYNC_ENCRYPTED_BIT;
 
     if (!zipped && !encrypted) {
-        kaa_error_t error_code =
-                kaa_platform_protocol_process_server_sync(
+        kaa_error_t error_code = kaa_platform_protocol_process_server_sync(
                         channel->transport_context.kaa_context->platform_protocol,
                         (const uint8_t *)message->sync_request, message->sync_request_size);
-        if (error_code)
+        if (error_code) {
             KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel [0x%08X] failed to process server sync"
                                                                                     , channel->access_point.id);
+        }
     } else {
         KAA_LOG_DEBUG(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] received unsupported flags: zipped %d, encrypted %d"
                                                                                         , channel->access_point.id, zipped, encrypted);

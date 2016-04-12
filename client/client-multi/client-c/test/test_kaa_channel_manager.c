@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,6 +63,9 @@ static const size_t supported_services_count = sizeof(SUPPORTED_SERVICES) / size
 static kaa_error_t test_init_channel(void *channel_context
                              , kaa_transport_context_t *transport_context)
 {
+    (void)channel_context;
+    (void)transport_context;
+
     return KAA_ERR_NONE;
 }
 

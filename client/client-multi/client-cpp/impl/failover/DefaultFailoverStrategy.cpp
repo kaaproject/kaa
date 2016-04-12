@@ -24,24 +24,32 @@ const std::size_t DefaultFailoverStrategy::DEFAULT_NO_OPERATION_SERVERS_RETRY_PE
 const std::size_t DefaultFailoverStrategy::DEFAULT_CURRENT_BOOTSTRAP_SERVER_NA;
 const std::size_t DefaultFailoverStrategy::DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD;
 
-FailoverStrategyDecision DefaultFailoverStrategy::onFailover(Failover failover)
+FailoverStrategyDecision DefaultFailoverStrategy::onFailover(KaaFailoverReason failover)
 {
-	switch (failover) {
-        case Failover::BOOTSTRAP_SERVERS_NA:
-			return FailoverStrategyDecision(FailoverStrategyAction::RETRY, bootstrapServersRetryPeriod_);
-        case Failover::NO_OPERATION_SERVERS_RECEIVED:
-            return FailoverStrategyDecision(FailoverStrategyAction::USE_NEXT_BOOTSTRAP, noOperationServersRetryPeriod_);
-        case Failover::OPERATION_SERVERS_NA:
-            return FailoverStrategyDecision(FailoverStrategyAction::RETRY, operationServersRetryPeriod_);
-		case Failover::NO_CONNECTIVITY:
-			return FailoverStrategyDecision(FailoverStrategyAction::RETRY, noConnectivityRetryPeriod_);
-		default:
-			return FailoverStrategyDecision(FailoverStrategyAction::NOOP);
-	}
+        switch (failover) {
+        case KaaFailoverReason::BOOTSTRAP_SERVERS_NA:
+            return FailoverStrategyDecision(FailoverStrategyAction::RETRY,
+                                            bootstrapServersRetryPeriod_);
+
+        case KaaFailoverReason::NO_OPERATION_SERVERS_RECEIVED:
+            return FailoverStrategyDecision(FailoverStrategyAction::USE_NEXT_BOOTSTRAP,
+                                            noOperationServersRetryPeriod_);
+
+        case KaaFailoverReason::OPERATION_SERVERS_NA:
+            return FailoverStrategyDecision(FailoverStrategyAction::RETRY,
+                                            operationServersRetryPeriod_);
+
+        case KaaFailoverReason::NO_CONNECTIVITY:
+            return FailoverStrategyDecision(FailoverStrategyAction::RETRY,
+                                            noConnectivityRetryPeriod_);
+
+        case KaaFailoverReason::CREDENTIALS_REVOKED:
+        case KaaFailoverReason::ENDPOINT_NOT_REGISTERED:
+            return FailoverStrategyDecision(FailoverStrategyAction::STOP_APP);
+
+        default:
+            return FailoverStrategyDecision(FailoverStrategyAction::NOOP);
+        }
 }
 
 }
-
-
-
-

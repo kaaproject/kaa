@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,7 +56,7 @@ static const kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 #define TEST_LOG_BUFFER  "log_record"
-
+#define TEST_TIMEOUT               1
 
 
 typedef struct {
@@ -448,8 +448,6 @@ void test_timeout(void **state)
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    size_t TEST_TIMEOUT = 2;
-
     kaa_log_collector_t *log_collector = NULL;
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -502,7 +500,6 @@ void test_decline_timeout(void **state)
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    size_t TEST_TIMEOUT = 2;
 
     kaa_log_collector_t *log_collector = NULL;
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
@@ -776,7 +773,7 @@ struct response_packet
 #define RESP_FAILURE_IDX           1 /* Index of failed response */
 #define TEST_BUFFER_SIZE           1024
 #define TEST_EXT_OP                0 /* Simple stub */
-#define TEST_TIMEOUT               2
+
 
 static mock_strategy_context_t         test_strategy1;
 static mock_strategy_context_t         test_strategy2;

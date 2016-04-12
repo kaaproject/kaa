@@ -14,8 +14,16 @@
 #  limitations under the License.
 #
 
-#! /bin/sh
+#!/bin/sh
 
 set -e
-nix-shell $@ --pure --run "make"
-nix-shell $@ --pure --run "./build.sh test"
+set -v
+
+mvn apache-rat:check
+
+# Stupid doxygen can't create a directory
+mkdir -p target/apidocs
+doxygen
+
+make
+./build.sh test
