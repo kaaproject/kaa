@@ -94,7 +94,7 @@ void test_meta_extension_serialize(void **state)
     kaa_context_t *context = NULL;
     kaa_init(&context);
     kaa_platform_protocol_t *protocol = NULL;
-    kaa_platform_protocol_create(&protocol, context, status);
+    kaa_platform_protocol_create(&protocol, context->logger, status);
 
     error_code = kaa_meta_data_request_serialize(protocol, writer, 1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

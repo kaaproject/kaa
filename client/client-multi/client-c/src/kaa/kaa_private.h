@@ -32,6 +32,13 @@
 #include <platform/kaa_client.h>
 #include <kaa_platform_common.h>
 #include <stdint.h>
+#include <kaa_context.h>
+#include <kaa_profile.h>
+#include <kaa_notification_manager.h>
+#include <platform/ext_kaa_failover_strategy.h>
+#include <kaa_configuration_manager.h>
+#include <utilities/kaa_log.h>
+#include <kaa_logging.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,8 +82,8 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
 
 void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
 
-kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p, kaa_context_t *context,
-        kaa_status_t *status);
+kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p,
+        kaa_logger_t *logger, kaa_status_t *status);
 void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self);
 
 kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);

@@ -75,7 +75,7 @@ struct kaa_extension {
      *                            set to the actual size used (or required).
      *
      * @param[out]    sync_needed Extension must set it to @c true if
-     *                            it requires * syncing. If set to @c false,
+     *                            it requires syncing. If set to @c false,
      *                            the extension's buffer is ignored and not
      *                            synced.
      *

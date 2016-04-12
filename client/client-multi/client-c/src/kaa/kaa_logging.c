@@ -57,7 +57,7 @@ typedef struct {
     uint16_t  id;                   /**< Bucket id. */
 } last_bucket_info_t;
 
-struct kaa_log_collector {
+struct kaa_log_collector_t {
     kaa_log_bucket_constraints_t   bucket_size;
     void                           *log_storage_context;
     void                           *log_upload_strategy_context;

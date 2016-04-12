@@ -26,12 +26,7 @@
 #include "kaa_platform_protocol.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-#include "kaa_context.h"
 #include "kaa_defaults.h"
-#include "kaa_event.h"
-#include "kaa_profile.h"
-#include "kaa_logging.h"
-#include "kaa_user.h"
 
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
@@ -51,10 +46,9 @@ static const size_t kaa_meta_data_request_size =
 
 struct kaa_platform_protocol_t
 {
-    kaa_context_t *kaa_context;
-    kaa_status_t  *status;
-    kaa_logger_t  *logger;
-    uint32_t       request_id;
+    kaa_status_t *status;
+    kaa_logger_t *logger;
+    uint32_t      request_id;
 };
 
 /**
@@ -116,9 +110,9 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self,
 }
 
 kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p,
-        kaa_context_t *context, kaa_status_t *status)
+        kaa_logger_t *logger, kaa_status_t *status)
 {
-    if (!platform_protocol_p || !context || !context->logger || !status) {
+    if (!platform_protocol_p || !logger || !status) {
         return KAA_ERR_BADPARAM;
     }
 
@@ -129,9 +123,8 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
 
     **platform_protocol_p = (kaa_platform_protocol_t){
         .request_id = 0,
-        .kaa_context = context,
         .status = status,
-        .logger = context->logger,
+        .logger = logger,
     };
 
     return KAA_ERR_NONE;
@@ -343,8 +336,20 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
             if (resync_request & KAA_PROFILE_RESYNC_FLAG) {
                 KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Profile resync is requested");
                 self->status->profile_needs_resync = true;
-                error_code = kaa_profile_force_sync(self->kaa_context->profile_manager);
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to force-sync profile");
+
+                void *profile_ctx = kaa_extension_get_context(KAA_EXTENSION_PROFILE);
+                if (!profile_ctx) {
+                    error_code = KAA_ERR_NOT_FOUND;
+                    KAA_LOG_ERROR(self->logger, error_code,
+                            "Profile extension is not found. Force resync can't be done");
+                    goto fail;
+                }
+
+                error_code = kaa_profile_force_sync(profile_ctx);
+                if (error_code) {
+                    KAA_LOG_ERROR(self->logger, error_code, "Failed to force-sync profile");
+                    goto fail;
+                }
             }
         } else {
             error_code = kaa_extension_server_sync(extension_type, request_id,

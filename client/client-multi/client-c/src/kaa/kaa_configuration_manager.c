@@ -49,7 +49,7 @@
 
 static kaa_extension_id configuration_sync_services[1] = { KAA_EXTENSION_CONFIGURATION };
 
-struct kaa_configuration_manager {
+struct kaa_configuration_manager_t {
     kaa_digest                           configuration_hash;
     kaa_configuration_root_receiver_t    root_receiver;
     kaa_root_configuration_t            *root_record;
