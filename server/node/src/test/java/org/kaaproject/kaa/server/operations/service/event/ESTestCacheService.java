@@ -448,4 +448,10 @@ public class ESTestCacheService implements CacheService {
     public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
         return null;
     }
+
+    @Override
+    public String getApplicationIdByAppToken(String appToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -30,6 +30,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -201,4 +202,10 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     public void onServerProfileUpdate(ThriftServerProfileUpdateMessage message) throws TException {
         clusterService.onServerProfileUpdateMessage(message);
     }
+    
+    @Override
+    public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws TException {
+        clusterService.onEndpointDeregistrationMessage(message);
+    }
+
 }

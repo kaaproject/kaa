@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Set;
 
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -211,6 +212,14 @@ public interface CacheService {
      * @return the Tenant Id
      */
     String getTenantIdByAppToken(String appToken);
+    
+    /**
+     * Gets the {@link ApplicationDto} by application token;
+     *
+     * @param appToken token of Application
+     * @return the Application
+     */
+    String getApplicationIdByAppToken(String appToken);
 
     /**
      * Gets the application token by the sdk token

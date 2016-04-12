@@ -24,14 +24,19 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextB
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 public class ApplicationViewImpl extends BaseDetailsViewImpl implements ApplicationView {
 
     private SizedTextBox applicationName;
     private SizedTextBox applicationToken;
+
+    private ValueListBox<String> credentialsServiceName;
 
     private Button generateSdkButton;
 
@@ -90,22 +95,46 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
         if (KaaAdmin.isDevMode()) {
             generateSdkButton = new Button(Utils.constants.generateSdk());
             detailsTable.setWidget(3, 0, generateSdkButton);
+        } else {
+            this.credentialsServiceName = new ValueListBox<String>();
+            this.credentialsServiceName.addValueChangeHandler(new ValueChangeHandler<String>() {
+                @Override
+                public void onValueChange(ValueChangeEvent<String> event) {
+                    ApplicationViewImpl.this.fireChanged();
+                }
+            });
+            this.credentialsServiceName.setWidth("100%");
+
+            Label label = new Label(Utils.constants.credentialsService());
+            label.addStyleName(this.avroUiStyle.requiredField());
+
+            this.detailsTable.setWidget(3, 0, label);
+            this.detailsTable.setWidget(3, 1, this.credentialsServiceName);
         }
     }
 
     @Override
     protected void resetImpl() {
         applicationName.setValue("");
+
+        if (this.credentialsServiceName != null) {
+            this.credentialsServiceName.setValue("");
+        }
     }
 
     @Override
     protected boolean validate() {
-        return applicationName.getValue().length()>0;
+        return applicationName.getValue().length()>0 && credentialsServiceName.getValue().length() > 0;
     }
 
     @Override
     public HasValue<String> getApplicationName() {
         return applicationName;
+    }
+
+    @Override
+    public ValueListBox<String> getCredentialsServiceName() {
+        return this.credentialsServiceName;
     }
 
     @Override

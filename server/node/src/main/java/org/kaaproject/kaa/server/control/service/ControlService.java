@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.control.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
@@ -50,6 +51,7 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -1667,7 +1669,16 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    public SdkProfileDto findSdkProfileByToken(String sdkToken) throws ControlServiceException;
+    SdkProfileDto findSdkProfileByToken(String sdkToken) throws ControlServiceException;
+
+    /**
+     * Removes the given endpoint profile from the database.
+     *
+     * @param endpointProfile The endpoint profile
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void removeEndpointProfile(EndpointProfileDto endpointProfile) throws ControlServiceException;
 
     /**
      * Returns a list of endpoint profiles for the endpoint user with the given external ID and tenant ID.
@@ -1681,4 +1692,74 @@ public interface ControlService {
      */
     List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException;
 
+    /**
+     * Provides security credentials, allowing an endpoint that uses them to
+     * interact with the specified application.
+     *
+     * @param applicationId The application ID to allow interaction with
+     * @param credentialsBody The security credentials to save
+     *
+     * @return The security credentials saved
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws ControlServiceException;
+
+    /**
+     * Returns credentials by application ID and credentials ID.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The credentials ID
+     *
+     * @return The credentials found
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    Optional<CredentialsDto> getCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+
+    /**
+     * Revokes security credentials from the corresponding credentials storage.
+     * Also launches an asynchronous process to terminate all active sessions of
+     * the endpoint that uses these credentials.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The credentials ID
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void revokeCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+    
+    /**
+     * Notifies the Kaa cluster about security credentials revocation. If an
+     * endpoint is already registered with the specified credentials, this API
+     * call launches an asynchronous process to terminate all active sessions of
+     * the corresponding endpoint.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The credentials ID
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void onCredentailsRevoked(String applicationId, String credentialsId) throws ControlServiceException;
+
+    /**
+     * Binds credentials to the server-side endpoint profile specified.
+     *
+     * @param applicationId The application ID
+     * @param credentialsId The ID of the credentials to bind
+     * @param serverProfileVersion The server-side endpoint profile version
+     * @param serverProfileBody The server-side endpoint profile body
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
+
+    /**
+     * Returns the names of credentials services configured.
+     *
+     * @return The names of credentials services configured
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    List<String> getCredentialsServiceNames() throws ControlServiceException;
 }

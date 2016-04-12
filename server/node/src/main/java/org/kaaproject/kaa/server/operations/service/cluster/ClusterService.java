@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.cluster;
 import java.util.List;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -140,6 +141,12 @@ public interface ClusterService {
      * @param msg the server profile update message
      */
     void onServerProfileUpdateMessage(ThriftServerProfileUpdateMessage msg);
+
+    /**
+     * Process endpoint de-registration message 
+     * @param msg the endpoint de-registration message
+     */
+    void onEndpointDeregistrationMessage(ThriftEndpointDeregistrationMessage msg);
 
     /**
      * Stops service.

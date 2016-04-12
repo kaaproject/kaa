@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
+import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
@@ -28,6 +30,7 @@ import org.kaaproject.kaa.server.operations.service.notification.NotificationDel
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -80,6 +83,13 @@ public class AkkaContext {
     
     @Autowired
     private EndpointUserService endpointUserService;
+    
+    @Autowired
+    @Qualifier("rootCredentialsServiceLocator")
+    private CredentialsServiceLocator credentialsServiceLocator;
+    
+    @Autowired
+    private RegistrationService registrationService; 
     
     @Autowired
     private CTLService ctlService;
@@ -160,4 +170,13 @@ public class AkkaContext {
     public Boolean getSupportUnencryptedConnection() {
         return supportUnencryptedConnection;
     }
+
+    public CredentialsServiceLocator getCredentialsServiceLocator() {
+        return credentialsServiceLocator;
+    }
+
+    public RegistrationService getRegistrationService() {
+        return registrationService;
+    }
+
 }

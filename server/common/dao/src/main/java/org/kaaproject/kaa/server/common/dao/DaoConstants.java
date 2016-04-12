@@ -107,6 +107,7 @@ public class DaoConstants {
     public static final String APPLICATION_NAME = NAME;
     public static final String APPLICATION_SEQUENCE_NUMBER = SEQUENCE_NUMBER;
     public static final String APPLICATION_TENANT_ID = TENANT_ID;
+    public static final String APPLICATION_CREDENTIALS_SERVICE_NAME = "credentials_service";
 
     /**
      * User constants.

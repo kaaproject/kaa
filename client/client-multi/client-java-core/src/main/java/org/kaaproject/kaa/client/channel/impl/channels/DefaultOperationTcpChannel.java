@@ -123,7 +123,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.info("Cleaning client state");
                     state.clean();
                 }
-                onServerFailed();
+                if (message.getReturnCode() != ReturnCode.REFUSE_VERIFICATION_FAILED) {
+                    onServerFailed();
+                } else {
+                    onServerFailed(FailoverStatus.ENDPOINT_VERIFICATION_FAILED);
+                }
             }
         }
 
@@ -361,12 +365,16 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private void onServerFailed() {
+        this.onServerFailed(FailoverStatus.NO_CONNECTIVITY);
+    }
+
+    private void onServerFailed(FailoverStatus status) {
         LOG.info("[{}] has failed", getId());
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
             LOG.warn("Loss of connectivity detected");
 
-            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
+            FailoverDecision decision = failoverManager.onFailover(status);
             switch (decision.getAction()) {
                 case NOOP:
                     LOG.warn("No operation is performed according to failover strategy decision");
