@@ -122,6 +122,15 @@ public class EndpointServiceImplTest extends AbstractTest {
         found.setId(null);
         endpointService.saveEndpointGroup(found);
     }
+    
+    @Test(expected = IncorrectParameterException.class)
+    public void saveEndpointGroupWithSameNameTest() {
+        EndpointGroupDto group = generateEndpointGroupDto(null);
+        EndpointGroupDto found = endpointService.findEndpointGroupById(group.getId());
+        found.setId(null);
+        found.setWeight(found.getWeight()+1);
+        endpointService.saveEndpointGroup(found);
+    }
 
     @Test
     public void removeEndpointGroupByAppIdTest() {
@@ -158,6 +167,17 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto group = groups.get(0);
         group.setId(null);
         group.setName("Updated Group Name");
+        endpointService.saveEndpointGroup(group);
+    }
+    
+    @Test(expected = IncorrectParameterException.class)
+    public void saveEndpointGroupWithExistingNameTest() {
+        ApplicationDto app = generateApplicationDto();
+        List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppId(app.getId());
+        Assert.assertFalse(groups.isEmpty());
+        EndpointGroupDto group = groups.get(0);
+        group.setId(null);
+        group.setWeight(group.getWeight()+1);
         endpointService.saveEndpointGroup(group);
     }
 

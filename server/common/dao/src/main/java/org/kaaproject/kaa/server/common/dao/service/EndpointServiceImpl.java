@@ -140,21 +140,26 @@ public class EndpointServiceImpl implements EndpointService {
         String appId = endpointGroupDto.getApplicationId();
         if (isValidId(appId)) {
             String id = endpointGroupDto.getId();
-            EndpointGroup group = endpointGroupDao.findByAppIdAndWeight(appId, endpointGroupDto.getWeight());
+            EndpointGroup groupWithSameWeight = endpointGroupDao.findByAppIdAndWeight(appId, endpointGroupDto.getWeight());
+            EndpointGroup groupWithSameName = endpointGroupDao.findByAppIdAndName(appId, endpointGroupDto.getName());
             if (StringUtils.isBlank(id)) {
-                if (group == null) {
+                if (groupWithSameWeight != null) {
+                    throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
+                } else if (groupWithSameName != null) {
+                    throw new IncorrectParameterException("Can't save endpoint group with same name and application id");
+                } else {
                     endpointGroupDto.setCreatedTime(System.currentTimeMillis());
                     savedGroup = getDto(endpointGroupDao.save(new EndpointGroup(endpointGroupDto)));
-                } else {
-                    throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
-                }
+                } 
             } else {
                 EndpointGroup previousGroup = endpointGroupDao.findById(id);
                 if (previousGroup != null) {
-                    if (group != null && !group.getId().equals(previousGroup.getId())) {
+                    if (groupWithSameWeight != null && !groupWithSameWeight.getId().equals(previousGroup.getId())) {
                         throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
                     } else if (previousGroup.getWeight() == DEFAULT_GROUP_WEIGHT) {
                         throw new IncorrectParameterException("Can't update weight for default endpoint group");
+                    } else if (groupWithSameName != null && !groupWithSameName.getId().equals(previousGroup.getId())) {
+                        throw new IncorrectParameterException("Can't save endpoint group with same name and application id");
                     } else {
                         savedGroup = getDto(endpointGroupDao.save(new EndpointGroup(endpointGroupDto)));
                     }

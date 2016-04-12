@@ -49,6 +49,13 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
         EndpointGroup group = endpointGroupDao.findByAppIdAndWeight(endpointGroup.getApplicationId(), endpointGroup.getWeight());
         Assert.assertEquals(endpointGroup, group);
     }
+    
+    @Test
+    public void findByAppIdAndName() {
+        EndpointGroup endpointGroup = generateEndpointGroup(null, null);
+        EndpointGroup group = endpointGroupDao.findByAppIdAndName(endpointGroup.getApplicationId(), endpointGroup.getName());
+        Assert.assertEquals(endpointGroup, group);
+    }
 
     @Test
     public void removeTopicFromEndpointGroup() {
