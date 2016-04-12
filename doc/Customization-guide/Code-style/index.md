@@ -53,7 +53,7 @@ Never spell "Kaa" as "KAA" (except for JIRA tickets like [KAA-1](http://jira.kaa
 ```
 
 - Observe standard rules of punctuation and grammar (use articles!).  
-- Do not use the first person, that is, I or We. For example, do not write “Here we display a list of servers.” Use present tense and omit the subject in comments that describe a code block, and use imperative mood to describe the action within that code block or between code blocks.
+- Do not use the first person, that is, _I_ or _We_. For example, do not write “Here we display a list of servers.” Use present tense and omit the subject in comments that describe a code block, and use imperative mood to describe the action within that code block or between code blocks.
 
 ```Java
     // Displays a list of servers with their addresses in the console.
