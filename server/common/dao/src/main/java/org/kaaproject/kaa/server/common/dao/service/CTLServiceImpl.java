@@ -191,6 +191,10 @@ public class CTLServiceImpl implements CTLService {
                     dataSchema, new RawDataFactory());
             unSavedSchema.setDefaultRecord(dataProcessor.getRootData().getRawData());
             return unSavedSchema;
+        } catch (StackOverflowError e) {
+            LOG.error("Failed to generate default record. Endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), e);
+            throw new RuntimeException("Unable to generate default record. Endless recursion is detected! "
+                    + "Please check non-optional references to nested types.");
         } catch (ConfigurationGenerationException | IOException | RuntimeException e) {
             LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
             throw new RuntimeException("An unexpected exception occured: " + e.toString());
