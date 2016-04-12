@@ -22,14 +22,7 @@
 #define MOCKITO_SHORTHAND
 #import <OCMockito/OCMockito.h>
 
-#import "DefaultLogUploadStrategy.h"
-#import "AbstractLogCollector.h"
-#import "EndpointGen.h"
-#import "LogCollector.h"
-#import "ExecutorContext.h"
-#import "MemLogStorage.h"
-#import "DefaultLogCollector.h"
-#import "BucketInfo.h"
+#import <Kaa/Kaa.h>
 #import "TestsHelper.h"
 
 @interface LogDeliveryDelegateImpl : NSObject <LogDeliveryDelegate>

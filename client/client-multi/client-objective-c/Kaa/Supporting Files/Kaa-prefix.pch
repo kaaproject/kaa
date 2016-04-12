@@ -14,6 +14,13 @@
  *  limitations under the License.
  */
 
-#import "KaaLogging.h"
+#import <Availability.h>
 
-const NSUInteger ddLogLevel = DDLogLevelWarning;
+#ifndef Kaa_prefix_pch
+#define Kaa_prefix_pch
+
+#ifdef __OBJC__
+    #import <CocoaLumberjack.h>
+#endif
+
+#endif /* Kaa_prefix_pch */

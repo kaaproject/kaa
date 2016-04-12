@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0720"
+   LastUpgradeVersion = "0730"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B824A1EA1B1452C50076C753"
-               BuildableName = "libKaa.a"
-               BlueprintName = "libKaa.a"
+               BlueprintIdentifier = "C5AAD8881CB7DC710046AA91"
+               BuildableName = "Kaa.framework"
+               BlueprintName = "Kaa"
+               ReferencedContainer = "container:Kaa.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B824A1F51B1452C50076C753"
+               BuildableName = "KaaTests.xctest"
+               BlueprintName = "KaaTests"
                ReferencedContainer = "container:Kaa.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,9 +56,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B824A1EA1B1452C50076C753"
-            BuildableName = "libKaa.a"
-            BlueprintName = "libKaa.a"
+            BlueprintIdentifier = "C5AAD8881CB7DC710046AA91"
+            BuildableName = "Kaa.framework"
+            BlueprintName = "Kaa"
             ReferencedContainer = "container:Kaa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,9 +78,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B824A1EA1B1452C50076C753"
-            BuildableName = "libKaa.a"
-            BlueprintName = "libKaa.a"
+            BlueprintIdentifier = "C5AAD8881CB7DC710046AA91"
+            BuildableName = "Kaa.framework"
+            BlueprintName = "Kaa"
             ReferencedContainer = "container:Kaa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -82,9 +96,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B824A1EA1B1452C50076C753"
-            BuildableName = "libKaa.a"
-            BlueprintName = "libKaa.a"
+            BlueprintIdentifier = "C5AAD8881CB7DC710046AA91"
+            BuildableName = "Kaa.framework"
+            BlueprintName = "Kaa"
             ReferencedContainer = "container:Kaa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
