@@ -6,4 +6,7 @@ nav: /:path/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructio
 sort_idx: 10
 ---
 
-SDK integration instructions for select platforms
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+
+To build the Android endpoint SDK, [generate]({{root_url}}Programming-guide/Getting-started#generate) the endpoint SDK with target platform = _Android_ in Admin UI and download the generated file.
