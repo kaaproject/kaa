@@ -29,7 +29,7 @@ import java.net.URL;
 public class SchemaUtilTest {
 
     private static final String VALID_SCHEMA_RESOURCE = "control/data/testLogSchema.json";
-    private static final String INVALID_SCHEMA_RESOURCE = "control/data/same_namespace_property.avsc";
+    private static final String INVALID_SCHEMA_RESOURCE = "control/data/KAA-946.avsc";
 
     @Test
     public void testCompileAvroSchema_success() throws Exception {
