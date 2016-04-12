@@ -10,7 +10,7 @@ This guide provides some important conventions on writing clear, readable code a
 
 ### General
 
-Never spell "Kaa" as "KAA" (except for JIRA tickets like KAA-1)
+Never spell "Kaa" as "KAA" (except for JIRA tickets like [KAA-1](http://jira.kaaproject.org/browse/KAA-1))
 
 ### Code formatting and naming
 
@@ -41,29 +41,29 @@ Never spell "Kaa" as "KAA" (except for JIRA tickets like KAA-1)
 - Add a meaningful description before each class declaration. You may add author(s) full name(s) as in the following example.
 
 ```Java
-/**
- * DefaultBootstrapInitializationService Class.
- * Starts and stops all services in the Bootstrap service:
- * 1. CLI Thrift service
- * 2. ZooKeeper service
- * 3. Netty HTTP service
- *
- * @author Andrey Panasenko
- */
- ```
+    /**
+      * DefaultBootstrapInitializationService Class.
+      * Starts and stops all services in the Bootstrap service:
+      * 1. CLI Thrift service
+      * 2. ZooKeeper service
+      * 3. Netty HTTP service
+      *
+      * @author Andrey Panasenko
+      */
+```
 
 - Observe standard rules of punctuation and grammar (use articles!).  
 - Do not use the first person, that is, I or We. For example, do not write “Here we display a list of servers.” Use present tense and omit the subject in comments that describe a code block, and use imperative mood to describe the action within that code block or between code blocks.
 
 ```Java
-// Displays a list of servers with their addresses in the console.
- void printServers(List<Server> serverList) {
+    // Displays a list of servers with their addresses in the console.
+    void printServers(List<Server> serverList) {
         // Display the name and address for each server.
         for (Server server : serverList) {
             System.out.printf("Server: %s, %s", server.getName(), server.getAddress());
         }
     }
-// Insert code for get and set accessors.
+    // Insert code for get and set accessors.
 ```
 
 - For more information on writing doc comments for the Javadoc tool, see [http://www.oracle.com/technetwork/articles/java/index-137868.html](http://www.oracle.com/technetwork/articles/java/index-137868.html).
