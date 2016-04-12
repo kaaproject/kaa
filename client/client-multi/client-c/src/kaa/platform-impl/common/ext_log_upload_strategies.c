@@ -165,7 +165,7 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
         KAA_RETURN_IF_ERR(error_code);
         error_code = kaa_bootstrap_manager_on_access_point_failed(self->bootstrap_manager
                                                                 , &protocol_id
-                                                                , KAA_SERVER_OPERATIONS);
+                                                                , KAA_SERVER_OPERATIONS, 0);
         return error_code;
     }
 

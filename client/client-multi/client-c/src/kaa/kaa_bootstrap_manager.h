@@ -58,9 +58,10 @@ typedef enum {
  *
  * @see kaa_transport_protocol_id_t
  */
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type);
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+													     uint16_t reason_code);
 
 #ifdef __cplusplus
 }      /* extern "C" */

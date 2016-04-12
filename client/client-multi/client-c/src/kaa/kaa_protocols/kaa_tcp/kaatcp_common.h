@@ -107,7 +107,7 @@ typedef enum {
     KAATCP_CONNACK_SERVER_UNAVAILABLE     = 0x04,
     KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS = 0x05,
     KAATCP_CONNACK_NOT_AUTHORIZED         = 0x06,
-    KAATCP_CONNACK_NOT_REGISTERED         = 0x10
+    KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED = 0x10,
 } kaatcp_connack_code_t;
 
 typedef struct {
@@ -118,6 +118,7 @@ typedef enum {
     KAATCP_DISCONNECT_NONE           = 0x00,
     KAATCP_DISCONNECT_BAD_REQUEST    = 0x01,
     KAATCP_DISCONNECT_INTERNAL_ERROR = 0x02,
+    KAATCP_DISCONNECT_CREDENTIALS_REVOKED = 0x03,
 } kaatcp_disconnect_reason_t;
 
 typedef struct {
