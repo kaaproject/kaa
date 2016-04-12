@@ -222,7 +222,7 @@
     }
 }
 
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server failoverStatus:(FailoverStatus)status {
     @synchronized(self) {
         if (self.isShutdown) {
             DDLogWarn(@"%@ Can't process server failure. Channel manager is down", TAG);
@@ -233,7 +233,7 @@
             id<TransportConnectionInfo> nextConnectionInfo = [self getNextBootstrapServerForServer:server];
             if (nextConnectionInfo) {
                 DDLogVerbose(@"%@ Using next bootstrap server", TAG);
-                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
                 switch (decision.failoverAction) {
                     case FAILOVER_ACTION_NOOP:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
@@ -296,7 +296,7 @@
                 }
             }
         } else {
-            [self.bootstrapManager useNextOperationsServerWithTransportId:[server transportId]];
+            [self.bootstrapManager useNextOperationsServerWithTransportId:[server transportId] failoverStatus:status];
         }
     }
 }

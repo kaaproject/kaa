@@ -74,8 +74,8 @@
     return nil;
 }
 
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server {
-#pragma unused(server)
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server failoverStatus:(FailoverStatus)status {
+#pragma unused(server, status)
 }
 
 - (void)setFailoverManager:(id<FailoverManager>)failoverManager {
@@ -160,7 +160,8 @@
     self.exceptionCaught = NO;
     @try {
         [manager receiveOperationsServerList];
-        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                         failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
     }
     @catch (NSException *exception) {
         self.exceptionCaught = YES;
@@ -178,7 +179,8 @@
     self.exceptionCaught = NO;
     
     @try {
-        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                         failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
     }
     @catch (NSException *exception) {
         self.exceptionCaught = YES;
@@ -203,7 +205,8 @@
     [manager setFailoverManager:failoverManager];
     [manager setTransport:transport];
     [manager onProtocolListUpdated:array];
-    [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+    [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                     failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
     
     XCTAssertTrue(channelManager.serverUpdated);
     XCTAssertEqualObjects(@"http://localhost:9889", [channelManager receivedURL]);

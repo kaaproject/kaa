@@ -22,6 +22,7 @@
 #define TAG @"AbstractHttpChannel >>>"
 
 #define UNATHORIZED_HTTP_STATUS 401
+#define FORBIDDEN_HTTP_STATUS   403
 
 @interface AbstractHttpChannel ()
 
@@ -256,15 +257,20 @@
 }
 
 - (void)connectionFailedWithStatus:(int)status {
+    FailoverStatus failoverStatus = FAILOVER_STATUS_OPERATION_SERVERS_NA;
     switch (status) {
         case UNATHORIZED_HTTP_STATUS:
             [self.kaaState clean];
+            failoverStatus = FAILOVER_STATUS_ENDPOINT_VERIFICATION_FAILED;
+            break;
+        case FORBIDDEN_HTTP_STATUS:
+            failoverStatus = FAILOVER_STATUS_CREDENTIALS_REVOKED;
             break;
         default:
             break;
     }
     self.lastConnectionFailed = YES;
-    [self.failoverMgr onServerFailedWithConnectionInfo:self.currentServer];
+    [self.failoverMgr onServerFailedWithConnectionInfo:self.currentServer failoverStatus:failoverStatus];
 }
 
 - (id<KaaDataMultiplexer>)getMultiplexer {

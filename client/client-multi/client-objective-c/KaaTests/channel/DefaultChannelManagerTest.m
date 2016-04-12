@@ -137,7 +137,9 @@
     [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                  bootstrapServers:bootstrapServers
+                                                                                           context:nil];
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
@@ -168,8 +170,9 @@
     id<TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     [channelManager onTransportConnectionInfoUpdated:opServer];
     
-    [channelManager onServerFailedWithConnectionInfo:opServer];
-    [verifyCount(bootstrapManager, times(1)) useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+    [channelManager onServerFailedWithConnectionInfo:opServer failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+    [verifyCount(bootstrapManager, times(1)) useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                                                     failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
 }
 
 - (void)testBootstrapServerFailed {
@@ -197,7 +200,7 @@
     
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
-    [channelManager onServerFailedWithConnectionInfo:server];
+    [channelManager onServerFailedWithConnectionInfo:server failoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         [NSThread sleepForTimeInterval:1];
@@ -226,7 +229,7 @@
     
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
-    [channelManager onServerFailedWithConnectionInfo:server];
+    [channelManager onServerFailedWithConnectionInfo:server failoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
 }
 
 - (void)testRemoveHttpLpChannel {
@@ -390,7 +393,7 @@
     [channelManager addChannel:channel];
     
     [channelManager shutdown];
-    [channelManager onServerFailedWithConnectionInfo:nil];
+    [channelManager onServerFailedWithConnectionInfo:nil failoverStatus:FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA];
     [channelManager onTransportConnectionInfoUpdated:nil];
     [channelManager addChannel:nil];
     [channelManager setChannel:nil withType:0];

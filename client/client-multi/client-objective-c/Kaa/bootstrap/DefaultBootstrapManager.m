@@ -38,7 +38,7 @@
 
 - (NSMutableArray *)getTransportsByAccessPointId:(int)accessPointId;
 - (void)notifyChannelManagerAboutServers:(NSMutableArray *)servers;
-- (void)applyDecision:(FailoverDecision *)decision;
+- (void)resolveFailoverStatus:(FailoverStatus)status;
 
 @end
 
@@ -60,7 +60,7 @@
     [self.transport sync];
 }
 
-- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId {
+- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId failoverStatus:(FailoverStatus)status {
     if (self.mappedOperationServerList && [self.mappedOperationServerList count] > 0) {
         ProtocolMetaData *nextOperServer = [self.mappedIterators[transportId] nextObject];
         if (nextOperServer) {
@@ -73,8 +73,7 @@
             }
         } else {
             DDLogWarn(@"%@ Failed to find server for channel %@", TAG, transportId);
-            FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_OPERATION_SERVERS_NA];
-            [self applyDecision:decision];
+            [self resolveFailoverStatus:status];
         }
     } else {
         [NSException raise:KaaBootstrapRuntimeException format:@"Operations Server list is empty"];
@@ -120,8 +119,7 @@
         
         if (!self.operationsServerList || [self.operationsServerList count] == 0) {
             DDLogVerbose(@"%@ Received empty operations server list", TAG);
-            FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
-            [self applyDecision:decision];
+            [self resolveFailoverStatus:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
             return;
         }
         
@@ -176,7 +174,8 @@
     return result;
 }
 
-- (void)applyDecision:(FailoverDecision *)decision {
+- (void)resolveFailoverStatus:(FailoverStatus)status {
+    FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
     switch (decision.failoverAction) {
         case FAILOVER_ACTION_NOOP:
         {
@@ -203,7 +202,8 @@
         case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
         {
             DDLogWarn(@"%@ Trying to switch to the next bootstrap server as to failover strategy decision", TAG);
-            [self.failoverManager onServerFailedWithConnectionInfo:[self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP]];
+            id<TransportConnectionInfo> connectionInfo = [self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP];
+            [self.failoverManager onServerFailedWithConnectionInfo:connectionInfo failoverStatus:status];
             __weak typeof(self)weakSelf = self;
             dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(decision.retryPeriod * NSEC_PER_MSEC));
             dispatch_after(delay, [self.context getSheduledExecutor], ^{

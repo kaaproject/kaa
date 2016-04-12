@@ -71,6 +71,7 @@ typedef enum {
 @property (nonatomic, strong) KAASocket *socket;//volatile
 
 - (void)onServerFailed;
+- (void)onServerFailedWithFailoverStatus:(FailoverStatus)status;
 - (void)closeConnection;
 - (void)sendFrame:(KAAMqttFrame *)frame;
 - (void)sendPingRequest;
@@ -165,11 +166,17 @@ typedef enum {
 
 - (void)onDisconnectMessage:(KAATcpDisconnect *)message {
     DDLogInfo(@"%@ Disconnect message (reason:%i) received for channel [%@]", TAG, message.reason, [self getId]);
-    if (message.reason != DISCONNECT_REASON_NONE) {
-        DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);
-        [self onServerFailed];
-    } else {
-        [self closeConnection];
+    switch (message.reason) {
+        case DISCONNECT_REASON_NONE:
+            [self closeConnection];
+            break;
+        case DISCONNECT_REASON_CREDENTIALS_REVOKED:
+            [self onServerFailedWithFailoverStatus:FAILOVER_STATUS_CREDENTIALS_REVOKED];
+            break;
+        default:
+            DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);
+            [self onServerFailed];
+            break;
     }
 }
 
@@ -318,11 +325,15 @@ typedef enum {
 }
 
 - (void)onServerFailed {
+    [self onServerFailedWithFailoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+}
+
+- (void)onServerFailedWithFailoverStatus:(FailoverStatus)status {
     DDLogInfo(@"%@ [%@] has failed", TAG, [self getId]);
     [self closeConnection];
     if (self.checker && ![self.checker isConnected]) {
         DDLogWarn(@"%@ Loss of connectivity detected", TAG);
-        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
         switch (decision.failoverAction) {
             case FAILOVER_ACTION_NOOP:
                 DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
@@ -344,7 +355,7 @@ typedef enum {
                 DDLogWarn(@"%@ Failover actions NEXT_BOOTSTRAP & NEXT_OPERATIONS not supported yet!", TAG);
         }
     } else {
-        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer];
+        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer failoverStatus:status];
     }
 }
 

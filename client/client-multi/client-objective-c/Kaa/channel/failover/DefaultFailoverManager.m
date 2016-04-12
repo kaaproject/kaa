@@ -87,7 +87,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
     return self;
 }
 
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo failoverStatus:(FailoverStatus)status {
     
     if (!connectionInfo) {
         DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", logTag);
@@ -125,7 +125,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
             [resolution start];
         });
         
-        [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo];
+        [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo failoverStatus:status];
         
         long updatedResolutionTime = pointResolution != nil ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
         AccessPointIdResolution *newPointResolution =

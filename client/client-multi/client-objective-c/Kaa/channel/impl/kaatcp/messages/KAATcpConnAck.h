@@ -26,6 +26,7 @@
  *  REFUSE_SERVER_UNAVAILABLE   0x04    Connection Refused: server unavailable
  *  REFUSE_BAD_CREDENTIALS      0x05    Connection Refused: invalid authentication parameters
  *  REFUSE_NO_AUTH              0x06    Connection Refused: not authorized
+ *  REFUSE_VERIFICATION_FAILED  0x10    Connection Refused: endpoint verification failed
  */
 
 typedef enum {
@@ -35,6 +36,7 @@ typedef enum {
     RETURN_CODE_REFUSE_SERVER_UNAVAILABLE = 0x04,
     RETURN_CODE_REFUSE_BAD_CREDENTIALS = 0x05,
     RETURN_CODE_REFUSE_NO_AUTH = 0x06,
+    RETURN_CODE_REFUSE_VERIFICATION_FAILED = 0x10,
     RETURN_CODE_UNDEFINED = 0x07
 } ReturnCode;
 
