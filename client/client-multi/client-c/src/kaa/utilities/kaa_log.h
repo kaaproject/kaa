@@ -29,6 +29,7 @@
 #include "../kaa_error.h"
 #include "../platform/defaults.h"
 #include "../platform/stdio.h"
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,13 +64,8 @@ extern "C" {
 #define KAA_LOG_LEVEL_TRACE_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE)
 
 
-/**
- * @brief Kaa logger type
- */
-#ifndef KAA_LOGGER_T
-#define KAA_LOGGER_T
-typedef struct kaa_logger_t             kaa_logger_t;
-#endif
+struct kaa_logger_t;
+typedef struct kaa_logger_t kaa_logger_t;
 
 /**
  * @brief Log level type

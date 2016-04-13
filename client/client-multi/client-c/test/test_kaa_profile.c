@@ -48,7 +48,7 @@ static kaa_profile_manager_t *profile_manager = NULL;
 
 
 #define TEST_PUB_KEY_SIZE 20
-static const char test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
+static const uint8_t test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 
 
 
@@ -105,13 +105,13 @@ static kaa_error_t get_protocol_id(void *ctx, kaa_transport_protocol_id_t *id)
     return KAA_ERR_NONE;
 }
 static kaa_error_t get_services(void *ctx,
-                                kaa_extension_id **supported_list,
+                                const kaa_extension_id **supported_list,
                                 size_t *count)
 {
     (void)ctx;
     /* Only profile service is "supported" by this mock */
-    static kaa_extension_id service = KAA_EXTENSION_PROFILE;
-    *supported_list = &service;
+    static const kaa_extension_id services[] = { KAA_EXTENSION_PROFILE };
+    *supported_list = services;
     *count = 1;
     return KAA_ERR_NONE;
 }
@@ -131,13 +131,13 @@ static kaa_error_t sync_handler(void *ctx,
 }
 
 static kaa_transport_channel_interface_t channel = {
-        .context = NULL,
-        .destroy = NULL,
-        .sync_handler = sync_handler,
-        .init = init_channel,
-        .set_access_point = set_access_point,
-        .get_protocol_id = get_protocol_id,
-        .get_supported_services = get_services,
+    .context = NULL,
+    .destroy = NULL,
+    .sync_handler = sync_handler,
+    .init = init_channel,
+    .set_access_point = set_access_point,
+    .get_protocol_id = get_protocol_id,
+    .get_supported_services = get_services,
 };
 
 /*----------------------------------------------------------------------------*/
@@ -274,7 +274,7 @@ void test_profile_sync_serialize(void **state)
     error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer[profile_sync_size];
+    uint8_t buffer[profile_sync_size];
     error_code = kaa_platform_message_writer_create(&manual_writer, buffer, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -314,7 +314,7 @@ void test_profile_sync_serialize(void **state)
     error_code = kaa_platform_message_write_aligned(manual_writer, access_token, access_token_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer2[profile_sync_size];
+    uint8_t buffer2[profile_sync_size];
     error_code = kaa_platform_message_writer_create(&auto_writer, buffer2, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -340,7 +340,7 @@ void test_profile_handle_sync(void **state)
     uint16_t extension_options = 0x1; /* Need resync */
 
     const size_t buffer_size = 6;
-    char buffer[buffer_size];
+    uint8_t buffer[buffer_size];
     kaa_platform_message_reader_t *reader;
     error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -370,8 +370,10 @@ static void test_profile_force_sync(void **state)
     ASSERT_TRUE(mock_sync_handler_called);
 }
 
-int test_init(void)
+int test_init(void **state)
 {
+    (void)state;
+
     kaa_error_t error = kaa_log_create(&logger,
                                        KAA_MAX_LOG_MESSAGE_LENGTH,
                                        KAA_MAX_LOG_LEVEL,
@@ -404,8 +406,10 @@ int test_init(void)
     return 0;
 }
 
-int test_deinit(void)
+int test_deinit(void **state)
 {
+    (void)state;
+
     kaa_profile_manager_destroy(profile_manager);
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
@@ -413,12 +417,15 @@ int test_deinit(void)
     return 0;
 }
 
-KAA_SUITE_MAIN(Profile, test_init, test_deinit,
-        KAA_TEST_CASE(profile_is_set, test_profile_is_set)
-        KAA_TEST_CASE(profile_update, test_profile_update)
-        KAA_TEST_CASE(profile_request, test_profile_sync_get_size)
-        KAA_TEST_CASE(profile_sync_serialize, test_profile_sync_serialize)
-        KAA_TEST_CASE(profile_handle_sync, test_profile_handle_sync)
-        KAA_TEST_CASE(profile_force_sync, test_profile_force_sync)
-
-)
+int main(void)
+{
+    const struct CMUnitTest tests[] = {
+        cmocka_unit_test_setup_teardown(test_profile_is_set, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_update, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_sync_get_size, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_sync_serialize, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_handle_sync, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_force_sync, test_init, test_deinit),
+    };
+    return cmocka_run_group_tests(tests, NULL, NULL);
+}

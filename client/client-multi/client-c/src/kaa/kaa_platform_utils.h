@@ -18,6 +18,9 @@
 #ifndef KAA_PLATFORM_UTILS_H_
 #define KAA_PLATFORM_UTILS_H_
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 #include "kaa_error.h"
 #include "kaa_platform_common.h"
@@ -28,23 +31,29 @@ extern "C" {
 
 
 typedef struct {
-    char       *begin;
-    char       *current;
-    char       *end;
+    uint8_t *begin;
+    uint8_t *current;
+    uint8_t *end;
 } kaa_platform_message_writer_t;
 
 
 typedef struct {
-    const char *begin;
-    const char *current;
-    const char *end;
+    const uint8_t *begin;
+    const uint8_t *current;
+    const uint8_t *end;
 } kaa_platform_message_reader_t;
 
+#define KAA_MESSAGE_WRITER(buffer, len) \
+    (kaa_platform_message_writer_t){ (buffer), (buffer), (buffer) + (len) }
 
+#define KAA_MESSAGE_READER(buffer, len) \
+    (kaa_platform_message_reader_t){ (buffer), (buffer), (buffer) + (len) }
 
-kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p
-                                             , char *buf
-                                             , size_t len);
+/**
+ * @deprecated Use @ref KAA_MESSAGE_WRITER instead -- it doesn't allocate memory.
+ */
+kaa_error_t kaa_platform_message_writer_create(kaa_platform_message_writer_t** writer_p,
+        uint8_t *buf, size_t len);
 
 void kaa_platform_message_writer_destroy(kaa_platform_message_writer_t* writer);
 
@@ -69,8 +78,11 @@ kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_wri
 
 
 
+/**
+ * @deprecated Use @ref KAA_MESSAGE_READER instead -- it doesn't allocate memory.
+ */
 kaa_error_t kaa_platform_message_reader_create(kaa_platform_message_reader_t **reader_p
-                                             , const char *buffer
+                                             , const uint8_t *buffer
                                              , size_t len);
 
 void kaa_platform_message_reader_destroy(kaa_platform_message_reader_t *reader);
