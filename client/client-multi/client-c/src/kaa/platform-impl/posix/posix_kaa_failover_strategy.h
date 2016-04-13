@@ -27,7 +27,8 @@
 *
 * @return The error code.
 */
-kaa_error_t kaa_failover_strategy_set(kaa_failover_strategy_t* strategy, kaa_failover_decision_t* decision);
+kaa_error_t kaa_failover_strategy_set(kaa_failover_strategy_t *strategy,
+        kaa_failover_decision_t *decision);
 
 
 #endif /* POSIX_KAA_STRATEGY_H_ */

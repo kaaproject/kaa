@@ -19,6 +19,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <arpa/inet.h>
 #include "platform/ext_sha.h"
 
 #include "kaa.h"
@@ -38,41 +39,22 @@
 
 #include "kaa_private.h"
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-
-static kaa_context_t* kaa_context= NULL;
-static kaa_serialize_info_t *info = NULL;
-char *buffer = NULL;
-size_t buffer_size = 0;
-static void *mock = NULL;
-
-
-char* allocator(void *mock_context, size_t size)
-{
-    (void)mock_context;
-    return KAA_MALLOC(size);
-}
-
 void test_empty_log_collector_extension_count(void **state)
 {
-    (void)state;
-    kaa_extension_id service = KAA_EXTENSION_LOGGING;
-    info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
-    info->services = &service;
-    info->services_count = 1;
-    info->allocator = &allocator;
-    info->allocator_context = mock;
+    kaa_context_t *kaa_context = *state;
 
-    void *log_storage_context         = NULL;
+    kaa_extension_id services[] = { KAA_EXTENSION_LOGGING };
+
+    void *log_storage_context = NULL;
     void *log_upload_strategy_context = NULL;
 
-    kaa_error_t error_code = ext_unlimited_log_storage_create(&log_storage_context, kaa_context->logger);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    kaa_error_t error_code = ext_unlimited_log_storage_create(&log_storage_context,
+            kaa_context->logger);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
-    error_code = ext_log_upload_strategy_create(kaa_context
-                                              , &log_upload_strategy_context
-                                              , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = ext_log_upload_strategy_create(kaa_context, &log_upload_strategy_context,
+            KAA_LOG_UPLOAD_VOLUME_STRATEGY);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
 
     kaa_log_bucket_constraints_t constraints = {
@@ -80,38 +62,39 @@ void test_empty_log_collector_extension_count(void **state)
         .max_bucket_log_count = UINT32_MAX,
     };
 
-    error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context, &constraints);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context,
+            log_upload_strategy_context, &constraints);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
-    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, info, &buffer, &buffer_size);
-    KAA_FREE(info);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    uint8_t *buffer = NULL;
+    size_t buffer_size = 0;
+    error_code = kaa_platform_protocol_alloc_serialize_client_sync(kaa_context->platform_protocol,
+            services, 1,
+            &buffer, &buffer_size);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
-    char count_of_extensions = *(buffer + 7);
-    KAA_LOG_DEBUG(kaa_context->logger, KAA_ERR_NONE, "count of extensions is %d, expected 1", count_of_extensions);
-    ASSERT_EQUAL(count_of_extensions, 1);
-}
-int test_init(void)
-{
-    kaa_error_t error_code = kaa_init(&kaa_context);
-    if (error_code) {
-    	return KAA_ERR_NOMEM;
-    }
-	return KAA_ERR_NONE;
-}
+    uint16_t count_of_extensions = ntohs(*(uint16_t *)(buffer + 6));
+    assert_int_equal(1, count_of_extensions);
 
-int test_deinit(void)
-{
-    kaa_deinit(kaa_context);
     KAA_FREE(buffer);
-    return KAA_ERR_NONE;
 }
 
-#endif
+int test_init(void **state)
+{
+    return kaa_init((kaa_context_t **)state);
+}
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-KAA_SUITE_MAIN(plarform_protocol_test,test_init,test_deinit,
-       KAA_TEST_CASE(empty_log_collector_test, test_empty_log_collector_extension_count))
-#else
-KAA_SUITE_MAIN(plarform_protocol_test,test_init,test_deinit)
-#endif
+int test_deinit(void **state)
+{
+    kaa_deinit(*state);
+    return 0;
+}
+
+int main(void)
+{
+    const struct CMUnitTest tests[] = {
+        cmocka_unit_test(test_empty_log_collector_extension_count),
+    };
+
+    return cmocka_run_group_tests(tests, test_init, test_deinit);
+}

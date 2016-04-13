@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     channelManager.setFailoverStrategy(failoverStrategy);
 
     ITransportConnectionInfoPtr fakeServer;
-    BOOST_CHECK_THROW(channelManager.onServerFailed(fakeServer), KaaException);
+    BOOST_CHECK_THROW(channelManager.onServerFailed(fakeServer, KaaFailoverReason::NO_CONNECTIVITY), KaaException);
 
     const std::string ch1Id("id1");
     UserDataChannel* userCh1 = new UserDataChannel;
@@ -415,15 +415,15 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     BOOST_CHECK(userCh1->server_);
     BOOST_CHECK(userCh1->server_->getPort() == 80);
 
-    channelManager.onServerFailed(servers[0]);
+    channelManager.onServerFailed(servers[0], KaaFailoverReason::BOOTSTRAP_SERVERS_NA);
 
     BOOST_CHECK(userCh1->server_);
     BOOST_CHECK(userCh1->server_->getPort() == 54);
 
-    channelManager.onServerFailed(servers[1]);
+    channelManager.onServerFailed(servers[1], KaaFailoverReason::BOOTSTRAP_SERVERS_NA);
     BOOST_CHECK(userCh1->server_->getPort() == 443);
 
-    channelManager.onServerFailed(servers[2]);
+    channelManager.onServerFailed(servers[2], KaaFailoverReason::BOOTSTRAP_SERVERS_NA);
     std::this_thread::sleep_for(std::chrono::seconds(DefaultFailoverStrategy::DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD + 3));
     BOOST_CHECK(userCh1->server_->getPort() == 80);
 }

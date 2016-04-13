@@ -58,7 +58,7 @@ void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
     }
 }
 
-void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo) {
+void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
@@ -80,7 +80,7 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
         if (nextConnectionInfo) {
             onTransportConnectionInfoUpdated(nextConnectionInfo);
         } else {
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::BOOTSTRAP_SERVERS_NA);
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
             switch (decision.getAction()) {
                  case FailoverStrategyAction::NOOP:
                      KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -107,7 +107,7 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
              }
         }
     } else {
-        bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId());
+        bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId(), reason);
     }
 }
 
@@ -139,7 +139,8 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     for (auto& channel : channels_) {
         if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId() == protocolId) {
             KAA_LOG_DEBUG(boost::format("Setting a new connection data for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+                          % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+
             channel->setServer(connectionInfo);
         }
     }

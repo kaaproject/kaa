@@ -33,6 +33,7 @@
 #include "platform/ext_tcp_utils.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
+#include <kaa_common.h>
 
 #define ACCESS_POINT_SOCKET_FD 5
 
@@ -718,28 +719,23 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     return KAA_ERR_BADPARAM;
 }
 
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size)
+kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
+        const extension_id *services, size_t services_count,
+        char **buffer, size_t *buffer_size)
 {
-    (void)self;
-    (void)buffer_size;
-    if (info->services_count == 4
-            && info->services[0] == KAA_EXTENSION_PROFILE
-            && info->services[1] == KAA_EXTENSION_USER
-            && info->services[2] == KAA_EXTENSION_EVENT
-            && info->services[3] == KAA_EXTENSION_LOGGING) {
-        if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
-            if (alloc_buffer) {
-                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-                *buffer = alloc_buffer;
-                *buffer_size = sizeof(CONNECT_PACK);
-                return KAA_ERR_NONE;
-            }
-        }
 
+    if (services_count == 4
+            && services[0] == KAA_EXTENSION_PROFILE
+            && services[1] == KAA_EXTENSION_USER
+            && services[2] == KAA_EXTENSION_EVENT
+            && services[3] == KAA_EXTENSION_LOGGING) {
+        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+        if (alloc_buffer) {
+            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+            *buffer = alloc_buffer;
+            *buffer_size = sizeof(CONNECT_PACK);
+            return KAA_ERR_NONE;
+        }
     }
 
     return KAA_ERR_BADPARAM;

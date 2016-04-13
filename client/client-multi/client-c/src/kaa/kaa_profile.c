@@ -55,15 +55,89 @@ struct kaa_profile_manager_t {
     kaa_profile_extension_data_t *extension_data;
 };
 
+kaa_error_t kaa_extension_profile_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_profile_manager_create(&kaa_context->profile_manager,
+        kaa_context->status->status_instance,
+        kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->profile_manager;
+    return result;
+}
+
+kaa_error_t kaa_extension_profile_deinit(void *context)
+{
+    kaa_profile_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_profile_request_get_size(void *context,
+        size_t *expected_size)
+{
+    return kaa_profile_request_get_size(context, expected_size);
+}
 
 static bool resync_is_required(kaa_profile_manager_t *self)
 {
     return self->need_resync || self->status->profile_needs_resync;
 }
 
-/**
+kaa_error_t kaa_extension_profile_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = resync_is_required(context);
+    if (!*need_resync) {
+        *size = 0;
+        return KAA_ERR_NONE;
+    }
+
+    size_t size_needed;
+    kaa_error_t error = kaa_profile_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_profile_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_profile_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_profile_handle_server_sync(context, &reader, extension_options, size);
+}
+
+/*
  * PUBLIC FUNCTIONS
  */
+/** @deprecated Use kaa_extension_profile_init(). */
 kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
@@ -122,6 +196,7 @@ bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self)
 
 
 
+/** @deprecated Use kaa_extension_profile_deinit(). */
 void kaa_profile_manager_destroy(kaa_profile_manager_t *self)
 {
     if (self) {
@@ -149,7 +224,15 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
 
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size)
 {
-    KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
+    // TODO(KAA-982): Use asserts
+    if (!self || !expected_size) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    if (!resync_is_required(self)) {
+        *expected_size = 0;
+        return KAA_ERR_NONE;
+    }
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // profile body size

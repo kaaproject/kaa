@@ -111,8 +111,11 @@ public:
      * @param server the parameters of server that was not connected.
      * @see ITransportConnectionInfo
      *
+     * @param reason The reason which caused failure.
+     * @see KaaFailoverReason
+     *
      */
-    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo) = 0;
+    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) = 0;
 
     /**
      * Reports to Channel Manager about the new server.

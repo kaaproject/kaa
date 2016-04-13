@@ -65,7 +65,74 @@ struct kaa_bootstrap_manager_t {
 
 static kaa_extension_id bootstrap_sync_services[1] = { KAA_EXTENSION_BOOTSTRAP };
 
+kaa_error_t kaa_extension_bootstrap_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_bootstrap_manager_create((kaa_bootstrap_manager_t **)context, kaa_context);
+    kaa_context->bootstrap_manager = *context;
+    return result;
+}
 
+kaa_error_t kaa_extension_bootstrap_deinit(void *context)
+{
+    kaa_bootstrap_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_bootstrap_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_channel_manager_bootstrap_request_get_size(
+            ((kaa_bootstrap_manager_t *)context)->channel_manager, expected_size);
+}
+
+kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_channel_manager_bootstrap_request_get_size(
+            ((kaa_bootstrap_manager_t *)context)->channel_manager, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_bootstrap_manager_bootstrap_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_bootstrap_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_bootstrap_manager_handle_server_sync(context, &reader, extension_options, size);
+}
 
 static void destroy_access_point(void *data)
 {
@@ -188,6 +255,7 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_manager_init(). */
 kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
@@ -208,6 +276,7 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_manager_deinit(). */
 void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self)
 {
     KAA_RETURN_IF_NIL(self,);

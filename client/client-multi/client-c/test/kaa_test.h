@@ -52,9 +52,8 @@
         if (fn) return fn(); \
         return 0; \
     } \
-    int main(int argc, char ** argv) \
+    int main(void) \
     { \
-        (void)argc; (void)argv; \
         const char suite_name[] = #SUITE_NAME; \
         const struct CMUnitTest tests[] = { \
 

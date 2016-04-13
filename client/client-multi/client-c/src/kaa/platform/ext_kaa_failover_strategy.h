@@ -21,8 +21,8 @@
 #include "../kaa_error.h"
 #include "../platform/time.h"
 
-#define KAA_FAILOVER_RETRY_PERIOD                 2
-#define KAA_BOOTSTRAP_RESPONSE_PERIOD             5
+#define KAA_FAILOVER_RETRY_PERIOD     2
+#define KAA_BOOTSTRAP_RESPONSE_PERIOD 5
 
 typedef enum {
     KAA_NOOP = 0,
@@ -43,6 +43,9 @@ typedef struct {
     kaa_failover_strategy_action_t action;
     kaa_time_t retry_period;
 } kaa_failover_decision_t;
+
+struct kaa_failover_strategy_t;
+typedef struct kaa_failover_strategy_t kaa_failover_strategy_t;
 
 /**
 * @brief Returns the decision, depending on the failover reason.

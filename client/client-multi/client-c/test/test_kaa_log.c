@@ -109,12 +109,12 @@ static kaa_error_t test_kaa_get_protocol_id(void *context
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t test_kaa_get_supported_services(void *context
-                                                    , kaa_extension_id **supported_services
-                                                    , size_t *service_count)
+static kaa_error_t test_kaa_get_supported_services(void *context,
+        const kaa_extension_id **supported_services,
+        size_t *service_count)
 {
     (void)context;
-    *supported_services = (kaa_extension_id *)OPERATIONS_SERVICES;
+    *supported_services = OPERATIONS_SERVICES;
     *service_count = OPERATIONS_SERVICES_COUNT;
     return KAA_ERR_NONE;
 }
@@ -334,7 +334,7 @@ void test_create_request(void **state)
     error_code = kaa_logging_request_get_size(log_collector, &expected_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer[expected_size];
+    uint8_t buffer[expected_size];
     kaa_platform_message_writer_t *writer = NULL;
     error_code = kaa_platform_message_writer_create(&writer, buffer, expected_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -344,23 +344,23 @@ void test_create_request(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     kaa_platform_message_writer_destroy(writer);
 
-    char *buf_cursor = buffer;
+    uint8_t *buf_cursor = buffer;
     ASSERT_EQUAL(KAA_EXTENSION_LOGGING, KAA_HTONS(*(uint16_t*)buf_cursor));
     buf_cursor += sizeof(uint16_t);
 
-    char options[] = { 0x00, 0x01 };
+    uint8_t options[] = { 0x00, 0x01 };
     ASSERT_EQUAL(memcmp(buf_cursor, options, 2), 0);
     buf_cursor += 2;
 
     ASSERT_EQUAL(*(uint32_t *) buf_cursor, KAA_HTONL(20));
     buf_cursor += sizeof(uint32_t);
 
-    char request_id_records_count[]  = { 0x00, 0x01, 0x00, 0x01 };
+    uint8_t request_id_records_count[]  = { 0x00, 0x01, 0x00, 0x01 };
     ASSERT_EQUAL(memcmp(buf_cursor, request_id_records_count, 4), 0);
     buf_cursor += 4;
 
-    char record_buf[test_log_record_size];
-    avro_writer_t avro_writer = avro_writer_memory(record_buf, test_log_record_size);
+    uint8_t record_buf[test_log_record_size];
+    avro_writer_t avro_writer = avro_writer_memory((char *)record_buf, test_log_record_size);
     test_log_record->serialize(avro_writer, test_log_record);
     avro_writer_free(avro_writer);
 
@@ -402,9 +402,9 @@ void test_response(void **state)
 
     uint32_t response_count = 2;
     size_t response_buffer_size = sizeof(uint32_t) + sizeof(uint32_t) * response_count;
-    char response_buffer[response_buffer_size];
+    uint8_t response_buffer[response_buffer_size];
 
-    char *response = response_buffer;
+    uint8_t *response = response_buffer;
     *((uint32_t *)response) = KAA_HTONL(response_count);
     response += sizeof(uint32_t);
 
@@ -474,7 +474,7 @@ void test_timeout(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t request_buffer_size = 256;
-    char request_buffer[request_buffer_size];
+    uint8_t request_buffer[request_buffer_size];
     kaa_platform_message_writer_t *writer = NULL;
     error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -530,7 +530,7 @@ void test_decline_timeout(void **state)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t request_buffer_size = 256;
-    char request_buffer[request_buffer_size];
+    uint8_t request_buffer[request_buffer_size];
     kaa_platform_message_writer_t *writer = NULL;
     error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -545,9 +545,9 @@ void test_decline_timeout(void **state)
 
     uint32_t response_count = 1;
     size_t response_buffer_size = sizeof(uint32_t) + sizeof(uint32_t) * response_count;
-    char response_buffer[response_buffer_size];
+    uint8_t response_buffer[response_buffer_size];
 
-    char *response = response_buffer;
+    uint8_t *response = response_buffer;
     *((uint32_t *)response) = KAA_HTONL(response_count);
     response += sizeof(uint32_t);
 
@@ -636,7 +636,7 @@ void test_max_parallel_uploads_with_log_sync(void **state)
      * Do the first request to remember the delivery timeout of the log batch.
      */
     size_t request_buffer_size = 256;
-    char request_buffer[request_buffer_size];
+    uint8_t request_buffer[request_buffer_size];
     kaa_platform_message_writer_t *writer = NULL;
     error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -722,7 +722,7 @@ void test_max_parallel_uploads_with_sync_all(void **state)
     error_code = kaa_logging_request_get_size(log_collector, &expected_size);
     ASSERT_TRUE(expected_size);
     size_t request_buffer_size = 256;
-    char request_buffer[request_buffer_size];
+    uint8_t request_buffer[request_buffer_size];
     kaa_platform_message_writer_t *writer = NULL;
     error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -1138,7 +1138,7 @@ KAA_GROUP_SETUP(log_callback_with_storage)
 
     error_code = kaa_platform_message_reader_create(
         &test_reader,
-        (char *)test_reader_buffer,
+        (const uint8_t *)test_reader_buffer,
         test_filled_size);
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -1364,7 +1364,7 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
 
     error_code = kaa_platform_message_reader_create(
         &test_reader,
-        (char *)test_reader_buffer,
+        (const uint8_t *)test_reader_buffer,
         test_filled_size);
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -1372,7 +1372,7 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
 
     error_code = kaa_platform_message_writer_create(
         &test_writer,
-        (char *)test_writer_buffer,
+        (uint8_t *)test_writer_buffer,
         test_log_record_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 

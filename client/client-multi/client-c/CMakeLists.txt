@@ -34,7 +34,7 @@ set(CMAKE_MODULE_PATH
 #
 # NOTE: Platform specific compilation flags should be set
 # in the corresponding platform CMake script(s).
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic")
 
 # Compiler specific flags.
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND APPLE)
@@ -145,6 +145,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_user.c
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_notification_manager.c
+        ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
         )
 
@@ -168,12 +169,13 @@ add_library(${KAA_BUILD_STATIC} STATIC ${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o
 target_link_libraries(${KAA_BUILD_STATIC} PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 target_include_directories(${KAA_BUILD_STATIC} PUBLIC ${KAA_INCLUDE_DIRS})
 
-if (NOT DEFINED KAA_BUILD_STATIC_ONLY)
+if(NOT DEFINED KAA_BUILD_STATIC_ONLY)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     set(KAA_BUILD_SHARED kaac)
     add_library(${KAA_BUILD_SHARED} SHARED ${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
     target_include_directories(${KAA_BUILD_SHARED} PUBLIC ${KAA_INCLUDE_DIRS})
     target_link_libraries(${KAA_BUILD_SHARED} ${KAA_THIRDPARTY_LIBRARIES})
-endif ()
+endif()
 
 message("KAA WILL BE INSTALLED TO  ${CMAKE_INSTALL_PREFIX} ")
 install(DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION include/kaa
@@ -182,6 +184,6 @@ install(DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION include/kaa
 install(TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION lib)
 
 # Builds unit tests.
-if (KAA_UNITTESTS_COMPILE)
+if(KAA_UNITTESTS_COMPILE)
     include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/UnitTest.cmake)
-endif ()
+endif()

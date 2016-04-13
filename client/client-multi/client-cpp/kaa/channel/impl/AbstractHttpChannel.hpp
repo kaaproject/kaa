@@ -85,7 +85,7 @@ private:
     virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body) = 0;
     virtual std::string retrieveResponse(const IHttpResponse& response) = 0;
 
-    void onServerFailed();
+    void onServerFailed(KaaFailoverReason reason);
 
 private:
     KeyPair clientKeys_;

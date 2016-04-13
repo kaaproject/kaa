@@ -24,7 +24,7 @@ namespace kaa {
 class DefaultFailoverStrategy: public IFailoverStrategy {
 public:
 
-	virtual FailoverStrategyDecision onFailover(Failover failover);
+	virtual FailoverStrategyDecision onFailover(KaaFailoverReason failover);
 
 public:
     static const std::size_t DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD = 2;
