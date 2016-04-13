@@ -85,7 +85,7 @@ The following command can be used to browse the Kaa node build artifacts in case
 
 ## Installing Kaa
 
-You can deploy kaa server as a single node or as multi node cluster, for more details refer to corresponding pages:
+You can deploy Kaa server as a single node or as multi node cluster, for more details refer to corresponding pages:
 
 * [Single node installation](../Single-node-installation)
 * [Node cluster setup](../Cluster-setup)
