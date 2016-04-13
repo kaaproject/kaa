@@ -46,17 +46,51 @@ SQL database host and port ```/usr/lib/kaa-node/conf/dao.properties```
 
 ```bash
 # specify jdbc database host
-jdbc_host=<postgresql_ip>
+jdbc_host=<sql_database_ip>
 # specify jdbc database post
-jdbc_port=<postgresql_port>
+jdbc_port=<sql_database_port>
 ```
 
 and in ```/usr/lib/kaa-node/conf/admin-dao.properties``` file.
     
 ```bash
 # specify jdbc database url
+jdbc_url=<sql_database_url>
+```
+
+For example for PostgreSQL database this property would look like:
+
+```bash
+# specify jdbc database url
 jdbc_url=jdbc:postgresql://<postgresql_ip>:<postgresql_port>/kaa
 ```
+
+and for MariaDB:
+
+```bash
+# specify jdbc database url
+jdbc_url=jdbc:mysql:failover://<mariadb_ip>:<mariadb_port>/kaa
+```
+
+Also it is worth noting that Kaa administrator need to update ```hibernate_dialect``` and ```jdbc_driver_className``` with corresponding values depending on selected SQL database.
+
+For example for PostgreSQL
+
+```bash
+hibernate_dialect=org.hibernate.dialect.PostgreSQL82Dialect
+
+jdbc_driver_className=org.postgresql.Driver
+```
+
+and for MariaDB
+
+```bash
+hibernate_dialect=org.hibernate.dialect.MySQL5Dialect
+
+jdbc_driver_className=org.mariadb.jdbc.Driver
+```
+
+> **NOTE** Kaa administrator must to ensure that jar package with corresponding JDBC driver is placed in Kaa node classpath ```/usr/lib/kaa-node/lib```.
 
 Kaa administrator can select NoSQL database between ```mongo``` or ```cassandra``` in ```usr/lib/kaa-node/conf/dao.properties``` file.
 
@@ -75,7 +109,5 @@ If he decide to use Cassandra as NoSQL database then he mast to populate propert
 ```bash
 node_list=<cassandra_database_ip>:<cassandra_database_port>
 ```
-
-
 
 ---
