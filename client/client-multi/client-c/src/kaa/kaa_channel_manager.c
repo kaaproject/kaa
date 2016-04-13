@@ -439,13 +439,12 @@ kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
 {
     KAA_RETURN_IF_NIL3(self, protocol_id, access_point, KAA_ERR_BADPARAM);
 
-    kaa_transport_channel_wrapper_t *channel_wrapper;
     kaa_list_node_t *channel_it = kaa_list_find_next(kaa_list_begin(self->transport_channels)
                                                    , &find_channel_by_protocol_id
                                                    , protocol_id);
 
     while (channel_it) {
-        channel_wrapper = kaa_list_get_data(channel_it);
+        kaa_transport_channel_wrapper_t *channel_wrapper = kaa_list_get_data(channel_it);
         if (channel_wrapper->server_type == server_type) {
             KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Set new %s access point [0x%08X] for channel [0x%08X] "
                                  "(protocol: id=0x%08X, version=%u)"

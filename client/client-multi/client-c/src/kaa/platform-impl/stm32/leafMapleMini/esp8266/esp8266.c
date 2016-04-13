@@ -461,7 +461,7 @@ esp8266_error_t esp8266_ipd_process(esp8266_t *controler, uint8 read_byte)
             break;
         case ESP8266_IPD_READ_BYTES:
             controler->ipd_counter--;
-            if (controler->ipd_counter <= 0) {
+            if (controler->ipd_counter == 0) {
                 //Push received buffer
                 if (controler->receive_callback) {
                     controler->receive_callback(controler->receive_context,
@@ -496,26 +496,25 @@ esp8266_error_t esp8266_ipd_process(esp8266_t *controler, uint8 read_byte)
 
 esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis)
 {
-	ESP8266_RETURN_IF_NIL(controler, ESP8266_ERR_BAD_PARAM);
+    ESP8266_RETURN_IF_NIL(controler, ESP8266_ERR_BAD_PARAM);
 
-	time_t start = 0;
-	if (limit_timeout_milis > 0) {
-		start = get_sys_milis();
-	}
+    time_t start = 0;
+    if (limit_timeout_milis > 0) {
+        start = get_sys_milis();
+    }
 
-	esp8266_error_t e = esp8266_check_status(controler);
-	if (e)
-		return e;
+    esp8266_error_t e = esp8266_check_status(controler);
+    if (e) {
+        return e;
+    }
 
-	int position = 0;
-	uint8 read_byte = 0;
-	while (esp8266_serial_available(controler->esp8266_serial)) {
-		read_byte = esp8266_serial_read(controler->esp8266_serial);
-		controler->rx_buffer[controler->rx_pointer++] = read_byte;
+    while (esp8266_serial_available(controler->esp8266_serial)) {
+        uint8 read_byte = esp8266_serial_read(controler->esp8266_serial);
+        controler->rx_buffer[controler->rx_pointer++] = read_byte;
 
 
-		if (controler->ipd == ESP8266_IPD_UNDEF
-		        && controler->current_command.command) {
+        if (controler->ipd == ESP8266_IPD_UNDEF
+                && controler->current_command.command) {
             CHECK_SEQUENCE(controler->current_command.success, controler->current_command.success_size, true);
             CHECK_SEQUENCE(controler->current_command.error, controler->current_command.error_size, false);
             CHECK_SEQUENCE(controler->current_command.error_alternative, controler->current_command.error_alternative_size, false);
@@ -756,7 +755,6 @@ bool fill_wifi_ap(esp8266_t *controler, esp8266_wifi_ap_t *wifi_ap, uint16_t sta
 	if(ch_pos < 0) {
 		return false;
 	}
-	ch_pos += buffer - controler->rx_buffer;
 
 	unsigned char type_char = controler->rx_buffer[type_pos - 1];
 	if (type_char == '0') {
@@ -1272,7 +1270,7 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
         return ESP8266_ERR_COMMAND_BUSY;
     }
 
-	int n = snprintf(controler->com_buffer, COMM_BUFFER_SIZE, "%s=%d,%d", AT_CIPSEND,id,size);
+	int n = snprintf(controler->com_buffer, COMM_BUFFER_SIZE, "%s=%d,%zu", AT_CIPSEND,id,size);
 	controler->com_buffer[n+1] = 0;
 
 	controler->rx_pointer = 0;
@@ -1281,7 +1279,6 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
 
 	time_t start = get_sys_milis();
 	uint8_t l = 0;
-	int position = -1;
 	bool buff_write = false;
 
 	while(get_sys_milis() - start < AT_CIPSEND_TIMEOUT) {
@@ -1401,9 +1398,8 @@ void status_command_complete(void *context
 					//Drop all connections not listed in status
 					int i=0;
 					int j=0;
-					bool con_found;
 					for(;i<TCP_CONNECTION_LIMIT;i++) {
-					    con_found = false;
+					    bool con_found = false;
 					    for(j=0;j<controler->tmp_array_used;j++) {
 					        if (controler->tmp_array[j] == i) {
 					            con_found = true;

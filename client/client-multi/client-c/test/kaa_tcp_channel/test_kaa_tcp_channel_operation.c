@@ -559,6 +559,8 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
+    assert_int_equal(KAA_ERR_NONE, error_code);
+
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
     access_point.id = 10;

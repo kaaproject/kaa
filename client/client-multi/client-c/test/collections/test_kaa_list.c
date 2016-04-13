@@ -104,10 +104,9 @@ static void test_list_sort()
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
-    test_list_node_t *node;
     uint64_t node_number = 100;
     for (uint64_t i = 0; i < node_number; ++i) {
-        node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        test_list_node_t *node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
         node->id = (uint64_t) rand();
         kaa_list_push_back(list, node);
@@ -146,10 +145,9 @@ static void test_list_hash()
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
-    test_list_node_t *node;
     uint64_t node_number = 100;
     for (uint64_t i = 0; i < node_number; ++i) {
-        node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        test_list_node_t *node = KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
         node->id = (uint64_t) node_number - i;
         kaa_list_push_back(list, node);
@@ -174,10 +172,9 @@ static void test_list_for_each()
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
-    int32_t *number1_ptr;
     int node_number = 4;
     for (int i = 0; i < node_number; ++i) {
-        number1_ptr = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
+        int32_t *number1_ptr = KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number1_ptr);
         *number1_ptr = rand();
         kaa_list_push_back(list, number1_ptr);

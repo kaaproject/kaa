@@ -249,8 +249,8 @@ void test_handle_server_sync(void **state)
     error_code = kaa_platform_message_writer_create(&writer, server_sync_buffer, server_sync_payload_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    uint16_t network_order_16;
-    uint32_t network_order_32;
+    uint16_t network_order_16 = 0xAEF5;
+    uint32_t network_order_32 = 0xEAFC5370;
 
     // request id
     error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));

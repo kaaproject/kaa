@@ -141,17 +141,23 @@ kaa_error_t kaa_extension_profile_server_sync(void *context, uint32_t request_id
 kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
-    KAA_RETURN_IF_NIL3(profile_manager_p, channel_manager, status, KAA_ERR_BADPARAM);
+    if (!profile_manager_p || !channel_manager || !status) {
+        return KAA_ERR_BADPARAM;
+    }
 
-    kaa_profile_manager_t *profile_manager = (kaa_profile_manager_t *) KAA_MALLOC(sizeof(kaa_profile_manager_t));
-    KAA_RETURN_IF_NIL(profile_manager, KAA_ERR_NOMEM);
+    kaa_profile_manager_t *profile_manager = KAA_MALLOC(sizeof(kaa_profile_manager_t));
+    if (!profile_manager) {
+        return KAA_ERR_NOMEM;
+    }
 
     /**
      * KAA_CALLOC is really needed.
      */
-    profile_manager->extension_data =
-            (kaa_profile_extension_data_t*) KAA_CALLOC(1, sizeof(kaa_profile_extension_data_t));
-    KAA_RETURN_IF_NIL(profile_manager->extension_data, KAA_ERR_NOMEM);
+    profile_manager->extension_data = KAA_CALLOC(1, sizeof(kaa_profile_extension_data_t));
+    if (!profile_manager->extension_data) {
+        KAA_FREE(profile_manager);
+        return KAA_ERR_NOMEM;
+    }
 
     profile_manager->need_resync = true;
 

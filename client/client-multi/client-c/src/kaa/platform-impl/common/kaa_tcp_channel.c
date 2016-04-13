@@ -1074,8 +1074,6 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     char *buffer = NULL;
     size_t buffer_size = 0;
     size_t request_size = 0;
@@ -1084,7 +1082,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     size_t sync_size = 0;
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calling kaa_platform_protocol_alloc_serialize_client_sync");
-    error_code = kaa_platform_protocol_alloc_serialize_client_sync(
+    kaa_error_t error_code = kaa_platform_protocol_alloc_serialize_client_sync(
             self->transport_context.kaa_context->platform_protocol,
             self->supported_services,
             self->supported_service_count,
@@ -1564,11 +1562,10 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
 kaa_error_t kaa_tcp_write_buffer(kaa_tcp_channel_t *self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    kaa_error_t error_code = KAA_ERR_NONE;
     char *buf = NULL;
     size_t buf_size = 0;
     size_t bytes_written = 0;
-    error_code = kaa_buffer_get_unprocessed_space(self->out_buffer, &buf, &buf_size);
+    kaa_error_t error_code = kaa_buffer_get_unprocessed_space(self->out_buffer, &buf, &buf_size);
     KAA_LOG_TRACE(self->logger, error_code, "Kaa TCP channel [0x%08X] writing %zu bytes to the socket"
                                                                     , self->access_point.id, buf_size);
     KAA_RETURN_IF_ERR(error_code);

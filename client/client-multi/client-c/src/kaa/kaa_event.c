@@ -575,8 +575,6 @@ kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expect
 
 static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_t *events, kaa_platform_message_writer_t *writer)
 {
-    kaa_error_t error = KAA_ERR_NONE;
-
     uint16_t temp_network_order_16 = 0;
     uint16_t options = 0;
     uint32_t temp_network_order_32 = 0;
@@ -590,7 +588,7 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
         }
 
         temp_network_order_32 = KAA_HTONL(event->seq_num);
-        error = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+        kaa_error_t error = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to write event sequence number");
             return error;

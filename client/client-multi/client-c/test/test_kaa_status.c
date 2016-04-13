@@ -104,6 +104,7 @@ void test_status_persistense(void **state)
 
     kaa_status_t *status;
     kaa_error_t err_code = kaa_status_create(&status);
+    assert_int_equal(KAA_ERR_NONE, err_code);
 
     ASSERT_NULL(status->endpoint_access_token);
     ASSERT_EQUAL(status->event_seq_n, 0);
@@ -127,6 +128,7 @@ void test_status_persistense(void **state)
 
 
     err_code = kaa_status_create(&status);
+    assert_int_equal(KAA_ERR_NONE, err_code);
 
     ASSERT_NOT_NULL(status->endpoint_access_token);
     ASSERT_EQUAL(strcmp("my_token", status->endpoint_access_token), 0);

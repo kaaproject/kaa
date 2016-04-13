@@ -162,8 +162,6 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel creating....");
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     //Check supported services, as Bootstrap channel we accept only one service which is bootstrap.
     //From other hand bootstrap can't be as service in operations service.
     bool bootstrap_found = false;
@@ -218,7 +216,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
      * Creates read/write buffers.
      */
 
-    error_code = kaa_buffer_create_buffer(&kaa_tcp_channel->out_buffer
+    kaa_error_t error_code = kaa_buffer_create_buffer(&kaa_tcp_channel->out_buffer
                                         , KAA_TCP_CHANNEL_OUT_BUFFER_SIZE);
     if (error_code) {
         KAA_LOG_ERROR(logger, error_code, "Failed to create OUT buffer for channel");
@@ -729,11 +727,10 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
         return KAA_ERR_NONE;
     }
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     char *buffer = NULL;
     size_t buffer_size = 0;
-    error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
+
+    kaa_error_t error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
 
     uint8_t *sync_buffer = NULL;
@@ -864,13 +861,12 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
         return KAA_ERR_NONE;
     }
 
-    bool found;
     size_t new_service_count = 0;
     kaa_extension_id temp_new_services[self->pending_request_service_count];
 
     size_t pending_i = 0;
     for (; pending_i < self->pending_request_service_count; ++pending_i) {
-        found = false;
+        bool found = false;
         size_t deleting_i = 0;
         for (; deleting_i < service_count; ++deleting_i) {
             if (self->pending_request_services[pending_i] == services[deleting_i]) {
@@ -930,10 +926,9 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
         self->pending_request_service_count = 0;
     }
 
-    bool found;
     size_t updating_i = 0;
     for (; updating_i < service_count; ++updating_i) {
-        found = false;
+        bool found = false;
         size_t pending_i = 0;
         for (; pending_i < new_service_count; ++pending_i) {
             if (services[updating_i] == temp_new_services[pending_i]) {
@@ -1098,10 +1093,9 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
 kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t * self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    kaa_error_t error_code = KAA_ERR_NONE;
     char *buffer = NULL;
     size_t buffer_size = 0;
-    error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
+    kaa_error_t error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
 
     kaatcp_error_t kaatcp_error_code = kaatcp_get_request_ping(buffer, &buffer_size);
@@ -1132,11 +1126,10 @@ kaa_error_t kaa_tcp_channel_disconnect_internal(kaa_tcp_channel_t  *self
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     char *buffer = NULL;
     size_t buffer_size = 0;
-    error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
+
+    kaa_error_t error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
 
     kaatcp_disconnect_t disconnect_message;
@@ -1203,12 +1196,9 @@ kaa_error_t kaa_tcp_channel_connected(kaa_transport_channel_interface_t *self)
 
     kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *)self->context;
 
-    kaa_error_t error_code = KAA_ERR_NONE;
     tcp_channel->access_point.state = AP_CONNECTED;
 
-    error_code = kaa_tcp_channel_authorize(tcp_channel);
-
-    return error_code;
+    return kaa_tcp_channel_authorize(tcp_channel);
 }
 
 
@@ -1252,9 +1242,7 @@ kaa_error_t kaa_tcp_channel_free_send_buffer(kaa_transport_channel_interface_t *
 {
     KAA_RETURN_IF_NIL3(self, self->context, bytes_written, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-    error_code = kaa_buffer_free_allocated_space(((kaa_tcp_channel_t *)(self->context))->out_buffer, bytes_written);
-    return error_code;
+    return kaa_buffer_free_allocated_space(((kaa_tcp_channel_t *)(self->context))->out_buffer, bytes_written);
 }
 
 kaa_error_t kaa_tcp_channel_read_bytes(kaa_transport_channel_interface_t *self, const uint8 *buffer, const size_t buffer_size)
