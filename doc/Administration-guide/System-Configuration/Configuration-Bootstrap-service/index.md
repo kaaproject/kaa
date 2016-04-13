@@ -18,7 +18,7 @@ A Kaa Bootstrap service is responsible for directing endpoints to Operations ser
 A Control service manages data stored in a database (independently for each tenant) and notifies every Operations server on most data updates via a Thrift-based protocol. The value of ```transport_public_interface``` property  in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file will be built-in as a host ip/name of Bootstrap server.
 
 ```bash
-transport_public_interface=<ip_of_current_machine>
+transport_public_interface=<ip_of_current_machine>  
 ```
 
 ---

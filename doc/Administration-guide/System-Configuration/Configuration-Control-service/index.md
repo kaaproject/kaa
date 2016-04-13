@@ -55,7 +55,7 @@ and in ```/usr/lib/kaa-node/conf/admin-dao.properties``` file.
     
 ```bash
 # specify jdbc database url
-jdbc_url=<sql_database_url>
+jdbc_url=<sql_database_url> 
 ```
 
 For example for PostgreSQL database this property would look like:
