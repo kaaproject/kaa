@@ -18,7 +18,7 @@ sort_idx: 30
 
 This page describes how to setup and configure kaa-node cluster.
 
-In general cluster setup is similar to [single node setup](../Single-node-installation), except few details. We need at least 3 nodes to create a reliable cluster. For simplicity in this tutorial we will be using single instance of SQL and NoSQL databases, so this tutorial doesn't cover such themes like setting up Cassandra, MongoDB or PostgresSql cluster setup. Let us assume that we have 3 nodes with Ubuntu 14.04 installed on each of them.
+In general cluster setup is similar to [single node setup](../Single-node-installation), except few details. We need at least 3 nodes to create a reliable cluster. For simplicity in this tutorial we will be using single instance of SQL and NoSQL databases, so this tutorial doesn't cover such themes like setting up Cassandra, MongoDB or PostgreSQL cluster setup. Let us assume that we have 3 nodes with Ubuntu 14.04 installed on each of them.
 
 ```bash
 node1 172.1.1.1
@@ -28,13 +28,13 @@ node3 172.3.3.3
 
 On node1 we will setup our SQL (PostgreSql) and NoSQl (MongoDB) databases and run Zookeeper.
 
-On every of them we had successfully installed kaa and everything that left is to configure kaa-node services.
+We had successfully installed Kaa on every node and everything that left is to configure kaa-node services.
 
 ## Cluster configuration
 
 ### List of properties
 
-To set up cluster it is necessary to edit next properties:
+It is necessary to edit next properties to set up cluster:
  
  | Property name             | Example values                   | Description                                                      | File location                                                                      | 
  |-------------------------- |--------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
