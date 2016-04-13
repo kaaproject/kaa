@@ -65,13 +65,13 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
     } catch (HttpTransportException& e) {
         KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: %3%")
                      % currentServer_->getHost() % currentServer_->getPort() % e.getHttpStatusCode());
-        context_.getStatus().setRegistered(false);
-        context_.getStatus().save();
 
         KaaFailoverReason reason;
         switch (e.getHttpStatusCode()) {
         case HttpStatusCode::UNAUTHORIZED:
             reason = KaaFailoverReason::ENDPOINT_NOT_REGISTERED;
+            context_.getStatus().setRegistered(false);
+            context_.getStatus().save();
             break;
         case HttpStatusCode::FORBIDDEN:
             reason = KaaFailoverReason::CREDENTIALS_REVOKED;
