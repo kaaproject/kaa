@@ -47,11 +47,8 @@
             request.endpointAccessToken = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0
                                                                data:[self.clientState endpointAccessToken]];
             if (![self.clientState isRegistred]) {
-                [self.clientState publicKey]; //ensures that key pair is created
-                NSData *publicKey = [KeyUtils getPublicKey];
-                assert(publicKey != nil);
                 request.endpointPublicKey = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0
-                                                                 data:publicKey];
+                                                                 data:[self.clientState publicKeyAsBytes]];
             }
             request.profileBody = serializedProfile;
             return request;

@@ -117,7 +117,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     sanityCheck = SecItemCopyMatching((__bridge CFDictionaryRef)queryKey, (CFTypeRef *)&keyReference);
     
     if (sanityCheck != noErr) {
-        DDLogWarn(@"%@ Can't get SecKeyRef by tag %@. OSStatus: %i", TAG, [tag hexadecimalString], (int)sanityCheck);
+        DDLogInfo(@"%@ SecKeyRef with tag [%@] not found. OSStatus: %i", TAG, [tag hexadecimalString], (int)sanityCheck);
         keyReference = NULL;
     }
     
@@ -254,7 +254,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     if (sanityCheck == noErr) {
         DDLogInfo(@"%@ Successfully removed key", TAG);
     } else {
-        DDLogWarn(@"%@ Error removing key, status: %i", TAG, (int)sanityCheck);
+        DDLogInfo(@"%@ Unable to remove key, status: %i", TAG, (int)sanityCheck);
     }
 }
 
