@@ -36,6 +36,10 @@
 
 #define MAX_FILE_SIZE 8L*1024L
 
+// TODO: KAA-845
+// There is no file consistency check when parsing persistence data. This causes
+// bugs when data inside a file is misinterpreted.
+#if 0
 static bool file_is_exist(const char *filename)
 {
     uint32_t ul_token;
@@ -68,6 +72,7 @@ static bool create_file(const char *filename)
     }
     return true;
 }
+#endif
 
 int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
@@ -118,6 +123,11 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
 
     sl_FsClose(l_file_handle, 0, 0, 0);
     return 0;
+#else
+    (void)file_name;
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 #endif
     return -1;
 }
@@ -147,8 +157,12 @@ int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t b
         sl_FsClose(l_file_handle, 0, 0, 0);
     }
     return ret;
-#endif
+#else
+    (void)file_name;
+    (void)buffer;
+    (void)buffer_size;
     return -1;
+#endif
 }
 
 int cc32xx_binary_file_delete(const char *file_name)
@@ -171,6 +185,8 @@ int cc32xx_binary_file_delete(const char *file_name)
         return -1;
 
     return 0;
-#endif
+#else
+    (void)file_name;
     return -1;
+#endif
 }
