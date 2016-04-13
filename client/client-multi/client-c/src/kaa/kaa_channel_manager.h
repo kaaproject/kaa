@@ -83,7 +83,7 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
  * @return                  Channel, if found. NULL if not found.
  */
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
-                                                                             kaa_service_t service_type);
+                                                                             kaa_extension_id service_type);
 
 
 /**

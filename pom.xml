@@ -20,7 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.8.1</version>
+    <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -31,8 +31,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
         <akka.version>2.4.1</akka.version>
-        <spring.version>4.0.2.RELEASE</spring.version>
-        <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
+        <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <spring.data.version>Fowler-RELEASE</spring.data.version>
         <spring.retry.version>1.1.2.RELEASE</spring.retry.version>
         <ehcache.version>2.8.1</ehcache.version>
@@ -40,6 +40,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hikari.cp.version>2.4.2</hikari.cp.version>
         <pgsql.driver.ver>9.3-1101-jdbc41</pgsql.driver.ver>
+        <mariadb-driver.version>1.3.0</mariadb-driver.version>
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
@@ -103,7 +104,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <cassandra-unit-spring.version>2.2.2.1</cassandra-unit-spring.version>
         <cassandra-all.version>3.2.1</cassandra-all.version>
         <guava.version>18.0</guava.version>
-        
+
         <couchbase.client.version>2.1.3</couchbase.client.version>
 
         <sonar.language>java</sonar.language>
@@ -1016,6 +1017,11 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${pgsql.driver.ver}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-driver.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.oracle.kv</groupId>

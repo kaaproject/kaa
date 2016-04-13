@@ -46,7 +46,7 @@
 }
 
 - (int32_t)getCount {
-    return [self.records count];
+    return (int32_t)[self.records count];
 }
 
 - (BOOL)addRecord:(LogRecord *)record {

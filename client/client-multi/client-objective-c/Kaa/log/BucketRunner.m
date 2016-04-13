@@ -38,7 +38,7 @@ typedef enum {
 
 @implementation BucketRunner
 
-static int64_t gBucketIdCounter = 0;
+static int32_t gBucketIdCounter = 0;
 
 - (instancetype)init {
     self = [super init];

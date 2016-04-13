@@ -49,15 +49,15 @@ typedef enum {
 @interface KAAMqttFrame : NSObject
 
 @property (nonatomic, strong) NSMutableData *buffer;
-@property (nonatomic) NSUInteger bufferPosition;
+@property (nonatomic) int32_t bufferPosition;
 
 @property (nonatomic) TCPMessageType messageType;
 @property (nonatomic) BOOL frameDecodeComplete;
 /**
  * Remaining length of mqtt frame
  */
-@property (nonatomic) int remainingLength;
-@property (nonatomic) int multiplier;
+@property (nonatomic) int32_t remainingLength;
+@property (nonatomic) int32_t multiplier;
 @property (nonatomic) FrameParsingState currentState;
 
 - (instancetype)initWithOld:(KAAMqttFrame *)old;
@@ -85,7 +85,7 @@ typedef enum {
  * Fill mqtt frame fixed header
  * @return number of packet bytes
  */
-- (int)fillFixedHeader:(NSMutableData *)header remainingLength:(int)remainingLength;
+- (int32_t)fillFixedHeader:(NSMutableData *)header remainingLength:(int32_t)remainingLength;
 
 - (void)onFrameDone;
 
@@ -96,7 +96,7 @@ typedef enum {
  * @return Count of used bytes from buffer
  * @exception KaaTcpProtocolException TCP exception
  */
-- (int)pushBytes:(NSData *)bytes toPosition:(int)position;
+- (int32_t)pushBytes:(NSData *)bytes toPosition:(int32_t)position;
 
 /**
  * Used in case if Frame Class should be changed during frame decode.

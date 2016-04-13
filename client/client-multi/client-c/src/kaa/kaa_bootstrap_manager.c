@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -30,15 +32,7 @@
 #include "utilities/kaa_log.h"
 #include "kaa_channel_manager.h"
 #include "platform/ext_kaa_failover_strategy.h"
-
-
-extern kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
-                                                         , kaa_transport_protocol_id_t *protocol_id
-                                                         , kaa_server_type_t server_type
-                                                         , kaa_access_point_t *access_point);
-
-extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
-                                                                   kaa_platform_message_writer_t* writer);
+#include "kaa_protocols/kaa_tcp/kaatcp_common.h"
 
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
@@ -70,7 +64,7 @@ struct kaa_bootstrap_manager_t {
     failover_meta_info        failover_meta_info;
 };
 
-static kaa_service_t bootstrap_sync_services[1] = { KAA_SERVICE_BOOTSTRAP };
+static kaa_extension_id bootstrap_sync_services[1] = { KAA_EXTENSION_BOOTSTRAP };
 
 
 
@@ -115,7 +109,7 @@ static kaa_error_t do_sync(kaa_bootstrap_manager_t *self)
 
     kaa_transport_channel_interface_t *channel =
             kaa_channel_manager_get_transport_channel(
-                            self->channel_manager, KAA_SERVICE_BOOTSTRAP);
+                            self->channel_manager, KAA_EXTENSION_BOOTSTRAP);
     if (channel) {
         channel->sync_handler(channel->context, bootstrap_sync_services, 1);
         return KAA_ERR_NONE;
@@ -358,6 +352,10 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
                                                    , uint16_t extension_options
                                                    , size_t extension_length)
 {
+    // Only used for logging
+    (void)extension_options;
+    (void)extension_length;
+
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received bootstrap server sync: options %u, payload size %u", extension_options, extension_length);
 
@@ -379,7 +377,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
                                                         , access_point_count, request_id);
 
     if (!access_point_count) {
-        kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, KAA_SERVICE_BOOTSTRAP);
+        kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, KAA_EXTENSION_BOOTSTRAP);
         kaa_transport_protocol_id_t protocol_id  = {0, 0};
         error_code = channel->get_protocol_id(channel->context, &protocol_id);
         KAA_RETURN_IF_ERR(error_code);
@@ -455,9 +453,10 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     return error_code;
 }
 
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type)
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+														 uint16_t reason_code)
 {
     KAA_RETURN_IF_NIL2(self, protocol_id, KAA_ERR_BADPARAM);
 
@@ -511,8 +510,15 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
             execute_failover = true;
     }
     if (execute_failover) {
-        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id, type,
-                                                type == KAA_SERVER_BOOTSTRAP ? KAA_BOOTSTRAP_SERVERS_NA : KAA_OPERATION_SERVERS_NA);
+        uint16_t reason = type == KAA_SERVER_BOOTSTRAP ? KAA_BOOTSTRAP_SERVERS_NA : KAA_OPERATION_SERVERS_NA;
+        if (reason_code == KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED) {
+            reason = KAA_ENDPOINT_NOT_REGISTERED;
+        }
+        if (reason_code == KAATCP_DISCONNECT_CREDENTIALS_REVOKED) {
+            reason = KAA_CREDENTIALS_REVOKED;
+        }
+        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id,
+                                                type, reason);
     }
 
     if (access_point && !execute_failover) {
@@ -547,7 +553,7 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
         if (self->next_operations_request_time && current_time >= self->next_operations_request_time) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Response bootstrap time expired.");
             kaa_bootstrap_access_points_t * acc_point = (kaa_bootstrap_access_points_t *) kaa_list_get_data(kaa_list_begin(self->bootstrap_access_points));
-            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP);
+            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP, 0);
             self->next_operations_request_time = 0;
             if (error_code == KAA_ERR_EVENT_NOT_ATTACHED) {
                 do_sync(self);

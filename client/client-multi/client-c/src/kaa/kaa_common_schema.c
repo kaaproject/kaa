@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdint.h>
 #include <string.h>
 
@@ -465,20 +467,24 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size)
 
 void kaa_null_serialize(avro_writer_t writer, void *data)
 {
-
+    (void)writer;
+    (void)data;
 }
 
 void *kaa_null_deserialize(avro_reader_t reader)
 {
+    (void)reader;
     return NULL;
 }
 
 void kaa_null_destroy(void *data)
 {
+    (void)data;
 }
 
 size_t kaa_null_get_size(void* data)
 {
+    (void)data;
     return AVRO_NULL_SIZE;
 }
 

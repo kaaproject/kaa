@@ -37,41 +37,36 @@
 #include "../../platform-impl/posix/posix_kaa_failover_strategy.h"
 #include "../../kaa_logging.h"
 #include "../../kaa_channel_manager.h"
+#include "../../kaa_platform_utils.h"
 
+#include "kaa_private.h"
 
+static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                  , kaa_logger_t *logger);
-
-extern void ext_log_upload_timeout(kaa_log_collector_t *self);
-
-
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
-
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
+static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                             , KAA_EXTENSION_USER
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-                                             , KAA_SERVICE_CONFIGURATION
+                                             , KAA_EXTENSION_CONFIGURATION
 #endif
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-                                             , KAA_SERVICE_EVENT
+                                             , KAA_EXTENSION_EVENT
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                                             , KAA_SERVICE_LOGGING
+                                             , KAA_EXTENSION_LOGGING
 #endif
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-                                             , KAA_SERVICE_NOTIFICATION
+                                             , KAA_EXTENSION_NOTIFICATION
 #endif
                                              };
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 
 /* Logging constraints */
 #define MAX_LOG_COUNT           SIZE_MAX
 #define MAX_LOG_BUCKET_SIZE     (KAA_TCP_CHANNEL_OUT_BUFFER_SIZE >> 3)
 
-_Static_assert(MAX_LOG_BUCKET_SIZE, "Maximum bucket size cannot be 0!");
+KAA_STATIC_ASSERT(log_bucket_size_is_not_zero, MAX_LOG_BUCKET_SIZE != 0);
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED = 0,
@@ -113,13 +108,12 @@ static kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client);
 static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 #endif
-
-
 
 kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {
+    (void)fd;
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
 
     if (event_type == SOCKET_DISCONNECTED) {
@@ -131,6 +125,7 @@ kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t even
 
 kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *props)
 {
+    (void)props;
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
     kaa_error_t error_code = KAA_ERR_NONE;

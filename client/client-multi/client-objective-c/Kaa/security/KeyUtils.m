@@ -168,7 +168,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     if  ([publicKey length] + 1  < 128 ) {
         bitstringEncLength = 1;
     } else {
-        bitstringEncLength = (([publicKey length] + 1 ) / 256 ) + 2;
+        bitstringEncLength = (int)(([publicKey length] + 1 ) / 256 ) + 2;
     }
     
     // Overall we have a sequence of a certain length

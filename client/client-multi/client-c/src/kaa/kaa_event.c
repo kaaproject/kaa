@@ -16,6 +16,8 @@
 
 # ifndef KAA_DISABLE_FEATURE_EVENTS
 
+#include "kaa_private.h"
+
 # include <stdbool.h>
 # include <stdint.h>
 # include <string.h>
@@ -118,8 +120,7 @@ struct kaa_event_manager_t {
     kaa_endpoint_id_p            event_source;
 };
 
-static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
-
+static kaa_extension_id event_sync_services[1] = { KAA_EXTENSION_EVENT };
 
 static void destroy_event_listener_request(void *request_p)
 {
@@ -271,11 +272,10 @@ void kaa_event_manager_destroy(kaa_event_manager_t *self)
     }
 }
 
-kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
-                                   , kaa_status_t *status
-                                   , kaa_channel_manager_t *channel_manager
-                                   , kaa_logger_t *logger)
+kaa_error_t kaa_event_manager_create(kaa_event_manager_t **context, kaa_status_t *status,
+    kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
+    kaa_event_manager_t **event_manager_p = (kaa_event_manager_t **)context;
     KAA_RETURN_IF_NIL(event_manager_p, KAA_ERR_BADPARAM);
 
     *event_manager_p = (kaa_event_manager_t *) KAA_MALLOC(sizeof(kaa_event_manager_t));
@@ -479,8 +479,7 @@ static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *sel
             if (!request->is_sent) {
                 *expected_size += sizeof(uint32_t); // request id + fqns count
                 *expected_size += sizeof(uint32_t) * request->fqns_count; // fqn length + reserved
-                int i = 0;
-                for (; i < request->fqns_count; ++i) {
+                for (size_t i = 0; i < request->fqns_count; ++i) {
                     *expected_size += kaa_aligned_size_get(request->fqns[i]->size);
                 }
             }
@@ -607,8 +606,7 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
             writer->current += sizeof(uint16_t);
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize event listeners: request id '%u', fqn count '%u'"
                         , request->request_id, request->fqns_count);
-            int i = 0;
-            for (; i < request->fqns_count; ++i) {
+            for (size_t i = 0; i < request->fqns_count; ++i) {
                 size_t fqn_length = request->fqns[i]->size;
                 *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) fqn_length);
                 writer->current += sizeof(uint32_t); // fqn length + reserved
@@ -644,12 +642,12 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
     }
 
     kaa_error_t error = kaa_platform_message_write_extension_header(writer
-                                                           , KAA_EVENT_EXTENSION_TYPE
+                                                           , KAA_EXTENSION_EVENT
                                                            , extension_options
                                                            , self->extension_payload_size);
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
-                                        , KAA_EVENT_EXTENSION_TYPE, extension_options, self->extension_payload_size);
+                                        , KAA_EXTENSION_EVENT, extension_options, self->extension_payload_size);
         return error;
     }
 

@@ -70,10 +70,13 @@
     return self.encoderDecoder;
 }
 
-- (NSData *)executeHttpRequest:(NSString *)uri entity:(NSDictionary *)entity verifyResponse:(BOOL)verifyResponse {
-#pragma unused (uri, entity, verifyResponse)
+- (void)executeHttpRequest:(NSString *)uri
+                    entity:(NSDictionary *)entity
+            verifyResponse:(BOOL)verifyResponse
+                   success:(void (^)(NSData *response))success
+                   failure:(void (^)(NSInteger responseCode))failure {
+#pragma unused (uri, entity, verifyResponse, success, failure)
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented"];
-    return nil;
 }
 
 - (void)close {

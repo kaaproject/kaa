@@ -34,7 +34,7 @@ extern "C" {
 
 kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
                                  , kaa_logger_t *logger
-                                 , kaa_service_t *supported_services
+                                 , kaa_extension_id *supported_services
                                  , size_t supported_service_count);
 
 kaa_error_t kaa_tcp_channel_get_access_point(kaa_transport_channel_interface_t *self

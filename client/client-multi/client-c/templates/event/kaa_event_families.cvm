@@ -24,9 +24,8 @@
 # include "../kaa_error.h"
 # include "../utilities/kaa_mem.h"
 
-extern kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
-extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
-extern kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
+#include "kaa_private.h"
+
 # ifdef kaa_broadcast_event
 # undef kaa_broadcast_event
 # endif

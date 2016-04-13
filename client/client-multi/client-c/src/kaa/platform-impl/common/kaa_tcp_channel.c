@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+#include "kaa_private.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -100,9 +102,9 @@ typedef struct {
     on_kaa_tcp_channel_event_fn    event_callback;
     void                           *event_context;
     kaa_tcp_access_point_t         access_point;
-    kaa_service_t                  *pending_request_services;
+    kaa_extension_id               *pending_request_services;
     size_t                         pending_request_service_count;
-    kaa_service_t                  *supported_services;
+    kaa_extension_id               *supported_services;
     size_t                         supported_service_count;
     kaa_buffer_t                   *in_buffer;
     kaa_buffer_t                   *out_buffer;
@@ -112,11 +114,9 @@ typedef struct {
     kaa_tcp_encrypt_t              encryption;
 } kaa_tcp_channel_t;
 
-extern kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered);
-
 static kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info);
-static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_service_t **supported_services, size_t *service_count);
-static kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t services[], size_t service_count);
+static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_extension_id **supported_services, size_t *service_count);
+static kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_extension_id services[], size_t service_count);
 static kaa_error_t kaa_tcp_channel_destroy_context(void *context);
 static kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context);
 static kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *access_point);
@@ -132,17 +132,17 @@ static void kaa_tcp_channel_pingresp_message_callback(void *context);
 /*
  * Internal functions
  */
-static kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self);
+static kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self, uint16_t reason_code);
 static kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self);
-static bool is_service_pending(kaa_tcp_channel_t *self, const kaa_service_t service);
-static kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self, const kaa_service_t services[], size_t service_count);
-static kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self, const kaa_service_t services[], size_t service_count);
+static bool is_service_pending(kaa_tcp_channel_t *self, const kaa_extension_id service);
+static kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self, const kaa_extension_id services[], size_t service_count);
+static kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self, const kaa_extension_id services[], size_t service_count);
 static kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context, const kaa_sockaddr_t *addr, kaa_socklen_t addr_size);
 static kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolve_failed(void *context);
 static inline uint32_t get_uint32_t(const char *buffer);
 static kaa_error_t kaa_tcp_channel_connect_access_point(kaa_tcp_channel_t *self);
 static kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *self);
-static kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self, kaa_service_t *service, size_t services_count);
+static kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self, kaa_extension_id *service, size_t services_count);
 static kaa_error_t kaa_tcp_write_buffer(kaa_tcp_channel_t *self);
 static char* kaa_tcp_write_pending_services_allocator_fn(void *context, size_t buffer_size);
 static kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t *self);
@@ -155,7 +155,7 @@ static kaa_error_t kaa_tcp_channel_disconnect_internal(kaa_tcp_channel_t *self, 
  */
 kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
                                  , kaa_logger_t *logger
-                                 , kaa_service_t *supported_services
+                                 , kaa_extension_id *supported_services
                                  , size_t supported_service_count)
 {
     KAA_RETURN_IF_NIL4(self, logger, supported_services, supported_service_count, KAA_ERR_BADPARAM);
@@ -167,13 +167,14 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     //Check supported services, as Bootstrap channel we accept only one service which is bootstrap.
     //From other hand bootstrap can't be as service in operations service.
     bool bootstrap_found = false;
-    size_t i = 0;
-    for(;i<supported_service_count;i++) {
-        if (supported_services[i] == KAA_SERVICE_BOOTSTRAP) {
+
+    for (size_t i = 0; i < supported_service_count; i++) {
+        if (supported_services[i] == KAA_EXTENSION_BOOTSTRAP) {
             bootstrap_found = true;
             break;
         }
     }
+
     if (bootstrap_found && supported_service_count > 1) {
         //unsupported configuration
         KAA_LOG_ERROR(logger,KAA_ERR_BADPARAM,"Kaa TCP channel creating, error unsupported configuration,  "
@@ -193,8 +194,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Copies supported services.
      */
-    kaa_tcp_channel->supported_services = (kaa_service_t *)
-                    KAA_MALLOC(supported_service_count * sizeof(kaa_service_t));
+    kaa_tcp_channel->supported_services = KAA_MALLOC(supported_service_count * sizeof(kaa_extension_id));
     if (!kaa_tcp_channel->supported_services) {
         KAA_LOG_ERROR(logger, KAA_ERR_NOMEM, "Failed to copy supported services");
         kaa_tcp_channel_destroy_context(kaa_tcp_channel);
@@ -202,10 +202,8 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     }
 
     kaa_tcp_channel->supported_service_count = supported_service_count;
-    i = 0;
-    for (; i < supported_service_count; ++i) {
-        kaa_tcp_channel->supported_services[i] = supported_services[i];
-    }
+
+    memcpy(kaa_tcp_channel->supported_services, supported_services, sizeof(kaa_extension_id) * supported_service_count);
 
     /*
      * Define type of channel (bootstrap or operations)
@@ -300,11 +298,12 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
 
 
-static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self)
+static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self, uint16_t reason_code)
 {
-    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.kaa_context->bootstrap_manager
-                                                            , &self->protocol_id
-                                                            , self->channel_operation_type);
+    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.kaa_context->bootstrap_manager,
+                                                                          &self->protocol_id,
+                                                                          self->channel_operation_type,
+																		  reason_code);
     if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
         KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
                 "error notifying bootstrap manager on access point failure"
@@ -331,7 +330,7 @@ kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_trans
 /*
  * Return supported services list
  */
-kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_service_t **supported_services, size_t *service_count) {
+kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_extension_id **supported_services, size_t *service_count) {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
 
@@ -346,7 +345,7 @@ kaa_error_t kaa_tcp_channel_get_supported_services(void * context, kaa_service_t
 /*
  * Sync specified services list with server side.
  */
-kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t services[], size_t service_count) {
+kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_extension_id services[], size_t service_count) {
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -374,7 +373,7 @@ kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t serv
                                       , SOCKET_CONNECTION_ERROR
                                       , ((kaa_tcp_channel_t *) context)->access_point.socket_descriptor);
 
-            error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context);
+            error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context, 0);
         }
     }
 
@@ -613,7 +612,7 @@ bool kaa_tcp_channel_is_ready(kaa_transport_channel_interface_t *self
             } else  if (tcp_channel->access_point.state == AP_CONNECTED) {
                 //If there are some pending sync services put W into fd_set
                 if (tcp_channel->pending_request_service_count > 0) {
-                    if (is_service_pending(tcp_channel, KAA_SERVICE_BOOTSTRAP)
+                    if (is_service_pending(tcp_channel, KAA_EXTENSION_BOOTSTRAP)
                         || tcp_channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZED)
                     {
                         return true;
@@ -693,7 +692,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                                 error_code = KAA_ERR_TCPCHANNEL_PARSER_ERROR;
                                 KAA_LOG_ERROR(tcp_channel->logger, error_code, "Kaa TCP channel [0x%08X] failed to parse the buffer (kaatcp_error_code=%d)"
                                                                                         , tcp_channel->access_point.id, kaatcp_error_code);
-                                kaa_tcp_channel_socket_io_error(tcp_channel);
+                                kaa_tcp_channel_socket_io_error(tcp_channel, 0);
                             } else {
                                 //Need to check AP state to avoid free space on closed connection.
                                 if (tcp_channel->access_point.state == AP_CONNECTED) {
@@ -706,7 +705,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                             }
                             break;
                         default:
-                            error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
+                            error_code = kaa_tcp_channel_socket_io_error(tcp_channel, 0);
                             break;
                     }
                 }
@@ -728,7 +727,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                         tcp_channel->access_point.state = AP_RESOLVED;
                         if (tcp_channel->event_callback)
                             tcp_channel->event_callback(tcp_channel->event_context, SOCKET_CONNECTION_ERROR, fd);
-                        error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
+                        error_code = kaa_tcp_channel_socket_io_error(tcp_channel, 0);
                         break;
                     case KAA_TCP_SOCK_CONNECTED:
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] socket was successfully connected"
@@ -757,7 +756,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                     size_t buf_size = 0;
                     error_code = kaa_buffer_get_unprocessed_space(tcp_channel->out_buffer, &buf, &buf_size);
                     if (error_code || !buf_size)
-                        error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
+                        error_code = kaa_tcp_channel_socket_io_error(tcp_channel, 0);
                     else {
                         KAA_LOG_TRACE(tcp_channel->logger, error_code, "Kaa TCP channel [0x%08X] can't disconnect right now (%d bytes are unprocessed)"
                                                                                     , tcp_channel->access_point.id, buf_size);
@@ -787,7 +786,7 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
         case FD_EXCEPTION:
             KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] processing event EXCEPTION"
                                                                                     , tcp_channel->access_point.id);
-            error_code = kaa_tcp_channel_socket_io_error(tcp_channel);
+            error_code = kaa_tcp_channel_socket_io_error(tcp_channel, 0);
             break;
     }
     KAA_LOG_TRACE_LDB(tcp_channel->logger, error_code, "Kaa TCP channel [0x%08X] event processing complete"
@@ -851,7 +850,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
                                               , SOCKET_CONNECTION_ERROR
                                               , tcp_channel->access_point.socket_descriptor);
 
-                    error_code = kaa_tcp_channel_on_access_point_failed(tcp_channel);
+                    error_code = kaa_tcp_channel_on_access_point_failed(tcp_channel, 0);
                 }
                 break;
             case RET_STATE_VALUE_ERROR:
@@ -859,7 +858,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
                 error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
                 KAA_LOG_ERROR(tcp_channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] hostname resolve failed"
                                                                                                     , tcp_channel->access_point.id);
-                error_code = kaa_tcp_channel_on_access_point_failed(tcp_channel);
+                error_code = kaa_tcp_channel_on_access_point_failed(tcp_channel, 0);
                 break;
             case RET_STATE_BUFFER_NOT_ENOUGH:
                 tcp_channel->access_point.state = AP_NOT_SET;
@@ -878,11 +877,11 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
         kaa_time_t interval = KAA_TIME() - tcp_channel->keepalive.last_sent_keepalive;
 
-        if (interval >= KAA_TCP_CHANNEL_PING_TIMEOUT) {
+        if (interval >= (kaa_time_t)KAA_TCP_CHANNEL_PING_TIMEOUT) {
             //Send ping request
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
-                kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager, &tcp_channel->protocol_id, tcp_channel->channel_operation_type);
+                kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager, &tcp_channel->protocol_id, tcp_channel->channel_operation_type, 0);
                 return KAA_ERR_TIMEOUT;
             }
 
@@ -929,30 +928,38 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
 
     if (channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZING) {
-        if (message.return_code == (uint16_t) KAATCP_CONNACK_SUCCESS) {
+        if (message.return_code == KAATCP_CONNACK_SUCCESS) {
             channel->channel_state = KAA_TCP_CHANNEL_AUTHORIZED;
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] successfully authorized"
-                                                                                , channel->access_point.id);
+            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE,
+                          "Kaa TCP channel [0x%08X] successfully authorized",
+                          channel->access_point.id);
 
         channel->keepalive.last_receive_keepalive = KAA_TIME();
         channel->keepalive.last_sent_keepalive
                 = channel->keepalive.last_receive_keepalive;
 
-        } else if (message.return_code == (uint16_t) KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
+        } else if (message.return_code == KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
             kaa_context_set_status_registered(channel->transport_context.kaa_context, false);
-            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] received KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS"
-                                                                                , channel->access_point.id);
+            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE,
+                         "Kaa TCP channel [0x%08X] received KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS",
+                         channel->access_point.id);
             channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
             kaa_tcp_channel_authorize(channel);
+        } else if (message.return_code == KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED) {
+            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE,
+                         "Kaa TCP channel receiver KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED",
+                         channel->access_point.id);
+            kaa_tcp_channel_socket_io_error(channel, message.return_code);
         } else {
-            KAA_LOG_WARN(channel->logger, KAA_ERR_BAD_STATE, "Kaa TCP channel [0x%08X] authorization failed, code %d"
-                                                                                , channel->access_point.id, message.return_code);
-            kaa_tcp_channel_socket_io_error(channel);
+            KAA_LOG_WARN(channel->logger, KAA_ERR_BAD_STATE,
+                         "Kaa TCP channel [0x%08X] authorization failed, code %d",
+                         channel->access_point.id, message.return_code);
+            kaa_tcp_channel_socket_io_error(channel, 0);
         }
     } else {
         KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] CONACK message received in incorrect state"
                                                                                                 , channel->access_point.id);
-        kaa_tcp_channel_socket_io_error(channel);
+        kaa_tcp_channel_socket_io_error(channel, 0);
     }
 }
 
@@ -964,11 +971,13 @@ void kaa_tcp_channel_disconnect_message_callback(void *context, kaatcp_disconnec
 
     KAA_LOG_TRACE(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE,"Kaa TCP channel [0x%08X] DISCONNECT message received"
                                                                             , ((kaa_tcp_channel_t *) context)->access_point.id);
-
-    if (message.reason != KAATCP_DISCONNECT_INTERNAL_ERROR) {
+    if (message.reason == KAATCP_DISCONNECT_CREDENTIALS_REVOKED) {
+        kaa_tcp_channel_socket_io_error(((kaa_tcp_channel_t *) context), message.reason);
+    }
+    if (message.reason != KAATCP_DISCONNECT_INTERNAL_ERROR && message.reason != KAATCP_DISCONNECT_CREDENTIALS_REVOKED) {
         ((kaa_tcp_channel_t *) context)->sync_state = KAA_TCP_CHANNEL_SYNC_OP_STARTED;
     }
-    kaa_tcp_channel_socket_io_error(((kaa_tcp_channel_t *) context));
+    kaa_tcp_channel_socket_io_error(((kaa_tcp_channel_t *) context), 0);
 }
 
 
@@ -989,9 +998,10 @@ void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *m
                 kaa_platform_protocol_process_server_sync(channel->transport_context.kaa_context->platform_protocol
                                                         , message->sync_request
                                                         , message->sync_request_size);
-        if (error_code)
+        if (error_code) {
             KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel [0x%08X] failed to process server sync"
                                                                                     , channel->access_point.id);
+        }
     } else {
         KAA_LOG_DEBUG(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] received unsupported flags: zipped %d, encrypted %d"
                                                                                         , channel->access_point.id, zipped, encrypted);
@@ -1024,7 +1034,7 @@ void kaa_tcp_channel_pingresp_message_callback(void *context)
 /*
  * Close Kaa TCP channel socket and reset state of channel
  */
-kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
+kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self, uint16_t reason_code)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
@@ -1053,7 +1063,7 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
     }
 
     if (self->sync_state == KAA_TCP_CHANNEL_SYNC_OP_STARTED) {
-        error_code = kaa_tcp_channel_on_access_point_failed(self);
+        error_code = kaa_tcp_channel_on_access_point_failed(self, reason_code);
     }
 
     kaa_buffer_reset(self->in_buffer);
@@ -1188,7 +1198,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 /*
  * Checks is specified service pending to sync.
  */
-bool is_service_pending(kaa_tcp_channel_t *self, const kaa_service_t service)
+bool is_service_pending(kaa_tcp_channel_t *self, const kaa_extension_id service)
 {
     KAA_RETURN_IF_NIL2(self, self->pending_request_services, false);
 
@@ -1208,10 +1218,10 @@ bool is_service_pending(kaa_tcp_channel_t *self, const kaa_service_t service)
  *
  * Returns new array count.
  */
-static size_t append_with_new_services(kaa_service_t *dest,
+static size_t append_with_new_services(kaa_extension_id *dest,
                                        size_t dest_count,
                                        size_t dest_capacity,
-                                       const kaa_service_t *src,
+                                       const kaa_extension_id *src,
                                        size_t src_count)
 {
     KAA_RETURN_IF_NIL2(dest, src, 0);
@@ -1243,7 +1253,7 @@ static size_t append_with_new_services(kaa_service_t *dest,
  * Delete specified services from pending list.
  */
 kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
-                                                  , const kaa_service_t services[]
+                                                  , const kaa_extension_id services[]
                                                   , size_t service_count)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
@@ -1266,7 +1276,7 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
     }
 
     size_t new_service_count = 0;
-    kaa_service_t temp_new_services[self->pending_request_service_count];
+    kaa_extension_id temp_new_services[self->pending_request_service_count];
 
     new_service_count = append_with_new_services(temp_new_services,
                                                  new_service_count,
@@ -1278,13 +1288,13 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
     self->pending_request_services = NULL;
     self->pending_request_service_count = 0;
 
-    self->pending_request_services = (kaa_service_t *)
-                            KAA_MALLOC(new_service_count * sizeof(kaa_service_t));
+    self->pending_request_services = (kaa_extension_id *)
+                            KAA_MALLOC(new_service_count * sizeof(kaa_extension_id));
     KAA_RETURN_IF_NIL(self->pending_request_services, KAA_ERR_NOMEM);
 
     if (new_service_count > 0) {
         self->pending_request_service_count = new_service_count;
-        memcpy(self->pending_request_services, temp_new_services, new_service_count * sizeof(kaa_service_t));
+        memcpy(self->pending_request_services, temp_new_services, new_service_count * sizeof(kaa_extension_id));
     }
 
     return KAA_ERR_NONE;
@@ -1296,7 +1306,7 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
  * Update pending service list with specified list. Pending service list should have only unique services.
  */
 kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
-                                                  , const kaa_service_t services[]
+                                                  , const kaa_extension_id services[]
                                                   , size_t service_count)
 {
     KAA_RETURN_IF_NIL3(self, services, service_count, KAA_ERR_BADPARAM);
@@ -1305,7 +1315,7 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
                                             , self->access_point.id, self->pending_request_service_count, service_count);
 
     size_t new_service_count = 0;
-    kaa_service_t temp_new_services[self->pending_request_service_count + service_count];
+    kaa_extension_id temp_new_services[self->pending_request_service_count + service_count];
 
     /* First call of sync handlers services, no one services wait */
     if (!self->pending_request_services || !self->pending_request_service_count) {
@@ -1313,7 +1323,7 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
     } else {
         /* Some services waiting to sync with service, need merge with other services */
         new_service_count = self->pending_request_service_count;
-        memcpy(temp_new_services, self->pending_request_services, new_service_count * sizeof(kaa_service_t));
+        memcpy(temp_new_services, self->pending_request_services, new_service_count * sizeof(kaa_extension_id));
 
         KAA_FREE(self->pending_request_services); //free previous pending services array.
         self->pending_request_services = NULL;
@@ -1326,13 +1336,14 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
                                                  services,
                                                  service_count);
 
-    self->pending_request_services = (kaa_service_t *)
-                            KAA_MALLOC(new_service_count * sizeof(kaa_service_t));
-    KAA_RETURN_IF_NIL(self->pending_request_services, KAA_ERR_NOMEM);
+    self->pending_request_services = KAA_MALLOC(new_service_count * sizeof(kaa_extension_id));
+    if (!self->pending_request_services) {
+        return KAA_ERR_NOMEM;
+    }
 
     if (new_service_count > 0) {
         self->pending_request_service_count = new_service_count;
-        memcpy(self->pending_request_services, temp_new_services, new_service_count * sizeof(kaa_service_t));
+        memcpy(self->pending_request_services, temp_new_services, new_service_count * sizeof(kaa_extension_id));
     }
 
     return KAA_ERR_NONE;
@@ -1364,7 +1375,7 @@ kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context
             channel->event_callback(channel->event_context
                                   , SOCKET_CONNECTION_ERROR
                                   , channel->access_point.socket_descriptor);
-        error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context);
+        error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context, 0);
     }
     return error_code;
 }
@@ -1472,7 +1483,7 @@ kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *self)
  * Write to socket sync services.
  */
 kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
-                                                 , kaa_service_t *service
+                                                 , kaa_extension_id *service
                                                  , size_t services_count)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
@@ -1596,7 +1607,7 @@ kaa_error_t kaa_tcp_write_buffer(kaa_tcp_channel_t *self)
             default:
                 KAA_LOG_WARN(self->logger, KAA_ERR_SOCKET_ERROR, "Kaa TCP channel [0x%08X] write failed"
                                                                                     , self->access_point.id);
-                error_code = kaa_tcp_channel_socket_io_error(self);
+                error_code = kaa_tcp_channel_socket_io_error(self, 0);
                 break;
         }
     }

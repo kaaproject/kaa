@@ -30,6 +30,7 @@
 #import "ConfigurationCommon.h"
 #import "NotificationCommon.h"
 #import "LogDeliveryDelegate.h"
+#import "FailoverStrategy.h"
 
 /**
  * Root interface for the Kaa client.<br>
@@ -331,6 +332,13 @@
  * Sets callback for notifications when current endpoint is detached from user.
  */
 - (void)setDetachDelegate:(id<DetachEndpointFromUserDelegate>)delegate;
+
+/**
+ * @param failoverStrategy strategy that will be used to resolve failovers.
+ *
+ * @see FailoverStrategy
+ */
+- (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy;
 
 @end
 #endif

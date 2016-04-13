@@ -60,13 +60,13 @@
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
-    id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
-    id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
-    id <NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
-    id <ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
-    id <UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
-    id <MetaDataTransport> metaDataTransport = mockProtocol(@protocol(MetaDataTransport));
-    id <LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
+    id<EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
+    id<NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
+    id<ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
+    id<UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
+    id<MetaDataTransport> metaDataTransport = mockProtocol(@protocol(MetaDataTransport));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
     
     [operationDataProcessor setConfigurationTransport:configurationTransport];
     [operationDataProcessor setProfileTransport:profileTransport];
@@ -91,13 +91,13 @@
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
-    id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
-    id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
-    id <NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
-    id <ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
-    id <UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
-    id <MetaDataTransport> metaDataTransport = mockProtocol(@protocol(MetaDataTransport));
-    id <LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
+    id<EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
+    id<NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
+    id<ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
+    id<UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
+    id<MetaDataTransport> metaDataTransport = mockProtocol(@protocol(MetaDataTransport));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
     
     [operationDataProcessor setConfigurationTransport:configurationTransport];
     [operationDataProcessor setProfileTransport:profileTransport];
@@ -122,13 +122,13 @@
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
-    id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
-    id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
-    id <NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
-    id <ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
-    id <UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
-    id <LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
-    id <RedirectionTransport> redirectionTransport = mockProtocol(@protocol(RedirectionTransport));
+    id<ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
+    id<EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
+    id<NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
+    id<ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
+    id<UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<RedirectionTransport> redirectionTransport = mockProtocol(@protocol(RedirectionTransport));
     
     [operationDataProcessor setConfigurationTransport:configurationTransport];
     [operationDataProcessor setProfileTransport:profileTransport];
@@ -197,13 +197,13 @@
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
-    id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
-    id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
-    id <NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
-    id <ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
-    id <UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
-    id <LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
-    id <RedirectionTransport> redirectionTransport = mockProtocol(@protocol(RedirectionTransport));
+    id<ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
+    id<EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
+    id<NotificationTransport> notificationTransport = mockProtocol(@protocol(NotificationTransport));
+    id<ConfigurationTransport> configurationTransport = mockProtocol(@protocol(ConfigurationTransport));
+    id<UserTransport> userTransport = mockProtocol(@protocol(UserTransport));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<RedirectionTransport> redirectionTransport = mockProtocol(@protocol(RedirectionTransport));
     
     [operationDataProcessor setConfigurationTransport:configurationTransport];
     [operationDataProcessor setProfileTransport:profileTransport];

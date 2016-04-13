@@ -83,9 +83,9 @@
 
 
 - (void)testDefaultOperationTcpChannel {
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id <KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state failoverManager:failoverManager];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state failoverManager:failoverManager];
     XCTAssertNotNil([tcpchannel getId]);
     XCTAssertNotNil([tcpchannel getSupportedTransportTypes]);
     XCTAssertNotEqual(0, [[tcpchannel getSupportedTransportTypes] count]);
@@ -96,17 +96,17 @@
  */
 - (void)DISABLED_testSync {
     KeyPair *clientKeys = [KeyUtils generateKeyPair];
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState privateKey]) willReturnStruct:[clientKeys getPrivateKeyRef] objCType:@encode(SecKeyRef)];
     [given([clientState publicKey]) willReturnStruct:[clientKeys getPublicKeyRef] objCType:@encode(SecKeyRef)];
     
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     MockedOperationTcpChannel *tcpChannel = [[MockedOperationTcpChannel alloc] initWithClientState:clientState failoverManager:failoverManager];
     
     AvroBytesConverter *requestCreator = [[AvroBytesConverter alloc] init];
-    id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
+    id<KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
     [given([multiplexer compileRequestForTypes:anything()])willReturn:[requestCreator toBytes:[[SyncRequest alloc] init]]];
-    id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
+    id<KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
     
     [tcpChannel setMultiplexer:multiplexer];
     [tcpChannel setDemultiplexer:demultiplexer];
@@ -114,7 +114,7 @@
     [tcpChannel syncForTransportType:TRANSPORT_TYPE_PROFILE];
     
     [KeyUtils generateKeyPair];
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 publicKey:[KeyUtils getPublicKey]];
     
     [tcpChannel setServer:server withKeyPair:clientKeys];
     uint8_t rawConnackChar[] = {0x20, 0x02, 0x00, 0x01};
@@ -148,14 +148,14 @@
 
 - (void)testConnectivity {
     KeyPair *clientKeys = [KeyUtils generateKeyPair];
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState privateKey]) willReturnStruct:[clientKeys getPrivateKeyRef] objCType:@encode(SecKeyRef)];
     [given([clientState publicKey]) willReturnStruct:[clientKeys getPublicKeyRef] objCType:@encode(SecKeyRef)];
     
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState failoverManager:failoverManager];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"www.test.fake" port:999 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"www.test.fake" port:999 publicKey:[KeyUtils getPublicKey]];
     XCTAssertNotNil(server);
     
     ConnectivityChecker *checker = mock([ConnectivityChecker class]);
