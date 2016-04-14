@@ -63,7 +63,7 @@ static void test_list_push_front()
     int32_t *number;
     size_t node_number = 2;
     for (size_t i = 0; i < node_number; ++i) {
-        number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
+        number = KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();
         kaa_list_push_front(list, number);
@@ -87,7 +87,7 @@ static void test_list_push_back()
     int32_t *number;
     int node_number = 2;
     for (int i = 0; i < node_number; ++i) {
-        number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
+        number = KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();
         kaa_list_push_back(list, number);
@@ -106,7 +106,7 @@ static void test_list_sort()
 
     uint64_t node_number = 100;
     for (uint64_t i = 0; i < node_number; ++i) {
-        test_list_node_t *node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        test_list_node_t *node = KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
         node->id = (uint64_t) rand();
         kaa_list_push_back(list, node);
