@@ -138,7 +138,7 @@
     [tcpChannel syncAll];
     [verifyCount(multiplexer, times(2)) compileRequestForTypes:[tcpChannel getSupportedTransportTypes]];
     
-    KAATcpDisconnect *disconnect = [[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_INTERNAL_ERROR];
+    KAATcpDisconnect *disconnect = [[KAATcpDisconnect alloc] initWithDisconnectReason:DisconnectReasonInternalError];
     [tcpChannel.outputStream write:[[disconnect getFrame] bytes] maxLength:[[disconnect getFrame] length]];
     
     [tcpChannel syncAll];
