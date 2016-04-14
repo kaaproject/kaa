@@ -46,8 +46,8 @@ public class GenericAvroConverter<T extends GenericContainer> {
     private static final Logger LOG = LoggerFactory
             .getLogger(GenericAvroConverter.class);
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final Charset ISO8859_1 = Charset.forName("ISO-8859-1");
+    private static final Charset ENCODING_CHARSET = Charset.forName("UTF-8");
+    private static final Charset DECODING_CHARSET = Charset.forName("ISO-8859-1");
 
     private Schema schema;
     private DatumReader<T> datumReader;
@@ -120,7 +120,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public T decodeJson(byte[] data) throws IOException {
-        return decodeJson(new String(data, ISO8859_1), null);
+        return decodeJson(new String(data, DECODING_CHARSET), null);
     }
 
     /**
@@ -144,7 +144,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public String encodeToJson(T record) throws IOException{
-        return new String(encodeToJsonBytes(record), UTF8);
+        return new String(encodeToJsonBytes(record), ENCODING_CHARSET);
     }
 
     /**
