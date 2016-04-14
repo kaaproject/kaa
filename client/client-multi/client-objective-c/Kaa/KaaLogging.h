@@ -14,6 +14,6 @@
  *  limitations under the License.
  */
 
-#import <CocoaLumberjack/CocoaLumberjack.h>
+#import <CocoaLumberjack.h>
 
 extern const DDLogLevel ddLogLevel;
