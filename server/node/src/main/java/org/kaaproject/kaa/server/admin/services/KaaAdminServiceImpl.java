@@ -2604,7 +2604,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkEventClassFamilyId(eventClassFamilyId);
             String schema = new String(data);
-            validateSchema(schema, false);
+            SchemaUtil.compileAvroSchema(validateSchema(schema, false));
 
             EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(storedEventClassFamily);

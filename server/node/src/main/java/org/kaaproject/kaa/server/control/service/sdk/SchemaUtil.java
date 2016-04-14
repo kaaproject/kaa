@@ -192,8 +192,8 @@ public class SchemaUtil {
             compiler.init();
             return compiler.compile(javaSources);
         } catch (Exception cause) {
-            LOG.error(MessageFormat.format("Failed to compile {0}", avroSchema), cause);
-            String userMessage = "Failed to compile the schema. Please, ensure the schema body is correct";
+            LOG.error("Failed to compile {}", avroSchema, cause);
+            String userMessage = "Failed to compile the schema: " + cause.getMessage();
             throw new IllegalArgumentException(userMessage, cause);
         }
     }
