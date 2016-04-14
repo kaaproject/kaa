@@ -90,6 +90,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RequestCallback;
@@ -1062,10 +1063,10 @@ public class AdminClient {
         return response.getBody();
     }
 
-    public CredentialsDto provideCredentials (String applicationId, String credentialsBody) {
+    public CredentialsDto provideCredentials (String applicationId, byte[] credentialsBody) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationId", applicationId);
-        parameters.add("credentialsBody", credentialsBody);
+        parameters.add("credentialsBody", Base64Utils.encodeToString(credentialsBody));
         return this.restTemplate.postForObject(restTemplate.getUrl() + "provideCredentials", parameters, CredentialsDto.class);
     }
 

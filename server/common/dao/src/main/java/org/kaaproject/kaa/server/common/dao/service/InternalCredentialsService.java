@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.Validate;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.dao.CredentialsService;
 import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 
 /**
  * The default implementation of the {@link CredentialsService} interface.
@@ -55,6 +57,8 @@ public class InternalCredentialsService implements CredentialsService {
         Validate.notBlank(applicationId, "Invalid application ID provided!");
         Validate.notNull(credentials, "Invalid credentials provided!");
         try {
+            byte[] credentialsBody = credentials.getCredentialsBody();
+            credentials.setId(Base64Utils.encodeToUrlSafeString(SHA1HashUtils.hashToBytes(credentialsBody)));
             return this.credentialsDao.save(applicationId, credentials).toDto();
         } catch (Exception cause) {
             String message = MessageFormat.format("[{0}] An unexpected exception occured while saving credentials!", applicationId);

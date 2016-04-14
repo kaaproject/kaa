@@ -55,7 +55,8 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
         try {
             Validate.notNull(endpointRegistration, "Invalid endpoint registration provided!");
             String credentialsId = endpointRegistration.getCredentialsId();
-            Validate.isTrue(this.findEndpointRegistrationByCredentialsId(credentialsId) == null, "The endpoint registration already exists!");
+            Optional<EndpointRegistrationDto> oldRegistration = findEndpointRegistrationByCredentialsId(credentialsId);
+            Validate.isTrue(!oldRegistration.isPresent(), "The endpoint registration already exists!");
             return this.endpointRegistrationDao.save(endpointRegistration).toDto();
         } catch (Exception cause) {
             LOG.error("An unexpected exception occured while saving endpoint registration!", cause);

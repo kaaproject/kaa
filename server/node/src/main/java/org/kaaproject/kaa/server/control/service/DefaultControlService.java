@@ -150,6 +150,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 
 /**
  * The Class DefaultControlService.
@@ -2243,7 +2244,7 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws ControlServiceException {
-        CredentialsDto credentials = new CredentialsDto(credentialsBody.getBytes(), CredentialsStatus.AVAILABLE);
+        CredentialsDto credentials = new CredentialsDto(Base64Utils.decodeFromString(credentialsBody), CredentialsStatus.AVAILABLE);
         try {
             return this.credentialsServiceLocator.getCredentialsService(applicationId).provideCredentials(credentials);
         } catch (CredentialsServiceException cause) {

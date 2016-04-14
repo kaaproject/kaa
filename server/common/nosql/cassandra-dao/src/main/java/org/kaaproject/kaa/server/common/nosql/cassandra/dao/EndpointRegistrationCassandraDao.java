@@ -93,7 +93,7 @@ public class EndpointRegistrationCassandraDao extends AbstractCassandraDao<Cassa
     public Optional<CassandraEndpointRegistration> findByCredentialsId(String credentialsId) {
         LOG.debug("Searching for endpoint registration by credentials ID [{}]", credentialsId);
         String endpointId = this.byCredentialsID.getEndpointIdByCredentialsId(credentialsId);
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_ENDPOINT_ID_PROPERTY, endpointId);
+        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_CREDENTIALS_ID_PROPERTY, endpointId);
         Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
         return Optional.ofNullable(this.findOneByStatement(statement));
     }
