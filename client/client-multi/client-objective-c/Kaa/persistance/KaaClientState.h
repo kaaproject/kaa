@@ -88,6 +88,11 @@
 @property (nonatomic) BOOL needProfileResync;
 
 /**
+ * Returns existing or generates new public key as bytes.
+ */
+- (NSData *)publicKeyAsBytes;
+
+/**
  * Adds topic with all its information.
  */
 - (void)addTopic:(Topic *)topic;

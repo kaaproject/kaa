@@ -430,7 +430,7 @@
     id<RedirectionTransport> redTransport = [self buildRedirectionTransport];
     id<LogTransport> logTransport = [self buildLogTransport];
     
-    EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[KeyUtils getPublicKey]];
+    EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[state publicKeyAsBytes]];
     
     id<MetaDataTransport> mdTransport = [[DefaultMetaDataTransport alloc] init];
     [mdTransport setClientProperties:properties];

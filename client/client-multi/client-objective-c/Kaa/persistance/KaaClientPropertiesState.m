@@ -256,6 +256,11 @@
     return newAccessToken;
 }
 
+- (NSData *)publicKeyAsBytes {
+    [self getOrGenerateKeyPair];
+    return [KeyUtils getPublicKey];
+}
+
 - (SecKeyRef)publicKey {
     return [[self getOrGenerateKeyPair] getPublicKeyRef];
 }
