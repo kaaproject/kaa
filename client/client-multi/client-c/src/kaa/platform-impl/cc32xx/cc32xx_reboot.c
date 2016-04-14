@@ -17,6 +17,7 @@
 #include "hw_types.h"
 #include "device.h"
 #include "prcm.h"
+#include "utils_if.h"
 
 void cc32xx_reboot(void)
 {
@@ -26,5 +27,5 @@ void cc32xx_reboot(void)
     PRCMHibernateEnter();
 
     PRCMMCUReset(true);
-    PRCMSOCReset();
+    Utils_TriggerHibCycle();
 }
