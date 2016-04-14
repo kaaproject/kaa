@@ -163,9 +163,10 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
         kaa_transport_protocol_id_t protocol_id;
         kaa_error_t error_code = channel->get_protocol_id(channel->context, &protocol_id);
         KAA_RETURN_IF_ERR(error_code);
-        error_code = kaa_bootstrap_manager_on_access_point_failed(self->bootstrap_manager
-                                                                , &protocol_id
-                                                                , KAA_SERVER_OPERATIONS, 0);
+        error_code = kaa_bootstrap_manager_on_access_point_failed(self->bootstrap_manager,
+                                                                  &protocol_id,
+                                                                  KAA_SERVER_OPERATIONS,
+                                                                  KAA_OPERATION_SERVERS_NA);
         return error_code;
     }
 

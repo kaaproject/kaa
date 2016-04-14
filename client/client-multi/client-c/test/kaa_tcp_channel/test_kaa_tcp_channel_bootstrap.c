@@ -491,7 +491,7 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
 kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
                                                          kaa_transport_protocol_id_t *protocol_id,
                                                          kaa_server_type_t type,
-                                                         uint16_t reason_code)
+                                                         kaa_failover_reason reason_code)
 {
     (void)reason_code;
     (void)self;

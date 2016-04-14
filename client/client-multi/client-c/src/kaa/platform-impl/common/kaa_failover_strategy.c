@@ -23,6 +23,8 @@
 #include "kaa_bootstrap_manager.h"
 #include "platform/ext_kaa_failover_strategy.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_common.h"
+#include "platform/ext_kaa_failover_strategy.h"
+#include "kaa_context.h"
 
 
 struct kaa_failover_strategy_t {
@@ -69,6 +71,7 @@ kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failov
             strategy->decision.action = KAA_RETRY;
             break;
 
+        case KAA_CHANNEL_NA:
         case KAA_CREDENTIALS_REVOKED:
         case KAA_ENDPOINT_NOT_REGISTERED:
             strategy->decision.action = KAA_STOP_APP;
