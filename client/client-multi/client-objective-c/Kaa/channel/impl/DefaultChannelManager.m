@@ -235,10 +235,10 @@
                 DDLogVerbose(@"%@ Using next bootstrap server", TAG);
                 FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
                 switch (decision.failoverAction) {
-                    case FAILOVER_ACTION_NOOP:
+                    case FailoverActionNoop:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
                         break;
-                    case FAILOVER_ACTION_RETRY:
+                    case FailoverActionRetry:
                     {
                         int64_t period = [decision retryPeriod];
                         DDLogWarn(@"%@ Reconnect to current bootstrap server will be made in %lli ms", TAG, period);
@@ -249,7 +249,7 @@
                         });
                     }
                         break;
-                    case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
+                    case FailoverActionUseNextBootstrap:
                     {
                         int64_t period = [decision retryPeriod];
                         DDLogWarn(@"%@ Connection to next bootstrap server will be made in %lli ms", TAG, period);
@@ -260,7 +260,7 @@
                         });
                     }
                         break;
-                    case FAILOVER_ACTION_STOP_APP:
+                    case FailoverActionStopApp:
                         DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
                         exit(EXIT_FAILURE);
                         //TODO: review how to exit application
@@ -270,12 +270,12 @@
                 }
             } else {
                 DDLogVerbose(@"%@ Can't find next bootstrap server", TAG);
-                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA];
+                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FailoverStatusBootstrapServersNotAvailable];
                 switch (decision.failoverAction) {
-                    case FAILOVER_ACTION_NOOP:
+                    case FailoverActionNoop:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
                         break;
-                    case FAILOVER_ACTION_RETRY:
+                    case FailoverActionRetry:
                     {
                         int64_t period = [decision retryPeriod];
                         DDLogWarn(@"%@ Reconnect to first bootstrap server will be made in %lli ms", TAG, period);
@@ -286,7 +286,7 @@
                         });
                     }
                         break;
-                    case FAILOVER_ACTION_STOP_APP:
+                    case FailoverActionStopApp:
                         DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
                         exit(EXIT_FAILURE);
                         //TODO: review how to exit application

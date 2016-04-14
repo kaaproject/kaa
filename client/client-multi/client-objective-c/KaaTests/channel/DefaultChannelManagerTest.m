@@ -170,9 +170,9 @@
     id<TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     [channelManager onTransportConnectionInfoUpdated:opServer];
     
-    [channelManager onServerFailedWithConnectionInfo:opServer failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+    [channelManager onServerFailedWithConnectionInfo:opServer failoverStatus:FailoverStatusNoConnectivity];
     [verifyCount(bootstrapManager, times(1)) useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
-                                                                     failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+                                                                     failoverStatus:FailoverStatusNoConnectivity];
 }
 
 - (void)testBootstrapServerFailed {
@@ -200,13 +200,13 @@
     
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
-    [channelManager onServerFailedWithConnectionInfo:server failoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+    [channelManager onServerFailedWithConnectionInfo:server failoverStatus:FailoverStatusCurrentBootstrapServerNotAvailable];
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         [NSThread sleepForTimeInterval:1];
         [verifyCount(channel, times(1)) setServer:server1];
     }];
-    [verifyCount(failoverManager, times(1)) decisionOnFailoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+    [verifyCount(failoverManager, times(1)) decisionOnFailoverStatus:FailoverStatusCurrentBootstrapServerNotAvailable];
 }
 
 
@@ -229,7 +229,7 @@
     
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
-    [channelManager onServerFailedWithConnectionInfo:server failoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+    [channelManager onServerFailedWithConnectionInfo:server failoverStatus:FailoverStatusCurrentBootstrapServerNotAvailable];
 }
 
 - (void)testRemoveHttpLpChannel {
@@ -393,7 +393,7 @@
     [channelManager addChannel:channel];
     
     [channelManager shutdown];
-    [channelManager onServerFailedWithConnectionInfo:nil failoverStatus:FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA];
+    [channelManager onServerFailedWithConnectionInfo:nil failoverStatus:FailoverStatusBootstrapServersNotAvailable];
     [channelManager onTransportConnectionInfoUpdated:nil];
     [channelManager addChannel:nil];
     [channelManager setChannel:nil withType:0];

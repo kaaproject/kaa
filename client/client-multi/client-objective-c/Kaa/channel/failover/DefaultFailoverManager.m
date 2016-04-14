@@ -206,23 +206,25 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
         int64_t resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
 
         switch (status) {
-            case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
-            case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
+            case FailoverStatusBootstrapServersNotAvailable:
+            case FailoverStatusCurrentBootstrapServerNotAvailable:
                 accessPointIdResolution = self.resolutionProgressMap[@(SERVER_BOOTSTRAP)];
                 resolutionTime += [TimeUtils convertValue:[self.failoverStrategy bootstrapServersRetryPeriod]
                                              fromTimeUnit:[self.failoverStrategy timeUnit]
                                                toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
-            case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
+            case FailoverStatusNoOperationsServersReceived:
                 accessPointIdResolution = self.resolutionProgressMap[@(SERVER_BOOTSTRAP)];
                 break;
-            case FAILOVER_STATUS_OPERATION_SERVERS_NA:
+            case FailoverStatusOperationsServersNotAvailable:
                 accessPointIdResolution = self.resolutionProgressMap[@(SERVER_OPERATIONS)];
                 resolutionTime += [TimeUtils convertValue:[self.failoverStrategy operationsServersRetryPeriod]
                                              fromTimeUnit:[self.failoverStrategy timeUnit]
                                                toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
-            case FAILOVER_STATUS_NO_CONNECTIVITY:
+            case FailoverStatusNoConnectivity:
+            case FailoverStatusCredentialsRevoked:
+            case FailoverStatusEndpointVerificationFailed:
                 break;
         }
         

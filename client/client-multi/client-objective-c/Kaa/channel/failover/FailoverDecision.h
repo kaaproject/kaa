@@ -21,26 +21,26 @@
  * Enum which describes status of the current failover state.
  * Managed by a failover strategy.
  */
-typedef enum {
-    FAILOVER_STATUS_ENDPOINT_VERIFICATION_FAILED,
-    FAILOVER_STATUS_CREDENTIALS_REVOKED,
-    FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA,
-    FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA,
-    FAILOVER_STATUS_OPERATION_SERVERS_NA,
-    FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED,
-    FAILOVER_STATUS_NO_CONNECTIVITY
-} FailoverStatus;
+typedef NS_ENUM(int, FailoverStatus) {
+    FailoverStatusEndpointVerificationFailed,
+    FailoverStatusCredentialsRevoked,
+    FailoverStatusBootstrapServersNotAvailable,
+    FailoverStatusCurrentBootstrapServerNotAvailable,
+    FailoverStatusOperationsServersNotAvailable,
+    FailoverStatusNoOperationsServersReceived,
+    FailoverStatusNoConnectivity
+};
 
 /**
  * Enum which represents an action corresponding to a failover scenario.
  */
-typedef enum  {
-    FAILOVER_ACTION_NOOP,               // doing nothing
-    FAILOVER_ACTION_RETRY,
-    FAILOVER_ACTION_USE_NEXT_BOOTSTRAP,
-    FAILOVER_ACTION_USE_NEXT_OPERATIONS,
-    FAILOVER_ACTION_STOP_APP
-} FailoverAction;
+typedef NS_ENUM(int, FailoverAction) {
+    FailoverActionNoop,               // doing nothing
+    FailoverActionRetry,
+    FailoverActionUseNextBootstrap,
+    FailoverActionUseNextOperations,
+    FailoverActionStopApp
+};
 
 /**
  * Class that describes a decision which is made by a failover manager, 

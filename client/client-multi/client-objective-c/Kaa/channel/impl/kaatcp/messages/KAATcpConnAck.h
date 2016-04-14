@@ -19,26 +19,25 @@
 #define CONNACK_REMAINING_LEGTH_V1 (2)
 
 /**
- * CONNACK return code enum
- *  ACCEPTED                    0x01    Connection Accepted
- *  REFUSE_BAD_PROTOCOL         0x02    Connection Refused: unacceptable protocol version
- *  REFUSE_ID_REJECT            0x03    Connection Refused: identifier rejected
- *  REFUSE_SERVER_UNAVAILABLE   0x04    Connection Refused: server unavailable
- *  REFUSE_BAD_CREDENTIALS      0x05    Connection Refused: invalid authentication parameters
- *  REFUSE_NO_AUTH              0x06    Connection Refused: not authorized
- *  REFUSE_VERIFICATION_FAILED  0x10    Connection Refused: endpoint verification failed
+ *  ReturnCodeAccepted                  0x01    Connection Accepted
+ *  ReturnCodeRefuseBadProtocol         0x02    Connection Refused: unacceptable protocol version
+ *  ReturnCodeRefuseIdReject            0x03    Connection Refused: identifier rejected
+ *  ReturnCodeRefuseServerUnavailable   0x04    Connection Refused: server unavailable
+ *  ReturnCodeRefuseBadCredentials      0x05    Connection Refused: invalid authentication parameters
+ *  ReturnCodeRefuseNoAuth              0x06    Connection Refused: not authorized
+ *  ReturnCodeRefuseVerificationFailed  0x10    Connection Refused: endpoint verification failed
  */
 
-typedef enum {
-    RETURN_CODE_ACCEPTED = 0x01,
-    RETURN_CODE_REFUSE_BAD_PROTOCOL = 0x02,
-    RETURN_CODE_REFUSE_ID_REJECT = 0x03,
-    RETURN_CODE_REFUSE_SERVER_UNAVAILABLE = 0x04,
-    RETURN_CODE_REFUSE_BAD_CREDENTIALS = 0x05,
-    RETURN_CODE_REFUSE_NO_AUTH = 0x06,
-    RETURN_CODE_REFUSE_VERIFICATION_FAILED = 0x10,
-    RETURN_CODE_UNDEFINED = 0x07
-} ReturnCode;
+typedef NS_ENUM(int, ReturnCode) {
+    ReturnCodeAccepted = 0x01,
+    ReturnCodeRefuseBadProtocol = 0x02,
+    ReturnCodeRefuseIdReject = 0x03,
+    ReturnCodeRefuseServerUnavailable = 0x04,
+    ReturnCodeRefuseBadCredentials = 0x05,
+    ReturnCodeRefuseNoAuth = 0x06,
+    ReturnCodeRefuseVerificationFailed = 0x10,
+    ReturnCodeUndefined = 0x07
+};
 
 
 /**

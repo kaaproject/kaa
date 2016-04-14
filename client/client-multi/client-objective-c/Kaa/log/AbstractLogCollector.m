@@ -310,7 +310,7 @@
 - (void)switchAccessPoint {
     id<TransportConnectionInfo> server = [self.channelManager getActiveServerForType:TRANSPORT_TYPE_LOGGING];
     if (server) {
-        [self.failoverManager onServerFailedWithConnectionInfo:server failoverStatus:FAILOVER_STATUS_OPERATION_SERVERS_NA];
+        [self.failoverManager onServerFailedWithConnectionInfo:server failoverStatus:FailoverStatusOperationsServersNotAvailable];
     } else {
         DDLogWarn(@"%@ Failed to switch Operation server. No channel is used for logging transport", TAG);
     }

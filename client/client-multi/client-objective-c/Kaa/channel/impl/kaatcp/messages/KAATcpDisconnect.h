@@ -17,18 +17,17 @@
 #import "KAAMqttFrame.h"
 
 /**
- *  DISCONNECT reason
- *  NONE                        0x00    No error
- *  BAD_REQUEST                 0x01    Client sent a corrupted data
- *  INTERNAL_ERROR              0x02    Internal error has been occurred
- *  CREDENTIALS_REVOKED         0x03    Credentials revoked
+ *  DisconnectReasonNone                    0x00    No error
+ *  DisconnectReasonBadRequest              0x01    Client sent a corrupted data
+ *  DisconnectReasonInternalError           0x02    Internal error has been occurred
+ *  DisconnectReasonCredentialsRevoked      0x03    Credentials revoked
  */
-typedef enum {
-    DISCONNECT_REASON_NONE = 0x00,
-    DISCONNECT_REASON_BAD_REQUEST = 0x01,
-    DISCONNECT_REASON_INTERNAL_ERROR = 0x02,
-    DISCONNECT_REASON_CREDENTIALS_REVOKED = 0x03
-} DisconnectReason;
+typedef NS_ENUM(int, DisconnectReason) {
+    DisconnectReasonNone = 0x00,
+    DisconnectReasonBadRequest = 0x01,
+    DisconnectReasonInternalError = 0x02,
+    DisconnectReasonCredentialsRevoked = 0x03
+};
 
 #define DISCONNECT_REMAINING_LEGTH_V1 2
 

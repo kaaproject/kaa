@@ -161,7 +161,7 @@
     @try {
         [manager receiveOperationsServerList];
         [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
-                                         failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+                                         failoverStatus:FailoverStatusNoConnectivity];
     }
     @catch (NSException *exception) {
         self.exceptionCaught = YES;
@@ -180,7 +180,7 @@
     
     @try {
         [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
-                                         failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+                                         failoverStatus:FailoverStatusNoConnectivity];
     }
     @catch (NSException *exception) {
         self.exceptionCaught = YES;
@@ -206,7 +206,7 @@
     [manager setTransport:transport];
     [manager onProtocolListUpdated:array];
     [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
-                                     failoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+                                     failoverStatus:FailoverStatusNoConnectivity];
     
     XCTAssertTrue(channelManager.serverUpdated);
     XCTAssertEqualObjects(@"http://localhost:9889", [channelManager receivedURL]);

@@ -119,7 +119,7 @@
         
         if (!self.operationsServerList || [self.operationsServerList count] == 0) {
             DDLogVerbose(@"%@ Received empty operations server list", TAG);
-            [self resolveFailoverStatus:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
+            [self resolveFailoverStatus:FailoverStatusNoOperationsServersReceived];
             return;
         }
         
@@ -177,12 +177,12 @@
 - (void)resolveFailoverStatus:(FailoverStatus)status {
     FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
     switch (decision.failoverAction) {
-        case FAILOVER_ACTION_NOOP:
+        case FailoverActionNoop:
         {
             DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
         }
             break;
-        case FAILOVER_ACTION_RETRY:
+        case FailoverActionRetry:
         {
             DDLogWarn(@"%@ Will try to receive operation servers in %lli ms as to failover strategy decision",
                       TAG, decision.retryPeriod);
@@ -199,7 +199,7 @@
             });
         }
             break;
-        case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
+        case FailoverActionUseNextBootstrap:
         {
             DDLogWarn(@"%@ Trying to switch to the next bootstrap server as to failover strategy decision", TAG);
             id<TransportConnectionInfo> connectionInfo = [self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP];
@@ -217,7 +217,7 @@
             });
         }
             break;
-        case FAILOVER_ACTION_STOP_APP:
+        case FailoverActionStopApp:
         {
             DDLogWarn(@"%@ Stopping application as to failover strategy decision!", TAG);
             //TODO: Applications that use exit(..) are rejected by AppStore thus there should be found another way to exit

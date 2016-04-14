@@ -19,10 +19,12 @@
 #import "TransportProtocolIdHolder.h"
 #import "KaaLogging.h"
 
-#define TAG @"AbstractHttpChannel >>>"
+static NSString *const logTag = @"AbstractHttpChannel >>>";
 
-#define UNATHORIZED_HTTP_STATUS 401
-#define FORBIDDEN_HTTP_STATUS   403
+typedef NS_ENUM(int, HttpStatus) {
+    HttpStatusUnauthorised = 401,
+    HttpStatusForbidden = 403
+};
 
 @interface AbstractHttpChannel ()
 
@@ -69,34 +71,34 @@
 - (void)syncTransportTypes:(NSSet *)types {
     @synchronized(self) {
         if (self.isShutdown) {
-            DDLogInfo(@"%@ Can't sync. Channel %@ is down", TAG, [self getId]);
+            DDLogInfo(@"%@ Can't sync. Channel %@ is down", logTag, [self getId]);
             return;
         }
         if (self.isPaused) {
-            DDLogInfo(@"%@ Can't sync. Channel %@ is paused", TAG, [self getId]);
+            DDLogInfo(@"%@ Can't sync. Channel %@ is paused", logTag, [self getId]);
             return;
         }
         if (!self.chMultiplexer) {
-            DDLogInfo(@"%@ Can't sync. Channel %@ multiplexer is not set", TAG, [self getId]);
+            DDLogInfo(@"%@ Can't sync. Channel %@ multiplexer is not set", logTag, [self getId]);
             return;
         }
         if (!self.chDemultiplexer) {
-            DDLogWarn(@"%@ Can't sync. Channel %@ demultiplexer is not set", TAG, [self getId]);
+            DDLogWarn(@"%@ Can't sync. Channel %@ demultiplexer is not set", logTag, [self getId]);
             return;
         }
         if (!self.currentServer) {
             self.lastConnectionFailed = YES;
-            DDLogWarn(@"%@ Can't sync. Server is nil", TAG);
+            DDLogWarn(@"%@ Can't sync. Server is nil", logTag);
         }
         
         NSMutableDictionary *typeMap = [NSMutableDictionary dictionary];
         for (NSNumber *type in types) {
-            DDLogInfo(@"%@ Processing sync %i for channel %@", TAG, [type intValue], [self getId]);
+            DDLogInfo(@"%@ Processing sync %i for channel %@", logTag, [type intValue], [self getId]);
             NSNumber *channelDirection = [self getSupportedTransportTypes][type];
             if (channelDirection) {
                 typeMap[type] = channelDirection;
             } else {
-                DDLogError(@"%@ Unsupported type %i for channel %@", TAG, [type intValue], [self getId]);
+                DDLogError(@"%@ Unsupported type %i for channel %@", logTag, [type intValue], [self getId]);
             }
         }
         if (self.executor) {
@@ -105,7 +107,7 @@
                 [weakSelf processTypes:typeMap];
             }];
         } else {
-            DDLogError(@"%@ No executor found for channel with id: %@", TAG, [self getId]);
+            DDLogError(@"%@ No executor found for channel with id: %@", logTag, [self getId]);
         }
     }
 }
@@ -113,16 +115,16 @@
 - (void)syncAll {
     @synchronized(self) {
         if (self.isShutdown) {
-            DDLogInfo(@"%@ Can't sync all. Channel %@ is down", TAG, [self getId]);
+            DDLogInfo(@"%@ Can't sync all. Channel %@ is down", logTag, [self getId]);
             return;
         }
         if (self.isPaused) {
-            DDLogInfo(@"%@ Can't sync. Channel %@ is paused", TAG, [self getId]);
+            DDLogInfo(@"%@ Can't sync. Channel %@ is paused", logTag, [self getId]);
             return;
         }
         
         if (!self.chMultiplexer || !self.chDemultiplexer) {
-            DDLogWarn(@"%@ Can't sync, multiplexer/demultiplexer not set: %@/%@", TAG, self.chMultiplexer, self.chDemultiplexer);
+            DDLogWarn(@"%@ Can't sync, multiplexer/demultiplexer not set: %@/%@", logTag, self.chMultiplexer, self.chDemultiplexer);
             return;
         }
         if (self.currentServer) {
@@ -132,7 +134,7 @@
             }];
         } else {
             self.lastConnectionFailed = YES;
-            DDLogWarn(@"%@ Can't sync. Server is nil", TAG);
+            DDLogWarn(@"%@ Can't sync. Server is nil", logTag);
         }
     }
 }
@@ -143,7 +145,7 @@
 
 - (void)syncAckForTransportTypes:(NSSet *)types {
 #pragma unused(types)
-    DDLogInfo(@"%@ Sync ack message is ignored for Channel with id: %@", TAG, [self getId]);
+    DDLogInfo(@"%@ Sync ack message is ignored for Channel with id: %@", logTag, [self getId]);
 }
 
 - (void)setMultiplexer:(id<KaaDataMultiplexer>)multiplexer {
@@ -165,7 +167,7 @@
 - (void)setServer:(id<TransportConnectionInfo>)server {
     @synchronized(self) {
         if (self.isShutdown) {
-            DDLogInfo(@"%@ Can't set server. Channel %@ is down", TAG, [self getId]);
+            DDLogInfo(@"%@ Can't set server. Channel %@ is down", logTag, [self getId]);
             return;
         }
         if (!self.executor && !self.isPaused) {
@@ -192,7 +194,7 @@
 
 - (void)setConnectivityChecker:(ConnectivityChecker *)checker {
 #pragma unused (checker)
-    DDLogInfo(@"%@ Ignore set connectivity checker", TAG);
+    DDLogInfo(@"%@ Ignore set connectivity checker", logTag);
 }
 
 - (void)shutdown {
@@ -206,7 +208,7 @@
 
 - (void)pause {
     if (self.isShutdown) {
-        DDLogInfo(@"%@ Can't pause. Channel %@ is down", TAG, [self getId]);
+        DDLogInfo(@"%@ Can't pause. Channel %@ is down", logTag, [self getId]);
         return;
     }
     if (!self.isPaused) {
@@ -220,7 +222,7 @@
 
 - (void)resume {
     if (self.isShutdown) {
-        DDLogInfo(@"%@ Can't resume. Channel %@ is down", TAG, [self getId]);
+        DDLogInfo(@"%@ Can't resume. Channel %@ is down", logTag, [self getId]);
         return;
     }
     
@@ -257,14 +259,14 @@
 }
 
 - (void)connectionFailedWithStatus:(int)status {
-    FailoverStatus failoverStatus = FAILOVER_STATUS_OPERATION_SERVERS_NA;
+    FailoverStatus failoverStatus = FailoverStatusOperationsServersNotAvailable;
     switch (status) {
-        case UNATHORIZED_HTTP_STATUS:
+        case HttpStatusUnauthorised:
             [self.kaaState clean];
-            failoverStatus = FAILOVER_STATUS_ENDPOINT_VERIFICATION_FAILED;
+            failoverStatus = FailoverStatusEndpointVerificationFailed;
             break;
-        case FORBIDDEN_HTTP_STATUS:
-            failoverStatus = FAILOVER_STATUS_CREDENTIALS_REVOKED;
+        case HttpStatusForbidden:
+            failoverStatus = FailoverStatusCredentialsRevoked;
             break;
         default:
             break;
@@ -296,7 +298,7 @@
 }
 
 - (NSOperationQueue *)createExecutor {
-    DDLogInfo(@"%@ Creating a new executor for channel: %@", TAG, [self getId]);
+    DDLogInfo(@"%@ Creating a new executor for channel: %@", logTag, [self getId]);
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
     return queue;
