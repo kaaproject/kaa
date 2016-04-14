@@ -58,7 +58,7 @@ public class InternalCredentialsService implements CredentialsService {
         Validate.notNull(credentials, "Invalid credentials provided!");
         try {
             byte[] credentialsBody = credentials.getCredentialsBody();
-            credentials.setId(Base64Utils.encodeToUrlSafeString(SHA1HashUtils.hashToBytes(credentialsBody)));
+            credentials.setId(Base64Utils.encodeToString(SHA1HashUtils.hashToBytes(credentialsBody)));
             return this.credentialsDao.save(applicationId, credentials).toDto();
         } catch (Exception cause) {
             String message = MessageFormat.format("[{0}] An unexpected exception occured while saving credentials!", applicationId);
