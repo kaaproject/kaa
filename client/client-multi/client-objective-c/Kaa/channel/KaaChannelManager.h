@@ -44,17 +44,35 @@
  */
 - (void)removeChannel:(id<KaaDataChannel>)channel;
 
-- (void)removeChannelById:(NSString*)channelId;
+/**
+ * Removes channel by the unique channel id.
+ */
+- (void)removeChannelById:(NSString *)channelId;
 
-- (NSArray*)getChannels;
+/**
+ * Retrieves the list of current channels.
+ */
+- (NSArray *)getChannels;
 
-- (id<KaaDataChannel>)getChannelById:(NSString*)channelId;
+/**
+ * Retrieves channel by the unique channel id.
+ */
+- (id<KaaDataChannel>)getChannelById:(NSString *)channelId;
 
 /**
  * Reports to Channel Manager in case link with server was not established.
+ * 
+ * @param server the parameters of server that was not connected.
+ * @param status failover status that reports connection issue.
+ *
+ * @see TransportConnectionInfo
+ * @see FailoverStatus
  */
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server;
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server failoverStatus:(FailoverStatus)status;
 
+/**
+ * Clears the list of channels.
+ */
 - (void)clearChannelList;
 
 /**
@@ -64,13 +82,13 @@
 
 /**
  * Invoke sync acknowledgement on active channel by specified transport type;
- *
  */
 - (void)syncAckForTransportType:(TransportType)type;
 
 /**
  * Invoke sync acknowledgement on active channel;
- * type is used to identify active channel.
+ *
+ * @param type transport type that is used to identify active channel.
  */
 - (void)syncAll:(TransportType)type;
 

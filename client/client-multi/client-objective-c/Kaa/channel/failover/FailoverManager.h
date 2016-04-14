@@ -30,7 +30,7 @@
 /**
  * Needs to be invoked when a server fail occurs.
  */
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo;
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo failoverStatus:(FailoverStatus)status;
 
 /**
  * Needs to be invoked as soon as current server is changed.

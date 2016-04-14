@@ -71,6 +71,7 @@ typedef enum {
 @property (nonatomic, strong) KAASocket *socket;//volatile
 
 - (void)onServerFailed;
+- (void)onServerFailedWithFailoverStatus:(FailoverStatus)status;
 - (void)closeConnection;
 - (void)sendFrame:(KAAMqttFrame *)frame;
 - (void)sendPingRequest;
@@ -111,9 +112,9 @@ typedef enum {
 
 - (void)onConnAckMessage:(KAATcpConnAck *)message {
     DDLogInfo(@"%@ ConnAck [%i] message received for channel [%@]", TAG, message.returnCode, [self getId]);
-    if (message.returnCode != RETURN_CODE_ACCEPTED) {
+    if (message.returnCode != ReturnCodeAccepted) {
         DDLogError(@"%@ Connection for channel [%@] was rejected: %i", TAG, [self getId], message.returnCode);
-        if (message.returnCode == RETURN_CODE_REFUSE_BAD_CREDENTIALS) {
+        if (message.returnCode == ReturnCodeRefuseBadCredentials) {
             DDLogInfo(@"%@ Cleaning client state", TAG);
             [self.state clean];
         }
@@ -165,11 +166,17 @@ typedef enum {
 
 - (void)onDisconnectMessage:(KAATcpDisconnect *)message {
     DDLogInfo(@"%@ Disconnect message (reason:%i) received for channel [%@]", TAG, message.reason, [self getId]);
-    if (message.reason != DISCONNECT_REASON_NONE) {
-        DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);
-        [self onServerFailed];
-    } else {
-        [self closeConnection];
+    switch (message.reason) {
+        case DisconnectReasonNone:
+            [self closeConnection];
+            break;
+        case DisconnectReasonCredentialsRevoked:
+            [self onServerFailedWithFailoverStatus:FailoverStatusCredentialsRevoked];
+            break;
+        default:
+            DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);
+            [self onServerFailed];
+            break;
     }
 }
 
@@ -188,7 +195,7 @@ typedef enum {
 
 - (void)sendDisconnect {
     DDLogDebug(@"%@ Sending Disconnect from channel: %@", TAG, [self getId]);
-    [self sendFrame:[[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_NONE]];
+    [self sendFrame:[[KAATcpDisconnect alloc] initWithDisconnectReason:DisconnectReasonNone]];
 }
 
 - (void)sendKaaSyncRequestWithTypes:(NSDictionary *)types {
@@ -318,33 +325,37 @@ typedef enum {
 }
 
 - (void)onServerFailed {
+    [self onServerFailedWithFailoverStatus:FailoverStatusNoConnectivity];
+}
+
+- (void)onServerFailedWithFailoverStatus:(FailoverStatus)status {
     DDLogInfo(@"%@ [%@] has failed", TAG, [self getId]);
     [self closeConnection];
     if (self.checker && ![self.checker isConnected]) {
         DDLogWarn(@"%@ Loss of connectivity detected", TAG);
-        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
         switch (decision.failoverAction) {
-            case FAILOVER_ACTION_NOOP:
+            case FailoverActionNoop:
                 DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
                 break;
-            case FAILOVER_ACTION_RETRY:
+            case FailoverActionRetry:
             {
                 int64_t retryPeriod = decision.retryPeriod;
                 DDLogWarn(@"%@ Attempt to reconnect will be made in %lli ms according to failover strategy decision", TAG, retryPeriod);
                 [self scheduleOpenConnectionTaskWithRetryPeriod:retryPeriod];
             }
                 break;
-            case FAILOVER_ACTION_STOP_APP:
+            case FailoverActionStopApp:
                 DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
                 exit(EXIT_FAILURE);
                 //TODO: review how to exit application
                 break;
-            case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
-            case FAILOVER_ACTION_USE_NEXT_OPERATIONS:
+            case FailoverActionUseNextBootstrap:
+            case FailoverActionUseNextOperations:
                 DDLogWarn(@"%@ Failover actions NEXT_BOOTSTRAP & NEXT_OPERATIONS not supported yet!", TAG);
         }
     } else {
-        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer];
+        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer failoverStatus:status];
     }
 }
 

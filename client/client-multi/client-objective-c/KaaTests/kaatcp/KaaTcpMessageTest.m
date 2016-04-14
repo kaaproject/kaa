@@ -73,14 +73,14 @@
 }
 
 - (void)testDisconnect {
-    KAATcpDisconnect *message = [[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_INTERNAL_ERROR];
+    KAATcpDisconnect *message = [[KAATcpDisconnect alloc] initWithDisconnectReason:DisconnectReasonInternalError];
     NSData *actual = [message getFrame];
     char disconnect[] = {0xE0, 0x02, 0x00, 0x02};
     XCTAssertEqualObjects(actual, [NSData dataWithBytes:&disconnect length:sizeof(disconnect)]);
 }
 
 - (void)testConnack {
-    KAATcpConnAck *message = [[KAATcpConnAck alloc] initWithReturnCode:RETURN_CODE_REFUSE_ID_REJECT];
+    KAATcpConnAck *message = [[KAATcpConnAck alloc] initWithReturnCode:ReturnCodeRefuseIdReject];
     NSData *actual = [message getFrame];
     char reject[] = {0x20, 0x02, 0x00, 0x03};
     XCTAssertEqualObjects(actual, [NSData dataWithBytes:&reject length:sizeof(reject)]);
