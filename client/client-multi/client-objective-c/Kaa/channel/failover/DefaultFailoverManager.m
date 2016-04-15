@@ -97,7 +97,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
     }
     
     @synchronized(self) {
-        long currentResolutionTime = -1;
+        int64_t currentResolutionTime = -1;
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
         if (pointResolution != nil) {
             currentResolutionTime = pointResolution.resolutionTimeMillis;
@@ -127,7 +127,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
         
         [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo];
         
-        long updatedResolutionTime = pointResolution != nil ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
+        int64_t updatedResolutionTime = pointResolution != nil ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
         AccessPointIdResolution *newPointResolution =
         [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:resolution];
         
