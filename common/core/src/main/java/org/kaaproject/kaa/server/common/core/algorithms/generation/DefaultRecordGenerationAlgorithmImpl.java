@@ -113,10 +113,10 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
                 return (float) byDefault.asDouble();
             }
         }
-        if (byDefault.isInt() && AvroUtils.getSchemaByType(schemaNode, Type.INT) != null) {
+        if (byDefault.isIntegralNumber() && AvroUtils.getSchemaByType(schemaNode, Type.INT) != null) {
             return byDefault.asInt();
         }
-        if (byDefault.isLong() && AvroUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
+        if (byDefault.isIntegralNumber() && AvroUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
             return byDefault.asLong();
         }
         if (byDefault.isTextual()) {
