@@ -124,7 +124,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             /* In case when we received new topic list, we need to remove
              * outdated subscription commands.
              */
-            std::remove_if(subscriptions_.begin(), subscriptions_.end(), [&](SubscriptionCommand &subscription) {
+            subscriptions_.remove_if([&](SubscriptionCommand &subscription) {
                  auto topicIsAvailable = std::find_if(topics.begin(), topics.end(), [&](Topic &topic)
                                                       { return topic.id == subscription.topicId; });
 

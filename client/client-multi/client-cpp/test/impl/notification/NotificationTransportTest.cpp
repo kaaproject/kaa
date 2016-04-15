@@ -133,6 +133,7 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
     BOOST_CHECK(acceptedUnicastNfs.front() == unicastNfUid);
 
     NotificationSyncResponse response2;
+    response2.responseStatus = SyncResponseStatus::NO_DELTA;
     transport.onNotificationResponse(response2);
 
     auto request2 = transport.createNotificationRequest();
