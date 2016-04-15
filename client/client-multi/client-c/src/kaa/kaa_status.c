@@ -70,7 +70,6 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     kaa_status_t *kaa_status = KAA_CALLOC(1, sizeof(*kaa_status));
     KAA_RETURN_IF_NIL(kaa_status, KAA_ERR_NOMEM);
 
-    char token_buf[sizeof(KAA_SDK_TOKEN)];
     kaa_status->topic_states = kaa_list_create();
     KAA_RETURN_IF_NIL(kaa_status->topic_states, KAA_ERR_NOMEM);
     kaa_status->topics = kaa_list_create();
@@ -145,15 +144,20 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         }
 
         READ_BUFFER(read_buf, &kaa_status->topic_list_hash, sizeof(kaa_status->topic_list_hash));
+        char token_buf[sizeof(KAA_SDK_TOKEN)];
         READ_BUFFER(read_buf, token_buf, sizeof(token_buf));
-        if (strcmp(token_buf, KAA_SDK_TOKEN))
+
+        // TODO: shouldn't that be memcmp?
+        if (strcmp(token_buf, KAA_SDK_TOKEN)) {
             kaa_status->is_registered = false;
-        else
+        } else {
             kaa_status_set_updated(kaa_status, true);
+        }
     }
 
-    if (needs_deallocation)
+    if (needs_deallocation) {
         KAA_FREE(read_buf_head);
+    }
 
     *kaa_status_p = kaa_status;
     return KAA_ERR_NONE;

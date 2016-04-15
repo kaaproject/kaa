@@ -226,7 +226,10 @@ kaa_bytes_t *kaa_fixed_deserialize(avro_reader_t reader, void *context)
     kaa_bytes_t *bytes = (kaa_bytes_t *)KAA_MALLOC(sizeof(kaa_bytes_t));
     KAA_RETURN_IF_NIL(bytes, NULL);
     bytes->buffer = (uint8_t*)KAA_MALLOC((*(size_t *)context) * sizeof(uint8_t));
-    KAA_RETURN_IF_NIL(bytes->buffer, NULL);
+    if (!bytes->buffer) {
+        KAA_FREE(bytes);
+        return NULL;
+    }
 
     avro_read(reader, (void *)bytes->buffer, (*(size_t *)context));
     bytes->size = (*(size_t *)context);

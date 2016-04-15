@@ -198,7 +198,6 @@ void test_profile_sync_get_size(void **state)
 {
     (void)state;
 
-    kaa_error_t error_code = KAA_ERR_NONE;
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
     profile->profile_body = kaa_string_copy_create("dummy");
 
@@ -213,7 +212,7 @@ void test_profile_sync_get_size(void **state)
 
     size_t profile_sync_size = 0;
 
-    error_code = kaa_profile_manager_update_profile(profile_manager, profile);
+    kaa_error_t error_code = kaa_profile_manager_update_profile(profile_manager, profile);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     status->is_registered = true;
@@ -233,6 +232,7 @@ void test_profile_sync_get_size(void **state)
 
     const char *access_token = "access token";
     error_code = kaa_profile_manager_set_endpoint_access_token(profile_manager, access_token);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
     expected_size += sizeof(uint32_t)
                    + strlen(access_token);
@@ -336,13 +336,12 @@ void test_profile_handle_sync(void **state)
     (void)state;
 
     bool need_resync = false;
-    kaa_error_t error_code = KAA_ERR_NONE;
     uint16_t extension_options = 0x1; /* Need resync */
 
     const size_t buffer_size = 6;
     uint8_t buffer[buffer_size];
     kaa_platform_message_reader_t *reader;
-    error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
+    kaa_error_t error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_profile_handle_server_sync(profile_manager, reader, extension_options, 0);

@@ -188,13 +188,11 @@ static kaa_error_t kaa_bootstrap_manager_on_server_sync(kaa_bootstrap_manager_t 
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    kaa_access_point_t *access_point;
-    kaa_operations_access_points_t *operations_access_points;
-
     kaa_list_node_t *channel_it = kaa_list_begin(self->operations_access_points);
     while (channel_it) {
-        operations_access_points = kaa_list_get_data(channel_it);
-        access_point = kaa_list_get_data(kaa_list_begin(operations_access_points->access_points));
+        kaa_operations_access_points_t *operations_access_points = kaa_list_get_data(channel_it);
+        kaa_access_point_t *access_point = kaa_list_get_data(
+                kaa_list_begin(operations_access_points->access_points));
 
         kaa_channel_manager_on_new_access_point(self->channel_manager
                                               , &operations_access_points->protocol_id
@@ -429,10 +427,9 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
 
     kaa_list_clear(self->operations_access_points, destroy_operations_access_points);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
 
     uint16_t request_id;
-    error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint16_t));
+    kaa_error_t error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint16_t));
     KAA_RETURN_IF_ERR(error_code);
     request_id = KAA_NTOHS(request_id);
 

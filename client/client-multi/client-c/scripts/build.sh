@@ -19,11 +19,17 @@
 set -e
 set -v
 
-mvn apache-rat:check
+mvn -q apache-rat:check
 
 # Stupid doxygen can't create a directory
 mkdir -p target/apidocs
 doxygen
 
 make
+
 ./build.sh test
+
+cppcheck --quiet --enable=all --std=c99 --suppress=unusedFunction \
+         --force --error-exitcode=1 --template=gcc -I src/kaa \
+         --inline-suppr \
+         src/ test/

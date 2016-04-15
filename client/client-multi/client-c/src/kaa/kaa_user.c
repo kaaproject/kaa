@@ -552,15 +552,13 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync: options %u, payload size %u", extension_options, extension_length);
 
     size_t remaining_length = extension_length;
-    uint32_t field_header = 0;
-    user_server_sync_field_t field = 0;
 
     while (remaining_length > 0) {
-        field_header = KAA_NTOHL(*(uint32_t *) reader->current);
+        uint32_t field_header = KAA_NTOHL(*(uint32_t *)reader->current);
         reader->current += sizeof(uint32_t);
         remaining_length -= sizeof(uint32_t);
 
-        field = (field_header >> 24) & 0xFF;
+        user_server_sync_field_t field = (field_header >> 24) & 0xFF;
         switch (field) {
             case USER_ATTACH_RESPONSE_FIELD: {
                 user_sync_result_t result = (uint8_t) (field_header >> 8) & 0xFF;
@@ -681,18 +679,15 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
             case ENDPOINT_ATTACH_RESPONSES_FIELD: {
                 uint16_t attach_responses_count = (field_header) & 0xFFFF;
 
-                uint8_t  result_code;
-                uint8_t  options;
-                uint16_t request_id;
-                kaa_endpoint_id endpoint_id;
-
-                if (sizeof(uint32_t) > remaining_length)
+                if (sizeof(uint32_t) > remaining_length) {
                     return KAA_ERR_INVALID_BUFFER_SIZE;
+                }
 
                 for (uint32_t i = 0; i < attach_responses_count; ++i) {
-                    result_code = *(reader->current++);
-                    options     = *(reader->current++);
-                    request_id  = KAA_NTOHS(*(uint16_t*)reader->current);
+                    uint8_t result_code = *(reader->current++);
+                    uint8_t options = *(reader->current++);
+                    uint16_t request_id = KAA_NTOHS(*(uint16_t*)reader->current);
+
                     reader->current  += sizeof(uint16_t);
                     remaining_length -= sizeof(uint32_t);
 
@@ -708,6 +703,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     }
 
                     if (options & USER_SYNC_ENDPOINT_ID_OPTION) {
+                        kaa_endpoint_id endpoint_id;
                         memcpy(endpoint_id, reader->current, KAA_ENDPOINT_ID_LENGTH);
                         reader->current  += KAA_ENDPOINT_ID_LENGTH;
                         remaining_length -= KAA_ENDPOINT_ID_LENGTH;
@@ -725,18 +721,16 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 break;
             }
             case ENDPOINT_DETACH_RESPONSES_FIELD: {
-                uint16_t detach_responses_count = (field_header) & 0xFFFF;
+                uint16_t detach_responses_count = field_header & 0xFFFF;
 
-                uint8_t  result_code;
-                uint16_t request_id;
-
-                if (sizeof(uint32_t) > remaining_length)
+                if (sizeof(uint32_t) > remaining_length) {
                     return KAA_ERR_INVALID_BUFFER_SIZE;
+                }
 
                 for (uint32_t i = 0; i < detach_responses_count; ++i) {
-                    result_code = *(reader->current++);
+                    uint8_t  result_code = *(reader->current++);
                     reader->current++;
-                    request_id  = KAA_NTOHS(*(uint16_t*)reader->current);
+                    uint16_t request_id = KAA_NTOHS(*(uint16_t*)reader->current);
                     reader->current += sizeof(uint16_t);
                     remaining_length -= sizeof(uint32_t);
 

@@ -199,7 +199,7 @@ void test_add_channel(void **state)
     compare_channels(actual_channel, &expected_channel);
 
     error_code = kaa_channel_manager_remove_transport_channel(channel_manager, channel_id);
-    ASSERT_NOT_EQUAL(actual_channel, NULL);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
     actual_channel = kaa_channel_manager_get_transport_channel(channel_manager
                                                              , rand() % supported_services_count);
@@ -258,7 +258,7 @@ void test_get_service_specific_channel(void **state)
     compare_channels(actual_channel, &global_channel);
 
     error_code = kaa_channel_manager_remove_transport_channel(channel_manager, logging_channel_id);
-    ASSERT_NOT_EQUAL(actual_channel, NULL);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
     actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_EXTENSION_LOGGING);
     ASSERT_NOT_EQUAL(actual_channel, NULL);
@@ -266,7 +266,7 @@ void test_get_service_specific_channel(void **state)
     compare_channels(actual_channel, &global_channel);
 
     error_code = kaa_channel_manager_remove_transport_channel(channel_manager, global_channel_id);
-    ASSERT_NOT_EQUAL(actual_channel, NULL);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
     actual_channel = kaa_channel_manager_get_transport_channel(channel_manager, KAA_EXTENSION_LOGGING);
     ASSERT_EQUAL(actual_channel, NULL);

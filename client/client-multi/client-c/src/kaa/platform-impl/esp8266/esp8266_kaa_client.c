@@ -172,8 +172,6 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     fd_set read_fds, write_fds, except_fds;
     struct timeval select_tv = { get_poll_timeout(kaa_client), 0 };
     int channel_fd = 0;
@@ -182,7 +180,7 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
     FD_ZERO(&write_fds);
     FD_ZERO(&except_fds);
 
-    error_code = kaa_tcp_channel_get_descriptor(&kaa_client->channel, &channel_fd);
+    kaa_error_t error_code = kaa_tcp_channel_get_descriptor(&kaa_client->channel, &channel_fd);
     if(error_code) KAA_LOG_ERROR(kaa_client->context->logger, error_code, "No descriptor provided!");
 
     if (kaa_tcp_channel_is_ready(&kaa_client->channel, FD_READ))

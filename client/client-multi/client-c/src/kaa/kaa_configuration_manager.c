@@ -260,9 +260,6 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
                  return error;
             }
 
-#if KAA_CONFIGURATION_DELTA_SUPPORT
-
-#else
             if (self->root_record)
                 self->root_record->destroy(self->root_record);
 
@@ -278,7 +275,7 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
                 return err;
             }
             ext_configuration_store((const char *)body, body_size);
-#endif
+
             if (self->root_receiver.on_configuration_updated)
                 self->root_receiver.on_configuration_updated(self->root_receiver.context, self->root_record);
 
