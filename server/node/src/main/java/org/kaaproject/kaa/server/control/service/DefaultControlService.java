@@ -2287,6 +2287,7 @@ public class DefaultControlService implements ControlService {
                 EndpointRegistrationDto endpointRegistration = endpointRegistrationOptional.get();
                 LOG.debug("[{}] Found endpoint registration information [{}]", applicationId, endpointRegistration);
                 if (endpointRegistration.getEndpointId() != null) {
+                    checkNeighbors();
                     ApplicationDto appDto = getApplication(endpointRegistration.getApplicationId());
                     ThriftEndpointDeregistrationMessage nf = new ThriftEndpointDeregistrationMessage();
                     nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(),
