@@ -52,7 +52,7 @@ void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy)
 
 kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failover_reason reason)
 {
-	 kaa_failover_strategy_t *strategy = (kaa_failover_strategy_t *) self;
+    kaa_failover_strategy_t *strategy = self;
 
     switch (reason) {
         case KAA_BOOTSTRAP_SERVERS_NA:
