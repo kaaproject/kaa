@@ -19,8 +19,6 @@
 set -e
 set -v
 
-mvn -q apache-rat:check
-
 # Stupid doxygen can't create a directory
 mkdir -p target/apidocs
 doxygen

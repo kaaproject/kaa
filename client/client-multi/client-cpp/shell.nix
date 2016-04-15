@@ -14,13 +14,9 @@
 #  limitations under the License.
 #
 
-#!/bin/sh
+args@
+{ }:
 
-set -e
-set -v
+let pkgs = import ../../../nix { };
 
-curl https://nixos.org/nix/install | sh
-. $HOME/.nix-profile/etc/profile.d/nix.sh
-sudo mkdir /etc/nix
-sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'
-nix-shell -Q $@ --pure --run true
+in pkgs.kaa-client-cpp.override args
