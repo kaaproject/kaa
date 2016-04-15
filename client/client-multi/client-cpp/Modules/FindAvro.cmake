@@ -22,7 +22,7 @@
 # Variables used by this module, they can change the default behaviour and need
 # to be set before calling find_package:
 #
-#  AVRO_ROOT_DIR  Set this variable to the root installation of
+#  AVRO_ROOT  Set this variable to the root installation of
 #                 Avro C++ if the module has problems finding
 #                 the proper installation path.
 #
@@ -34,12 +34,12 @@
 
 message ("\nLooking for Avro C++ headers and libraries")
 
-if (NOT "$ENV{AVRO_ROOT_DIR}" STREQUAL "")
-    set(AVRO_ROOT_DIR "$ENV{AVRO_ROOT_DIR}")
-endif(NOT "$ENV{AVRO_ROOT_DIR}" STREQUAL "")
+if (NOT "$ENV{AVRO_ROOT}" STREQUAL "")
+    set(AVRO_ROOT "$ENV{AVRO_ROOT}")
+endif(NOT "$ENV{AVRO_ROOT}" STREQUAL "")
 
-if (AVRO_ROOT_DIR)
-    message (STATUS "Root dir: ${AVRO_ROOT_DIR}")
+if (AVRO_ROOT)
+    message (STATUS "Root dir: ${AVRO_ROOT}")
 endif ()
 
 if (NOT WIN32)
@@ -55,7 +55,7 @@ endif (NOT WIN32)
 find_path(AVRO_INCLUDE_DIR 
      avro/Encoder.hh
      HINTS
-     ${AVRO_ROOT_DIR}/include
+     ${AVRO_ROOT}/include
      ${PC_AVRO_INCLUDEDIR}
      ${PC_AVRO_INCLUDE_DIRS}
      ${CMAKE_INCLUDE_PATH}
@@ -71,7 +71,7 @@ find_library(AVRO_LIBRARY
     NAMES
     ${AVRO_LOOK_FOR_LIB_NAMES}
     PATHS
-    ${AVRO_ROOT_DIR}/lib
+    ${AVRO_ROOT}/lib
     ${PC_AVRO_LIBDIR}
     ${PC_AVRO_LIBRARY_DIRS}
 )

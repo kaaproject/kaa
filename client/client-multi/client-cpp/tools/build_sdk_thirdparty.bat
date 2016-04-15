@@ -56,9 +56,9 @@ goto :eof
  cd %AVRO_SRC%\lang\c++\build.win
 
  if %BUILD_TYPE%==debug (
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT_DIR% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug
+    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug
  ) else (
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT_DIR% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
  )
  nmake install
 
