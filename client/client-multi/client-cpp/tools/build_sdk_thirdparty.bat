@@ -22,6 +22,32 @@ call env.bat
 SET BUILD_HOME=%CD%
 SET BUILD_TYPE=debug
 
+if not exist %ZLIB_ROOT% (
+    echo "ZLIB_ROOT=%ZLIB_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+if not exist %AVRO_ROOT% (
+    echo "AVRO_ROOT=%AVRO_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+
+if not exist %BOTAN_ROOT% (
+    echo "BOTAN_ROOT=%BOTAN_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+if not exist %SQLITE_ROOT% (
+    echo "SQLITE_ROOT=%SQLITE_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+
 if "%1" == "" goto startBuild
 if /i %1 == release call :setRelease
 
