@@ -16,9 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TransportProtocolId.h"
-#import "EndpointGen.h"
-#import "KaaClientProperties.h"
-#import "AbstractHttpClient.h"
+#import <Kaa/Kaa.h>
 #import <XCTest/XCTest.h>
 
 #define KAATestEqual(a, b)\

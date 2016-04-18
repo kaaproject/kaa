@@ -21,11 +21,7 @@
 #import <OCMockito/OCMockito.h>
 
 #import <XCTest/XCTest.h>
-#import "KaaClientState.h"
-#import "NotificationTransport.h"
-#import "DefaultNotificationTransport.h"
-#import "TopicListHashCalculator.h"
-#import "NotificationProcessor.h"
+#import <Kaa/Kaa.h>
 
 @interface DefaultNotificationTransportTest : XCTestCase
 

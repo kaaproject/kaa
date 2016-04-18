@@ -16,4 +16,4 @@
 
 #import "KaaLogging.h"
 
-const DDLogLevel ddLogLevel = DDLogLevelWarning;
+const NSUInteger ddLogLevel = DDLogLevelWarning;

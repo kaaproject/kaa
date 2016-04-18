@@ -15,11 +15,7 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "AbstractHttpClient.h"
 #import <Foundation/Foundation.h>
-#import "KeyUtils.h"
-#import "KeyPair.h"
-#import "MessageEncoderDecoder.h"
 #import "TestsHelper.h"
 
 @interface AbstractHttpClientTest : XCTestCase

@@ -21,15 +21,7 @@
 #import <OCMockito/OCMockito.h>
 
 #import <XCTest/XCTest.h>
-#import "KaaClient.h"
-#import "KaaClientPlatformContext.h"
-#import "KaaClientProperties.h"
-#import "KaaClientStateDelegate.h"
-#import "DefaultBootstrapManager.h"
-#import "SimpleExecutorContext.h"
-#import "AbstractKaaClient.h"
-#import "GenericTransportInfo.h"
-#import "KAADummyProfile.h"
+#import <Kaa/Kaa.h>
 
 @interface TestClientProfileContainer : NSObject <ProfileContainer>
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-#import <CocoaLumberjack/CocoaLumberjack.h>
+#import <Foundation/Foundation.h>
 
-extern const DDLogLevel ddLogLevel;
+// Log level is declared as NSUInteger to avoid unnecessary building of CocoaLumberjack by framework clients. 
+extern const NSUInteger ddLogLevel;

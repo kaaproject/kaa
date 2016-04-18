@@ -22,9 +22,7 @@
 #define MOCKITO_SHORTHAND
 #import <OCMockito/OCMockito.h>
 
-#import "DefaultFailoverManager.h"
-#import "DefaultFailoverStrategy.h"
-#import "KaaClient.h"
+#import <Kaa/Kaa.h>
 
 @interface CustomFailoverStrategy : DefaultFailoverStrategy
 

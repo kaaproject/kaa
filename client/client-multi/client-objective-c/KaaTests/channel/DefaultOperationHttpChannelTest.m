@@ -21,10 +21,7 @@
 #import <OCMockito/OCMockito.h>
 
 #import <XCTest/XCTest.h>
-#import "DefaultOperationHttpChannel.h"
-#import "TransportProtocolIdHolder.h"
-#import "KeyUtils.h"
-#import "GenericTransportInfo.h"
+#import <Kaa/Kaa.h>
 #import "TestsHelper.h"
 
 static NSDictionary *SUPPORTED_TYPES;

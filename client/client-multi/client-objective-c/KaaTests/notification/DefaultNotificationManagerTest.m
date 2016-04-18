@@ -21,15 +21,8 @@
 #import <OCMockito/OCMockito.h>
 
 #import <XCTest/XCTest.h>
-#import "ExecutorContext.h"
-#import "KaaClientPropertiesState.h"
-#import "KaaClientProperties.h"
-#import "NotificationTransport.h"
-#import "DefaultNotificationManager.h"
-#import "AvroBytesConverter.h"
-#import "EndpointGen.h"
+#import <Kaa/Kaa.h>
 #import "TestsHelper.h"
-#import "KAADummyNotification.h"
 
 #define UNKNOWN_TOPIC_ID 100500
 
