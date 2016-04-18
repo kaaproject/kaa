@@ -31,10 +31,10 @@ set BUILD_PLATFORM=x64
 set MSVC_VERSION=14
 
 @REM Set path for thirparty tools
-set MSVS_HOME=C:\Program Files (x86)\Microsoft Visual Studio %MSVC_VERSION%.0
+set MSVS_ROOT=C:\Program Files (x86)\Microsoft Visual Studio %MSVC_VERSION%.0
 set BOOST_ROOT=C:\local\boost_1_60_0\
-set PYTHON_HOME=C:\Python27
-set GNUWIN32_HOME=C:\Program Files (x86)\GnuWin32
+set PYTHON_ROOT=C:\Python27
+set GNUWIN32_ROOT=C:\Program Files (x86)\GnuWin32
 
 if not %BUILD_PLATFORM% == x86 (
   set BUILD_PLATFORM=x64
@@ -42,7 +42,7 @@ if not %BUILD_PLATFORM% == x86 (
 
 @REM zlib configuration
 set ZLIB_SRC=zlib-1.2.8
-set ZLIB_HOME=C:\local\%ZLIB_SRC%\%BUILD_PLATFORM%
+set ZLIB_ROOT=C:\local\%ZLIB_SRC%\%BUILD_PLATFORM%
 set ZLIB_URL=http://zlib.net/zlib-1.2.8.tar.gz
 
 @REM Avro configuration
@@ -55,6 +55,11 @@ set BOTAN_SRC=Botan-1.11.28
 set BOTAN_ROOT=C:\local\%BOTAN_SRC%\%BUILD_PLATFORM%
 set BOTAN_URL=https://github.com/randombit/botan/archive/1.11.28.tar.gz
 
+@REM Sqlite configuration
+set SQLITE_SRC=sqlite-autoconf-3120100
+set SQLITE_ROOT=C:\local\%SQLITE_SRC%\
+set SQLITE_URL=https://www.sqlite.org/2016/sqlite-autoconf-3120100.tar.gz
+
 @REM PATH configuration
 if %BUILD_PLATFORM% == x86 (
  set BOOST_LIBRARYDIR=%BOOST_ROOT%\lib32-msvc-%MSVC_VERSION%.0
@@ -63,7 +68,7 @@ if %BUILD_PLATFORM% == x86 (
 )
 set BOTAN_INCLUDE_DIR=%BOTAN_ROOT%\include
 
-set PATH=%BOTAN_ROOT%;%AVRO_ROOT%\bin;%AVRO_ROOT%\lib;%ZLIB_HOME%\bin;%ZLIB_HOME%\lib;%PATH%
-set PATH=%MSVS_HOME%\VC;%BOOST_LIBRARYDIR%;%PYTHON_HOME%;%GNUWIN32_HOME%\bin;%PATH%
+set PATH=%BOTAN_ROOT%;%AVRO_ROOT%\bin;%AVRO_ROOT%\lib;%ZLIB_ROOT%\bin;%ZLIB_ROOT%\lib;%PATH%
+set PATH=%MSVS_ROOT%\VC;%BOOST_LIBRARYDIR%;%PYTHON_ROOT%;%GNUWIN32_ROOT%\bin;%SQLITE_ROOT%\lib;%PATH%
 
 call vcvarsall.bat %BUILD_PLATFORM%

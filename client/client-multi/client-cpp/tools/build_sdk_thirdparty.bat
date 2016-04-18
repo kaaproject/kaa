@@ -39,6 +39,7 @@ goto :eof
   call :buildZlib
   call :buildAvro
   call :buildBotan
+  call :buildSqlite
 goto :eof
 
 :buildAvro
@@ -78,9 +79,9 @@ goto :eof
   cd %ZLIB_SRC%\build.win
 
   if %BUILD_PLATFORM% == x86 (
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_HOME% -G "Visual Studio %MSVC_VERSION%"  ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_ROOT% -G "Visual Studio %MSVC_VERSION%"  ..
   ) else (
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_HOME% -G "Visual Studio %MSVC_VERSION% Win64"  ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_ROOT% -G "Visual Studio %MSVC_VERSION% Win64"  ..
   )
   msbuild INSTALL.vcxproj /property:Configuration=%BUILD_TYPE% /property:Platform=%BUILD_PLATFORM%
 
@@ -114,6 +115,21 @@ goto :eof
   move %BOTAN_ROOT%/include/botan-1.11/botan %BOTAN_ROOT%/include
 
   cd %BUILD_HOME%
+
+goto :eof
+
+:buildSqlite
+
+  echo Building Sqlite...
+  call :download %SQLITE_SRC%.tar.gz %SQLITE_URL%
+  cd %SQLITE_SRC%
+  nmake /f Makefile.msc sqlite3.c
+  nmake /f Makefile.msc
+  mkdir %SQLITE_ROOT%\include
+  copy sqlite3.h %SQLITE_ROOT%\include
+  mkdir %SQLITE_ROOT%\lib
+  copy sqlite3.dll %SQLITE_ROOT%\lib
+  copy sqlite3.lib %SQLITE_ROOT%\lib
 
 goto :eof
 
