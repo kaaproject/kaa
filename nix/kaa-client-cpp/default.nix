@@ -14,17 +14,19 @@
 #  limitations under the License.
 #
 
-args@
-{ posixSupport ? null
-, clangSupport ? null
-, cc3200Support ? null
-, esp8266Support ? null
-, raspberrypiSupport ? null
-, testSupport ? null
-, withWerror ? null
-, withTooling ? null
+{ stdenv, cmake, pkgconfig, boost, avro-cpp, botanUnstable, sqlite, python
 }:
 
-let pkgs = import ../../../nix { };
+stdenv.mkDerivation {
+  name = "kaa-client-cpp";
 
-in pkgs.kaa-client-c.override args
+  buildInputs = [
+    cmake
+    pkgconfig
+    boost
+    avro-cpp
+    botanUnstable
+    sqlite
+    python
+  ];
+}

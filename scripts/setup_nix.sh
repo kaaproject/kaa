@@ -14,17 +14,11 @@
 #  limitations under the License.
 #
 
-args@
-{ posixSupport ? null
-, clangSupport ? null
-, cc3200Support ? null
-, esp8266Support ? null
-, raspberrypiSupport ? null
-, testSupport ? null
-, withWerror ? null
-, withTooling ? null
-}:
+#!/bin/sh
 
-let pkgs = import ../../../nix { };
+set -e
+set -v
 
-in pkgs.kaa-client-c.override args
+curl https://nixos.org/nix/install | sh
+sudo mkdir /etc/nix
+sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'

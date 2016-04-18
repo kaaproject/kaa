@@ -42,7 +42,9 @@ let
     # };
     gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
 
-    kaa-client = callPackage ./kaa-client { };
+    kaa-client-c = callPackage ./kaa-client-c { };
+
+    kaa-client-cpp = callPackage ./kaa-client-cpp { };
 
     astyle = pkgs.astyle.overrideDerivation (self: {
       sourceRoot = "astyle";
@@ -51,6 +53,8 @@ let
       '';
       patches = [ ./astyle/max_indent.patch ];
     });
+
+    avro-cpp = callPackage ./avro-cpp { };
   };
 
 in self

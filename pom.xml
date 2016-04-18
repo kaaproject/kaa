@@ -579,6 +579,7 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>**/source/esp8266/include/driver/uart*.h</exclude>
                         <exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                         <exclude>**/security.policy</exclude>
+                        <exclude>nix/astyle/max_indent.patch</exclude>
                     </excludes>
                 </configuration>
             </plugin>

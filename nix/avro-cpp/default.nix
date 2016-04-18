@@ -13,18 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-
-args@
-{ posixSupport ? null
-, clangSupport ? null
-, cc3200Support ? null
-, esp8266Support ? null
-, raspberrypiSupport ? null
-, testSupport ? null
-, withWerror ? null
-, withTooling ? null
+{ stdenv, fetchurl, cmake, boost155, python
 }:
 
-let pkgs = import ../../../nix { };
+stdenv.mkDerivation {
+  name = "avro-cpp-1.7.5";
 
-in pkgs.kaa-client-c.override args
+  buildInputs = [
+    cmake
+    boost155
+    python
+  ];
+
+  src = fetchurl {
+    url = "http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz";
+    sha256 = "064ssbbgrc3hyalzj8rn119bsrnyk1vlpkhl8gghv96jgqbpdyb3";
+  };
+
+  enableParallelBuilding = true;
+}

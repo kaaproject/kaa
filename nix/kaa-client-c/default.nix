@@ -18,7 +18,6 @@
 , writeTextFile
 , cmake
 
-, maven ? null
 , astyle ? null
 , doxygen ? null
 
@@ -97,13 +96,12 @@ let
               "-DCMAKE_PREFIX_PATH=${raspberrypi-openssl} -DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
     };
 in stdenv.mkDerivation {
-  name = "kaa-client";
+  name = "kaa-client-c";
 
   buildInputs = [
     kaa-generic-makefile
     cmake
   ] ++ lib.optional withTooling [
-    maven
     astyle
     doxygen
   ] ++ lib.optional clangSupport [
