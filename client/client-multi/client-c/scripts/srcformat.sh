@@ -22,7 +22,7 @@
 #     This script formats given source FILES according code style.
 
 
-STYLE="--style=1tbs --indent=spaces=4 --pad-header --align-pointer=name --indent-preproc-block --indent-switches"
+STYLE="--style=1tbs --indent=spaces=4 --pad-header --align-pointer=name --indent-preproc-block --indent-switches -M8"
 
 if [ -z "$@" ]; then echo "You must specify source files"; exit 1; fi
 
