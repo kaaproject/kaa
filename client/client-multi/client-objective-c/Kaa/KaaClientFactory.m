@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2014-2016 CyberVision, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,13 @@
  *  limitations under the License.
  */
 
-#import "Kaa.h"
+#import "KaaClientFactory.h"
 #import "BaseKaaClient.h"
 #import "KaaLogging.h"
 
-#define TAG @"Kaa >>>"
+#define TAG @"KaaClientFactory >>>"
 
-@implementation Kaa
+@implementation KaaClientFactory
 
 + (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context stateDelegate:(id<KaaClientStateDelegate>)delegate {
     

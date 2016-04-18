@@ -15,9 +15,7 @@
  */
 
 #import "TestsHelper.h"
-#import "KaaClientPropertiesState.h"
 #import <objc/objc-runtime.h>
-#import "KaaLogging.h"
 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
