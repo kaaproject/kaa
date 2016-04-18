@@ -373,7 +373,7 @@ kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_extension_id s
                                       , SOCKET_CONNECTION_ERROR
                                       , ((kaa_tcp_channel_t *) context)->access_point.socket_descriptor);
 
-            error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context, KAA_CHANNEL_NA);
+            error_code = kaa_tcp_channel_on_access_point_failed(context, KAA_CHANNEL_NA);
         }
     }
 
@@ -959,7 +959,7 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                          channel->access_point.id);
             kaa_tcp_channel_socket_io_error(channel, KAA_ENDPOINT_NOT_REGISTERED);
         } else {
-            KAA_LOG_WARN(channel->logger, KAA_ERR_BAD_STATE,
+            KAA_LOG_ERROR(channel->logger, KAA_ERR_BAD_STATE,
                          "Kaa TCP channel [0x%08X] authorization failed, code %d",
                          channel->access_point.id, message.return_code);
             kaa_tcp_channel_socket_io_error(channel, KAA_CHANNEL_NA);
@@ -980,12 +980,12 @@ void kaa_tcp_channel_disconnect_message_callback(void *context, kaatcp_disconnec
     KAA_LOG_TRACE(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE,"Kaa TCP channel [0x%08X] DISCONNECT message received"
                                                                             , ((kaa_tcp_channel_t *) context)->access_point.id);
     if (message.reason == KAATCP_DISCONNECT_CREDENTIALS_REVOKED) {
-        kaa_tcp_channel_socket_io_error(((kaa_tcp_channel_t *) context), KAA_CREDENTIALS_REVOKED);
+        kaa_tcp_channel_socket_io_error(context, KAA_CREDENTIALS_REVOKED);
     }
     if (message.reason != KAATCP_DISCONNECT_INTERNAL_ERROR && message.reason != KAATCP_DISCONNECT_CREDENTIALS_REVOKED) {
         ((kaa_tcp_channel_t *) context)->sync_state = KAA_TCP_CHANNEL_SYNC_OP_STARTED;
     }
-    kaa_tcp_channel_socket_io_error(((kaa_tcp_channel_t *) context), KAA_CHANNEL_NA);
+    kaa_tcp_channel_socket_io_error(context, KAA_CHANNEL_NA);
 }
 
 
