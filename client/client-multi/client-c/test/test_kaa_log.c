@@ -1014,7 +1014,10 @@ KAA_TEST_CASE_EX(log_callback_basic, invalid_parameters)
     (void)state;
 
     kaa_log_delivery_listener_t listeners = {
-        NULL,
+        .on_success = NULL,
+        .on_failed = NULL,
+        .on_timeout = NULL,
+        .ctx = NULL,
     };
 
     /* NULL parameters case */

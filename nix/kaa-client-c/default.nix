@@ -85,9 +85,9 @@ let
         __propagate:;
       ''
       + target posixSupport "posix"
-              ""
+              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''}"
       + target clangSupport "clang"
-              "-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
       + target cc3200Support "cc3200"
               "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake"
       + target esp8266Support "esp8266"
