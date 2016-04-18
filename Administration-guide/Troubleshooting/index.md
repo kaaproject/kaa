@@ -5,6 +5,8 @@ permalink: /:path/
 nav: /:path/Administration-guide/Troubleshooting
 sort_idx: 60
 ---
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
 - [How to's](#how-tos)
   - [How to change the service logging level](#how-to-change-the-service-logging-level)
@@ -216,7 +218,7 @@ How to restart Kaa service
 
 | Error description                                                                                     | Possible cause                                                                   | Solution                                                                                                                           | Related documentation    |
 |-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
-| Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: ```$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh``` | Kaa Sandbox - Networking |
+| Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: ```$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh``` | [Kaa Sandbox - Networking]({{root_url}}Programming-guide/Getting-started/#networking) |
 
 # Reporting issues to the Kaa Crew
 
