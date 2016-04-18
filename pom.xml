@@ -294,20 +294,24 @@ Copyright 2014-2016 CyberVision, Inc.
                             <header>copyright.txt</header>
                             <strictCheck>true</strictCheck>
                             <mapping>
-                                <tmpl>JAVADOC_STYLE</tmpl>
+                                <tmpl>PHP</tmpl>
                                 <cmake>SCRIPT_STYLE</cmake>
                                 <txt>SCRIPT_STYLE</txt>
                                 <properties>SCRIPT_STYLE</properties>
                                 <in>SCRIPT_STYLE</in>
                                 <mk>SCRIPT_STYLE</mk>
-                                <m>JAVADOC_STYLE</m>
-                                <hpp>JAVADOC_STYLE</hpp>
-                                <dox>JAVADOC_STYLE</dox>
-                                <cvm>JAVADOC_STYLE</cvm>
-                                <hvm>JAVADOC_STYLE</hvm>
+                                <m>PHP</m>
+                                <h>PHP</h>
+                                <c>PHP</c>
+                                <cpp>PHP</cpp>
+                                <hpp>PHP</hpp>
+                                <dox>PHP</dox>
+                                <cvm>PHP</cvm>
+                                <hvm>PHP</hvm>
+                                <java>PHP</java>
                                 <bat_template>BATCH</bat_template>
                                 <sh_template>SCRIPT_STYLE</sh_template>
-                                <template>JAVADOC_STYLE</template>
+                                <template>PHP</template>
                             </mapping>
                             <includes>
                                 <include>**/*.sh</include>
