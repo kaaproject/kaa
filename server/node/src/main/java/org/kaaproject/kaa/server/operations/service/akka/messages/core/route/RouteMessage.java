@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.TenantAwareMessage;
