@@ -488,12 +488,14 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     CHECK_SOCKET_RW(channel,false,true);
 }
 
-/* Mocket functions */
+/* Mocked functions */
 
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type)
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+                                                         kaa_failover_reason reason_code)
 {
+    (void)reason_code;
     (void)self;
     ASSERT_EQUAL(protocol_id->id,0x56c8ff92);
     ASSERT_EQUAL(protocol_id->version,1);

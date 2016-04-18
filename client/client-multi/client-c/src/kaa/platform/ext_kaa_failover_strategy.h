@@ -33,10 +33,14 @@ typedef enum {
 } kaa_failover_strategy_action_t;
 
 typedef enum {
-    KAA_BOOTSTRAP_SERVERS_NA = 0,
+    KAA_CHANNEL_NA = 0,
+    KAA_BOOTSTRAP_SERVERS_NA,
     KAA_OPERATION_SERVERS_NA,
     KAA_NO_OPERATION_SERVERS_RECEIVED,
-    KAA_NO_CONNECTIVITY
+    KAA_NO_CONNECTIVITY,
+    KAA_ENDPOINT_NOT_REGISTERED,
+    KAA_CREDENTIALS_REVOKED,
+
 } kaa_failover_reason;
 
 typedef struct {

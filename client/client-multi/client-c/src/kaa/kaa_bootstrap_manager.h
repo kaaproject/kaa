@@ -27,7 +27,7 @@
 #include <stdbool.h>
 #include "kaa_error.h"
 #include "kaa_common.h"
-#include "platform/ext_transport_channel.h"
+#include "platform/ext_kaa_failover_strategy.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,9 +58,10 @@ typedef enum {
  *
  * @see kaa_transport_protocol_id_t
  */
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type);
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+                                                         kaa_failover_reason reason_code);
 
 #ifdef __cplusplus
 }      /* extern "C" */

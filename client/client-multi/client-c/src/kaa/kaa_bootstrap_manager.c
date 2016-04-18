@@ -32,6 +32,7 @@
 #include "utilities/kaa_log.h"
 #include "kaa_channel_manager.h"
 #include "platform/ext_kaa_failover_strategy.h"
+#include "kaa_protocols/kaa_tcp/kaatcp_common.h"
 
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
@@ -518,9 +519,10 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     return error_code;
 }
 
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type)
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+                                                         kaa_failover_reason reason_code)
 {
     KAA_RETURN_IF_NIL2(self, protocol_id, KAA_ERR_BADPARAM);
 
@@ -574,8 +576,8 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
             execute_failover = true;
     }
     if (execute_failover) {
-        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id, type,
-                                                type == KAA_SERVER_BOOTSTRAP ? KAA_BOOTSTRAP_SERVERS_NA : KAA_OPERATION_SERVERS_NA);
+        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id,
+                                                type, reason_code);
     }
 
     if (access_point && !execute_failover) {
@@ -610,7 +612,7 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
         if (self->next_operations_request_time && current_time >= self->next_operations_request_time) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Response bootstrap time expired.");
             kaa_bootstrap_access_points_t * acc_point = (kaa_bootstrap_access_points_t *) kaa_list_get_data(kaa_list_begin(self->bootstrap_access_points));
-            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP);
+            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP, KAA_BOOTSTRAP_SERVERS_NA);
             self->next_operations_request_time = 0;
             if (error_code == KAA_ERR_EVENT_NOT_ATTACHED) {
                 do_sync(self);
