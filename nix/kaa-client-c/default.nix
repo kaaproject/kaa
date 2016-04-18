@@ -86,6 +86,8 @@ let
       ''
       + target posixSupport "posix"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''}"
+      + target posixSupport "nologs"
+              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DKAA_MAX_LOG_LEVEL=0"
       + target clangSupport "clang"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
       + target cc3200Support "cc3200"
