@@ -94,6 +94,9 @@ public class OperationsServiceMsg {
             if (msg.getServerProfileUpdateMsg() != null) {
                 client.onServerProfileUpdate(msg.getServerProfileUpdateMsg());
             }
+            if (msg.getEndpointDeregistrationMsg() != null) {
+                client.onEndpointDeregistration(msg.getEndpointDeregistrationMsg());
+            }
             if (msg.getUserConfigurationUpdateMsg() != null) {
                 updates.add(msg.getUserConfigurationUpdateMsg());
             }

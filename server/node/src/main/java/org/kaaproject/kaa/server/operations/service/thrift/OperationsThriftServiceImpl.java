@@ -205,6 +205,7 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     
     @Override
     public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws TException {
+        LOG.debug("Received Event about endpoint deregistration {}", message);
         clusterService.onEndpointDeregistrationMessage(message);
     }
 
