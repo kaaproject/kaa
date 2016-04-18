@@ -40,20 +40,20 @@ UNITTESTS_COMPILE=0
 COLLECT_COVERAGE=0
 
 prepare_build() {
-    mkdir -p build;
-    cd build;
-    cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE .. -DCMAKE_C_FLAGS="-Werror";
+    mkdir -p build-posix
+    cd build-posix
+    cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE .. -DCMAKE_C_FLAGS="-Werror"
     cd ..
 }
 
 build() {
-    cd build
+    cd build-posix
     make
     cd ..
 }
 
 execute_tests() {
-    cd build
+    cd build-posix
     ctest --output-on-failure .
     cd ..
 }
@@ -87,7 +87,7 @@ check_installed_software() {
 
 run_valgrind() {
     echo "Starting valgrind..."
-    cd build
+    cd build-posix
     if [ ! -d valgrindReports ]
     then
         mkdir valgrindReports
@@ -108,15 +108,15 @@ run_valgrind() {
 
 run_cppcheck() {
     echo "Starting Cppcheck..."
-    cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build/cppcheck_.xml > build/cppcheck.log
-    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build/cppcheck_.xml > build/cppcheck.xml
-    rm build/cppcheck_.xml
+    cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build-posix/cppcheck_.xml > build-posix/cppcheck.log
+    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build-posix/cppcheck_.xml > build-posix/cppcheck.xml
+    rm build-posix/cppcheck_.xml
     echo "Cppcheck analysis finished."
 }
 
 run_rats() {
     echo "Starting RATS..."
-    rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
+    rats --xml `find src/ -name *.[ch]` > build-posix/rats-report.xml
     echo "RATS analysis finished."
 }
 
@@ -137,14 +137,14 @@ run_analysis() {
 }
 
 clean() {
-    if [ -d build ]
+    if [ -d build-posix ]
     then
-        cd build
+        cd build-posix
         if [ -f Makefile ]
         then
             make clean
         fi
-        cd .. && rm -r build
+        cd .. && rm -r build-posix
     fi
 }
 
@@ -160,7 +160,7 @@ case "$cmd" in
     ;;
 
     install)
-        cd build && make install && cd ..
+        cd build-posix && make install && cd ..
     ;;
 
     test)
