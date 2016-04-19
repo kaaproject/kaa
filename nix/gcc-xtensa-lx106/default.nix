@@ -48,13 +48,12 @@ in stdenv.mkDerivation {
   preFixup = if stdenv.isLinux then let
     rpath = stdenv.lib.concatStringsSep ":" [
       "$out/lib"
-      (stdenv.lib.makeLibraryPath [ zlib ])
-      "${stdenv.cc.cc}/lib${stdenv.lib.optionalString stdenv.is64bit "64"}"
+      (stdenv.lib.makeLibraryPath [ zlib stdenv.cc.cc ])
     ];
   in ''
     find -H $out/ -type f -executable -exec \
       patchelf \
-        --interpreter "${stdenv.glibc}/lib/${stdenv.cc.dynamicLinker}" \
+        --set-interpreter "${stdenv.glibc.out}/lib/${stdenv.cc.dynamicLinker}" \
         --set-rpath "${rpath}" \
         {} \;
   '' else "";
