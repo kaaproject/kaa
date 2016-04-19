@@ -16,14 +16,59 @@
 
 @echo off
 
-set MSVS_HOME=C:\Program Files (x86)\Microsoft Visual Studio 12.0
-set BOOST_ROOT=C:\boost
-set AVRO_ROOT_DIR=C:\Avro-cpp
-set BOTAN_HOME=C:\botan
+@REM Set  target Platform(x86|x64)
+set BUILD_PLATFORM=x64
 
-set BOOST_LIBRARYDIR=%BOOST_ROOT%\lib32-msvc-12.0
-set AVRO_LIBRARYDIR=%AVRO_ROOT_DIR%\lib
+@REM Set MSVC++ version from following table
+@REM VS version         - MSVC++ version
+@REM Visual Studio 2015 - 14
+@REM Visual Studio 2013 - 12
+@REM Visual Studio 2012 - 11
+@REM Visual Studio 2010 - 10
+@REM Visual Studio 2008 - 9
+@REM Visual Studio 2005 - 8
 
-set PATH=%MSVS_HOME%\VC;%BOTAN_HOME%;%AVRO_ROOT_DIR%\bin;%AVRO_LIBRARYDIR%;%BOOST_LIBRARYDIR%;%PATH%
+set MSVC_VERSION=14
 
-call vcvarsall.bat
+@REM Set path for thirparty tools
+set MSVS_ROOT=C:\Program Files (x86)\Microsoft Visual Studio %MSVC_VERSION%.0
+set BOOST_ROOT=C:\local\boost_1_60_0\
+set PYTHON_ROOT=C:\Python27
+set GNUWIN32_ROOT=C:\Program Files (x86)\GnuWin32
+
+if not %BUILD_PLATFORM% == x86 (
+  set BUILD_PLATFORM=x64
+)
+
+@REM zlib configuration
+set ZLIB_SRC=zlib-1.2.8
+set ZLIB_ROOT=C:\local\%ZLIB_SRC%\%BUILD_PLATFORM%
+set ZLIB_URL=http://zlib.net/zlib-1.2.8.tar.gz
+
+@REM Avro configuration
+set AVRO_SRC=avro-src-1.8.0
+set AVRO_ROOT=C:\local\%AVRO_SRC%\%BUILD_PLATFORM%
+set AVRO_URL=http://archive.apache.org/dist/avro/avro-1.8.0/avro-src-1.8.0.tar.gz
+
+@REM Botan configuration
+set BOTAN_SRC=Botan-1.11.28
+set BOTAN_ROOT=C:\local\%BOTAN_SRC%\%BUILD_PLATFORM%
+set BOTAN_URL=https://github.com/randombit/botan/archive/1.11.28.tar.gz
+
+@REM Sqlite configuration
+set SQLITE_SRC=sqlite-autoconf-3120100
+set SQLITE_ROOT=C:\local\%SQLITE_SRC%\
+set SQLITE_URL=https://www.sqlite.org/2016/sqlite-autoconf-3120100.tar.gz
+
+@REM PATH configuration
+if %BUILD_PLATFORM% == x86 (
+ set BOOST_LIBRARYDIR=%BOOST_ROOT%\lib32-msvc-%MSVC_VERSION%.0
+) else (
+ set BOOST_LIBRARYDIR=%BOOST_ROOT%\lib64-msvc-%MSVC_VERSION%.0
+)
+set BOTAN_INCLUDE_DIR=%BOTAN_ROOT%\include
+
+set PATH=%BOTAN_ROOT%;%AVRO_ROOT%\bin;%AVRO_ROOT%\lib;%ZLIB_ROOT%\bin;%ZLIB_ROOT%\lib;%PATH%
+set PATH=%MSVS_ROOT%\VC;%BOOST_LIBRARYDIR%;%PYTHON_ROOT%;%GNUWIN32_ROOT%\bin;%SQLITE_ROOT%\lib;%PATH%
+
+call vcvarsall.bat %BUILD_PLATFORM%
