@@ -23,13 +23,13 @@ generate_docs() {
 compile() {
 	pod setup
 	pod install
-	xcodebuild -workspace Kaa.xcworkspace/ -scheme libKaa.a clean build
+	xcodebuild -workspace Kaa.xcworkspace -scheme Kaa clean build
 }
 
 test() {
 	pod setup
 	pod install
-	xcodebuild -workspace Kaa.xcworkspace/ -scheme libKaa.a -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6' test
+	xcodebuild -workspace Kaa.xcworkspace -scheme Kaa -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6' test
 }
 
 help() {
