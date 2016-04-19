@@ -153,8 +153,10 @@ goto :eof
   nmake /f Makefile.msc
   mkdir %SQLITE_ROOT%\include
   copy sqlite3.h %SQLITE_ROOT%\include
+  copy sqlite3ext.h %SQLITE_ROOT%\include
   mkdir %SQLITE_ROOT%\lib
   copy sqlite3.dll %SQLITE_ROOT%\lib
+  copy sqlite3.lib %SQLITE_ROOT%\lib
 
 goto :eof
 

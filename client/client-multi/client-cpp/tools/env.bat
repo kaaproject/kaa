@@ -56,9 +56,9 @@ set BOTAN_ROOT=C:\local\%BOTAN_SRC%\%BUILD_PLATFORM%
 set BOTAN_URL=https://github.com/randombit/botan/archive/1.11.28.tar.gz
 
 @REM Sqlite configuration
-set SQLITE_SRC=sqlite-autoconf-3120100
+set SQLITE_SRC=sqlite-autoconf-3120200
 set SQLITE_ROOT=C:\local\%SQLITE_SRC%\
-set SQLITE_URL=https://www.sqlite.org/2016/sqlite-autoconf-3120100.tar.gz
+set SQLITE_URL=https://www.sqlite.org/2016/sqlite-autoconf-3120200.tar.gz
 
 @REM PATH configuration
 if %BUILD_PLATFORM% == x86 (
@@ -68,7 +68,7 @@ if %BUILD_PLATFORM% == x86 (
 )
 set BOTAN_INCLUDE_DIR=%BOTAN_ROOT%\include
 
-set PATH=%BOTAN_ROOT%;%AVRO_ROOT%\bin;%AVRO_ROOT%\lib;%ZLIB_ROOT%\bin;%ZLIB_ROOT%\lib;%PATH%
+set PATH=%BOTAN_ROOT%\lib;%AVRO_ROOT%\bin;%AVRO_ROOT%\lib;%ZLIB_ROOT%\bin;%ZLIB_ROOT%\lib;%PATH%
 set PATH=%MSVS_ROOT%\VC;%BOOST_LIBRARYDIR%;%PYTHON_ROOT%;%GNUWIN32_ROOT%\bin;%SQLITE_ROOT%\lib;%PATH%
 
 call vcvarsall.bat %BUILD_PLATFORM%
