@@ -151,7 +151,7 @@ $ sudo service kaa-node restart
 
 The Kaa service logs can be found under /var/log/kaa:
 
-- kaa-none.* files contain log information from the Kaa service component.
+- kaa-node.* files contain log information from the Kaa service component.
 
 You can download logs from the Sandbox guest machine to the host machine as follows:
 
@@ -182,7 +182,7 @@ How to restart Kaa service
 2. Restart Kaa service:
 
 ```
-    $ sudo service kaa-node restar
+    $ sudo service kaa-node restart
 ```
 
 </div><div id="Windows" class="tab-pane fade" markdown="1">
