@@ -21,26 +21,26 @@ To support high availability, a Kaa cluster must include at least two nodes with
 
 ## Configurations
 
-Kaa administrator can specify thrift hos by editing  ```thrift_host``` property in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file. 
+Kaa administrator can specify thrift host by editing  ```thrift_host``` property in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file. 
 
 ```bash
 thrift_host=<ip_of_current_machine>
 ```
 
 
-Property ```transport_public_interface``` is used as Bootstrap server host and also this host will be built in generated SDKs. 
+Property ```transport_public_interface``` is used as Bootstrap server host and also this host will be included into generated SDKs. 
 
 ```bash
 transport_public_interface=<ip_of_current_machine>
 ```
 
-For the list of available Zookeeper servers responsible ```zk_host_port_list``` property.
+Property ```zk_host_port_list``` is responsible for holding a list of available Zookeeper nodes.
 
 ```bash
 zk_host_port_list=<zookeeper_ip>:<zookeeper_port>
 ```
 
-For connection to SQL database responsible next properties:
+Next properties are responsible for SQL database connection:
 
 SQL database host and port ```/usr/lib/kaa-node/conf/dao.properties```
 
@@ -104,7 +104,7 @@ If administrator select MongoDB then he must to populate property ```servers``` 
 servers=<mongo_database_ip>:<mongo_database_port>
 ```
 
-If he decide to use Cassandra as NoSQL database then he mast to populate property ```node_list``` in ```/usr/lib/kaa-node/conf/common-dao-cassandra.properties``` file
+If Administrator decide to use Cassandra as NoSQL database then he must to populate property ```node_list``` in ```/usr/lib/kaa-node/conf/common-dao-cassandra.properties``` file
 
 ```bash
 node_list=<cassandra_database_ip>:<cassandra_database_port>
