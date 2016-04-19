@@ -44,6 +44,17 @@ public interface EndpointGroupDao<T> extends SqlDao<T> {
      * @return the endpoint group object
      */
     T findByAppIdAndWeight(String applicationId, int weight);
+    
+    /**
+     *  Find endpoint group by application id and group name.
+     *  This method used for validation. For one application can be
+     *  used unique group name
+     *
+     * @param applicationId the application id
+     * @param name the group name
+     * @return the endpoint group object
+     */
+    T findByAppIdAndName(String applicationId, String name);
 
     /**
      * Removes the topic from endpoint group.

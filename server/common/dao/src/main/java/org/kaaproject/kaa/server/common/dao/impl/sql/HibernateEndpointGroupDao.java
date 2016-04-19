@@ -41,6 +41,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPICS_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.WEIGHT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NAME_PROPERTY;
 
 @Repository
 public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGroup> implements EndpointGroupDao<EndpointGroup> {
@@ -80,6 +81,24 @@ public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGrou
             LOG.trace("[{},{}] Search result: {}.", appId, weight, group);
         } else {
             LOG.debug("[{},{}] Search result: {}.", appId, weight, group != null);
+        }
+        return group;
+    }
+    
+    @Override
+    public EndpointGroup findByAppIdAndName(String applicationId, String name) {
+        EndpointGroup group = null;
+        LOG.debug("Searching endpoint group by application id [{}] and name [{}]", applicationId, name);
+        if (isNotBlank(applicationId)) {
+            group = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.and(
+                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)),
+                            Restrictions.eq(NAME_PROPERTY, name)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", applicationId, name, group);
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", applicationId, name, group != null);
         }
         return group;
     }
@@ -180,4 +199,5 @@ public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGrou
         remove(endpointGroup);
         LOG.debug("Removed endpoint group by id [{}] ", id);
     }
+
 }
