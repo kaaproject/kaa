@@ -1,0 +1,12 @@
+{
+  "type" : "record",
+  "name" : "name",
+  "namespace" : "same",
+  "fields" : [ {
+    "name" : "same",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }
+  } ]
+}
