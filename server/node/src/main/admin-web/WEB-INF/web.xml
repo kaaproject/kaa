@@ -44,22 +44,28 @@
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.RecordServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
         </servlet>
-        
+
         <servlet>
             <servlet-name>kaaCtlExportServlet</servlet-name>
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.CtlExportServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
-        </servlet>   
-        
+        </servlet>
+
         <servlet>
             <servlet-name>kaaProfileDownloadServlet</servlet-name>
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.ProfileDownloadServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
-        </servlet> 
+        </servlet>
 
         <servlet>
             <servlet-name>kaaFileUploadServlet</servlet-name>
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.FileUpload</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaConfigurationDownloadServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.ConfigurationDownloadServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
         </servlet>
 
@@ -100,12 +106,12 @@
             <servlet-name>kaaRecordLibraryServlet</servlet-name>
             <url-pattern>/kaaAdmin/servlet/kaaRecordLibraryServlet</url-pattern>
         </servlet-mapping>
-        
+
         <servlet-mapping>
             <servlet-name>kaaCtlExportServlet</servlet-name>
             <url-pattern>/kaaAdmin/servlet/kaaCtlExportServlet</url-pattern>
         </servlet-mapping>
-        
+
         <servlet-mapping>
             <servlet-name>kaaProfileDownloadServlet</servlet-name>
             <url-pattern>/kaaAdmin/servlet/kaaProfileDownloadServlet</url-pattern>
@@ -119,6 +125,11 @@
         <servlet-mapping>
             <servlet-name>kaaRestServlet</servlet-name>
             <url-pattern>/kaaAdmin/rest/*</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaConfigurationDownloadServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaConfigurationDownloadServlet</url-pattern>
         </servlet-mapping>
 
          <!-- Default page to serve -->

@@ -19,14 +19,15 @@ package org.kaaproject.kaa.server.admin.servlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 public class ServletUtils {
 
-    /** The Constant LOG. */
+    /**
+     * The Constant LOG.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(ServletUtils.class);
 
     private ServletUtils() {
@@ -39,14 +40,14 @@ public class ServletUtils {
         try {
             byte[] fileNameBytes = fileName.getBytes(isInternetExplorer ? "windows-1250" : "utf-8");
             String dispositionFileName = "";
-            for (byte b: fileNameBytes) {
-                dispositionFileName += (char)(b & 0xff);
+            for (byte b : fileNameBytes) {
+                dispositionFileName += (char) (b & 0xff);
             }
 
             String disposition = "attachment; filename=\"" + dispositionFileName + "\"";
             response.setHeader("Content-Disposition", disposition);
-        } catch(UnsupportedEncodingException ence) {
-           LOG.error("Exception catched: ", ence);
+        } catch (UnsupportedEncodingException ence) {
+            LOG.error("Exception catched: ", ence);
         }
-  }
+    }
 }
