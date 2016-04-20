@@ -13,6 +13,7 @@ sort_idx: 30
   * [Zookeeper configuration](#zookeeper-configuration)
   * [SQL database configuration](#sql-database-configuration)
   * [NoSQL database configuration](#nosql-database-configuration)
+  * [Firewall rules configuration](#firewall-rules-configuration)
 
 ## Introduction
 
@@ -36,21 +37,21 @@ We had successfully installed Kaa on every node and everything that left is to c
 
 It is necessary to edit next properties to set up cluster:
  
- | Property name             | Example values                   | Description                                                      | File location                                                                      | 
- |-------------------------- |--------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
- | control_server_enabled    | true/false                       | Determines whether control server enabled on this node or not    | /usr/lib/kaa-node/conf/kaa-node.properties                                         |
- | bootstrap_server_enabled  | true/false                       | Determines whether bootstrap server enabled on this node or not  | /usr/lib/kaa-node/conf/kaa-node.properties                                         |
- | operations_server_enabled | true/false                       | Determines whether operations server enabled on this node or not | /usr/lib/kaa-node/conf/kaa-node.properties                                         |
- | zk_host_port_list         | localhost:2181, anotherhost:2181 | Comma-separated list of Zookeeper nodes hostname:port            | /usr/lib/kaa-node/conf/kaa-node.properties                                         |
- | node id                   | 1-255                            | single line of text that represents node id                      | /var/lib/zookeeper/myid                                                            |
- | jdbc_host                 | localhost                        | PostgreSQL database hostname                                     | /usr/lib/kaa-node/conf/dao.properties, /usr/lib/kaa-node/conf/admin-dao.properties |
- | jdbc_port                 | 5432                             | PostgreSQL database port                                         | /usr/lib/kaa-node/conf/dao.properties, /usr/lib/kaa-node/conf/admin-dao.properties |
- | nosql_db_provider_name    | cassandra/mongodb                | Determines whether Cassandra or MongoDB provider will be used    | /usr/lib/kaa-node/conf/dao.properties                                              |
- | node_list                 | localhost:9042, ...              | Comma-separated list of Cassandra nodes hostname:port            | /usr/lib/kaa-node/conf/common-dao-cassandra.properties                             |
- | servers                   | localhost:27017, ...             | Comma-separated list of MongoDB nodes hostname:port              | /usr/lib/kaa-node/conf/common-dao-mongodb.properties                               |
+ | Property name             | Example values                   | Description                                                      | File location                                                              | 
+ |-------------------------- |--------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+ | control_server_enabled    | true/false                       | Determines whether control server enabled on this node or not    | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | bootstrap_server_enabled  | true/false                       | Determines whether bootstrap server enabled on this node or not  | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | operations_server_enabled | true/false                       | Determines whether operations server enabled on this node or not | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | zk_host_port_list         | localhost:2181, anotherhost:2181 | Comma-separated list of Zookeeper nodes hostname:port            | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | node id                   | 1-255                            | single line of text that represents node id                      | /etc/zookeeper/myid                                                        |
+ | jdbc_host                 | localhost                        | PostgreSQL database hostname                                     | /etc/kaa-node/conf/dao.properties, /etc/kaa-node/conf/admin-dao.properties |
+ | jdbc_port                 | 5432                             | PostgreSQL database port                                         | /etc/kaa-node/conf/dao.properties, /etc/kaa-node/conf/admin-dao.properties |
+ | nosql_db_provider_name    | cassandra/mongodb                | Determines whether Cassandra or MongoDB provider will be used    | /etc/kaa-node/conf/dao.properties                                          |
+ | node_list                 | localhost:9042, ...              | Comma-separated list of Cassandra nodes hostname:port            | /etc/kaa-node/conf/common-dao-cassandra.properties                         |
+ | servers                   | localhost:27017, ...             | Comma-separated list of MongoDB nodes hostname:port              | /etc/kaa-node/conf/common-dao-mongodb.properties                           |
 
 <br/>
-After Kaa installation on Ubuntu/Debian OS (deb packages), configuration files for each Kaa component will be extracted into the ```/usr/lib/kaa-{component-name}/conf``` or ```/etc/kaa-{component-name}/conf``` directories. We are interested in 3 configuration files.
+After Kaa installation on Ubuntu/Debian OS (deb packages), configuration files for each Kaa component will be extracted into the ```/etc/kaa-{component-name}/conf``` directories. We are interested in 3 configuration files.
 
 ### Kaa-node configuration
 
@@ -60,7 +61,7 @@ Stop kaa-node service before starting configuration by executing next command:
  $ sudo service kaa-node stop
 ```
 
-Kaa services (bootstrap, control or operations) can be enabled or disabled on node by editing corresponding properties in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file.
+Kaa services (bootstrap, control or operations) can be enabled or disabled on node by editing corresponding properties in ```/etc/kaa-node/conf/kaa-node.properties``` file.
 
 ```bash
 # Specifies if Control Server is enabled.
@@ -122,13 +123,13 @@ We assume that zookeeper with default port (2181) is running on every node. Conf
  zk_host_port_list=172.1.1.1:2181,172.2.2.2:2181,172.3.3.3:2181
 
  # node2
- zk_host_port_list=172.2.2.2:2181,172.1.1.1:2181,172.3.3.3:2181
+ zk_host_port_list=172.1.1.1:2181,172.2.2.2:2181,172.3.3.3:2181
 
  # node3
- zk_host_port_list=172.3.3.3:2181,172.2.2.2:2181,172.1.1.1:2181
+ zk_host_port_list=172.1.1.1:2181,172.2.2.2:2181,172.3.3.3:2181
 ```
 
-For every node insert node id in file ```/var/lib/zookeeper/myid```. The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing else. The id must be unique within the ensemble and should have a value between 1 and 255. For example we have 3 nodes so we will have next values 1, 2, 3. For more details visit this [documentation page](https://zookeeper.apache.org/doc/r3.3.2/zookeeperAdmin.html#sc_zkMulitServerSetup).
+For every node insert node id in file ```/etc/zookeeper/myid```. The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing else. The id must be unique within the ensemble and should have a value between 1 and 255. For example we have 3 nodes so we will have next values 1, 2, 3. For more details visit this [documentation page](https://zookeeper.apache.org/doc/r3.3.2/zookeeperAdmin.html#sc_zkMulitServerSetup).
 
 So for ```node1``` myid would look like this
 
@@ -150,7 +151,7 @@ And for ```node3```
 
 ### SQL database configuration
 
-Configure SQL database host and port ```/usr/lib/kaa-node/conf/dao.properties```
+Configure SQL database host and port ```/etc/kaa-node/conf/dao.properties```
 
 ```bash
  # specify jdbc database host
@@ -160,14 +161,14 @@ Configure SQL database host and port ```/usr/lib/kaa-node/conf/dao.properties```
  jdbc_port=<postgresql_port>
 ```
 
-Configurations for all three nodes wold look like this
+Configurations for all three nodes would look like this
 
 ```bash
  jdbc_host=172.1.1.1
  jdbc_port=5432
 ```
 
-and ```/usr/lib/kaa-node/conf/admin-dao.properties```
+and ```/etc/kaa-node/conf/admin-dao.properties```
 
 ```bash
  # specify jdbc database url
@@ -180,9 +181,11 @@ For all three nodes it would be like this
  jdbc_url=jdbc:postgresql://172.1.1.1:5432/kaa
 ```
 
+And also configure [username and password](../Single-node-installation#sql-database-configuration)
+
 ### NoSQL database configuration
 
-Select NoSQL database ```mongo``` or ```cassandra```in ```/usr/lib/kaa-node/conf/dao.properties``` file.
+Select NoSQL database ```mongo``` or ```cassandra```in ```/etc/kaa-node/conf/dao.properties``` file.
 
 ```bash
  # NoSQL database provider name, autogenerated when mongo-dao or cassandra-dao profile is activated
@@ -196,7 +199,7 @@ For all three nodes it would be like this
  nosql_db_provider_name=mongodb
 ```
 
-Setup MongoDB host IP ```/usr/lib/kaa-node/conf/common-dao-mongodb.properties```
+Setup MongoDB host IP ```/etc/kaa-node/conf/common-dao-mongodb.properties```
 
 ```bash
  # list of mongodb nodes, possible to use multiply servers
@@ -209,7 +212,7 @@ Assuming that we peek standard MongoDB port, for all three nodes property would 
  servers=172.1.1.1:27017
 ```
 
-Setup Cassandra host ip ```/usr/lib/kaa-node/conf/common-dao-cassandra.properties```
+Setup Cassandra host ip ```/etc/kaa-node/conf/common-dao-cassandra.properties```
 
 ```bash
  # Specify node list
@@ -222,10 +225,21 @@ Assuming that we peek standard Cassandra port, for all three nodes property woul
  servers=172.1.1.1:9042
 ```
 
+### Firewall rules configuration
+
+On every endpoin Kaa Administrator needs to configure [firewall rules](../Single-node-installation#firewall-rules-configuration).
+
 After all configuration properties set up
 
 ```bash
  $ sudo service kaa-node start
+```
+
+If everithing is configured properly Kaa Administrator will see next output on command:
+
+```bash
+ $ sudo service kaa-node status 
+  * Kaa Node daemon is running
 ```
 
 ---
