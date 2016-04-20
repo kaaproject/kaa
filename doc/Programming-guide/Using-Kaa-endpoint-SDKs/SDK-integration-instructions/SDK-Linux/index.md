@@ -93,6 +93,11 @@ To build the C endpoint SDK, do the following:
 <!-- TODO: Fix this link when Administration-UI-guide#AdministrationUIguide-GeneratingSDK are updated -->
 1. [Generate ](Administration-UI-guide#AdministrationUIguide-GeneratingSDK)the C endpoint SDK in Admin UI.
 2. Download and untar the Kaa C SDK archive.
+
+   ~~~ bash
+   $ tar xfv kaa-c-ep-sdk.tar.gz
+   ~~~
+
 3. Run the following commands.
 
    ~~~ bash
@@ -237,6 +242,11 @@ To build the C++ endpoint SDK, do the following:
 <!-- TODO: Fix this link when Administration-UI-guide#AdministrationUIguide-GeneratingSDK are updated -->
 1. [Generate](Administration-UI-guide#AdministrationUIguide-GeneratingSDK) the C++ endpoint SDK in Admin UI.
 2. Download and untar the Kaa C++ SDK archive.
+
+   ~~~ bash
+   $ tar xfv kaa-cpp-ep-sdk.tar.gz
+   ~~~
+
 3. Run the following commands.
 
    ~~~
