@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /**
@@ -27,7 +27,7 @@
 #include <stdbool.h>
 #include "kaa_error.h"
 #include "kaa_common.h"
-#include "platform/ext_transport_channel.h"
+#include "platform/ext_kaa_failover_strategy.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,9 +58,10 @@ typedef enum {
  *
  * @see kaa_transport_protocol_id_t
  */
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type);
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+                                                         kaa_failover_reason reason_code);
 
 #ifdef __cplusplus
 }      /* extern "C" */

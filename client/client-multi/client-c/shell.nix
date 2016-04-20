@@ -22,8 +22,9 @@ args@
 , raspberrypiSupport ? null
 , testSupport ? null
 , withWerror ? null
+, withTooling ? null
 }:
 
-let pkgs = import ./nix { };
+let pkgs = import ../../../nix { };
 
-in pkgs.kaa-client.override args
+in pkgs.kaa-client-c.override args

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "posix_file_utils.h"
@@ -32,12 +32,12 @@ int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_
     KAA_RETURN_IF_NIL(file, -1);
 
     fseek(file, 0, SEEK_END);
-    size_t result_size = ftell(file);
+    long result_size = ftell(file);
     if (result_size <= 0) {
         fclose(file);
         return -1;
     }
-    char *result_buffer = (char *) KAA_MALLOC(result_size * sizeof(char));
+    char *result_buffer = KAA_MALLOC(result_size * sizeof(char));
     if (!result_buffer) {
         fclose(file);
         return -1;

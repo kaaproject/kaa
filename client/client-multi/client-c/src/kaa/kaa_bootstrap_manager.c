@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "kaa_private.h"
@@ -32,6 +32,7 @@
 #include "utilities/kaa_log.h"
 #include "kaa_channel_manager.h"
 #include "platform/ext_kaa_failover_strategy.h"
+#include "kaa_protocols/kaa_tcp/kaatcp_common.h"
 
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
@@ -65,7 +66,74 @@ struct kaa_bootstrap_manager_t {
 
 static kaa_extension_id bootstrap_sync_services[1] = { KAA_EXTENSION_BOOTSTRAP };
 
+kaa_error_t kaa_extension_bootstrap_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_bootstrap_manager_create((kaa_bootstrap_manager_t **)context, kaa_context);
+    kaa_context->bootstrap_manager = *context;
+    return result;
+}
 
+kaa_error_t kaa_extension_bootstrap_deinit(void *context)
+{
+    kaa_bootstrap_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_bootstrap_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_channel_manager_bootstrap_request_get_size(
+            ((kaa_bootstrap_manager_t *)context)->channel_manager, expected_size);
+}
+
+kaa_error_t kaa_extension_bootstrap_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_channel_manager_bootstrap_request_get_size(
+            ((kaa_bootstrap_manager_t *)context)->channel_manager, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_bootstrap_manager_bootstrap_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_bootstrap_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_bootstrap_manager_handle_server_sync(context, &reader, extension_options, size);
+}
 
 static void destroy_access_point(void *data)
 {
@@ -121,13 +189,11 @@ static kaa_error_t kaa_bootstrap_manager_on_server_sync(kaa_bootstrap_manager_t 
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    kaa_access_point_t *access_point;
-    kaa_operations_access_points_t *operations_access_points;
-
     kaa_list_node_t *channel_it = kaa_list_begin(self->operations_access_points);
     while (channel_it) {
-        operations_access_points = kaa_list_get_data(channel_it);
-        access_point = kaa_list_get_data(kaa_list_begin(operations_access_points->access_points));
+        kaa_operations_access_points_t *operations_access_points = kaa_list_get_data(channel_it);
+        kaa_access_point_t *access_point = kaa_list_get_data(
+                kaa_list_begin(operations_access_points->access_points));
 
         kaa_channel_manager_on_new_access_point(self->channel_manager
                                               , &operations_access_points->protocol_id
@@ -188,6 +254,7 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_manager_init(). */
 kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
@@ -208,6 +275,7 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_manager_deinit(). */
 void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self)
 {
     KAA_RETURN_IF_NIL(self,);
@@ -360,10 +428,9 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
 
     kaa_list_clear(self->operations_access_points, destroy_operations_access_points);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
 
     uint16_t request_id;
-    error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint16_t));
+    kaa_error_t error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint16_t));
     KAA_RETURN_IF_ERR(error_code);
     request_id = KAA_NTOHS(request_id);
 
@@ -452,9 +519,10 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     return error_code;
 }
 
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type)
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+                                                         kaa_failover_reason reason_code)
 {
     KAA_RETURN_IF_NIL2(self, protocol_id, KAA_ERR_BADPARAM);
 
@@ -508,8 +576,8 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
             execute_failover = true;
     }
     if (execute_failover) {
-        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id, type,
-                                                type == KAA_SERVER_BOOTSTRAP ? KAA_BOOTSTRAP_SERVERS_NA : KAA_OPERATION_SERVERS_NA);
+        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id,
+                                                type, reason_code);
     }
 
     if (access_point && !execute_failover) {
@@ -544,7 +612,7 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
         if (self->next_operations_request_time && current_time >= self->next_operations_request_time) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Response bootstrap time expired.");
             kaa_bootstrap_access_points_t * acc_point = (kaa_bootstrap_access_points_t *) kaa_list_get_data(kaa_list_begin(self->bootstrap_access_points));
-            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP);
+            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP, KAA_BOOTSTRAP_SERVERS_NA);
             self->next_operations_request_time = 0;
             if (error_code == KAA_ERR_EVENT_NOT_ATTACHED) {
                 do_sync(self);

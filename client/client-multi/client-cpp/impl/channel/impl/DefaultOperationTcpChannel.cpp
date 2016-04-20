@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifdef KAA_DEFAULT_TCP_CHANNEL
@@ -86,11 +86,21 @@ void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
     switch (message.getReturnCode()) {
     case ConnackReturnCode::ACCEPTED:
         break;
+    case ConnackReturnCode::REFUSE_VERIFICATION_FAILED:
     case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
-        KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: bad credentials. Going to re-register... ") % getId());
+        KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: %2%. ") % getId() %
+                     ((message.getReturnCode() == ConnackReturnCode::REFUSE_BAD_CREDENTIALS) ?
+                     "bad credantials" : "verification failed"));
+
         context_.getStatus().setRegistered(false);
         context_.getStatus().save();
-        setServer(currentServer_);
+
+        if (message.getReturnCode() == ConnackReturnCode::REFUSE_BAD_CREDENTIALS) {
+            onServerFailed();
+        } else {
+            onServerFailed(KaaFailoverReason::ENDPOINT_NOT_REGISTERED);
+        }
+
         break;
     default:
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connack result failed: %2%. Closing connection") % getId() % message.getMessage());
@@ -101,8 +111,10 @@ void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
 
 void DefaultOperationTcpChannel::onDisconnect(const DisconnectMessage& message)
 {
-    KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Disconnect (result=%2%) response received") % getId() % message.getMessage());
-    onServerFailed();
+    KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Disconnect (result=%2%) response received")
+                  % getId() % message.getMessage());
+    return (message.getReason() == DisconnectReason::CREDENTIALS_REVOKED) ?
+            onServerFailed(KaaFailoverReason::CREDENTIALS_REVOKED) : onServerFailed();
 }
 
 void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
@@ -249,7 +261,7 @@ void DefaultOperationTcpChannel::closeConnection()
     }
 }
 
-void DefaultOperationTcpChannel::onServerFailed()
+void DefaultOperationTcpChannel::onServerFailed(KaaFailoverReason failoverReason)
 {
     if (isFailoverInProgress_) {
         KAA_LOG_TRACE("Failover in progress. On server failed skipped.");
@@ -262,7 +274,7 @@ void DefaultOperationTcpChannel::onServerFailed()
 
     if (connectivityChecker_ && !connectivityChecker_->checkConnectivity()) {
         KAA_LOG_TRACE("Loss of connectivity detected.");
-        FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_CONNECTIVITY);
+        FailoverStrategyDecision decision = failoverStrategy_->onFailover(failoverReason);
         switch (decision.getAction()) {
             case FailoverStrategyAction::NOOP:
                 KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -272,7 +284,7 @@ void DefaultOperationTcpChannel::onServerFailed()
             {
                 std::size_t period = decision.getRetryPeriod();
                 KAA_LOG_WARN(boost::format("Attempt to reconnect will be made in %1% secs "
-                        "according to failover strategy decision.") % period);
+                                           "according to failover strategy decision.") % period);
                 retryTimer_.stop();
                 retryTimer_.start(period, [&] { isFailoverInProgress_ = false; openConnection(); });
                 break;
@@ -285,13 +297,11 @@ void DefaultOperationTcpChannel::onServerFailed()
                 break;
         }
 
-        //KAA_LOG_TRACE(boost::format("Loss of connectivity. Attempt to reconnect will be made in {} sec") % RECONNECT_TIMEOUT);
-        //reconnectTimer_.expires_from_now(boost::posix_time::seconds(RECONNECT_TIMEOUT));
-        //reconnectTimer_.async_wait(std::bind(&DefaultOperationTcpChannel::openConnection, this));
         return;
     }
 
-    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_),
+                                    failoverReason);
 }
 
 boost::system::error_code DefaultOperationTcpChannel::sendData(const IKaaTcpRequest& request)

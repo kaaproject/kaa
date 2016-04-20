@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -178,7 +178,7 @@ void test_create_kaa_tcp_channel(void **state)
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_extension_id *r_supported_services;
+    const kaa_extension_id *r_supported_services;
     size_t r_supported_service_count = 0;
     error_code = channel->get_supported_services(channel->context,&r_supported_services,&r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -454,6 +454,8 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
+    assert_int_equal(KAA_ERR_NONE, error_code);
+
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
     access_point.id = 10;
@@ -486,12 +488,14 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     CHECK_SOCKET_RW(channel,false,true);
 }
 
-/* Mocket functions */
+/* Mocked functions */
 
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type)
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
+                                                         kaa_transport_protocol_id_t *protocol_id,
+                                                         kaa_server_type_t type,
+                                                         kaa_failover_reason reason_code)
 {
+    (void)reason_code;
     (void)self;
     ASSERT_EQUAL(protocol_id->id,0x56c8ff92);
     ASSERT_EQUAL(protocol_id->version,1);
@@ -522,7 +526,7 @@ kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_eve
 
 
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
-                                                    , const char *buffer
+                                                    , const uint8_t *buffer
                                                     , size_t buffer_size)
 {
     (void)self;
@@ -689,25 +693,21 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
 }
 
 
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size)
+kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
+        const kaa_extension_id *services, size_t services_count,
+        uint8_t **buffer, size_t *buffer_size)
 {
     (void)self;
 
-    if (info->services_count == 1
-            && info->services[0] == KAA_EXTENSION_BOOTSTRAP) {
-        if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
-            if (alloc_buffer) {
-                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-                *buffer = alloc_buffer;
-                *buffer_size = sizeof(CONNECT_PACK);
-                return KAA_ERR_NONE;
-            }
+    if (services_count == 1
+            && services[0] == KAA_EXTENSION_BOOTSTRAP) {
+        uint8_t *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+        if (alloc_buffer) {
+            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+            *buffer = alloc_buffer;
+            *buffer_size = sizeof(CONNECT_PACK);
+            return KAA_ERR_NONE;
         }
-
     }
 
     return KAA_ERR_BADPARAM;

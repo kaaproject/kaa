@@ -1,18 +1,18 @@
 #!/bin/sh
 #
-#  Copyright 2014-2016 CyberVision, Inc.
+# Copyright 2014-2016 CyberVision, Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 # Exits immediately if error occurs
@@ -35,25 +35,25 @@ then
     MAX_LOG_LEVEL=6
 fi
 
-DEBUG_ENABLED=1
+BUILD_TYPE="Debug"
 UNITTESTS_COMPILE=0
 COLLECT_COVERAGE=0
 
 prepare_build() {
-    mkdir -p build;
-    cd build;
-    cmake -DKAA_DEBUG_ENABLED=$DEBUG_ENABLED -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE .. -DCMAKE_C_FLAGS="-Werror";
+    mkdir -p build-posix
+    cd build-posix
+    cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE .. -DCMAKE_C_FLAGS="-Werror"
     cd ..
 }
 
 build() {
-    cd build
+    cd build-posix
     make
     cd ..
 }
 
 execute_tests() {
-    cd build
+    cd build-posix
     ctest --output-on-failure .
     cd ..
 }
@@ -87,7 +87,7 @@ check_installed_software() {
 
 run_valgrind() {
     echo "Starting valgrind..."
-    cd build
+    cd build-posix
     if [ ! -d valgrindReports ]
     then
         mkdir valgrindReports
@@ -108,15 +108,15 @@ run_valgrind() {
 
 run_cppcheck() {
     echo "Starting Cppcheck..."
-    cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build/cppcheck_.xml > build/cppcheck.log
-    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build/cppcheck_.xml > build/cppcheck.xml
-    rm build/cppcheck_.xml
+    cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build-posix/cppcheck_.xml > build-posix/cppcheck.log
+    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build-posix/cppcheck_.xml > build-posix/cppcheck.xml
+    rm build-posix/cppcheck_.xml
     echo "Cppcheck analysis finished."
 }
 
 run_rats() {
     echo "Starting RATS..."
-    rats --xml `find src/ -name *.[ch]` > build/rats-report.xml
+    rats --xml `find src/ -name *.[ch]` > build-posix/rats-report.xml
     echo "RATS analysis finished."
 }
 
@@ -137,14 +137,14 @@ run_analysis() {
 }
 
 clean() {
-    if [ -d build ]
+    if [ -d build-posix ]
     then
-        cd build
+        cd build-posix
         if [ -f Makefile ]
         then
             make clean
         fi
-        cd .. && rm -r build
+        cd .. && rm -r build-posix
     fi
 }
 
@@ -160,7 +160,7 @@ case "$cmd" in
     ;;
 
     install)
-        cd build && make install && cd ..
+        cd build-posix && make install && cd ..
     ;;
 
     test)

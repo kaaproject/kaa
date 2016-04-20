@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.common.avro;
@@ -46,7 +46,8 @@ public class GenericAvroConverter<T extends GenericContainer> {
     private static final Logger LOG = LoggerFactory
             .getLogger(GenericAvroConverter.class);
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset ENCODING_CHARSET = Charset.forName("UTF-8");
+    private static final Charset DECODING_CHARSET = Charset.forName("ISO-8859-1");
 
     private Schema schema;
     private DatumReader<T> datumReader;
@@ -119,7 +120,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public T decodeJson(byte[] data) throws IOException {
-        return decodeJson(new String(data, UTF8), null);
+        return decodeJson(new String(data, DECODING_CHARSET), null);
     }
 
     /**
@@ -143,7 +144,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public String encodeToJson(T record) throws IOException{
-        return new String(encodeToJsonBytes(record), UTF8);
+        return new String(encodeToJsonBytes(record), ENCODING_CHARSET);
     }
 
     /**

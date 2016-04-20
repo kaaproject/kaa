@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.service;
@@ -191,6 +191,10 @@ public class CTLServiceImpl implements CTLService {
                     dataSchema, new RawDataFactory());
             unSavedSchema.setDefaultRecord(dataProcessor.getRootData().getRawData());
             return unSavedSchema;
+        } catch (StackOverflowError e) {
+            LOG.error("Failed to generate default record. An endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), e);
+            throw new RuntimeException("Unable to generate default record. An endless recursion is detected! "
+                    + "Please check non-optional references to nested types.");
         } catch (ConfigurationGenerationException | IOException | RuntimeException e) {
             LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
             throw new RuntimeException("An unexpected exception occured: " + e.toString());

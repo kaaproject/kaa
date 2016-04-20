@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdint.h>
@@ -102,14 +102,14 @@ void test_specified_user_verifier(void **state)
     size_t expected_size = 0;
     ASSERT_EQUAL(kaa_user_request_get_size(user_manager, &expected_size), KAA_ERR_NONE);
 
-    char buffer[expected_size];
+    uint8_t buffer[expected_size];
     kaa_platform_message_writer_t *writer = NULL;
     ASSERT_EQUAL(kaa_platform_message_writer_create(&writer, buffer, expected_size), KAA_ERR_NONE);
     ASSERT_NOT_NULL(writer);
 
     ASSERT_EQUAL(kaa_user_request_serialize(user_manager, writer), KAA_ERR_NONE);
 
-    char *buf_cursor = buffer;
+    uint8_t *buf_cursor = buffer;
     ASSERT_EQUAL(KAA_EXTENSION_USER, KAA_HTONS(*(uint16_t*)buf_cursor));
     buf_cursor += sizeof(uint16_t);
 
@@ -151,7 +151,7 @@ void test_success_response(void **state)
 {
     (void)state;
 
-    char success_response[] = {
+    uint8_t success_response[] = {
             /*  bit 0   */   0x00, 0x00, 0x00, 0x00,    /* User attach response field. Result - success */
             /*  bit 32  */   0x01, 0x07, 0x00, 0x05,    /* User attach notification field */
             /*  bit 64  */   'u', 's', 'e', 'r',
@@ -181,7 +181,7 @@ void test_failed_response(void **state)
 {
     (void)state;
 
-    char failed_response[] = {
+    uint8_t failed_response[] = {
             /*  bit 0   */   0x00, 0x00, 0x01, 0x00,    /* User attach response field. Result - success */
             /*  bit 32  */   0x00, 0x04, 0x00, 0x14,    /* User attach notification field */
             /*  bit 64  */   'B', 'a', 'd', ' ',

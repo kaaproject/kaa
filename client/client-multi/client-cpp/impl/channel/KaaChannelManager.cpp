@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "kaa/channel/KaaChannelManager.hpp"
@@ -58,7 +58,7 @@ void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
     }
 }
 
-void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo) {
+void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
@@ -80,7 +80,7 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
         if (nextConnectionInfo) {
             onTransportConnectionInfoUpdated(nextConnectionInfo);
         } else {
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::BOOTSTRAP_SERVERS_NA);
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
             switch (decision.getAction()) {
                  case FailoverStrategyAction::NOOP:
                      KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -107,7 +107,7 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
              }
         }
     } else {
-        bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId());
+        bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId(), reason);
     }
 }
 
@@ -139,7 +139,8 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     for (auto& channel : channels_) {
         if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId() == protocolId) {
             KAA_LOG_DEBUG(boost::format("Setting a new connection data for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+                          % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+
             channel->setServer(connectionInfo);
         }
     }

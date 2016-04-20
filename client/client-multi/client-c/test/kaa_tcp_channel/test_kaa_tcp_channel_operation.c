@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -33,6 +33,7 @@
 #include "platform/ext_tcp_utils.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
+#include <kaa_common.h>
 
 #define ACCESS_POINT_SOCKET_FD 5
 
@@ -558,6 +559,8 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
+    assert_int_equal(KAA_ERR_NONE, error_code);
+
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
     access_point.id = 10;
@@ -718,28 +721,23 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     return KAA_ERR_BADPARAM;
 }
 
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size)
+kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
+        const extension_id *services, size_t services_count,
+        char **buffer, size_t *buffer_size)
 {
-    (void)self;
-    (void)buffer_size;
-    if (info->services_count == 4
-            && info->services[0] == KAA_EXTENSION_PROFILE
-            && info->services[1] == KAA_EXTENSION_USER
-            && info->services[2] == KAA_EXTENSION_EVENT
-            && info->services[3] == KAA_EXTENSION_LOGGING) {
-        if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
-            if (alloc_buffer) {
-                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-                *buffer = alloc_buffer;
-                *buffer_size = sizeof(CONNECT_PACK);
-                return KAA_ERR_NONE;
-            }
-        }
 
+    if (services_count == 4
+            && services[0] == KAA_EXTENSION_PROFILE
+            && services[1] == KAA_EXTENSION_USER
+            && services[2] == KAA_EXTENSION_EVENT
+            && services[3] == KAA_EXTENSION_LOGGING) {
+        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+        if (alloc_buffer) {
+            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+            *buffer = alloc_buffer;
+            *buffer_size = sizeof(CONNECT_PACK);
+            return KAA_ERR_NONE;
+        }
     }
 
     return KAA_ERR_BADPARAM;
