@@ -28,6 +28,7 @@ import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
@@ -96,8 +97,10 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         LOG.debug("Received Notification from control server {}", notification);
         LOG.debug("Going to notify cache service..");
         processCacheNotification(notification);
-        LOG.debug("Going to notify akka service..");
-        akkaService.onNotification(notification);
+        if (notification.getOp() != Operation.APP_UPDATE) {
+            LOG.debug("Going to notify akka service..");
+            akkaService.onNotification(notification);
+        }
     }
 
     /*
@@ -145,6 +148,11 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         ApplicationDto appDto = applicationService.findAppById(notification.getAppId());
         LOG.debug("Processing cache notification {} for app {}", notification, appDto);
         if (appDto != null) {
+            if (notification.getOp() == Operation.APP_UPDATE) {
+                LOG.debug("Reseting application info {}", appDto.getId());
+                cacheService.resetAppById(appDto.getId());
+                return;
+            }
             if (notification.getProfileFilterId() != null) {
                 ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
                 LOG.debug("Processing filter  {}", filterDto); 

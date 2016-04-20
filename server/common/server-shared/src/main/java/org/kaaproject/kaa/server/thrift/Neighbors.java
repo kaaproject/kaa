@@ -91,7 +91,11 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     }
 
     public void brodcastMessages(Collection<V> msgs) {
+        if(LOG.isTraceEnabled()){
+            LOG.trace("Broadcasting {} msgs to {} neighbors", msgs.size(), neigbors.values().size());
+        }
         for (NeighborConnection<T, V> neighbor : neigbors.values()) {
+            LOG.trace("Broadcasting to {} neighbor", neighbor);
             try {
                 neighbor.sendMessages(msgs);
             } catch (InterruptedException e) {

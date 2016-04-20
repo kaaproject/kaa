@@ -773,6 +773,18 @@ public class ConcurrentCacheService implements CacheService {
     }
     
     @Override
+    @Cacheable("apps")
+    public ApplicationDto findAppById(String applicationId) {
+        return applicationService.findAppById(applicationId);
+    }
+
+    @Override
+    @CacheEvict(value = "apps", key = "#applicationId")
+    public void resetAppById(String applicationId) {
+        return;
+    }
+    
+    @Override
     @Cacheable("appIds")
     public String getApplicationIdByAppToken(String key) {
         return appTokenMemorizer.compute(key, new Computable<String, String>() {

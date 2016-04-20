@@ -68,7 +68,7 @@ public class CredentialsMongoDao extends AbstractMongoDao<MongoCredentials, Byte
 
     @Override
     public Optional<MongoCredentials> updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
-        LOG.debug("Settings status [{}] for credentials [{}] in application [{}]", status.toString(), credentialsId, applicationId);
+        LOG.debug("Settings status [{}] for credentials [{}] in application [{}]", status, credentialsId, applicationId);
         updateFirst(
                 Query.query(Criteria.where(MongoModelConstants.CREDENTIALS_ID).is(credentialsId).and(MongoModelConstants.APPLICATION_ID).is(applicationId)),
                 Update.update(MongoModelConstants.CREDENTIAL_STATUS, status));

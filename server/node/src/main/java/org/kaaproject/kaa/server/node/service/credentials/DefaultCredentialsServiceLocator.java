@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +46,14 @@ public final class DefaultCredentialsServiceLocator implements CredentialsServic
     public static final String DEFAULT_CREDENTIALS_SERVICE_NAME = "Trustful";
 
     @Autowired
-    private ApplicationService applicationService;
+    private CacheService cacheService;
 
     @Resource
     private Map<String, CredentialsServiceLocator> credentialsServiceLocatorMap;
 
     @Override
     public CredentialsService getCredentialsService(String applicationId) {
-        String serviceName = this.applicationService.findAppById(applicationId).getCredentialsServiceName();
+        String serviceName = this.cacheService.findAppById(applicationId).getCredentialsServiceName();
         if (StringUtils.isBlank(serviceName)) {
             serviceName = DEFAULT_CREDENTIALS_SERVICE_NAME;
             LOG.debug("No credentials service configured for application [{}], using [{}]", applicationId, serviceName);

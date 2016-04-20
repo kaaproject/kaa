@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.control.service;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -483,7 +484,17 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException {
-        return applicationService.saveApp(application);
+        boolean update = !isEmpty(application.getId());
+        ApplicationDto appDto = applicationService.saveApp(application);
+        if (update) {
+            LOG.info("[{}] Broadcasting notification about application {} update.", application.getId(), application.getApplicationToken());
+            Notification thriftNotification = new Notification();
+            thriftNotification.setAppId(appDto.getId());
+            thriftNotification.setAppSeqNumber(appDto.getSequenceNumber());
+            thriftNotification.setOp(Operation.APP_UPDATE);
+            controlZKService.sendEndpointNotification(thriftNotification);
+        }
+        return appDto;
     }
 
     /*

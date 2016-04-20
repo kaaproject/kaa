@@ -204,9 +204,6 @@ public class EncDecActorMessageProcessor {
         if (isSDKTokenValid(sdkToken)) {
             String appToken = getAppToken(sdkToken);
             verifyEndpoint(key, appToken);
-
-            // TODO: fetch credentials and validate them
-            // TODO: execute separate call for device registration if needed.
             SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
                     message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(),
                     message.isEncrypted());

@@ -409,4 +409,8 @@ public interface CacheService {
     TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry);
 
     TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash);
+
+    ApplicationDto findAppById(String applicationId);
+    
+    void resetAppById(String applicationId);
 }
