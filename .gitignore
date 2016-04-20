@@ -23,8 +23,8 @@ bin/
 **/dependency-reduced-pom.xml
 server/common/server-shared/src/main/java/org/kaaproject/kaa/server/common/Version.java
 pom.xml.versionsBackup
-server/common/dao/src/main/resources/dao.properties
 server/common/dao/src/main/resources/sql-dao.properties
+server/node/src/main/resources/admin-dao.properties
 build/
 DerivedData
 Pods/
