@@ -298,6 +298,10 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "topic/" + topicId, TopicDto.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getTopicsByApplicationToken(String)}
+    */
+    @Deprecated
     public List<TopicDto> getTopicsByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {
         };
@@ -411,6 +415,10 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "logSchema/" + logSchemaId, LogSchemaDto.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getSchemaVersionsByApplicationToken(String)}
+    */
+    @Deprecated
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws Exception {
         return restTemplate.getForObject(restTemplate.getUrl() + "schemaVersions/" + applicationId, SchemaVersions.class);
     }
@@ -419,6 +427,10 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "schemaVersionsByAppToken/" + applicationToken, SchemaVersions.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getConfigurationSchemasByAppToken(String)}
+    */
+    @Deprecated
     public List<ConfigurationSchemaDto> getConfigurationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {
         };
@@ -443,6 +455,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getServerProfileSchemasByAppToken(String)}
+    */
+    @Deprecated
     public List<ServerProfileSchemaDto> getServerProfileSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ServerProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<ServerProfileSchemaDto>>() {
         };
@@ -459,6 +475,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getNotificationSchemasByAppToken(String)}
+    */
+    @Deprecated
     public List<NotificationSchemaDto> getNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<NotificationSchemaDto>> typeRef = new ParameterizedTypeReference<List<NotificationSchemaDto>>() {
         };
@@ -475,6 +495,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getUserNotificationSchemasByAppToken(String)}
+    */
+    @Deprecated
     public List<VersionDto> getUserNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<VersionDto>> typeRef = new ParameterizedTypeReference<List<VersionDto>>() {
         };
@@ -491,6 +515,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getLogSchemasByAppToken(String)}
+    */
+    @Deprecated
     public List<LogSchemaDto> getLogSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<LogSchemaDto>> typeRef = new ParameterizedTypeReference<List<LogSchemaDto>>() {
         };
@@ -541,6 +569,10 @@ public class AdminClient {
         restTemplate.postForLocation(restTemplate.getUrl() + "delEndpointGroup", params);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getEndpointGroupsByAppToken(String)}
+    */
+    @Deprecated
     public List<EndpointGroupDto> getEndpointGroups(String applicationId) throws Exception {
         ParameterizedTypeReference<List<EndpointGroupDto>> typeRef = new ParameterizedTypeReference<List<EndpointGroupDto>>() {
         };
@@ -739,6 +771,10 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "applicationEventMap/" + aefMapId, ApplicationEventFamilyMapDto.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getApplicationEventFamilyMapsByApplicationToken(String)}
+    */
+    @Deprecated
     public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ApplicationEventFamilyMapDto>> typeRef = new ParameterizedTypeReference<List<ApplicationEventFamilyMapDto>>() {
         };
@@ -755,6 +791,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getVacantEventClassFamiliesByApplicationToken(String)}
+    */
+    @Deprecated
     public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<EcfInfoDto>> typeRef = new ParameterizedTypeReference<List<EcfInfoDto>>() {
         };
@@ -771,6 +811,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getEventClassFamiliesByApplicationToken(String)}
+    */
+    @Deprecated
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<AefMapInfoDto>> typeRef = new ParameterizedTypeReference<List<AefMapInfoDto>>() {
         };
@@ -795,6 +839,10 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "logAppender/" + logAppenderId, LogAppenderDto.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getLogAppendersByAppToken(String)}
+    */
+    @Deprecated
     public List<LogAppenderDto> getLogAppenders(String applicationId) throws Exception {
         ParameterizedTypeReference<List<LogAppenderDto>> typeRef = new ParameterizedTypeReference<List<LogAppenderDto>>() {
         };
@@ -821,6 +869,10 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "userVerifier/" + userVerifierId, UserVerifierDto.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getUserVerifiersByApplicationToken(String)}
+    */
+    @Deprecated
     public List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) {
         ParameterizedTypeReference<List<UserVerifierDto>> typeRef = new ParameterizedTypeReference<List<UserVerifierDto>>() {
         };
@@ -863,6 +915,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    *  @deprecated  As of release 0.9.0, replaced by {@link #getSdkProfilesByApplicationToken(String)}
+    */
+    @Deprecated
     public List<SdkProfileDto> getSdkProfiles(String applicationId) throws Exception {
         ParameterizedTypeReference<List<SdkProfileDto>> typeRef = new ParameterizedTypeReference<List<SdkProfileDto>>() {
         };
@@ -925,6 +981,10 @@ public class AdminClient {
         return data;
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #downloadCtlSchemaByAppToken(CTLSchemaDto, CTLSchemaExportMethod, String)}
+    */
+    @Deprecated
     public FileData downloadCtlSchema(CTLSchemaDto ctlSchemaDto, CTLSchemaExportMethod method) {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
@@ -1088,6 +1148,10 @@ public class AdminClient {
         return bar;
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #saveCTLSchemaWithAppToken(String, String, String)}
+    */
+    @Deprecated
     public CTLSchemaDto saveCTLSchema(String body, String tenantId, String applicationId) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("body", body);
@@ -1112,6 +1176,10 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "CTL/appToken/saveSchema", params, CTLSchemaDto.class);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String, Integer, String, String)}
+    */
+    @Deprecated
     public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
                                                                     Integer version,
                                                                     String tenantId,
@@ -1144,6 +1212,10 @@ public class AdminClient {
         restTemplate.postForLocation(restTemplate.getUrl() + "CTL/appToken/deleteSchema", params);
     }
 
+    /**
+     * @deprecated  As of release 0.9.0, replaced by {@link #getCTLSchemaByFqnVersionTenantIdAndApplicationToken(String, Integer, String, String)}
+     */
+    @Deprecated
     public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) {
         if (tenantId != null && applicationId != null) {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}&applicationId={applicationId}", CTLSchemaDto.class, fqn, version, tenantId, applicationId);
@@ -1170,6 +1242,10 @@ public class AdminClient {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchemaById?id={id}", CTLSchemaDto.class, id);
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #checkFqnExistsWithAppToken(String, String, String)}
+    */
+    @Deprecated
     public boolean checkFqnExists(String fqn, String tenantId, String applicationId) {
         if (tenantId != null && applicationId != null) {
             return restTemplate.getForObject(restTemplate.getUrl() + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}&applicationId={applicationId}",
@@ -1210,6 +1286,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    /**
+    * @deprecated  As of release 0.9.0, replaced by {@link #getApplicationLevelCTLSchemasByAppToken(String)}
+    */
+    @Deprecated
     public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
