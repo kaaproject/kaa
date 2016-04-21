@@ -15,6 +15,7 @@
 #
 
 { stdenv, cmake, pkgconfig, boost, avro-cpp, botanUnstable, sqlite, python
+, which
 }:
 
 stdenv.mkDerivation {
@@ -28,5 +29,6 @@ stdenv.mkDerivation {
     botanUnstable
     sqlite
     python
+    which
   ];
 }

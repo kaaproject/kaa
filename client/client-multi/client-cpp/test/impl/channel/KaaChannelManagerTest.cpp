@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(AddChannelTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     IDataChannelPtr fakeChannel(nullptr);
     BOOST_CHECK_THROW(channelManager.addChannel(fakeChannel), KaaException);
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(RemoveChannelTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     IDataChannelPtr fakeChannel(nullptr);
     BOOST_CHECK_THROW(channelManager.removeChannel(fakeChannel), KaaException);
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(GetChannelBySomeCriteriaTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     auto configurationCh = channelManager.getChannelByTransportType(TransportType::CONFIGURATION);
     BOOST_CHECK(!configurationCh);
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(ClearChannelsTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
     UserDataChannel* tmp = new UserDataChannel;
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE(ServerUpdateTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     ITransportConnectionInfoPtr fakeServer;
     BOOST_CHECK_THROW(channelManager.onTransportConnectionInfoUpdated(fakeServer), KaaException);
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
                                 };
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, servers, clientContext);
+    KaaChannelManager channelManager(BootstrapManager, servers, clientContext, nullptr);
 
     IFailoverStrategyPtr failoverStrategy(std::make_shared<DefaultFailoverStrategy>());
     channelManager.setFailoverStrategy(failoverStrategy);
@@ -451,7 +451,7 @@ BOOST_AUTO_TEST_CASE(SetChannelTest)
 
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
     userCh1->id_ = ch1Id;
@@ -480,7 +480,7 @@ BOOST_AUTO_TEST_CASE(SetChannelNegativeTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
     ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
@@ -498,7 +498,7 @@ BOOST_AUTO_TEST_CASE(ShutdownTest)
 {
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
     ConfLogDataChannel* userCh1 = new ConfLogDataChannel;
@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(PauseBeforeAddTest)
 
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
 
@@ -538,7 +538,7 @@ BOOST_AUTO_TEST_CASE(PauseAfterAddTest)
 
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
 
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(PauseBeforeSetTest)
 
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
     userCh1->id_ = ch1Id;
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(ResumetTest)
 
     MockBootstrapManager BootstrapManager;
     KaaClientContext clientContext(properties, tmp_logger, context, state);
-    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext);
+    KaaChannelManager channelManager(BootstrapManager, getBootstrapServers(), clientContext, nullptr);
 
     const std::string ch1Id("id1");
     userCh1->id_ = ch1Id;

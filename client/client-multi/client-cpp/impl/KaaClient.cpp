@@ -64,8 +64,8 @@ void KaaClient::init()
 
     initClientKeys();
     context_.setStatus(status_);
-    bootstrapManager_.reset(new BootstrapManager(context_));
-    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers(), context_));
+    bootstrapManager_.reset(new BootstrapManager(context_, this));
+    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers(), context_, this));
     failoverStrategy_.reset(new DefaultFailoverStrategy);
     channelManager_->setFailoverStrategy(failoverStrategy_);
     profileManager_.reset(new ProfileManager(context_));
@@ -264,7 +264,7 @@ void KaaClient::initKaaTransport()
     channelManager_->addChannel(bootstrapChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, context_));
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, context_, this));
     opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
     opsTcpChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());

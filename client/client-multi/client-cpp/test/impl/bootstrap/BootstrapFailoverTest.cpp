@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstdint>
 
+#include "kaa/KaaClient.hpp"
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/failover/DefaultFailoverStrategy.hpp"
@@ -44,7 +45,7 @@ BOOST_AUTO_TEST_CASE(BootstrapEmptyOperationalServersListTest)
     SimpleExecutorContext exeContext;
     IKaaClientStateStoragePtr status (new MockKaaClientStateStorage);
     KaaClientContext context(properties, tmp_logger, exeContext, status);
-    BootstrapManager bootstrapManager(context);
+    BootstrapManager bootstrapManager(context, nullptr);
     IFailoverStrategyPtr failoverStrategy(std::make_shared<DefaultFailoverStrategy>());
     MockChannelManager channelManager;
     std::vector<ProtocolMetaData> operationServers;
