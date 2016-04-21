@@ -75,7 +75,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     @Override
-    public void useNextOperationsServer(TransportProtocolId transportId) {
+    public void useNextOperationsServer(TransportProtocolId transportId, FailoverStatus status) {
         if (mappedOperationServerList != null && !mappedOperationServerList.isEmpty()) {
             if (mappedIterators.get(transportId).hasNext()) {
                 ProtocolMetaData nextOperationsServer = mappedIterators.get(transportId).next();
@@ -90,8 +90,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 }
             } else {
                 LOG.warn("Failed to find server for channel [{}]", transportId);
-                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.OPERATION_SERVERS_NA);
-                applyDecision(decision);
+                resolveFailoverStatus(status);
             }
         } else {
             throw new BootstrapRuntimeException("Operations Server list is empty");
@@ -153,8 +152,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
 
         if (operationsServerList == null || operationsServerList.isEmpty()) {
             LOG.trace("Received empty operations server list");
-            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_OPERATION_SERVERS_RECEIVED);
-            applyDecision(decision);
+            resolveFailoverStatus(FailoverStatus.NO_OPERATION_SERVERS_RECEIVED);
             return;
         }
 
@@ -185,7 +183,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
         }
     }
 
-    private void applyDecision(FailoverDecision decision) {
+    private void resolveFailoverStatus(FailoverStatus status) {
+        FailoverDecision decision = failoverManager.onFailover(status);
         switch (decision.getAction()) {
             case NOOP:
                 LOG.warn("No operation is performed according to failover strategy decision");
@@ -208,7 +207,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
             case USE_NEXT_BOOTSTRAP:
                 LOG.warn("Trying to switch to the next bootstrap server according to failover strategy decision");
                 retryPeriod = decision.getRetryPeriod();
-                failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP));
+                failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP), status);
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
                     public void run() {

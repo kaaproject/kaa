@@ -27,12 +27,13 @@ public interface FailoverManager {
     /**
      * Needs to be invoked when a server fail occurs.
      *
-     * @param connectionInfo
-     *                       the connection information of the failed server.
+     * @param connectionInfo the connection information of the failed server.
+     * @param status
+     *
      *
      * @see org.kaaproject.kaa.client.channel.TransportConnectionInfo
      */
-    void onServerFailed(TransportConnectionInfo connectionInfo);
+    void onServerFailed(TransportConnectionInfo connectionInfo, FailoverStatus status);
 
     /**
      * Needs to be invoked as soon as current server is changed.
