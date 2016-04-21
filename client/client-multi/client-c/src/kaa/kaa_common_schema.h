@@ -40,23 +40,23 @@ extern "C" {
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
 
 /**
- * @brief This is like a parent class both for @typedef deserialize_wo_ctx_fn
- * and @typedef deserialize_w_ctx_fn that is why it has an empty parameter list instead of using <i>void</i>.
+ * @brief This is like a parent class both for @ref deserialize_wo_ctx_fn
+ * and @ref deserialize_w_ctx_fn that is why it has an empty parameter list instead of using @c void.
  *
  * @note It is not expected to use it explicitly. It is used under the hood of Avro Gen C.
  *
  * It is a workaround to specify different type of a deserializer. For now there is two kinds - with and without context.
- * Now a context is used to deserialize the fixed Avro type. See @link kaa_fixed_deserialize() @endlink.
+ * Now a context is used to deserialize the fixed Avro type. See @ref kaa_fixed_deserialize().
  */
 typedef void *(*deserialize_fn)();
 
 /**
- * @brief See @typedef deserialize_fn.
+ * @brief See @ref deserialize_fn.
  */
 typedef void *(*deserialize_wo_ctx_fn)(avro_reader_t reader);
 
 /**
- * @brief See @typedef deserialize_fn.
+ * @brief See @ref deserialize_fn.
  */
 typedef void *(*deserialize_w_ctx_fn)(avro_reader_t reader, void *context);
 

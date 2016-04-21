@@ -15,7 +15,7 @@
  */
 
 /**
- * @file kaa_bootstrap.h
+ * @file
  * @brief Management of the Operations servers connection parameters.
  *
  * Manages connection parameters to Operations servers that are received from Bootstrap servers.
@@ -54,6 +54,7 @@ typedef enum {
  * @param[in]   self           Bootstrap manager.
  * @param[in]   protocol_id    Transport protocol id that failed access point belongs to.
  * @param[in]   type           Server type that failed access point belongs to.
+ * @param[in]   reason_code    The reason of failure.
  * @return                     Error code.
  *
  * @see kaa_transport_protocol_id_t
