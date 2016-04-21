@@ -28,7 +28,7 @@
 <code>$ ./build.sh compile</code>
 
 <h3>Link Kaa library to your project</h3>
-<p>Drag and drop Kaa XCode project workspace as sub-module to your project and add libKaa.a binary to "Link Binary with Libraries" in Build Phases tab. In Build Settings tab find property called "Other Linker Flags" and set it's value to -ObjC. In Build Settings tab find property called "User Header Search Paths" and set it's value to "$(BUILT_PRODUCTS_DIR)" and switch value in right column to recursive.
+<p>Drag and drop Kaa XCode project workspace as sub-module to your project and add Kaa.framework binary to "Link Binary with Libraries" in Build Phases tab. Add new "Copy Files" phase, set its destination to "Frameworks" and add Kaa.framework there. In Build Settings tab find property called "Other Linker Flags" and set it's value to -ObjC. In Build Settings tab find property called "Header Search Paths" and set it's value to "$(BUILT_PRODUCTS_DIR)" and switch value in right column to recursive. In Build Settings tab find property "Allow Non-modular Includes In Framework Modules" and set its value to "Yes".
 </p>
 
 <h2>Programming guide</h2>

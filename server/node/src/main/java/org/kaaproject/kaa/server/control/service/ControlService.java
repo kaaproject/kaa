@@ -1383,8 +1383,9 @@ public interface ControlService {
      * @throws ControlServiceException
      *             - if an exception occures.
      */
-    CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
-    
+    CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId)
+            throws ControlServiceException;
+
     /**
      * Returns a CTL schema with the given meta info id and version.
      *

@@ -119,6 +119,43 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     }
 
     /**
+     * Test get configuration schemas by application token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetConfigurationSchemasByApplicationToken() throws Exception {
+
+        List<ConfigurationSchemaDto> configurationSchemas  = new ArrayList<ConfigurationSchemaDto>(11);
+        ApplicationDto application = createApplication(tenantAdminDto);
+
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+        List<ConfigurationSchemaDto> defaultConfigurationSchemas = client.getConfigurationSchemasByAppToken(application.getApplicationToken());
+        configurationSchemas.addAll(defaultConfigurationSchemas);
+
+        for (int i=0;i<10;i++) {
+            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
+            configurationSchemas.add(configurationSchema);
+        }
+
+        Collections.sort(configurationSchemas, new IdComparator());
+
+        List<ConfigurationSchemaDto> storedConfigurationSchemas = client.getConfigurationSchemasByAppToken(application.getApplicationToken());
+
+        Collections.sort(storedConfigurationSchemas, new IdComparator());
+
+        Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
+        for (int i=0;i<configurationSchemas.size();i++) {
+            ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
+            ConfigurationSchemaDto storedConfigurationSchema = storedConfigurationSchemas.get(i);
+            Assert.assertEquals(configurationSchema.getId(), storedConfigurationSchema.getId());
+            Assert.assertEquals(configurationSchema.getApplicationId(), storedConfigurationSchema.getApplicationId());
+            Assert.assertEquals(configurationSchema.getStatus(), storedConfigurationSchema.getStatus());
+        }
+    }
+
+    /**
      * Test get configuration schema versions by application id.
      *
      * @throws Exception the exception
@@ -143,6 +180,43 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
 
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(application.getId());
         
+        List<VersionDto> storedConfigurationSchemas = schemaVersions.getConfigurationSchemaVersions();
+
+        Collections.sort(storedConfigurationSchemas, new IdComparator());
+
+        Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
+        for (int i=0;i<configurationSchemas.size();i++) {
+            ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
+            VersionDto storedConfigurationSchema = storedConfigurationSchemas.get(i);
+            assertSchemasEquals(configurationSchema, storedConfigurationSchema);
+        }
+    }
+
+    /**
+     * Test get configuration schema versions by application Token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetConfigurationSchemaVersionsByApplicationToken() throws Exception {
+
+        List<ConfigurationSchemaDto> configurationSchemas  = new ArrayList<ConfigurationSchemaDto>(11);
+        ApplicationDto application = createApplication(tenantAdminDto);
+
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+        List<ConfigurationSchemaDto> defaultConfigurationSchemas = client.getConfigurationSchemasByAppToken(application.getApplicationToken());
+        configurationSchemas.addAll(defaultConfigurationSchemas);
+
+        for (int i=0;i<10;i++) {
+            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
+            configurationSchemas.add(configurationSchema);
+        }
+
+        Collections.sort(configurationSchemas, new IdComparator());
+
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+
         List<VersionDto> storedConfigurationSchemas = schemaVersions.getConfigurationSchemaVersions();
 
         Collections.sort(storedConfigurationSchemas, new IdComparator());

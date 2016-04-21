@@ -223,7 +223,7 @@ public class CTLServiceImpl implements CTLService {
             throw new DatabaseProcessingException("Can't find common type version by id.");
         }
     }
-    
+
     @Override
     public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
         validateObject(ctlSchemaMetaInfo, "Incorrect ctl schema meta info object");
@@ -245,7 +245,7 @@ public class CTLServiceImpl implements CTLService {
             throw new DatabaseProcessingException("Can't find common type by id.");
         }
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
         if (isBlank(fqn)) {
@@ -254,7 +254,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find sibling ctl schemas by fqn {}, tenant id {} and application id {}", fqn, tenantId, applicationId);
         return convertDtoList(ctlSchemaMetaInfoDao.findSiblingsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId));
     }
-    
+
     private boolean checkScopeUpdate(CTLSchemaMetaInfoDto newSchemaMetaInfo, CTLSchemaMetaInfoDto prevSchemaMetaInfo) {
         if (!newSchemaMetaInfo.equals(prevSchemaMetaInfo)) {
             if (isBlank(newSchemaMetaInfo.getFqn())) {
@@ -330,7 +330,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find ctl schema by fqn {} version {}, tenant id {} and application id {}", fqn, version, tenantId, applicationId);
         return DaoUtil.getDto(ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId));
     }
-    
+
     @Override
     public CTLSchemaDto findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
         if (isBlank(metaInfoId) || version == null) {
@@ -349,7 +349,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find any ctl schema by fqn {} version {}, tenant id {} and application id {}", fqn, version, tenantId, applicationId);
         return DaoUtil.getDto(ctlSchemaDao.findAnyByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId));
     }
-    
+
     @Override
     public List<CTLSchemaDto> findSystemCTLSchemas() {
         LOG.debug("Find system ctl schemas");
@@ -367,7 +367,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find system and tenant scopes ctl schemas by tenant id {}", tenantId);
         return getMetaInfoFromCTLSchema(ctlSchemaDao.findAvailableSchemasForTenant(tenantId));
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfoForApplication(String tenantId, String applicationId) {
         LOG.debug("Find system, tenant and application scopes ctl schemas by application id {}", applicationId);
@@ -380,14 +380,14 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find latest ctl schema by fqn {}, tenantId {} and applicationId {}", fqn, tenantId, applicationId);
         return DaoUtil.getDto(ctlSchemaDao.findLatestByFqnAndTenantIdAndApplicationId(fqn, tenantId, applicationId));
     }
-    
+
     @Override
     public CTLSchemaDto findLatestByMetaInfoId(String metaInfoId) {
         validateString(metaInfoId, "Incorrect meta info id for ctl schema request.");
         LOG.debug("Find latest ctl schema by meta info id {}", metaInfoId);
         return DaoUtil.getDto(ctlSchemaDao.findLatestByMetaInfoId(metaInfoId));
     }
-    
+
     @Override
     public List<CTLSchemaDto> findAllCTLSchemasByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
         validateString(fqn, "Incorrect fqn for ctl schema request.");
@@ -460,7 +460,7 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaMetaInfoDto> result = new ArrayList<>(metaInfoMap.values());
         return result;
     }
-    
+
     @Override
     public FileData shallowExport(CTLSchemaDto schema) {
         try {

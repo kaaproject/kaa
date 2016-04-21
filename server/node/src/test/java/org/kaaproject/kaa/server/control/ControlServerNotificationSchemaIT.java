@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -79,7 +80,24 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         Assert.assertEquals(2, foundSchema.size());
         Assert.assertEquals(schemaDto, foundSchema.get(1));
     }
-    
+
+    /**
+     * Test get notification schemas by app token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetNotificationSchemasByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        NotificationSchemaDto schemaDto = createNotificationSchema(application.getId(), NotificationTypeDto.SYSTEM);
+        Assert.assertNotNull(schemaDto.getId());
+        LOG.debug("Create notification schema with id {}", schemaDto.getId());
+        List<NotificationSchemaDto> foundSchema = client.getNotificationSchemasByAppToken(application.getApplicationToken());
+        Assert.assertFalse(foundSchema.isEmpty());
+        Assert.assertEquals(2, foundSchema.size());
+        Assert.assertEquals(schemaDto, foundSchema.get(1));
+    }
+
     /**
      * Test get user notification schemas by app id.
      *
@@ -95,7 +113,24 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         Assert.assertEquals(2, foundSchema.size());
         assertSchemasEquals(schemaDto, foundSchema.get(1));
     }
-    
+
+    /**
+     * Test get user notification schemas by app id.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetUserNotificationSchemasByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        NotificationSchemaDto schemaDto = createNotificationSchema(application.getId(), NotificationTypeDto.USER);
+        Assert.assertNotNull(schemaDto.getId());
+        LOG.debug("Create notification schema with id {}", schemaDto.getId());
+        List<VersionDto> foundSchema = client.getUserNotificationSchemasByAppToken(application.getApplicationToken());
+        Assert.assertFalse(foundSchema.isEmpty());
+        Assert.assertEquals(2, foundSchema.size());
+        assertSchemasEquals(schemaDto, foundSchema.get(1));
+    }
+
     /**
      * Test get notification schema versions by app id.
      *
@@ -113,4 +148,21 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         assertSchemasEquals(schemaDto, foundSchema.get(1));
     }
 
+    /**
+     * Test get notification schema versions by app token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetNotificationSchemaVersionsByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        NotificationSchemaDto schemaDto = createNotificationSchema(application.getId(), NotificationTypeDto.USER);
+        Assert.assertNotNull(schemaDto.getId());
+        LOG.debug("Create notification schema with id {}", schemaDto.getId());
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+        List<VersionDto> foundSchema = schemaVersions.getNotificationSchemaVersions();
+        Assert.assertFalse(foundSchema.isEmpty());
+        Assert.assertEquals(2, foundSchema.size());
+        assertSchemasEquals(schemaDto, foundSchema.get(1));
+    }
 }

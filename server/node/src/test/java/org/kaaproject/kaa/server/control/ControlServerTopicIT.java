@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
@@ -71,6 +72,22 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
         TopicDto topic = createTopic(null, TopicTypeDto.MANDATORY);
         LOG.debug("Created topic with id {}", topic.getId());
         List<TopicDto> storedTopic = client.getTopicsByApplicationId(topic.getApplicationId());
+        Assert.assertNotNull(storedTopic);
+        Assert.assertFalse(storedTopic.isEmpty());
+        Assert.assertEquals(topic, storedTopic.get(0));
+    }
+
+    /**
+     * Test get topic by app token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetTopicByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        TopicDto topic = createTopic(application.getId(), TopicTypeDto.MANDATORY);
+        LOG.debug("Created topic with id {}", topic.getId());
+        List<TopicDto> storedTopic = client.getTopicsByApplicationToken(application.getApplicationToken());
         Assert.assertNotNull(storedTopic);
         Assert.assertFalse(storedTopic.isEmpty());
         Assert.assertEquals(topic, storedTopic.get(0));
