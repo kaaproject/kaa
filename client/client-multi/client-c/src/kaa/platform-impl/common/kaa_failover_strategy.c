@@ -74,7 +74,7 @@ kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failov
         case KAA_CHANNEL_NA:
         case KAA_CREDENTIALS_REVOKED:
         case KAA_ENDPOINT_NOT_REGISTERED:
-            strategy->decision.action = KAA_STOP_APP;
+            strategy->decision.action = KAA_RETRY;
             break;
 
         default:
