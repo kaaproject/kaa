@@ -54,7 +54,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     protected Class<CTLSchema> getEntityClass() {
         return CTLSchema.class;
     }
-    
+
     private Criterion buildScopeCriterion(String tenantId, String applicationId) {
         if (isBlank(tenantId)) {
            // SYSTEM - tenantId=null && appId=null 
@@ -106,7 +106,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return schemas;
     }
-    
+
     @Override
     public List<CTLSchema> findAvailableSchemasForTenant(String tenantId) {
         LOG.debug("Searching available ctl schemas for tenant with id [{}]", tenantId);
@@ -134,7 +134,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return availableSchemas;
     }
-    
+
     @Override
     public CTLSchema findByFqnAndVerAndTenantIdAndApplicationId(String fqn, 
             Integer version, String tenantId, String applicationId) {
@@ -160,7 +160,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return ctlSchema;
     }
-    
+
     @Override
     public CTLSchema findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
         CTLSchema ctlSchema = null;
@@ -179,7 +179,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return ctlSchema;
     }
-    
+
     @Override
     public CTLSchema findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId,
             String applicationId) {
@@ -200,7 +200,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return ctlSchema;
     }
- 
+
     @Override
     public CTLSchema findLatestByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
         LOG.debug("Searching latest ctl schema by fqn [{}], tenantId [{}] and applicationId [{}]", fqn, tenantId, applicationId);
@@ -223,7 +223,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return latestSchema;
     }
-    
+
     @Override
     public CTLSchema findLatestByMetaInfoId(String metaInfoId) {
         CTLSchema latestSchema = null;
@@ -243,7 +243,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return latestSchema;
     }
-    
+
     @Override
     public List<CTLSchema> findAllByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
         LOG.debug("Searching available version of ctl schema by fqn [{}], tenantId [{}] and applicationId [{}]", fqn, tenantId, applicationId);
@@ -265,7 +265,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return schemas;
     }
-    
+
     @Override
     public List<CTLSchema> findAllByMetaInfoId(String metaInfoId) {
         LOG.debug("Searching available version of ctl schema by meta info id [{}]", metaInfoId);
@@ -280,7 +280,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return schemas;
     }
-    
+
     @Override
     public List<CTLSchema> findDependentSchemas(String schemaId) {
         LOG.debug("Searching dependents ctl schemas for schema with id [{}]", schemaId);

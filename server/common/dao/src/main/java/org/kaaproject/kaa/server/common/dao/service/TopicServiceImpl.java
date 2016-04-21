@@ -89,7 +89,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<TopicDto> findTopicsByAppId(String appId) {
-        validateId(appId, "Can't find topic. Invalid topic id " + appId);
+        validateId(appId, "Can't find topic. Invalid application id " + appId);
         return convertDtoList(topicDao.findTopicsByAppId(appId));
     }
 

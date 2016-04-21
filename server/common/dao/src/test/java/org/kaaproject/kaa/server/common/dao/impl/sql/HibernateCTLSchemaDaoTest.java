@@ -63,7 +63,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     private CTLSchemaDto systemSchema;
 
     private static final String SYSTEM_FQN = "org.kaaproject.kaa.ctl.SystemSchema";
-    
+
     @Before
     public void before() {
         clearDBData();
@@ -95,7 +95,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, new Tenant(tenant), 11, null));
         ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, null, 11, null));
     }
-    
+
     private CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
         CTLSchema ctlSchema = new CTLSchema();
         if (tenant == null) {
@@ -124,7 +124,6 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         dep = convertDtoList(ctlSchemaDao.findDependentSchemas(fourthSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
     }
-
 
     @Test
     public void testFindByFqnAndVerAndTenantIdAndApplicationId() {

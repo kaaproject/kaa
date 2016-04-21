@@ -31,7 +31,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the list of CTL schemas available in the database.
      */
     List<T> findSystemSchemas();
-    
+
     /**
      * Find available for tenant(include system scope) CTL schemas by given tenant identifier.
      *
@@ -39,7 +39,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the list of available schemas.
      */
     List<T> findAvailableSchemasForTenant(String tenantId);
-    
+
     /**
      * Find available for application(include system and tenant scope) CTL schemas by given tenant and application identifier.
      * 
@@ -56,9 +56,9 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @param version    the schema version.
      * @return the CTL schema with the given meta info id and version.
      */
-    
+
     T findByMetaInfoIdAndVer(String metaInfoId, Integer version);
-    
+
     /**
      * Find CTL schema with the given fully qualified name, version, tenant and application identifiers.
      *
@@ -91,7 +91,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the latest version of CTL schema with the given fully qualified name, tenant and application identifiers.
      */
     T findLatestByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
-    
+
     /**
      * Find the last version of CTL schema with the given meta info id.
      *
@@ -100,7 +100,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      */
     
     T findLatestByMetaInfoId(String metaInfoId);
-    
+
     /**
      * Find all available versions of CTL schema with the given fully qualified name, tenant and application identifiers.
      *
@@ -110,7 +110,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the list of available versions of CTL schema with the given fully qualified name, tenant and application identifiers.
      */
     List<T> findAllByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
-    
+
     /**
      * Find all available versions of CTL schema with the given meta info id.
      *
@@ -126,5 +126,5 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the list of dependents schemas from schema with given identifier.
      */
     List<T> findDependentSchemas(String schemaId);
-    
+
 }

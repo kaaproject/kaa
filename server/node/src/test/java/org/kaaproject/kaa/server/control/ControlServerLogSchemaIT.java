@@ -44,6 +44,20 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
     }
 
     /**
+     * Gets the log schemas by application token test.
+     *
+     * @return the log schemas by application token test
+     * @throws Exception the exception
+     */
+    @Test
+    public void getLogSchemasByApplicationTokenTest() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        LogSchemaDto logSchemaDto = createLogSchema(application.getId());
+        List<LogSchemaDto> found = client.getLogSchemasByAppToken(application.getApplicationToken());
+        Assert.assertEquals(2, found.size());
+    }
+
+    /**
      * Gets the log schemas by id test.
      *
      * @return the log schemas by id test
@@ -80,6 +94,21 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
     public void getLogSchemaVersionsByApplicationIdTest() throws Exception {
         LogSchemaDto logSchemaDto = createLogSchema();
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(logSchemaDto.getApplicationId());
+        List<VersionDto> found = schemaVersions.getLogSchemaVersions();
+        Assert.assertEquals(2, found.size());
+    }
+
+    /**
+     * Gets the log schema versions by application token test.
+     *
+     * @return the log schema versions by application token test
+     * @throws Exception the exception
+     */
+    @Test
+    public void getLogSchemaVersionsByApplicationTokenTest() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        LogSchemaDto logSchemaDto = createLogSchema(application.getId());
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
         List<VersionDto> found = schemaVersions.getLogSchemaVersions();
         Assert.assertEquals(2, found.size());
     }
