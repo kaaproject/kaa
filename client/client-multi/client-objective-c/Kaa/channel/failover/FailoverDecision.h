@@ -23,7 +23,7 @@
  */
 typedef NS_ENUM(int, FailoverStatus) {
     FailoverStatusEndpointVerificationFailed,
-    FailoverStatusCredentialsRevoked,
+    FailoverStatusEndpointCredentialsRevoked,
     FailoverStatusBootstrapServersNotAvailable,
     FailoverStatusCurrentBootstrapServerNotAvailable,
     FailoverStatusOperationsServersNotAvailable,
