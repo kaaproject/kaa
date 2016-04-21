@@ -46,13 +46,16 @@ typedef enum {
 } logging_sync_result_t;
 
 typedef struct {
-    kaa_time_t   deadline;          /**< Bucket must be threated as expired after this deadline. */
+    /** Bucket must be threated as expired after this deadline.
+     *  Already expired buckets marked with deadline equal to 0.
+     */
+    kaa_time_t   deadline;
     uint16_t     log_bucket_id;     /**< ID of bucket present in storage. */
     uint16_t     log_count;         /**< Current logs count. */
 } timeout_info_t;
 
 typedef struct {
-    size_t    size;                 /**< Bucket size. */
+    size_t    size;                 /**< Bucket size in bytes. */
     size_t    log_count;            /**< Count of logs in bucket. */
     uint16_t  id;                   /**< Bucket id. */
 } last_bucket_info_t;
@@ -233,6 +236,7 @@ static size_t remove_request(kaa_log_collector_t *self, uint16_t bucket_id)
     return logs_sent;
 }
 
+/** Handles timeout event. Must be called if timeout is occurred. */
 static void handle_timeout(kaa_log_collector_t *self)
 {
     // TODO(KAA-982): Use asserts
@@ -240,23 +244,18 @@ static void handle_timeout(kaa_log_collector_t *self)
         return;
     }
 
-    bool expire_every_entry = false;
-
     kaa_error_t err = ext_log_upload_strategy_on_timeout(self->log_upload_strategy_context);
 
-    /* Upload strategy decided to switch an access point. All pending logs are now deemed as
-     * timeouted.
-     */
-    if (err == KAA_ERR_EVENT_NOT_ATTACHED) {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Access point has beed switched. "
-                "All buckets are expired.");
-        expire_every_entry = true;
+    bool expire_every_entry = (err == KAA_ERR_EVENT_NOT_ATTACHED);
+
+    if (expire_every_entry) {
+        /* Upload strategy decided to switch an access point. All pending logs are now deemed as
+         * timeouted.
+         */
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Access point has been switched. All buckets are expired.");
     }
 
-    kaa_list_node_t *it = kaa_list_begin(self->timeouts);
-
-
-    while (it) {
+    for (kaa_list_node_t *it = kaa_list_begin(self->timeouts); it; it = kaa_list_next(it)) {
         timeout_info_t *info = kaa_list_get_data(it);
 
         if (expire_every_entry || !info->deadline) {
@@ -271,13 +270,9 @@ static void handle_timeout(kaa_log_collector_t *self)
                         &log_bucket_info);
             }
         }
-
-        it = kaa_list_next(it);
     }
 
     kaa_list_clear(self->timeouts, NULL);
-
-    return;
 }
 
 static bool is_timeout(kaa_log_collector_t *self)
@@ -285,8 +280,7 @@ static bool is_timeout(kaa_log_collector_t *self)
     kaa_time_t now = KAA_TIME();
     bool timeout_occur = false;
 
-    kaa_list_node_t *it = kaa_list_begin(self->timeouts);
-    while (it) {
+    for (kaa_list_node_t *it = kaa_list_begin(self->timeouts); it; it = kaa_list_next(it)) {
         timeout_info_t *info = kaa_list_get_data(it);
         if (now >= info->deadline) {
             KAA_LOG_ERROR(self->logger, KAA_ERR_TIMEOUT,
@@ -295,7 +289,6 @@ static bool is_timeout(kaa_log_collector_t *self)
             /* Mark bucket as expired */
             info->deadline = 0;
         }
-        it = kaa_list_next(it);
     }
 
     return timeout_occur;
@@ -318,6 +311,7 @@ static bool is_upload_allowed(kaa_log_collector_t *self)
 /** @deprecated Use kaa_extension_logging_deinit(). */
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
+    // TODO(KAA-982): Use asserts
     if (!self) {
         return;
     }
@@ -360,7 +354,7 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p,
 
     collector->timeouts = kaa_list_create();
     if (!collector->timeouts) {
-        kaa_log_collector_destroy(collector);
+        KAA_FREE(collector);
         return KAA_ERR_NOMEM;
     }
 
@@ -456,7 +450,7 @@ static void update_storage(kaa_log_collector_t *self)
     }
 }
 
-// Checks if there is a place for a new record
+/** Checks if there is a place for a new record */
 static bool no_more_space_in_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
 {
     if (self->last_bucket.log_count + 1 > self->bucket_size.max_bucket_log_count
@@ -467,27 +461,14 @@ static bool no_more_space_in_bucket(kaa_log_collector_t *self, kaa_log_record_t 
     return false;
 }
 
-// Checks if bucket is last
+/** Checks if the given bucket is the last bucket */
 static bool last_bucket(kaa_log_collector_t *self, uint16_t bucket)
 {
     return self->last_bucket.id == bucket;
 }
 
-// Puts record in next bucket
-static void place_record_in_next_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
-{
-    new_record->bucket_id = self->last_bucket.id + 1;
-}
-
-// Puts record in the current bucket
-static void place_record_in_current_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
-{
-    new_record->bucket_id = self->last_bucket.id;
-    self->last_bucket.log_count++;
-}
-
-// Creates a new bucket and places an initial record there if given
-static void form_new_bucket(kaa_log_collector_t *self, const kaa_log_record_t *initial_record)
+/** Creates a new empty bucket */
+static void form_new_bucket(kaa_log_collector_t *self)
 {
     self->last_bucket.id++;
     // Avoid hitting reserved values
@@ -495,13 +476,23 @@ static void form_new_bucket(kaa_log_collector_t *self, const kaa_log_record_t *i
         self->last_bucket.id++;
     }
 
-    if (initial_record) {
-        self->last_bucket.log_count = 1;
-        self->last_bucket.size = initial_record->size;
-    } else {
-        self->last_bucket.log_count = 0;
-        self->last_bucket.size = 0;
-    }
+    self->last_bucket.log_count = 0;
+    self->last_bucket.size = 0;
+}
+
+/** Puts the given record in the current bucket */
+static void place_record_in_current_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
+{
+    new_record->bucket_id = self->last_bucket.id;
+    self->last_bucket.log_count++;
+    self->last_bucket.size += new_record->size;
+}
+
+/** Creates the next bucket and puts the given record there */
+static void place_record_in_next_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
+{
+    form_new_bucket(self);
+    place_record_in_current_bucket(self, new_record);
 }
 
 kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_record_info_t *log_info)
@@ -523,8 +514,6 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         .bucket_id = 0,
     };
 
-    bool next_bucket_required = false;
-
     if (!record.size) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA,
                 "Failed to add log record: serialized record size is null. "
@@ -532,10 +521,14 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         return KAA_ERR_BADDATA;
     }
 
+    bool next_bucket_required = no_more_space_in_bucket(self, &record);
+
+    // To restore last bucket state in case of error
+    last_bucket_info_t fallback = self->last_bucket;
+
     // Put log in the next bucket if required
-    if (no_more_space_in_bucket(self, &record)) {
+    if (next_bucket_required) {
         place_record_in_next_bucket(self, &record);
-        next_bucket_required = true;
     } else {
         place_record_in_current_bucket(self, &record);
     }
@@ -543,17 +536,18 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage_context,
             &record);
     if (error) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA,
+        KAA_LOG_ERROR(self->logger, error,
                 "Failed to add log record: cannot allocate buffer for log record");
-        return error;
+        goto err_buffer;
     }
 
     avro_writer_t writer = avro_writer_memory((char *)record.data, record.size);
     if (!writer) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA,
+        error = KAA_ERR_NOMEM;
+        KAA_LOG_ERROR(self->logger, error,
                 "Failed to add log record: cannot create serializer");
         ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
-        return KAA_ERR_NOMEM;
+        goto err_avro;
     }
 
     entry->serialize(writer, entry);
@@ -563,17 +557,17 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to add log record to storage");
         ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
-        return error;
+        goto err_add;
     }
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu, bucket %u",
             record.size,
             record.bucket_id);
 
-    is_timeout(self) ? handle_timeout(self) : update_storage(self);
-
-    if (next_bucket_required) {
-        form_new_bucket(self, &record);
+    if (is_timeout(self)) {
+        handle_timeout(self);
+    } else {
+        update_storage(self);
     }
 
     if (log_info) {
@@ -582,6 +576,13 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     }
 
     return KAA_ERR_NONE;
+
+err_add:
+err_avro:
+    ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
+err_buffer:
+    self->last_bucket = fallback;
+    return error;
 }
 
 kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_delivery_listener_t *listeners)
@@ -695,7 +696,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
         switch (error) {
             case KAA_ERR_NONE:
-                if (!first_bucket) {
+                if (first_bucket == 0) {
                     first_bucket = bucket_id;
                 } else if (bucket_id != first_bucket) {
                     // Put back log item if it is in another bucket
@@ -707,7 +708,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
                 *((uint32_t *) tmp_writer.current) = KAA_HTONL(record_len);
                 tmp_writer.current += (sizeof(uint32_t) + record_len);
                 kaa_platform_message_write_alignment(&tmp_writer);
-                bucket_size -= (kaa_aligned_size_get(record_len) + sizeof(uint32_t));
+                bucket_size -= kaa_aligned_size_get(record_len) + sizeof(uint32_t);
                 break;
             case KAA_ERR_NOT_FOUND:
             case KAA_ERR_INSUFFICIENT_BUFFER:
@@ -741,7 +742,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     // Incomplete bucket sent, so let's go and step to the next bucket
     if (last_bucket(self, first_bucket)) {
-        form_new_bucket(self, NULL);
+        form_new_bucket(self);
     }
 
     return KAA_ERR_NONE;
@@ -775,7 +776,7 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self,
     int8_t delivery_result;
     int8_t delivery_error_code;
 
-    while (delivery_status_count-- > 0) {
+    for (uint32_t i = 0; i < delivery_status_count; ++i) {
         error_code = kaa_platform_message_read(reader, &bucket_id, sizeof(uint16_t));
         if (error_code) {
             return error_code;
@@ -828,7 +829,6 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self,
     update_storage(self);
 
     return error_code;
-
 }
 
 
