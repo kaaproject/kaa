@@ -103,12 +103,6 @@ public class SdkProfileServiceImpl implements SdkProfileService {
     }
 
     @Override
-    public List<SdkProfileDto> findSdkProfilesByApplicationToken(String applicationToken) {
-        Validator.validateId(applicationToken, "Unable to find SDK profiles. Invalid application token: " + applicationToken);
-        return DaoUtil.convertDtoList(sdkProfileDao.findSdkProfileByApplicationToken(applicationToken));
-    }
-
-    @Override
     public void removeSdkProfileById(String id) {
         Validator.validateId(id, "Unable to remove SDK profile. Invalid SDK profile ID: " + id);
         sdkProfileDao.removeById(id);

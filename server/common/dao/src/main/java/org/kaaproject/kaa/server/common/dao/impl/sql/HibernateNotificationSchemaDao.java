@@ -31,10 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.NOTIFICATION_SCHEMA_TYPE_PROPERTY;
 
@@ -64,22 +61,6 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
     }
 
     @Override
-    public List<NotificationSchema> findNotificationSchemasByAppToken(String appToken) {
-        LOG.debug("Searching notification schemas by application token [{}]", appToken);
-        List<NotificationSchema> schemas = Collections.emptyList();
-        if (isNotBlank(appToken)) {
-            schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appToken, Arrays.toString(schemas.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", appToken, schemas.size());
-        }
-        return schemas;
-    }
-
-    @Override
     public void removeNotificationSchemasByAppId(String appId) {
         removeList(findNotificationSchemasByAppId(appId));
         LOG.debug("Removed notification schemas by application id [{}]", appId);
@@ -98,24 +79,6 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
             LOG.trace("[{},{}] Search result: {}.", appId, type, Arrays.toString(schemas.toArray()));
         } else {
             LOG.debug("[{},{}] Search result: {}.", appId, type, schemas.size());
-        }
-        return schemas;
-    }
-
-    @Override
-    public List<NotificationSchema> findNotificationSchemasByAppTokenAndType(String appToken, NotificationTypeDto type) {
-        LOG.debug("Searching notification schema by application token {} type {}", appToken, type);
-        List<NotificationSchema> schemas = Collections.emptyList();
-        if (isNotBlank(appToken)) {
-            schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken),
-                            Restrictions.eq(NOTIFICATION_SCHEMA_TYPE_PROPERTY, type)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appToken, type, Arrays.toString(schemas.toArray()));
-        } else {
-            LOG.debug("[{},{}] Search result: {}.", appToken, type, schemas.size());
         }
         return schemas;
     }

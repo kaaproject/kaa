@@ -33,14 +33,6 @@ public interface ApplicationEventFamilyMapDao<T> extends SqlDao<T> {
     List<T> findByApplicationId(String id);
 
     /**
-     * Find map elements for applicationToken.
-     *
-     * @param token the application token
-     * @return the list of map elements
-     */
-    List<T> findByApplicationToken(String token);
-
-    /**
      * Find map elements for ids.
      *
      * @param ids the application event maps ids

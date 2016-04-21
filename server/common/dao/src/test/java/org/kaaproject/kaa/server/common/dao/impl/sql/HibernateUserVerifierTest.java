@@ -47,24 +47,9 @@ public class HibernateUserVerifierTest extends HibernateAbstractTest{
     }
 
     @Test
-    public void findByAppTokenTest() {
-        UserVerifier verifier = generateUserVerifier(null, null);
-        Application app = verifier.getApplication();
-        List<UserVerifier> result = verifierDao.findByAppToken(app.getApplicationToken());
-        Assert.assertEquals(result.size(), 1);
-    }
-
-    @Test
     public void findByAppIdBlankIdTest() {
         UserVerifier verifier = generateUserVerifier(null, null);
         List<UserVerifier> result = verifierDao.findByAppId("");
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void findByAppTokenBlankTokenTest() {
-        UserVerifier verifier = generateUserVerifier(null, null);
-        List<UserVerifier> result = verifierDao.findByAppToken("");
         Assert.assertTrue(result.isEmpty());
     }
 

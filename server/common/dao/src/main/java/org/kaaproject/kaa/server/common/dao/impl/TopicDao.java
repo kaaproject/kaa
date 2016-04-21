@@ -37,14 +37,6 @@ public interface TopicDao<T> extends SqlDao<T> {
     List<T> findTopicsByAppId(String appId);
 
     /**
-     * Find topics by application token.
-     *
-     * @param appToken the application token
-     * @return the list of topics
-     */
-    List<T> findTopicsByAppToken(String appToken);
-
-    /**
      * Find topics by application id and type.
      *
      * @param appId the application id

@@ -464,6 +464,7 @@ public class KaaAdminController {
      * @return the application dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getApplicationByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "application/{applicationId}", method = RequestMethod.GET)
@@ -510,7 +511,6 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @Deprecated
     @RequestMapping(value = "delApplication", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteApplication(@RequestParam(value = "applicationId") String applicationId) throws KaaAdminServiceException {
@@ -620,6 +620,7 @@ public class KaaAdminController {
      * @return the schema versions
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getSchemaVersionsByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "schemaVersions/{applicationId}", method = RequestMethod.GET)
@@ -728,6 +729,7 @@ public class KaaAdminController {
      * @return the list sdk profile dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     *  @deprecated  As of release 0.9.0, replaced by {@link #getSdkProfilesByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "sdkProfiles/{applicationId}")
@@ -781,6 +783,7 @@ public class KaaAdminController {
      *             the kaa admin service exception
      * 
      * @return CTL schema info
+     * @deprecated  As of release 0.9.0, replaced by {@link #saveCTLSchemaWithAppToken(String, String, String)}
      */
     @Deprecated
     @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
@@ -826,6 +829,7 @@ public class KaaAdminController {
      *            
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String, int, String, String)}
      */
     @Deprecated
     @RequestMapping(value = "CTL/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
@@ -876,6 +880,7 @@ public class KaaAdminController {
      *             the kaa admin service exception
      * 
      * @return CTL schema info
+     * @deprecated  As of release 0.9.0, replaced by {@link #getCTLSchemaByFqnVersionTenantIdAndApplicationToken(String, int, String, String)}
      */
     @Deprecated
     @RequestMapping(value = "CTL/getSchema", params = { "fqn", "version" }, method = RequestMethod.GET)
@@ -946,7 +951,8 @@ public class KaaAdminController {
      *             the kaa admin service exception
      * 
      * @return true if CTL schema with same fqn is already exists in other scope
-    */
+     * @deprecated  As of release 0.9.0, replaced by {@link #checkFqnExistsWithAppToken(String, String, String)}
+     */
     @Deprecated
     @RequestMapping(value = "CTL/checkFqn", params = { "fqn" }, method = RequestMethod.GET)
     @ResponseBody
@@ -1034,6 +1040,7 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
+     * @deprecated  As of release 0.9.0, replaced by {@link #getApplicationLevelCTLSchemasByAppToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "CTL/getApplicationSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1079,6 +1086,7 @@ public class KaaAdminController {
      * 
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #exportCTLSchemaByAppToken(String, int, String, String, HttpServletRequest, HttpServletResponse)}
      */
     @Deprecated
     @RequestMapping(value = "CTL/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
@@ -1147,6 +1155,7 @@ public class KaaAdminController {
      * @return the list profile schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getServerProfileSchemasByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "serverProfileSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1211,6 +1220,7 @@ public class KaaAdminController {
      * @return the list of endpoint profile schema dto objects
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getProfileSchemasByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "profileSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1274,6 +1284,7 @@ public class KaaAdminController {
      * @return the сonfiguration schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getConfigurationSchemasByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "configurationSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1357,6 +1368,7 @@ public class KaaAdminController {
      * @return the list notification schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getNotificationSchemasByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "notificationSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1390,6 +1402,7 @@ public class KaaAdminController {
      * @return the list schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getUserNotificationSchemasByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "userNotificationSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1471,6 +1484,7 @@ public class KaaAdminController {
      * @return the list log schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getLogSchemasByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "logSchemas/{applicationId}", method = RequestMethod.GET)
@@ -1569,6 +1583,7 @@ public class KaaAdminController {
      * @return the list log appender dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getLogAppendersByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "logAppenders/{applicationId}", method = RequestMethod.GET)
@@ -1644,6 +1659,7 @@ public class KaaAdminController {
      * @return the list user verifier dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getUserVerifiersByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "userVerifiers/{applicationId}", method = RequestMethod.GET)
@@ -1777,6 +1793,7 @@ public class KaaAdminController {
      * @return the list endpoint group dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getEndpointGroupsByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "endpointGroups/{applicationId}", method = RequestMethod.GET)
@@ -2090,6 +2107,7 @@ public class KaaAdminController {
      * @return the topic dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getTopicsByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "topics/{applicationId}", method = RequestMethod.GET)
@@ -2354,6 +2372,7 @@ public class KaaAdminController {
      * @return list the application event family map dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getApplicationEventFamilyMapsByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "applicationEventMaps/{applicationId}", method = RequestMethod.GET)
@@ -2419,6 +2438,7 @@ public class KaaAdminController {
      * @return the list ecf info dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getVacantEventClassFamiliesByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "vacantEventClassFamilies/{applicationId}", method = RequestMethod.GET)
@@ -2450,6 +2470,7 @@ public class KaaAdminController {
      * @return the list aef map info dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
+     * @deprecated  As of release 0.9.0, replaced by {@link #getEventClassFamiliesByApplicationToken(String)}
      */
     @Deprecated
     @RequestMapping(value = "eventClassFamilies/{applicationId}", method = RequestMethod.GET)

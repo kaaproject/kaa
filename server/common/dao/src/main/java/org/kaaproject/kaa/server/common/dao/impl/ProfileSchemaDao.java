@@ -33,14 +33,6 @@ public interface ProfileSchemaDao<T> extends SqlDao<T> {
     List<T> findByApplicationId(String applicationId);
 
     /**
-     * Find profile schemas by application token.
-     *
-     * @param applicationToken the application token
-     * @return the list of profile schemas
-     */
-    List<T> findByApplicationToken(String applicationToken);
-
-    /**
      * Find profile schema by application id and version.
      *
      * @param applicationId the application id

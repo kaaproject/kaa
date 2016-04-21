@@ -90,29 +90,6 @@ public class ServerProfileServiceImplTest extends AbstractTest {
     }
 
     @Test
-    public void testFindServerProfileSchemasByAppToken() {
-        ApplicationDto app = generateApplicationDto();
-
-        List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppToken(app.getApplicationToken());
-        Assert.assertEquals(1, found.size());
-
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-
-        List<ServerProfileSchemaDto> expected = new ArrayList<>();
-        expected.add(found.get(0));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-
-        found = serverProfileService.findServerProfileSchemasByAppToken(app.getApplicationToken());
-        Assert.assertEquals(expected, found);
-    }
-
-    @Test
     public void testRemoveServerProfileSchemaById() {
         ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
         serverProfileService.removeServerProfileSchemaById(schemaDto.getId());

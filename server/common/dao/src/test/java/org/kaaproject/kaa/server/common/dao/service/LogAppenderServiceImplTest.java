@@ -55,17 +55,6 @@ public class LogAppenderServiceImplTest extends AbstractTest {
     }
 
     @Test
-    public void findAllAppendersByAppTokenTest() {
-        LogAppenderDto logAppender1 = generateLogAppenderDto(application.getId(), null);
-        Assert.assertNotNull(logAppender1);
-        LogAppenderDto logAppender2 = generateLogAppenderDto(application.getId(), null);
-        Assert.assertNotNull(logAppender2);
-        List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppToken(application.getApplicationToken());
-        Assert.assertNotNull(appenders);
-        Assert.assertEquals(2, appenders.size());
-    }
-
-    @Test
     public void findLogAppenderByIdTest() {
         LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
         LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());

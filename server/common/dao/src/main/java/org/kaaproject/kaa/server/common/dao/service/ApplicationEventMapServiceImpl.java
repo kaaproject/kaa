@@ -75,18 +75,6 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
     }
 
     @Override
-    public List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationToken(String applicationToken) {
-        List<ApplicationEventFamilyMapDto> eventFamilyMaps;
-        if (isValidSqlId(applicationToken)) {
-            LOG.debug("Find application event family maps by applicationId token [{}]", applicationToken);
-            eventFamilyMaps = convertDtoList(applicationEventFamilyMapDao.findByApplicationToken(applicationToken));
-        } else {
-            throw new IncorrectParameterException("Incorrect applicationId token: " + applicationToken);
-        }
-        return eventFamilyMaps;
-    }
-
-    @Override
     public List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByIds(List<String> ids) {
         LOG.debug("Find application event family maps by ids [{}]", ids);
         List<ApplicationEventFamilyMapDto> eventFamilies = Collections.emptyList();
@@ -172,46 +160,6 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
     }
 
     @Override
-    public List<EcfInfoDto> findVacantEventClassFamiliesByApplicationToken(
-            String applicationToken) {
-        List<EcfInfoDto> vacantEcfs = new ArrayList<>();
-        if (isValidSqlId(applicationToken)) {
-            ApplicationDto application = getDto(applicationDao.findByApplicationToken(applicationToken));
-            if (application != null) {
-                String tenantId = application.getTenantId();
-                List<EventClassFamilyDto> eventClassFamilies = convertDtoList(eventClassFamilyDao.findByTenantId(tenantId));
-                List<AefMapInfoDto> aefMaps = findEventClassFamiliesByApplicationToken(applicationToken);
-                List<EcfInfoDto> occupiedEcfs = new ArrayList<>();
-                for (AefMapInfoDto aefMap : aefMaps) {
-                    EcfInfoDto ecf = new EcfInfoDto();
-                    ecf.setEcfId(aefMap.getEcfId());
-                    ecf.setEcfName(aefMap.getEcfName());
-                    ecf.setVersion(aefMap.getVersion());
-                    occupiedEcfs.add(ecf);
-                }
-                if (eventClassFamilies != null) {
-                    for (EventClassFamilyDto eventClassFamily : eventClassFamilies) {
-                        if (eventClassFamily.getSchemas() != null) {
-                            for (EventSchemaVersionDto eventSchemaVersion : eventClassFamily.getSchemas()) {
-                                EcfInfoDto ecf = new EcfInfoDto();
-                                ecf.setEcfId(eventClassFamily.getId());
-                                ecf.setEcfName(eventClassFamily.getName());
-                                ecf.setVersion(eventSchemaVersion.getVersion());
-                                if (occupiedEcfs != null && !occupiedEcfs.contains(ecf)) {
-                                    vacantEcfs.add(ecf);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            throw new IncorrectParameterException("Incorrect applicationId token: " + applicationToken);
-        }
-        return vacantEcfs;
-    }
-
-    @Override
     public List<AefMapInfoDto> findEventClassFamiliesByApplicationId(
             String applicationId) {
         List<ApplicationEventFamilyMapDto> eventFamilyMaps = findApplicationEventFamilyMapsByApplicationId(applicationId);
@@ -229,21 +177,6 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
         return aefMaps;
     }
 
-    @Override
-    public List<AefMapInfoDto> findEventClassFamiliesByApplicationToken(
-            String applicationToken) {
-        List<ApplicationEventFamilyMapDto> eventFamilyMaps = findApplicationEventFamilyMapsByApplicationToken(applicationToken);
-        List<AefMapInfoDto> aefMaps = new ArrayList<>();
-        if (eventFamilyMaps != null) {
-            for (ApplicationEventFamilyMapDto eventFamilyMap : eventFamilyMaps) {
-                AefMapInfoDto aefMap = new AefMapInfoDto();
-                aefMap.setAefMapId(eventFamilyMap.getId());
-                aefMap.setEcfId(eventFamilyMap.getEcfId());
-                aefMap.setEcfName(eventFamilyMap.getEcfName());
-                aefMap.setVersion(eventFamilyMap.getVersion());
-                aefMaps.add(aefMap);
-            }
-        }
-        return aefMaps;
-    }
+
+
 }

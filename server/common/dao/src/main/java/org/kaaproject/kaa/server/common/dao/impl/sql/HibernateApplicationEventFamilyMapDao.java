@@ -33,7 +33,6 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_REFERENCE;
@@ -61,22 +60,6 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
             LOG.trace("[{}] Search result: {}.", appId, applicationEventFamilyMaps);
         } else {
             LOG.debug("[{}] Search result: {}.", appId, applicationEventFamilyMaps.size());
-        }
-        return applicationEventFamilyMaps;
-    }
-
-    @Override
-    public List<ApplicationEventFamilyMap> findByApplicationToken(String appToken) {
-        LOG.debug("Searching application event family maps by application token [{}] ", appToken);
-        List<ApplicationEventFamilyMap> applicationEventFamilyMaps = Collections.emptyList();
-        if (isNotBlank(appToken)) {
-            applicationEventFamilyMaps = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appToken, applicationEventFamilyMaps);
-        } else {
-            LOG.debug("[{}] Search result: {}.", appToken, applicationEventFamilyMaps.size());
         }
         return applicationEventFamilyMaps;
     }

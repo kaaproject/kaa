@@ -59,12 +59,6 @@ public class LogAppenderServiceImpl implements LogAppendersService {
     }
 
     @Override
-    public List<LogAppenderDto> findAllAppendersByAppToken(String appToken) {
-        LOG.debug("Find vacant log appenders by application token [{}]", appToken);
-        return convertDtoList(logAppenderDao.findByAppToken(appToken));
-    }
-
-    @Override
     public LogAppenderDto saveLogAppender(LogAppenderDto logAppenderDto) {
         LOG.debug("Save log appender [{}]", logAppenderDto);
         LogAppenderDto saved = null;

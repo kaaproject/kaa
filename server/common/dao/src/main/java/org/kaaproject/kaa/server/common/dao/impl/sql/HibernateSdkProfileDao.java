@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.common.dao.impl.sql;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_TOKEN_PROPERTY;
 
 import java.util.Arrays;
@@ -76,25 +75,6 @@ public class HibernateSdkProfileDao extends HibernateAbstractDao<SdkProfile> imp
             LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(found.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", applicationId, found.size());
-        }
-
-        return found;
-    }
-
-    @Override
-    public List<SdkProfile> findSdkProfileByApplicationToken(String applicationToken) {
-        LOG.debug("Searching for SDK profiles by application ID: [{}]", applicationToken);
-
-        List<SdkProfile> found = Collections.emptyList();
-        if (StringUtils.isNotBlank(applicationToken)) {
-            Criterion criterion = Restrictions.eq(APPLICATION_TOKEN_REFERENCE, applicationToken);
-            found = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", applicationToken, Arrays.toString(found.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", applicationToken, found.size());
         }
 
         return found;

@@ -36,14 +36,6 @@ public interface NotificationSchemaDao<T> extends SqlDao<T> {
     List<T> findNotificationSchemasByAppId(String appId);
 
     /**
-     * Find notification schemas by application token.
-     *
-     * @param appToken the application token
-     * @return the list of notification schemas
-     */
-    List<T> findNotificationSchemasByAppToken(String appToken);
-
-    /**
      * Removes the notification schemas by application id.
      *
      * @param appId the application id
@@ -58,15 +50,6 @@ public interface NotificationSchemaDao<T> extends SqlDao<T> {
      * @return the list of notification schemas
      */
     List<T> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type);
-
-    /**
-     * Find notification schemas by application token and type.
-     *
-     * @param appToken the application token
-     * @param type the type
-     * @return the list of notification schemas
-     */
-    List<T> findNotificationSchemasByAppTokenAndType(String appToken, NotificationTypeDto type);
 
     /**
      * Find notification schemas by application id and type and version.

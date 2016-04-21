@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
@@ -39,14 +38,6 @@ public class UserVerifierServiceImplTest extends AbstractTest {
     public void findUserVerifiersByAppIdTest() {
         UserVerifierDto verifierDto = generateUserVerifierDto(null, null);
         List<UserVerifierDto> found = verifierService.findUserVerifiersByAppId(verifierDto.getApplicationId());
-        Assert.assertEquals(2, found.size());
-    }
-
-    @Test
-    public void findUserVerifiersByAppTokenTest() {
-        ApplicationDto application = generateApplicationDto();
-        UserVerifierDto verifierDto = generateUserVerifierDto(application.getId(), null);
-        List<UserVerifierDto> found = verifierService.findUserVerifiersByAppToken(application.getApplicationToken());
         Assert.assertEquals(2, found.size());
     }
 

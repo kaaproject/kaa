@@ -26,7 +26,6 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -380,26 +379,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<ConfigurationSchemaDto> findConfSchemasByAppToken(String applicationToken) {
-        validateString(applicationToken, "Incorrect application token " + applicationToken + ". Can't find configuration schemas.");
-        return convertDtoList(configurationSchemaDao.findByApplicationToken(applicationToken));
-    }
-
-    @Override
     public List<VersionDto> findConfigurationSchemaVersionsByAppId(String applicationId) {
         validateSqlId(applicationId, "Incorrect application id " + applicationId + ". Can't find configuration schema versions.");
         List<ConfigurationSchema> configurationSchemas = configurationSchemaDao.findByApplicationId(applicationId);
-        List<VersionDto> schemas = new ArrayList<>();
-        for (ConfigurationSchema configurationSchema : configurationSchemas) {
-            schemas.add(configurationSchema.toVersionDto());
-        }
-        return schemas;
-    }
-
-    @Override
-    public List<VersionDto> findConfigurationSchemaVersionsByAppToken(String applicationToken) {
-        validateString(applicationToken, "Incorrect application token " + applicationToken + ". Can't find configuration schema versions.");
-        List<ConfigurationSchema> configurationSchemas = configurationSchemaDao.findByApplicationToken(applicationToken);
         List<VersionDto> schemas = new ArrayList<>();
         for (ConfigurationSchema configurationSchema : configurationSchemas) {
             schemas.add(configurationSchema.toVersionDto());

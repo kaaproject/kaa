@@ -44,13 +44,7 @@ public interface UserVerifierService {
      * @return  the list user verifier dto
      */
     List<UserVerifierDto> findUserVerifiersByAppId(String appId);
-
-    /**
-     * @param   appToken the app token
-     * @return  the list user verifier dto
-     */
-    List<UserVerifierDto> findUserVerifiersByAppToken(String appToken);
-
+    
     /**
      * @param   appId           the app id
      * @param   verifierToken   the verifier token

@@ -332,8 +332,6 @@ public interface KaaAdminService extends RemoteService {
 
     public List<LogAppenderDto> getLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
 
-    public List<LogAppenderDto> getLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException;
-
     public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException;
 
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
@@ -361,8 +359,6 @@ public interface KaaAdminService extends RemoteService {
     public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
 
     public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
-
-    public List<UserVerifierDto> getUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException;
 
     public UserVerifierDto getUserVerifier(String userVerifierId) throws KaaAdminServiceException;
 

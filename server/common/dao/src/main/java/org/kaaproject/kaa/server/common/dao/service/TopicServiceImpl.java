@@ -21,7 +21,6 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -92,12 +91,6 @@ public class TopicServiceImpl implements TopicService {
     public List<TopicDto> findTopicsByAppId(String appId) {
         validateId(appId, "Can't find topic. Invalid application id " + appId);
         return convertDtoList(topicDao.findTopicsByAppId(appId));
-    }
-
-    @Override
-    public List<TopicDto> findTopicsByAppToken(String appToken) {
-        validateString(appToken, "Can't find topic. Invalid application token" + appToken);
-        return convertDtoList(topicDao.findTopicsByAppToken(appToken));
     }
 
     @Override

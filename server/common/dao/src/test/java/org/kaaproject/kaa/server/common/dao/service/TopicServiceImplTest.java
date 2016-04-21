@@ -67,15 +67,6 @@ public class TopicServiceImplTest extends AbstractTest {
     }
 
     @Test
-    public void findTopicsByAppTokenTest() {
-        ApplicationDto application = generateApplicationDto();
-        TopicDto topic = generateTopicDto(application.getId(), null);
-        List<TopicDto> found = topicService.findTopicsByAppToken(application.getApplicationToken());
-        Assert.assertEquals(1, found.size());
-        Assert.assertEquals(topic, found.get(0));
-    }
-
-    @Test
     public void findTopicsByAppIdAndTypeTest() {
         TopicDto topic = generateTopicDto(null, TopicTypeDto.OPTIONAL);
         List<TopicDto> found = topicService.findTopicsByAppIdAndType(topic.getApplicationId(), TopicTypeDto.OPTIONAL);

@@ -62,7 +62,6 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 @Service
 @Transactional
@@ -88,26 +87,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<EndpointProfileSchemaDto> findProfileSchemasByAppToken(String applicationToken) {
-        validateString(applicationToken, "Can't find profile schema. Invalid application id: " + applicationToken);
-        return convertDtoList(profileSchemaDao.findByApplicationToken(applicationToken));
-    }
-
-    @Override
     public List<VersionDto> findProfileSchemaVersionsByAppId(String applicationId) {
         validateSqlId(applicationId, "Can't find profile schemas. Invalid application id: " + applicationId);
         List<EndpointProfileSchema> endpointProfileSchemas = profileSchemaDao.findByApplicationId(applicationId);
-        List<VersionDto> schemas = new ArrayList<>();
-        for (EndpointProfileSchema endpointProfileSchema : endpointProfileSchemas) {
-            schemas.add(endpointProfileSchema.toVersionDto());
-        }
-        return schemas;
-    }
-
-    @Override
-    public List<VersionDto> findProfileSchemaVersionsByAppToken(String applicationToken) {
-        validateString(applicationToken, "Can't find profile schemas. Invalid application token: " + applicationToken);
-        List<EndpointProfileSchema> endpointProfileSchemas = profileSchemaDao.findByApplicationToken(applicationToken);
         List<VersionDto> schemas = new ArrayList<>();
         for (EndpointProfileSchema endpointProfileSchema : endpointProfileSchemas) {
             schemas.add(endpointProfileSchema.toVersionDto());

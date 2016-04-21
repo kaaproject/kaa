@@ -47,23 +47,8 @@ public class HibernateLogAppenderTest extends HibernateAbstractTest {
     }
 
     @Test
-    public void findByAppTokenTest() {
-        LogAppender appender = generateLogAppender(null);
-        Application app = appender.getApplication();
-        List<LogAppender> result = appenderDao.findByAppToken(app.getApplicationToken());
-        System.out.println(result.get(0));
-        Assert.assertEquals(result.size(), 1);
-    }
-
-    @Test
     public void findByAppIdBlankIdTest() {
         List<LogAppender> result = appenderDao.findByAppId("");
-        Assert.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void findByAppTokenBlankTokenTest() {
-        List<LogAppender> result = appenderDao.findByAppToken("");
         Assert.assertTrue(result.isEmpty());
     }
 

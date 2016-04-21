@@ -39,7 +39,6 @@ import static org.hibernate.criterion.Restrictions.or;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUPS_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_REFERENCE;
@@ -64,22 +63,6 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
             LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(topics.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", appId, topics.size());
-        }
-        return topics;
-    }
-
-    @Override
-    public List<Topic> findTopicsByAppToken(String appToken) {
-        LOG.debug("Searching topics by application token [{}]", appToken);
-        List<Topic> topics = Collections.emptyList();
-        if (isNotBlank(appToken)) {
-            topics = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    eq(APPLICATION_TOKEN_REFERENCE, appToken));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appToken, Arrays.toString(topics.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", appToken, topics.size());
         }
         return topics;
     }

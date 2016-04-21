@@ -46,12 +46,6 @@ public interface LogAppendersService {
     List<LogAppenderDto> findAllAppendersByAppId(String appId);
 
     /**
-     * @param   appToken the app token
-     * @return  the list log appender dto
-     */
-    List<LogAppenderDto> findAllAppendersByAppToken(String appToken);
-
-    /**
      * @param   appId           the app id
      * @param   schemaVersion   the schema version
      * @return  the list log appender dto

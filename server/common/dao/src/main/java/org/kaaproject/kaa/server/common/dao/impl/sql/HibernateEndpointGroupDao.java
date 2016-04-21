@@ -37,7 +37,6 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPICS_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_REFERENCE;
@@ -63,22 +62,6 @@ public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGrou
             LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(groups.toArray()));
         } else {
             LOG.debug("[{}] Search result: {}.", appId, groups.size());
-        }
-        return groups;
-    }
-
-    @Override
-    public List<EndpointGroup> findByApplicationToken(String appToken) {
-        List<EndpointGroup> groups = Collections.emptyList();
-        LOG.debug("Searching endpoint group by application token [{}] ", appToken);
-        if (isNotBlank(appToken)) {
-            groups = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_TOKEN_REFERENCE, appToken));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appToken, Arrays.toString(groups.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", appToken, groups.size());
         }
         return groups;
     }

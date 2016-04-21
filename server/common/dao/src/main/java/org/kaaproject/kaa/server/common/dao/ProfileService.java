@@ -41,28 +41,12 @@ public interface ProfileService {
     List<EndpointProfileSchemaDto> findProfileSchemasByAppId(String applicationId);
 
     /**
-     * Find profile schemas by application token.
-     *
-     * @param applicationToken the application token
-     * @return the list of profile schemas
-     */
-    List<EndpointProfileSchemaDto> findProfileSchemasByAppToken(String applicationToken);
-
-    /**
      * Find schemas versions by application id.
      *
      * @param applicationId the application id
      * @return the list of <code>SchemaDto</code> objects
      */
     List<VersionDto> findProfileSchemaVersionsByAppId(String applicationId);
-
-    /**
-     * Find schemas versions by application token.
-     *
-     * @param applicationToken the application token
-     * @return the list of <code>SchemaDto</code> objects
-     */
-    List<VersionDto> findProfileSchemaVersionsByAppToken(String applicationToken);
 
     /**
      * Find profile schema by id.

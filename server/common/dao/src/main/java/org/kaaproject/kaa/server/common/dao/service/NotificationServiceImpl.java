@@ -25,7 +25,6 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHas
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -218,33 +217,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<VersionDto> findUserNotificationSchemasByAppToken(String applicationToken) {
-        validateString(applicationToken, "Can't find schemas. Invalid application token: " + applicationToken);
-        List<NotificationSchema> notificationSchemas = notificationSchemaDao.findNotificationSchemasByAppTokenAndType(applicationToken,
-                NotificationTypeDto.USER);
-        List<VersionDto> schemas = new ArrayList<>();
-        for (NotificationSchema notificationSchema : notificationSchemas) {
-            schemas.add(notificationSchema.toVersionDto());
-        }
-        return schemas;
-    }
-
-    @Override
     public List<VersionDto> findNotificationSchemaVersionsByAppId(
             String applicationId) {
         validateId(applicationId, "Can't find notification schema versions. Invalid application id: " + applicationId);
         List<NotificationSchema> notificationSchemas = notificationSchemaDao.findNotificationSchemasByAppId(applicationId);
-        List<VersionDto> schemas = new ArrayList<>();
-        for (NotificationSchema notificationSchema : notificationSchemas) {
-            schemas.add(notificationSchema.toVersionDto());
-        }
-        return schemas;
-    }
-
-    @Override
-    public List<VersionDto> findNotificationSchemaVersionsByAppToken(String applicationToken) {
-        validateId(applicationToken, "Can't find notification schema versions. Invalid application token: " + applicationToken);
-        List<NotificationSchema> notificationSchemas = notificationSchemaDao.findNotificationSchemasByAppToken(applicationToken);
         List<VersionDto> schemas = new ArrayList<>();
         for (NotificationSchema notificationSchema : notificationSchemas) {
             schemas.add(notificationSchema.toVersionDto());
@@ -270,12 +246,6 @@ public class NotificationServiceImpl implements NotificationService {
     public List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type) {
         validateId(appId, "Can't find notification schemas. Invalid application id: " + appId);
         return convertDtoList(notificationSchemaDao.findNotificationSchemasByAppIdAndType(appId, type));
-    }
-
-    @Override
-    public List<NotificationSchemaDto> findNotificationSchemasByAppTokenAndType(String appToken, NotificationTypeDto type) {
-        validateString(appToken, "Can't find notification schemas. Invalid application token: " + appToken);
-        return convertDtoList(notificationSchemaDao.findNotificationSchemasByAppTokenAndType(appToken, type));
     }
 
     @Override

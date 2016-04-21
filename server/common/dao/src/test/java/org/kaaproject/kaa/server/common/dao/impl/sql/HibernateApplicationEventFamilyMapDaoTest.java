@@ -78,22 +78,6 @@ public class HibernateApplicationEventFamilyMapDaoTest extends HibernateAbstract
     }
 
     @Test
-    public void findByAppTokenTest() {
-        List<ApplicationEventFamilyMap> applicationEventFamilyMaps = generateApplicationEventFamilyMap(null, null, null, 2, true);
-        ApplicationEventFamilyMap dto = applicationEventFamilyMapDao.findById(applicationEventFamilyMaps.get(0).getStringId());
-        Assert.assertNotNull(dto);
-        List<ApplicationEventFamilyMap> eventFamilyMapList = applicationEventFamilyMapDao.findByApplicationToken(dto.getApplication().getApplicationToken());
-        ApplicationEventFamilyMap eventFamilyMap = null;
-        for (ApplicationEventFamilyMap found : eventFamilyMapList) {
-            if (dto.getId().equals(found.getId())) {
-                eventFamilyMap = found;
-            }
-        }
-        Assert.assertNotNull(eventFamilyMap);
-        Assert.assertEquals(dto, eventFamilyMap);
-    }
-
-    @Test
     public void testValidateApplicationEventFamilyMap() {
         List<ApplicationEventFamilyMap> applicationEventFamilyMaps = generateApplicationEventFamilyMap(null, null, null, 2, true);
         ApplicationEventFamilyMap aefm = applicationEventFamilyMaps.get(0);
