@@ -189,7 +189,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     break;
                 case CREDENTIALS_REVOKED:
                     LOG.error("Endpoint credentials been revoked");
-                    onServerFailed(FailoverStatus.CREDENTIALS_REVOKED);
+                    onServerFailed(FailoverStatus.ENDPOINT_CREDENTIALS_REVOKED);
                     break;
                 default:
                     LOG.error("Server error occurred: {}", message.getReason());

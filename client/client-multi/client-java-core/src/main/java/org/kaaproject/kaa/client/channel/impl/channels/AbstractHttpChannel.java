@@ -250,7 +250,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
                 failoverStatus = FailoverStatus.ENDPOINT_VERIFICATION_FAILED;
                 break;
             case FORBIDDEN_HTTP_STATUS:
-                failoverStatus = FailoverStatus.CREDENTIALS_REVOKED;
+                failoverStatus = FailoverStatus.ENDPOINT_CREDENTIALS_REVOKED;
                 break;
             default:
                 break;

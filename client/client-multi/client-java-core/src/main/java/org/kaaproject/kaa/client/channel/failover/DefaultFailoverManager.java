@@ -16,20 +16,19 @@
 
 package org.kaaproject.kaa.client.channel.failover;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.failover.FailoverDecision.FailoverAction;
 import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
 import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class DefaultFailoverManager implements FailoverManager {
 
@@ -178,8 +177,6 @@ public class DefaultFailoverManager implements FailoverManager {
         AccessPointIdResolution accessPointIdResolution = null;
         long resolutionTime = System.currentTimeMillis();
         switch (failoverStatus) {
-            case ENDPOINT_VERIFICATION_FAILED:
-                return new FailoverDecision(FailoverAction.STOP_APP);
             case BOOTSTRAP_SERVERS_NA:
             case CURRENT_BOOTSTRAP_SERVER_NA:
                 accessPointIdResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
@@ -191,6 +188,8 @@ public class DefaultFailoverManager implements FailoverManager {
             case OPERATION_SERVERS_NA:
                 accessPointIdResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
                 resolutionTime += failoverStrategy.getTimeUnit().toMillis(failoverStrategy.getOperationServersRetryPeriod());
+                break;
+            default:
                 break;
         }
         if (accessPointIdResolution != null) {
