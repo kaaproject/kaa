@@ -32,6 +32,7 @@ import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -114,7 +115,7 @@ public class DefaultProfileService implements ProfileService {
      */
     @Override
     public EndpointProfileDto registerProfile(RegisterProfileRequest request) {
-        String endpointId = Base64Util.encode(request.getEndpointKey()); 
+        String endpointId = Base64Util.encode(SHA1HashUtils.hashToBytes(request.getEndpointKey())); 
         LOG.debug("Registering Profile for {}", request.getEndpointKey());
         LOG.trace("Lookup application by token: {}", request.getAppToken());
 

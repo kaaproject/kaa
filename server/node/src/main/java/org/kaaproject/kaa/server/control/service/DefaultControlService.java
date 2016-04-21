@@ -2326,7 +2326,7 @@ public class DefaultControlService implements ControlService {
             Integer serverProfileVersion,
             String serverProfileBody)
                     throws ControlServiceException {
-        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(applicationId, credentialsId, null, serverProfileVersion, serverProfileBody);
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(applicationId, null, credentialsId, serverProfileVersion, serverProfileBody);
         try {
             this.endpointRegistrationService.saveEndpointRegistration(endpointRegistration);
         } catch (EndpointRegistrationServiceException cause) {

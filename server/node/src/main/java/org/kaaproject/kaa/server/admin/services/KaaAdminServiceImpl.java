@@ -3650,7 +3650,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Integer serverProfileVersion,
             String serverProfileBody)
                     throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             this.checkApplicationId(applicationId);
             Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);

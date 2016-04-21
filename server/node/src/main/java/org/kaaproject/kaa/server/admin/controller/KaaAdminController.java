@@ -2135,7 +2135,7 @@ public class KaaAdminController {
      *
      * @throws KaaAdminServiceException - if an exception occures.
      */
-    @RequestMapping(value = "provisionRegistration", params = { "applicationId", "credentialsId" }, method = RequestMethod.POST)
+    @RequestMapping(value = "provisionRegistration", params = { "applicationId", "credentialsId", "serverProfileVersion", "serverProfileBody" }, method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void provisionRegistration(
             @RequestParam String applicationId,

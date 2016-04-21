@@ -51,12 +51,19 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
     }
 
     @Override
-    public EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException {
+    public EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration)
+            throws EndpointRegistrationServiceException {
         try {
             Validate.notNull(endpointRegistration, "Invalid endpoint registration provided!");
             String credentialsId = endpointRegistration.getCredentialsId();
             Optional<EndpointRegistrationDto> oldRegistration = findEndpointRegistrationByCredentialsId(credentialsId);
-            Validate.isTrue(!oldRegistration.isPresent(), "The endpoint registration already exists!");
+            if (oldRegistration.isPresent()) {
+                EndpointRegistrationDto oldRegistrationDto = oldRegistration.get();
+                if (oldRegistrationDto.getEndpointId() != null
+                        && !oldRegistrationDto.getEndpointId().equals(endpointRegistration.getEndpointId())) {
+                    throw new IllegalStateException("The endpoint registration with such credentials already exists!");
+                }
+            }
             return this.endpointRegistrationDao.save(endpointRegistration).toDto();
         } catch (Exception cause) {
             LOG.error("An unexpected exception occured while saving endpoint registration!", cause);
@@ -65,7 +72,8 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
     }
 
     @Override
-    public Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException {
+    public Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId)
+            throws EndpointRegistrationServiceException {
         try {
             Validate.notBlank(endpointId, "Invalid endpoint ID provided!");
             return this.endpointRegistrationDao.findByEndpointId(endpointId).map(EndpointRegistration::toDto);
@@ -76,7 +84,8 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
     }
 
     @Override
-    public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId) throws EndpointRegistrationServiceException {
+    public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId)
+            throws EndpointRegistrationServiceException {
         try {
             Validate.notBlank(credentialsId, "Invalid credentials ID provided!");
             return this.endpointRegistrationDao.findByCredentialsId(credentialsId).map(EndpointRegistration::toDto);
