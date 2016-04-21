@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <random>
 
+#include "kaa/IKaaClient.hpp"
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
@@ -94,9 +95,9 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                     retryTimer_.start(period, [&] { receiveOperationsServerList(); });
                     break;
                 }
-                case FailoverStrategyAction::STOP_APP:
-                    KAA_LOG_WARN("Stopping application according to failover strategy decision!");
-                    exit(EXIT_FAILURE);
+                case FailoverStrategyAction::STOP_CLIENT:
+                    KAA_LOG_WARN("Stopping client according to failover strategy decision!");
+                    client_->stop();
                     break;
                 default:
                     break;
@@ -163,9 +164,9 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
             channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer(),
                                             failoverReason);
             break;
-        case FailoverStrategyAction::STOP_APP:
-            KAA_LOG_WARN("Stopping application according to failover strategy decision!");
-            exit(EXIT_FAILURE);
+        case FailoverStrategyAction::STOP_CLIENT:
+            KAA_LOG_WARN("Stopping client according to failover strategy decision!");
+            client_->stop();
             break;
         default:
             break;

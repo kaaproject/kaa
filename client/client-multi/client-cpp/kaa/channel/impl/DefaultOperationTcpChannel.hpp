@@ -42,12 +42,14 @@
 
 namespace kaa {
 
+class IKaaClient;
 class IKaaTcpRequest;
 class KeyPair;
 
 class DefaultOperationTcpChannel : public IDataChannel {
 public:
-    DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context);
+    DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys,
+            IKaaClientContext &context, IKaaClient *client);
     virtual ~DefaultOperationTcpChannel();
 
     virtual void sync(TransportType type);
@@ -167,6 +169,9 @@ private:
     IFailoverStrategyPtr failoverStrategy_;
 
     IKaaClientContext &context_;
+
+    // Temporary solution to stop app
+    IKaaClient *client_;
 };
 
 }

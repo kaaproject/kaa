@@ -37,7 +37,7 @@ enum class FailoverStrategyAction {
     RETRY,                      /*!< Initiate log upload. */
     USE_NEXT_BOOTSTRAP,
     USE_NEXT_OPERATIONS,
-    STOP_APP
+    STOP_CLIENT,
 };
 
 class FailoverStrategyDecision {
