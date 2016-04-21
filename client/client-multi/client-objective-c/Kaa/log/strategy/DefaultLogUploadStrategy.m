@@ -98,7 +98,7 @@
 }
 
 - (void)onTimeoutForController:(id<LogFailoverCommand>)controller {
-    [controller switchAccessPoint];
+    [controller retryLogUploadWithDelay:self.retryPeriod];
 }
 
 - (void)onFailureForController:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code {
