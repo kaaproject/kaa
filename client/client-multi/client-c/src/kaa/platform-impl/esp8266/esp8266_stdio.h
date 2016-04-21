@@ -21,6 +21,4 @@
 #undef stdout
 #define stdout 0
 
-#define KAA_EXIT(e) exit(e)
-
 #endif /* ESP8266_STDIO_H */

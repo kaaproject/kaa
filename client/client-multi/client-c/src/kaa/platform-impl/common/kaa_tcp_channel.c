@@ -881,14 +881,19 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
                 if (tcp_channel->channel_operation_type == KAA_SERVER_BOOTSTRAP) {
-                    kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager,
-                                                                 &tcp_channel->protocol_id, tcp_channel->channel_operation_type,
-                                                                 KAA_BOOTSTRAP_SERVERS_NA);
+                    error_code = kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager,
+                                                                              &tcp_channel->protocol_id, tcp_channel->channel_operation_type,
+                                                                              KAA_BOOTSTRAP_SERVERS_NA);
                 } else {
-                    kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager,
-                                                                 &tcp_channel->protocol_id, tcp_channel->channel_operation_type,
-                                                                 KAA_OPERATION_SERVERS_NA);
+                    error_code = kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager,
+                                                                              &tcp_channel->protocol_id, tcp_channel->channel_operation_type,
+                                                                              KAA_OPERATION_SERVERS_NA);
                 }
+
+                if (error_code) {
+                    return error_code;
+                }
+
                 return KAA_ERR_TIMEOUT;
             }
 
