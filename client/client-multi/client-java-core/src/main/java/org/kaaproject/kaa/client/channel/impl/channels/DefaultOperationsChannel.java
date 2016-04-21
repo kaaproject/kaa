@@ -39,6 +39,7 @@ import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableCommandRunnable;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableRunnable;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.CancelableScheduledFuture;
@@ -206,7 +207,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             synchronized (this) {
                 stopPollScheduler(false);
             }
-            failoverManager.onServerFailed(info);
+            failoverManager.onServerFailed(info, FailoverStatus.NO_CONNECTIVITY);
         } else {
             LOG.debug("Channel [{}] connection aborted", getId());
         }
