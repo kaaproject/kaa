@@ -29,7 +29,7 @@ public:
 
     virtual std::size_t getTimeout() { ++onGetTimeout_; return timeout_; }
 
-    virtual void onTimeout(ILogFailoverCommand& controller) { ++onTimeout_; }
+    virtual void onTimeout(ILogFailoverCommand& controller) { ++onTimeout_; controller.switchAccessPoint(); }
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code) { ++onFailure_; }
 
     virtual std::size_t getTimeoutCheckPeriod() { ++onGetTimeoutCheckPeriod_ ; return timeoutCheckPeriod_; }

@@ -336,7 +336,8 @@ BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
                                     createSerializedLogRecord()
                                   };
 
-    LogBucket bucket(1, std::move(logs));
+    LogBucket bucket(1, logs);
+    LogBucket bucket2(2, logs);
 
     std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
     logStorage->recordPack_ = bucket;
@@ -359,10 +360,19 @@ BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
     BOOST_CHECK_EQUAL(uploadStrategy->onTimeout_, 0);
     BOOST_CHECK_EQUAL(uploadStrategy->onGetTimeout_, 1);
 
+    //increase delivery timeout so that bucket2 won't expire
+    uploadStrategy->timeout_ = DELIVERY_TIMEOUT * 3;
+    logStorage->recordPack_ = bucket2;
+    request = logCollector.getLogUploadRequest();
+
+    BOOST_CHECK_EQUAL(uploadStrategy->onGetTimeout_, 2);
+
     std::this_thread::sleep_for(std::chrono::seconds(2 * DELIVERY_TIMEOUT));
 
     BOOST_CHECK_EQUAL(uploadStrategy->onTimeout_, 1);
-    BOOST_CHECK_EQUAL(logStorage->onRollbackBucket_, 1);
+    // Timeout which orrured on first bucket should trigger AP switch
+    // The second bucket should be rolled back because of AP switch
+    BOOST_CHECK_EQUAL(logStorage->onRollbackBucket_, 2);
     BOOST_CHECK_EQUAL(logDeliveryListener->onTimeout_, 1);
 }
 
