@@ -424,11 +424,11 @@ public interface KaaAdminService extends RemoteService {
     
     List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException;
 
-    CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException;
+    CredentialsDto provisionCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException;
 
     void revokeCredentials(String applicationId, String credentialsId) throws KaaAdminServiceException;
 
-    void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
+    void provisionRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
 
     void onCredentialsRevoked(String applicationId, String credentialsId) throws KaaAdminServiceException;
 

@@ -1703,7 +1703,7 @@ public interface ControlService {
      *
      * @throws ControlServiceException - if an exception occures.
      */
-    CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws ControlServiceException;
+    CredentialsDto provisionCredentials(String applicationId, String credentialsBody) throws ControlServiceException;
 
     /**
      * Returns credentials by application ID and credentials ID.
@@ -1752,7 +1752,7 @@ public interface ControlService {
      *
      * @throws ControlServiceException - if an exception occures.
      */
-    void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
+    void provisionRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
 
     /**
      * Returns the names of credentials services configured.

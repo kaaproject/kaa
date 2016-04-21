@@ -2254,7 +2254,7 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws ControlServiceException {
+    public CredentialsDto provisionCredentials(String applicationId, String credentialsBody) throws ControlServiceException {
         CredentialsDto credentials = new CredentialsDto(Base64Utils.decodeFromString(credentialsBody), CredentialsStatus.AVAILABLE);
         try {
             return this.credentialsServiceLocator.getCredentialsService(applicationId).provideCredentials(credentials);
@@ -2320,7 +2320,7 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public void provideRegistration(
+    public void provisionRegistration(
             String applicationId,
             String credentialsId,
             Integer serverProfileVersion,

@@ -1063,20 +1063,20 @@ public class AdminClient {
         return response.getBody();
     }
 
-    public CredentialsDto provideCredentials (String applicationId, byte[] credentialsBody) {
+    public CredentialsDto provisionCredentials (String applicationId, byte[] credentialsBody) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationId", applicationId);
         parameters.add("credentialsBody", Base64Utils.encodeToString(credentialsBody));
-        return this.restTemplate.postForObject(restTemplate.getUrl() + "provideCredentials", parameters, CredentialsDto.class);
+        return this.restTemplate.postForObject(restTemplate.getUrl() + "provisionCredentials", parameters, CredentialsDto.class);
     }
 
-    public void provideRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody){
+    public void provisionRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody){
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationId", applicationId);
         parameters.add("credentialsId", credentialsId);
         parameters.add("serverProfileVersion", serverProfileVersion);
         parameters.add("serverProfileBody", serverProfileBody);
-        this.restTemplate.postForLocation(restTemplate.getUrl() + "provideRegistration", parameters);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistration", parameters);
     }
 
     public void revokeCredentials(String applicationId, String credentialsId){

@@ -25,6 +25,7 @@ server/common/server-shared/src/main/java/org/kaaproject/kaa/server/common/Versi
 pom.xml.versionsBackup
 server/common/dao/src/main/resources/dao.properties
 server/common/dao/src/main/resources/sql-dao.properties
+server/node/src/main/resources/admin-dao.properties
 build/
 DerivedData
 Pods/

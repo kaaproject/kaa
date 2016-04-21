@@ -3608,11 +3608,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public CredentialsDto provideCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException {
+    public CredentialsDto provisionCredentials(String applicationId, String credentialsBody) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             this.checkApplicationId(applicationId);
-            return this.controlService.provideCredentials(applicationId, credentialsBody);
+            return this.controlService.provisionCredentials(applicationId, credentialsBody);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
@@ -3644,7 +3644,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void provideRegistration(
+    public void provisionRegistration(
             String applicationId,
             String credentialsId,
             Integer serverProfileVersion,
@@ -3664,7 +3664,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
                 throw new IllegalArgumentException(message);
             }
-            this.controlService.provideRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
+            this.controlService.provisionRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

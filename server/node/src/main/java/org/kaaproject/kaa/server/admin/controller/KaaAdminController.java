@@ -2116,13 +2116,13 @@ public class KaaAdminController {
      *
      * @throws KaaAdminServiceException - if an exception occures.
      */
-    @RequestMapping(value = "provideCredentials", params = { "applicationId", "credentialsBody" }, method = RequestMethod.POST)
+    @RequestMapping(value = "provisionCredentials", params = { "applicationId", "credentialsBody" }, method = RequestMethod.POST)
     @ResponseBody
-    public CredentialsDto provideCredentials(
+    public CredentialsDto provisionCredentials(
             @RequestParam String applicationId,
             @RequestParam String credentialsBody)
                     throws KaaAdminServiceException {
-        return this.kaaAdminService.provideCredentials(applicationId, credentialsBody);
+        return this.kaaAdminService.provisionCredentials(applicationId, credentialsBody);
     }
 
     /**
@@ -2135,15 +2135,15 @@ public class KaaAdminController {
      *
      * @throws KaaAdminServiceException - if an exception occures.
      */
-    @RequestMapping(value = "provideRegistration", params = { "applicationId", "credentialsId" }, method = RequestMethod.POST)
+    @RequestMapping(value = "provisionRegistration", params = { "applicationId", "credentialsId" }, method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void provideRegistration(
+    public void provisionRegistration(
             @RequestParam String applicationId,
             @RequestParam String credentialsId,
             @RequestParam Integer serverProfileVersion,
             @RequestParam String serverProfileBody)
                     throws KaaAdminServiceException {
-        this.kaaAdminService.provideRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
+        this.kaaAdminService.provisionRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
     }
 
     /**
