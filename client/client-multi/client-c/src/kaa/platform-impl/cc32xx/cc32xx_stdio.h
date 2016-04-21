@@ -19,7 +19,6 @@
 
 #include <stdio.h>
 
-#define KAA_EXIT(e) cc32xx_reboot()
 void cc32xx_reboot(void);
 
 #endif /* CC32XX_STDIO_H_ */

@@ -19,6 +19,4 @@
 
 #include <stdio.h>
 
-#define KAA_EXIT(e)
-
 #endif /* ECONAIS_EC19D_STDIO_H_ */
