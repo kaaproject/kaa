@@ -63,8 +63,8 @@ static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeo
 typedef struct {
     size_t timeout;
     size_t max_parallel_uploads;
-    bool on_timeout_count;
-    bool on_failure_count;
+    int on_timeout_count;
+    int on_failure_count;
     ext_log_upload_decision_t decision;
     kaa_error_t timeout_retval; // Return value when timeout event hits
 } mock_strategy_context_t;
