@@ -607,4 +607,14 @@ public interface GenericKaaClient {
      * @see org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy
      */
     void setFailoverStrategy(FailoverStrategy failoverStrategy);
+
+    /**
+     * Set listener which is notified on critical failures that are treated as something
+     * that client should not handle on its own.
+     *
+     * @param failureListener listener to handle critical failures
+     *
+     * @see org.kaaproject.kaa.client.FailureListener
+     */
+    void setFailureListener(FailureListener failureListener);
 }

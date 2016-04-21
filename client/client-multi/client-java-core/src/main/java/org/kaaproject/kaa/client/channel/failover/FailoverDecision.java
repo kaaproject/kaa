@@ -58,6 +58,6 @@ public class FailoverDecision {
         RETRY,
         USE_NEXT_BOOTSTRAP,
         USE_NEXT_OPERATIONS,
-        STOP_APP
+        FAILURE
     }
 }
