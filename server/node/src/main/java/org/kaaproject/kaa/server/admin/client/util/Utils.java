@@ -230,5 +230,16 @@ public class Utils {
     public static String getEndpointGroupIdFromUrl(String path) {
         return path.split("&")[1].split("=")[1];
     }
-   
+
+    /**
+     * Abbreviates a long string using ellipsis.
+     *
+     * @param text The string to abbreviate
+     * @param maxLength The maximum length of the resulting string
+     *
+     * @return The abbreviated string
+     */
+    public static String abbreviateText(String text, int maxLength) {
+        return (text != null && text.length() > maxLength) ? text.substring(0, maxLength) + "..." : text;
+    }
 }

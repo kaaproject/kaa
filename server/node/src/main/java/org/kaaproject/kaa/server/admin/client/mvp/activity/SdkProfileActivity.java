@@ -16,10 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
@@ -35,8 +34,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SdkProfileActivity extends
         AbstractDetailsActivity<SdkProfileViewDto, SdkProfileView, SdkProfilePlace>{

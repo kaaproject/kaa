@@ -54,9 +54,9 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                 new StringValueProvider<SdkProfileDto>() {
                     @Override
                     public String getValue(SdkProfileDto item) {
-                        return item.getName();
+                        return Utils.abbreviateText(item.getName(), 50);
                     }
-                }, 40);
+                }, 60);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.author(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -80,7 +80,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getConfigurationSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.profile(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -88,7 +88,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getProfileSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.notification(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -96,7 +96,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getNotificationSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.log(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -104,15 +104,15 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getLogSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.sdkToken(),
                 new StringValueProvider<SdkProfileDto>() {
                     @Override
                     public String getValue(SdkProfileDto item) {
-                        return item.getToken();
+                        return Utils.abbreviateText(item.getToken(), 20);
                     }
-                }, 80);
+                }, 60);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.ecfs(),
                 new StringValueProvider<SdkProfileDto>() {
