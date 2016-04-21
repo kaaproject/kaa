@@ -33,19 +33,11 @@ let
     raspberrypi-openssl = callPackage ./raspberrypi-openssl { };
 
     # Currently, it causes compilation failure, so we use 4.7 for now.
-    # gcc-arm-embedded = pkgs.callPackage_i686 ./gcc-arm-embedded {
-    #   dirName = "5.0";
-    #   subdirName = "5-2015-q4-major";
-    #   version = "5.2-2015q4-20151219";
-    #   releaseType = "major";
-    #   sha256 = "12mbwl9iwbw7h6gwwkvyvfmrsz7vgjz27jh2cz9z006ihzigi50y";
-    # };
+    # gcc-arm-embedded = pkgs.gcc-arm-embedded-5_2;
     gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
 
-    kaa-client-c = callPackage ./kaa-client-c { };
-
-    kaa-client-cpp = callPackage ./kaa-client-cpp { };
-
+    # Submitted patch upstream:
+    # https://sourceforge.net/p/astyle/bugs/396/
     astyle = pkgs.astyle.overrideDerivation (self: {
       sourceRoot = "astyle";
       preBuild = ''
@@ -54,7 +46,15 @@ let
       patches = [ ./astyle/max_indent.patch ];
     });
 
+    # avro-cpp was merged into upstream
+    # (https://github.com/NixOS/nixpkgs/pull/14811)
+    #
+    # Remove next line, once it gets into channel.
     avro-cpp = callPackage ./avro-cpp { };
+
+    kaa-client-c = callPackage ./kaa-client-c { };
+
+    kaa-client-cpp = callPackage ./kaa-client-cpp { };
   };
 
 in self
