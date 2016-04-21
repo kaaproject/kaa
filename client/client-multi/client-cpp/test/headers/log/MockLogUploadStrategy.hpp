@@ -20,6 +20,7 @@
 #include <cstdint>
 
 #include "kaa/log/ILogUploadStrategy.hpp"
+#include "kaa/log/ILogFailoverCommand.hpp"
 
 namespace kaa {
 
@@ -29,7 +30,11 @@ public:
 
     virtual std::size_t getTimeout() { ++onGetTimeout_; return timeout_; }
 
-    virtual void onTimeout(ILogFailoverCommand& controller) { ++onTimeout_; }
+    virtual void onTimeout(ILogFailoverCommand& controller) {
+        controller.switchAccessPoint();
+        ++onTimeout_;
+    }
+
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code) { ++onFailure_; }
 
     virtual std::size_t getTimeoutCheckPeriod() { ++onGetTimeoutCheckPeriod_ ; return timeoutCheckPeriod_; }
