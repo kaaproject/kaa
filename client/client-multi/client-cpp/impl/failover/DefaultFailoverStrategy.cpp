@@ -45,7 +45,7 @@ FailoverStrategyDecision DefaultFailoverStrategy::onFailover(KaaFailoverReason f
 
         case KaaFailoverReason::CREDENTIALS_REVOKED:
         case KaaFailoverReason::ENDPOINT_NOT_REGISTERED:
-            return FailoverStrategyDecision(FailoverStrategyAction::STOP_APP);
+            return FailoverStrategyDecision(FailoverStrategyAction::RETRY);
 
         default:
             return FailoverStrategyDecision(FailoverStrategyAction::NOOP);
