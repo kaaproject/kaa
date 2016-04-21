@@ -266,7 +266,7 @@ typedef NS_ENUM(int, HttpStatus) {
             failoverStatus = FailoverStatusEndpointVerificationFailed;
             break;
         case HttpStatusForbidden:
-            failoverStatus = FailoverStatusCredentialsRevoked;
+            failoverStatus = FailoverStatusEndpointCredentialsRevoked;
             break;
         default:
             break;

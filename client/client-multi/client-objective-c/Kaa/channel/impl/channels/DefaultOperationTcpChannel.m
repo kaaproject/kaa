@@ -171,7 +171,7 @@ typedef enum {
             [self closeConnection];
             break;
         case DisconnectReasonCredentialsRevoked:
-            [self onServerFailedWithFailoverStatus:FailoverStatusCredentialsRevoked];
+            [self onServerFailedWithFailoverStatus:FailoverStatusEndpointCredentialsRevoked];
             break;
         default:
             DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);

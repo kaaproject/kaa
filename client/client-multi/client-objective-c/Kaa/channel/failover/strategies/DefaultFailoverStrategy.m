@@ -84,9 +84,9 @@ static const int64_t kDefaultTimeUnit = TIME_UNIT_SECONDS;
             return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionRetry
                                                         retryPeriod:self.noConnectivityRetryPeriod
                                                            timeUnit:self.timeUnit];
-        case FailoverStatusCredentialsRevoked:
+        case FailoverStatusEndpointCredentialsRevoked:
         case FailoverStatusEndpointVerificationFailed:
-            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionStopApp];
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionRetry];
         default:
             return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionNoop];
     }

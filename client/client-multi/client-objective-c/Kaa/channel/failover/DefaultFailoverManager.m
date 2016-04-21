@@ -223,7 +223,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
                                                toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
             case FailoverStatusNoConnectivity:
-            case FailoverStatusCredentialsRevoked:
+            case FailoverStatusEndpointCredentialsRevoked:
             case FailoverStatusEndpointVerificationFailed:
                 break;
         }
