@@ -80,7 +80,7 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
 
     @Override
     public void onTimeout(LogFailoverCommand controller) {
-        controller.switchAccessPoint();
+        controller.retryLogUpload(retryPeriod);
     }
 
     @Override
