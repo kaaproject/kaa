@@ -84,20 +84,30 @@ private:
     void closeDBConnection();
 
     void initDBTables();
-    void applyOptimization(int mask);
-
-    void markBucketsAsFree();
-
-    void addNextBucket();
+    void applyDBOptimization(int mask);
 
     bool checkBucketOverflow(const LogRecord& record) {
         return (currentBucketSize_ + record.getSize() > maxBucketSize_) ||
                (currentBucketRecordCount_ + 1 > maxBucketRecordCount_);
     }
 
+    void addNextBucket();
     void markBucketAsInUse(std::int32_t id);
+    void markBucketsAsFree();
+    bool retrieveLastBucketInfo();
 
+    void retrieveConsumedSizeAndVolume();
     bool truncateIfBucketSizeIncompatible();
+
+    std::string storageStatisticsToStr() {
+        return (boost::format("Storage: total_logs %d, unmarked_logs %d, total_size: %d B")
+                                % totalRecordCount_ % unmarkedRecordCount_ % consumedMemory_).str();
+    }
+
+    std::string bucketStatisticsToStr() {
+        return (boost::format("Bucket: id %d, logs %d, size %d B")
+                    % currentBucketId_ % currentBucketRecordCount_ % currentBucketSize_).str();
+    }
 
 private:
     struct InnerBucketInfo {
