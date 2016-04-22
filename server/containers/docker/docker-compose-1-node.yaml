@@ -1,5 +1,3 @@
-#!/bin/sh
-#
 # Copyright 2014-2016 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# SYNOPSIS
-#     srcformat.sh [FILE]...
-#
-# DESCRIPTION
-#     This script formats given source FILES according code style.
-
-
-STYLE="--style=1tbs --indent=spaces=4 --pad-header --align-pointer=name --indent-preproc-block --indent-switches -M8"
-
-if [ -z "$@" ]; then echo "You must specify source files"; exit 1; fi
-
-astyle $STYLE $@
-
+kaa_node:
+    image: kaaproject/node:0.9.0
+    environment:
+        - DATABASE=cassandra
+        - ZK_HOSTS=zookeeperhost:2181
+        - CASSANDRA_HOSTS=cassandrahost:9042
+        - MONGODB_HOSTS=mongodbhost:27017
+        - JDBC_HOST=postgreshost
+        - JDBC_PORT=5432
+    command: bash -c "/config_listener.sh && /usr/bin/kaa-node start && while true; do sleep 1; done"

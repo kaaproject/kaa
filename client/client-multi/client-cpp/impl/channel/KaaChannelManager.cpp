@@ -18,6 +18,7 @@
 
 #include <sstream>
 
+#include "kaa/IKaaClient.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
@@ -25,8 +26,15 @@
 
 namespace kaa {
 
-KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers, IKaaClientContext &context)
-    : bootstrapManager_(manager), retryTimer_("KaaChannelManager retryTimer"), isShutdown_(false), isPaused_(false), bsTransportId_(0,0), context_(context)
+KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers,
+        IKaaClientContext &context, IKaaClient *client)
+    : bootstrapManager_(manager)
+    , retryTimer_("KaaChannelManager retryTimer")
+    , isShutdown_(false)
+    , isPaused_(false)
+    , bsTransportId_(0,0)
+    , context_(context)
+    , client_(client)
 {
     for (const auto& connectionInfo : servers) {
         auto& list = bootstrapServers_[connectionInfo->getTransportId()];
@@ -98,9 +106,9 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
                          });
                      break;
                  }
-                 case FailoverStrategyAction::STOP_APP:
-                     KAA_LOG_WARN("Stopping application according to failover strategy decision!");
-                     exit(EXIT_FAILURE);
+                 case FailoverStrategyAction::STOP_CLIENT:
+                     KAA_LOG_WARN("Stopping client according to failover strategy decision!");
+                     client_->stop();
                      break;
                  default:
                     break;

@@ -165,6 +165,7 @@ kaa_error_t kaa_subscribe_to_topics(kaa_notification_manager_t *self, uint64_t *
 *
 * @param[in]  self         The pointer to the notification manager instance.
 * @param[in]  topic_id     The pointer to the id of the topic from which the endpoint should be unsubscribed.
+* @param[in]  force_sync   Sync topic unsubscription
 *
 * @return The error code.
 */

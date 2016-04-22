@@ -26,6 +26,7 @@
 
 #include <boost/bind.hpp>
 
+#include "kaa/IKaaClient.hpp"
 #include "kaa/common/exception/TransportRedirectException.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
@@ -59,12 +60,29 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
         };
 
 
-DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
-    : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/
+DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager
+        , const KeyPair& clientKeys, IKaaClientContext &context, IKaaClient *client)
+    : clientKeys_(clientKeys)
+    , work_(io_)
+    , socketWork_(socketIo_)
+    /*, sock_(io_) */
+    , pingTimer_(io_)
+    , connAckTimer_(io_)
+    /*, reconnectTimer_(io_)*/
     , retryTimer_("DefaultOperationTcpChannel retryTimer")
-    , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
-    , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr)
-    , channelManager_(channelManager), responsePorcessor(context), context_(context)
+    , firstStart_(true)
+    , isConnected_(false)
+    , isFirstResponseReceived_(false)
+    , isPendingSyncRequest_(false)
+    , isShutdown_(false)
+    , isPaused_(false)
+    , isFailoverInProgress_(false)
+    , multiplexer_(nullptr)
+    , demultiplexer_(nullptr)
+    , channelManager_(channelManager)
+    , responsePorcessor(context)
+    , context_(context)
+    , client_(client)
 {
     responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
     responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
@@ -289,9 +307,9 @@ void DefaultOperationTcpChannel::onServerFailed(KaaFailoverReason failoverReason
                 retryTimer_.start(period, [&] { isFailoverInProgress_ = false; openConnection(); });
                 break;
             }
-            case FailoverStrategyAction::STOP_APP:
-                KAA_LOG_WARN("Stopping application according to failover strategy decision!");
-                exit(EXIT_FAILURE);
+            case FailoverStrategyAction::STOP_CLIENT:
+                KAA_LOG_WARN("Stopping client according to failover strategy decision!");
+                client_->stop();
                 break;
             default:
                 break;

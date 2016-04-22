@@ -82,7 +82,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
  * destroyed and new strategy will be assigned.
  *
  * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in] log_storage_context           Log storage context.
+ * @param[in] log_upload_strategy_context   Log storage context.
  *
  * @return  Error code.
  */
@@ -105,9 +105,9 @@ kaa_error_t kaa_logging_set_storage(kaa_log_collector_t *self, void *log_storage
 /**
  * @brief Serializes and adds a log record to the log storage.
  *
- * @param[in]  self    Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in]  entry   Pointer to log entry to be added to the storage.
- * @param[out] bucket  Pointer to log bucket info. May be NULL.
+ * @param[in]  self      Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in]  entry     Pointer to log entry to be added to the storage.
+ * @param[out] log_info  Pointer to log info. May be @c NULL.
  *
  * @return  Error code.
  */

@@ -623,7 +623,7 @@ QUIET                  = YES
 
 WARNINGS               = YES
 
-WARN_AS_ERROR          = NO
+WARN_AS_ERROR          = YES
 
 # If WARN_IF_UNDOCUMENTED is set to YES, then doxygen will generate warnings
 # for undocumented members. If EXTRACT_ALL is set to YES then this flag will

@@ -31,12 +31,14 @@
 
 namespace kaa {
 
+class IKaaClient;
 class IBootstrapManager;
 
 class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage
 {
 public:
-    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers, IKaaClientContext &context);
+    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers,
+            IKaaClientContext &context, IKaaClient *client);
     ~KaaChannelManager() { doShutdown(); }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -104,6 +106,9 @@ private:
     TransportProtocolId bsTransportId_;
 
     IKaaClientContext &context_;
+
+    // Temporary solution to stop app
+    IKaaClient *client_;
 };
 
 } /* namespace kaa */

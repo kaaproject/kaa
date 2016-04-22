@@ -77,11 +77,11 @@ typedef uint8_t kaa_log_level_t;
  *
  * @param[in,out]   logger          Address of a pointer to the newly created logger.
  * @param[in]       buffer_size     Size of the log message buffer to allocate to the logger.
- * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
+ * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_LEVEL_NONE @endlink to switch the logger off.
  * @param[in]       sink            Valid, opened file to write logs to. Will use @c stdout if @c NULL is provided.
  * @return                          Error code.
  */
-kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
+kaa_error_t kaa_log_create(kaa_logger_t **logger, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
 
 /**
  * @brief Deinitializes and destroys the logger instance.
@@ -95,7 +95,9 @@ kaa_error_t kaa_log_destroy(kaa_logger_t *logger);
  * @brief Retrieves the current log level.
  *
  * @param[in]   self    Pointer to a logger.
- * @return              Log level. Returns @link KAA_LOG_NONE @endlink if this is NULL.
+ *
+ * @return Log level.
+ * @retval KAA_LOG_LEVEL_NONE @p self is @c NULL.
  */
 kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self);
 
@@ -103,7 +105,7 @@ kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self);
  * @brief Sets the maximum log level.
  *
  * @param[in]   self            Pointer to a logger.
- * @param[in]   max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
+ * @param[in]   max_log_level   Max log level to be used. Use @ref KAA_LOG_LEVEL_NONE to switch the logger off.
  * @return                      Error code.
  */
 kaa_error_t kaa_set_max_log_level(kaa_logger_t *self, kaa_log_level_t max_log_level);

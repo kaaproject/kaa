@@ -54,7 +54,7 @@ extern "C" {
  *
  * @param[in]   self                 The user manager instance.
  * @param[in]   user_external_id     Null-terminated string representing external user ID.
- * @param[in]   user_access_token    Null-terminated string representing external access token.
+ * @param[in]   access_token         Null-terminated string representing external access token.
  *
  * @return      Error code.
  */
@@ -74,7 +74,7 @@ kaa_error_t kaa_user_manager_default_attach_to_user(kaa_user_manager_t *self
  *
  * @param[in]   self                   The user manager instance.
  * @param[in]   user_external_id       Null-terminated string representing external user ID.
- * @param[in]   user_access_token      Null-terminated string representing external access token.
+ * @param[in]   access_token           Null-terminated string representing external access token.
  * @param[in]   user_verifier_token    Null-terminated string representing user verifier token.
  *
  * @return      Error code.
@@ -90,8 +90,8 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
  * @brief Checks if current endpoint is attached to user.
  *
  * @param[in]   self    The user manager instance.
- * @retval      TRUE    The endpoint is attached to user
- * @retval      FALSE   Otherwise
+ * @retval      true    The endpoint is attached to user
+ * @retval      false   Otherwise
  */
 bool kaa_user_manager_is_attached_to_user(kaa_user_manager_t *self);
 
@@ -112,6 +112,7 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
  *
  * @param[in]   self                     The user manager instance.
  * @param[in]   endpoint_access_token    Null-terminated string representing endpoint access token.
+ * @param[in]   listener                 Status listener to set.
  *
  * @return      Error code.
  */
@@ -123,6 +124,7 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
  *
  * @param[in]   self                 The user manager instance.
  * @param[in]   endpoint_hash_key    Unique endpoint id.
+ * @param[in]   listener
  *
  * @return      Error code.
  */

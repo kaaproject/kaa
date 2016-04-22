@@ -28,9 +28,17 @@
 
 namespace kaa {
 
+class IKaaClient;
+
 class BootstrapManager : public IBootstrapManager, public boost::noncopyable {
 public:
-    BootstrapManager(IKaaClientContext &context) : bootstrapTransport_(nullptr), channelManager_(nullptr), context_(context), retryTimer_("BootstrapManager retryTimer") { }
+    BootstrapManager(IKaaClientContext& context, IKaaClient *client)
+        : bootstrapTransport_(nullptr)
+        , channelManager_(nullptr)
+        , context_(context)
+        , retryTimer_("BootstrapManager retryTimer")
+        , client_(client)
+        { }
     ~BootstrapManager() { }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -61,6 +69,9 @@ private:
     std::unique_ptr<std::int32_t> serverToApply;
 
     KaaTimer<void ()>        retryTimer_;
+
+    // Temporary solution to stop app
+    IKaaClient *client_;
 
     KAA_R_MUTEX_MUTABLE_DECLARE(guard_);
 };

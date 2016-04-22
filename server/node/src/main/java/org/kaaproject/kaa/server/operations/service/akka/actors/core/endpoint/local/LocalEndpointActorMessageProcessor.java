@@ -628,6 +628,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         LOG.debug("[{}] response: {}", actorKey, syncResponse);
 
         ServerSync copy = ServerSync.deepCopy(syncResponse);
+        ServerSync.cleanup(syncResponse);
 
         NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, e,
                 request.getCommand().getMessageBuilder(), request.getCommand().getErrorBuilder());

@@ -50,7 +50,7 @@ struct kaa_failover_strategy_t;
 typedef struct kaa_context_s {
     struct kaa_status_holder_t         *status;                 /**< See @link kaa_status.h @endlink. */
     struct kaa_platform_protocol_t     *platform_protocol;      /**< See @link kaa_platform_protocol.h @endlink. */
-    struct kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap.h @endlink. */
+    struct kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap_manager.h @endlink. */
     struct kaa_channel_manager_t       *channel_manager;        /**< See @link kaa_channel_manager.h @endlink. */
     struct kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
     struct kaa_user_manager_t          *user_manager;           /**< See @link kaa_user.h @endlink. */
@@ -58,7 +58,7 @@ typedef struct kaa_context_s {
     struct kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
     struct kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
     struct kaa_logger_t                *logger;                 /**< See @link kaa_log.h @endlink. */
-    struct kaa_notification_manager_t  *notification_manager;   /**< See @link kaa_notification.h @endlink. */
+    struct kaa_notification_manager_t  *notification_manager;   /**< See @link kaa_notification_manager.h @endlink. */
     struct kaa_failover_strategy_t     *failover_strategy;
 } kaa_context_t;
 
