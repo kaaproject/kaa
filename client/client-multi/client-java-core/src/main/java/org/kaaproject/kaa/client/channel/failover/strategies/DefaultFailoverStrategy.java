@@ -73,6 +73,9 @@ public class DefaultFailoverStrategy implements FailoverStrategy {
                 return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
             case NO_CONNECTIVITY:
                 return new FailoverDecision(FailoverAction.RETRY, noConnectivityRetryPeriod, timeUnit);
+            case ENDPOINT_VERIFICATION_FAILED:
+            case ENDPOINT_CREDENTIALS_REVOKED:
+                return new FailoverDecision(FailoverAction.RETRY);
             default:
                 return new FailoverDecision(FailoverAction.NOOP);
         }

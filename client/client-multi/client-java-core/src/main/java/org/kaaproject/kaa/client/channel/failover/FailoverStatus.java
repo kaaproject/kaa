@@ -21,6 +21,8 @@ package org.kaaproject.kaa.client.channel.failover;
  * a failover strategy
  */
 public enum FailoverStatus {
+    ENDPOINT_VERIFICATION_FAILED,
+    ENDPOINT_CREDENTIALS_REVOKED,
     BOOTSTRAP_SERVERS_NA,
     CURRENT_BOOTSTRAP_SERVER_NA,
     OPERATION_SERVERS_NA,

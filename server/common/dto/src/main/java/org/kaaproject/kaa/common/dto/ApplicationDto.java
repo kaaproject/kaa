@@ -27,6 +27,7 @@ public class ApplicationDto implements HasId, Serializable {
     private String name;
     private int sequenceNumber;
     private String tenantId;
+    private String credentialsServiceName;
 
     @Override
     public String getId() {
@@ -70,6 +71,14 @@ public class ApplicationDto implements HasId, Serializable {
         this.tenantId = tenantId;
     }
 
+    public String getCredentialsServiceName() {
+        return this.credentialsServiceName;
+    }
+
+    public void setCredentialsServiceName(String credentialsServiceName) {
+        this.credentialsServiceName = credentialsServiceName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -109,6 +118,6 @@ public class ApplicationDto implements HasId, Serializable {
     @Override
     public String toString() {
         return "ApplicationDto{" + "id='" + id + '\'' + ", applicationToken='" + applicationToken + '\'' + ", name='" + name + '\''
-                + ", sequenceNumber=" + sequenceNumber + ", tenantId='" + tenantId + '\'' + '}';
+                + ", sequenceNumber=" + sequenceNumber + ", tenantId='" + tenantId + ", credentialsServiceName='" + credentialsServiceName + '\'' + '}';
     }
 }

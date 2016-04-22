@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Set;
 
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -447,5 +448,23 @@ public class ESTestCacheService implements CacheService {
     @Override
     public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
         return null;
+    }
+
+    @Override
+    public String getApplicationIdByAppToken(String appToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ApplicationDto findAppById(String applicationId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void resetAppById(String applicationId) {
+        // TODO Auto-generated method stub
+        
     }
 }

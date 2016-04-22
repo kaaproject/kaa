@@ -30,6 +30,7 @@ import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityClusterAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
@@ -243,13 +244,20 @@ public class DefaultClusterService implements ClusterService {
         ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
         listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftServerProfileUpdateMessage>(address, classifier, msg));
     }
+    
+    @Override
+    public void onEndpointDeregistrationMessage(ThriftEndpointDeregistrationMessage msg) {
+        EndpointAddress address = fromThriftAddress(msg.getAddress());
+        ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
+        listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointDeregistrationMessage>(address, classifier, msg));
+    }
 
     private EndpointAddress fromThriftAddress(ThriftEntityAddress source) {
         return new EndpointAddress(source.getTenantId(), source.getApplicationToken(), EndpointObjectHash.fromBytes(source.getEntityId()));
     }
 
     private ActorClassifier fromThriftActorClassifier(ThriftActorClassifier actorClassifier) {
-        return new ActorClassifier(actorClassifier.isGlobalActor());
+        return ActorClassifier.valueOf(actorClassifier.name());
     }
 
     private EndpointRouteMessage fromThriftMsg(ThriftEntityRouteMessage source) {

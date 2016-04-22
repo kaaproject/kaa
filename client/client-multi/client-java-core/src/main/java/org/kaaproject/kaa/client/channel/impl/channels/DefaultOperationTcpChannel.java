@@ -119,11 +119,15 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
             if (message.getReturnCode() != ReturnCode.ACCEPTED) {
                 LOG.error("Connection for channel [{}] was rejected: {}", getId(), message.getReturnCode());
-                if (message.getReturnCode() == ReturnCode.REFUSE_BAD_CREDENTIALS) {
-                    LOG.info("Cleaning client state");
-                    state.clean();
+
+                LOG.info("Cleaning client state");
+                state.clean();
+
+                if (message.getReturnCode() == ReturnCode.REFUSE_VERIFICATION_FAILED) {
+                    onServerFailed(FailoverStatus.ENDPOINT_VERIFICATION_FAILED);
+                } else {
+                    onServerFailed();
                 }
-                onServerFailed();
             }
         }
 
@@ -179,11 +183,18 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         @Override
         public void onMessage(Disconnect message) {
             LOG.info("Disconnect message (reason={}) received for channel [{}]", message.getReason(), getId());
-            if (!message.getReason().equals(DisconnectReason.NONE)) {
-                LOG.error("Server error occurred: {}", message.getReason());
-                onServerFailed();
-            } else {
-                closeConnection();
+            switch (message.getReason()) {
+                case NONE:
+                    closeConnection();
+                    break;
+                case CREDENTIALS_REVOKED:
+                    LOG.error("Endpoint credentials been revoked");
+                    onServerFailed(FailoverStatus.ENDPOINT_CREDENTIALS_REVOKED);
+                    break;
+                default:
+                    LOG.error("Server error occurred: {}", message.getReason());
+                    onServerFailed();
+                    break;
             }
         }
     };
@@ -361,12 +372,16 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private void onServerFailed() {
+        this.onServerFailed(FailoverStatus.NO_CONNECTIVITY);
+    }
+
+    private void onServerFailed(FailoverStatus status) {
         LOG.info("[{}] has failed", getId());
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
             LOG.warn("Loss of connectivity detected");
 
-            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
+            FailoverDecision decision = failoverManager.onFailover(status);
             switch (decision.getAction()) {
                 case NOOP:
                     LOG.warn("No operation is performed according to failover strategy decision");
@@ -385,7 +400,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     break;
             }
         } else {
-            failoverManager.onServerFailed(currentServer);
+            failoverManager.onServerFailed(currentServer, status);
         }
     }
 

@@ -57,6 +57,7 @@ enum Operation {
       ADD_USER_VERIFIER = 18
       REMOVE_USER_VERIFIER = 19
       UPDATE_USER_VERIFIER = 20
+      APP_UPDATE = 21
 }
 
 /**
@@ -208,8 +209,15 @@ struct ThriftEntityAddress {
   4: binary entityId
 }
 
-struct ThriftActorClassifier {
-  1: bool globalActor
+enum ThriftActorClassifier {
+    LOCAL = 1;
+    GLOBAL = 2;
+    APPLICATION = 3;
+}
+
+struct ThriftEndpointDeregistrationMessage {
+  1: ThriftEntityAddress address
+  2: ThriftActorClassifier actorClassifier
 }
 
 struct ThriftEntityClusterAddress {
@@ -269,5 +277,9 @@ service OperationsThriftService {
 *  Interface to send server profile update message
 */
   void onServerProfileUpdate(1: ThriftServerProfileUpdateMessage message);  
-    
+
+/**
+ *  Interface to send server profile update message
+ */
+  void onEndpointDeregistration(1: ThriftEndpointDeregistrationMessage message);
 }

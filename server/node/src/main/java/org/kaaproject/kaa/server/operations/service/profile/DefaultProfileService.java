@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.operations.service.profile;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -27,11 +28,15 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
@@ -54,17 +59,12 @@ public class DefaultProfileService implements ProfileService {
     /** The LOG constant. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProfileService.class);
 
-    /** The application service. */
-    @Autowired
-    private ApplicationService applicationService;
-
     /** The endpoint service. */
     @Autowired
     private EndpointService endpointService;
-
-    /** The profile service. */
+    
     @Autowired
-    private org.kaaproject.kaa.server.common.dao.ProfileService profileService;
+    private EndpointRegistrationService endpointRegistrationService;
 
     /** The endpoint service. */
     @Autowired
@@ -115,6 +115,7 @@ public class DefaultProfileService implements ProfileService {
      */
     @Override
     public EndpointProfileDto registerProfile(RegisterProfileRequest request) {
+        String endpointId = Base64Util.encode(SHA1HashUtils.hashToBytes(request.getEndpointKey())); 
         LOG.debug("Registering Profile for {}", request.getEndpointKey());
         LOG.trace("Lookup application by token: {}", request.getAppToken());
 
@@ -137,6 +138,23 @@ public class DefaultProfileService implements ProfileService {
             dto.setEndpointKeyHash(keyHash.getData());
             dto.setClientProfileBody(profileJson);
             dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
+            
+            try {
+                Optional<EndpointRegistrationDto> endpointRegistrationLookup = endpointRegistrationService.findEndpointRegistrationByEndpointId(endpointId);
+                if(endpointRegistrationLookup.isPresent()){
+                    LOG.debug("Endpoint registration information found {}: {}", dto.getEndpointKey(), endpointRegistrationLookup.get());
+                    EndpointRegistrationDto endpointRegistration = endpointRegistrationLookup.get();
+                    if(endpointRegistration.getServerProfileBody() != null && endpointRegistration.getServerProfileVersion() != null){
+                        dto.setServerProfileVersion(endpointRegistration.getServerProfileVersion());
+                        dto.setServerProfileBody(endpointRegistration.getServerProfileBody());
+                    }
+                } else {
+                    LOG.debug("Endpoint registration information not found {}", dto.getEndpointKey());
+                }
+            } catch (EndpointRegistrationServiceException e) {
+                LOG.error("Failed to lookup registration information for: {}. Reason: {}", dto.getEndpointKey(), e);
+                throw new RuntimeException(e);
+            }
 
             populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
 

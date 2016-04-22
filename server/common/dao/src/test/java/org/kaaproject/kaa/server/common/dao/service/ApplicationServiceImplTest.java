@@ -91,7 +91,7 @@ public class ApplicationServiceImplTest extends AbstractTest {
         Assert.assertEquals(application.getId(), foundApp.getId());
     }
 
-    @Test(expected = IncorrectParameterException.class)
+    @Test
     public void saveAppTest() {
         ApplicationDto app = generateApplicationDto();
         applicationService.saveApp(app);

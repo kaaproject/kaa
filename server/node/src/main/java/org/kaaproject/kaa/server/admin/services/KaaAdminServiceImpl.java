@@ -21,6 +21,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,11 +31,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -79,6 +82,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -3702,7 +3707,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    @Override
     public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -3711,6 +3715,100 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 throw new IllegalArgumentException(message);
             }
             return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId(endpointUserExternalId, getCurrentUser().getTenantId());
+
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    private ServerProfileSchemaDto getServerProfileSchema(String applicationId, Integer serverProfileVersion) throws Exception {
+        ServerProfileSchemaDto serverProfileSchema = this.controlService.getServerProfileSchemaByApplicationIdAndVersion(applicationId, serverProfileVersion);
+        if (serverProfileSchema == null) {
+            throw new NotFoundException("No server-side endpoint profile schema found!");
+        }
+        return serverProfileSchema;
+    }
+
+    private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema, String serverProfileBody) throws Exception {
+        CTLSchemaDto commonType = this.controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
+        Schema typeSchema = this.controlService.exportCTLSchemaFlatAsSchema(commonType);
+        try {
+            new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
+        } catch (Exception cause) {
+            throw new IllegalArgumentException("Invalid server-side endpoint profile body provided!");
+        }
+    }
+
+    @Override
+    public CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            return this.controlService.provisionCredentials(applicationId, credentialsBody);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId).isPresent(), "No credentials with the given ID found!");
+            this.controlService.revokeCredentials(applicationId, credentialsId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+    
+
+    @Override
+    public void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() == CredentialsStatus.REVOKED, "Credentails with the given ID are not revoked!");
+            this.controlService.onCredentailsRevoked(applicationId, credentials.get().getId());
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }        
+    }
+
+    @Override
+    public void provisionRegistration(
+            String applicationToken,
+            String credentialsId,
+            Integer serverProfileVersion,
+            String serverProfileBody)
+                    throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
+            if (serverProfileVersion != null && serverProfileBody != null) {
+                ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
+                this.validateServerProfile(serverProfileSchema, serverProfileBody);
+            } else if (serverProfileVersion != null || serverProfileBody != null) {
+                String missingParameter = (serverProfileVersion == null ? "schema version" : "body");
+                String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
+                throw new IllegalArgumentException(message);
+            }
+            this.controlService.provisionRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<String> getCredentialsServiceNames() throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            return this.controlService.getCredentialsServiceNames();
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

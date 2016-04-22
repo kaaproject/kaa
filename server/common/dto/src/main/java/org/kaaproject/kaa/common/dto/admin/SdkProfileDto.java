@@ -92,7 +92,7 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
     public void setEndpointCount(Integer endpointCount) {
         this.endpointCount = endpointCount;
     }
-    
+
     @Override
     public String getId() {
         return id;

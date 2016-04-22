@@ -1524,4 +1524,12 @@ public class DataSource {
             }
         });
     }
+
+    public void getCredentialsServiceNames(final AsyncCallback<List<String>> callback) {
+        rpcService.getCredentialsServiceNames(new DataCallback<List<String>>(callback) {
+            @Override
+            protected void onResult(List<String> result) {
+            }
+        });
+    }
 }

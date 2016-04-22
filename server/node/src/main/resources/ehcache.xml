@@ -37,6 +37,13 @@
         transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
     </cache>
+    
+    <cache name="apps" maxEntriesLocalHeap="10000"
+        eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
+        transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
 
     <cache name="configurationIds" maxEntriesLocalHeap="10000"
         eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
@@ -80,7 +87,7 @@
         <persistence strategy="localTempSwap" />
     </cache>
 
-    <cache name="sdkProperties" maxEntriesLocalHeap="10000"
+    <cache name="sdkProfiles" maxEntriesLocalHeap="10000"
         eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
         timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
         transactionalMode="off" statistics="true">
@@ -156,6 +163,14 @@
         transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
     </cache>
+    
+        <cache name="appIds" maxEntriesLocalHeap="100000" eternal="false"
+        diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
+        transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+    
 
     <cache name="endpointGroups" maxEntriesLocalHeap="100000"
         eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"

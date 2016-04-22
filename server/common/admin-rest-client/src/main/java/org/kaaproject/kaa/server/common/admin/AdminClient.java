@@ -18,6 +18,19 @@ package org.kaaproject.kaa.server.common.admin;
 
 
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +63,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -76,23 +90,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
-
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AdminClient {
 
@@ -1319,5 +1321,35 @@ public class AdminClient {
         ParameterizedTypeReference<List<EndpointProfileDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileDto>>() {};
         ResponseEntity<List<EndpointProfileDto>> response = this.restTemplate.exchange(address, HttpMethod.GET, null, typeRef);
         return response.getBody();
+    }
+
+    public CredentialsDto provisionCredentials (String applicationToken, byte[] credentialsBody) {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationToken", applicationToken);
+        parameters.add("credentialsBody", Base64Utils.encodeToString(credentialsBody));
+        return this.restTemplate.postForObject(restTemplate.getUrl() + "provisionCredentials", parameters, CredentialsDto.class);
+    }
+
+    public void provisionRegistration(String applicationToken, String credentialsId, Integer serverProfileVersion, String serverProfileBody){
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationToken", applicationToken);
+        parameters.add("credentialsId", credentialsId);
+        parameters.add("serverProfileVersion", serverProfileVersion);
+        parameters.add("serverProfileBody", serverProfileBody);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistration", parameters);
+    }
+
+    public void revokeCredentials(String applicationToken, String credentialsId){
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationToken", applicationToken);
+        parameters.add("credentialsId", credentialsId);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "revokeCredentials", parameters);
+    }
+
+    public void onCredentialsRevoked(String applicationToken, String credentialsId){
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationToken", applicationToken);
+        parameters.add("credentialsId", credentialsId);
+        this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
     }
 }

@@ -38,10 +38,13 @@
 /**
  * Force switch to the next operations server that support given <TransportProtocolId>
  *
- * @param transportId of the transport protocol.
+ * @param transportId id of the transport protocol.
+ * @param status failovers status that causes using of the next operation server.
+ *
+ * @see FailoverStatus
  * @see TransportProtocolId
  */
-- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId;
+- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId failoverStatus:(FailoverStatus)status;
 
 /**
  * Update the Channel Manager with endpoint's properties retrieved by its DNS.

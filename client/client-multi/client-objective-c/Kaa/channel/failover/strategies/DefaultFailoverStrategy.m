@@ -64,28 +64,31 @@ static const int64_t kDefaultTimeUnit = TIME_UNIT_SECONDS;
 - (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
     DDLogVerbose(@"%@ Producing failover decision for failover status: %i", logTag, status);
     switch (status) {
-        case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
-            return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
+        case FailoverStatusBootstrapServersNotAvailable:
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionRetry
                                                         retryPeriod:self.bootstrapServersRetryPeriod
                                                            timeUnit:self.timeUnit];
-        case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
-            return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
+        case FailoverStatusCurrentBootstrapServerNotAvailable:
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionUseNextBootstrap
                                                         retryPeriod:self.bootstrapServersRetryPeriod
                                                            timeUnit:self.timeUnit];
-        case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
-            return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
+        case FailoverStatusNoOperationsServersReceived:
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionUseNextBootstrap
                                                         retryPeriod:self.bootstrapServersRetryPeriod
                                                            timeUnit:self.timeUnit];
-        case FAILOVER_STATUS_OPERATION_SERVERS_NA:
-            return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
+        case FailoverStatusOperationsServersNotAvailable:
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionRetry
                                                         retryPeriod:self.operationsServersRetryPeriod
                                                            timeUnit:self.timeUnit];
-        case FAILOVER_STATUS_NO_CONNECTIVITY:
-            return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
+        case FailoverStatusNoConnectivity:
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionRetry
                                                         retryPeriod:self.noConnectivityRetryPeriod
                                                            timeUnit:self.timeUnit];
+        case FailoverStatusEndpointCredentialsRevoked:
+        case FailoverStatusEndpointVerificationFailed:
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionRetry];
         default:
-            return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_NOOP];
+            return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionNoop];
     }
 }
 

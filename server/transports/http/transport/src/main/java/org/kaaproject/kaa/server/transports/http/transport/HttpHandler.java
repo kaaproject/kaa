@@ -16,12 +16,16 @@
 
 package org.kaaproject.kaa.server.transports.http.transport;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
+import org.kaaproject.kaa.server.transport.EndpointRevocationException;
+import org.kaaproject.kaa.server.transport.EndpointVerificationException;
+import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
@@ -31,10 +35,15 @@ import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 /**
  * The Class AkkaHandler.
  */
-public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand>  implements MessageBuilder, ErrorBuilder{
+public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand> implements MessageBuilder, ErrorBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpHandler.class);
 
@@ -70,23 +79,37 @@ public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand>  i
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final AbstractCommand msg) throws Exception {
         this.command = (AbstractHttpSyncCommand) msg;
-        NettyHttpSyncMessage message = new NettyHttpSyncMessage(uuid, msg.getNextProtocol(), new NettyChannelContext(ctx), command.getChannelType(), command , this, this);
+        NettyHttpSyncMessage message = new NettyHttpSyncMessage(uuid, msg.getNextProtocol(), new NettyChannelContext(ctx),
+                command.getChannelType(), command, this, this);
         LOG.trace("Forwarding {} to handler", message);
         messageHandler.process(message);
     }
 
     @Override
     public Object[] build(Exception e) {
-        return null;
+        HttpResponseStatus status;
+        if (e instanceof EndpointVerificationException) {
+            status = HttpResponseStatus.UNAUTHORIZED;
+        } else if (e instanceof EndpointRevocationException) {
+            status = HttpResponseStatus.FORBIDDEN;
+        } else if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException
+                || e instanceof InvalidSDKTokenException) {
+            status = HttpResponseStatus.BAD_REQUEST;
+        } else {
+            status = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        command.setResponse(new DefaultFullHttpResponse(HTTP_1_1, status));
+        return new Object[] { command };
     }
 
     @Override
     public Object[] build(byte[] responseData, byte[] responseSignatureData, boolean isEncrypted) {
         command.setResponseBody(responseData);
-        if(responseSignatureData != null){
+        if (responseSignatureData != null) {
             command.setResponseSignature(responseSignatureData);
         }
-        return new Object[]{command};
+        return new Object[] { command };
     }
 
     @Override

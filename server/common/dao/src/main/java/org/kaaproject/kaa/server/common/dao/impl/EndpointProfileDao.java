@@ -34,9 +34,11 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, ByteBuffer> {
 
     /**
+     * Saves the given endpoint profiles.
      *
-     * @param dto
-     * @return
+     * @param dto The endpoint profile to save
+     *
+     * @return The endpoint profile saved
      */
     T save(EndpointProfileDto dto);
 

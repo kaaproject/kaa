@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
+import org.kaaproject.kaa.server.transport.EndpointVerificationException;
 import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
@@ -71,6 +72,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
             if (e instanceof GeneralSecurityException || e instanceof IOException ||
                     e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDENTIALS);
+            } else if (e instanceof EndpointVerificationException) {
+                responses[0] = new ConnAck(ReturnCode.REFUSE_VERIFICATION_FAILED);
             } else {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_SERVER_UNAVAILABLE);
             }
@@ -101,6 +104,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
             if (e instanceof GeneralSecurityException || e instanceof IOException ||
                     e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
                 responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
+            } else if (e instanceof EndpointVerificationException) {
+                responses[0] = new Disconnect(DisconnectReason.CREDENTIALS_REVOKED);
             } else {
                 responses[0] = new Disconnect(DisconnectReason.INTERNAL_ERROR);
             }

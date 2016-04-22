@@ -296,9 +296,11 @@ public interface EndpointService {
     List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId);
 
     /**
-     * 
-     * @param applicationId
-     * @return
+     * Returns the default group for the given application.
+     *
+     * @param applicationId The application ID
+     *
+     * @return The default group for the given application.
      */
     EndpointGroupDto findDefaultGroup(String applicationId);
 

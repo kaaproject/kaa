@@ -22,7 +22,7 @@
     self = [super init];
     if (self) {
         [self setMessageType:TCP_MESSAGE_TYPE_CONNACK];
-        [self setReturnCode:RETURN_CODE_ACCEPTED];
+        [self setReturnCode:ReturnCodeAccepted];
     }
     return self;
 }

@@ -87,7 +87,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
     return self;
 }
 
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo failoverStatus:(FailoverStatus)status {
     
     if (!connectionInfo) {
         DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", logTag);
@@ -125,7 +125,7 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
             [resolution start];
         });
         
-        [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo];
+        [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo failoverStatus:status];
         
         int64_t updatedResolutionTime = pointResolution != nil ?  pointResolution.resolutionTimeMillis : currentResolutionTime;
         AccessPointIdResolution *newPointResolution =
@@ -206,23 +206,25 @@ static const TimeUnit kDefaultTimeUnit = TIME_UNIT_SECONDS;
         int64_t resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
 
         switch (status) {
-            case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
-            case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
+            case FailoverStatusBootstrapServersNotAvailable:
+            case FailoverStatusCurrentBootstrapServerNotAvailable:
                 accessPointIdResolution = self.resolutionProgressMap[@(SERVER_BOOTSTRAP)];
                 resolutionTime += [TimeUtils convertValue:[self.failoverStrategy bootstrapServersRetryPeriod]
                                              fromTimeUnit:[self.failoverStrategy timeUnit]
                                                toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
-            case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
+            case FailoverStatusNoOperationsServersReceived:
                 accessPointIdResolution = self.resolutionProgressMap[@(SERVER_BOOTSTRAP)];
                 break;
-            case FAILOVER_STATUS_OPERATION_SERVERS_NA:
+            case FailoverStatusOperationsServersNotAvailable:
                 accessPointIdResolution = self.resolutionProgressMap[@(SERVER_OPERATIONS)];
                 resolutionTime += [TimeUtils convertValue:[self.failoverStrategy operationsServersRetryPeriod]
                                              fromTimeUnit:[self.failoverStrategy timeUnit]
                                                toTimeUnit:TIME_UNIT_MILLISECONDS];
                 break;
-            case FAILOVER_STATUS_NO_CONNECTIVITY:
+            case FailoverStatusNoConnectivity:
+            case FailoverStatusEndpointCredentialsRevoked:
+            case FailoverStatusEndpointVerificationFailed:
                 break;
         }
         

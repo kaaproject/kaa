@@ -165,8 +165,9 @@ public class DefaultChannelManagerTest {
                 ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
         channelManager.onTransportConnectionInfoUpdated(opServer);
 
-        channelManager.onServerFailed(opServer);
-        Mockito.verify(bootstrapManager, Mockito.times(1)).useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+        channelManager.onServerFailed(opServer, FailoverStatus.NO_CONNECTIVITY);
+        Mockito.verify(bootstrapManager, Mockito.times(1))
+                .useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
     }
 
     @Test
@@ -197,7 +198,8 @@ public class DefaultChannelManagerTest {
 
         Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
 
-        channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0));
+        channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0),
+                FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -229,7 +231,8 @@ public class DefaultChannelManagerTest {
 
         Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
 
-        channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0));
+        channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0),
+                FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
     }
 
     @Test
@@ -396,7 +399,7 @@ public class DefaultChannelManagerTest {
         channelManager.addChannel(channel);
 
         channelManager.shutdown();
-        channelManager.onServerFailed(null);
+        channelManager.onServerFailed(null, FailoverStatus.BOOTSTRAP_SERVERS_NA);
         channelManager.onTransportConnectionInfoUpdated(null);
         channelManager.addChannel(null);
         channelManager.setChannel(null, null);

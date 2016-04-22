@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.client.channel.failover;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
@@ -24,11 +29,6 @@ import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class DefaultFailoverManager implements FailoverManager {
 
@@ -63,7 +63,7 @@ public class DefaultFailoverManager implements FailoverManager {
     }
 
     @Override
-    public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo) {
+    public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo, FailoverStatus status) {
         if (connectionInfo == null) {
             LOG.warn("Server failed, but connection info is null, can't resolve");
             return;
@@ -98,7 +98,7 @@ public class DefaultFailoverManager implements FailoverManager {
             }
         }, failureResolutionTimeout, timeUnit);
 
-        channelManager.onServerFailed(connectionInfo);
+        channelManager.onServerFailed(connectionInfo, status);
 
         long updatedResolutionTime = currentAccessPointIdResolution != null ? currentAccessPointIdResolution.getResolutionTime() : currentResolutionTime;
 
@@ -188,6 +188,8 @@ public class DefaultFailoverManager implements FailoverManager {
             case OPERATION_SERVERS_NA:
                 accessPointIdResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
                 resolutionTime += failoverStrategy.getTimeUnit().toMillis(failoverStrategy.getOperationServersRetryPeriod());
+                break;
+            default:
                 break;
         }
         if (accessPointIdResolution != null) {

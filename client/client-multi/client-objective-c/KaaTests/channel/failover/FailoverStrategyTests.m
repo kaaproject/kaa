@@ -53,7 +53,7 @@
 
 - (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
 #pragma unused(status)
-    return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP];
+    return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionUseNextBootstrap];
 }
 
 @end
@@ -87,7 +87,7 @@
         return nil;
     }];
     
-    FailoverStatus singleFailoverStatus = FAILOVER_STATUS_OPERATION_SERVERS_NA;
+    FailoverStatus singleFailoverStatus = FailoverStatusOperationsServersNotAvailable;
     
     FailoverDecision *primaryFailoverDecision = [self.failoverManager decisionOnFailoverStatus:singleFailoverStatus];
     
@@ -99,7 +99,7 @@
 }
 
 - (void)testBasicFailoverStrategy {
-    FailoverStatus incomingStatus = FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA;
+    FailoverStatus incomingStatus = FailoverStatusBootstrapServersNotAvailable;
     XCTAssertNotNil([self.failoverManager decisionOnFailoverStatus:incomingStatus]);
     XCTAssertEqual(self.failoverStrategy.wantedNumberOfInvocationsOnFailure, 1);
     

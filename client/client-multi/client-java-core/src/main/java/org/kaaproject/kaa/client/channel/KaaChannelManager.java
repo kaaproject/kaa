@@ -19,6 +19,7 @@ package org.kaaproject.kaa.client.channel;
 import java.util.List;
 
 import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
@@ -87,7 +88,7 @@ import org.kaaproject.kaa.common.TransportType;
  * Call to {@link #clearChannelList()} removes <b>all</b> existing channels.<br>
  * <br>
  * If physical connection to remote server failed, call
- * {@link #onServerFailed(TransportConnectionInfo)} to switch to another
+ * {@link #onServerFailed(TransportConnectionInfo, FailoverStatus)} to switch to another
  * available server.
  *
  * @author Yaroslav Zeygerman
@@ -170,7 +171,7 @@ public interface KaaChannelManager {
      * @see TransportConnectionInfo
      *
      */
-    void onServerFailed(TransportConnectionInfo server);
+    void onServerFailed(TransportConnectionInfo server, FailoverStatus status);
 
     /**
      * Clears the list of channels.

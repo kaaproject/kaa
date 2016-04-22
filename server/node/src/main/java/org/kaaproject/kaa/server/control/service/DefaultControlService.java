@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.control.service;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PreDestroy;
 
@@ -72,6 +74,9 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -94,6 +99,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
+import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
@@ -106,6 +112,8 @@ import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
@@ -115,6 +123,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -129,6 +138,8 @@ import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceRegistry;
 import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
@@ -137,8 +148,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 
 /**
  * The Class DefaultControlService.
@@ -237,6 +250,16 @@ public class DefaultControlService implements ControlService {
 
     @Autowired
     private CTLService ctlService;
+
+    @Autowired
+    @Qualifier("rootCredentialsServiceLocator")
+    private CredentialsServiceLocator credentialsServiceLocator;
+    
+    @Autowired
+    private CredentialsServiceRegistry credentialsServiceRegistry;
+    
+    @Autowired
+    private EndpointRegistrationService endpointRegistrationService;
 
     /** The neighbor connections size. */
     @Value("#{properties[max_number_neighbor_connections]}")
@@ -461,7 +484,17 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException {
-        return applicationService.saveApp(application);
+        boolean update = !isEmpty(application.getId());
+        ApplicationDto appDto = applicationService.saveApp(application);
+        if (update) {
+            LOG.info("[{}] Broadcasting notification about application {} update.", application.getId(), application.getApplicationToken());
+            Notification thriftNotification = new Notification();
+            thriftNotification.setAppId(appDto.getId());
+            thriftNotification.setAppSeqNumber(appDto.getSequenceNumber());
+            thriftNotification.setOp(Operation.APP_UPDATE);
+            controlZKService.sendEndpointNotification(thriftNotification);
+        }
+        return appDto;
     }
 
     /*
@@ -1377,7 +1410,7 @@ public class DefaultControlService implements ControlService {
             ThriftUnicastNotificationMessage nf = new ThriftUnicastNotificationMessage();
             nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
                     ByteBuffer.wrap(notificationDto.getEndpointKeyHash())));
-            nf.setActorClassifier(new ThriftActorClassifier(true));
+            nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
             nf.setNotificationId(notificationDto.getId());
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sending message {} to [{}]", nf, Neighbors.getServerID(server.getConnectionInfo()));
@@ -1403,7 +1436,7 @@ public class DefaultControlService implements ControlService {
             ThriftServerProfileUpdateMessage nf = new ThriftServerProfileUpdateMessage();
             nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
                     ByteBuffer.wrap(endpointProfileDto.getEndpointKeyHash())));
-            nf.setActorClassifier(new ThriftActorClassifier(true));
+            nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sending message {} to [{}]", nf, Neighbors.getServerID(server.getConnectionInfo()));
             }
@@ -2207,5 +2240,104 @@ public class DefaultControlService implements ControlService {
             LOG.info("Shutdown of control service neighbors complete!");
         }
     }
-    
+
+    @Override
+    public void removeEndpointProfile(EndpointProfileDto endpointProfile) throws ControlServiceException {
+        byte[] endpointKeyHash = endpointProfile.getEndpointKeyHash();
+        this.endpointService.removeEndpointProfileByKeyHash(endpointKeyHash);
+        ApplicationDto appDto = getApplication(endpointProfile.getApplicationId());
+        ThriftEndpointDeregistrationMessage nf = new ThriftEndpointDeregistrationMessage();
+        nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
+                ByteBuffer.wrap(endpointKeyHash)));
+        nf.setActorClassifier(ThriftActorClassifier.APPLICATION);
+        neighbors.brodcastMessage(OperationsServiceMsg.fromDeregistration(nf));
+    }
+
+    @Override
+    public CredentialsDto provisionCredentials(String applicationId, String credentialsBody) throws ControlServiceException {
+        CredentialsDto credentials = new CredentialsDto(Base64Utils.decodeFromString(credentialsBody), CredentialsStatus.AVAILABLE);
+        try {
+            return this.credentialsServiceLocator.getCredentialsService(applicationId).provideCredentials(credentials);
+        } catch (CredentialsServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while saving credentials [{0}]", credentials);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public Optional<CredentialsDto> getCredentials(String applicationId, String credentialsId) throws ControlServiceException {
+        try {
+            return this.credentialsServiceLocator.getCredentialsService(applicationId).lookupCredentials(credentialsId);
+        } catch (CredentialsServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while searching for credentials by ID [{0}]", credentialsId);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public void revokeCredentials(String applicationId, String credentialsId) throws ControlServiceException {
+        try {
+            this.credentialsServiceLocator.getCredentialsService(applicationId).markCredentialsRevoked(credentialsId);
+            onCredentailsRevoked(applicationId, credentialsId);
+        } catch (CredentialsServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while revoking credentials by ID [{0}]", credentialsId);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public void onCredentailsRevoked(String applicationId, String credentialsId) throws ControlServiceException {
+        LOG.debug("[{}] Lookup registration information based on credentials ID [{}]", applicationId, credentialsId);
+        try {
+            Optional<EndpointRegistrationDto> endpointRegistrationOptional = endpointRegistrationService
+                    .findEndpointRegistrationByCredentialsId(credentialsId);
+            if (endpointRegistrationOptional.isPresent()) {
+                EndpointRegistrationDto endpointRegistration = endpointRegistrationOptional.get();
+                LOG.debug("[{}] Found endpoint registration information [{}]", applicationId, endpointRegistration);
+                if (endpointRegistration.getEndpointId() != null) {
+                    checkNeighbors();
+                    ApplicationDto appDto = getApplication(endpointRegistration.getApplicationId());
+                    ThriftEndpointDeregistrationMessage nf = new ThriftEndpointDeregistrationMessage();
+                    nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(),
+                            ThriftClusterEntityType.ENDPOINT, ByteBuffer.wrap(Base64Util.decode(endpointRegistration.getEndpointId()))));
+                    nf.setActorClassifier(ThriftActorClassifier.APPLICATION);
+                    neighbors.brodcastMessage(OperationsServiceMsg.fromDeregistration(nf));
+                }
+                endpointRegistrationService.removeEndpointRegistrationById(endpointRegistration.getId());
+                LOG.debug("[{}] endpoint registration information [{}] removed", applicationId, endpointRegistration);
+            } else {
+                LOG.debug("[{}] No endpoint registration information provisioned for credentials ID [{}]", applicationId, credentialsId);
+            }
+        } catch (EndpointRegistrationServiceException cause) {
+            String message = MessageFormat.format(
+                    "An unexpected exception occured while lookup registration information based on credentails ID [{0}]", credentialsId);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public void provisionRegistration(
+            String applicationId,
+            String credentialsId,
+            Integer serverProfileVersion,
+            String serverProfileBody)
+                    throws ControlServiceException {
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(applicationId, null, credentialsId, serverProfileVersion, serverProfileBody);
+        try {
+            this.endpointRegistrationService.saveEndpointRegistration(endpointRegistration);
+        } catch (EndpointRegistrationServiceException cause) {
+            String message = MessageFormat.format("An unexpected exception occured while saving endpoint registration [{0}]", endpointRegistration);
+            LOG.error(message, cause);
+            throw new ControlServiceException(cause);
+        }
+    }
+
+    @Override
+    public List<String> getCredentialsServiceNames() throws ControlServiceException {
+        return this.credentialsServiceRegistry.getCredentialsServiceNames();
+    }
 }
