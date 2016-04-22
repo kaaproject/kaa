@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter;
 
+import java.util.Optional;
+
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.AbstractCassandraDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPRegistrationByCredentialsID;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPRegistrationByEndpointID;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.springframework.stereotype.Repository;
 
@@ -31,21 +33,26 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * @since v0.9.0
  */
 @Repository
-public class CassandraEPRegistrationByCredentialsIDDao extends AbstractCassandraDao<CassandraEPRegistrationByCredentialsID, String> {
+public class CassandraEPRegistrationByEndpointIDDao extends AbstractCassandraDao<CassandraEPRegistrationByEndpointID, String> {
 
     @Override
-    protected Class<CassandraEPRegistrationByCredentialsID> getColumnFamilyClass() {
-        return CassandraEPRegistrationByCredentialsID.class;
+    protected Class<CassandraEPRegistrationByEndpointID> getColumnFamilyClass() {
+        return CassandraEPRegistrationByEndpointID.class;
     }
 
     @Override
-    protected String getColumnFamilyName() {
-        return CassandraModelConstants.EP_REGISTRATIONS_BY_CREDENTIALS_ID_COLUMN_FAMILY_NAME;
+    public String getColumnFamilyName() {
+        return CassandraModelConstants.EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME;
     }
 
-    public String getEndpointIdByCredentialsId(String credentialsId) {
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_BY_CREDENTIALS_ID_CREDENTIALS_ID_PROPERTY, credentialsId);
+    public Optional<String> getCredentialsIdByEndpointId(String endpointId) {
+        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY, endpointId);
         Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
-        return this.findOneByStatement(statement).getEndpointId();
+        CassandraEPRegistrationByEndpointID result = this.findOneByStatement(statement);
+        if (result != null) {
+            return Optional.of(result.getCredentialsId());
+        } else {
+            return Optional.empty();
+        }
     }
 }

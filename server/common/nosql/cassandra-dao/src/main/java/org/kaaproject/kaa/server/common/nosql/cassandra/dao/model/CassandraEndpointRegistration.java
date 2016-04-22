@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import java.io.Serializable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -51,11 +53,11 @@ public final class CassandraEndpointRegistration implements EndpointRegistration
     private String applicationId;
 
     @PartitionKey
-    @Column(name = CassandraModelConstants.EP_REGISTRATION_ENDPOINT_ID_PROPERTY)
-    private String endpointId;
-
     @Column(name = CassandraModelConstants.EP_REGISTRATION_CREDENTIALS_ID_PROPERTY)
     private String credentialsId;
+    
+    @Column(name = CassandraModelConstants.EP_REGISTRATION_ENDPOINT_ID_PROPERTY)
+    private String endpointId;
 
     @Column(name = CassandraModelConstants.EP_REGISTRATION_SERVER_PROFILE_VERSION_PROPERTY)
     private Integer serverProfileVersion;
@@ -154,5 +156,12 @@ public final class CassandraEndpointRegistration implements EndpointRegistration
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+    
+    public String generateId() {
+        if (isBlank(id)) {
+            id = credentialsId;
+        }
+        return id;
     }
 }

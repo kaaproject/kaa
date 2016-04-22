@@ -133,15 +133,15 @@ CREATE TABLE IF NOT EXISTS kaa.tl_entry (
 CREATE TABLE IF NOT EXISTS kaa.ep_registration (
     id text,
     app_id text,
-    ep_id text PRIMARY KEY,
-    creds_id text,
+    ep_id text,
+    creds_id text PRIMARY KEY,
     srv_pf_ver int,
     srv_pf text
 );
 
 CREATE TABLE IF NOT EXISTS kaa.creds_id_ep_registration (
-    creds_id text PRIMARY KEY,
-    ep_id text
+	ep_id text PRIMARY KEY,
+    creds_id text
 );
 
 CREATE TABLE IF NOT EXISTS kaa.credentials (

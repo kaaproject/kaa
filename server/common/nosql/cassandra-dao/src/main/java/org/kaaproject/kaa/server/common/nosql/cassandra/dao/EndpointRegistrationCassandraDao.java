@@ -16,15 +16,16 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointRegistrationDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPRegistrationByCredentialsIDDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPRegistrationByCredentialsID;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPRegistrationByEndpointIDDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPRegistrationByEndpointID;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointRegistration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.slf4j.Logger;
@@ -42,13 +43,13 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * @since v0.9.0
  */
 @Repository("endpointRegistrationDao")
-public class EndpointRegistrationCassandraDao extends AbstractCassandraDao<CassandraEndpointRegistration, String> implements
-        EndpointRegistrationDao<CassandraEndpointRegistration> {
+public class EndpointRegistrationCassandraDao extends AbstractCassandraDao<CassandraEndpointRegistration, String>
+        implements EndpointRegistrationDao<CassandraEndpointRegistration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointRegistrationCassandraDao.class);
 
     @Autowired
-    private CassandraEPRegistrationByCredentialsIDDao byCredentialsID;
+    private CassandraEPRegistrationByEndpointIDDao byEndpointID;
 
     @Override
     protected Class<CassandraEndpointRegistration> getColumnFamilyClass() {
@@ -63,19 +64,20 @@ public class EndpointRegistrationCassandraDao extends AbstractCassandraDao<Cassa
     @Override
     public CassandraEndpointRegistration save(EndpointRegistrationDto endpointRegistration) {
         LOG.debug("Saving [{}]", endpointRegistration.toString());
-        if (StringUtils.isBlank(endpointRegistration.getId())) {
-            endpointRegistration.setId(endpointRegistration.getEndpointId());
-        }
         return this.save(new CassandraEndpointRegistration(endpointRegistration));
     }
 
     @Override
     public CassandraEndpointRegistration save(CassandraEndpointRegistration endpointRegistration) {
+        if (isBlank(endpointRegistration.getId())) {
+            endpointRegistration.generateId();
+        }
         endpointRegistration = super.save(endpointRegistration);
         List<Statement> statements = new ArrayList<>();
         statements.add(this.getSaveQuery(endpointRegistration));
-        if (endpointRegistration.getCredentialsId() != null) {
-            statements.add(this.byCredentialsID.getSaveQuery(CassandraEPRegistrationByCredentialsID.fromEndpointRegistration(endpointRegistration)));
+        if (endpointRegistration.getEndpointId() != null) {
+            statements.add(
+                    this.byEndpointID.getSaveQuery(CassandraEPRegistrationByEndpointID.fromEndpointRegistration(endpointRegistration)));
         }
         this.executeBatch(statements.toArray(new Statement[statements.size()]));
         return endpointRegistration;
@@ -84,16 +86,22 @@ public class EndpointRegistrationCassandraDao extends AbstractCassandraDao<Cassa
     @Override
     public Optional<CassandraEndpointRegistration> findByEndpointId(String endpointId) {
         LOG.debug("Searching for endpoint registration by endpoint ID [{}]", endpointId);
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_ENDPOINT_ID_PROPERTY, endpointId);
-        Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
-        return Optional.ofNullable(this.findOneByStatement(statement));
+        Optional<String> credentialsId = this.byEndpointID.getCredentialsIdByEndpointId(endpointId);
+        if (credentialsId.isPresent()) {
+            LOG.debug("[{}] Endpoint credentials ID by endpoint ID: {}", endpointId, credentialsId.get());
+            Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_CREDENTIALS_ID_PROPERTY, credentialsId.get());
+            Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
+            return Optional.ofNullable(this.findOneByStatement(statement));
+        } else {
+            LOG.debug("[{}] No credentials ID found by endpoint ID: {}", endpointId);
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<CassandraEndpointRegistration> findByCredentialsId(String credentialsId) {
         LOG.debug("Searching for endpoint registration by credentials ID [{}]", credentialsId);
-        String endpointId = this.byCredentialsID.getEndpointIdByCredentialsId(credentialsId);
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_ENDPOINT_ID_PROPERTY, endpointId);
+        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_CREDENTIALS_ID_PROPERTY, credentialsId);
         Statement statement = QueryBuilder.select().from(this.getColumnFamilyName()).where(clause);
         return Optional.ofNullable(this.findOneByStatement(statement));
     }
@@ -101,8 +109,16 @@ public class EndpointRegistrationCassandraDao extends AbstractCassandraDao<Cassa
     @Override
     public void removeByEndpointId(String endpointId) {
         LOG.debug("Removing endpoint registration by endpoint ID", endpointId);
-        Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_ENDPOINT_ID_PROPERTY, endpointId);
-        Statement statement = QueryBuilder.delete().from(this.getColumnFamilyName()).where(clause);
-        this.execute(statement);
+        Optional<String> credentialsId = this.byEndpointID.getCredentialsIdByEndpointId(endpointId);
+        if (credentialsId.isPresent()) {
+            Clause clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY, endpointId);
+            Statement statement = QueryBuilder.delete().from(this.byEndpointID.getColumnFamilyName()).where(clause);
+            this.execute(statement);
+            clause = QueryBuilder.eq(CassandraModelConstants.EP_REGISTRATION_CREDENTIALS_ID_PROPERTY, credentialsId.get());
+            statement = QueryBuilder.delete().from(this.getColumnFamilyName()).where(clause);
+            this.execute(statement);
+        } else {
+            LOG.debug("[{}] No credentials ID found by endpoint ID: {}", endpointId);
+        }
     }
 }
