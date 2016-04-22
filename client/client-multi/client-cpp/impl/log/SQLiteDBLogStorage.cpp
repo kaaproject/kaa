@@ -111,8 +111,7 @@
     "SELECT * FROM " KAA_BUCKETS_TABLE_NAME " " \
     "WHERE " KAA_BUCKETS_OUTER_BUCKET_ID_FIELD_NAME " = " \
                         "(SELECT MAX(" KAA_BUCKETS_OUTER_BUCKET_ID_FIELD_NAME ") " \
-                         "FROM " KAA_BUCKETS_TABLE_NAME ") " \
-    "LIMIT 1;"
+                         "FROM " KAA_BUCKETS_TABLE_NAME ");"
 
 #define KAA_MARK_LOG_BUCKET_AS_IN_USE \
     "UPDATE " KAA_BUCKETS_TABLE_NAME " " \
