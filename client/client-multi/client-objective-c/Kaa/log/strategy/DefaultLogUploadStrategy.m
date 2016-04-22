@@ -98,7 +98,8 @@
 }
 
 - (void)onTimeoutForController:(id<LogFailoverCommand>)controller {
-    [controller switchAccessPoint];
+    //TODO: fix issue described in KAA-1040
+    [controller retryLogUploadWithDelay:self.retryPeriod];
 }
 
 - (void)onFailureForController:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code {
