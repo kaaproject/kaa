@@ -98,6 +98,7 @@
 }
 
 - (void)onTimeoutForController:(id<LogFailoverCommand>)controller {
+    //TODO: fix issue described in KAA-1040
     [controller retryLogUploadWithDelay:self.retryPeriod];
 }
 
