@@ -50,32 +50,32 @@ SET(_botan_LIBRARIES_SEARCH_DIRS
   )
 
 ##
-if( "${BOTAN_HOME}" STREQUAL "")
-  if("" MATCHES "$ENV{BOTAN_HOME}")
-    message(STATUS "BOTAN_HOME env is not set, setting it to /usr/local")
-    set (BOTAN_HOME ${_botan_HOME})
-  else("" MATCHES "$ENV{BOTAN_HOME}")
-    set (BOTAN_HOME "$ENV{BOTAN_HOME}")
-  endif("" MATCHES "$ENV{BOTAN_HOME}")
-else( "${BOTAN_HOME}" STREQUAL "")
-  message(STATUS "BOTAN_HOME is not empty: \"${BOTAN_HOME}\"")
-endif( "${BOTAN_HOME}" STREQUAL "")
+if( "${BOTAN_ROOT}" STREQUAL "")
+  if("" MATCHES "$ENV{BOTAN_ROOT}")
+    message(STATUS "BOTAN_ROOT env is not set, setting it to /usr/local")
+    set (BOTAN_ROOT ${_botan_HOME})
+  else("" MATCHES "$ENV{BOTAN_ROOT}")
+    set (BOTAN_ROOT "$ENV{BOTAN_ROOT}")
+  endif("" MATCHES "$ENV{BOTAN_ROOT}")
+else( "${BOTAN_ROOT}" STREQUAL "")
+  message(STATUS "BOTAN_ROOT is not empty: \"${BOTAN_ROOT}\"")
+endif( "${BOTAN_ROOT}" STREQUAL "")
 ##
 
-message(STATUS "Looking for botan in ${BOTAN_HOME}")
+message(STATUS "Looking for botan in ${BOTAN_ROOT}")
 
-IF( NOT ${BOTAN_HOME} STREQUAL "" )
+IF( NOT ${BOTAN_ROOT} STREQUAL "" )
     SET(_botan_INCLUDE_SEARCH_DIRS 
-        ${BOTAN_HOME}/include 
+        ${BOTAN_ROOT}/include
         ${_botan_INCLUDE_SEARCH_DIRS}
     )
     SET(_botan_LIBRARIES_SEARCH_DIRS 
-        ${BOTAN_HOME}
-        ${BOTAN_HOME}/lib 
+        ${BOTAN_ROOT}
+        ${BOTAN_ROOT}/lib
         ${_botan_LIBRARIES_SEARCH_DIRS}
     )    
-    SET(_botan_HOME ${BOTAN_HOME})
-ENDIF( NOT ${BOTAN_HOME} STREQUAL "" )
+    SET(_botan_HOME ${BOTAN_ROOT})
+ENDIF( NOT ${BOTAN_ROOT} STREQUAL "" )
 
 IF( NOT $ENV{BOTAN_INCLUDEDIR} STREQUAL "" )
   SET(_botan_INCLUDE_SEARCH_DIRS $ENV{BOTAN_INCLUDEDIR} ${_botan_INCLUDE_SEARCH_DIRS})
@@ -85,11 +85,11 @@ IF( NOT $ENV{BOTAN_LIBRARYDIR} STREQUAL "" )
   SET(_botan_LIBRARIES_SEARCH_DIRS $ENV{BOTAN_LIBRARYDIR} ${_botan_LIBRARIES_SEARCH_DIRS})
 ENDIF( NOT $ENV{BOTAN_LIBRARYDIR} STREQUAL "" )
 
-IF( BOTAN_HOME )
-  SET(_botan_INCLUDE_SEARCH_DIRS ${BOTAN_HOME}/include ${_botan_INCLUDE_SEARCH_DIRS})
-  SET(_botan_LIBRARIES_SEARCH_DIRS ${BOTAN_HOME}/lib ${_botan_LIBRARIES_SEARCH_DIRS})
-  SET(_botan_HOME ${BOTAN_HOME})
-ENDIF( BOTAN_HOME )
+IF( BOTAN_ROOT )
+  SET(_botan_INCLUDE_SEARCH_DIRS ${BOTAN_ROOT}/include ${_botan_INCLUDE_SEARCH_DIRS})
+  SET(_botan_LIBRARIES_SEARCH_DIRS ${BOTAN_ROOT}/lib ${_botan_LIBRARIES_SEARCH_DIRS})
+  SET(_botan_HOME ${BOTAN_ROOT})
+ENDIF( BOTAN_ROOT )
 
 # find the include files
 FIND_PATH(BOTAN_INCLUDE_DIR botan/version.h

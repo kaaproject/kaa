@@ -22,6 +22,32 @@ call env.bat
 SET BUILD_HOME=%CD%
 SET BUILD_TYPE=debug
 
+if not exist %ZLIB_ROOT% (
+    echo "ZLIB_ROOT=%ZLIB_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+if not exist %AVRO_ROOT% (
+    echo "AVRO_ROOT=%AVRO_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+
+if not exist %BOTAN_ROOT% (
+    echo "BOTAN_ROOT=%BOTAN_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+if not exist %SQLITE_ROOT% (
+    echo "SQLITE_ROOT=%SQLITE_ROOT% does not exist"
+    echo "Please set this variable to valid value in env.bat and run this script again"
+    goto :eof
+)
+
+
 if "%1" == "" goto startBuild
 if /i %1 == release call :setRelease
 
@@ -35,70 +61,122 @@ goto :eof
 goto :eof
 
 :buildKaaThirdparty
-   echo Building Kaa thirdparty components...
-   call :buildAvro
-   call :buildBotan
+  echo Building Kaa thirdparty components...
+  call :buildZlib
+  call :buildAvro
+  call :buildBotan
+  call :buildSqlite
 goto :eof
 
 :buildAvro
- echo Building Avro...
-  
- SET AVRO_SRC=avro-src-1.7.5
+  echo Building Avro...
 
- IF EXIST %AVRO_SRC%\NUL (
-   call :deleteDir %AVRO_SRC%
- )
-   
- 7z x -y %AVRO_SRC%.tar.gz
- 7z x -y %AVRO_SRC%.tar
+  call :deleteDir %AVRO_SRC%
 
- md %AVRO_SRC%\lang\c++\build.win
- cd %AVRO_SRC%\lang\c++\build.win
+  call :download %AVRO_SRC%.tar.gz %AVRO_URL%
 
- if %BUILD_TYPE%==debug (
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT_DIR% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug
- ) else (
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT_DIR% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
- )
- nmake install
+  md %AVRO_SRC%\lang\c++\build.win
+  cd %AVRO_SRC%\lang\c++\build.win
 
- cd %BUILD_HOME%
+  if %BUILD_PLATFORM% == x86 (
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT% -G "Visual Studio %MSVC_VERSION%"  ..
+  ) else (
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT% -G "Visual Studio %MSVC_VERSION% Win64"  ..
+  )
+
+  del buffertest.vcxproj
+  del SchemaTests.vcxproj
+
+  msbuild INSTALL.vcxproj /property:Configuration=%BUILD_TYPE%  /property:Platform=%BUILD_PLATFORM%
+
+  cd %BUILD_HOME%
+
+goto :eof
+
+:buildZlib
+
+  echo Building zlib...
+
+  call :deleteDir %ZLIB_SRC%
+
+  call :download %ZLIB_SRC%.tar.gz %ZLIB_URL%
+
+  md %ZLIB_SRC%\build.win
+  cd %ZLIB_SRC%\build.win
+
+  if %BUILD_PLATFORM% == x86 (
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_ROOT% -G "Visual Studio %MSVC_VERSION%"  ..
+  ) else (
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_ROOT% -G "Visual Studio %MSVC_VERSION% Win64"  ..
+  )
+  msbuild INSTALL.vcxproj /property:Configuration=%BUILD_TYPE% /property:Platform=%BUILD_PLATFORM%
+
+  cd %BUILD_HOME%
 
 goto :eof
 
 :buildBotan
 
- echo Building Botan...
+  echo Building Botan...
 
- SET BOTAN_SRC=botan-1.11.28
+  call :deleteDir %BOTAN_SRC%
 
- IF EXIST %BOTAN_SRC%\NUL (
-   call :deleteDir %BOTAN_SRC%
- )
+  call :download %BOTAN_SRC%.tar.gz %BOTAN_URL%
 
- 7z x -y -obotan_archive botan-1.11.28.tar.gz
- 7z x -y -o. botan_archive\botan-1.11.28.tar
+  cd %BOTAN_SRC%
 
- cd %BOTAN_SRC%
+  if %BUILD_PLATFORM% == x86 (
+    set ARCH=i386
+  ) else (
+    set ARCH=amd64
+  )
+  if %BUILD_TYPE%==debug (
+    python configure.py --cc=msvc --cpu=%ARCH% --prefix=%BOTAN_ROOT% --with-debug-info --no-optimizations
+  ) else (
+    python configure.py --cc=msvc --cpu=%ARCH% --prefix=%BOTAN_ROOT%
+  ) 
 
- if %BUILD_TYPE%==debug (
-   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --with-debug-info --no-optimizations
- ) else (
-   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT%
- ) 
+  nmake install
 
- nmake install
+  move %BOTAN_ROOT%/include/botan-1.11/botan %BOTAN_ROOT%/include
 
- move %BOTAN_ROOT%/include/botan-1.11/botan %BOTAN_ROOT%/include
+  cd %BUILD_HOME%
 
- cd %BUILD_HOME%
+goto :eof
+
+:buildSqlite
+
+  echo Building Sqlite...
+  call :download %SQLITE_SRC%.tar.gz %SQLITE_URL%
+  cd %SQLITE_SRC%
+  nmake /f Makefile.msc sqlite3.c
+  nmake /f Makefile.msc
+  mkdir %SQLITE_ROOT%\include
+  copy sqlite3.h %SQLITE_ROOT%\include
+  copy sqlite3ext.h %SQLITE_ROOT%\include
+  mkdir %SQLITE_ROOT%\lib
+  copy sqlite3.dll %SQLITE_ROOT%\lib
+  copy sqlite3.lib %SQLITE_ROOT%\lib
+
+goto :eof
+
+:download
+
+  IF not EXIST %1 (
+    wget --no-check-certificate --content-disposition -c %2
+  )
+  bsdtar -xf %1
 
 goto :eof
 
 :deleteDir
- del /s /f /q %1\*.*
- for /f %%f in ('dir /ad /b %1\') do rd /s /q %1\%%f
- rd /s /q %1
+
+  IF EXIST %1\NUL (
+    del /s /f /q %1\*.*
+    for /f %%f in ('dir /ad /b %1\') do rd /s /q %1\%%f
+    rd /s /q %1
+  )
+
 goto :eof
 
 endlocal
