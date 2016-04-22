@@ -100,9 +100,9 @@ Copyright 2014-2016 CyberVision, Inc.
         <cassandra.driver.version>3.0.0</cassandra.driver.version>
         <cassandra.driver.mapping>3.0.0</cassandra.driver.mapping>
         <cassandra.driver.extras>3.0.0</cassandra.driver.extras>
-        <cassandra-unit.version>2.2.2.1</cassandra-unit.version>
-        <cassandra-unit-spring.version>2.2.2.1</cassandra-unit-spring.version>
-        <cassandra-all.version>3.2.1</cassandra-all.version>
+        <cassandra-unit.version>3.0.0.1</cassandra-unit.version>
+        <cassandra-unit-spring.version>3.0.0.1</cassandra-unit-spring.version>
+        <cassandra-all.version>3.5</cassandra-all.version>
         <guava.version>18.0</guava.version>
 
         <couchbase.client.version>2.1.3</couchbase.client.version>
@@ -1269,6 +1269,11 @@ Copyright 2014-2016 CyberVision, Inc.
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <dependency>
