@@ -40,13 +40,13 @@
     </appender>
 
     <logger name="org.kaaproject.kaa" level="INFO"/>
-    <logger name="org.kaaproject.kaa.metrics" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server.hash" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server.bootstrap.service.DefaultOperationsServerListService" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server.operations.service.statistics" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server.operations.service.event" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server.thrift" level="WARN"/>
+    <logger name="org.kaaproject.kaa.metrics" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server.hash" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server.bootstrap.service.DefaultOperationsServerListService" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server.operations.service.statistics" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server.operations.service.event" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server.thrift" level="INFO"/>
     <logger name="org.kaaproject.kaa.server.common.Environment" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.spring4gwt.server" level="INFO"/>

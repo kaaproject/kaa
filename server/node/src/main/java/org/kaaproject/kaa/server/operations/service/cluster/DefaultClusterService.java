@@ -124,20 +124,20 @@ public class DefaultClusterService implements ClusterService {
         operationsNode.addListener(new OperationsNodeListener() {
             @Override
             public void onNodeUpdated(OperationsNodeInfo node) {
-                LOG.debug("Update of node {} is pushed to resolver {}", node, resolver);
+                LOG.trace("Update of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeUpdated(node);
             }
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo node) {
-                LOG.debug("Remove of node {} is pushed to resolver {}", node, resolver);
+                LOG.trace("Remove of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeRemoved(node);
                 notifyListener();
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
-                LOG.debug("Add of node {} is pushed to resolver {}", node, resolver);
+                LOG.trace("Add of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeAdded(node);
                 notifyListener();
             }
