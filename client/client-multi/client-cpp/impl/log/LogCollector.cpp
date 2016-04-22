@@ -86,11 +86,16 @@ void LogCollector::processTimeout()
     KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
     KAA_MUTEX_LOCKED("timeoutsGuard_");
 
-    for (const auto& request : timeouts_) {
-        storage_->rollbackBucket(request.first);
-    }
+    auto now = clock_t::now();
 
-    timeouts_.clear();
+    for (auto request = timeouts_.begin(); request != timeouts_.end();) {
+        if (now >= request->second.getTimeoutTime()) {
+            storage_->rollbackBucket(request->first);
+            request = timeouts_.erase(request);
+        } else {
+            request++;
+        }
+    }
 
     KAA_MUTEX_UNLOCKING("timeoutsGuard_");
     KAA_UNLOCK(timeoutsGuardLock);
@@ -371,6 +376,13 @@ void LogCollector::switchAccessPoint()
             KAA_LOG_WARN("Try to switch to another Operations server...");
             channelManager_->onServerFailed(logChannel->getServer(),
                                             KaaFailoverReason::OPERATION_SERVERS_NA);
+            KAA_MUTEX_LOCKING("timeoutsGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
+            KAA_MUTEX_LOCKED("timeoutsGuard_");
+            for (const auto &request : timeouts_) {
+                storage_->rollbackBucket(request.first);
+            }
+            timeouts_.clear();
         }
     } else {
         KAA_LOG_ERROR("Can't find LOGGING data channel");
