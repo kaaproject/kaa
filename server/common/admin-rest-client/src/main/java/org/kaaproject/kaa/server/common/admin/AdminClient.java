@@ -381,7 +381,7 @@ public class AdminClient {
             throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notification", notification);
-        params.add("clientKeyHash", clientKeyHash);
+        params.add("endpointKeyHash", clientKeyHash);
         params.add("file", resource);
         return restTemplate.postForObject(restTemplate.getUrl() + "sendUnicastNotification", params, EndpointNotificationDto.class);
     }
@@ -390,7 +390,7 @@ public class AdminClient {
                                                                      String notificationMessage) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notification", notification);
-        params.add("clientKeyHash", clientKeyHash);
+        params.add("endpointKeyHash", clientKeyHash);
         params.add("file", getStringResource("notification", notificationMessage));
         return restTemplate.postForObject(restTemplate.getUrl() + "sendUnicastNotification", params, EndpointNotificationDto.class);
     }

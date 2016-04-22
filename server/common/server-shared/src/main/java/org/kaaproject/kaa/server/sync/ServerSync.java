@@ -236,6 +236,20 @@ public final class ServerSync {
         copy.setConfigurationSync(deepCopy(source.getConfigurationSync()));
         return copy;
     }
+    
+
+    public static void cleanup(ServerSync syncResponse) {
+        if (syncResponse == null) {
+            return;
+        }
+        syncResponse.setUserSync(null);
+        syncResponse.setRedirectSync(null);
+        syncResponse.setProfileSync(null);
+        syncResponse.setNotificationSync(null);
+        syncResponse.setLogSync(null);
+        syncResponse.setEventSync(null);
+        syncResponse.setConfigurationSync(null);
+    }
 
     private static ConfigurationServerSync deepCopy(ConfigurationServerSync source) {
         if (source == null) {
