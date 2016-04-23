@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
+#ifndef FailureDelegate_h
+#define FailureDelegate_h
+
 #import <Foundation/Foundation.h>
-#import "BootstrapManager.h"
-#import "ExecutorContext.h"
-#import "FailureDelegate.h"
+
 
 /**
- * Default implementation of BootstrapManager protocol.
+ * Notifies about critical failures that are treated as something
+ * that client should not handle on its own.
  */
-@interface DefaultBootstrapManager : NSObject <BootstrapManager>
+@protocol FailureDelegate
 
-- (instancetype)initWithTransport:(id<BootstrapTransport>)transport
-                  executorContext:(id<ExecutorContext>)context
-                  failureDelegate:(id<FailureDelegate>)delegate;
+- (void)onFailure;
 
 @end
+
+
+#endif /* FailureDelegate_h */

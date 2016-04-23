@@ -39,7 +39,7 @@ typedef NS_ENUM(int, FailoverAction) {
     FailoverActionRetry,
     FailoverActionUseNextBootstrap,
     FailoverActionUseNextOperations,
-    FailoverActionStopApp
+    FailoverActionFailure
 };
 
 /**

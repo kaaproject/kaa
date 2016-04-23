@@ -47,7 +47,7 @@
 @implementation MockedOperationTcpChannel
 
 - (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr {
-    self = [super initWithClientState:state failoverManager:failoverMgr];
+    self = [super initWithClientState:state failoverManager:failoverMgr failureDelegate:nil];
     if (self) {
         CFReadStreamRef readStream = NULL;
         CFWriteStreamRef writeStream = NULL;
@@ -85,7 +85,9 @@
 - (void)testDefaultOperationTcpChannel {
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id<KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state failoverManager:failoverManager];
+    id<KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state
+                                                                            failoverManager:failoverManager
+                                                                            failureDelegate:nil];
     XCTAssertNotNil([tcpchannel getId]);
     XCTAssertNotNil([tcpchannel getSupportedTransportTypes]);
     XCTAssertNotEqual(0, [[tcpchannel getSupportedTransportTypes] count]);
@@ -153,7 +155,9 @@
     [given([clientState publicKey]) willReturnStruct:[clientKeys getPublicKeyRef] objCType:@encode(SecKeyRef)];
     
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState failoverManager:failoverManager];
+    DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState
+                                                                                  failoverManager:failoverManager
+                                                                                  failureDelegate:nil];
     
     id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"www.test.fake" port:999 publicKey:[KeyUtils getPublicKey]];
     XCTAssertNotNil(server);

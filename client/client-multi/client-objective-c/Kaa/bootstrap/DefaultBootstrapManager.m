@@ -22,7 +22,6 @@
 #import "KaaExceptions.h"
 
 #define TAG @"DefaultBootstrapManager"
-#define EXIT_FAILURE 1
 
 @interface DefaultBootstrapManager ()
 
@@ -30,6 +29,8 @@
 @property (nonatomic, strong) id<ExecutorContext> context;
 @property (nonatomic, strong) id<FailoverManager> failoverManager;
 @property (nonatomic, strong) id<KaaInternalChannelManager> channelManager;
+
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
 
 @property (nonatomic, strong) NSNumber *serverToApply;
 @property (nonatomic, strong) NSArray *operationsServerList;                   //<ProtocolMetaData>
@@ -44,11 +45,14 @@
 
 @implementation DefaultBootstrapManager
 
-- (instancetype)initWithTransport:(id<BootstrapTransport>)transport executorContext:(id<ExecutorContext>)context {
+- (instancetype)initWithTransport:(id<BootstrapTransport>)transport
+                  executorContext:(id<ExecutorContext>)context
+                  failureDelegate:(id<FailureDelegate>)delegate {
     self = [super init];
     if (self) {
         self.transport = transport;
         self.context = context;
+        self.failureDelegate = delegate;
         self.mappedOperationServerList = [NSMutableDictionary dictionary];
         self.mappedIterators = [NSMutableDictionary dictionary];
     }
@@ -192,9 +196,8 @@
                 @try {
                     [weakSelf receiveOperationsServerList];
                 }
-                @catch (NSException *exception) {
-                    DDLogWarn(@"%@ Excpetion caugh with name: %@, reason: %@", TAG, exception.name, exception.reason);
-                    DDLogError(@"%@ Error while receiving operations server list", TAG);
+                @catch (NSException *ex) {
+                    DDLogError(@"%@ Error while receiving operations server list: %@, reason: %@", TAG, ex.name, ex.reason);
                 }
             });
         }
@@ -210,18 +213,16 @@
                 @try {
                     [weakSelf receiveOperationsServerList];
                 }
-                @catch (NSException *exception) {
-                    DDLogWarn(@"%@ Excpetion caugh with name: %@, reason: %@", TAG, exception.name, exception.reason);
-                    DDLogError(@"%@ Error while receiving operations server list", TAG);
+                @catch (NSException *ex) {
+                    DDLogError(@"%@ Error while receiving operations server list: %@ reason: %@", TAG, ex.name, ex.reason);
                 }
             });
         }
             break;
-        case FailoverActionStopApp:
+        case FailoverActionFailure:
         {
-            DDLogWarn(@"%@ Stopping application as to failover strategy decision!", TAG);
-            //TODO: Applications that use exit(..) are rejected by AppStore thus there should be found another way to exit
-            exit(EXIT_FAILURE);
+            DDLogWarn(@"%@ Calling failure delegate as to failover strategy decision!", TAG);
+            [self.failureDelegate onFailure];
         }
             break;
         default:

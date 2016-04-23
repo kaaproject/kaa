@@ -58,7 +58,10 @@
 - (void)testNullBootStrapServer {
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     @try {
-        DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:nil context:nil];
+        DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                bootstrapServers:nil
+                                                                                         context:nil
+                                                                                 failureDelegate:nil];
         XCTAssertNil(channel);
         XCTFail();
     }
@@ -70,7 +73,10 @@
 - (void)testEmptyBootstrapServer {
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     @try {
-        DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:[[NSDictionary alloc] init] context:nil];
+        DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                bootstrapServers:[[NSDictionary alloc] init]
+                                                                                         context:nil
+                                                                                 failureDelegate:nil];
         XCTAssertNil(channel);
         XCTFail();
     }
@@ -81,7 +87,10 @@
 
 - (void)testEmptyBootstrapManager {
     @try {
-        DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:nil bootstrapServers:nil context:nil];
+        DefaultChannelManager *channel = [[DefaultChannelManager alloc] initWithBootstrapManager:nil
+                                                                                bootstrapServers:nil
+                                                                                         context:nil
+                                                                                 failureDelegate:nil];
         XCTAssertNil(channel);
         XCTFail();
     }
@@ -101,7 +110,10 @@
     [given([channel getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                          bootstrapServers:bootstrapServers
+                                                                                                   context:nil
+                                                                                           failureDelegate:nil];
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
@@ -139,7 +151,8 @@
     
     id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
                                                                                   bootstrapServers:bootstrapServers
-                                                                                           context:nil];
+                                                                                           context:nil
+                                                                                   failureDelegate:nil];
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
@@ -164,7 +177,10 @@
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:[self getDefaultBootstrapServers] context:nil];
+    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                          bootstrapServers:[self getDefaultBootstrapServers]
+                                                                                                   context:nil
+                                                                                           failureDelegate:nil];
     [channelManager addChannel:channel];
     
     id<TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
@@ -192,7 +208,10 @@
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue setMaxConcurrentOperationCount:1];
     [given([executorContext getSheduledExecutor]) willReturn:[queue underlyingQueue]];
-    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:executorContext];
+    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                  bootstrapServers:bootstrapServers
+                                                                                           context:executorContext
+                                                                                   failureDelegate:nil];
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     
@@ -222,7 +241,10 @@
     [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
-    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                  bootstrapServers:bootstrapServers
+                                                                                           context:nil
+                                                                                   failureDelegate:nil];
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
@@ -264,7 +286,10 @@
     [given([channel3 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel3 getId]) willReturn:@"mock_channel3"];
     
-    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    id<KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                          bootstrapServers:bootstrapServers
+                                                                                                   context:nil
+                                                                                           failureDelegate:nil];
     
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     [channelManager setFailoverManager:failoverManager];
@@ -296,7 +321,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     TransportProtocolId *type = [TransportProtocolIdHolder TCPTransportID];
     id<KaaDataChannel> channel1 = mockProtocol(@protocol(KaaDataChannel));
@@ -328,7 +356,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     NSDictionary *types = [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
                                                                 @(CHANNEL_DIRECTION_UP)]
@@ -355,7 +386,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_DOWN),
@@ -378,7 +412,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
@@ -405,7 +442,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
@@ -424,7 +464,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
@@ -443,7 +486,10 @@
     NSDictionary *bootstrapServers = [self getDefaultBootstrapServers];
     
     id<BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
-    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
+    DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
+                                                                                   bootstrapServers:bootstrapServers
+                                                                                            context:nil
+                                                                                    failureDelegate:nil];
     
     NSDictionary *types =
     [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)

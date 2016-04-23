@@ -30,7 +30,6 @@ typedef enum {
 } ChannelState;
 
 #define TAG                 @"DefaultOperationTcpChannel >>>"
-#define EXIT_FAILURE        1
 #define CHANNEL_TIMEOUT     200
 #define PING_TIMEOUT_SEC    (CHANNEL_TIMEOUT / 2)
 #define MAX_THREADS_COUNT   2
@@ -69,6 +68,7 @@ typedef enum {
 @property (nonatomic) volatile BOOL isOpenConnectionScheduled;
 @property (nonatomic, strong) NSOperationQueue *executor;
 @property (nonatomic, strong) KAASocket *socket;//volatile
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
 
 - (void)onServerFailed;
 - (void)onServerFailedWithFailoverStatus:(FailoverStatus)status;
@@ -87,7 +87,9 @@ typedef enum {
 
 @implementation DefaultOperationTcpChannel
 
-- (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr {
+- (instancetype)initWithClientState:(id<KaaClientState>)state
+                    failoverManager:(id<FailoverManager>)failoverMgr
+                    failureDelegate:(id<FailureDelegate>)delegate {
     self = [super init];
     if (self) {
         self.supportedTypes = @{
@@ -102,6 +104,7 @@ typedef enum {
         self.messageFactory = [[KAAMessageFactory alloc] init];
         self.state = state;
         self.failoverManager = failoverMgr;
+        self.failureDelegate = delegate;
         [self.messageFactory registerConnAckDelegate:self];
         [self.messageFactory registerSyncResponseDelegate:self];
         [self.messageFactory registerPingResponseDelegate:self];
@@ -345,14 +348,14 @@ typedef enum {
                 [self scheduleOpenConnectionTaskWithRetryPeriod:retryPeriod];
             }
                 break;
-            case FailoverActionStopApp:
-                DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
-                exit(EXIT_FAILURE);
-                //TODO: review how to exit application
+            case FailoverActionFailure:
+                DDLogWarn(@"%@ Calling failure delegate according to failover strategy decision!", TAG);
+                [self.failureDelegate onFailure];
                 break;
             case FailoverActionUseNextBootstrap:
             case FailoverActionUseNextOperations:
                 DDLogWarn(@"%@ Failover actions NEXT_BOOTSTRAP & NEXT_OPERATIONS not supported yet!", TAG);
+                break;
         }
     } else {
         [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer failoverStatus:status];

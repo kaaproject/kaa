@@ -155,7 +155,9 @@
 
 - (void)testReceiveOperationsServerList {
     id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport executorContext:nil];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport
+                                                                          executorContext:nil
+                                                                          failureDelegate:nil];
     
     self.exceptionCaught = NO;
     @try {
@@ -174,7 +176,9 @@
 
 - (void)testOperationsServerInfoRetrieving {
     id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:executorContext];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil
+                                                                          executorContext:executorContext
+                                                                          failureDelegate:nil];
     
     self.exceptionCaught = NO;
     
@@ -216,7 +220,9 @@
 }
 
 - (void)testUseServerByDNSName {
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:nil];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil
+                                                                          executorContext:nil
+                                                                          failureDelegate:nil];
     
     ChannelManagerMock *channelManager = [[ChannelManagerMock alloc] init];
     [manager setChannelManager:channelManager];
