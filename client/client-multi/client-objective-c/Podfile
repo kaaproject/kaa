@@ -4,7 +4,7 @@
 target 'Kaa' do
   pod 'CocoaLumberjack'
   pod 'AFNetworking', '~> 3.x'
-  pod 'sqlite3'
+  pod 'sqlite3', :inhibit_warnings => true
 end
 
 target :KaaTests, :exclusive => true do
