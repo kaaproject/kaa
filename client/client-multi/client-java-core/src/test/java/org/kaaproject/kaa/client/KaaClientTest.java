@@ -19,6 +19,7 @@ package org.kaaproject.kaa.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.SimpleExecutorContext;
@@ -88,7 +92,8 @@ public class KaaClientTest {
         bsManagerMock = Mockito.mock(DefaultBootstrapManager.class);
         client = new AbstractKaaClient(platformContext, stateListener) {
             @Override
-            protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties,
+                                                                    KaaClientState kaaClientState,
                                                                     TransportContext transportContext) {
                 return bsManagerMock;
             }
@@ -208,5 +213,25 @@ public class KaaClientTest {
         ChannelRuntimeException channelRuntimeException2 = new ChannelRuntimeException(new Exception());
         ChannelRuntimeException channelRuntimeException3 = new ChannelRuntimeException("", new Exception());
         ChannelRuntimeException channelRuntimeException4 = new ChannelRuntimeException("", new Exception(), true, true);
+    }
+
+    @Test
+    public void failureListenerTest() throws IOException, GeneralSecurityException {
+
+        client.setFailoverStrategy(new DefaultFailoverStrategy() {
+
+            @Override
+            public FailoverDecision onFailover(FailoverStatus failoverStatus) {
+                return new FailoverDecision(FailoverDecision.FailoverAction.FAILURE);
+            }
+        });
+
+        client.start();
+
+        ProtocolMetaData metaData = new ProtocolMetaData(1, new ProtocolVersionPair(1, 1), null);
+        TransportConnectionInfo info = new GenericTransportInfo(ServerType.BOOTSTRAP, metaData);
+        client.getChannelManager().onServerFailed(info, FailoverStatus.BOOTSTRAP_SERVERS_NA);
+
+        Mockito.verify(stateListener, Mockito.timeout(500)).onStopped();
     }
 }
