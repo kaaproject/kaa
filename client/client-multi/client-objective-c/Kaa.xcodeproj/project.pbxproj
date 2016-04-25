@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2751A21FD925C7B97408EDB2 /* libPods-Kaa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 236E19905FF92899F3DD4D05 /* libPods-Kaa.a */; };
 		391A91A31BBE604C00DBA851 /* EndPointObjectHashTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 391A91A21BBE604C00DBA851 /* EndPointObjectHashTest.m */; };
 		B843B49E1BE67F950060519D /* TestsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B843B49D1BE67F950060519D /* TestsHelper.m */; };
 		B85B18F51C92E9CA002467B1 /* AbstractLogCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */; };
@@ -53,6 +54,7 @@
 		B8EE47AD1CA7251D008F996A /* CommonLogStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47AA1CA7251D008F996A /* CommonLogStorageTests.m */; };
 		B8EE47AE1CA7251D008F996A /* MemBucketTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47AB1CA7251D008F996A /* MemBucketTest.m */; };
 		B8EE47AF1CA7251D008F996A /* PersistentLogStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EE47AC1CA7251D008F996A /* PersistentLogStorageTests.m */; };
+		B8F0B4351CCA7B0200C2C933 /* FailureDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B8F0B4301CCA778A00C2C933 /* FailureDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5A82DC91CBBFEB40051B234 /* libAFNetworking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C5AAD9391CB7DEC90046AA91 /* libAFNetworking.a */; };
 		C5A82DCA1CBBFEB40051B234 /* libCocoaLumberjack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C5AAD93A1CB7DEC90046AA91 /* libCocoaLumberjack.a */; };
 		C5A82DCB1CBBFEB40051B234 /* libsqlite3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C5AAD93E1CB7DEC90046AA91 /* libsqlite3.a */; };
@@ -346,9 +348,11 @@
 		C5BB84411CBD3E4D00DBC739 /* FailoverStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BB84391CBD3E4D00DBC739 /* FailoverStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5BB84441CBD3ED600DBC739 /* FailoverStrategyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C5BB84431CBD3ED600DBC739 /* FailoverStrategyTests.m */; };
 		E815A8531C05984D00FEDECA /* KaaClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E815A8521C05984D00FEDECA /* KaaClientTest.m */; };
+		FAEF50DC2B1C5E972113C287 /* libPods-KaaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0EF18F15697D1F651B3AED4 /* libPods-KaaTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		236E19905FF92899F3DD4D05 /* libPods-Kaa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Kaa.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		288B6E34A174A0B006D7475F /* Pods-KaaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KaaTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KaaTests/Pods-KaaTests.release.xcconfig"; sourceTree = "<group>"; };
 		2B82CEEF86BDB0D4EB551C48 /* Pods-KaaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KaaTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KaaTests/Pods-KaaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		34B3F556DC3121F3AFA8ECC3 /* Pods-libKaa.a.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-libKaa.a.release.xcconfig"; path = "Pods/Target Support Files/Pods-libKaa.a/Pods-libKaa.a.release.xcconfig"; sourceTree = "<group>"; };
@@ -358,6 +362,7 @@
 		4CAC4D1133C2E2FBC990B5AC /* Pods-libKaa.a.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-libKaa.a.debug.xcconfig"; path = "Pods/Target Support Files/Pods-libKaa.a/Pods-libKaa.a.debug.xcconfig"; sourceTree = "<group>"; };
 		82D20E3FF13591EBE78EEF11 /* Pods-Kaa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kaa.release.xcconfig"; path = "Pods/Target Support Files/Pods-Kaa/Pods-Kaa.release.xcconfig"; sourceTree = "<group>"; };
 		ACAA02F0BC14427987EC4DE4 /* Pods-Kaa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kaa.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kaa/Pods-Kaa.debug.xcconfig"; sourceTree = "<group>"; };
+		B0EF18F15697D1F651B3AED4 /* libPods-KaaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KaaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8082F1C1CA965AD008FDE7B /* PersistentLogStorageConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentLogStorageConstants.h; sourceTree = "<group>"; };
 		B8082F1D1CA965AD008FDE7B /* SQLiteLogStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteLogStorage.h; sourceTree = "<group>"; };
 		B8082F1E1CA965AD008FDE7B /* SQLiteLogStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLiteLogStorage.m; sourceTree = "<group>"; };
@@ -677,6 +682,7 @@
 		B8EE47AA1CA7251D008F996A /* CommonLogStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonLogStorageTests.m; sourceTree = "<group>"; };
 		B8EE47AB1CA7251D008F996A /* MemBucketTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemBucketTest.m; sourceTree = "<group>"; };
 		B8EE47AC1CA7251D008F996A /* PersistentLogStorageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentLogStorageTests.m; sourceTree = "<group>"; };
+		B8F0B4301CCA778A00C2C933 /* FailureDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FailureDelegate.h; sourceTree = "<group>"; };
 		B8F14E221BD8E200001D1B02 /* BaseKaaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseKaaClient.h; sourceTree = "<group>"; };
 		B8F14E231BD8E200001D1B02 /* BaseKaaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseKaaClient.m; sourceTree = "<group>"; };
 		B8FBD9F61B9E35B4009A2BA3 /* KaaClientPlatformContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaClientPlatformContext.h; sourceTree = "<group>"; };
@@ -712,6 +718,7 @@
 				C5A82DCC1CBBFEBF0051B234 /* libOCHamcrest.a in Frameworks */,
 				C5A82DCD1CBBFEBF0051B234 /* libOCMockito.a in Frameworks */,
 				C5AAD9B81CB7E1D80046AA91 /* Kaa.framework in Frameworks */,
+				FAEF50DC2B1C5E972113C287 /* libPods-KaaTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -724,6 +731,7 @@
 				C5A82DC91CBBFEB40051B234 /* libAFNetworking.a in Frameworks */,
 				C5A82DCA1CBBFEB40051B234 /* libCocoaLumberjack.a in Frameworks */,
 				C5A82DCB1CBBFEB40051B234 /* libsqlite3.a in Frameworks */,
+				2751A21FD925C7B97408EDB2 /* libPods-Kaa.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -800,6 +808,7 @@
 				B86229E81BE352EF0045ED0D /* DefaultKaaPlatformContext.m */,
 				B8A0B5111BEF65FA00105DFE /* KaaDefaults.h */,
 				E847D1E31C03342200147BAE /* KaaExceptions.h */,
+				B8F0B4301CCA778A00C2C933 /* FailureDelegate.h */,
 			);
 			path = Kaa;
 			sourceTree = "<group>";
@@ -1525,6 +1534,8 @@
 				C5AAD93C1CB7DEC90046AA91 /* libOCMockito.a */,
 				C5AAD93D1CB7DEC90046AA91 /* libPods-KaaTests.a */,
 				C5AAD93E1CB7DEC90046AA91 /* libsqlite3.a */,
+				236E19905FF92899F3DD4D05 /* libPods-Kaa.a */,
+				B0EF18F15697D1F651B3AED4 /* libPods-KaaTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1701,6 +1712,7 @@
 				C5AAD9301CB7DE700046AA91 /* DefaultKaaPlatformContext.h in Headers */,
 				C5AAD9311CB7DE700046AA91 /* KaaDefaults.h in Headers */,
 				C5AAD9321CB7DE700046AA91 /* KaaExceptions.h in Headers */,
+				B8F0B4351CCA7B0200C2C933 /* FailureDelegate.h in Headers */,
 				C5AAD9351CB7DE960046AA91 /* io.h in Headers */,
 				C5AAD9361CB7DE960046AA91 /* platform.h in Headers */,
 				C5AAD9371CB7DE960046AA91 /* avro_private.h in Headers */,
@@ -1720,6 +1732,7 @@
 				B824A1F31B1452C50076C753 /* Frameworks */,
 				B824A1F41B1452C50076C753 /* Resources */,
 				187C1CBC80866C0AFDD68769 /* Copy Pods Resources */,
+				ED6792EF2E814A4017A759DC /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1853,6 +1866,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		ED6792EF2E814A4017A759DC /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KaaTests/Pods-KaaTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

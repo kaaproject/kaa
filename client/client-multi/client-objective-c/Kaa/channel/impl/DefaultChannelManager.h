@@ -18,12 +18,14 @@
 #import "KaaInternalChannelManager.h"
 #import "BootstrapManager.h"
 #import "ExecutorContext.h"
+#import "FailureDelegate.h"
 
 @interface DefaultChannelManager : NSObject <KaaInternalChannelManager>
 
 - (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
                         bootstrapServers:(NSDictionary *)servers
-                                 context:(id<ExecutorContext>)context;
+                                 context:(id<ExecutorContext>)context
+                         failureDelegate:(id<FailureDelegate>)delegate;
 
 @end
 
@@ -33,6 +35,7 @@
 @property (nonatomic, weak) DefaultChannelManager *manager;
 @property (nonatomic) volatile BOOL isStopped;
 
-- (instancetype)initWithChannel:(id<KaaDataChannel>)channel manager:(DefaultChannelManager *)manager;
+- (instancetype)initWithChannel:(id<KaaDataChannel>)channel
+                        manager:(DefaultChannelManager *)manager;
 
 @end

@@ -31,6 +31,7 @@
 #import "NotificationCommon.h"
 #import "LogDeliveryDelegate.h"
 #import "FailoverStrategy.h"
+#import "FailureDelegate.h"
 
 /**
  * Root interface for the Kaa client.<br>
@@ -339,6 +340,14 @@
  * @see FailoverStrategy
  */
 - (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy;
+
+/**
+ * Set listener which is notified on critical failures that are treated as something
+ * that client should not handle on its own.
+ *
+ * @param delegate delegate to handle critical failures
+ */
+- (void)setFailureDelegate:(id<FailureDelegate>)delegate;
 
 @end
 #endif

@@ -24,8 +24,6 @@
 
 #define TAG @"DefaultChannelManager >>>"
 
-#define EXIT_FAILURE 1
-
 @interface DefaultChannelManager ()
 
 @property (nonatomic, strong) NSMutableArray *channels;              //<KaaDataChannel>
@@ -43,6 +41,8 @@
 @property (nonatomic, strong) id<ExecutorContext> executorContext;
 
 @property (nonatomic, strong) ConnectivityChecker *connectivityChecker;
+
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
 
 @property (nonatomic) BOOL isShutdown;
 @property (nonatomic) BOOL isPaused;
@@ -70,7 +70,8 @@
 
 - (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
                         bootstrapServers:(NSDictionary *)servers
-                                 context:(id<ExecutorContext>)context {
+                                 context:(id<ExecutorContext>)context
+                         failureDelegate:(id<FailureDelegate>)delegate{
     self = [super init];
     if (self) {
         if (!bootstrapMgr || !servers || [servers count] == 0) {
@@ -80,6 +81,7 @@
         self.bootstrapManager = bootstrapMgr;
         self.bootststrapServers = servers;
         self.executorContext = context;
+        self.failureDelegate = delegate;
         
         self.channels = [NSMutableArray array];
         self.upChannels = [NSMutableDictionary dictionary];
@@ -260,10 +262,9 @@
                         });
                     }
                         break;
-                    case FailoverActionStopApp:
-                        DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
-                        exit(EXIT_FAILURE);
-                        //TODO: review how to exit application
+                    case FailoverActionFailure:
+                        DDLogWarn(@"%@ Calling failure delegate according to failover strategy decision!", TAG);
+                        [self.failureDelegate onFailure];
                         break;
                     default:
                         break;
@@ -286,10 +287,9 @@
                         });
                     }
                         break;
-                    case FailoverActionStopApp:
-                        DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
-                        exit(EXIT_FAILURE);
-                        //TODO: review how to exit application
+                    case FailoverActionFailure:
+                        DDLogWarn(@"%@ Calling failure delegate according to failover strategy decision!", TAG);
+                        [self.failureDelegate onFailure];
                         break;
                     default:
                         break;

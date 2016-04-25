@@ -20,12 +20,15 @@
 #import "FailoverManager.h"
 #import "KeyPair.h"
 #import "KAASocket.h"
+#import "FailureDelegate.h"
 
 @interface DefaultOperationTcpChannel : NSObject <KaaDataChannel>
 
 - (KAASocket *)createSocket;
 - (void)setServer:(id<TransportConnectionInfo>)server withKeyPair:(KeyPair *)sentKeyPair;
-- (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr;
+- (instancetype)initWithClientState:(id<KaaClientState>)state
+                    failoverManager:(id<FailoverManager>)failoverMgr
+                    failureDelegate:(id<FailureDelegate>)delegate;
 - (NSOperationQueue *)createExecutor;
 
 @end
