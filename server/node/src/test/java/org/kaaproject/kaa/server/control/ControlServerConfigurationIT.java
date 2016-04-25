@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +35,8 @@ import org.kaaproject.kaa.common.dto.VersionDto;
  */
 public class ControlServerConfigurationIT extends AbstractTestControlServer {
 
+    private static final Charset DECODING_CHARSET = Charset.forName("ISO-8859-1");
+    
     /**
      * Test create configuration.
      *
@@ -61,6 +64,24 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         Assert.assertNotNull(configurationRecord);
         Assert.assertNotNull(configurationRecord.getInactiveStructureDto());
         assertConfigurationsEquals(configuration, configurationRecord.getInactiveStructureDto());
+    }
+    
+    /**
+     * Test get configuration record body.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetConfigurationRecordBody() throws Exception {
+        ConfigurationDto configuration = createConfiguration();
+        ConfigurationDto activatedConfiguration = client.activateConfiguration(configuration.getId());
+        ConfigurationRecordDto configurationRecord = client.getConfigurationRecord(activatedConfiguration.getSchemaId(), configuration.getEndpointGroupId());
+        
+        String configurationRecordBody = client.getConfigurationRecordBody(activatedConfiguration.getSchemaId(), activatedConfiguration.getEndpointGroupId());
+        
+        Assert.assertNotNull(configurationRecordBody);
+        String expectedConfigurationRecordBody = new String(configurationRecord.getActiveStructureDto().getBody().getBytes(), DECODING_CHARSET);
+        Assert.assertEquals(expectedConfigurationRecordBody, configurationRecordBody);
     }
 
     /**

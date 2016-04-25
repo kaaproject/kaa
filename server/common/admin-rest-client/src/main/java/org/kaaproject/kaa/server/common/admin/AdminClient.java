@@ -623,6 +623,11 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "configurationRecord?schemaId={schemaId}&endpointGroupId={endpointGroupId}",
                 ConfigurationRecordDto.class, schemaId, endpointGroupId);
     }
+    
+    public String getConfigurationRecordBody(String schemaId, String endpointGroupId) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "configurationRecordBody?schemaId={schemaId}&endpointGroupId={endpointGroupId}",
+                String.class, schemaId, endpointGroupId);
+    }
 
     public ConfigurationDto activateConfiguration(String configurationId) throws Exception {
         return restTemplate.postForObject(restTemplate.getUrl() + "activateConfiguration", configurationId, ConfigurationDto.class);
