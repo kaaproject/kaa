@@ -7,5 +7,3 @@ sort_idx: 10
 ---
 
 Devices provisioning and registration
-
-(I )
