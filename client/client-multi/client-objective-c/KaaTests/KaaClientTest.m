@@ -23,6 +23,20 @@
 #import <XCTest/XCTest.h>
 #import <Kaa/Kaa.h>
 
+@interface TestFailoverStrategy : DefaultFailoverStrategy
+
+@end
+
+@implementation TestFailoverStrategy
+
+- (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
+#pragma unused(status)
+    return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionFailure];
+}
+
+@end
+
+
 @interface TestClientProfileContainer : NSObject <ProfileContainer>
 
 @end
@@ -169,6 +183,25 @@
     
     [NSThread sleepForTimeInterval:1];
     [verifyCount(self.delegate, times(1)) onResumeFailureWithException:anything()];
+}
+
+- (void)testDefaultFailureDelegate {
+    [self.client setFailoverStrategy:[[TestFailoverStrategy alloc] init]];
+    
+    [self.client start];
+    
+    ProtocolVersionPair *protocolPair = [[ProtocolVersionPair alloc] initWithId:1 version:1];
+    ProtocolMetaData *metaData = [[ProtocolMetaData alloc] initWithAccessPointId:1
+                                                             protocolVersionInfo:protocolPair
+                                                                  connectionInfo:nil];
+    id<TransportConnectionInfo> connectionInfo = [[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP
+                                                                                             meta:metaData];
+    [[self.client getChannelManager] onServerFailedWithConnectionInfo:connectionInfo
+                                                       failoverStatus:FailoverStatusBootstrapServersNotAvailable];
+    
+    [NSThread sleepForTimeInterval:0.5];
+    
+    [verifyCount(self.delegate, times(1)) onStopped];
 }
 
 #pragma mark - Supporting methods
