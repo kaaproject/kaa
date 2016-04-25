@@ -197,7 +197,7 @@ public class DefaultBootstrapManagerTest {
     @Test
     public void testReceiveOperationsServerList() throws TransportException {
         BootstrapTransport transport = mock(BootstrapTransport.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null, null);
 
         boolean exception = false;
         try {
@@ -216,7 +216,7 @@ public class DefaultBootstrapManagerTest {
     @Test
     public void testOperationsServerInfoRetrieving() throws TransportException, NoSuchAlgorithmException, InvalidKeySpecException {
         ExecutorContext executorContext = mock(ExecutorContext.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext, null);
 
         boolean exception = false;
         try {
@@ -258,7 +258,7 @@ public class DefaultBootstrapManagerTest {
 
     @Test
     public void testUseServerByDnsName() throws NoSuchAlgorithmException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null, null);
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         manager.setChannelManager(channelManager);

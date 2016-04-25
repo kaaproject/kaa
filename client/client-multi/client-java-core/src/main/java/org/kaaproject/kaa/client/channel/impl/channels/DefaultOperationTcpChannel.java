@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.kaaproject.kaa.client.FailureListener;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
 import org.kaaproject.kaa.client.channel.failover.FailoverManager;
@@ -71,7 +72,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationTcpChannel.class);
 
-    private static final int EXIT_FAILURE = 1;
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
     static {
         SUPPORTED_TYPES.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
@@ -86,6 +86,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private static final int PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
 
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
+
+    private FailureListener failureListener;
 
     private IPTransportInfo currentServer;
     private final KaaClientState state;
@@ -276,9 +278,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private volatile boolean isOpenConnectionScheduled;
 
-    public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager) {
+    public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager, FailureListener failureListener) {
         this.state = state;
         this.failoverManager = failoverManager;
+        this.failureListener = failureListener;
         messageFactory.registerMessageListener(connAckListener);
         messageFactory.registerMessageListener(kaaSyncResponseListener);
         messageFactory.registerMessageListener(pingResponseListener);
@@ -392,9 +395,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                             "according to failover strategy decision", retryPeriod);
                     scheduleOpenConnectionTask(retryPeriod);
                     break;
-                case STOP_APP:
-                    LOG.warn("Stopping application according to failover strategy decision!");
-                    System.exit(EXIT_FAILURE); //NOSONAR
+                case FAILURE:
+                    LOG.warn("Calling failure listener according to failover strategy decision!");
+                    failureListener.onFailure();
                     break;
                 default:
                     break;

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.kaaproject.kaa.client.FailureListener;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
 import org.kaaproject.kaa.client.channel.failover.FailoverManager;
@@ -52,7 +53,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapManager.class);
 
-    private static final int EXIT_FAILURE = 1;
+    private FailureListener failureListener;
 
     private BootstrapTransport transport;
     private List<ProtocolMetaData> operationsServerList;
@@ -63,9 +64,10 @@ public class DefaultBootstrapManager implements BootstrapManager {
     private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<>();
     private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
 
-    public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext) {
+    public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext, FailureListener failureListener) {
         this.transport = transport;
         this.executorContext = executorContext;
+        this.failureListener = failureListener;
     }
 
     @Override
@@ -219,9 +221,9 @@ public class DefaultBootstrapManager implements BootstrapManager {
                     }
                 }, retryPeriod, TimeUnit.MILLISECONDS);
                 break;
-            case STOP_APP:
-                LOG.warn("Stopping application according to failover strategy decision!");
-                System.exit(EXIT_FAILURE); //NOSONAR
+            case FAILURE:
+                LOG.warn("Calling failure listener according to failover strategy decision!");
+                failureListener.onFailure();
                 break;
             default:
                 break;

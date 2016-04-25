@@ -60,7 +60,7 @@ public class DefaultOperationTcpChannelTest {
 
         public TestOperationTcpChannel(KaaClientState state,
                 FailoverManager failoverManager) throws IOException {
-            super(state, failoverManager);
+            super(state, failoverManager, null);
             PipedInputStream in = new PipedInputStream(4096);
             PipedOutputStream out = new PipedOutputStream(in);
             os = out;
@@ -85,7 +85,7 @@ public class DefaultOperationTcpChannelTest {
     public void testDefaultOperationTcpChannel() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
-        KaaDataChannel tcpChannel = new DefaultOperationTcpChannel(clientState, failoverManager);
+        KaaDataChannel tcpChannel = new DefaultOperationTcpChannel(clientState, failoverManager, null);
         assertNotNull("New channel's id is null", tcpChannel.getId());
         assertNotNull("New channel does not support any of transport types", tcpChannel.getSupportedTransportTypes());
         assertNotEquals(0, tcpChannel.getSupportedTransportTypes().size());
@@ -149,7 +149,7 @@ public class DefaultOperationTcpChannelTest {
         Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
 
         FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
-        DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, failoverManager);
+        DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, failoverManager, null);
 
         TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
                 "www.test.fake", 999, KeyUtil.generateKeyPair().getPublic());

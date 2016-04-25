@@ -580,6 +580,15 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         failoverManager.setFailoverStrategy(failoverStrategy);
     }
 
+    @Override
+    public void setFailureListener(FailureListener failureListener) {
+        if (failureListener == null) {
+            throw new IllegalStateException("Failure listener can't be null");
+        }
+
+        this.failureListener = failureListener;
+    }
+
     protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {
         BootstrapTransport bootstrapTransport = buildBootstrapTransport(properties, kaaClientState);
         ProfileTransport profileTransport = buildProfileTransport();
@@ -603,7 +612,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers) {
-        KaaInternalChannelManager kaaInternalChannelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers, context.getExecutorContext());
+        KaaInternalChannelManager kaaInternalChannelManager =
+                new DefaultChannelManager(bootstrapManager, bootstrapServers, context.getExecutorContext(), failureListener);
         kaaInternalChannelManager.setConnectivityChecker(context.createConnectivityChecker());
         return kaaInternalChannelManager;
     }
@@ -627,7 +637,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
         channelManager.addChannel(bootstrapChannel);
 
-        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, failoverManager);
+        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, failoverManager, failureListener);
         operationsChannel.setMultiplexer(operationsDataProcessor);
         operationsChannel.setDemultiplexer(operationsDataProcessor);
         channelManager.addChannel(operationsChannel);
@@ -664,7 +674,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected BootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new DefaultBootstrapManager(transportContext.getBootstrapTransport(), context.getExecutorContext());
+        return new DefaultBootstrapManager(transportContext.getBootstrapTransport(), context.getExecutorContext(), failureListener);
     }
 
     public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
@@ -708,4 +718,12 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     protected RedirectionTransport buildRedirectionTransport() {
         return new DefaultRedirectionTransport();
     }
+
+    protected FailureListener failureListener = new FailureListener() {
+        @Override
+        public void onFailure() {
+            stop();
+        }
+    };
+
 }
