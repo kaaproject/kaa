@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,6 +122,8 @@ public class KaaAdminController {
 
     /** The Constant HTTP_PORT. */
     public static final int HTTP_PORT = 80;
+
+    private static final Charset DECODING_CHARSET = Charset.forName("ISO-8859-1");
 
     /** The kaa admin service. */
     @Autowired
@@ -2620,5 +2623,15 @@ public class KaaAdminController {
     @ResponseBody
     public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(@RequestParam("userExternalId") String endpointUserExternalId) throws KaaAdminServiceException {
         return this.kaaAdminService.getEndpointProfilesByUserExternalId(endpointUserExternalId);
+    }
+
+    @RequestMapping(value = "configurationRecordBody", params = {"schemaId", "endpointGroupId"}, method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String getConfigurationRecordBody(@RequestParam("schemaId") String schemaId,
+                                             @RequestParam("endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
+        String response = kaaAdminService.getConfigurationRecord(schemaId, endpointGroupId).getActiveStructureDto().getBody();
+        String decodedResponse = new String(response.getBytes(), DECODING_CHARSET);
+        return decodedResponse;
     }
 }
