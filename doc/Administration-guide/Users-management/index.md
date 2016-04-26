@@ -14,6 +14,10 @@ sort_idx: 50
 - [Managing tenant admins](#managing-tenant-admins)
 - [Managing users](#managing-users)
 
+This guide explains how to manage users in Kaa Admin UI.
+
+This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the [Installation guide]({{root_url}}Programming-guide/Getting-started/#installation) for more info.
+
 ## Managing tenant admins
 
 The **Tenants** window, which is the starting window for a Kaa admin, displays a list of tenant admins. A Kaa admin can edit a tenant admin's name/e-mail and delete tenant admins from the system.
