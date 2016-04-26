@@ -81,6 +81,17 @@ static LogRecord createSerializedLogRecord()
     return LogRecord(logRecord);
 }
 
+static void joinThreadsSync(SimpleExecutorContext& executor)
+{
+    auto& lifeCycleExecutor = executor.getLifeCycleExecutor();
+    auto& apiExecutor = executor.getApiExecutor();
+    auto& callbackExecutor = executor.getCallbackExecutor();
+
+    dynamic_cast<ThreadPool&>(lifeCycleExecutor).shutdownNow();
+    dynamic_cast<ThreadPool&>(apiExecutor).shutdownNow();
+    dynamic_cast<ThreadPool&>(callbackExecutor).shutdownNow();
+}
+
 BOOST_AUTO_TEST_SUITE(LogCollectorTestSuite)
 
 BOOST_AUTO_TEST_CASE(BadLogStorageTest)
@@ -519,7 +530,7 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncAll)
 
     testMaxParallelUpload(5);
 
-    executor.stop();
+    joinThreadsSync(executor);
 }
 
 BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncLogging)
@@ -574,7 +585,7 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncLogging)
 
     testMaxParallelUpload(5);
 
-    executor.stop();
+    joinThreadsSync(executor);
 }
 
 BOOST_AUTO_TEST_CASE(RecordFuturesResult)
@@ -637,7 +648,7 @@ BOOST_AUTO_TEST_CASE(RecordFuturesResult)
         }
     }
 
-    executor.stop();
+    joinThreadsSync(executor);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
