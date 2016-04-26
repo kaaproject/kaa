@@ -476,10 +476,41 @@ Kaa allows updating configuration data for a specific endpoint group under the a
 The override schema is obtained by transforming the configuration schema and looks very similar to the base schema. The difference is that when constructing an override schema, Kaa adds org.kaaproject.configuration.unchangedT to every field type definition (converting them into union types, if necessary). Thus, all mandatory fields become union types with either their original type (if there is any data change) or the org.kaaproject.configuration.unchangedT type (if there is no data change). When org.kaaproject.configuration.unchangedT appears in the data, it indicates that the corresponding field value remains without the change during the update.
 As an example, consider how mandatory and optional fields are converted from the configuration schema to the override schema.
 
-| Configuration schema | Override schema |
-|----------------------|-----------------|
-| Mandatory field: ```json { "name": "stringField", "type": "string", "by_default": "default string value" } ``` | becomes:```json {"name": "stringField", "type": [ "string", { "name": "unchangedT","namespace": "org.kaaproject.configuration", "type": "enum", "symbols": ["unchanged"] } ], "by_default": "default string value" } ``` |
-| Optional field:```json{,"name": "optionalBytesField",,"type": [,"null",,"bytes",],,"optional": true}```        | becomes:```json{,"name": "optionalBytesField",,"type": [,"null",,"bytes",,"org.kaaproject.configuration.unchangedT",],,"optional": true}```                                                                              |
+<table style="width:100%">
+  <tr>
+    <td>Configuration schema</td>
+    <td>Override schema</td>		
+  </tr>
+  <tr>
+    <td>Mandatory field: 
+
+```json
+    {
+    "name": "stringField",
+    "type": "string",
+    "by_default": "default string value"
+    }```
+
+</td>
+    <td>Optional field:
+
+```json
+{
+    "name": "stringField",
+    "type": [
+        "string",
+        {
+            "name": "unchangedT",
+            "namespace": "org.kaaproject.configuration",
+            "type": "enum",
+            "symbols": ["unchanged"]
+        }
+    ],
+    "by_default": "default string value"
+}
+</td>
+</tr>
+</table>
 
 Loading the override data into the endpoint groups is similar to [loading base data into group "all"](). Among other parameters, the group ID must be passed to the API call to indicate the group to which the new data should be applied. The loading algorithm processes the record UUID values identically to how it is done for the "all" group, persisting the UUID values that already existed in the previous version of the data in the processed group. Loading is done for the group in question independently of any other groups and without any cross-group data lookups.
 
