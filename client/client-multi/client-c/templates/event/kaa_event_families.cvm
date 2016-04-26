@@ -24,7 +24,7 @@
 # include "../kaa_error.h"
 # include "../utilities/kaa_mem.h"
 
-#include "kaa_private.h"
+# include "kaa_private.h"
 
 # ifdef kaa_broadcast_event
 # undef kaa_broadcast_event
