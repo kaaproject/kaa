@@ -107,8 +107,16 @@ kaa_error_t kaa_extension_logging_request_serialize(void *context, uint32_t requ
         return KAA_ERR_BADPARAM;
     }
 
+    kaa_error_t error;
+
+    size_t size_needed;
+    error = kaa_logging_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
     *need_resync = false;
-    kaa_error_t error = kaa_logging_need_logging_resync(context, need_resync);
+    error = kaa_logging_need_logging_resync(context, need_resync);
     if (error) {
         return error;
     }
@@ -116,12 +124,6 @@ kaa_error_t kaa_extension_logging_request_serialize(void *context, uint32_t requ
     if (!*need_resync) {
         *size = 0;
         return KAA_ERR_NONE;
-    }
-
-    size_t size_needed;
-    error = kaa_logging_request_get_size(context, &size_needed);
-    if (error) {
-        return error;
     }
 
     if (!buffer || *size < size_needed) {
