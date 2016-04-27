@@ -83,13 +83,9 @@ static LogRecord createSerializedLogRecord()
 
 static void joinThreadsSync(SimpleExecutorContext& executor)
 {
-    auto& lifeCycleExecutor = executor.getLifeCycleExecutor();
-    auto& apiExecutor = executor.getApiExecutor();
-    auto& callbackExecutor = executor.getCallbackExecutor();
-
-    dynamic_cast<ThreadPool&>(lifeCycleExecutor).shutdownNow();
-    dynamic_cast<ThreadPool&>(apiExecutor).shutdownNow();
-    dynamic_cast<ThreadPool&>(callbackExecutor).shutdownNow();
+    executor.getLifeCycleExecutor().shutdownNow();
+    executor.getApiExecutor().shutdownNow();
+    executor.getCallbackExecutor().shutdownNow();
 }
 
 BOOST_AUTO_TEST_SUITE(LogCollectorTestSuite)
