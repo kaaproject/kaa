@@ -3,7 +3,7 @@
 This readme contains information about Kaa Docker image deployment.
 
 Default environments that comes in this package is:
-  - Fully functional Kaa cluster (1x Kaa node, 1x Zookeeper node, 1x Z
+  - Fully functional Kaa cluster (1x Kaa node, 1x Zookeeper node, 1x Database nodes)
     - Kaa node
     - Zookeeper node
     - PostgreSQL
@@ -27,11 +27,13 @@ Base image configuration is done using the following environment variables:
 
 ## Steps to deploy
 
-1. From node/ folder execute:
+1. Download Kaa debian package from http://www.kaaproject.org/download-kaa/ and place it under node/ folder.
+2. From node/ folder execute:
 ```sh
-$ docker build -t kaaproject/node:0.9.0 .
+$ docker build --build-arg setupfile=<KAA_DEBIAN_PACKAGE_LOCATION> -t kaaproject/node:0.9.0 .
 ```
-2. Return to docker/ folder and run:
+Example of <KAA_DEBIAN_PACKAGE_LOCATION> is ./kaa-node.deb
+3. Return to docker/ folder and run:
 ```sh
 $ docker-compose -f docker-compose-cluster-1-node.yaml up -d
 ```
@@ -39,7 +41,7 @@ If you want deploy single node to external cluster, edit docker-compose-1-node.y
 ```sh
 $ docker-compose -f docker-compose-1-node.yaml up -d
 ```
-3. Execute following command to get into running container:
+4. Execute following command to get into running container:
 ```sh
 $ docker exec -i -t docker_kaa_node_1 bash
 ```
