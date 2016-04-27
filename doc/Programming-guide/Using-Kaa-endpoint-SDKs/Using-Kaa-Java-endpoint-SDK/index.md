@@ -16,4 +16,4 @@ For using Java endpoint SDK you need to have at least 80 Mb RAM.
 
 # Using endpoint SDK in your appication
 
-You need [generate Endpoint SDK](Getting-started#generate-sdk) for target platform - Java. Endpoint SDK is a jar file that developer should add to classpath using some build tools.
+You need to [generate Endpoint SDK](Getting-started#generate-sdk) for the target platform - Java. Endpoint SDK is a jar file that developer should add to classpath using some build tools.
