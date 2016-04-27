@@ -276,7 +276,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
-        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 8);
         buf.putInt(sync.getRequestId());
         buf.putInt(sync.getStatus().ordinal());
     }
