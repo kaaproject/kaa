@@ -59,8 +59,18 @@ sort_idx: 40
   - [Managing endpoint profiles](#managing-endpoint-profiles)
   - [Managing Application CTL](#managing-application-ctl)
   - [Managing Tenant CTL](#managing-tenant-ctl-1)
+- [Avro UI forms](#avro-ui-forms)
+  - [Avro UI form types](#avro-ui-form-types)
+    - [Schema form](#schema-form)
+    - [Record form](#record-form)
+  - [Working with schema form](#working-with-schema-form)
+  - [Working with record form](#working-with-record-form)
+  - [Avro UI forms GWT Sandbox](#avro-ui-forms-gwt-sandbox)
+  - [Avro schema parameters](#avro-schema-parameters)
 
-This guide explains how to manage users and develop applications in Kaa Admin UI.
+This guide explains how to manage develop applications in Kaa Admin UI and how to work with Avro UI forms.
+
+This guide also explains how to use _Avro UI forms GWT Sandbox_, which is a testing environment for Avro UI forms.
 
 This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the [Installation guide]({{root_url}}Programming-guide/Getting-started/#installation) for more info.
 
@@ -179,7 +189,7 @@ To create a new ECF, do the following:
 
    <img src="attach/image2015-3-4%2017-2-28.png" width="500" height="400">
 
-5. In the **Add event class family schema** window, create an ECF schema either by using the **Event class family schema** [schema form999](999) or by uploading the schema from a file, then click Add.
+5. In the **Add event class family schema** window, create an ECF schema either by using the **Event class family schema** [schema form](#schema-form) or by uploading the schema from a file, then click Add.
 **NOTE:** More than one schema can be added to an ECF.
 **NOTE:** If uploaded from a file, a schema(s) should be written in the [Avro](http://avro.apache.org/docs/current/spec.html) format and describe how event classes should be grouped depending on subject areas.
 
@@ -285,7 +295,7 @@ As a tenant developer, you can create new client-side EP schemas for the applica
   - Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
 
         <img src="attach/Create%20client-side%20endpoint%20profile%20schema%201.png" width="500" height="400">
-  - Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the [schema form999](999) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+  - Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the [schema form](#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 
         <img src="attach/Create%20client-side%20endpoint%20profile%20schema%202.png" width="700" height="400">
 4. Click **Add** at the top of the window to save the schema.
@@ -311,7 +321,7 @@ As a tenant developer, you can create new server-side EP schemas for the applica
   - Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
 
         <img src="attach/Create%20server-side%20endpoint%20profile%20schema%201.png" width="500" height="400">
-  - Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the [schema form999](999) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+  - Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the [schema form](#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 
         <img src="attach/Create%20server-side%20endpoint%20profile%20schema%202.png" width="700" height="400">
 4. Click **Add** at the top of the window to save the schema.
@@ -330,7 +340,7 @@ The list of configuration schemas created by a tenant developer for the applicat
 As a tenant developer, you can create new configuration schemas for the application as follows:
 
 1. In the **Configuration schemas** window for the application, click **Add schema**.
-2. In the **Add configuration schema** window, create a configuration schema either by using the [schema form999](999) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+2. In the **Add configuration schema** window, create a configuration schema either by using the [schema form](#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 
     <img src="attach/image2015-3-4%2018-39-13.png" width="600" height="400">
 3. Click **Add** to save the schema.
@@ -348,7 +358,7 @@ The list of notification schemas created by a tenant developer for the applicati
 As a tenant developer, you can create new notification schemas for the application as follows:
 
 1. In the **Notification schemas** window for the application, click **Add schema**.
-2. In the **Add notification schema** window, create a notification schema either by using the [schema form999](999) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+2. In the **Add notification schema** window, create a notification schema either by using the [schema form](#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 
     <img src="attach/image2015-3-4%2018-52-11.png" width="600" height="400">
 3. Click **Add** to save the schema.
@@ -366,7 +376,7 @@ The list of log schemas created by a tenant developer for the application is sho
 As a tenant developer, you can create new log schemas for the application as follows:
 
 1. In the **Log schemas** window for the application, click **Add schema**.
-2. In the **Add log schema** window, create a log schema either by using the [schema form999](999) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+2. In the **Add log schema** window, create a log schema either by using the [schema form](#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 
    <img src="attach/image2015-3-4%2018-58-6.png" width="600" height="400">
 3. Click **Add** to save the schema.
@@ -397,7 +407,7 @@ To add a new notification topic to the application, do the following:
 To send a notification for the application, do the following:
 
 1. In the **Notification topics**, click the mail icon next to the appropriate notification topic.
-2. In the **Send notification** window, create a notification either by using the **Notification body** [record form999](999) or by uploading the data in the JSON format from a file.
+2. In the **Send notification** window, create a notification either by using the **Notification body** [record form](#record-form) or by uploading the data in the JSON format from a file.
 **NOTE:** The contents of the file should match the corresponding notification schema.
 
     <img src="attach/image2015-3-4%2019-18-15.png" width="800" height="300">
@@ -465,7 +475,7 @@ To add a configuration to the endpoint group, do the following:
 
 1. In the **Endpoint group** window, click **Add configuration**.
 2. In the **Configuration** window, select the schema version.
-3. On the **Draft** tab, enter the description, create the configuration using the **Configuration body** [record form999](999), and then click **Save**.
+3. On the **Draft** tab, enter the description, create the configuration using the **Configuration body** [record form](#record-form), and then click **Save**.
 **NOTE:** You can save the data on the **Draft** tab and return to update it later as many times as needed until you click **Activate**.
 
     <img src="attach/image2015-3-4%2019-40-23.png" width="500" height="400">
@@ -719,3 +729,119 @@ To promote the application CT from application to tenant scope, click **Promote*
 ## Managing Tenant CTL
 The **Tenant CTL** window displays a list of CTs with tenant and system scope. The tenant developer can add new tenant CTs and delete tenant CTs from the system. It has read-only access to the system CTs.
 The tenant developer has the same Tenant CTL management capabilities as the tenant admin. See [Managing Tenant CTL](#managing-tenant-ctl) in the Tenant admin section.
+
+# Avro UI Forms
+
+Avro UI forms are GUI components in the Admin UI that allow you to create Kaa schemas and enter corresponding data records without using the [Avro/JSON](http://avro.apache.org/docs/current/spec.html) syntax.
+
+## Avro UI form types
+
+There are two Avro UI form types: a _schema form_ and a _record form_.
+
+### Schema form
+
+A schema form allows the user (tenant developer) to create Kaa schemas (profile, configuration, notification, and log schemas) for applications in Admin UI.
+
+It consists of a header with the general schema info, such as the name, namespace, and display name, and the **Fields** section where you can add fields to your schema.
+
+**NOTE**  
+You can also upload a schema from a file using the **Upload from file** option. In this case, the schema must be provided in the JSON format.
+
+<img src="attach/image2015-3-4 13-58-15.png" width="600" height="400">
+
+### Record form
+
+A record form allows the user (tenant developer) to enter data records according to corresponding Kaa schemas (configuration and notification schemas) for applications in Admin UI.
+
+A record form contains the fields according to the corresponding schema.
+
+**NOTE**  
+You can also upload data from a file using the **Upload from file** option. In this case, the data must be provided in the JSON format.
+
+<img src="attach/image2015-3-3 16-39-51.png" width="500" height="400">
+
+## Working with schema form
+
+An example of a schema form usage is creating a new configuration schema.
+
+1.  Open the **Configuration schemas** window for some application in Admin UI and then click **Add schema**.
+2.  In the **Configuration schema** schema form, specify the name, namespace, and display name of the record.  
+
+    <img src="attach/image2015-3-3 17-39-10.png" width="700" height="400">
+
+3.  To add a new field, click **Add** in the **Fields** section in the form.
+4.  On the **Add new Field** page of the form, specify the field parameters as required and select the field type.  
+
+    <img src="attach/image2015-3-3 17-49-38.png" width="700" height="400">
+
+5.  Depending on the selected field type, specify additional parameters for the field.  
+
+    <img src="attach/image2015-3-3 17-52-16.png" width="700" height="400">
+
+6.  Click **Add** to finish adding the field.  
+
+    <img src="attach/image2015-3-3 18-3-40.png" width="700" height="400">
+
+7.  In a similar way, add as many fields as necessary and then save the schema (see [Adding schemas section](#adding-shemas) for details).
+
+## Working with record form
+
+An example of a record form usage is adding new configuration data to an endpoint group.
+
+1.  Open the **Endpoint groups** window for some application in Admin UI and click on some endpoint group.  
+
+    <img src="attach/image2015-3-3 18-24-37.png" width="600" height="250">
+
+2.  Scroll down to the **Configurations** form and then click **Add configuration**.  
+
+    <img src="attach/image2015-3-3 19-20-39.png" width="600" height="250">
+
+3.  Specify the field values in the **Configuration body** record form and then click **Save** to save the configuration.  
+
+    <img src="attach/image2015-3-3 19-29-20.png" width="600" height="450">
+
+4.  To apply the new configuration, click **Activate**.
+
+## Avro UI forms GWT Sandbox
+
+_Avro UI forms GWT Sandbox_ is a tool for testing Avro UI forms. It allows you to create an Avro schema using the schema form (or adding a schema in the Avro format) and see what the corresponding record form will look like.
+
+To start using this tool, [install and run Kaa Sandbox](http://docs.kaaproject.org/display/KAA/Kaa+Sandbox#KaaSandbox-InstallingSandbox) at first and then go to the following URL (by default): [http://127.0.0.1:9080/avroUiSandbox/](http://127.0.0.1:9080/avroUiSandbox/).
+
+<img src="attach/image2015-3-4 14-10-1.png" width="800" height="450">
+
+To generate an Avro UI record form, proceed as follows:
+
+1.  Create an Avro schema in the schema form or, alternatively, click **Upload from JSON** and paste your schema into the text field.
+2.  Click **Generate form**.  
+
+    <img src="attach/image2015-3-4 15-35-10.png" width="600" height="300">
+
+3.  (Optional) To view the generated schema in the JSON format, click **Show JSON** under the schema form.
+
+    <img src="attach/image2015-3-4 15-37-15.png" width="500" height="450">
+
+To view the JSON record for the data from the record form, enter some data into the field(s) and click **Show JSON**.
+
+<img src="attach/image2015-3-4 15-44-42.png" width="500" height="480">
+
+To upload data from the JSON record into the record form, click **Upload from JSON**, then enter the data into the text field in the JSON format and click **Upload**.
+
+<img src="attach/image2015-3-4 15-47-40.png" width="500" height="400">
+<img src="attach/image2015-3-4 15-48-16.png" width="400" height="400">
+
+## Avro schema parameters
+
+If the Avro schema is added in the JSON format rather than via GUI, the following parameters of the schema determine the layout and values displayed on the Avro UI record form.
+
+*   displayName - displays the name of the field on UI
+*   displayNames - displays the name of each enumeration symbol on UI (only for enumeration fields in the schema)
+*   displayPrompt - displays the text prompt for the field on UI
+*   by_default - displays the default value of the field on UI
+*   minRowCount - defines a minimum number of rows in a UI table (only for arrays in the schema)
+*   optional - defines whether the field on UI is optional or mandatory
+*   weight - defines a relative width of the corresponding column on UI (only for arrays in the schema)
+*   keyIndex - defines the order in which the fields of a record are displayed in a row (only for arrays of records in the schema; integer; if this parameter is defined selectively for specific fields of the record, the other fields of the record will not be displayed)
+*   overrideStrategy - defines [how to merge arrays in the configuration across the endpoint groups999](999) (only for arrays in the schema; accepted values are "replace" and "append"; "replace" by default)
+*   fieldAccess - defines the viewing and editing restrictions for the field (accepted values are "read_only", "editable" and "hidden"; "editable" by default)
+*   inputType - defines whether the characters will be masked or not when the user enters the field value (accepted values are "password" and "plain"; "plain" by default)
