@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef BOOTSTRAPMANAGER_HPP_
@@ -28,14 +28,22 @@
 
 namespace kaa {
 
+class IKaaClient;
+
 class BootstrapManager : public IBootstrapManager, public boost::noncopyable {
 public:
-    BootstrapManager(IKaaClientContext &context) : bootstrapTransport_(nullptr), channelManager_(nullptr), context_(context), retryTimer_("BootstrapManager retryTimer") { }
+    BootstrapManager(IKaaClientContext& context, IKaaClient *client)
+        : bootstrapTransport_(nullptr)
+        , channelManager_(nullptr)
+        , context_(context)
+        , retryTimer_("BootstrapManager retryTimer")
+        , client_(client)
+        { }
     ~BootstrapManager() { }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void receiveOperationsServerList();
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId);
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason reason);
     virtual void useNextOperationsServerByAccessPointId(std::int32_t id);
     virtual void setTransport(IBootstrapTransport* transport);
     virtual void setChannelManager(IKaaChannelManager* manager);
@@ -61,6 +69,9 @@ private:
     std::unique_ptr<std::int32_t> serverToApply;
 
     KaaTimer<void ()>        retryTimer_;
+
+    // Temporary solution to stop app
+    IKaaClient *client_;
 
     KAA_R_MUTEX_MUTABLE_DECLARE(guard_);
 };

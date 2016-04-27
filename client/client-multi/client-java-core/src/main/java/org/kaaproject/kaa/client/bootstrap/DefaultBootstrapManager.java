@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client.bootstrap;
@@ -25,10 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.kaaproject.kaa.client.FailureListener;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
@@ -52,7 +53,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapManager.class);
 
-    private static final int EXIT_FAILURE = 1;
+    private FailureListener failureListener;
 
     private BootstrapTransport transport;
     private List<ProtocolMetaData> operationsServerList;
@@ -63,9 +64,10 @@ public class DefaultBootstrapManager implements BootstrapManager {
     private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<>();
     private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
 
-    public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext) {
+    public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext, FailureListener failureListener) {
         this.transport = transport;
         this.executorContext = executorContext;
+        this.failureListener = failureListener;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     @Override
-    public void useNextOperationsServer(TransportProtocolId transportId) {
+    public void useNextOperationsServer(TransportProtocolId transportId, FailoverStatus status) {
         if (mappedOperationServerList != null && !mappedOperationServerList.isEmpty()) {
             if (mappedIterators.get(transportId).hasNext()) {
                 ProtocolMetaData nextOperationsServer = mappedIterators.get(transportId).next();
@@ -90,8 +92,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 }
             } else {
                 LOG.warn("Failed to find server for channel [{}]", transportId);
-                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.OPERATION_SERVERS_NA);
-                applyDecision(decision);
+                resolveFailoverStatus(status);
             }
         } else {
             throw new BootstrapRuntimeException("Operations Server list is empty");
@@ -153,8 +154,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
 
         if (operationsServerList == null || operationsServerList.isEmpty()) {
             LOG.trace("Received empty operations server list");
-            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_OPERATION_SERVERS_RECEIVED);
-            applyDecision(decision);
+            resolveFailoverStatus(FailoverStatus.NO_OPERATION_SERVERS_RECEIVED);
             return;
         }
 
@@ -185,7 +185,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
         }
     }
 
-    private void applyDecision(FailoverDecision decision) {
+    private void resolveFailoverStatus(FailoverStatus status) {
+        FailoverDecision decision = failoverManager.onFailover(status);
         switch (decision.getAction()) {
             case NOOP:
                 LOG.warn("No operation is performed according to failover strategy decision");
@@ -208,7 +209,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
             case USE_NEXT_BOOTSTRAP:
                 LOG.warn("Trying to switch to the next bootstrap server according to failover strategy decision");
                 retryPeriod = decision.getRetryPeriod();
-                failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP));
+                failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP), status);
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
                     public void run() {
@@ -220,9 +221,9 @@ public class DefaultBootstrapManager implements BootstrapManager {
                     }
                 }, retryPeriod, TimeUnit.MILLISECONDS);
                 break;
-            case STOP_APP:
-                LOG.warn("Stopping application according to failover strategy decision!");
-                System.exit(EXIT_FAILURE); //NOSONAR
+            case FAILURE:
+                LOG.warn("Calling failure listener according to failover strategy decision!");
+                failureListener.onFailure();
                 break;
             default:
                 break;

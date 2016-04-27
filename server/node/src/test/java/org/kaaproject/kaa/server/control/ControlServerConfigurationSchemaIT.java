@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
@@ -119,6 +119,43 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     }
 
     /**
+     * Test get configuration schemas by application token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetConfigurationSchemasByApplicationToken() throws Exception {
+
+        List<ConfigurationSchemaDto> configurationSchemas  = new ArrayList<ConfigurationSchemaDto>(11);
+        ApplicationDto application = createApplication(tenantAdminDto);
+
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+        List<ConfigurationSchemaDto> defaultConfigurationSchemas = client.getConfigurationSchemasByAppToken(application.getApplicationToken());
+        configurationSchemas.addAll(defaultConfigurationSchemas);
+
+        for (int i=0;i<10;i++) {
+            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
+            configurationSchemas.add(configurationSchema);
+        }
+
+        Collections.sort(configurationSchemas, new IdComparator());
+
+        List<ConfigurationSchemaDto> storedConfigurationSchemas = client.getConfigurationSchemasByAppToken(application.getApplicationToken());
+
+        Collections.sort(storedConfigurationSchemas, new IdComparator());
+
+        Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
+        for (int i=0;i<configurationSchemas.size();i++) {
+            ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
+            ConfigurationSchemaDto storedConfigurationSchema = storedConfigurationSchemas.get(i);
+            Assert.assertEquals(configurationSchema.getId(), storedConfigurationSchema.getId());
+            Assert.assertEquals(configurationSchema.getApplicationId(), storedConfigurationSchema.getApplicationId());
+            Assert.assertEquals(configurationSchema.getStatus(), storedConfigurationSchema.getStatus());
+        }
+    }
+
+    /**
      * Test get configuration schema versions by application id.
      *
      * @throws Exception the exception
@@ -143,6 +180,43 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
 
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(application.getId());
         
+        List<VersionDto> storedConfigurationSchemas = schemaVersions.getConfigurationSchemaVersions();
+
+        Collections.sort(storedConfigurationSchemas, new IdComparator());
+
+        Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
+        for (int i=0;i<configurationSchemas.size();i++) {
+            ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
+            VersionDto storedConfigurationSchema = storedConfigurationSchemas.get(i);
+            assertSchemasEquals(configurationSchema, storedConfigurationSchema);
+        }
+    }
+
+    /**
+     * Test get configuration schema versions by application Token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetConfigurationSchemaVersionsByApplicationToken() throws Exception {
+
+        List<ConfigurationSchemaDto> configurationSchemas  = new ArrayList<ConfigurationSchemaDto>(11);
+        ApplicationDto application = createApplication(tenantAdminDto);
+
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+        List<ConfigurationSchemaDto> defaultConfigurationSchemas = client.getConfigurationSchemasByAppToken(application.getApplicationToken());
+        configurationSchemas.addAll(defaultConfigurationSchemas);
+
+        for (int i=0;i<10;i++) {
+            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
+            configurationSchemas.add(configurationSchema);
+        }
+
+        Collections.sort(configurationSchemas, new IdComparator());
+
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+
         List<VersionDto> storedConfigurationSchemas = schemaVersions.getConfigurationSchemaVersions();
 
         Collections.sort(storedConfigurationSchemas, new IdComparator());

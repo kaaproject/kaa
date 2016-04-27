@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.akka;
@@ -22,12 +22,14 @@ import static org.mockito.Mockito.when;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +46,9 @@ import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -76,13 +81,19 @@ import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsService;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
+import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -120,6 +131,8 @@ import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
+import org.kaaproject.kaa.server.transport.EndpointRevocationException;
+import org.kaaproject.kaa.server.transport.EndpointVerificationException;
 import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
@@ -179,6 +192,9 @@ public class DefaultAkkaServiceTest {
     private LogAppenderService logAppenderService;
     private EndpointUserService endpointUserService;
     private CTLService ctlService;
+    private CredentialsServiceLocator credentialsServiceLocator;
+    private CredentialsService credentialsService;
+    private RegistrationService registrationService;
 
     private KeyPair clientPair;
     private KeyPair targetPair;
@@ -192,7 +208,7 @@ public class DefaultAkkaServiceTest {
     private EndpointProfileDto mockProfile;
 
     @Before
-    public void before() throws GeneralSecurityException {
+    public void before() throws GeneralSecurityException, CredentialsServiceException, EndpointRegistrationServiceException {
         akkaService = new DefaultAkkaService();
 
         AkkaContext context = new AkkaContext();
@@ -208,6 +224,9 @@ public class DefaultAkkaServiceTest {
         logAppenderService = mock(LogAppenderService.class);
         endpointUserService = mock(EndpointUserService.class);
         ctlService = mock(CTLService.class);
+        credentialsServiceLocator = mock(CredentialsServiceLocator.class);
+        credentialsService = mock(CredentialsService.class);
+        registrationService = mock(RegistrationService.class);
 
         ReflectionTestUtils.setField(context, "clusterService", clusterService);
         ReflectionTestUtils.setField(context, "cacheService", cacheService);
@@ -220,6 +239,8 @@ public class DefaultAkkaServiceTest {
         ReflectionTestUtils.setField(context, "logAppenderService", logAppenderService);
         ReflectionTestUtils.setField(context, "endpointUserService", endpointUserService);
         ReflectionTestUtils.setField(context, "ctlService", ctlService);
+        ReflectionTestUtils.setField(context, "credentialsServiceLocator", credentialsServiceLocator);
+        ReflectionTestUtils.setField(context, "registrationService", registrationService);
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();
@@ -228,6 +249,12 @@ public class DefaultAkkaServiceTest {
         Mockito.when(operationsKeyStoreService.getPublicKey()).thenReturn(serverPair.getPublic());
         Mockito.when(operationsKeyStoreService.getPrivateKey()).thenReturn(serverPair.getPrivate());
         Mockito.when(metricsService.createMeter(Mockito.anyString(), Mockito.anyString())).thenReturn(Mockito.mock(MeterClient.class));
+        
+        Mockito.when(credentialsServiceLocator.getCredentialsService(Mockito.anyString())).thenReturn(credentialsService);
+        Mockito.when(credentialsService.lookupCredentials(Mockito.anyString())).thenReturn(Optional.ofNullable((CredentialsDto)null));
+        
+        registerPublicKey(clientPair.getPublic());
+        registerPublicKey(targetPair.getPublic());
 
         ReflectionTestUtils.setField(akkaService, "context", context);
 
@@ -314,6 +341,13 @@ public class DefaultAkkaServiceTest {
         when(clusterService.getNodeId()).thenReturn(LOCAL_NODE_ID);
         when(clusterService.getEntityNode(Mockito.any(byte[].class))).thenReturn(LOCAL_NODE_ID);
         when(clusterService.getEntityNode(Mockito.any(EndpointObjectHash.class))).thenReturn(LOCAL_NODE_ID);
+    }
+
+    private void registerPublicKey(PublicKey publicKey) throws EndpointRegistrationServiceException {
+        byte[] clientPublicKeyBytes = publicKey.getEncoded();
+        String endpointId = Base64Util.encode(EndpointObjectHash.fromSHA1(clientPublicKeyBytes).getData());
+        EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(APP_ID, endpointId, endpointId, null, null);
+        Mockito.when(registrationService.findEndpointRegistrationByCredentialsId(endpointId)).thenReturn(Optional.of(endpointRegistration));
     }
 
     @After
@@ -560,7 +594,7 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
                 Mockito.any(ProfileClientSync.class));
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
                 Mockito.any(boolean.class));
@@ -730,7 +764,7 @@ public class DefaultAkkaServiceTest {
 
         EndpointAddress address = new EndpointAddress(applicationDto.getTenantId(), applicationDto.getApplicationToken(),
                 EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
-        ActorClassifier classifier = new ActorClassifier(true);
+        ActorClassifier classifier =  ActorClassifier.GLOBAL;
         // TODO: replace nulls with values
         ThriftUnicastNotificationMessage msg = new ThriftUnicastNotificationMessage(null, null, UNICAST_NOTIFICATION_ID);
         clusterServiceListener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(address, classifier, msg));
@@ -1668,7 +1702,146 @@ public class DefaultAkkaServiceTest {
     // Mockito.timeout(TIMEOUT*100).atLeastOnce())
     // .refreshServerEndpointProfile(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
     // }
+    
+    //TODO: Implement tests that cover endpoint verification logic.
 
+    @Test
+    public void testNoEndpointCredentialsSyncRequest() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setSdkToken(SDK_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setProfileHash(clientPublicKeyHash);
+        request.setSyncRequestMetaData(md);
+
+        SyncContext holder = simpleResponse;
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array())))
+                .thenReturn(clientPair.getPublic());
+        whenSync(holder);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+        
+        Mockito.when(registrationService.findEndpointRegistrationByCredentialsId(Mockito.anyString())).thenReturn(Optional.ofNullable((EndpointRegistrationDto)null));
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
+                errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointVerificationException.class));
+    }
+    
+    @Test
+    public void testRevokedEndpointCredentialsSyncRequest() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setSdkToken(SDK_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setProfileHash(clientPublicKeyHash);
+        request.setSyncRequestMetaData(md);
+
+        SyncContext holder = simpleResponse;
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array())))
+                .thenReturn(clientPair.getPublic());
+        whenSync(holder);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+        
+        Mockito.when(registrationService.findEndpointRegistrationByCredentialsId(Mockito.anyString())).thenReturn(Optional.ofNullable((EndpointRegistrationDto)null));
+        Mockito.when(credentialsService.lookupCredentials(Mockito.anyString())).thenReturn(Optional.of(new CredentialsDto(new byte[]{}, CredentialsStatus.REVOKED)));
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
+                errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointVerificationException.class));
+    }
+    
+    @Test
+    public void testInUseEndpointCredentialsSyncRequest() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setSdkToken(SDK_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setProfileHash(clientPublicKeyHash);
+        request.setSyncRequestMetaData(md);
+
+        SyncContext holder = simpleResponse;
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array())))
+                .thenReturn(clientPair.getPublic());
+        whenSync(holder);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+        
+        Mockito.when(registrationService.findEndpointRegistrationByCredentialsId(Mockito.anyString())).thenReturn(Optional.ofNullable((EndpointRegistrationDto)null));
+        Mockito.when(credentialsService.lookupCredentials(Mockito.anyString())).thenReturn(Optional.of(new CredentialsDto(new byte[]{}, CredentialsStatus.IN_USE)));
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
+                errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointVerificationException.class));
+    }
+    
+    @Test
+    public void testLongSyncRevocation() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = buildSyncRequestMetaData();
+        request.setSyncRequestMetaData(md);
+
+        ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        csRequest.setConfigurationHash(ByteBuffer.wrap(new byte[] {}));
+        csRequest.setResyncOnly(true);
+        request.setConfigurationSyncRequest(csRequest);
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array())))
+                .thenReturn(clientPair.getPublic());
+        whenSync(noDeltaResponse);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        whenSync(deltaResponse);
+
+        EndpointAddress address = new EndpointAddress(applicationDto.getTenantId(), applicationDto.getApplicationToken(),
+                EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
+        ActorClassifier classifier =  ActorClassifier.APPLICATION;
+        
+        clusterServiceListener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointDeregistrationMessage>(
+                address, classifier, new ThriftEndpointDeregistrationMessage()));
+
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointRevocationException.class));
+    }
+    
     private SyncRequestMetaData buildSyncRequestMetaData() {
         return buildSyncRequestMetaData(clientPublicKeyHash);
     }

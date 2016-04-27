@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef KAACHANNELMANAGER_HPP_
@@ -31,12 +31,14 @@
 
 namespace kaa {
 
+class IKaaClient;
 class IBootstrapManager;
 
 class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage
 {
 public:
-    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers, IKaaClientContext &context);
+    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers,
+            IKaaClientContext &context, IKaaClient *client);
     ~KaaChannelManager() { doShutdown(); }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -50,7 +52,8 @@ public:
     virtual IDataChannelPtr getChannelByTransportType(TransportType type);
     virtual IDataChannelPtr getChannel(const std::string& channelId);
 
-    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo);
+    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason);
+
     virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo);
 
     virtual void clearChannelList();
@@ -103,6 +106,9 @@ private:
     TransportProtocolId bsTransportId_;
 
     IKaaClientContext &context_;
+
+    // Temporary solution to stop app
+    IKaaClient *client_;
 };
 
 } /* namespace kaa */

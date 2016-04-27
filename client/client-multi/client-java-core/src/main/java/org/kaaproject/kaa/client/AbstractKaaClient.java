@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client;
@@ -30,7 +30,7 @@ import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.channel.EventTransport;
-import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
@@ -42,9 +42,10 @@ import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.UserTransport;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
-import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
@@ -574,6 +575,20 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         logCollector.setLogDeliveryListener(listener);
     }
 
+    @Override
+    public void setFailoverStrategy(FailoverStrategy failoverStrategy) {
+        failoverManager.setFailoverStrategy(failoverStrategy);
+    }
+
+    @Override
+    public void setFailureListener(FailureListener failureListener) {
+        if (failureListener == null) {
+            throw new IllegalStateException("Failure listener can't be null");
+        }
+
+        this.failureListener = failureListener;
+    }
+
     protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {
         BootstrapTransport bootstrapTransport = buildBootstrapTransport(properties, kaaClientState);
         ProfileTransport profileTransport = buildProfileTransport();
@@ -597,7 +612,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers) {
-        KaaInternalChannelManager kaaInternalChannelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers, context.getExecutorContext());
+        KaaInternalChannelManager kaaInternalChannelManager =
+                new DefaultChannelManager(bootstrapManager, bootstrapServers, context.getExecutorContext(), failureListener);
         kaaInternalChannelManager.setConnectivityChecker(context.createConnectivityChecker());
         return kaaInternalChannelManager;
     }
@@ -621,7 +637,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
         channelManager.addChannel(bootstrapChannel);
 
-        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, failoverManager);
+        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, failoverManager, failureListener);
         operationsChannel.setMultiplexer(operationsDataProcessor);
         operationsChannel.setDemultiplexer(operationsDataProcessor);
         channelManager.addChannel(operationsChannel);
@@ -658,7 +674,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected BootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new DefaultBootstrapManager(transportContext.getBootstrapTransport(), context.getExecutorContext());
+        return new DefaultBootstrapManager(transportContext.getBootstrapTransport(), context.getExecutorContext(), failureListener);
     }
 
     public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
@@ -702,4 +718,12 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     protected RedirectionTransport buildRedirectionTransport() {
         return new DefaultRedirectionTransport();
     }
+
+    protected FailureListener failureListener = new FailureListener() {
+        @Override
+        public void onFailure() {
+            stop();
+        }
+    };
+
 }

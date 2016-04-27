@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
@@ -68,11 +68,6 @@ import com.mongodb.util.JSON;
 public final class MongoEndpointProfile implements EndpointProfile, Serializable {
 
     private static final long serialVersionUID = -3227246639864687299L;
-    private static final BiMap<Character, Character> RESERVED_CHARACTERS = HashBiMap.create();
-    static {
-        RESERVED_CHARACTERS.put('.', (char) 0xFF0E);
-        RESERVED_CHARACTERS.put('$', (char) 0xFF04);
-    }
 
     @Id
     private String id;
@@ -129,7 +124,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Field(EP_SDK_TOKEN)
     private String sdkToken;
     @Field(EP_SERVER_PROFILE_PROPERTY)
-    private String serverProfile;
+    private DBObject serverProfile;
     @Version
     @Field(OPT_LOCK)
     private Long version;
@@ -150,7 +145,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.accessToken = dto.getAccessToken();
         this.groupState = MongoDaoUtil.convertDtoToModelList(dto.getGroupState());
         this.sequenceNumber = dto.getSequenceNumber();
-        this.profile = encodeReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
+        this.profile = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getClientProfileBody()));
         this.profileHash = dto.getProfileHash();
         this.profileVersion = dto.getClientProfileVersion();
         this.serverProfileVersion = dto.getServerProfileVersion();
@@ -167,7 +162,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.ecfVersionStates = MongoDaoUtil.convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
-        this.serverProfile = dto.getServerProfileBody();
+        this.serverProfile = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getServerProfileBody()));
         this.version = dto.getVersion();
     }
 
@@ -238,14 +233,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
 
     public void setChangedFlag(Boolean changedFlag) {
         this.changedFlag = changedFlag;
-    }
-
-    public String getProfileAsString() {
-        String pfBody = null;
-        if (profile != null) {
-            pfBody = profile.toString();
-        }
-        return pfBody;
     }
 
     public byte[] getProfileHash() {
@@ -377,16 +364,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.sdkToken = sdkToken;
     }
 
-    @Override
-    public String getServerProfile() {
-        return serverProfile;
-    }
-
-    public void setServerProfile(String serverProfile) {
-        this.serverProfile = serverProfile;
-    }
-    
-    @Override
     public Long getVersion() {
         return version;
     }
@@ -394,50 +371,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Override
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    private DBObject encodeReservedCharacteres(DBObject profileBody) {
-        if (profileBody == null) {
-            return null;
-        }
-        Set<String> keySet = profileBody.keySet();
-        DBObject modifiedNode = new BasicDBObject();
-        if (keySet != null) {
-            for (String key : keySet) {
-                Object value = profileBody.get(key);
-                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
-                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
-                }
-                if(value instanceof DBObject) {
-                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
-                } else {
-                    modifiedNode.put(key, value);
-                }
-            }
-        }
-        return modifiedNode;
-    }
-
-    private String decodeReservedCharacteres(DBObject profileBody) {
-        if (profileBody == null) {
-            return "";
-        }
-        Set<String> keySet = profileBody.keySet();
-        DBObject modifiedNode = new BasicDBObject();
-        if (keySet != null) {
-            for (String key : keySet) {
-                Object value = profileBody.get(key);
-                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
-                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
-                }
-                if(value instanceof DBObject) {
-                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
-                } else {
-                    modifiedNode.put(key, value);
-                }
-            }
-        }
-        return modifiedNode != null ? modifiedNode.toString() : "";
     }
 
     @Override
@@ -577,7 +510,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setClientProfileBody(decodeReservedCharacteres(profile));
+        dto.setClientProfileBody(MongoDaoUtil.decodeReservedCharacteres(profile));
         dto.setProfileHash(profileHash);
         dto.setClientProfileVersion(profileVersion);
         dto.setServerProfileVersion(serverProfileVersion);
@@ -591,7 +524,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEcfVersionStates(DaoUtil.convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
-        dto.setServerProfileBody(serverProfile);
+        dto.setServerProfileBody(MongoDaoUtil.decodeReservedCharacteres(serverProfile));
         dto.setVersion(version);
         return dto;
     }

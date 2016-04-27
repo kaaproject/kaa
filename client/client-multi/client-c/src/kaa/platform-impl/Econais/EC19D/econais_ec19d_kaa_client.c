@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -78,13 +78,8 @@ struct kaa_client_t {
 
 //Forward declaration of internal functions
 kaa_error_t kaa_init_security_stuff(void);
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 /* forward declarations */
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                    , kaa_logger_t *logger);
-
 
 void print_mem_stat(kaa_client_t *kaa_client);
 /*
@@ -110,19 +105,19 @@ static size_t kaa_public_key_length;
 static char *kaa_public_key;
 static kaa_digest kaa_public_key_hash;
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
 /*
  * Define services which should be used.
  * Don't define unused services, it may cause an error.
  */
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_CONFIGURATION
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING};
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                             , KAA_EXTENSION_CONFIGURATION
+                                             , KAA_EXTENSION_USER
+                                             , KAA_EXTENSION_EVENT
+                                             , KAA_EXTENSION_LOGGING};
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_extension_id);
 
 void thread_run_fn(uintptr_t arg);
 
@@ -130,9 +125,7 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
 {
     KAA_RETURN_IF_NIL2(kaa_client, props, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
-    error_code = kaa_init_security_stuff();
+    kaa_error_t error_code = kaa_init_security_stuff();
     KAA_RETURN_IF_ERR(error_code);
 
     kaa_client_t *self = sndc_mem_calloc(1,sizeof(kaa_client_t));
@@ -261,12 +254,9 @@ kaa_context_t* kaa_client_get_context(kaa_client_t *kaa_client)
 kaa_error_t kaa_client_init_operations_channel(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
-    kaa_error_t error_code = KAA_ERR_NONE;
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Start operations channel initialization");
-    error_code = kaa_tcp_channel_create(&kaa_client->operations_channel
-                                      , kaa_client->kaa_context->logger
-                                      , OPERATIONS_SERVICES
-                                      , OPERATIONS_SERVICES_COUNT);
+    kaa_error_t error_code = kaa_tcp_channel_create(&kaa_client->operations_channel,
+            kaa_client->kaa_context->logger, OPERATIONS_SERVICES, OPERATIONS_SERVICES_COUNT);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Operations channel initialization failed");
         return error_code;
@@ -274,9 +264,8 @@ kaa_error_t kaa_client_init_operations_channel(kaa_client_t *kaa_client)
 
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Initializing Kaa SDK Operations channel added to transport channel manager");
 
-    error_code = kaa_channel_manager_add_transport_channel(kaa_client->kaa_context->channel_manager
-                                                         , &kaa_client->operations_channel
-                                                         , &kaa_client->operations_channel_id);
+    error_code = kaa_channel_manager_add_transport_channel(kaa_client->kaa_context->channel_manager,
+            &kaa_client->operations_channel, &kaa_client->operations_channel_id);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error during Kaa operations channel setting as transport");
         return error_code;
@@ -319,9 +308,8 @@ kaa_error_t kaa_client_deinit_bootstrap_channel(kaa_client_t *kaa_client)
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Bootstrap channel deinitialization starting ....");
     print_mem_stat(kaa_client);
-    kaa_error_t error_code = KAA_ERR_NONE;
 
-    error_code = kaa_channel_manager_remove_transport_channel(
+    kaa_error_t error_code = kaa_channel_manager_remove_transport_channel(
             kaa_client->kaa_context->channel_manager,kaa_client->bootstrap_channel_id);
 
     if (error_code) {
@@ -409,9 +397,6 @@ void thread_run_fn(uintptr_t arg)
     sndc_sock_fdset r_set;
     sndc_sock_fdset w_set;
     sndc_sock_fdset x_set;
-    int r = 0;
-    int max_fd = 0;
-    uint32_t msec = 0;
     int ops_fd = -1, bootstrap_fd = -1;
     bool_t fdset = false;
     uint16_t timeout = self->max_update_time;
@@ -421,7 +406,7 @@ void thread_run_fn(uintptr_t arg)
     KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa client working thread(%s) started", self->thread_name);
 
     while(self->operate) {
-        max_fd = 0;
+        int max_fd = 0;
         SNDC_FD_ZERO(&r_set);
         SNDC_FD_ZERO(&w_set);
         SNDC_FD_ZERO(&x_set);
@@ -488,14 +473,17 @@ void thread_run_fn(uintptr_t arg)
 
         self->timeval.tv_usec = 0;
         sndc_sem_post(&self->logging_semophore);
-        r = sndc_sock_select(max_fd+1,&r_set,&w_set,&x_set,&self->timeval);
+        int r = sndc_sock_select(max_fd+1,&r_set,&w_set,&x_set,&self->timeval);
         sndc_sem_tryWait(&self->logging_semophore);
         if (r == 0) {
-            msec = sndc_sys_getTimestamp_msec();
+            uint32_t msec = sndc_sys_getTimestamp_msec();
             KAA_LOG_DEBUG(self->kaa_context->logger,
                     KAA_ERR_NONE,
                     "IO LOOP: timeout (%d) expired",
                     self->timeval.tv_sec);
+
+            // TODO why is it unused?
+            (void)msec;
 
             if (self->bootstrap_state == BOOTSRAP_FINISHED && bootstrap_fd == -1) {
                 sndc_printf("Bootstrap channel deinit, Operations channel init %d\n", bootstrap_fd);

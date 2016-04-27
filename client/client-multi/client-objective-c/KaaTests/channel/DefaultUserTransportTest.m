@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -35,8 +35,8 @@ static int REQUEST_ID_2 = 73;
 @implementation DefaultUserTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     [transport setClientState:clientState];
     @try {
         [transport sync];
@@ -48,9 +48,9 @@ static int REQUEST_ID_2 = 73;
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     [transport setClientState:clientState];
     [transport setChannelManager:channelManager];
     [transport sync];
@@ -64,13 +64,13 @@ static int REQUEST_ID_2 = 73;
     NSDictionary *attachedEPs = [NSDictionary dictionaryWithObject:accTok1 forKey:@(REQUEST_ID_1)];
     NSDictionary *detachedEPs = [NSDictionary dictionaryWithObject:keyHash1 forKey:@(REQUEST_ID_1)];
     
-    id <EndpointRegistrationProcessor> processor =
+    id<EndpointRegistrationProcessor> processor =
     mockProtocol(@protocol(EndpointRegistrationProcessor));
     
     [given([processor getAttachEndpointRequests]) willReturn:attachedEPs];
     [given([processor getDetachEndpointRequests]) willReturn:detachedEPs];
     
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     [transport createUserRequest];
     [transport setEndpointRegistrationProcessor:processor];
     

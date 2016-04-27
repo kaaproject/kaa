@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "KAAMqttFrame.h"
@@ -52,23 +52,23 @@
 
 - (NSData *)getFrame {
     if (!self.buffer) {
-        int remainingLength = self.remainingLength;
+        int32_t remainingLength = self.remainingLength;
         NSMutableData *kaaTcpHeader = [NSMutableData dataWithCapacity:KAA_TCP_NAME_LENGTH];
-        int headerSize = [self fillFixedHeader:kaaTcpHeader remainingLength:remainingLength];
-        int remainingSize = remainingLength + headerSize;
+        int32_t headerSize = [self fillFixedHeader:kaaTcpHeader remainingLength:remainingLength];
+        int32_t remainingSize = remainingLength + headerSize;
         DDLogVerbose(@"%@ Allocating buffer size [%i]", TAG, remainingSize);
         self.buffer = [NSMutableData dataWithCapacity:remainingSize];
         [self.buffer appendData:kaaTcpHeader];
-        self.bufferPosition += kaaTcpHeader.length;
+        self.bufferPosition += headerSize;
         [self pack];
         self.bufferPosition = 0;
     }
     return self.buffer;
 }
 
-- (int)fillFixedHeader:(NSMutableData *)header remainingLength:(int)remainingLength {
+- (int32_t)fillFixedHeader:(NSMutableData *)header remainingLength:(int32_t)remainingLength {
     char *rawDestination = [header mutableBytes];
-    int size = 1;
+    int32_t size = 1;
     char byte1 = self.messageType;
     byte1 = byte1 & 0x0F;
     byte1 = byte1 << 4;
@@ -114,8 +114,8 @@
     }
 }
 
-- (int)pushBytes:(NSData *)bytes toPosition:(int)position {
-    int pos = position;
+- (int32_t)pushBytes:(NSData *)bytes toPosition:(int32_t)position {
+    int32_t pos = position;
     const char *rawBytes = [bytes bytes];
     if (self.currentState == FRAME_PARSING_STATE_NONE) {
         self.remainingLength = 0;
@@ -123,12 +123,12 @@
     }
     while (pos < bytes.length && !self.frameDecodeComplete) {
         if (self.currentState == FRAME_PARSING_STATE_PROCESSING_PAYLOAD) {
-            NSUInteger bytesToCopy = (self.remainingLength > bytes.length - pos) ? bytes.length - pos : self.remainingLength;
+            int32_t bytesToCopy = (int32_t)((self.remainingLength > bytes.length - pos) ? bytes.length - pos : self.remainingLength);
             [self.buffer appendData:[bytes subdataWithRange:NSMakeRange(pos, bytesToCopy)]];
             self.bufferPosition += bytesToCopy;
             pos += bytesToCopy;
             self.remainingLength -= bytesToCopy;
-            DDLogVerbose(@"%@ Frame [%i]: copied %li bytes of payload. %i bytes left",
+            DDLogVerbose(@"%@ Frame [%i]: copied %i bytes of payload. %i bytes left",
                          TAG, self.messageType, bytesToCopy, self.remainingLength);
             if (self.remainingLength == 0) {
                 [self onFrameDone];

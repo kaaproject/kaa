@@ -1,20 +1,22 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 # ifndef KAA_DISABLE_FEATURE_EVENTS
+
+#include "kaa_private.h"
 
 # include <stdbool.h>
 # include <stdint.h>
@@ -118,8 +120,72 @@ struct kaa_event_manager_t {
     kaa_endpoint_id_p            event_source;
 };
 
-static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
+static kaa_extension_id event_sync_services[1] = { KAA_EXTENSION_EVENT };
 
+
+kaa_error_t kaa_extension_event_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t error = kaa_event_manager_create(&kaa_context->event_manager, kaa_context->status->status_instance,
+        kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->event_manager;
+    return error;
+}
+
+kaa_error_t kaa_extension_event_deinit(void *context)
+{
+    kaa_event_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_event_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_event_request_get_size(context, expected_size);
+}
+
+kaa_error_t kaa_extension_event_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_extension_event_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_event_request_serialize(context, request_id, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_event_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_event_handle_server_sync(context, &reader, extension_options, size, request_id);
+}
 
 static void destroy_event_listener_request(void *request_p)
 {
@@ -255,6 +321,7 @@ static bool transaction_search_by_id_predicate(void *trx_p, void *context)
     return (matcher && trx) ? ((*matcher) == trx->id) : false;
 }
 
+/** @deprecated Use kaa_extension_event_deinit(). */
 void kaa_event_manager_destroy(kaa_event_manager_t *self)
 {
     if (self) {
@@ -271,11 +338,11 @@ void kaa_event_manager_destroy(kaa_event_manager_t *self)
     }
 }
 
-kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
-                                   , kaa_status_t *status
-                                   , kaa_channel_manager_t *channel_manager
-                                   , kaa_logger_t *logger)
+/** @deprecated Use kaa_extension_event_init(). */
+kaa_error_t kaa_event_manager_create(kaa_event_manager_t **context, kaa_status_t *status,
+    kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
+    kaa_event_manager_t **event_manager_p = (kaa_event_manager_t **)context;
     KAA_RETURN_IF_NIL(event_manager_p, KAA_ERR_BADPARAM);
 
     *event_manager_p = (kaa_event_manager_t *) KAA_MALLOC(sizeof(kaa_event_manager_t));
@@ -479,8 +546,7 @@ static kaa_error_t kaa_event_request_get_size_no_header(kaa_event_manager_t *sel
             if (!request->is_sent) {
                 *expected_size += sizeof(uint32_t); // request id + fqns count
                 *expected_size += sizeof(uint32_t) * request->fqns_count; // fqn length + reserved
-                int i = 0;
-                for (; i < request->fqns_count; ++i) {
+                for (size_t i = 0; i < request->fqns_count; ++i) {
                     *expected_size += kaa_aligned_size_get(request->fqns[i]->size);
                 }
             }
@@ -509,8 +575,6 @@ kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expect
 
 static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_t *events, kaa_platform_message_writer_t *writer)
 {
-    kaa_error_t error = KAA_ERR_NONE;
-
     uint16_t temp_network_order_16 = 0;
     uint16_t options = 0;
     uint32_t temp_network_order_32 = 0;
@@ -524,7 +588,7 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
         }
 
         temp_network_order_32 = KAA_HTONL(event->seq_num);
-        error = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
+        kaa_error_t error = kaa_platform_message_write(writer, &temp_network_order_32, sizeof(uint32_t));
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to write event sequence number");
             return error;
@@ -607,8 +671,7 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
             writer->current += sizeof(uint16_t);
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize event listeners: request id '%u', fqn count '%u'"
                         , request->request_id, request->fqns_count);
-            int i = 0;
-            for (; i < request->fqns_count; ++i) {
+            for (size_t i = 0; i < request->fqns_count; ++i) {
                 size_t fqn_length = request->fqns[i]->size;
                 *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) fqn_length);
                 writer->current += sizeof(uint32_t); // fqn length + reserved
@@ -644,12 +707,12 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
     }
 
     kaa_error_t error = kaa_platform_message_write_extension_header(writer
-                                                           , KAA_EVENT_EXTENSION_TYPE
+                                                           , KAA_EXTENSION_EVENT
                                                            , extension_options
                                                            , self->extension_payload_size);
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to write event extension header (ext type %u, options %X, payload size %u)"
-                                        , KAA_EVENT_EXTENSION_TYPE, extension_options, self->extension_payload_size);
+                                        , KAA_EXTENSION_EVENT, extension_options, self->extension_payload_size);
         return error;
     }
 
@@ -686,7 +749,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
         if (kaa_list_get_size(self->event_listeners_requests)) {
             *((uint8_t *) writer->current) = EVENT_LISTENERS_FIELD;
             writer->current += sizeof(uint16_t); // field id + reserved
-            char *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
+            uint8_t *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
             writer->current += sizeof(uint16_t);
 
             uint16_t listeners_count = 0;
@@ -767,7 +830,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         callback = self->global_event_callback;
 
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
-        const char* event_data = reader->current;
+        const uint8_t *event_data = reader->current;
         kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(event_data_size));
         if (error) {
              KAA_LOG_ERROR(self->logger, error, "Failed to read event data, size %u", event_data_size);
@@ -776,7 +839,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
-            (*callback)(event_fqn, event_data, event_data_size, self->event_source);
+            (*callback)(event_fqn, (const char *)event_data, event_data_size, self->event_source);
     } else if (callback) {
         (*callback)(event_fqn, NULL, 0, self->event_source);
     }
@@ -873,7 +936,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
 
     while (extension_length > 0) {
         uint8_t field_id = 0;
-        const char *field_id_pos = reader->current;
+        const uint8_t *field_id_pos = reader->current;
 
         kaa_error_t error = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
         if (error) {

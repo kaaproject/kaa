@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdint.h>
@@ -75,9 +75,8 @@ kaa_error_t kaa_buffer_reallocate_space(kaa_buffer_t *buffer_p, size_t size)
 {
     KAA_RETURN_IF_NIL(buffer_p, KAA_ERR_BADPARAM);
     size_t locked_space    = buffer_p->current - buffer_p->begin;
-    size_t free_space      = buffer_p->end     - buffer_p->current;
     size_t total_space     = buffer_p->end     - buffer_p->begin;
-    size_t new_buffer_size = size - free_space + locked_space;
+    size_t new_buffer_size = size + locked_space;
     char *ptr;
 
     if (total_space >= new_buffer_size)

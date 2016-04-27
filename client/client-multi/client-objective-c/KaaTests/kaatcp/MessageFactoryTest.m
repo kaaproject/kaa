@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -86,38 +86,38 @@
     KAAMessageFactory *factory = [[KAAMessageFactory alloc] initWithFramer:[[KAAFramer alloc] init]];
     char reject[] = {0x20, 0x02, 0x00, 0x03};
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&reject length:sizeof(reject)]];
-    id <ConnAckDelegate> idRejectDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> idRejectDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:idRejectDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&reject length:sizeof(reject)]];
     [verifyCount(idRejectDelegate, times(1)) onConnAckMessage:anything()];
     
     char accept[] = {0x20, 0x02, 0x00, 0x01};
-    id <ConnAckDelegate> acceptDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> acceptDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:acceptDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&accept length:sizeof(accept)]];
     
     char badprotocol[] = {0x20, 0x02, 0x00, 0x02};
-    id <ConnAckDelegate> badprotocolDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> badprotocolDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:badprotocolDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&badprotocol length:sizeof(badprotocol)]];
     
     char serverunavaliable[] = {0x20, 0x02, 0x00, 0x04};
-    id <ConnAckDelegate> servUnavaliableDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> servUnavaliableDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:servUnavaliableDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&serverunavaliable length:sizeof(serverunavaliable)]];
     
     char rawConnackBadCredentials[] = {0x20, 0x02, 0x00, 0x05};
-    id <ConnAckDelegate> badCredentialsDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> badCredentialsDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:badCredentialsDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&rawConnackBadCredentials length:sizeof(rawConnackBadCredentials)]];
     
     char rawConnackNoAuth[] = {0x20, 0x02, 0x00, 0x06};
-    id <ConnAckDelegate> noAuthDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> noAuthDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:noAuthDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&rawConnackNoAuth length:sizeof(rawConnackNoAuth)]];
     
     char rawConnackUndefined[] = {0x20, 0x02, 0x00, 0x07};
-    id <ConnAckDelegate> undefinedDelegate = mockProtocol(@protocol(ConnAckDelegate));
+    id<ConnAckDelegate> undefinedDelegate = mockProtocol(@protocol(ConnAckDelegate));
     [factory registerConnAckDelegate:undefinedDelegate];
     [factory.framer pushBytes:[NSMutableData dataWithBytes:&rawConnackUndefined length:sizeof(rawConnackUndefined)]];
 }
@@ -177,7 +177,7 @@
     [factory registerConnectDelegate:self];
     [factory.framer pushBytes:connectBuffer];
     
-    id <ConnectDelegate> mockDelegate = mockProtocol(@protocol(ConnectDelegate));
+    id<ConnectDelegate> mockDelegate = mockProtocol(@protocol(ConnectDelegate));
     [factory registerConnectDelegate:mockDelegate];
     [factory.framer pushBytes:connectBuffer];
     [verifyCount(mockDelegate, times(1)) onConnectMessage:anything()];
@@ -201,7 +201,7 @@
     [factory registerConnectDelegate:self];
     [factory.framer pushBytes:connectBuffer];
     
-    id <ConnectDelegate> mockDelegate = mockProtocol(@protocol(ConnectDelegate));
+    id<ConnectDelegate> mockDelegate = mockProtocol(@protocol(ConnectDelegate));
     [factory registerConnectDelegate:mockDelegate];
     [factory.framer pushBytes:connectBuffer];
     [verifyCount(mockDelegate, times(1)) onConnectMessage:anything()];
@@ -215,7 +215,7 @@
     [factory registerSyncResponseDelegate:self];
     [factory.framer pushBytes:syncRequest];
     
-    id <SyncResponseDelegate> syncRespDelegate = mockProtocol(@protocol(SyncResponseDelegate));
+    id<SyncResponseDelegate> syncRespDelegate = mockProtocol(@protocol(SyncResponseDelegate));
     [factory registerSyncResponseDelegate:syncRespDelegate];
     [factory.framer pushBytes:syncRequest];
     [verifyCount(syncRespDelegate, times(1)) onSyncResponseMessage:anything()];
@@ -229,7 +229,7 @@
     [factory registerSyncRequestDelegate:self];
     [factory.framer pushBytes:syncRequest];
     
-    id <SyncRequestDelegate> syncReqDelegate = mockProtocol(@protocol(SyncRequestDelegate));
+    id<SyncRequestDelegate> syncReqDelegate = mockProtocol(@protocol(SyncRequestDelegate));
     [factory registerSyncRequestDelegate:syncReqDelegate];
     [factory.framer pushBytes:syncRequest];
     [verifyCount(syncReqDelegate, times(1)) onSyncRequestMessage:anything()];
@@ -241,7 +241,7 @@
     
     KAAMessageFactory *factory = [[KAAMessageFactory alloc] init];
     [factory.framer pushBytes:pingRequest];
-    id <PingRequestDelegate> delegate = mockProtocol(@protocol(PingRequestDelegate));
+    id<PingRequestDelegate> delegate = mockProtocol(@protocol(PingRequestDelegate));
     [factory registerPingRequestDelegate:delegate];
     [factory.framer pushBytes:pingRequest];
     [verifyCount(delegate, times(1)) onPingRequestMessage:anything()];
@@ -253,7 +253,7 @@
     
     KAAMessageFactory *factory = [[KAAMessageFactory alloc] init];
     [factory.framer pushBytes:pingResponse];
-    id <PingResponseDelegate> delegate = mockProtocol(@protocol(PingResponseDelegate));
+    id<PingResponseDelegate> delegate = mockProtocol(@protocol(PingResponseDelegate));
     [factory registerPingResponseDelegate:delegate];
     [factory.framer pushBytes:pingResponse];
     [verifyCount(delegate, times(1)) onPingResponseMessage:anything()];
@@ -269,7 +269,7 @@
     [factory registerDisconnectDelegate:self];
     [factory.framer pushBytes:disconnect];
     
-    id <DisconnectDelegate> mockDisconnect = mockProtocol(@protocol(DisconnectDelegate));
+    id<DisconnectDelegate> mockDisconnect = mockProtocol(@protocol(DisconnectDelegate));
     [factory registerDisconnectDelegate:mockDisconnect];
     [factory.framer pushBytes:disconnect];
     [verifyCount(mockDisconnect, times(1)) onDisconnectMessage:anything()];
@@ -314,7 +314,7 @@
     i = [factory.framer pushBytes:thirdBufferData];
     KAATestEqual(thirdBufferData.length, i);
     
-    id <SyncRequestDelegate> syncRequestDelegate = mockProtocol(@protocol(SyncRequestDelegate));
+    id<SyncRequestDelegate> syncRequestDelegate = mockProtocol(@protocol(SyncRequestDelegate));
     [factory registerSyncRequestDelegate:syncRequestDelegate];
     
     i = [factory.framer pushBytes:firstBufferData];
@@ -332,32 +332,32 @@
 
 - (void)onConnAckMessage:(KAATcpConnAck *)message {
     switch (message.returnCode) {
-        case RETURN_CODE_ACCEPTED:
-            KAATestEqual(RETURN_CODE_ACCEPTED, message.returnCode);
+        case ReturnCodeAccepted:
+            KAATestEqual(ReturnCodeAccepted, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_BAD_CREDENTIALS:
-            KAATestEqual(RETURN_CODE_REFUSE_BAD_CREDENTIALS, message.returnCode);
+        case ReturnCodeRefuseBadCredentials:
+            KAATestEqual(ReturnCodeRefuseBadCredentials, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_ID_REJECT:
-            KAATestEqual(RETURN_CODE_REFUSE_ID_REJECT, message.returnCode);
+        case ReturnCodeRefuseIdReject:
+            KAATestEqual(ReturnCodeRefuseIdReject, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_BAD_PROTOCOL:
-            KAATestEqual(RETURN_CODE_REFUSE_BAD_PROTOCOL, message.returnCode);
+        case ReturnCodeRefuseBadProtocol:
+            KAATestEqual(ReturnCodeRefuseBadProtocol, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_NO_AUTH:
-            KAATestEqual(RETURN_CODE_REFUSE_NO_AUTH, message.returnCode);
+        case ReturnCodeRefuseNoAuth:
+            KAATestEqual(ReturnCodeRefuseNoAuth, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_SERVER_UNAVAILABLE:
-            KAATestEqual(RETURN_CODE_REFUSE_SERVER_UNAVAILABLE, message.returnCode);
+        case ReturnCodeRefuseServerUnavailable:
+            KAATestEqual(ReturnCodeRefuseServerUnavailable, message.returnCode);
             break;
             
-        case RETURN_CODE_UNDEFINED:
-            KAATestEqual(RETURN_CODE_UNDEFINED, message.returnCode);
+        case ReturnCodeUndefined:
+            KAATestEqual(ReturnCodeUndefined, message.returnCode);
             break;
             
         default:
@@ -418,7 +418,7 @@
 }
 
 - (void)onDisconnectMessage:(KAATcpDisconnect *)message {
-    KAATestEqual(DISCONNECT_REASON_INTERNAL_ERROR, message.reason);
+    KAATestEqual(DisconnectReasonInternalError, message.reason);
 }
 
 - (NSData *)generateTag {

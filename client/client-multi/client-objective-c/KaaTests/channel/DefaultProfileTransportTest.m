@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -49,8 +49,8 @@
 @implementation DefaultProfileTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <ProfileTransport> transport = [DefaultProfileTransport alloc];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<ProfileTransport> transport = [DefaultProfileTransport alloc];
     [transport setClientState:clientState];
     @try {
         [transport sync];
@@ -62,9 +62,9 @@
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
     [transport setClientState:clientState];
     [transport setChannelManager:channelManager];
     [transport sync];
@@ -74,15 +74,15 @@
 
 - (void)testCreateRequest {
     [KeyUtils generateKeyPair];
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState publicKey]) willReturn:(id)[KeyUtils getPublicKeyRef]];
     [given([clientState isRegistred]) willReturnBool:NO];
     
     KaaClientProperties *properties = mock([KaaClientProperties class]);
-    id <ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
+    id<ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
     [given([profileManager getSerializedProfile]) willReturn:[self getDataWith123]];
     
-    id <ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
+    id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
     [transport createProfileRequest];
     [transport setClientState:clientState];
     [transport createProfileRequest];
@@ -97,15 +97,15 @@
 
 - (void)testUpToDateProfile {
     NSData *profile = [self getDataWith123];
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState isRegistred]) willReturnBool:YES];
     [given([clientState profileHash]) willReturn:[EndpointObjectHash hashWithSHA1:profile]];
     
     KaaClientProperties *properties = mock([KaaClientProperties class]);
-    id <ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
+    id<ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
     [given([profileManager getSerializedProfile]) willReturn:profile];
     
-    id <ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
+    id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
     [transport createProfileRequest];
     [transport setClientState:clientState];
     [transport createProfileRequest];
@@ -118,10 +118,10 @@
 }
 
 - (void)testOnProfileResponse {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState1 = mockProtocol(@protocol(KaaClientState));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState1 = mockProtocol(@protocol(KaaClientState));
     
-    id <ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
+    id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
     [transport setChannelManager:channelManager];
     [transport setClientState:clientState1];
     
@@ -146,7 +146,7 @@
     
     [verifyCount(clientState1, times(1)) setIsRegistred:YES];
     
-    id <KaaClientState> clientState2 = mockProtocol(@protocol(KaaClientState));
+    id<KaaClientState> clientState2 = mockProtocol(@protocol(KaaClientState));
     [given([clientState2 isRegistred]) willReturnBool:YES];
     [transport setClientState:clientState2];
     [transport onProfileResponse:response2];
@@ -155,8 +155,8 @@
 }
 
 - (void)testProfileDelegate {
-    id <ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
-    id <ProfileManager> manager = [[DefaultProfileManager alloc] initWithTransport:transport];
+    id<ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
+    id<ProfileManager> manager = [[DefaultProfileManager alloc] initWithTransport:transport];
     
     [manager setProfileContainer:[[ConcreteProfileContainer alloc] init]];
     [manager updateProfile];

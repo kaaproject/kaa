@@ -1,24 +1,30 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_APPLICATION_TOKEN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_CREDENTIALS_SERVICE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_SEQUENCE_NUMBER;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENANT_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,14 +32,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.io.Serializable;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_APPLICATION_TOKEN;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_SEQUENCE_NUMBER;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 
 @Entity
 @Table(name = APPLICATION_TABLE_NAME, uniqueConstraints = {
@@ -56,6 +58,9 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Tenant tenant;
 
+    @Column(name = APPLICATION_CREDENTIALS_SERVICE_NAME)
+    private String credentialsServiceName;
+
     public Application() {
     }
 
@@ -73,6 +78,7 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
             if (tenantId != null) {
                 this.tenant = new Tenant(tenantId);
             }
+            this.credentialsServiceName = dto.getCredentialsServiceName();
         }
     }
 
@@ -108,6 +114,14 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
         this.tenant = tenant;
     }
 
+    public String getCredentialsServiceName() {
+        return credentialsServiceName;
+    }
+
+    public void setCredentialsServiceName(String credentialsServiceName) {
+        this.credentialsServiceName = credentialsServiceName;
+    }
+
     public int incrementSequenceNumber() {
         return ++sequenceNumber;
     }
@@ -115,7 +129,7 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
     @Override
     public String toString() {
         return "Application [id=" + id + ", applicationToken=" + applicationToken + ", name=" + name + ", sequenceNumber=" + sequenceNumber
-                + ", tenant=" + tenant + "]";
+                + ", tenant=" + tenant + ", credentialsServiceName=" + credentialsServiceName + "]";
     }
 
     @Override
@@ -196,6 +210,7 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
         if (tenant != null) {
             dto.setTenantId(tenant.getStringId());
         }
+        dto.setCredentialsServiceName(credentialsServiceName);
         return dto;
     }
 }

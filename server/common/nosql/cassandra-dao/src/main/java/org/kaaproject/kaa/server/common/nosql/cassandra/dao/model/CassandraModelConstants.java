@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
@@ -196,4 +196,30 @@ public class CassandraModelConstants {
     public static final String TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY = "tl_entry_simple_hash";
     public static final String TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY = "tl_entry_topic_ids";
 
+    /**
+     * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointRegistration}
+     */
+    public static final String EP_REGISTRATION_COLUMN_FAMILY_NAME = "ep_registration";
+    public static final String EP_REGISTRATION_ID_PROPERTY = "id";
+    public static final String EP_REGISTRATION_APPLICATION_ID_PROPERTY = EP_APP_ID_PROPERTY;
+    public static final String EP_REGISTRATION_ENDPOINT_ID_PROPERTY = "ep_id";
+    public static final String EP_REGISTRATION_CREDENTIALS_ID_PROPERTY = "creds_id";
+    public static final String EP_REGISTRATION_SERVER_PROFILE_VERSION_PROPERTY = EP_SERVER_PROFILE_VERSION_PROPERTY;
+    public static final String EP_REGISTRATION_SERVER_PROFILE_BODY_PROPERTY = EP_SERVER_PROFILE_PROPERTY;
+
+    /**
+     * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPRegistrationByEndpointID}
+     */
+    public static final String EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME = "creds_id_ep_registration";
+    public static final String EP_REGISTRATION_BY_ENDPOINT_ID_CREDENTIALS_ID_PROPERTY = EP_REGISTRATION_CREDENTIALS_ID_PROPERTY;
+    public static final String EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY = EP_REGISTRATION_ENDPOINT_ID_PROPERTY;
+
+    /**
+     * Cassandra Credentials constants
+     */
+    public static final String CREDENTIALS_COLUMN_FAMILY_NAME = "credentials";
+    public static final String CREDENTIALS_APPLICATION_ID_PROPERTY = "creds_application_id";
+    public static final String CREDENTIALS_ID_PROPERTY = "creds_id";
+    public static final String CREDENTIALS_BODY_PROPERTY = "creds_body";
+    public static final String CREDENTIALS_STATUS_PROPERTY = "creds_status";
 }

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -32,8 +32,8 @@
 @implementation DefaultBootstrapTransportTest
 
 - (void)testSyncNegative {
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
     [transport setClientState:clientState];
     @try {
         [transport sync];
@@ -45,9 +45,9 @@
 }
 
 - (void)testSync {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
     [transport setChannelManager:channelManager];
     [transport setClientState:clientState];
     [transport sync];
@@ -56,9 +56,9 @@
 }
 
 - (void)testCreateRequest {
-    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
     [transport setChannelManager:channelManager];
     [transport createResolveRequest];
     [transport setClientState:clientState];
@@ -66,8 +66,8 @@
 }
 
 - (void)testOnBootstrapResponse {
-    id <BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
-    id <BootstrapManager> manager = mockProtocol(@protocol(BootstrapManager));
+    id<BootstrapTransport> transport = [[DefaultBootstrapTransport alloc] initWithToken:@"some token"];
+    id<BootstrapManager> manager = mockProtocol(@protocol(BootstrapManager));
     
     SyncResponse *response = [self getNewSyncResponse];
     NSArray *mdArray = [NSArray array];

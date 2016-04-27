@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import <XCTest/XCTest.h>
@@ -22,14 +22,7 @@
 #define MOCKITO_SHORTHAND
 #import <OCMockito/OCMockito.h>
 
-#import "DefaultLogUploadStrategy.h"
-#import "AbstractLogCollector.h"
-#import "EndpointGen.h"
-#import "LogCollector.h"
-#import "ExecutorContext.h"
-#import "MemLogStorage.h"
-#import "DefaultLogCollector.h"
-#import "BucketInfo.h"
+#import <Kaa/Kaa.h>
 #import "TestsHelper.h"
 
 @interface LogDeliveryDelegateImpl : NSObject <LogDeliveryDelegate>
@@ -47,10 +40,12 @@
 }
 
 - (void)onLogDeliveryFailureWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
     [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
 }
 
 - (void)onLogDeliveryTimeoutWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
     [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
 }
 
@@ -106,6 +101,7 @@
     self.logCollector.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
     
     [self.logCollector onLogResponse:response];
+    [NSThread sleepForTimeInterval:0.5];
     [verifyCount(delegate, times(1)) onLogDeliverySuccessWithBucketInfo:bucketInfo];
     
 
@@ -113,6 +109,7 @@
     self.logCollector.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
     
     [self.logCollector onLogResponse:response];
+    [NSThread sleepForTimeInterval:0.5];
     [verifyCount(delegate, times(1)) onLogDeliveryFailureWithBucketInfo:bucketInfo];
     
     

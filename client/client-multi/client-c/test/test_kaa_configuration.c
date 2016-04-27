@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdio.h>
@@ -33,20 +33,7 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
-
-
-extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern void        kaa_status_destroy(kaa_status_t *self);
-
-extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p,
-                                                    kaa_channel_manager_t *channel_manager, kaa_status_t *status,
-                                                    kaa_logger_t *logger);
-extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
-
-extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-
+#include "kaa_private.h"
 
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
@@ -62,26 +49,27 @@ static const char CONFIG_UUID[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x
 
 static kaa_error_t on_configuration_updated(void *context, const kaa_root_configuration_t *configuration)
 {
+    (void)configuration;
     bool *result = (bool *) context;
     *result = true;
     return KAA_ERR_NONE;
 }
 
-void test_create_request(void)
+void test_create_request(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     size_t expected_size = 0;
     ASSERT_EQUAL(kaa_configuration_manager_get_size(config_manager, &expected_size), KAA_ERR_NONE);
     ASSERT_EQUAL(expected_size, KAA_EXTENSION_HEADER_SIZE + SHA_1_DIGEST_LENGTH);
 
-    char request_buffer[expected_size];
+    uint8_t request_buffer[expected_size];
     kaa_platform_message_writer_t *writer = NULL;
     ASSERT_EQUAL(kaa_platform_message_writer_create(&writer, request_buffer, expected_size), KAA_ERR_NONE);
     ASSERT_EQUAL(kaa_configuration_manager_request_serialize(config_manager, writer), KAA_ERR_NONE);
 
-    char *cursor = writer->begin;
-    ASSERT_EQUAL(KAA_HTONS(*((uint16_t *) cursor)), KAA_CONFIGURATION_EXTENSION_TYPE);
+    uint8_t *cursor = writer->begin;
+    ASSERT_EQUAL(KAA_HTONS(*((uint16_t *) cursor)), KAA_EXTENSION_CONFIGURATION);
     cursor += sizeof(uint32_t);
 
     ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)),  SHA_1_DIGEST_LENGTH);    // checking payload size
@@ -97,12 +85,12 @@ void test_create_request(void)
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_response(void)
+void test_response(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
     const size_t response_size = kaa_aligned_size_get(KAA_CONFIGURATION_DATA_LENGTH) + sizeof(uint32_t);
-    char response[response_size];
-    char *response_cursor = response;
+    uint8_t response[response_size];
+    uint8_t *response_cursor = response;
 
     *((uint32_t *) response_cursor) = KAA_HTONL(KAA_CONFIGURATION_DATA_LENGTH);
     response_cursor += sizeof(uint32_t);
@@ -168,10 +156,10 @@ int test_deinit(void)
 
 
 
-KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-       ,
+KAA_SUITE_MAIN(Log, test_init, test_deinit,
        KAA_TEST_CASE(create_request, test_create_request)
-       KAA_TEST_CASE(process_response, test_response)
+       KAA_TEST_CASE(process_response, test_response))
+#else
+KAA_SUITE_MAIN(Log, test_init, test_deinit)
 #endif
-        )

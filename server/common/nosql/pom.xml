@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
-        <version>0.8.1</version>
+        <version>0.9.0</version>
         <artifactId>common</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -66,6 +66,12 @@
                 <artifactId>cassandra-unit</artifactId>
                 <version>${cassandra-unit.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-handler</artifactId>
+                    </exclusion>
+            </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

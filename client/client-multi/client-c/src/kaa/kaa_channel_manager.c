@@ -1,36 +1,32 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stddef.h>
 #include <stdint.h>
 
-#include "platform/sock.h"
 #include "kaa_channel_manager.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
-
-
-extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
-                                                                        , kaa_transport_protocol_id_t *protocol_info);
-
-extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
-                                                                          , kaa_transport_protocol_id_t *protocol_id);
+// This header conflicts with stdio.h and should be put last
+#include "platform/sock.h"
 
 typedef struct {
     uint32_t                             channel_id;
@@ -129,7 +125,7 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
 
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
     size_t services_count = 0;
-    kaa_service_t *services = NULL;
+    const kaa_extension_id *services = NULL;
     channel->get_supported_services(channel->context, &services, &services_count);
     if (services) {
         size_t i = 0;
@@ -152,7 +148,7 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
 {
     KAA_RETURN_IF_NIL(channel, false);
 
-    kaa_service_t *services;
+    const kaa_extension_id *services;
     size_t service_count;
     kaa_error_t error_code = channel->get_supported_services(channel->context
                                                            , &services
@@ -161,7 +157,7 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
     if (!error_code) {
         size_t i = 0;
         for (; i < service_count; ++i) {
-            if (services[i] == KAA_SERVICE_BOOTSTRAP) {
+            if (services[i] == KAA_EXTENSION_BOOTSTRAP) {
                 return true;
             }
         }
@@ -309,12 +305,12 @@ kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *
 }
 
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                           , kaa_service_t service_type)
+                                                                           , kaa_extension_id service_type)
 {
     KAA_RETURN_IF_NIL(self, NULL);
 
     kaa_transport_channel_wrapper_t *channel_wrapper;
-    kaa_service_t *services;
+    const kaa_extension_id *services;
     size_t service_count;
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);
@@ -387,7 +383,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
 
     if (self->sync_info.payload_size > 0 && self->sync_info.channel_count > 0) {
         error_code = kaa_platform_message_write_extension_header(writer
-                                                               , KAA_BOOTSTRAP_EXTENSION_TYPE
+                                                               , KAA_EXTENSION_BOOTSTRAP
                                                                , 0
                                                                , self->sync_info.payload_size);
         KAA_RETURN_IF_ERR(error_code);
@@ -443,13 +439,12 @@ kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
 {
     KAA_RETURN_IF_NIL3(self, protocol_id, access_point, KAA_ERR_BADPARAM);
 
-    kaa_transport_channel_wrapper_t *channel_wrapper;
     kaa_list_node_t *channel_it = kaa_list_find_next(kaa_list_begin(self->transport_channels)
                                                    , &find_channel_by_protocol_id
                                                    , protocol_id);
 
     while (channel_it) {
-        channel_wrapper = kaa_list_get_data(channel_it);
+        kaa_transport_channel_wrapper_t *channel_wrapper = kaa_list_get_data(channel_it);
         if (channel_wrapper->server_type == server_type) {
             KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Set new %s access point [0x%08X] for channel [0x%08X] "
                                  "(protocol: id=0x%08X, version=%u)"

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /**
@@ -35,13 +35,11 @@ extern "C" {
 #endif
 
 
-#ifndef KAA_LOG_COLLECTOR_T
-# define KAA_LOG_COLLECTOR_T
-    /**
-     * Private log collector structure.
-     */
-    typedef struct kaa_log_collector        kaa_log_collector_t;
-#endif
+/**
+ * Private log collector structure.
+ */
+struct kaa_log_collector_t;
+typedef struct kaa_log_collector_t kaa_log_collector_t;
 
 /**
  * @brief Log record info.
@@ -84,7 +82,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
  * destroyed and new strategy will be assigned.
  *
  * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in] log_storage_context           Log storage context.
+ * @param[in] log_upload_strategy_context   Log storage context.
  *
  * @return  Error code.
  */
@@ -107,9 +105,9 @@ kaa_error_t kaa_logging_set_storage(kaa_log_collector_t *self, void *log_storage
 /**
  * @brief Serializes and adds a log record to the log storage.
  *
- * @param[in]  self    Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in]  entry   Pointer to log entry to be added to the storage.
- * @param[out] bucket  Pointer to log bucket info. May be NULL.
+ * @param[in]  self      Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in]  entry     Pointer to log entry to be added to the storage.
+ * @param[out] log_info  Pointer to log info. May be @c NULL.
  *
  * @return  Error code.
  */

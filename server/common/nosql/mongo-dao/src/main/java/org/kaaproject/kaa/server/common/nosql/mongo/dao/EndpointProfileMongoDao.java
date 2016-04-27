@@ -1,22 +1,23 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
@@ -25,6 +26,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -225,8 +227,8 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
         LOG.debug("Update server endpoint profile for endpoint with key hash {}, schema version is {}", keyHash, version);
         updateFirst(
                 query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
-                update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
-                        .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
+                update(EP_SERVER_PROFILE_PROPERTY, MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(serverProfile)))
+                .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

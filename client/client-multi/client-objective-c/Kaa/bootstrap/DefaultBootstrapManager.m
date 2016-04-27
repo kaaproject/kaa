@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "DefaultBootstrapManager.h"
@@ -22,7 +22,6 @@
 #import "KaaExceptions.h"
 
 #define TAG @"DefaultBootstrapManager"
-#define EXIT_FAILURE 1
 
 @interface DefaultBootstrapManager ()
 
@@ -31,6 +30,8 @@
 @property (nonatomic, strong) id<FailoverManager> failoverManager;
 @property (nonatomic, strong) id<KaaInternalChannelManager> channelManager;
 
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
+
 @property (nonatomic, strong) NSNumber *serverToApply;
 @property (nonatomic, strong) NSArray *operationsServerList;                   //<ProtocolMetaData>
 @property (nonatomic, strong) NSMutableDictionary *mappedOperationServerList;  //<TransportProtocolId, NSMutableArray<ProtocolMetaData>>
@@ -38,17 +39,20 @@
 
 - (NSMutableArray *)getTransportsByAccessPointId:(int)accessPointId;
 - (void)notifyChannelManagerAboutServers:(NSMutableArray *)servers;
-- (void)applyDecision:(FailoverDecision *)decision;
+- (void)resolveFailoverStatus:(FailoverStatus)status;
 
 @end
 
 @implementation DefaultBootstrapManager
 
-- (instancetype)initWithTransport:(id<BootstrapTransport>)transport executorContext:(id<ExecutorContext>)context {
+- (instancetype)initWithTransport:(id<BootstrapTransport>)transport
+                  executorContext:(id<ExecutorContext>)context
+                  failureDelegate:(id<FailureDelegate>)delegate {
     self = [super init];
     if (self) {
         self.transport = transport;
         self.context = context;
+        self.failureDelegate = delegate;
         self.mappedOperationServerList = [NSMutableDictionary dictionary];
         self.mappedIterators = [NSMutableDictionary dictionary];
     }
@@ -60,7 +64,7 @@
     [self.transport sync];
 }
 
-- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId {
+- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId failoverStatus:(FailoverStatus)status {
     if (self.mappedOperationServerList && [self.mappedOperationServerList count] > 0) {
         ProtocolMetaData *nextOperServer = [self.mappedIterators[transportId] nextObject];
         if (nextOperServer) {
@@ -73,8 +77,7 @@
             }
         } else {
             DDLogWarn(@"%@ Failed to find server for channel %@", TAG, transportId);
-            FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_OPERATION_SERVERS_NA];
-            [self applyDecision:decision];
+            [self resolveFailoverStatus:status];
         }
     } else {
         [NSException raise:KaaBootstrapRuntimeException format:@"Operations Server list is empty"];
@@ -120,8 +123,7 @@
         
         if (!self.operationsServerList || [self.operationsServerList count] == 0) {
             DDLogVerbose(@"%@ Received empty operations server list", TAG);
-            FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
-            [self applyDecision:decision];
+            [self resolveFailoverStatus:FailoverStatusNoOperationsServersReceived];
             return;
         }
         
@@ -176,14 +178,15 @@
     return result;
 }
 
-- (void)applyDecision:(FailoverDecision *)decision {
+- (void)resolveFailoverStatus:(FailoverStatus)status {
+    FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
     switch (decision.failoverAction) {
-        case FAILOVER_ACTION_NOOP:
+        case FailoverActionNoop:
         {
             DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
         }
             break;
-        case FAILOVER_ACTION_RETRY:
+        case FailoverActionRetry:
         {
             DDLogWarn(@"%@ Will try to receive operation servers in %lli ms as to failover strategy decision",
                       TAG, decision.retryPeriod);
@@ -193,35 +196,33 @@
                 @try {
                     [weakSelf receiveOperationsServerList];
                 }
-                @catch (NSException *exception) {
-                    DDLogWarn(@"%@ Excpetion caugh with name: %@, reason: %@", TAG, exception.name, exception.reason);
-                    DDLogError(@"%@ Error while receiving operations server list", TAG);
+                @catch (NSException *ex) {
+                    DDLogError(@"%@ Error while receiving operations server list: %@, reason: %@", TAG, ex.name, ex.reason);
                 }
             });
         }
             break;
-        case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
+        case FailoverActionUseNextBootstrap:
         {
             DDLogWarn(@"%@ Trying to switch to the next bootstrap server as to failover strategy decision", TAG);
-            [self.failoverManager onServerFailedWithConnectionInfo:[self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP]];
+            id<TransportConnectionInfo> connectionInfo = [self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP];
+            [self.failoverManager onServerFailedWithConnectionInfo:connectionInfo failoverStatus:status];
             __weak typeof(self)weakSelf = self;
             dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(decision.retryPeriod * NSEC_PER_MSEC));
             dispatch_after(delay, [self.context getSheduledExecutor], ^{
                 @try {
                     [weakSelf receiveOperationsServerList];
                 }
-                @catch (NSException *exception) {
-                    DDLogWarn(@"%@ Excpetion caugh with name: %@, reason: %@", TAG, exception.name, exception.reason);
-                    DDLogError(@"%@ Error while receiving operations server list", TAG);
+                @catch (NSException *ex) {
+                    DDLogError(@"%@ Error while receiving operations server list: %@ reason: %@", TAG, ex.name, ex.reason);
                 }
             });
         }
             break;
-        case FAILOVER_ACTION_STOP_APP:
+        case FailoverActionFailure:
         {
-            DDLogWarn(@"%@ Stopping application as to failover strategy decision!", TAG);
-            //TODO: Applications that use exit(..) are rejected by AppStore thus there should be found another way to exit
-            exit(EXIT_FAILURE);
+            DDLogWarn(@"%@ Calling failure delegate as to failover strategy decision!", TAG);
+            [self.failureDelegate onFailure];
         }
             break;
         default:

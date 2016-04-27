@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef DISCONNECTMESSAGE_HPP_
@@ -27,9 +27,10 @@ namespace kaa
 
 enum class DisconnectReason : std::uint8_t
 {
-    NONE = 0x00,
-    BAD_REQUEST = 0x01,
-    INTERNAL_ERROR = 0x02,
+    NONE                = 0x00,
+    BAD_REQUEST         = 0x01,
+    INTERNAL_ERROR      = 0x02,
+    CREDENTIALS_REVOKED = 0x03,
 };
 
 class DisconnectMessage : public IKaaTcpRequest
@@ -44,6 +45,8 @@ public:
                 return "Bad request";
             case DisconnectReason::INTERNAL_ERROR:
                 return "Internal error has been occurred";
+            case DisconnectReason::CREDENTIALS_REVOKED:
+                return "Credentials have been revoked";
             default:
                 return (boost::format("Invalid Disconnect reason %1%") % (std::uint8_t) reason).str();
         }
@@ -80,7 +83,7 @@ private:
         }
 
         int code = *(payload + 1);
-        if (code < (int)DisconnectReason::NONE || code > (int)DisconnectReason::INTERNAL_ERROR) {
+        if (code < (int)DisconnectReason::NONE || code > (int)DisconnectReason::CREDENTIALS_REVOKED) {
             throw KaaException(boost::format("Bad Disconnect return code: %1%") % code);
         }
         reason_ = (DisconnectReason) code;

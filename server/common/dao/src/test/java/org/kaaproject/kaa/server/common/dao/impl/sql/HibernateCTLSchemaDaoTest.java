@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
@@ -63,7 +63,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     private CTLSchemaDto systemSchema;
 
     private static final String SYSTEM_FQN = "org.kaaproject.kaa.ctl.SystemSchema";
-    
+
     @Before
     public void before() {
         clearDBData();
@@ -95,7 +95,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, new Tenant(tenant), 11, null));
         ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, null, 11, null));
     }
-    
+
     private CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
         CTLSchema ctlSchema = new CTLSchema();
         if (tenant == null) {
@@ -124,7 +124,6 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         dep = convertDtoList(ctlSchemaDao.findDependentSchemas(fourthSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
     }
-
 
     @Test
     public void testFindByFqnAndVerAndTenantIdAndApplicationId() {

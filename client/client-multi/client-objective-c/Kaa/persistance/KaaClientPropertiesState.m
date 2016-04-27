@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "KaaClientPropertiesState.h"
@@ -150,6 +150,15 @@
             }
         } else {
             DDLogInfo(@"%@ First SDK start!", TAG);
+            
+            if (![fileManager fileExistsAtPath:storage]) {
+                NSError *error;
+                BOOL dirCreated = [fileManager createDirectoryAtPath:storage withIntermediateDirectories:YES attributes:nil error:&error];
+                if (!dirCreated) {
+                    DDLogError(@"%@ Creating directory for client state: %@", TAG, error);
+                }
+            }
+            
             [self setPropertiesHash:properties.propertiesHash];
         }
     }
@@ -204,7 +213,7 @@
             }
             
             [topic serialize:writer];
-            [encodedData appendBytes:writer->buf length:writer->written];
+            [encodedData appendBytes:writer->buf length:(NSUInteger)writer->written];
             avro_writer_free(writer);
         }
         NSData *base64Encoded = [self.base64 encodeBase64:encodedData];
@@ -231,18 +240,25 @@
     self.state[TOPIC_LIST_HASH] = @(_topicListHash);
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *backup = [NSString stringWithFormat:@"%@_bckp", self.stateFileLocation];
-    BOOL backupResult = [fileManager copyItemAtPath:self.stateFileLocation toPath:backup error:nil];
-    DDLogDebug(@"%@ Backup created: %d", TAG, backupResult);
+    if ([fileManager fileExistsAtPath:self.stateFileLocation]) {
+        NSString *backup = [NSString stringWithFormat:@"%@_bckp", self.stateFileLocation];
+        BOOL backupResult = [fileManager copyItemAtPath:self.stateFileLocation toPath:backup error:nil];
+        DDLogDebug(@"%@ Backup created: %d", TAG, backupResult);
+    }
     
-    BOOL result = [self.state writeToFile:self.stateFileLocation atomically:YES];
-    DDLogDebug(@"%@ Persist finished with result: %d", TAG, result);
+    BOOL peristResult = [self.state writeToFile:self.stateFileLocation atomically:YES];
+    DDLogDebug(@"%@ Persist finished. Result: %d", TAG, peristResult);
 }
 
 - (NSString *)refreshEndpointAccessToken {
     NSString *newAccessToken = [UUID randomUUID];
     [self setEndpointAccessToken:newAccessToken];
     return newAccessToken;
+}
+
+- (NSData *)publicKeyAsBytes {
+    [self getOrGenerateKeyPair];
+    return [KeyUtils getPublicKey];
 }
 
 - (SecKeyRef)publicKey {

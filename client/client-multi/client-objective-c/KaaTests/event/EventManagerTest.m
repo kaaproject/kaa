@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -40,6 +40,7 @@
 }
 
 - (void)onEventListenersReceived:(NSArray *)eventListeners {
+#pragma unused(eventListeners)
 }
 
 
@@ -70,6 +71,7 @@
 }
 
 - (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
+#pragma unused(eventFQN, data, source)
     self.eventsCount++;
 }
 
@@ -86,11 +88,11 @@
 
 - (void)testNoHandler {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
-    id <BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<EventTransport> transport = mockProtocol(@protocol(EventTransport));
+    id<BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
+    id<EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
     [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
@@ -101,11 +103,11 @@
 
 - (void)testEngageRelease {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
-    id <BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<EventTransport> transport = mockProtocol(@protocol(EventTransport));
+    id<BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
+    id<EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
     [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
@@ -118,11 +120,11 @@
 
 - (void)testTransaction {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-    id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
-    id <BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<EventTransport> transport = mockProtocol(@protocol(EventTransport));
+    id<BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
+    id<EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
     TransactionId *trxId = [eventManager beginTransaction];
@@ -146,16 +148,16 @@
 - (void)testOneEventForTwoDifferentFamilies {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
-    id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
+    id<EventTransport> transport = mockProtocol(@protocol(EventTransport));
     ConcreteEventFamily *eventFamily1 = [[ConcreteEventFamily alloc] initWithSupportedFQN:@"kaa.test.event.PlayEvent"];
     ConcreteEventFamily *eventFamily2 = [[ConcreteEventFamily alloc] initWithSupportedFQN:@"kaa.test.event.StopEvent"];
     
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
     
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
+    id<EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily1];
     [eventManager registerEventFamily:eventFamily2];
     
@@ -187,9 +189,9 @@
 - (void)testFillRequest {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
-    id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
+    id<EventTransport> transport = mockProtocol(@protocol(EventTransport));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     
     EventSyncRequest *request = [[EventSyncRequest alloc] init];
 
@@ -217,14 +219,14 @@
 - (void)testEventListenersSyncRequestResponse {
     KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
-    id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
-    id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<EventTransport> transport = mockProtocol(@protocol(EventTransport));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     [given([executorContext getCallbackExecutor]) willReturn:[[NSOperationQueue alloc] init]];
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
+    id<EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     
     NSArray *eventFQNs = [NSArray arrayWithObject:@"eventFQN1"];
     
-    id <FindEventListenersDelegate> fetchListener = mockProtocol(@protocol(FindEventListenersDelegate));
+    id<FindEventListenersDelegate> fetchListener = mockProtocol(@protocol(FindEventListenersDelegate));
     int32_t requestIdOk = [eventManager requestListenersForEventFQNs:eventFQNs delegate:fetchListener];
     int32_t requestIdBad = [eventManager requestListenersForEventFQNs:eventFQNs delegate:fetchListener];
     

@@ -1,18 +1,20 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -39,10 +41,6 @@
 #define EXTERNAL_SYSTEM_ENDPOINT_DETACH_FIELD      0x02
 
 #define USER_SYNC_ENDPOINT_ID_OPTION               0x01
-
-
-
-extern kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 
 
 typedef struct {
@@ -90,8 +88,75 @@ typedef enum {
 
 
 
-static kaa_service_t user_sync_services[1] = {KAA_SERVICE_USER};
+static kaa_extension_id user_sync_services[1] = {KAA_EXTENSION_USER};
 
+kaa_error_t kaa_extension_user_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t error = kaa_user_manager_create(&kaa_context->user_manager, kaa_context->status->status_instance,
+            kaa_context->channel_manager, kaa_context->logger);
+    *context = kaa_context->user_manager;
+    return error;
+}
+
+kaa_error_t kaa_extension_user_deinit(void *context)
+{
+    kaa_user_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_user_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_user_request_get_size(context, expected_size);
+}
+
+kaa_error_t kaa_extension_user_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_user_request_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_user_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_user_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_user_handle_server_sync(context, &reader, extension_options, size);
+}
 
 static void dtor_endpoint_info(void *data)
 {
@@ -161,6 +226,7 @@ static user_info_t *create_user_info(const char *external_id, const char *user_a
     return user_info;
 }
 
+/** @deprecated Use kaa_extension_user_init(). */
 kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p
                                   , kaa_status_t *status
                                   , kaa_channel_manager_t *channel_manager
@@ -187,6 +253,7 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p
     return KAA_ERR_NONE;
 }
 
+/** @deprecated Use kaa_extension_user_deinit(). */
 void kaa_user_manager_destroy(kaa_user_manager_t *self)
 {
     if (self) {
@@ -366,7 +433,7 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client user sync");
 
     size_t size = kaa_user_request_get_size_no_header(self);
-    if (kaa_platform_message_write_extension_header(writer, KAA_USER_EXTENSION_TYPE, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
+    if (kaa_platform_message_write_extension_header(writer, KAA_EXTENSION_USER, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user extension header");
         return KAA_ERR_WRITE_FAILED;
     }
@@ -477,20 +544,21 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                                       , uint16_t extension_options
                                       , size_t extension_length)
 {
+    // Only used for logging
+    (void)extension_options;
+    (void)extension_length;
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync: options %u, payload size %u", extension_options, extension_length);
 
     size_t remaining_length = extension_length;
-    uint32_t field_header = 0;
-    user_server_sync_field_t field = 0;
 
     while (remaining_length > 0) {
-        field_header = KAA_NTOHL(*(uint32_t *) reader->current);
+        uint32_t field_header = KAA_NTOHL(*(uint32_t *)reader->current);
         reader->current += sizeof(uint32_t);
         remaining_length -= sizeof(uint32_t);
 
-        field = (field_header >> 24) & 0xFF;
+        user_server_sync_field_t field = (field_header >> 24) & 0xFF;
         switch (field) {
             case USER_ATTACH_RESPONSE_FIELD: {
                 user_sync_result_t result = (uint8_t) (field_header >> 8) & 0xFF;
@@ -611,18 +679,15 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
             case ENDPOINT_ATTACH_RESPONSES_FIELD: {
                 uint16_t attach_responses_count = (field_header) & 0xFFFF;
 
-                uint8_t  result_code;
-                uint8_t  options;
-                uint16_t request_id;
-                kaa_endpoint_id endpoint_id;
-
-                if (sizeof(uint32_t) > remaining_length)
+                if (sizeof(uint32_t) > remaining_length) {
                     return KAA_ERR_INVALID_BUFFER_SIZE;
+                }
 
                 for (uint32_t i = 0; i < attach_responses_count; ++i) {
-                    result_code = *(reader->current++);
-                    options     = *(reader->current++);
-                    request_id  = KAA_NTOHS(*(uint16_t*)reader->current);
+                    uint8_t result_code = *(reader->current++);
+                    uint8_t options = *(reader->current++);
+                    uint16_t request_id = KAA_NTOHS(*(uint16_t*)reader->current);
+
                     reader->current  += sizeof(uint16_t);
                     remaining_length -= sizeof(uint32_t);
 
@@ -638,6 +703,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     }
 
                     if (options & USER_SYNC_ENDPOINT_ID_OPTION) {
+                        kaa_endpoint_id endpoint_id;
                         memcpy(endpoint_id, reader->current, KAA_ENDPOINT_ID_LENGTH);
                         reader->current  += KAA_ENDPOINT_ID_LENGTH;
                         remaining_length -= KAA_ENDPOINT_ID_LENGTH;
@@ -655,18 +721,16 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 break;
             }
             case ENDPOINT_DETACH_RESPONSES_FIELD: {
-                uint16_t detach_responses_count = (field_header) & 0xFFFF;
+                uint16_t detach_responses_count = field_header & 0xFFFF;
 
-                uint8_t  result_code;
-                uint16_t request_id;
-
-                if (sizeof(uint32_t) > remaining_length)
+                if (sizeof(uint32_t) > remaining_length) {
                     return KAA_ERR_INVALID_BUFFER_SIZE;
+                }
 
                 for (uint32_t i = 0; i < detach_responses_count; ++i) {
-                    result_code = *(reader->current++);
+                    uint8_t  result_code = *(reader->current++);
                     reader->current++;
-                    request_id  = KAA_NTOHS(*(uint16_t*)reader->current);
+                    uint16_t request_id = KAA_NTOHS(*(uint16_t*)reader->current);
                     reader->current += sizeof(uint16_t);
                     remaining_length -= sizeof(uint32_t);
 

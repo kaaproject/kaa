@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "DefaultEventTransport.h"
@@ -27,7 +27,7 @@
 @property (nonatomic, strong) id<EventManager> kaaEventManager;
 
 @property (nonatomic) BOOL isEventSequenceNumberSynchronized;
-@property (atomic) int startEventSequenceNumber;
+@property (atomic) int32_t startEventSequenceNumber;
 
 @end
 
@@ -117,7 +117,7 @@
             
             NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             
-            [self.kaaClientState setEventSequenceNumber:(self.startEventSequenceNumber + [sortedEvents count])];
+            [self.kaaClientState setEventSequenceNumber:(self.startEventSequenceNumber + (int32_t)[sortedEvents count])];
             if ([sortedEvents count] > 0 && [(Event *)sortedEvents.firstObject seqNum] != self.startEventSequenceNumber) {
                 DDLogInfo(@"%@ Put in order event sequence numbers (expected: %i, actual: %i)",
                           TAG, self.startEventSequenceNumber, [(Event *)sortedEvents.firstObject seqNum]);
@@ -125,7 +125,7 @@
                     event.seqNum = self.startEventSequenceNumber++;
                 }
             } else {
-                self.startEventSequenceNumber += [sortedEvents count];
+                self.startEventSequenceNumber += (int32_t)[sortedEvents count];
             }
             
             DDLogInfo(@"%@ Event sequence number isn't synchronized. Set to %i", TAG, self.startEventSequenceNumber);

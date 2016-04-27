@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /**
@@ -22,12 +22,27 @@
 #ifndef KAA_COMMON_H_
 #define KAA_COMMON_H_
 
+#include <stdint.h>
 #include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/**
+ * @brief Kaa extensions.
+ */
+typedef enum {
+    // Don't change numbers. They are critical to platform protocol.
+    KAA_EXTENSION_BOOTSTRAP     = 0,
+    KAA_EXTENSION_META_DATA     = 1,
+    KAA_EXTENSION_PROFILE       = 2,
+    KAA_EXTENSION_USER          = 3,
+    KAA_EXTENSION_LOGGING       = 4,
+    KAA_EXTENSION_CONFIGURATION = 5,
+    KAA_EXTENSION_EVENT         = 7,
+    KAA_EXTENSION_NOTIFICATION  = 6,
+} kaa_extension_id;
 
 /*
  * Standard error handling macros
@@ -49,20 +64,6 @@ extern "C" {
 
 #define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
     do { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; } while (0)
-
-
-/**
- * @brief Types of Kaa platform services
- */
-typedef enum {
-    KAA_SERVICE_BOOTSTRAP = 0,
-    KAA_SERVICE_PROFILE = 1,
-    KAA_SERVICE_USER = 2,
-    KAA_SERVICE_EVENT = 3,
-    KAA_SERVICE_LOGGING = 4,
-    KAA_SERVICE_CONFIGURATION = 5,
-    KAA_SERVICE_NOTIFICATION = 6
-} kaa_service_t;
 
 /**
  * @brief Identifier used to uniquely represent transport protocol.

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "KAATcpSync.h"
@@ -44,7 +44,7 @@
 }
 
 - (void)decodeAvroObjectFromInput:(NSInputStream *)input {
-    int avroObjectSize = self.buffer.length - self.bufferPosition;
+    int32_t avroObjectSize = (int32_t)(self.buffer.length - self.bufferPosition);
     if (avroObjectSize > 0) {
         uint8_t data[avroObjectSize];
         [input read:data maxLength:sizeof(data)];
@@ -56,7 +56,7 @@
 - (void)pack {
     [self packVariableHeader];
     [self.buffer appendData:_avroObject];
-    self.bufferPosition += _avroObject.length;
+    self.bufferPosition += (int32_t)_avroObject.length;
 }
 
 - (void)decode {
@@ -69,7 +69,7 @@
 
 - (void)setAvroObject:(NSData *)avroObject {
     _avroObject = avroObject;
-    self.remainingLength = KAASYNC_VARIABLE_HEADER_LENGTH_V1 + avroObject.length;
+    self.remainingLength = (int32_t)(KAASYNC_VARIABLE_HEADER_LENGTH_V1 + avroObject.length);
 }
 
 @end

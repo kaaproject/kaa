@@ -1,20 +1,55 @@
 #
-#  Copyright 2014-2016 CyberVision, Inc.
+# Copyright 2014-2016 CyberVision, Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 cmake_minimum_required(VERSION 2.8.8)
+
+macro(DECCHAR2HEX VAR VAL)
+    if (${VAL} LESS 10)
+        SET(${VAR} ${VAL})
+    elseif(${VAL} EQUAL 10)
+        SET(${VAR} "A")
+    elseif(${VAL} EQUAL 11)
+        SET(${VAR} "B")
+    elseif(${VAL} EQUAL 12)
+        SET(${VAR} "C")
+    elseif(${VAL} EQUAL 13)
+        SET(${VAR} "D")
+    elseif(${VAL} EQUAL 14)
+        SET(${VAR} "E")
+    elseif(${VAL} EQUAL 15)
+        SET(${VAR} "F")
+    else()
+        MESSAGE(FATAL_ERROR "Invalid format for hexidecimal character")
+    endif()
+endmacro(DECCHAR2HEX)
+
+macro(DEC2HEX16 VAR VAL)
+    if (${VAL} EQUAL 0)
+        SET(${VAR} 0)
+    else()
+        SET(VAL2 ${VAL})
+        SET(${VAR} "")
+
+        foreach(i 0 4 8 12)
+            MATH(EXPR VALCHAR "((${VAL}>>${i})&15)")
+            DECCHAR2HEX(VALCHAR ${VALCHAR})
+            SET(${VAR} "${VALCHAR}${${VAR}}")
+        endforeach(i)
+    endif()
+endmacro(DEC2HEX16)
 
 project (Kaa-cpp)
 enable_language(CXX)
@@ -58,16 +93,9 @@ if (NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif ()
 
-if (KAA_DEBUG_ENABLED)
-    if (NOT MSVC)
-       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
-    endif () 
-else()
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os")
-    if (CMAKE_COMPILER_IS_GNUCXX)
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
-    endif()
-endif()
+if (NOT MSVC)
+   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
+endif ()
 
 #Compiler specific flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -78,13 +106,6 @@ endif()
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
 endif ()
-
-# Release version is built by default.
-if(KAA_DEBUG_ENABLED)
-    set(CMAKE_BUILD_TYPE DEBUG)
-else()
-    set(CMAKE_BUILD_TYPE RELEASE)
-endif()
 
 #
 # Sets maximum Kaa SDK log level.
@@ -98,7 +119,7 @@ endif()
 # DEBUG - 5
 # TRACE - 6
 if(NOT DEFINED KAA_MAX_LOG_LEVEL)
-    if(KAA_DEBUG_ENABLED)
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
         set(KAA_MAX_LOG_LEVEL 6)
     else()
         set(KAA_MAX_LOG_LEVEL 4)
@@ -242,8 +263,12 @@ endif()
 
 if (WIN32 AND NOT CYGWIN AND NOT MSYS)
     if (CMAKE_SYSTEM_VERSION)
-        string(REGEX REPLACE "^([0-9])\\.([0-9]).*" "0\\10\\2" version ${CMAKE_SYSTEM_VERSION})
-
+        string(REGEX REPLACE "^([0-9]+).*" "\\1" verMajor ${CMAKE_SYSTEM_VERSION})
+        string(REGEX REPLACE "^[0-9]+.([0-9]+).*" "\\1" verMinor ${CMAKE_SYSTEM_VERSION})
+        math(EXPR ver "((${verMajor} << 8) + ${verMinor})")
+        DEC2HEX16(version ${ver})
+        message(STATUS "CMAKE_SYSTEM_VERSION=${CMAKE_SYSTEM_VERSION}")
+        message(STATUS "VERSION=${version}")
         add_definitions(-D_WIN32_WINNT=0x${version})
     endif() 
 
@@ -313,7 +338,7 @@ if (SQLITE_LOG_STORAGE_ENABLED)
     target_link_libraries(kaacpp ${SQLITE3_LIBRARY})
 endif()
 
-if (WIN32 AND KAA_DEBUG_ENABLED)
+if (WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_link_libraries(kaacpp dbghelp)
 endif()
 

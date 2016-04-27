@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.services.util;
@@ -41,13 +41,13 @@ public class Utils {
     }
 
     public static KaaAdminServiceException handleException(Exception exception, String message) {
-        LOG.error("Unexpected exception catched!", exception);
+        LOG.error("An unexpected exception occured!", exception);
         return new KaaAdminServiceException(message, ServiceErrorCode.GENERAL_ERROR);
     }
 
     public static KaaAdminServiceException handleException(Exception exception, boolean logException) {
         if (logException) {
-            LOG.error("Unexpected exception catched!", exception);
+            LOG.error("An unexpected exception occured!", exception);
         }
 
         String cause = "";
@@ -69,7 +69,7 @@ public class Utils {
 
     public static <T> T checkNotNull(T reference) throws KaaAdminServiceException {
         if (reference == null) {
-            throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
+            throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
         }
         return reference;
     }

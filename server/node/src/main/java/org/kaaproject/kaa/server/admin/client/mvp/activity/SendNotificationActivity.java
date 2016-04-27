@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -99,18 +100,34 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
 
     @Override
     protected void editEntity(NotificationDto entity, final AsyncCallback<NotificationDto> callback) {
-        KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(), 
-                new AsyncCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        callback.onSuccess(null);
-                    }
-                    
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-                });
+        String endpointKeyHash = detailsView.getEndpointKeyHash().getValue();
+        if(endpointKeyHash == null || endpointKeyHash.equals("")) {
+            KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(),
+                    new AsyncCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            callback.onSuccess(null);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        } else {
+            KaaAdmin.getDataSource().sendUnicastNotification(entity, endpointKeyHash, detailsView.getNotificationData().getValue(),
+                    new AsyncCallback<EndpointNotificationDto>() {
+                        @Override
+                        public void onSuccess(EndpointNotificationDto result) {
+                            callback.onSuccess(null);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        }
     }
 
 }

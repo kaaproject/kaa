@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao;
@@ -67,6 +67,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -80,29 +82,31 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
+import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
+import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
-import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
+import org.kaaproject.kaa.server.common.dao.impl.sql.MariaDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
@@ -147,7 +151,7 @@ public class AbstractTest {
     protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
     public static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
-    public static final String TEST_PRIFILE_BODY = "{ \"Profile\" : { \"org.kaaproject.kaa.schema.sample.profile\" : { \"country.$\" : \"1.0.$.\" , " +
+    public static final String TEST_PROFILE_BODY = "{ \"Profile\" : { \"org.kaaproject.kaa.schema.sample.profile\" : { \"country.$\" : \"1.0.$.\" , " +
             "\"country$IsoCode\" : \"2.0.$.\" , \"city\" : \"3.0.$.\" , \"Obj\" : { \"org.kaaproject.kaa.schema.sample.profile.Obj\" : { \"name\" : { " +
             "\"string\" : \"Obj.name$\"}}}}} , \"OS\" : { \"org.kaaproject.kaa.schema.sample.profile.OS\" : \"Android\"}}";
 
@@ -245,9 +249,12 @@ public class AbstractTest {
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-            } else {
+            } else if(url.contains("postgres")) {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
+            } else {
+                LOG.info("Deleting data from MariaDB database");
+                new MariaDBTestRunner().truncateTables(dataSource);
             }
         } catch (SQLException ex) {
             LOG.error("Can't delete data from databases.", ex);
@@ -722,7 +729,7 @@ public class AbstractTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
-        profileDto.setClientProfileBody(TEST_PRIFILE_BODY);
+        profileDto.setClientProfileBody(TEST_PROFILE_BODY);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
@@ -732,7 +739,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setServerProfileVersion(schemaVersion);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setClientProfileBody(TEST_PRIFILE_BODY);
+        profileDto.setClientProfileBody(TEST_PROFILE_BODY);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         profileDto.setServerProfileBody(srvProfileBody);
         return endpointService.saveEndpointProfile(profileDto);
@@ -746,7 +753,7 @@ public class AbstractTest {
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setGroupState(groupState);
-        profileDto.setClientProfileBody(TEST_PRIFILE_BODY);
+        profileDto.setClientProfileBody(TEST_PROFILE_BODY);
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);

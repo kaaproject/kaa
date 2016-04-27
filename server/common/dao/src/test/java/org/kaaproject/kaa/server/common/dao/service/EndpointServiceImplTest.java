@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.service;
@@ -122,6 +122,15 @@ public class EndpointServiceImplTest extends AbstractTest {
         found.setId(null);
         endpointService.saveEndpointGroup(found);
     }
+    
+    @Test(expected = IncorrectParameterException.class)
+    public void saveEndpointGroupWithSameNameTest() {
+        EndpointGroupDto group = generateEndpointGroupDto(null);
+        EndpointGroupDto found = endpointService.findEndpointGroupById(group.getId());
+        found.setId(null);
+        found.setWeight(found.getWeight()+1);
+        endpointService.saveEndpointGroup(found);
+    }
 
     @Test
     public void removeEndpointGroupByAppIdTest() {
@@ -158,6 +167,17 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto group = groups.get(0);
         group.setId(null);
         group.setName("Updated Group Name");
+        endpointService.saveEndpointGroup(group);
+    }
+    
+    @Test(expected = IncorrectParameterException.class)
+    public void saveEndpointGroupWithExistingNameTest() {
+        ApplicationDto app = generateApplicationDto();
+        List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppId(app.getId());
+        Assert.assertFalse(groups.isEmpty());
+        EndpointGroupDto group = groups.get(0);
+        group.setId(null);
+        group.setWeight(group.getWeight()+1);
         endpointService.saveEndpointGroup(group);
     }
 

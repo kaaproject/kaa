@@ -1,18 +1,20 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -25,9 +27,6 @@
 #include "kaa_status.h"
 #include "kaa_defaults.h"
 #include "utilities/kaa_mem.h"
-
-
-extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
 
 /*
  * KAA Status persistent content:
@@ -63,7 +62,7 @@ extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
         memcpy(TO, FROM, SIZE); \
         TO += SIZE
 
-// TODO: discuss/implement a failover, when storage is somehow broken
+// TODO KAA-845: discuss/implement a failover, when storage is somehow broken
 kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
 {
     KAA_RETURN_IF_NIL(kaa_status_p, KAA_ERR_BADPARAM);
@@ -71,7 +70,6 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     kaa_status_t *kaa_status = KAA_CALLOC(1, sizeof(*kaa_status));
     KAA_RETURN_IF_NIL(kaa_status, KAA_ERR_NOMEM);
 
-    char token_buf[sizeof(KAA_SDK_TOKEN)];
     kaa_status->topic_states = kaa_list_create();
     KAA_RETURN_IF_NIL(kaa_status->topic_states, KAA_ERR_NOMEM);
     kaa_status->topics = kaa_list_create();
@@ -146,15 +144,20 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         }
 
         READ_BUFFER(read_buf, &kaa_status->topic_list_hash, sizeof(kaa_status->topic_list_hash));
+        char token_buf[sizeof(KAA_SDK_TOKEN)];
         READ_BUFFER(read_buf, token_buf, sizeof(token_buf));
-        if (strcmp(token_buf, KAA_SDK_TOKEN))
+
+        // TODO: shouldn't that be memcmp?
+        if (strcmp(token_buf, KAA_SDK_TOKEN)) {
             kaa_status->is_registered = false;
-        else
+        } else {
             kaa_status_set_updated(kaa_status, true);
+        }
     }
 
-    if (needs_deallocation)
+    if (needs_deallocation) {
         KAA_FREE(read_buf_head);
+    }
 
     *kaa_status_p = kaa_status;
     return KAA_ERR_NONE;

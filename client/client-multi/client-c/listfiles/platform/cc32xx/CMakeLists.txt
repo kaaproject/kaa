@@ -1,17 +1,17 @@
 #
-#  Copyright 2014-2016 CyberVision, Inc.
+# Copyright 2014-2016 CyberVision, Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 set(KAA_SOURCE_FILES
@@ -70,7 +70,8 @@ set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
 
 set(KAA_BUILD_STATIC_ONLY 1)
 
-set(CC32XX_RSA_KEY ${KAA_SDK_DIR}/src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
+set(CC32XX_RSA_KEY ${CMAKE_CURRENT_BINARY_DIR}/cc32xx_rsa_key.h)
 
 execute_process(COMMAND rm ${CC32XX_RSA_KEY})
 execute_process(COMMAND java -jar ${KAA_SDK_DIR}/tools/pub_key_generator.jar ${CC32XX_RSA_KEY})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})

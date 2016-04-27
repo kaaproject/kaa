@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.service;
@@ -39,6 +39,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -190,6 +191,10 @@ public class CTLServiceImpl implements CTLService {
                     dataSchema, new RawDataFactory());
             unSavedSchema.setDefaultRecord(dataProcessor.getRootData().getRawData());
             return unSavedSchema;
+        } catch (StackOverflowError e) {
+            LOG.error("Failed to generate default record. An endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), e);
+            throw new RuntimeException("Unable to generate default record. An endless recursion is detected! "
+                    + "Please check non-optional references to nested types.");
         } catch (ConfigurationGenerationException | IOException | RuntimeException e) {
             LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
             throw new RuntimeException("An unexpected exception occured: " + e.toString());
@@ -218,7 +223,7 @@ public class CTLServiceImpl implements CTLService {
             throw new DatabaseProcessingException("Can't find common type version by id.");
         }
     }
-    
+
     @Override
     public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
         validateObject(ctlSchemaMetaInfo, "Incorrect ctl schema meta info object");
@@ -240,7 +245,7 @@ public class CTLServiceImpl implements CTLService {
             throw new DatabaseProcessingException("Can't find common type by id.");
         }
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
         if (isBlank(fqn)) {
@@ -249,7 +254,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find sibling ctl schemas by fqn {}, tenant id {} and application id {}", fqn, tenantId, applicationId);
         return convertDtoList(ctlSchemaMetaInfoDao.findSiblingsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId));
     }
-    
+
     private boolean checkScopeUpdate(CTLSchemaMetaInfoDto newSchemaMetaInfo, CTLSchemaMetaInfoDto prevSchemaMetaInfo) {
         if (!newSchemaMetaInfo.equals(prevSchemaMetaInfo)) {
             if (isBlank(newSchemaMetaInfo.getFqn())) {
@@ -325,7 +330,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find ctl schema by fqn {} version {}, tenant id {} and application id {}", fqn, version, tenantId, applicationId);
         return DaoUtil.getDto(ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId));
     }
-    
+
     @Override
     public CTLSchemaDto findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
         if (isBlank(metaInfoId) || version == null) {
@@ -344,7 +349,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find any ctl schema by fqn {} version {}, tenant id {} and application id {}", fqn, version, tenantId, applicationId);
         return DaoUtil.getDto(ctlSchemaDao.findAnyByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId));
     }
-    
+
     @Override
     public List<CTLSchemaDto> findSystemCTLSchemas() {
         LOG.debug("Find system ctl schemas");
@@ -362,7 +367,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find system and tenant scopes ctl schemas by tenant id {}", tenantId);
         return getMetaInfoFromCTLSchema(ctlSchemaDao.findAvailableSchemasForTenant(tenantId));
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfoForApplication(String tenantId, String applicationId) {
         LOG.debug("Find system, tenant and application scopes ctl schemas by application id {}", applicationId);
@@ -375,14 +380,14 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find latest ctl schema by fqn {}, tenantId {} and applicationId {}", fqn, tenantId, applicationId);
         return DaoUtil.getDto(ctlSchemaDao.findLatestByFqnAndTenantIdAndApplicationId(fqn, tenantId, applicationId));
     }
-    
+
     @Override
     public CTLSchemaDto findLatestByMetaInfoId(String metaInfoId) {
         validateString(metaInfoId, "Incorrect meta info id for ctl schema request.");
         LOG.debug("Find latest ctl schema by meta info id {}", metaInfoId);
         return DaoUtil.getDto(ctlSchemaDao.findLatestByMetaInfoId(metaInfoId));
     }
-    
+
     @Override
     public List<CTLSchemaDto> findAllCTLSchemasByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
         validateString(fqn, "Incorrect fqn for ctl schema request.");
@@ -455,7 +460,7 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaMetaInfoDto> result = new ArrayList<>(metaInfoMap.values());
         return result;
     }
-    
+
     @Override
     public FileData shallowExport(CTLSchemaDto schema) {
         try {
@@ -552,8 +557,9 @@ public class CTLServiceImpl implements CTLService {
                 ObjectNode dependency = (ObjectNode) node;
                 String fqn = dependency.get(FQN).getTextValue();
                 Integer version = dependency.get(VERSION).getIntValue();
-                CTLSchemaDto child = this.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
+                CTLSchemaDto child = this.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
                         fqn, version, parent.getMetaInfo().getTenantId(), parent.getMetaInfo().getApplicationId());
+                Validate.notNull(child, MessageFormat.format("The dependency [{0}] was not found!", fqn));
                 this.recursiveShallowExport(files, child);
             }
         }

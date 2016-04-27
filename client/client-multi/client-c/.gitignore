@@ -1,0 +1,9 @@
+Makefile
+.zshrc
+sonar-project.properties
+build-cc3200/
+build-clang/
+build-nologs/
+build-esp8266/
+build-posix/
+build-rpi/

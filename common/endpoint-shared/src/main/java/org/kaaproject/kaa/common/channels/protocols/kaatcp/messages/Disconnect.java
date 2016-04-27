@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
@@ -42,7 +42,8 @@ public class Disconnect extends MqttFrame {
     public enum DisconnectReason {
         NONE((byte)0x00),
         BAD_REQUEST((byte)0x01),
-        INTERNAL_ERROR((byte)0x02);
+        INTERNAL_ERROR((byte)0x02),
+        CREDENTIALS_REVOKED((byte)0x03);
 
         private byte reason;
 
@@ -110,13 +111,13 @@ public class Disconnect extends MqttFrame {
     @Override
     protected void decode() throws KaaTcpProtocolException {
         byte code = buffer.get(1);
-        if (code == DisconnectReason.NONE.getReason()) {
-            reason = DisconnectReason.NONE;
-        } else if(code == DisconnectReason.BAD_REQUEST.getReason()) {
-            reason = DisconnectReason.BAD_REQUEST;
-        } else if(code == DisconnectReason.INTERNAL_ERROR.getReason()) {
-            reason = DisconnectReason.INTERNAL_ERROR;
+        for(DisconnectReason tmp : DisconnectReason.values()){
+            if(code == tmp.getReason()){
+                reason = tmp;
+                return;
+            }
         }
+        throw new KaaTcpProtocolException("Unknown disconnect reason!");
     }
 
     /* (non-Javadoc)

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
@@ -71,6 +72,22 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
         TopicDto topic = createTopic(null, TopicTypeDto.MANDATORY);
         LOG.debug("Created topic with id {}", topic.getId());
         List<TopicDto> storedTopic = client.getTopicsByApplicationId(topic.getApplicationId());
+        Assert.assertNotNull(storedTopic);
+        Assert.assertFalse(storedTopic.isEmpty());
+        Assert.assertEquals(topic, storedTopic.get(0));
+    }
+
+    /**
+     * Test get topic by app token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetTopicByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        TopicDto topic = createTopic(application.getId(), TopicTypeDto.MANDATORY);
+        LOG.debug("Created topic with id {}", topic.getId());
+        List<TopicDto> storedTopic = client.getTopicsByApplicationToken(application.getApplicationToken());
         Assert.assertNotNull(storedTopic);
         Assert.assertFalse(storedTopic.isEmpty());
         Assert.assertEquals(topic, storedTopic.get(0));

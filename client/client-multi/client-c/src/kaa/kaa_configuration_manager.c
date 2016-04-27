@@ -1,21 +1,22 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
+#include "kaa_private.h"
 
 #include <stdbool.h>
 #include <inttypes.h>
@@ -46,9 +47,9 @@
 
 #define KAA_CONFIGURATION_BODY_PRESENT           0x02
 
-static kaa_service_t configuration_sync_services[1] = { KAA_SERVICE_CONFIGURATION };
+static kaa_extension_id configuration_sync_services[1] = { KAA_EXTENSION_CONFIGURATION };
 
-struct kaa_configuration_manager {
+struct kaa_configuration_manager_t {
     kaa_digest                           configuration_hash;
     kaa_configuration_root_receiver_t    root_receiver;
     kaa_root_configuration_t            *root_record;
@@ -58,6 +59,75 @@ struct kaa_configuration_manager {
     size_t                               payload_size;
 };
 
+kaa_error_t kaa_extension_configuration_init(kaa_context_t *kaa_context, void **context)
+{
+    kaa_error_t result = kaa_configuration_manager_create(&kaa_context->configuration_manager,
+        kaa_context->channel_manager,
+        kaa_context->status->status_instance,
+        kaa_context->logger);
+    *context = kaa_context->configuration_manager;
+    return result;
+}
+
+kaa_error_t kaa_extension_configuration_deinit(void *context)
+{
+    kaa_configuration_manager_destroy(context);
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_configuration_request_get_size(void *context, size_t *expected_size)
+{
+    return kaa_configuration_manager_get_size(context, expected_size);
+}
+
+kaa_error_t kaa_extension_configuration_request_serialize(void *context, uint32_t request_id,
+        uint8_t *buffer, size_t *size, bool *need_resync)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !size || !need_resync) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    *need_resync = true;
+
+    size_t size_needed;
+    kaa_error_t error = kaa_configuration_manager_get_size(context, &size_needed);
+    if (error) {
+        return error;
+    }
+
+    if (!buffer || *size < size_needed) {
+        *size = size_needed;
+        return KAA_ERR_BUFFER_IS_NOT_ENOUGH;
+    }
+
+    *size = size_needed;
+
+    kaa_platform_message_writer_t writer = KAA_MESSAGE_WRITER(buffer, *size);
+    error = kaa_configuration_manager_request_serialize(context, &writer);
+    if (error) {
+        return error;
+    }
+
+    *size = writer.current - buffer;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_extension_configuration_server_sync(void *context, uint32_t request_id,
+        uint16_t extension_options, const uint8_t *buffer, size_t size)
+{
+    (void)request_id;
+
+    // TODO(KAA-982): Use asserts
+    if (!context || !buffer) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    kaa_platform_message_reader_t reader = KAA_MESSAGE_READER(buffer, size);
+    return kaa_configuration_manager_handle_server_sync(context, &reader, extension_options, size);
+}
 
 static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const char *buffer, size_t buffer_size)
 {
@@ -71,6 +141,7 @@ static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const cha
 }
 
 
+/** @deprecated Use kaa_extension_configuration_init(). */
 kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_channel_manager_t *channel_manager, kaa_status_t *status, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL3(configuration_manager_p, status, logger, KAA_ERR_BADPARAM);
@@ -118,6 +189,7 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
 
 
 
+/** @deprecated Use kaa_extension_configuration_deinit(). */
 void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self)
 {
     if (self) {
@@ -148,7 +220,7 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
 
     kaa_platform_message_writer_t tmp_writer = *writer;
-    kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_CONFIGURATION_EXTENSION_TYPE, KAA_CONFIGURATION_ALL_FLAGS, self->payload_size);
+    kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_EXTENSION_CONFIGURATION, KAA_CONFIGURATION_ALL_FLAGS, self->payload_size);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write configuration extension header");
         return KAA_ERR_WRITE_FAILED;
@@ -181,32 +253,29 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
             reader->current += sizeof(uint32_t);
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration body, size '%u' ", body_size);
-            const char* body = reader->current;
+            const uint8_t *body = reader->current;
             kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(body_size));
             if (error) {
                  KAA_LOG_ERROR(self->logger, error, "Failed to read configuration body, size %u", body_size);
                  return error;
             }
 
-#if KAA_CONFIGURATION_DELTA_SUPPORT
-
-#else
             if (self->root_record)
                 self->root_record->destroy(self->root_record);
 
-            self->root_record = kaa_configuration_manager_deserialize(body, body_size);
+            self->root_record = kaa_configuration_manager_deserialize((const char *)body, body_size);
             if (!self->root_record) {
                 KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to deserialize configuration body, size %u", body_size);
                 return KAA_ERR_READ_FAILED;
             }
 
-            kaa_error_t err = ext_calculate_sha_hash(body, body_size, self->configuration_hash);
+            kaa_error_t err = ext_calculate_sha_hash((const char *)body, body_size, self->configuration_hash);
             if (err) {
                 KAA_LOG_WARN(self->logger, err, "Failed to calculate configuration body hash");
                 return err;
             }
-            ext_configuration_store(body, body_size);
-#endif
+            ext_configuration_store((const char *)body, body_size);
+
             if (self->root_receiver.on_configuration_updated)
                 self->root_receiver.on_configuration_updated(self->root_receiver.context, self->root_record);
 

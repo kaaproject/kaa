@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -79,7 +80,24 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         Assert.assertEquals(2, foundSchema.size());
         Assert.assertEquals(schemaDto, foundSchema.get(1));
     }
-    
+
+    /**
+     * Test get notification schemas by app token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetNotificationSchemasByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        NotificationSchemaDto schemaDto = createNotificationSchema(application.getId(), NotificationTypeDto.SYSTEM);
+        Assert.assertNotNull(schemaDto.getId());
+        LOG.debug("Create notification schema with id {}", schemaDto.getId());
+        List<NotificationSchemaDto> foundSchema = client.getNotificationSchemasByAppToken(application.getApplicationToken());
+        Assert.assertFalse(foundSchema.isEmpty());
+        Assert.assertEquals(2, foundSchema.size());
+        Assert.assertEquals(schemaDto, foundSchema.get(1));
+    }
+
     /**
      * Test get user notification schemas by app id.
      *
@@ -95,7 +113,24 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         Assert.assertEquals(2, foundSchema.size());
         assertSchemasEquals(schemaDto, foundSchema.get(1));
     }
-    
+
+    /**
+     * Test get user notification schemas by app id.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetUserNotificationSchemasByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        NotificationSchemaDto schemaDto = createNotificationSchema(application.getId(), NotificationTypeDto.USER);
+        Assert.assertNotNull(schemaDto.getId());
+        LOG.debug("Create notification schema with id {}", schemaDto.getId());
+        List<VersionDto> foundSchema = client.getUserNotificationSchemasByAppToken(application.getApplicationToken());
+        Assert.assertFalse(foundSchema.isEmpty());
+        Assert.assertEquals(2, foundSchema.size());
+        assertSchemasEquals(schemaDto, foundSchema.get(1));
+    }
+
     /**
      * Test get notification schema versions by app id.
      *
@@ -113,4 +148,21 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         assertSchemasEquals(schemaDto, foundSchema.get(1));
     }
 
+    /**
+     * Test get notification schema versions by app token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetNotificationSchemaVersionsByAppToken() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        NotificationSchemaDto schemaDto = createNotificationSchema(application.getId(), NotificationTypeDto.USER);
+        Assert.assertNotNull(schemaDto.getId());
+        LOG.debug("Create notification schema with id {}", schemaDto.getId());
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+        List<VersionDto> foundSchema = schemaVersions.getNotificationSchemaVersions();
+        Assert.assertFalse(foundSchema.isEmpty());
+        Assert.assertEquals(2, foundSchema.size());
+        assertSchemasEquals(schemaDto, foundSchema.get(1));
+    }
 }

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -21,10 +21,7 @@
 #import <OCMockito/OCMockito.h>
 
 #import <XCTest/XCTest.h>
-#import "DefaultOperationHttpChannel.h"
-#import "TransportProtocolIdHolder.h"
-#import "KeyUtils.h"
-#import "GenericTransportInfo.h"
+#import <Kaa/Kaa.h>
 #import "TestsHelper.h"
 
 static NSDictionary *SUPPORTED_TYPES;
@@ -76,9 +73,9 @@ static NSDictionary *SUPPORTED_TYPES;
 
 - (void)testChannelGetters {
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
-    id <FailoverManager> manager = mockProtocol(@protocol(FailoverManager));
-    id <KaaDataChannel> channel = [[DefaultOperationHttpChannel alloc] initWithClient:client state:state failoverManager:manager];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<FailoverManager> manager = mockProtocol(@protocol(FailoverManager));
+    id<KaaDataChannel> channel = [[DefaultOperationHttpChannel alloc] initWithClient:client state:state failoverManager:manager];
     
     XCTAssertEqualObjects(SUPPORTED_TYPES, [channel getSupportedTransportTypes]);
     XCTAssertEqualObjects([TransportProtocolIdHolder HTTPTransportID], [channel getTransportProtocolId]);
@@ -86,28 +83,21 @@ static NSDictionary *SUPPORTED_TYPES;
 }
 
 - (void)testChannelSync {
-    id <KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
-    AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    
-    int32_t five = 5;
-    NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    
-    [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willReturn:data];
+    id<KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
+    AbstractHttpClient *httpClient = [[HttpClientMock alloc] init];
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     
     [KeyUtils generateKeyPair];
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:nil publicKeyRef:nil remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
-    id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
-    id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
+    id<KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
     DefaultOperationHttpChannelFake *channel = [[DefaultOperationHttpChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:2];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
     [channel syncForTransportType:TRANSPORT_TYPE_EVENT];
@@ -125,37 +115,30 @@ static NSDictionary *SUPPORTED_TYPES;
 }
 
 - (void)testShutDown {
-    id <KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
+    id<KaaChannelManager> manager = mockProtocol(@protocol(KaaChannelManager));
     AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    NSException *excption = [[NSException alloc] initWithName:@"Exception" reason:@"Exception raised" userInfo:nil];
-    [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willThrow:excption];
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
     [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
-    id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
-    id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
+    id<KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
     DefaultOperationHttpChannelFake *channel = [[DefaultOperationHttpChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:0];
     [channel setMultiplexer:multiplexer];
     [channel setDemultiplexer:demultiplexer];
     [channel shutdown];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
+    id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
     [channel syncForTransportType:TRANSPORT_TYPE_BOOTSTRAP];
     [channel syncAll];
-    
-    int32_t five = 5;
-    NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
-    [data appendBytes:&five length:sizeof(five)];
 
     [NSThread sleepForTimeInterval:1];
-    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:data];
+    [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:[TestsHelper getData]];
     [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 

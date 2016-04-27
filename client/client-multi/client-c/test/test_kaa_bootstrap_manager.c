@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <string.h>
@@ -36,29 +36,12 @@
 #include "platform/ext_transport_channel.h"
 #include "platform/sock.h"
 
-
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_context_t *context);
-extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                              , kaa_channel_manager_t *channel_manager
-                                              , kaa_logger_t *logger);
-
-extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
-
-extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
-                                                          , kaa_platform_message_reader_t *reader
-                                                          , uint16_t extension_options
-                                                          , size_t extnsion_length);
-
-
+#include "kaa_private.h"
 
 typedef struct {
     kaa_transport_protocol_id_t protocol_info;
     kaa_access_point_t *access_point;
-    kaa_service_t* services;
+    kaa_extension_id* services;
     size_t         services_count;
     kaa_transport_context_t transport_context;
 } test_channel_context_t;
@@ -69,12 +52,12 @@ static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 
-static kaa_service_t SUPPORTED_SERVICES[] = { KAA_SERVICE_PROFILE
-                                            , KAA_SERVICE_USER
-                                            , KAA_SERVICE_EVENT
-                                            , KAA_SERVICE_LOGGING };
+static kaa_extension_id SUPPORTED_SERVICES[] = { KAA_EXTENSION_PROFILE
+                                            , KAA_EXTENSION_USER
+                                            , KAA_EXTENSION_EVENT
+                                            , KAA_EXTENSION_LOGGING };
 
-static size_t SUPPORTED_SERVICES_COUNT = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_service_t);
+static size_t SUPPORTED_SERVICES_COUNT = sizeof(SUPPORTED_SERVICES) / sizeof(kaa_extension_id);
 
 
 
@@ -108,7 +91,7 @@ static kaa_error_t test_get_protocol_info(void *context, kaa_transport_protocol_
 }
 
 static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
+                                             , kaa_extension_id **supported_services
                                              , size_t *service_count)
 {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
@@ -121,7 +104,7 @@ static kaa_error_t test_get_supported_services(void *context
 }
 
 static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
+                                   , const kaa_extension_id services[]
                                    , size_t service_count)
 {
     KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
@@ -142,28 +125,23 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
 
 
 
-void test_create_bootstrap_manager(void)
+void test_create_bootstrap_manager(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
     kaa_bootstrap_manager_t* manager = NULL;
 
-    error_code = kaa_bootstrap_manager_create(NULL, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(NULL, &kaa_context);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_bootstrap_manager_create(&manager, NULL, logger);
+    error_code = kaa_bootstrap_manager_create(&manager, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_bootstrap_manager_create(&manager, channel_manager, NULL);
-    ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = kaa_bootstrap_manager_create(&manager, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(&manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_bootstrap_manager_destroy(manager);
-
-    KAA_TRACE_OUT(logger);
 }
 
 static kaa_access_point_t *create_access_point(void)
@@ -192,15 +170,15 @@ static void destroy_access_point(kaa_access_point_t * access_point)
     }
 }
 
-void test_handle_server_sync(void)
+void test_handle_server_sync(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
     kaa_bootstrap_manager_t *bootstrap_manager = NULL;
 
 
-    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_context.bootstrap_manager = bootstrap_manager;
@@ -211,15 +189,18 @@ void test_handle_server_sync(void)
     kaa_transport_protocol_id_t protocol2 = { 2, 1 };
     kaa_transport_protocol_id_t protocol3 = { 465, 564 };
 
-    test_channel_context_t protocol1_channel_context = { protocol1, NULL, SUPPORTED_SERVICES, SUPPORTED_SERVICES_COUNT };
+    test_channel_context_t protocol1_channel_context = { protocol1, NULL, SUPPORTED_SERVICES,
+                                                         SUPPORTED_SERVICES_COUNT, {NULL} };
     kaa_transport_channel_interface_t protocol1_channel;
     test_create_channel_interface(&protocol1_channel, &protocol1_channel_context);
 
-    test_channel_context_t protocol2_channel_context = { protocol2, NULL, SUPPORTED_SERVICES, SUPPORTED_SERVICES_COUNT };
+    test_channel_context_t protocol2_channel_context = { protocol2, NULL, SUPPORTED_SERVICES,
+                                                         SUPPORTED_SERVICES_COUNT, {NULL} };
     kaa_transport_channel_interface_t protocol2_channel;
     test_create_channel_interface(&protocol2_channel, &protocol2_channel_context);
 
-    test_channel_context_t protocol3_channel_context = { protocol3, NULL, SUPPORTED_SERVICES, SUPPORTED_SERVICES_COUNT };
+    test_channel_context_t protocol3_channel_context = { protocol3, NULL, SUPPORTED_SERVICES,
+                                                         SUPPORTED_SERVICES_COUNT, {NULL} };
     kaa_transport_channel_interface_t protocol3_channel;
     test_create_channel_interface(&protocol3_channel, &protocol3_channel_context);
 
@@ -268,8 +249,8 @@ void test_handle_server_sync(void)
     error_code = kaa_platform_message_writer_create(&writer, server_sync_buffer, server_sync_payload_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    uint16_t network_order_16;
-    uint32_t network_order_32;
+    uint16_t network_order_16 = 0xAEF5;
+    uint32_t network_order_32 = 0xEAFC5370;
 
     // request id
     error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
@@ -367,8 +348,6 @@ void test_handle_server_sync(void)
     kaa_platform_message_writer_destroy(writer);
     kaa_bootstrap_manager_destroy(bootstrap_manager);
     kaa_context.bootstrap_manager = NULL;
-
-    KAA_TRACE_OUT(logger);
 }
 
 
@@ -393,15 +372,15 @@ static kaa_error_t find_bootstrap_access_point_index(kaa_transport_protocol_id_t
     return KAA_ERR_NOT_FOUND;
 }
 
-void test_bootstrap_channel(void)
+void test_bootstrap_channel(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
     kaa_error_t error_code;
     kaa_bootstrap_manager_t *bootstrap_manager = NULL;
 
 
-    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+    error_code = kaa_bootstrap_manager_create(&bootstrap_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_context.bootstrap_manager = bootstrap_manager;
@@ -410,12 +389,13 @@ void test_bootstrap_channel(void)
       * TEST DATA
       */
     size_t index = rand() % KAA_BOOTSTRAP_ACCESS_POINT_COUNT;
-    kaa_service_t bootstrap_service[] = { KAA_SERVICE_BOOTSTRAP };
+    kaa_extension_id bootstrap_service[] = { KAA_EXTENSION_BOOTSTRAP };
 
     test_channel_context_t bootstrap_channel_context = { KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id
                                                        , NULL
                                                        , bootstrap_service
-                                                       , 1 };
+                                                       , 1
+                                                       , {NULL} };
     kaa_transport_channel_interface_t bootstrap_channel;
     test_create_channel_interface(&bootstrap_channel, &bootstrap_channel_context);
 
@@ -497,12 +477,16 @@ int test_deinit(void)
 }
 
 
-
+#if KAA_BOOTSTRAP_ACCESS_POINT > 0
 KAA_SUITE_MAIN(Bootstrap, test_init, test_deinit,
         KAA_TEST_CASE(create_bootstrap_manager, test_create_bootstrap_manager)
         KAA_TEST_CASE(handle_server_sync, test_handle_server_sync)
-#if KAA_BOOTSTRAP_ACCESS_POINT_COUNT > 0
-       KAA_TEST_CASE(test_bootstrap_channel, test_bootstrap_channel)
-#endif
+        KAA_TEST_CASE(test_bootstrap_channel, test_bootstrap_channel)
 )
+#else
+KAA_SUITE_MAIN(Bootstrap, test_init, test_deinit,
+        KAA_TEST_CASE(create_bootstrap_manager, test_create_bootstrap_manager)
+        KAA_TEST_CASE(handle_server_sync, test_handle_server_sync)
+)
+#endif
 

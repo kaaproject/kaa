@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
@@ -31,12 +31,13 @@ public class ConnAck extends MqttFrame {
 
     /**
      * CONNACK return code enum
-     *  ACCEPTED                    0x01    Connection Accepted
-     *  REFUSE_BAD_PROTOCOL         0x02    Connection Refused: unacceptable protocol version
-     *  REFUSE_ID_REJECT            0x03    Connection Refused: identifier rejected
-     *  REFUSE_SERVER_UNAVAILABLE   0x04    Connection Refused: server unavailable
-     *  REFUSE_BAD_CREDENTIALS       0x05    Connection Refused: invalid authentication parameters
-     *  REFUSE_NO_AUTH              0x06    Connection Refused: not authorized
+     *  ACCEPTED                        0x01    Connection Accepted
+     *  REFUSE_BAD_PROTOCOL             0x02    Connection Refused: unacceptable protocol version
+     *  REFUSE_ID_REJECT                0x03    Connection Refused: identifier rejected
+     *  REFUSE_SERVER_UNAVAILABLE       0x04    Connection Refused: server unavailable
+     *  REFUSE_BAD_CREDENTIALS          0x05    Connection Refused: invalid authentication parameters
+     *  REFUSE_NO_AUTH                  0x06    Connection Refused: not authorized
+     *  REFUSE_VERIFICATION_FAILED      0x10    Connection Refused: endpoint verification failed
      */
     public enum ReturnCode {
         ACCEPTED((byte)0x01),
@@ -45,6 +46,7 @@ public class ConnAck extends MqttFrame {
         REFUSE_SERVER_UNAVAILABLE((byte)0x04),
         REFUSE_BAD_CREDENTIALS((byte)0x05),
         REFUSE_NO_AUTH((byte)0x06),
+        REFUSE_VERIFICATION_FAILED((byte) 0x10),
         UNDEFINED((byte)0x07);
 
         private byte returnCode;
@@ -127,6 +129,8 @@ public class ConnAck extends MqttFrame {
             returnCode = ReturnCode.REFUSE_NO_AUTH;
         } else if(code == ReturnCode.REFUSE_SERVER_UNAVAILABLE.getReturnCode()) {
             returnCode = ReturnCode.REFUSE_SERVER_UNAVAILABLE;
+        } else if(code == ReturnCode.REFUSE_VERIFICATION_FAILED.getReturnCode()) {
+            returnCode = ReturnCode.REFUSE_VERIFICATION_FAILED;
         } else {
             returnCode = ReturnCode.UNDEFINED;
         }

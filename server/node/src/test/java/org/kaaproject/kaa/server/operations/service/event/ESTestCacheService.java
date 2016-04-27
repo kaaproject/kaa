@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.event;
@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Set;
 
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -447,5 +448,23 @@ public class ESTestCacheService implements CacheService {
     @Override
     public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
         return null;
+    }
+
+    @Override
+    public String getApplicationIdByAppToken(String appToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ApplicationDto findAppById(String applicationId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void resetAppById(String applicationId) {
+        // TODO Auto-generated method stub
+        
     }
 }

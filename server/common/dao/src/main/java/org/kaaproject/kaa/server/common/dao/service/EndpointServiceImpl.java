@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.service;
@@ -140,21 +140,26 @@ public class EndpointServiceImpl implements EndpointService {
         String appId = endpointGroupDto.getApplicationId();
         if (isValidId(appId)) {
             String id = endpointGroupDto.getId();
-            EndpointGroup group = endpointGroupDao.findByAppIdAndWeight(appId, endpointGroupDto.getWeight());
+            EndpointGroup groupWithSameWeight = endpointGroupDao.findByAppIdAndWeight(appId, endpointGroupDto.getWeight());
+            EndpointGroup groupWithSameName = endpointGroupDao.findByAppIdAndName(appId, endpointGroupDto.getName());
             if (StringUtils.isBlank(id)) {
-                if (group == null) {
+                if (groupWithSameWeight != null) {
+                    throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
+                } else if (groupWithSameName != null) {
+                    throw new IncorrectParameterException("Can't save endpoint group with same name and application id");
+                } else {
                     endpointGroupDto.setCreatedTime(System.currentTimeMillis());
                     savedGroup = getDto(endpointGroupDao.save(new EndpointGroup(endpointGroupDto)));
-                } else {
-                    throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
-                }
+                } 
             } else {
                 EndpointGroup previousGroup = endpointGroupDao.findById(id);
                 if (previousGroup != null) {
-                    if (group != null && !group.getId().equals(previousGroup.getId())) {
+                    if (groupWithSameWeight != null && !groupWithSameWeight.getId().equals(previousGroup.getId())) {
                         throw new IncorrectParameterException("Can't save endpoint group with same weight and application id");
                     } else if (previousGroup.getWeight() == DEFAULT_GROUP_WEIGHT) {
                         throw new IncorrectParameterException("Can't update weight for default endpoint group");
+                    } else if (groupWithSameName != null && !groupWithSameName.getId().equals(previousGroup.getId())) {
+                        throw new IncorrectParameterException("Can't save endpoint group with same name and application id");
                     } else {
                         savedGroup = getDto(endpointGroupDao.save(new EndpointGroup(endpointGroupDto)));
                     }

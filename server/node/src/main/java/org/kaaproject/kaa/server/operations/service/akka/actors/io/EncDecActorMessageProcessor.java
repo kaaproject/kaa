@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
@@ -20,12 +20,22 @@ import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
+import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
+import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsService;
+import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
+import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettySessionResponseMessage;
@@ -41,6 +51,8 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
+import org.kaaproject.kaa.server.transport.EndpointVerificationError;
+import org.kaaproject.kaa.server.transport.EndpointVerificationException;
 import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
@@ -63,6 +75,10 @@ public class EncDecActorMessageProcessor {
 
     private final CacheService cacheService;
 
+    private final CredentialsServiceLocator credentialsServiceLocator;
+    
+    private final RegistrationService registrationService;
+
     private final MessageEncoderDecoder crypt;
 
     private final Map<Integer, PlatformEncDec> platformEncDecMap;
@@ -82,6 +98,8 @@ public class EncDecActorMessageProcessor {
         super();
         this.opsActor = epsActor;
         this.cacheService = context.getCacheService();
+        this.credentialsServiceLocator = context.getCredentialsServiceLocator();
+        this.registrationService = context.getRegistrationService();
         this.supportUnencryptedConnection = context.getSupportUnencryptedConnection();
         this.crypt = new MessageEncoderDecoder(context.getKeyStoreService().getPrivateKey(), context.getKeyStoreService().getPublicKey());
         this.platformEncDecMap = PlatformLookup.initPlatformProtocolMap(platformProtocols);
@@ -96,7 +114,7 @@ public class EncDecActorMessageProcessor {
     void decodeAndForward(ActorContext context, SessionInitMessage message) {
         try {
             sessionInitMeter.mark();
-            processSignedRequest(context, message);
+            processSessionInitRequest(context, message);
         } catch (Exception e) {
             processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
         }
@@ -114,9 +132,9 @@ public class EncDecActorMessageProcessor {
     void encodeAndReply(SessionResponse message) {
         try {
             sessionResponseMeter.mark();
-            if(message.getError() == null){
+            if (message.getError() == null) {
                 processSessionResponse(message);
-            }else{
+            } else {
                 processErrors(message.getChannelContext(), message.getErrorBuilder(), message.getError());
             }
         } catch (Exception e) {
@@ -142,7 +160,8 @@ public class EncDecActorMessageProcessor {
             String sdkToken = getSdkToken(request);
             String appToken = getAppToken(sdkToken);
             SessionInfo sessionInfo = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(), message.isEncrypted());
+                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(),
+                    message.isEncrypted());
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
                     message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
@@ -160,7 +179,7 @@ public class EncDecActorMessageProcessor {
             ServerSync response = buildRedirectionResponse(redirection, request);
             SessionInfo sessionInfo = message.getSessionInfo();
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
-                        message.getErrorBuilder());
+                    message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
             processSessionResponse(responseMessage);
         } catch (Exception e) {
@@ -177,16 +196,17 @@ public class EncDecActorMessageProcessor {
         return response;
     }
 
-    private void processSignedRequest(ActorContext context, SessionInitMessage message) throws GeneralSecurityException,
-            PlatformEncDecException, InvalidSDKTokenException {
+    private void processSessionInitRequest(ActorContext context, SessionInitMessage message)
+            throws GeneralSecurityException, PlatformEncDecException, InvalidSDKTokenException, EndpointVerificationException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
         String sdkToken = getSdkToken(request);
         if (isSDKTokenValid(sdkToken)) {
             String appToken = getAppToken(sdkToken);
+            verifyEndpoint(key, appToken);
             SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken,
-                    message.getKeepAlive(), message.isEncrypted());
+                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(),
+                    message.isEncrypted());
             message.onSessionCreated(session);
             forwardToOpsActor(context, session, request, message);
         } else {
@@ -195,8 +215,64 @@ public class EncDecActorMessageProcessor {
         }
     }
 
-    private void processSessionRequest(ActorContext context, SessionAwareMessage message) throws GeneralSecurityException,
-            PlatformEncDecException, InvalidSDKTokenException {
+    private void verifyEndpoint(EndpointObjectHash key, String appToken) throws EndpointVerificationException {
+        // Credentials id match EP id in current implementation.
+        // We will have two dedicated variables with same value just to
+        // simplify reading of the logic.
+        String credentialsId = Base64Util.encode(key.getData());
+        String endpointId = credentialsId;
+        try {
+            Optional<EndpointRegistrationDto> registrationLookupResult = registrationService
+                    .findEndpointRegistrationByCredentialsId(credentialsId);
+            if (!registrationLookupResult.isPresent()) {
+                String appId = cacheService.getApplicationIdByAppToken(appToken);
+                CredentialsService credentialsService = credentialsServiceLocator.getCredentialsService(appId);
+
+                Optional<CredentialsDto> credentailsLookupResult = credentialsService.lookupCredentials(credentialsId);
+                if (!credentailsLookupResult.isPresent()) {
+                    LOG.info("[{}] Credentials with id: [{}] not found!", appToken, credentialsId);
+                    throw new EndpointVerificationException(EndpointVerificationError.NOT_FOUND, "Credentials not found!");
+                }
+                CredentialsDto credentials = credentailsLookupResult.get();
+                if (credentials.getStatus() == CredentialsStatus.REVOKED) {
+                    LOG.info("[{}] Credentials with id: [{}] was already revoked!", appToken, credentialsId);
+                    throw new EndpointVerificationException(EndpointVerificationError.REVOKED, "Credentials was revoked!");
+                } else if (credentials.getStatus() == CredentialsStatus.IN_USE) {
+                    LOG.info("[{}] Credentials with id: [{}] are already in use!", appToken, credentialsId);
+                    throw new EndpointVerificationException(EndpointVerificationError.IN_USE, "Credentials are already in use!");
+                } else {
+                    credentialsService.markCredentialsInUse(credentialsId);
+                    EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto();
+                    endpointRegistration.setApplicationId(appId);
+                    endpointRegistration.setCredentialsId(credentialsId);
+                    endpointRegistration.setEndpointId(endpointId);
+                    registrationService.saveEndpointRegistration(endpointRegistration);
+                }
+            } else {
+                EndpointRegistrationDto endpointRegistration = registrationLookupResult.get();
+                if (endpointRegistration.getEndpointId() == null) {
+                    String appId = cacheService.getApplicationIdByAppToken(appToken);
+                    CredentialsService credentialsService = credentialsServiceLocator.getCredentialsService(appId);
+                    credentialsService.markCredentialsInUse(credentialsId);
+                    endpointRegistration.setEndpointId(endpointId);
+                    registrationService.saveEndpointRegistration(endpointRegistration);
+                } else if (!endpointId.equals(endpointRegistration.getEndpointId())) {
+                    LOG.info("[{}] Credentials with id: [{}] are already in use!", appToken, credentialsId);
+                    throw new EndpointVerificationException(EndpointVerificationError.IN_USE, "Credentials are already in use!");
+                }
+            }
+            LOG.debug("[{}] Succesfully validated endpoint information: [{}]", appToken, credentialsId);
+        } catch (CredentialsServiceException e) {
+            LOG.info("[{}] Failed to lookup credentials info with id: [{}]", appToken, credentialsId, e);
+            throw new RuntimeException(e);
+        } catch (EndpointRegistrationServiceException e) {
+            LOG.info("[{}] Failed to lookup registration info with id: [{}]", appToken, credentialsId, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void processSessionRequest(ActorContext context, SessionAwareMessage message)
+            throws GeneralSecurityException, PlatformEncDecException, InvalidSDKTokenException {
         ClientSync request = decodeRequest(message);
         if (isSDKTokenValid(message.getSessionInfo().getSdkToken())) {
             forwardToOpsActor(context, message.getSessionInfo(), request, message);

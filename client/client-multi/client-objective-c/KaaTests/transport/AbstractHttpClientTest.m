@@ -1,51 +1,22 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import <XCTest/XCTest.h>
-#import "AbstractHttpClient.h"
 #import <Foundation/Foundation.h>
-#import "KeyUtils.h"
-#import "KeyPair.h"
-#import "MessageEncoderDecoder.h"
-
-@interface TestHttpClient : AbstractHttpClient
-
-@end
-
-
-
-@implementation TestHttpClient
-
-- (NSData *)executeHttpRequest:(NSString *)uri entity:(NSDictionary *)entity verifyResponse:(BOOL)verifyResponse {
-    return nil;
-}
-
-- (void)close {
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"%@ NSException raised in close method.", NSStringFromClass([self class])] userInfo:nil];
-}
-
-- (void)abort {
-}
-
-- (BOOL)canAbort {
-    return FALSE;
-}
-
-@end
-
+#import "TestsHelper.h"
 
 @interface AbstractHttpClientTest : XCTestCase
 
@@ -76,7 +47,7 @@
 }
 
 - (void)testDisableVerification {
-    TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:nil publicKeyRef:nil remoteKeyRef:nil];
+    HttpClientMock *client = [[HttpClientMock alloc] initWithURLString:@"test_url" privateKeyRef:nil publicKeyRef:nil remoteKeyRef:nil];
     [client disableVerification];
     int a = 1; int b = 2; int c = 3;
     NSMutableData *body = [NSMutableData data];
@@ -89,7 +60,7 @@
 }
 
 - (void)testSignature {
-    TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
+    HttpClientMock *client = [[HttpClientMock alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
     
     MessageEncoderDecoder *serverEncoder = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     
@@ -106,7 +77,7 @@
 - (void)testVerifyResponseFailure {
     
     @try {
-        TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
+        HttpClientMock *client = [[HttpClientMock alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
         
         int a = 1; int b = 2; int c = 3;
         NSMutableData *body = [NSMutableData data];

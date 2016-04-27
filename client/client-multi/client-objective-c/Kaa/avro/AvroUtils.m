@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "AvroUtils.h"
@@ -35,7 +35,7 @@
         n >>= 7;
     }
     len++;
-    return len;
+    return (size_t)len;
 }
 
 - (size_t)getStringSize:(NSString *)data {
@@ -63,7 +63,7 @@
     char *buffer;
     int64_t size;
     avro_binary_encoding.read_bytes(reader, &buffer, &size);
-    return [NSData dataWithBytes:buffer length:size];
+    return [NSData dataWithBytes:buffer length:(NSUInteger)size];
 }
 
 - (void)serializeBytes:(NSData *)data to:(avro_writer_t)writer {
@@ -217,7 +217,7 @@
                        target:(id)target {
     int64_t size;
     avro_binary_encoding.read_long(reader, &size);
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:size];
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:(NSUInteger)size];
     if (size != 0 && [(target ? target : self) respondsToSelector:deserializeFunc]) {
         if (size < 0) {
             int64_t temp;

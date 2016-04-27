@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
@@ -25,6 +25,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -1287,6 +1288,17 @@ public class DataSource {
                 });
     }
 
+    public void sendUnicastNotification(
+            NotificationDto notification, String endpointKeyHash, RecordField notificationData,
+            final AsyncCallback<EndpointNotificationDto> callback) {
+        rpcService.sendUnicastNotification(notification, endpointKeyHash, notificationData,
+                new DataCallback<EndpointNotificationDto>(callback) {
+                    @Override
+                    protected void onResult(EndpointNotificationDto result) {
+                    }
+                });
+    }
+
     public void loadLogAppenders(String applicationId,
             final AsyncCallback<List<LogAppenderDto>> callback) {
         rpcService.getLogAppendersByApplicationId(applicationId,
@@ -1509,6 +1521,14 @@ public class DataSource {
         rpcService.getSdkProfilesByApplicationId(applicationId, new DataCallback<List<SdkProfileDto>>(callback) {
             @Override
             protected void onResult(List<SdkProfileDto> result) {
+            }
+        });
+    }
+
+    public void getCredentialsServiceNames(final AsyncCallback<List<String>> callback) {
+        rpcService.getCredentialsServiceNames(new DataCallback<List<String>>(callback) {
+            @Override
+            protected void onResult(List<String> result) {
             }
         });
     }

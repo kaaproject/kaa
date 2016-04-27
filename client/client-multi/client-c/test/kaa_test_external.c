@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <string.h>
@@ -28,12 +28,15 @@ static const char test_ep_key[20] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9
 
 void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 }
 
 void ext_status_store(const char *buffer, size_t buffer_size)
 {
-
+    (void)buffer;
+    (void)buffer_size;
 }
 
 void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
@@ -51,11 +54,13 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
 
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
 }
 
 void ext_configuration_store(const char *buffer, size_t buffer_size)
 {
-
+    (void)buffer;
+    (void)buffer_size;
 }
-

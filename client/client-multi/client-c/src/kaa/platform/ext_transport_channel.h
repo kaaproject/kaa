@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef EXT_TRANSPORT_CHANNEL_H_
@@ -28,7 +28,7 @@ extern "C" {
 
 
 /**
- * @brief Uses to initialize transport channel implementation with Kaa specific
+ * @brief Used to initialize transport channel implementation with Kaa specific
  * transport context.
  */
 typedef struct {
@@ -53,7 +53,7 @@ typedef kaa_error_t (*kaa_init_channel_fn)(void *channel_context
 /**
  * @brief Sets transport connection data.
  *
- * @b NOTE: Copy connection data for the local usage.
+ * @note Copy connection data for the local usage.
  *
  * @param[in]   channel_context    Channel context.
  * @param[in]   access_point       Connection data used to establish connection
@@ -70,7 +70,7 @@ typedef kaa_error_t (*kaa_set_access_point_fn)(void *channel_context
  * @brief Retrieves a transport protocol id supported by a transport channel implementation.
  *
  * @param[in]       context          Channel context.
- * @param[in,out]   protocol_info    Transport protocol id instance to be filled in.
+ * @param[out]      protocol_info    Transport protocol id instance to be filled in.
  * @return                           Error code.
  *
  * @see kaa_transport_protocol_id_t
@@ -84,15 +84,15 @@ typedef kaa_error_t (*kaa_get_protocol_id_fn)(void *context
  * @brief Retrieves the list of the supported services.
  *
  * @param[in]       context               Channel context.
- * @param[in,out]   supported_services    List of the supported services.
- * @param[in,out]   service_count         Number of the supported services.
+ * @param[out]      supported_services    List of the supported services.
+ * @param[out]      service_count         Number of the supported services.
  * @return                                Error code.
  *
- * @see kaa_service_t
+ * @see kaa_extension_id
  */
-typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
-                                                   , kaa_service_t **supported_services
-                                                   , size_t *service_count);
+typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context,
+        const kaa_extension_id **supported_services,
+        size_t *service_count);
 
 
 
@@ -104,10 +104,10 @@ typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
  * @param[in]   service_count    Number of services.
  * @return                       Error code.
  *
- * @see kaa_service_t
+ * @see kaa_extension_id
  */
 typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
-                                         , const kaa_service_t services[]
+                                         , const kaa_extension_id services[]
                                          , size_t service_count);
 
 

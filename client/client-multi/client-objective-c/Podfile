@@ -1,9 +1,10 @@
 # Uncomment this line to define a global platform for your project
 # platform :ios, '6.0'
 
-target 'libKaa.a' do
+target 'Kaa' do
   pod 'CocoaLumberjack'
-  pod 'AFNetworking', '~> 1.x'
+  pod 'AFNetworking', '~> 3.x'
+  pod 'sqlite3', :inhibit_warnings => true
 end
 
 target :KaaTests, :exclusive => true do

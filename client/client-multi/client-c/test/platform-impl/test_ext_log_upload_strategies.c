@@ -1,18 +1,20 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+#include "kaa_private.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -30,20 +32,6 @@
 #include "platform/ext_log_upload_strategy.h"
 
 #include "platform-impl/common/ext_log_upload_strategies.h"
-
-
-
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_context_t *context);
-extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
-
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                              , kaa_channel_manager_t *channel_manager
-                                              , kaa_logger_t *logger);
-
-extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
-
-
 
 typedef struct {
     uint8_t type;
@@ -76,14 +64,15 @@ size_t ext_log_storage_get_records_count(const void *context)
 }
 
 
-void test_create_strategy(void)
+void test_create_strategy(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
+    (void)state;
 
-    kaa_error_t error_code = KAA_ERR_NONE;
     void *tmp_strategy = NULL;
 
-    error_code = ext_log_upload_strategy_create(&kaa_context, NULL, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
+    kaa_error_t error_code = ext_log_upload_strategy_create(&kaa_context, NULL,
+            KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_create(NULL, &tmp_strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
@@ -97,49 +86,44 @@ void test_create_strategy(void)
     ASSERT_NOT_NULL(tmp_strategy);
 
     ext_log_upload_strategy_destroy(tmp_strategy);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_set_upload_timeout(void)
+void test_set_upload_timeout(void **state)
 {
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
+    (void)state;
+    (void)state;
 
     size_t DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
 
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
+    kaa_error_t error_code = ext_log_upload_strategy_change_strategy(strategy,
+            KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_set_upload_timeout(strategy, DEFAULT_UPLOAD_TIMEOUT);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(ext_log_upload_strategy_get_timeout(strategy), DEFAULT_UPLOAD_TIMEOUT);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_volume(void)
+void test_upload_decision_by_volume(void **state)
 {
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
+    (void)state;
 
     size_t DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
 
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_BY_STORAGE_SIZE);
+    kaa_error_t error_code = ext_log_upload_strategy_change_strategy(strategy,
+            KAA_LOG_UPLOAD_BY_STORAGE_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_set_threshold_volume(strategy, DEFAULT_UPLOAD_VOLUME_THRESHOLD);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     test_log_storage_context_t log_storage_context;
-    ext_log_upload_decision_t upload_decision = NOOP;
 
     log_storage_context.total_size = DEFAULT_UPLOAD_VOLUME_THRESHOLD - 1;
     log_storage_context.record_count = 0;
-    upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
+    ext_log_upload_decision_t upload_decision = ext_log_upload_strategy_decide(strategy,
+            &log_storage_context);
     ASSERT_EQUAL(upload_decision, NOOP);
 
     log_storage_context.total_size = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
@@ -151,30 +135,26 @@ void test_upload_decision_by_volume(void)
     log_storage_context.record_count = 0;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_count(void)
+void test_upload_decision_by_count(void **state)
 {
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
+    (void)state;
 
     size_t DEFAULT_UPLOAD_COUNT_THRESHOLD  = 64;
 
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_BY_RECORD_COUNT);
+    kaa_error_t error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_BY_RECORD_COUNT);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_set_threshold_count(strategy, DEFAULT_UPLOAD_COUNT_THRESHOLD);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     test_log_storage_context_t log_storage_context;
-    ext_log_upload_decision_t upload_decision = NOOP;
 
     log_storage_context.total_size = 0;
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD - 1;
-    upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
+    ext_log_upload_decision_t upload_decision = ext_log_upload_strategy_decide(strategy,
+            &log_storage_context);
     ASSERT_EQUAL(upload_decision, NOOP);
 
     log_storage_context.total_size = 0;
@@ -186,53 +166,47 @@ void test_upload_decision_by_count(void)
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD + 1;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_timeout(void)
+void test_upload_decision_by_timeout(void **state)
 {
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
+    (void)state;
 
     size_t DEFAULT_UPLOAD_TIMEOUT_THRESHOLD  = 1;// in sec.
 
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_BY_TIMEOUT_STRATEGY);
+    kaa_error_t error_code = ext_log_upload_strategy_change_strategy(strategy,
+            KAA_LOG_UPLOAD_BY_TIMEOUT_STRATEGY);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_set_upload_timeout(strategy, DEFAULT_UPLOAD_TIMEOUT_THRESHOLD);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     test_log_storage_context_t log_storage_context;
-    ext_log_upload_decision_t upload_decision = NOOP;
 
     log_storage_context.total_size = 0;
     log_storage_context.record_count = 0;
     log_storage_context.upload_timeout = DEFAULT_UPLOAD_TIMEOUT_THRESHOLD;
-    upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
+    ext_log_upload_decision_t upload_decision = ext_log_upload_strategy_decide(strategy,
+            &log_storage_context);
     ASSERT_EQUAL(upload_decision, NOOP);
 
     log_storage_context.upload_timeout = DEFAULT_UPLOAD_TIMEOUT_THRESHOLD + 1;
 
-    usleep(1000 * 1000);
+    sleep(DEFAULT_UPLOAD_TIMEOUT_THRESHOLD);
 
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_noop_decision_on_failure(void)
+void test_noop_decision_on_failure(void **state)
 {
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
+    (void)state;
 
     size_t DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
     size_t DEFAULT_UPLOAD_COUNT_THRESHOLD  = 64;
 
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
+    kaa_error_t error_code = ext_log_upload_strategy_change_strategy(strategy,
+            KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_set_threshold_volume(strategy, DEFAULT_UPLOAD_VOLUME_THRESHOLD);
@@ -247,27 +221,24 @@ void test_noop_decision_on_failure(void)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     test_log_storage_context_t log_storage_context;
-    ext_log_upload_decision_t upload_decision = NOOP;
 
     log_storage_context.total_size = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-    upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
+    ext_log_upload_decision_t upload_decision = ext_log_upload_strategy_decide(strategy,
+            &log_storage_context);
     ASSERT_EQUAL(upload_decision, NOOP);
-
-    KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_on_failure(void)
+void test_upload_decision_on_failure(void **state)
 {
-    KAA_TRACE_IN(logger);
+    (void)state;
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
-    size_t DEFAULT_RETRY_PERIOD            = 2;
+    size_t DEFAULT_RETRY_PERIOD = 1;
     size_t DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
     size_t DEFAULT_UPLOAD_COUNT_THRESHOLD  = 64;
 
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
+    kaa_error_t error_code = ext_log_upload_strategy_change_strategy(strategy,
+            KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = ext_log_upload_strategy_set_threshold_volume(strategy, DEFAULT_UPLOAD_VOLUME_THRESHOLD);
@@ -281,11 +252,11 @@ void test_upload_decision_on_failure(void)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     test_log_storage_context_t log_storage_context;
-    ext_log_upload_decision_t upload_decision = NOOP;
 
     log_storage_context.total_size = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-    upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
+    ext_log_upload_decision_t upload_decision = ext_log_upload_strategy_decide(strategy,
+            &log_storage_context);
     ASSERT_EQUAL(upload_decision, NOOP);
 
     sleep(DEFAULT_RETRY_PERIOD);
@@ -294,8 +265,6 @@ void test_upload_decision_on_failure(void)
     log_storage_context.record_count = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     upload_decision = ext_log_upload_strategy_decide(strategy, &log_storage_context);
     ASSERT_EQUAL(upload_decision, UPLOAD);
-
-    KAA_TRACE_OUT(logger);
 }
 
 int test_init(void)
@@ -313,17 +282,13 @@ int test_init(void)
     }
     kaa_context.channel_manager = channel_manager;
 
-    error = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+    error = kaa_bootstrap_manager_create(&bootstrap_manager, &kaa_context);
     if (error || !bootstrap_manager) {
         return error;
     }
     kaa_context.bootstrap_manager = bootstrap_manager;
 
-    error = ext_log_upload_strategy_create(&kaa_context, &strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    if(error)
-        return error;
-
-    return 0;
+    return ext_log_upload_strategy_create(&kaa_context, &strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
 }
 
 int test_deinit(void)

@@ -1,24 +1,30 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -26,6 +32,12 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 public class MongoDaoUtil {
 
     private MongoDaoUtil() {
+    }
+
+    private static final BiMap<Character, Character> RESERVED_CHARACTERS = HashBiMap.create();
+    static {
+        RESERVED_CHARACTERS.put('.', (char) 0xFF0E);
+        RESERVED_CHARACTERS.put('$', (char) 0xFF04);
     }
 
     /**
@@ -85,5 +97,59 @@ public class MongoDaoUtil {
             }
         }
         return notifications;
+    }
+
+    /**
+     * Specific method for recursive substitute the reserved $ and . characters in the key names of the DBObject.
+     * @param profileBody the profileBody
+     * @return encoded DBObject
+     */
+    public static DBObject encodeReservedCharacteres(DBObject profileBody) {
+        if (profileBody == null) {
+            return null;
+        }
+        Set<String> keySet = profileBody.keySet();
+        DBObject modifiedNode = new BasicDBObject();
+        if (keySet != null) {
+            for (String key : keySet) {
+                Object value = profileBody.get(key);
+                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
+                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
+                }
+                if(value instanceof DBObject) {
+                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
+                } else {
+                    modifiedNode.put(key, value);
+                }
+            }
+        }
+        return modifiedNode;
+    }
+
+    /**
+     * Specific method for recursive decoding the reserved $ and . characters in the key names of the DBObject.
+     * @param profileBody the profileBody
+     * @return decoded DBObject
+     */
+    public static String decodeReservedCharacteres(DBObject profileBody) {
+        if (profileBody == null) {
+            return "";
+        }
+        Set<String> keySet = profileBody.keySet();
+        DBObject modifiedNode = new BasicDBObject();
+        if (keySet != null) {
+            for (String key : keySet) {
+                Object value = profileBody.get(key);
+                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
+                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
+                }
+                if(value instanceof DBObject) {
+                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
+                } else {
+                    modifiedNode.put(key, value);
+                }
+            }
+        }
+        return modifiedNode != null ? modifiedNode.toString() : "";
     }
 }
