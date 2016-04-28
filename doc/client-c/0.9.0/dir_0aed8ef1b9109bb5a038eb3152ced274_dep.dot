@@ -1,0 +1,16 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src/kaa/platform-impl/posix" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_fc67601a334e257613cafc7e4a706286 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="platform-impl" fontname="FreeSans", fontsize="10", URL="dir_fc67601a334e257613cafc7e4a706286.html"]
+  dir_0aed8ef1b9109bb5a038eb3152ced274 [shape=box, label="posix", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_0aed8ef1b9109bb5a038eb3152ced274.html"];
+  }
+  dir_5931e5bafe2a658ec1ca5220ea8dd358 [shape=box label="common" URL="dir_5931e5bafe2a658ec1ca5220ea8dd358.html"];
+  dir_f5578be942770e4acff3bf1f5dec02cc [shape=box label="platform" URL="dir_f5578be942770e4acff3bf1f5dec02cc.html"];
+  dir_5931e5bafe2a658ec1ca5220ea8dd358->dir_f5578be942770e4acff3bf1f5dec02cc [headlabel="4", labeldistance=1.5 headhref="dir_000017_000010.html"];
+  dir_f5578be942770e4acff3bf1f5dec02cc->dir_0aed8ef1b9109bb5a038eb3152ced274 [headlabel="7", labeldistance=1.5 headhref="dir_000010_000021.html"];
+  dir_0aed8ef1b9109bb5a038eb3152ced274->dir_5931e5bafe2a658ec1ca5220ea8dd358 [headlabel="1", labeldistance=1.5 headhref="dir_000021_000017.html"];
+  dir_0aed8ef1b9109bb5a038eb3152ced274->dir_f5578be942770e4acff3bf1f5dec02cc [headlabel="5", labeldistance=1.5 headhref="dir_000021_000010.html"];
+}

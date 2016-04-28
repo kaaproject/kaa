@@ -1,0 +1,9 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src/kaa/platform-impl/esp8266/esp8266_sock.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l-impl/esp8266/esp8266_sock.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="lwip/lwip/sockets.h",height=0.2,width=0.4,color="grey75"];
+}

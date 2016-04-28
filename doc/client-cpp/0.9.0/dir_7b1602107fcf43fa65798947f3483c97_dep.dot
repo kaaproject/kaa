@@ -1,0 +1,19 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_9_0/client/client-multi/client-cpp/kaa/event" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_951d4cf453dead4176aaa049a84f3db0 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_951d4cf453dead4176aaa049a84f3db0.html"]
+  subgraph clusterdir_7b1602107fcf43fa65798947f3483c97 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_7b1602107fcf43fa65798947f3483c97.html"];
+    dir_7b1602107fcf43fa65798947f3483c97 [shape=plaintext label="event"];
+    dir_c2a11c9963401a03e10c0f4bacb73494 [shape=box label="registration" color="black" fillcolor="white" style="filled" URL="dir_c2a11c9963401a03e10c0f4bacb73494.html"];
+  }
+  }
+  dir_0b95a1a84a1907e4dad96edce31fbd32 [shape=box label="transact" URL="dir_0b95a1a84a1907e4dad96edce31fbd32.html"];
+  dir_395e806c1408165f3bc42cd821277ec8 [shape=box label="channel" color="red" URL="dir_395e806c1408165f3bc42cd821277ec8.html"];
+  dir_c2a11c9963401a03e10c0f4bacb73494->dir_395e806c1408165f3bc42cd821277ec8 [headlabel="2", labeldistance=1.5 headhref="dir_000021_000010.html"];
+  dir_7b1602107fcf43fa65798947f3483c97->dir_0b95a1a84a1907e4dad96edce31fbd32 [headlabel="2", labeldistance=1.5 headhref="dir_000020_000032.html"];
+  dir_7b1602107fcf43fa65798947f3483c97->dir_395e806c1408165f3bc42cd821277ec8 [headlabel="4", labeldistance=1.5 headhref="dir_000020_000010.html"];
+}

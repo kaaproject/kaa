@@ -1,0 +1,12 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src/kaa/kaa_protocols/kaa_tcp" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_c84a9f932eec344cc60e6fbc188d6659 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa_protocols" fontname="FreeSans", fontsize="10", URL="dir_c84a9f932eec344cc60e6fbc188d6659.html"]
+  dir_52923317cd2e4ccd36181cfa84f2fd8f [shape=box, label="kaa_tcp", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_52923317cd2e4ccd36181cfa84f2fd8f.html"];
+  }
+  dir_f5578be942770e4acff3bf1f5dec02cc [shape=box label="platform" URL="dir_f5578be942770e4acff3bf1f5dec02cc.html"];
+  dir_52923317cd2e4ccd36181cfa84f2fd8f->dir_f5578be942770e4acff3bf1f5dec02cc [headlabel="1", labeldistance=1.5 headhref="dir_000014_000010.html"];
+}

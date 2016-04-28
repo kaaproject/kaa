@@ -1,0 +1,14 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_65979d235be991a5015bba6c8281053c {
+    graph [ bgcolor="#ddddee", pencolor="black", label="client-c" fontname="FreeSans", fontsize="10", URL="dir_65979d235be991a5015bba6c8281053c.html"]
+  subgraph clusterdir_a440b212f89233653f549688dd52ab2e {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_a440b212f89233653f549688dd52ab2e.html"];
+    dir_a440b212f89233653f549688dd52ab2e [shape=plaintext label="src"];
+    dir_fab121e2619aa34fc31de4462f6e84e8 [shape=box label="kaa" color="red" fillcolor="white" style="filled" URL="dir_fab121e2619aa34fc31de4462f6e84e8.html"];
+  }
+  }
+}

@@ -1,0 +1,14 @@
+digraph "/data/git" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_7b555189eda6378f1d04c5207486d2fc {
+    graph [ bgcolor="#ddddee", pencolor="black", label="data" fontname="FreeSans", fontsize="10", URL="dir_7b555189eda6378f1d04c5207486d2fc.html"]
+  subgraph clusterdir_bb75404fad894629d1f60761f83ed3f6 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_bb75404fad894629d1f60761f83ed3f6.html"];
+    dir_bb75404fad894629d1f60761f83ed3f6 [shape=plaintext label="git"];
+    dir_75a97b331b52705b2b0d7a1bbfe8d803 [shape=box label="kaa_github" color="red" fillcolor="white" style="filled" URL="dir_75a97b331b52705b2b0d7a1bbfe8d803.html"];
+  }
+  }
+}

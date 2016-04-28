@@ -1,0 +1,16 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src/kaa/platform-impl/Econais" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_fc67601a334e257613cafc7e4a706286 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="platform-impl" fontname="FreeSans", fontsize="10", URL="dir_fc67601a334e257613cafc7e4a706286.html"]
+  subgraph clusterdir_1f5f8978a7bbf46c516e051a54869863 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_1f5f8978a7bbf46c516e051a54869863.html"];
+    dir_1f5f8978a7bbf46c516e051a54869863 [shape=plaintext label="Econais"];
+    dir_0ed1ccb1eb3c583a4babbc1d276527fc [shape=box label="EC19D" color="black" fillcolor="white" style="filled" URL="dir_0ed1ccb1eb3c583a4babbc1d276527fc.html"];
+  }
+  }
+  dir_f5578be942770e4acff3bf1f5dec02cc [shape=box label="platform" URL="dir_f5578be942770e4acff3bf1f5dec02cc.html"];
+  dir_0ed1ccb1eb3c583a4babbc1d276527fc->dir_f5578be942770e4acff3bf1f5dec02cc [headlabel="1", labeldistance=1.5 headhref="dir_000019_000010.html"];
+}

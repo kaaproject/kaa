@@ -1,0 +1,11 @@
+digraph "/data" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_7b555189eda6378f1d04c5207486d2fc {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_7b555189eda6378f1d04c5207486d2fc.html"];
+    dir_7b555189eda6378f1d04c5207486d2fc [shape=plaintext label="data"];
+    dir_bb75404fad894629d1f60761f83ed3f6 [shape=box label="git" color="red" fillcolor="white" style="filled" URL="dir_bb75404fad894629d1f60761f83ed3f6.html"];
+  }
+}

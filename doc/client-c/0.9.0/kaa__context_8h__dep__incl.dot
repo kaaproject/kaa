@@ -1,0 +1,25 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src/kaa/kaa_context.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/kaa\l_context.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/kaa.h",height=0.2,width=0.4,color="black",URL="$kaa_8h.html",tooltip="Kaa C endpoint library. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/kaa\l_platform_protocol.h",height=0.2,width=0.4,color="black",URL="$kaa__platform__protocol_8h.html",tooltip="Kaa binary platform level protocol implementation (org.kaaproject.protocol.platform.binary). "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l/ext_transport_channel.h",height=0.2,width=0.4,color="black",URL="$ext__transport__channel_8h.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/kaa\l_channel_manager.h",height=0.2,width=0.4,color="black",URL="$kaa__channel__manager_8h.html",tooltip="User defined channels manager for Kaa C SDK. "];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/kaa\l_private.h",height=0.2,width=0.4,color="black",URL="$kaa__private_8h.html"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/kaa\l_extension_private.h",height=0.2,width=0.4,color="black",URL="$kaa__extension__private_8h.html"];
+  Node4 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l-impl/common/kaa_tcp_channel.h",height=0.2,width=0.4,color="black",URL="$kaa__tcp__channel_8h.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l/kaa_client.h",height=0.2,width=0.4,color="black",URL="$kaa__client_8h.html"];
+  Node9 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

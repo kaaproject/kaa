@@ -1,0 +1,11 @@
+digraph "/data/git/kaa_github/client/client-multi/client-c/src/kaa/platform/sock.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l/sock.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l/ext_tcp_utils.h",height=0.2,width=0.4,color="black",URL="$ext__tcp__utils_8h.html",tooltip="External interface for socket manipulations used by Kaa transport channel implementations. "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/data/git/kaa_github\l/client/client-multi\l/client-c/src/kaa/platform\l-impl/common/kaa_tcp_channel.h",height=0.2,width=0.4,color="black",URL="$kaa__tcp__channel_8h.html"];
+}
