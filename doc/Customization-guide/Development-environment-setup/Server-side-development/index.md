@@ -34,9 +34,9 @@ sort_idx: 10
   - [User verifier descriptor](#user-verifier-descriptor)
   - [User verifier provisioning](#user-verifier-provisioning)
 
-  This guide explains how to create your own versions of such Kaa entities as transports, log appenders, and user verifiers. Kaa supports various kinds of customization to provide you with maximum flexibility and freedom of choice for your particular project needs.
+This guide explains how to create your own versions of such Kaa entities as transports, log appenders, and user verifiers. Kaa supports various kinds of customization to provide you with maximum flexibility and freedom of choice for your particular project needs.
 
-  In order for the guide to be useful, make sure that you have a development environment set up, including a Kaa server instance. We recommend that you use Kaa Sandbox with this guide, but you can use a Kaa cluster instead, if you like.
+In order for the guide to be useful, make sure that you have a development environment set up, including a Kaa server instance. We recommend that you use Kaa Sandbox with this guide, but you can use a Kaa cluster instead, if you like.
 
 # Creating custom log appender
 
