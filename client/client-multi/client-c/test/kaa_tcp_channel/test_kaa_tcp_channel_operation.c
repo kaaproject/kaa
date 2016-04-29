@@ -1,23 +1,24 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
  * @file test_kaa_tcp_channel_operation.c
  */
 
+#define _POSIX_C_SOURCE 200112L
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -32,6 +33,7 @@
 #include "platform/ext_tcp_utils.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
+#include <kaa_common.h>
 
 #define ACCESS_POINT_SOCKET_FD 5
 
@@ -70,27 +72,27 @@ static void reset_access_point_test_info()
 
 static kaa_logger_t *logger = NULL;
 
-static char CONNACK[] = {0x20, 0x02, 0x00, 0x01};
+static uint8_t CONNACK[] = {0x20, 0x02, 0x00, 0x01};
 
-static char DISCONNECT_NONE[] = {0xE0, 0x02, 0x00, 0x00};
+static uint8_t DISCONNECT_NONE[] = {0xE0, 0x02, 0x00, 0x00};
 
-static char KAASYNC_OP_SERV[] = {0xf0, 0x0e, 0x00, 0x06, 'K', 'a','a','t','c','p',
+static uint8_t KAASYNC_OP_SERV[] = {0xf0, 0x0e, 0x00, 0x06, 'K', 'a','a','t','c','p',
                                  0x01, 0x00, 0x00, 0x11, 0x34, 0x45};
 
-static char KAASYNC_OP[] = {0xF0, 0x13, 0x00, 0x06, 'K', 'a','a','t','c','p',
+static uint8_t KAASYNC_OP[] = {0xF0, 0x13, 0x00, 0x06, 'K', 'a','a','t','c','p',
                                    0x01, 0x00, 0x01, 0x10, 'K', 'a','a','t','c','p', 0x00};
 
 static char *KAASYNC_OP_MESSAGE = "Kaatcp";
 
-static char DISCONNECT_MESSAGE[] = {0xE0, 0x02, 0x00, 0x00};
+static uint8_t DISCONNECT_MESSAGE[] = {0xE0, 0x02, 0x00, 0x00};
 
-static char CONNECT_HEAD[] = {0x35, 0x46};
-static char CONNECT_PACK[] = {0x34, 0x45};
+static uint8_t CONNECT_HEAD[] = {0x35, 0x46};
+static uint8_t CONNECT_PACK[] = {0x34, 0x45};
 
-static char DESTINATION_SOCKADDR[]   = {0x02, 0x00, 0x26, 0xa0, 0xc0, 0xa8, 0x4d, 0x02,
+static uint8_t DESTINATION_SOCKADDR[]   = {0x02, 0x00, 0x26, 0xa0, 0xc0, 0xa8, 0x4d, 0x02,
                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-static char CONNECTION_DATA[]   = { 0x00, 0x00, 0x01, 0x26, 0x30, 0x82, 0x01, 0x22,
+static uint8_t CONNECTION_DATA[]   = { 0x00, 0x00, 0x01, 0x26, 0x30, 0x82, 0x01, 0x22,
                                     0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86,
                                     0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00, 0x03,
                                     0x82, 0x01, 0x0F, 0x00, 0x30, 0x82, 0x01, 0x0A,
@@ -557,10 +559,12 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
+    assert_int_equal(KAA_ERR_NONE, error_code);
+
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
     access_point.id = 10;
-    access_point.connection_data = CONNECTION_DATA;
+    access_point.connection_data = (char *)CONNECTION_DATA;
     access_point.connection_data_len = sizeof(CONNECTION_DATA);
 
     reset_access_point_test_info();
@@ -593,6 +597,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                                                        , kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type)
 {
+    (void)self;
     ASSERT_EQUAL(protocol_id->id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_id->version, 1);
     ASSERT_EQUAL(type, KAA_SERVER_OPERATIONS);
@@ -602,6 +607,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
 kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
 {
+    (void)context;
     if (fd != access_point_test_info.fd) {
         return KAA_ERR_BADPARAM;
     }
@@ -704,6 +710,8 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , const char *buffer
                                                     , size_t buffer_size)
 {
+    (void)self;
+    (void)buffer_size;
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_BADPARAM);
 
     if (!memcmp(buffer, KAASYNC_OP_MESSAGE, strlen(KAASYNC_OP_MESSAGE))) {
@@ -713,27 +721,23 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     return KAA_ERR_BADPARAM;
 }
 
-kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
-                                                      , const kaa_serialize_info_t *info
-                                                      , char **buffer
-                                                      , size_t *buffer_size)
+kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
+        const extension_id *services, size_t services_count,
+        char **buffer, size_t *buffer_size)
 {
 
-    if (info->services_count == 4
-            && info->services[0] == KAA_EXTENSION_PROFILE
-            && info->services[1] == KAA_EXTENSION_USER
-            && info->services[2] == KAA_EXTENSION_EVENT
-            && info->services[3] == KAA_EXTENSION_LOGGING) {
-        if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
-            if (alloc_buffer) {
-                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-                *buffer = alloc_buffer;
-                *buffer_size = sizeof(CONNECT_PACK);
-                return KAA_ERR_NONE;
-            }
+    if (services_count == 4
+            && services[0] == KAA_EXTENSION_PROFILE
+            && services[1] == KAA_EXTENSION_USER
+            && services[2] == KAA_EXTENSION_EVENT
+            && services[3] == KAA_EXTENSION_LOGGING) {
+        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+        if (alloc_buffer) {
+            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+            *buffer = alloc_buffer;
+            *buffer_size = sizeof(CONNECT_PACK);
+            return KAA_ERR_NONE;
         }
-
     }
 
     return KAA_ERR_BADPARAM;
@@ -758,6 +762,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_soc
 
 ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
 {
+    (void)resolve_listener;
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
         return RET_STATE_BUFFER_NOT_ENOUGH;
@@ -815,6 +820,7 @@ kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read)
 {
+    (void)buffer_size;
     KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
 
     if (fd != access_point_test_info.fd) {

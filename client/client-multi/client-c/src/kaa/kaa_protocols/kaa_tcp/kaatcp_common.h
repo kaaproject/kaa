@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef KAATCP_COMMON_H_
@@ -100,13 +100,14 @@ typedef struct {
 } kaatcp_connect_t;
 
 typedef enum {
-    KAATCP_CONNACK_UNKNOWN                = 0x00,
-    KAATCP_CONNACK_SUCCESS                = 0x01,
-    KAATCP_CONNACK_UNACCEPTABLE_VERSION   = 0x02,
-    KAATCP_CONNACK_IDENTIFIER_REJECTED    = 0x03,
-    KAATCP_CONNACK_SERVER_UNAVAILABLE     = 0x04,
-    KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS = 0x05,
-    KAATCP_CONNACK_NOT_AUTHORIZED         = 0x06
+    KAATCP_CONNACK_UNKNOWN                    = 0x00,
+    KAATCP_CONNACK_SUCCESS                    = 0x01,
+    KAATCP_CONNACK_UNACCEPTABLE_VERSION       = 0x02,
+    KAATCP_CONNACK_IDENTIFIER_REJECTED        = 0x03,
+    KAATCP_CONNACK_SERVER_UNAVAILABLE         = 0x04,
+    KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS     = 0x05,
+    KAATCP_CONNACK_NOT_AUTHORIZED             = 0x06,
+    KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED = 0x10,
 } kaatcp_connack_code_t;
 
 typedef struct {
@@ -114,9 +115,10 @@ typedef struct {
 } kaatcp_connack_t;
 
 typedef enum {
-    KAATCP_DISCONNECT_NONE           = 0x00,
-    KAATCP_DISCONNECT_BAD_REQUEST    = 0x01,
-    KAATCP_DISCONNECT_INTERNAL_ERROR = 0x02,
+    KAATCP_DISCONNECT_NONE                = 0x00,
+    KAATCP_DISCONNECT_BAD_REQUEST         = 0x01,
+    KAATCP_DISCONNECT_INTERNAL_ERROR      = 0x02,
+    KAATCP_DISCONNECT_CREDENTIALS_REVOKED = 0x03,
 } kaatcp_disconnect_reason_t;
 
 typedef struct {

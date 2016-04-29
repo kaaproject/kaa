@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "DefaultOperationTcpChannel.h"
@@ -30,7 +30,6 @@ typedef enum {
 } ChannelState;
 
 #define TAG                 @"DefaultOperationTcpChannel >>>"
-#define EXIT_FAILURE        1
 #define CHANNEL_TIMEOUT     200
 #define PING_TIMEOUT_SEC    (CHANNEL_TIMEOUT / 2)
 #define MAX_THREADS_COUNT   2
@@ -69,8 +68,10 @@ typedef enum {
 @property (nonatomic) volatile BOOL isOpenConnectionScheduled;
 @property (nonatomic, strong) NSOperationQueue *executor;
 @property (nonatomic, strong) KAASocket *socket;//volatile
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
 
 - (void)onServerFailed;
+- (void)onServerFailedWithFailoverStatus:(FailoverStatus)status;
 - (void)closeConnection;
 - (void)sendFrame:(KAAMqttFrame *)frame;
 - (void)sendPingRequest;
@@ -86,7 +87,9 @@ typedef enum {
 
 @implementation DefaultOperationTcpChannel
 
-- (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr {
+- (instancetype)initWithClientState:(id<KaaClientState>)state
+                    failoverManager:(id<FailoverManager>)failoverMgr
+                    failureDelegate:(id<FailureDelegate>)delegate {
     self = [super init];
     if (self) {
         self.supportedTypes = @{
@@ -101,6 +104,7 @@ typedef enum {
         self.messageFactory = [[KAAMessageFactory alloc] init];
         self.state = state;
         self.failoverManager = failoverMgr;
+        self.failureDelegate = delegate;
         [self.messageFactory registerConnAckDelegate:self];
         [self.messageFactory registerSyncResponseDelegate:self];
         [self.messageFactory registerPingResponseDelegate:self];
@@ -111,9 +115,9 @@ typedef enum {
 
 - (void)onConnAckMessage:(KAATcpConnAck *)message {
     DDLogInfo(@"%@ ConnAck [%i] message received for channel [%@]", TAG, message.returnCode, [self getId]);
-    if (message.returnCode != RETURN_CODE_ACCEPTED) {
+    if (message.returnCode != ReturnCodeAccepted) {
         DDLogError(@"%@ Connection for channel [%@] was rejected: %i", TAG, [self getId], message.returnCode);
-        if (message.returnCode == RETURN_CODE_REFUSE_BAD_CREDENTIALS) {
+        if (message.returnCode == ReturnCodeRefuseBadCredentials) {
             DDLogInfo(@"%@ Cleaning client state", TAG);
             [self.state clean];
         }
@@ -165,11 +169,17 @@ typedef enum {
 
 - (void)onDisconnectMessage:(KAATcpDisconnect *)message {
     DDLogInfo(@"%@ Disconnect message (reason:%i) received for channel [%@]", TAG, message.reason, [self getId]);
-    if (message.reason != DISCONNECT_REASON_NONE) {
-        DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);
-        [self onServerFailed];
-    } else {
-        [self closeConnection];
+    switch (message.reason) {
+        case DisconnectReasonNone:
+            [self closeConnection];
+            break;
+        case DisconnectReasonCredentialsRevoked:
+            [self onServerFailedWithFailoverStatus:FailoverStatusEndpointCredentialsRevoked];
+            break;
+        default:
+            DDLogError(@"%@ Server error occurred: %i", TAG, message.reason);
+            [self onServerFailed];
+            break;
     }
 }
 
@@ -188,7 +198,7 @@ typedef enum {
 
 - (void)sendDisconnect {
     DDLogDebug(@"%@ Sending Disconnect from channel: %@", TAG, [self getId]);
-    [self sendFrame:[[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_NONE]];
+    [self sendFrame:[[KAATcpDisconnect alloc] initWithDisconnectReason:DisconnectReasonNone]];
 }
 
 - (void)sendKaaSyncRequestWithTypes:(NSDictionary *)types {
@@ -318,33 +328,37 @@ typedef enum {
 }
 
 - (void)onServerFailed {
+    [self onServerFailedWithFailoverStatus:FailoverStatusNoConnectivity];
+}
+
+- (void)onServerFailedWithFailoverStatus:(FailoverStatus)status {
     DDLogInfo(@"%@ [%@] has failed", TAG, [self getId]);
     [self closeConnection];
     if (self.checker && ![self.checker isConnected]) {
         DDLogWarn(@"%@ Loss of connectivity detected", TAG);
-        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
+        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
         switch (decision.failoverAction) {
-            case FAILOVER_ACTION_NOOP:
+            case FailoverActionNoop:
                 DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
                 break;
-            case FAILOVER_ACTION_RETRY:
+            case FailoverActionRetry:
             {
                 int64_t retryPeriod = decision.retryPeriod;
                 DDLogWarn(@"%@ Attempt to reconnect will be made in %lli ms according to failover strategy decision", TAG, retryPeriod);
                 [self scheduleOpenConnectionTaskWithRetryPeriod:retryPeriod];
             }
                 break;
-            case FAILOVER_ACTION_STOP_APP:
-                DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
-                exit(EXIT_FAILURE);
-                //TODO: review how to exit application
+            case FailoverActionFailure:
+                DDLogWarn(@"%@ Calling failure delegate according to failover strategy decision!", TAG);
+                [self.failureDelegate onFailure];
                 break;
-            case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
-            case FAILOVER_ACTION_USE_NEXT_OPERATIONS:
+            case FailoverActionUseNextBootstrap:
+            case FailoverActionUseNextOperations:
                 DDLogWarn(@"%@ Failover actions NEXT_BOOTSTRAP & NEXT_OPERATIONS not supported yet!", TAG);
+                break;
         }
     } else {
-        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer];
+        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer failoverStatus:status];
     }
 }
 

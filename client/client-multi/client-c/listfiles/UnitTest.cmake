@@ -1,17 +1,17 @@
 #
-#  Copyright 2014-2016 CyberVision, Inc.
+# Copyright 2014-2016 CyberVision, Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 enable_testing()
@@ -174,9 +174,9 @@ kaa_add_unit_test(NAME test_platform_protocol
 kaa_add_unit_test(NAME test_list
         SOURCES
         test/collections/test_kaa_list.c
-        test/kaa_test_external.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        src/kaa/collections/kaa_list.c
+        INC_DIRS
+        src/kaa)
 
 kaa_add_unit_test(NAME test_kaatcp_parser
         SOURCES
@@ -224,3 +224,37 @@ kaa_add_unit_test(NAME test_kaa_reallocation
         test/utilities/test_kaa_reallocation.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
+
+kaa_add_unit_test(NAME test_kaa_extension
+        SOURCES
+        test/test_kaa_extension.c src/kaa/kaa_extension.c
+        INC_DIRS
+        test/kaa_extension src/kaa)
+
+kaa_add_unit_test(NAME test_kaa_extension_private
+        SOURCES
+        test/test_kaa_extension_private.c src/kaa/kaa_extension.c
+        INC_DIRS
+        src/kaa)
+
+# KAA-985
+#kaa_add_unit_test(NAME test_kaa_tcp_channel_operation
+#        SOURCES
+#        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
+#        test/kaa_test_external.c
+#        DEPENDS
+#        kaac ${OPENSSL_LIBRARIES})
+
+# KAA-989
+#kaa_add_unit_test(NAME test_kaa_bootstrap_manager
+#        SOURCES
+#        test/test_kaa_bootstrap_manager.c
+#        DEPENDS
+#        kaac ${OPENSSL_LIBRARIES})
+
+# KAA-988
+#kaa_add_unit_test(NAME test_kaa_channel_manager
+#        SOURCES
+#        test/test_kaa_channel_manager.c
+#        DEPENDS
+#        kaac ${OPENSSL_LIBRARIES})

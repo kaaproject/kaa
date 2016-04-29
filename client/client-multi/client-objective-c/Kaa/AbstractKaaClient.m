@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "AbstractKaaClient.h"
@@ -37,11 +37,12 @@
 #import "DefaultOperationTcpChannel.h"
 #import "KaaLogging.h"
 #import "KaaExceptions.h"
+#import "FailureDelegate.h"
 
 #define TAG @"AbstractKaaClient >>>"
 #define LONG_POLL_TIMEOUT 60000
 
-@interface AbstractKaaClient ()
+@interface AbstractKaaClient () <FailureDelegate>
 
 @property (nonatomic, strong) DefaultNotificationManager *notificationManager;
 @property (nonatomic, strong) id<ProfileManager> profileManager;
@@ -54,6 +55,7 @@
 @property (nonatomic, strong) DefaultEndpointRegistrationManager *endpointRegistrationManager;
 @property (nonatomic, strong) id<KaaInternalChannelManager> channelManager;
 @property (nonatomic, strong) id<FailoverManager> failoverManager;
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
 
 - (NSOperationQueue *)getLifeCycleExecutor;
 - (void)checkReadiness;
@@ -69,6 +71,7 @@
         self.stateDelegate = delegate;
         self.lifecycleState = CLIENT_LIFECYCLE_STATE_CREATED;
         self.properties = [self.context getProperties];
+        self.failureDelegate = self;
         if (![self.context getProperties]) {
             self.properties = [[KaaClientProperties alloc] initDefaultsWithBase64:[self.context getBase64]];
         }
@@ -412,6 +415,22 @@
     [self.endpointRegistrationManager setDetachDelegate:delegate];
 }
 
+- (void)setFailoverStrategy:(id<FailoverStrategy>)failoverStrategy {
+    [self.failoverManager setFailoverStrategy:failoverStrategy];
+}
+
+- (void)setFailureDelegate:(id<FailureDelegate>)failureDelegate {
+    if (failureDelegate == nil) {
+        [NSException raise:NSInvalidArgumentException format:@"Failure delegate is nil"];
+    }
+    
+    _failureDelegate = failureDelegate;
+}
+
+- (void)onFailure {
+    [self stop];
+}
+
 - (NSOperationQueue *)getLifeCycleExecutor {
     return [[self.context getExecutorContext] getLifeCycleExecutor];
 }
@@ -426,7 +445,7 @@
     id<RedirectionTransport> redTransport = [self buildRedirectionTransport];
     id<LogTransport> logTransport = [self buildLogTransport];
     
-    EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[KeyUtils getPublicKey]];
+    EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[state publicKeyAsBytes]];
     
     id<MetaDataTransport> mdTransport = [[DefaultMetaDataTransport alloc] init];
     [mdTransport setClientProperties:properties];
@@ -449,7 +468,8 @@
                                                                  servers:(NSDictionary *)bootstrapServers {
     id<KaaInternalChannelManager> manager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager
                                                                                    bootstrapServers:bootstrapServers
-                                                                                            context:[self.context getExecutorContext]];
+                                                                                            context:[self.context getExecutorContext]
+                                                                                    failureDelegate:self.failureDelegate];
     [manager setConnectivityChecker:[self.context createConnectivityChecker]];
     return manager;
 }
@@ -476,7 +496,8 @@
     [manager addChannel:btChannel];
     
     id<KaaDataChannel> opChannel = [[DefaultOperationTcpChannel alloc] initWithClientState:self.clientState
-                                                                            failoverManager:self.failoverManager];
+                                                                           failoverManager:self.failoverManager
+                                                                           failureDelegate:self.failureDelegate];
     [opChannel setMultiplexer:opProcessor];
     [opChannel setDemultiplexer:opProcessor];
     [manager addChannel:opChannel];
@@ -525,7 +546,8 @@
 
 - (id<BootstrapManager>)buildBootstrapManagerWithTransportContext:(TransportContext *)context {
     return [[DefaultBootstrapManager alloc] initWithTransport:[context getBootstrapTransport]
-                                              executorContext:[self.context getExecutorContext]];
+                                              executorContext:[self.context getExecutorContext]
+                                              failureDelegate:self.failureDelegate];
 }
 
 - (AbstractHttpClient *)createHttpClientWithURLString:(NSString *)url
@@ -588,14 +610,13 @@
 
 - (void)checkReadiness {
     if (!self.profileManager || ![self.profileManager isInitialized]) {
-        DDLogError(@"%@ Profile manager isn't initialized: maybe profile container isn't set", TAG);
+        NSString *errorMessage = @"Profile manager isn't initialized: maybe profile container isn't set";
+        NSException *exception = [NSException exceptionWithName:KaaRuntimeException reason:errorMessage userInfo:nil];
+        DDLogError(@"%@ %@", TAG, errorMessage);
         if (self.stateDelegate) {
-            NSException *exception = [NSException exceptionWithName:KaaException
-                                                             reason:@"Profile manager isn't initialized: maybe profile container isn't set"
-                                                           userInfo:nil];
             [self.stateDelegate onStartFailureWithException:exception];
         } else {
-            [NSException raise:KaaRuntimeException format:@"Profile manager isn't initialized: maybe profile container isn't set"];
+            [exception raise];
         }
     }
 }

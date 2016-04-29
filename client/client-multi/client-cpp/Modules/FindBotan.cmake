@@ -1,17 +1,17 @@
 #
-#  Copyright 2014-2016 CyberVision, Inc.
+# Copyright 2014-2016 CyberVision, Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 # -*- mode: cmake; -*-
@@ -50,32 +50,32 @@ SET(_botan_LIBRARIES_SEARCH_DIRS
   )
 
 ##
-if( "${BOTAN_HOME}" STREQUAL "")
-  if("" MATCHES "$ENV{BOTAN_HOME}")
-    message(STATUS "BOTAN_HOME env is not set, setting it to /usr/local")
-    set (BOTAN_HOME ${_botan_HOME})
-  else("" MATCHES "$ENV{BOTAN_HOME}")
-    set (BOTAN_HOME "$ENV{BOTAN_HOME}")
-  endif("" MATCHES "$ENV{BOTAN_HOME}")
-else( "${BOTAN_HOME}" STREQUAL "")
-  message(STATUS "BOTAN_HOME is not empty: \"${BOTAN_HOME}\"")
-endif( "${BOTAN_HOME}" STREQUAL "")
+if( "${BOTAN_ROOT}" STREQUAL "")
+  if("" MATCHES "$ENV{BOTAN_ROOT}")
+    message(STATUS "BOTAN_ROOT env is not set, setting it to /usr/local")
+    set (BOTAN_ROOT ${_botan_HOME})
+  else("" MATCHES "$ENV{BOTAN_ROOT}")
+    set (BOTAN_ROOT "$ENV{BOTAN_ROOT}")
+  endif("" MATCHES "$ENV{BOTAN_ROOT}")
+else( "${BOTAN_ROOT}" STREQUAL "")
+  message(STATUS "BOTAN_ROOT is not empty: \"${BOTAN_ROOT}\"")
+endif( "${BOTAN_ROOT}" STREQUAL "")
 ##
 
-message(STATUS "Looking for botan in ${BOTAN_HOME}")
+message(STATUS "Looking for botan in ${BOTAN_ROOT}")
 
-IF( NOT ${BOTAN_HOME} STREQUAL "" )
+IF( NOT ${BOTAN_ROOT} STREQUAL "" )
     SET(_botan_INCLUDE_SEARCH_DIRS 
-        ${BOTAN_HOME}/include 
+        ${BOTAN_ROOT}/include
         ${_botan_INCLUDE_SEARCH_DIRS}
     )
     SET(_botan_LIBRARIES_SEARCH_DIRS 
-        ${BOTAN_HOME}
-        ${BOTAN_HOME}/lib 
+        ${BOTAN_ROOT}
+        ${BOTAN_ROOT}/lib
         ${_botan_LIBRARIES_SEARCH_DIRS}
     )    
-    SET(_botan_HOME ${BOTAN_HOME})
-ENDIF( NOT ${BOTAN_HOME} STREQUAL "" )
+    SET(_botan_HOME ${BOTAN_ROOT})
+ENDIF( NOT ${BOTAN_ROOT} STREQUAL "" )
 
 IF( NOT $ENV{BOTAN_INCLUDEDIR} STREQUAL "" )
   SET(_botan_INCLUDE_SEARCH_DIRS $ENV{BOTAN_INCLUDEDIR} ${_botan_INCLUDE_SEARCH_DIRS})
@@ -85,11 +85,11 @@ IF( NOT $ENV{BOTAN_LIBRARYDIR} STREQUAL "" )
   SET(_botan_LIBRARIES_SEARCH_DIRS $ENV{BOTAN_LIBRARYDIR} ${_botan_LIBRARIES_SEARCH_DIRS})
 ENDIF( NOT $ENV{BOTAN_LIBRARYDIR} STREQUAL "" )
 
-IF( BOTAN_HOME )
-  SET(_botan_INCLUDE_SEARCH_DIRS ${BOTAN_HOME}/include ${_botan_INCLUDE_SEARCH_DIRS})
-  SET(_botan_LIBRARIES_SEARCH_DIRS ${BOTAN_HOME}/lib ${_botan_LIBRARIES_SEARCH_DIRS})
-  SET(_botan_HOME ${BOTAN_HOME})
-ENDIF( BOTAN_HOME )
+IF( BOTAN_ROOT )
+  SET(_botan_INCLUDE_SEARCH_DIRS ${BOTAN_ROOT}/include ${_botan_INCLUDE_SEARCH_DIRS})
+  SET(_botan_LIBRARIES_SEARCH_DIRS ${BOTAN_ROOT}/lib ${_botan_LIBRARIES_SEARCH_DIRS})
+  SET(_botan_HOME ${BOTAN_ROOT})
+ENDIF( BOTAN_ROOT )
 
 # find the include files
 FIND_PATH(BOTAN_INCLUDE_DIR botan/version.h

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
@@ -31,31 +31,31 @@ public class MongoModelConstants {
     public static final String APPLICATION_ID = "application_id";
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.EndpointGroupState} constants.
+     * {@link EndpointGroupState} constants.
      */
     public static final String ENDPOINT_GROUP_ID = "endpoint_group_id";
     public static final String PROFILE_FILTER_ID = "profile_filter_id";
     public static final String CONFIGURATION_ID = "configuration_id";
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.EventClassFamilyVersionState} constants
+     * {@link EventClassFamilyVersionState} constants
      */
     public static final String ECF_ID = "ecf_id";
     public static final String EVENT_CLASS_FAMILY_VERSION = "ecf_version";
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration} constants
+     * {@link MongoEndpointConfiguration} constants
      */
     public static final String ENDPOINT_CONFIGURATION = "endpoint_configuration";
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointNotification} constants
+     * {@link MongoEndpointNotification} constants
      */
     public static final String ENDPOINT_NOTIFICATION = "endpoint_notification";
     public static final String EP_NF_ENDPOINT_KEY_HASH = ENDPOINT_KEY_HASH;
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointNotification} constants
+     * {@link MongoEndpointNotification} constants
      */
     public static final String NOTIFICATION = "notification";
     public static final String NF_APPLICATION_ID = APPLICATION_ID;
@@ -69,7 +69,7 @@ public class MongoModelConstants {
     public static final String NF_BODY = BODY;
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUser} constants
+     * {@link MongoEndpointUser} constants
      */
     public static final String ENDPOINT_USER = "endpoint_user";
     public static final String EP_USER_USERNAME = "username";
@@ -79,7 +79,7 @@ public class MongoModelConstants {
     public static final String EP_USER_ENDPOINT_IDS = "endpoint_ids";
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile} constants
+     * {@link MongoEndpointProfile} constants
      */
     public static final String ENDPOINT_PROFILE = "endpoint_profile";
     public static final String EP_APPLICATION_ID = APPLICATION_ID;
@@ -110,7 +110,7 @@ public class MongoModelConstants {
     public static final String EP_SERVER_PROFILE_PROPERTY = "srv_profile";
 
     /**
-     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoTopicListEntry} constants
+     * {@link MongoTopicListEntry} constants
      */
     public static final String TOPIC_LIST_ENTRY = "topic_list_entry";
     public static final String TOPIC_LIST_SIMPLE_HASH = "simple_hash";
@@ -125,4 +125,22 @@ public class MongoModelConstants {
     public static final String USER_CONF_SCHEMA_VERSION = "schema_version";
     public static final String USER_CONF_BODY = BODY;
 
+    /**
+     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointRegistration}
+     */
+    public static final String ENDPOINT_REGISTRATION = "endpoint_registration";
+    public static final String EP_REGISTRATION_APPLICATION_ID = APPLICATION_ID;
+    public static final String EP_REGISTRATION_ENDPOINT_ID = "endpoint_id";
+    public static final String EP_REGISTRATION_CREDENTIALS_ID = "credentials_id";
+    public static final String EP_REGISTRATION_SERVER_PROFILE_VERSION = "server_profile_version";
+    public static final String EP_REGISTRATION_SERVER_PROFILE_BODY = "server_profile";
+
+    /**
+     * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoCredentials}
+     */
+    public static final String CREDENTIALS = "credentials";
+    public static final String CREDENTIALS_APPLICATION_ID = APPLICATION_ID;
+    public static final String CREDENTIALS_ID = ID;
+    public static final String CREDENTIALS_BODY = "credentials_body";
+    public static final String CREDENTIAL_STATUS = "credentials_status";
 }

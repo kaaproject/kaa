@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel.impl.channels;
@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
@@ -34,6 +34,7 @@ import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
@@ -44,7 +45,8 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(AbstractHttpChannel.class);
 
-    private static final int UNATHORIZED_HTTP_STATUS = 401;
+    private static final int UNAUTHORIZED_HTTP_STATUS = 401;
+    private static final int FORBIDDEN_HTTP_STATUS = 403;
 
     private IPTransportInfo currentServer;
     private final AbstractKaaClient client;
@@ -241,9 +243,14 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
 
     protected void connectionFailed(boolean failed, int status) {
+        FailoverStatus failoverStatus = FailoverStatus.OPERATION_SERVERS_NA;
         switch (status) {
-            case UNATHORIZED_HTTP_STATUS:
+            case UNAUTHORIZED_HTTP_STATUS:
                 state.clean();
+                failoverStatus = FailoverStatus.ENDPOINT_VERIFICATION_FAILED;
+                break;
+            case FORBIDDEN_HTTP_STATUS:
+                failoverStatus = FailoverStatus.ENDPOINT_CREDENTIALS_REVOKED;
                 break;
             default:
                 break;
@@ -251,7 +258,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
 
         lastConnectionFailed = failed;
         if (failed) {
-            failoverManager.onServerFailed(currentServer);
+            failoverManager.onServerFailed(currentServer, failoverStatus);
         } else {
             failoverManager.onServerConnected(currentServer);
         }

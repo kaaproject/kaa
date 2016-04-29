@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "kaa_private.h"
@@ -125,7 +125,7 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
 
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
     size_t services_count = 0;
-    kaa_extension_id *services = NULL;
+    const kaa_extension_id *services = NULL;
     channel->get_supported_services(channel->context, &services, &services_count);
     if (services) {
         size_t i = 0;
@@ -148,7 +148,7 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
 {
     KAA_RETURN_IF_NIL(channel, false);
 
-    kaa_extension_id *services;
+    const kaa_extension_id *services;
     size_t service_count;
     kaa_error_t error_code = channel->get_supported_services(channel->context
                                                            , &services
@@ -310,7 +310,7 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
     KAA_RETURN_IF_NIL(self, NULL);
 
     kaa_transport_channel_wrapper_t *channel_wrapper;
-    kaa_extension_id *services;
+    const kaa_extension_id *services;
     size_t service_count;
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);
@@ -439,13 +439,12 @@ kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
 {
     KAA_RETURN_IF_NIL3(self, protocol_id, access_point, KAA_ERR_BADPARAM);
 
-    kaa_transport_channel_wrapper_t *channel_wrapper;
     kaa_list_node_t *channel_it = kaa_list_find_next(kaa_list_begin(self->transport_channels)
                                                    , &find_channel_by_protocol_id
                                                    , protocol_id);
 
     while (channel_it) {
-        channel_wrapper = kaa_list_get_data(channel_it);
+        kaa_transport_channel_wrapper_t *channel_wrapper = kaa_list_get_data(channel_it);
         if (channel_wrapper->server_type == server_type) {
             KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Set new %s access point [0x%08X] for channel [0x%08X] "
                                  "(protocol: id=0x%08X, version=%u)"

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -47,7 +47,7 @@
 @implementation MockedOperationTcpChannel
 
 - (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr {
-    self = [super initWithClientState:state failoverManager:failoverMgr];
+    self = [super initWithClientState:state failoverManager:failoverMgr failureDelegate:nil];
     if (self) {
         CFReadStreamRef readStream = NULL;
         CFWriteStreamRef writeStream = NULL;
@@ -85,7 +85,9 @@
 - (void)testDefaultOperationTcpChannel {
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id<KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state failoverManager:failoverManager];
+    id<KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state
+                                                                            failoverManager:failoverManager
+                                                                            failureDelegate:nil];
     XCTAssertNotNil([tcpchannel getId]);
     XCTAssertNotNil([tcpchannel getSupportedTransportTypes]);
     XCTAssertNotEqual(0, [[tcpchannel getSupportedTransportTypes] count]);
@@ -138,7 +140,7 @@
     [tcpChannel syncAll];
     [verifyCount(multiplexer, times(2)) compileRequestForTypes:[tcpChannel getSupportedTransportTypes]];
     
-    KAATcpDisconnect *disconnect = [[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_INTERNAL_ERROR];
+    KAATcpDisconnect *disconnect = [[KAATcpDisconnect alloc] initWithDisconnectReason:DisconnectReasonInternalError];
     [tcpChannel.outputStream write:[[disconnect getFrame] bytes] maxLength:[[disconnect getFrame] length]];
     
     [tcpChannel syncAll];
@@ -153,7 +155,9 @@
     [given([clientState publicKey]) willReturnStruct:[clientKeys getPublicKeyRef] objCType:@encode(SecKeyRef)];
     
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState failoverManager:failoverManager];
+    DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState
+                                                                                  failoverManager:failoverManager
+                                                                                  failureDelegate:nil];
     
     id<TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"www.test.fake" port:999 publicKey:[KeyUtils getPublicKey]];
     XCTAssertNotNil(server);

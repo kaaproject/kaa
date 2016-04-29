@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel.impl;
@@ -26,11 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.kaaproject.kaa.client.FailureListener;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -51,7 +52,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultChannelManager.class);
 
-    private static final int EXIT_FAILURE = 1;
+    private FailureListener failureListener;
+
     private final List<KaaDataChannel> channels = new LinkedList<>();
     private final Map<TransportType, KaaDataChannel> upChannels = new HashMap<TransportType, KaaDataChannel>();
     private final BootstrapManager bootstrapManager;
@@ -76,13 +78,14 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private KaaDataDemultiplexer bootstrapDemultiplexer;
 
     public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId,
-            List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext) {
+            List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext, FailureListener failureListener) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
             throw new ChannelRuntimeException("Failed to create channel manager");
         }
         this.bootstrapManager = manager;
         this.bootststrapServers = bootststrapServers;
         this.executorContext = executorContext;
+        this.failureListener = failureListener;
     }
 
     private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
@@ -285,7 +288,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     @Override
-    public synchronized void onServerFailed(final TransportConnectionInfo server) {
+    public synchronized void onServerFailed(final TransportConnectionInfo server, FailoverStatus status) {
         if (isShutdown) {
             LOG.warn("Can't process server failure. Channel manager is down");
             return;
@@ -322,16 +325,16 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                             }
                         }, retryPeriod, TimeUnit.MILLISECONDS);
                         break;
-                    case STOP_APP:
-                        LOG.warn("Stopping application according to failover strategy decision!");
-                        System.exit(EXIT_FAILURE); //NOSONAR
+                    case FAILURE:
+                        LOG.warn("Calling failure listener according to failover strategy decision!");
+                        failureListener.onFailure();
                         break;
                     default:
                         break;
                 }
             } else {
                 LOG.trace("Can't find next bootstrap server");
-                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
+                FailoverDecision decision = failoverManager.onFailover(status);
                 switch (decision.getAction()) {
                     case NOOP:
                         LOG.warn("No operation is performed according to failover strategy decision");
@@ -347,16 +350,16 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                             }
                         }, retryPeriod, TimeUnit.MILLISECONDS);
                         break;
-                    case STOP_APP:
-                        LOG.warn("Stopping application according to failover strategy decision!");
-                        System.exit(EXIT_FAILURE); //NOSONAR
+                    case FAILURE:
+                        LOG.warn("Calling failure listener according to failover strategy decision!");
+                        failureListener.onFailure();
                         break;
                     default:
                         break;
                 }
             }
         } else {
-            bootstrapManager.useNextOperationsServer(server.getTransportId());
+            bootstrapManager.useNextOperationsServer(server.getTransportId(), status);
         }
     }
 

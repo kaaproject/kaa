@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #import "DefaultChannelManager.h"
@@ -23,8 +23,6 @@
 #import "KaaExceptions.h"
 
 #define TAG @"DefaultChannelManager >>>"
-
-#define EXIT_FAILURE 1
 
 @interface DefaultChannelManager ()
 
@@ -43,6 +41,8 @@
 @property (nonatomic, strong) id<ExecutorContext> executorContext;
 
 @property (nonatomic, strong) ConnectivityChecker *connectivityChecker;
+
+@property (nonatomic, weak) id<FailureDelegate> failureDelegate;
 
 @property (nonatomic) BOOL isShutdown;
 @property (nonatomic) BOOL isPaused;
@@ -70,7 +70,8 @@
 
 - (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
                         bootstrapServers:(NSDictionary *)servers
-                                 context:(id<ExecutorContext>)context {
+                                 context:(id<ExecutorContext>)context
+                         failureDelegate:(id<FailureDelegate>)delegate{
     self = [super init];
     if (self) {
         if (!bootstrapMgr || !servers || [servers count] == 0) {
@@ -80,6 +81,7 @@
         self.bootstrapManager = bootstrapMgr;
         self.bootststrapServers = servers;
         self.executorContext = context;
+        self.failureDelegate = delegate;
         
         self.channels = [NSMutableArray array];
         self.upChannels = [NSMutableDictionary dictionary];
@@ -222,7 +224,7 @@
     }
 }
 
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server failoverStatus:(FailoverStatus)status {
     @synchronized(self) {
         if (self.isShutdown) {
             DDLogWarn(@"%@ Can't process server failure. Channel manager is down", TAG);
@@ -233,12 +235,12 @@
             id<TransportConnectionInfo> nextConnectionInfo = [self getNextBootstrapServerForServer:server];
             if (nextConnectionInfo) {
                 DDLogVerbose(@"%@ Using next bootstrap server", TAG);
-                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
                 switch (decision.failoverAction) {
-                    case FAILOVER_ACTION_NOOP:
+                    case FailoverActionNoop:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
                         break;
-                    case FAILOVER_ACTION_RETRY:
+                    case FailoverActionRetry:
                     {
                         int64_t period = [decision retryPeriod];
                         DDLogWarn(@"%@ Reconnect to current bootstrap server will be made in %lli ms", TAG, period);
@@ -249,7 +251,7 @@
                         });
                     }
                         break;
-                    case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
+                    case FailoverActionUseNextBootstrap:
                     {
                         int64_t period = [decision retryPeriod];
                         DDLogWarn(@"%@ Connection to next bootstrap server will be made in %lli ms", TAG, period);
@@ -260,22 +262,21 @@
                         });
                     }
                         break;
-                    case FAILOVER_ACTION_STOP_APP:
-                        DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
-                        exit(EXIT_FAILURE);
-                        //TODO: review how to exit application
+                    case FailoverActionFailure:
+                        DDLogWarn(@"%@ Calling failure delegate according to failover strategy decision!", TAG);
+                        [self.failureDelegate onFailure];
                         break;
                     default:
                         break;
                 }
             } else {
                 DDLogVerbose(@"%@ Can't find next bootstrap server", TAG);
-                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA];
+                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FailoverStatusBootstrapServersNotAvailable];
                 switch (decision.failoverAction) {
-                    case FAILOVER_ACTION_NOOP:
+                    case FailoverActionNoop:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
                         break;
-                    case FAILOVER_ACTION_RETRY:
+                    case FailoverActionRetry:
                     {
                         int64_t period = [decision retryPeriod];
                         DDLogWarn(@"%@ Reconnect to first bootstrap server will be made in %lli ms", TAG, period);
@@ -286,17 +287,16 @@
                         });
                     }
                         break;
-                    case FAILOVER_ACTION_STOP_APP:
-                        DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
-                        exit(EXIT_FAILURE);
-                        //TODO: review how to exit application
+                    case FailoverActionFailure:
+                        DDLogWarn(@"%@ Calling failure delegate according to failover strategy decision!", TAG);
+                        [self.failureDelegate onFailure];
                         break;
                     default:
                         break;
                 }
             }
         } else {
-            [self.bootstrapManager useNextOperationsServerWithTransportId:[server transportId]];
+            [self.bootstrapManager useNextOperationsServerWithTransportId:[server transportId] failoverStatus:status];
         }
     }
 }

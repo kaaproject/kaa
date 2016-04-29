@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "kaa/log/LogCollector.hpp"
@@ -86,11 +86,16 @@ void LogCollector::processTimeout()
     KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
     KAA_MUTEX_LOCKED("timeoutsGuard_");
 
-    for (const auto& request : timeouts_) {
-        storage_->rollbackBucket(request.first);
-    }
+    auto now = clock_t::now();
 
-    timeouts_.clear();
+    for (auto request = timeouts_.begin(); request != timeouts_.end();) {
+        if (now >= request->second.getTimeoutTime()) {
+            storage_->rollbackBucket(request->first);
+            request = timeouts_.erase(request);
+        } else {
+            request++;
+        }
+    }
 
     KAA_MUTEX_UNLOCKING("timeoutsGuard_");
     KAA_UNLOCK(timeoutsGuardLock);
@@ -369,7 +374,15 @@ void LogCollector::switchAccessPoint()
     if (logChannel && logChannel->getServer()) {
         if (timeoutAccessPointId_ == logChannel->getServer()->getAccessPointId()) {
             KAA_LOG_WARN("Try to switch to another Operations server...");
-            channelManager_->onServerFailed(logChannel->getServer());
+            channelManager_->onServerFailed(logChannel->getServer(),
+                                            KaaFailoverReason::OPERATION_SERVERS_NA);
+            KAA_MUTEX_LOCKING("timeoutsGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
+            KAA_MUTEX_LOCKED("timeoutsGuard_");
+            for (const auto &request : timeouts_) {
+                storage_->rollbackBucket(request.first);
+            }
+            timeouts_.clear();
         }
     } else {
         KAA_LOG_ERROR("Can't find LOGGING data channel");
@@ -429,4 +442,3 @@ void LogCollector::removeBucketInfo(std::int32_t id)
 }
 
 }  // namespace kaa
-

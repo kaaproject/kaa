@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.thrift;
@@ -28,8 +28,10 @@ import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -95,8 +97,10 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         LOG.debug("Received Notification from control server {}", notification);
         LOG.debug("Going to notify cache service..");
         processCacheNotification(notification);
-        LOG.debug("Going to notify akka service..");
-        akkaService.onNotification(notification);
+        if (notification.getOp() != Operation.APP_UPDATE) {
+            LOG.debug("Going to notify akka service..");
+            akkaService.onNotification(notification);
+        }
     }
 
     /*
@@ -144,6 +148,11 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         ApplicationDto appDto = applicationService.findAppById(notification.getAppId());
         LOG.debug("Processing cache notification {} for app {}", notification, appDto);
         if (appDto != null) {
+            if (notification.getOp() == Operation.APP_UPDATE) {
+                LOG.debug("Reseting application info {}", appDto.getId());
+                cacheService.resetAppById(appDto.getId());
+                return;
+            }
             if (notification.getProfileFilterId() != null) {
                 ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
                 LOG.debug("Processing filter  {}", filterDto); 
@@ -201,4 +210,11 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     public void onServerProfileUpdate(ThriftServerProfileUpdateMessage message) throws TException {
         clusterService.onServerProfileUpdateMessage(message);
     }
+    
+    @Override
+    public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws TException {
+        LOG.debug("Received Event about endpoint deregistration {}", message);
+        clusterService.onEndpointDeregistrationMessage(message);
+    }
+
 }

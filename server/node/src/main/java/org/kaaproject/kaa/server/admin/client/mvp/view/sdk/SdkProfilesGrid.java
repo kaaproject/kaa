@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
@@ -54,9 +54,9 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                 new StringValueProvider<SdkProfileDto>() {
                     @Override
                     public String getValue(SdkProfileDto item) {
-                        return item.getName();
+                        return Utils.abbreviateText(item.getName(), 50);
                     }
-                }, 40);
+                }, 60);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.author(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -80,7 +80,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getConfigurationSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.profile(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -88,7 +88,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getProfileSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.notification(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -96,7 +96,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getNotificationSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.log(),
                 new StringValueProvider<SdkProfileDto>() {
@@ -104,15 +104,15 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
                     public String getValue(SdkProfileDto item) {
                         return "v" + item.getLogSchemaVersion().toString();
                     }
-                }, 40);
+                }, 30);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.sdkToken(),
                 new StringValueProvider<SdkProfileDto>() {
                     @Override
                     public String getValue(SdkProfileDto item) {
-                        return item.getToken();
+                        return Utils.abbreviateText(item.getToken(), 20);
                     }
-                }, 80);
+                }, 60);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.ecfs(),
                 new StringValueProvider<SdkProfileDto>() {

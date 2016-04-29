@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -55,9 +55,9 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
 /**
  * @brief De-initializes and destroys Kaa client
  *
- * After a successful call @c kaa_client pointer becomes invalid.
+ * After a successful call @p kaa_client pointer becomes invalid.
  *
- * @param[in]       kaa_context     Pointer to an Kaa client.
+ * @param[in]       kaa_client     Pointer to an Kaa client.
  *
  * @return Error code.
  */
@@ -68,10 +68,10 @@ void kaa_client_destroy(kaa_client_t *kaa_client);
  *
  * Start Kaa client IO loop.
  *
- * @param[in]   kaa_context                  Pointer to an Kaa client.
- * @param[in]    external_process            Callback function to process something outside a main loop
- * @param[in]    external_process_context    Callback function context
- * @param[in]    time_t max_delay            Callback delay
+ * @param[in] kaa_client                  Pointer to an Kaa client.
+ * @param[in] external_process            Callback function to process something outside a main loop
+ * @param[in] external_process_context    Callback function context
+ * @param[in] max_delay                   Callback delay
  *
  * @return Error code.
  */
@@ -85,7 +85,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
  *
  * Stop Kaa client IO loop.
  *
- * @param[in]       kaa_context     Pointer to an Kaa client.
+ * @param[in]       kaa_client     Pointer to an Kaa client.
  *
  * @return Error code.
  */
@@ -94,7 +94,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client);
 /**
  * @brief Return pointer to Kaa context
  *
- * @param[in]       kaa_context     Pointer to an Kaa client.
+ * @param[in]       kaa_client     Pointer to an Kaa client.
  *
  * @return pointer to Kaa context.
  */

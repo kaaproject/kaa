@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel.impl.channels;
@@ -30,10 +30,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.kaaproject.kaa.client.FailureListener;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.FailoverDecision;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
@@ -71,7 +72,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationTcpChannel.class);
 
-    private static final int EXIT_FAILURE = 1;
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
     static {
         SUPPORTED_TYPES.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
@@ -86,6 +86,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private static final int PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
 
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
+
+    private FailureListener failureListener;
 
     private IPTransportInfo currentServer;
     private final KaaClientState state;
@@ -119,11 +121,15 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
             if (message.getReturnCode() != ReturnCode.ACCEPTED) {
                 LOG.error("Connection for channel [{}] was rejected: {}", getId(), message.getReturnCode());
-                if (message.getReturnCode() == ReturnCode.REFUSE_BAD_CREDENTIALS) {
-                    LOG.info("Cleaning client state");
-                    state.clean();
+
+                LOG.info("Cleaning client state");
+                state.clean();
+
+                if (message.getReturnCode() == ReturnCode.REFUSE_VERIFICATION_FAILED) {
+                    onServerFailed(FailoverStatus.ENDPOINT_VERIFICATION_FAILED);
+                } else {
+                    onServerFailed();
                 }
-                onServerFailed();
             }
         }
 
@@ -179,11 +185,18 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         @Override
         public void onMessage(Disconnect message) {
             LOG.info("Disconnect message (reason={}) received for channel [{}]", message.getReason(), getId());
-            if (!message.getReason().equals(DisconnectReason.NONE)) {
-                LOG.error("Server error occurred: {}", message.getReason());
-                onServerFailed();
-            } else {
-                closeConnection();
+            switch (message.getReason()) {
+                case NONE:
+                    closeConnection();
+                    break;
+                case CREDENTIALS_REVOKED:
+                    LOG.error("Endpoint credentials been revoked");
+                    onServerFailed(FailoverStatus.ENDPOINT_CREDENTIALS_REVOKED);
+                    break;
+                default:
+                    LOG.error("Server error occurred: {}", message.getReason());
+                    onServerFailed();
+                    break;
             }
         }
     };
@@ -265,9 +278,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private volatile boolean isOpenConnectionScheduled;
 
-    public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager) {
+    public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager, FailureListener failureListener) {
         this.state = state;
         this.failoverManager = failoverManager;
+        this.failureListener = failureListener;
         messageFactory.registerMessageListener(connAckListener);
         messageFactory.registerMessageListener(kaaSyncResponseListener);
         messageFactory.registerMessageListener(pingResponseListener);
@@ -361,12 +375,16 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private void onServerFailed() {
+        this.onServerFailed(FailoverStatus.NO_CONNECTIVITY);
+    }
+
+    private void onServerFailed(FailoverStatus status) {
         LOG.info("[{}] has failed", getId());
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
             LOG.warn("Loss of connectivity detected");
 
-            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
+            FailoverDecision decision = failoverManager.onFailover(status);
             switch (decision.getAction()) {
                 case NOOP:
                     LOG.warn("No operation is performed according to failover strategy decision");
@@ -377,15 +395,15 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                             "according to failover strategy decision", retryPeriod);
                     scheduleOpenConnectionTask(retryPeriod);
                     break;
-                case STOP_APP:
-                    LOG.warn("Stopping application according to failover strategy decision!");
-                    System.exit(EXIT_FAILURE); //NOSONAR
+                case FAILURE:
+                    LOG.warn("Calling failure listener according to failover strategy decision!");
+                    failureListener.onFailure();
                     break;
                 default:
                     break;
             }
         } else {
-            failoverManager.onServerFailed(currentServer);
+            failoverManager.onServerFailed(currentServer, status);
         }
     }
 

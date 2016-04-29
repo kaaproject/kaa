@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client.bootstrap;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
@@ -47,7 +47,10 @@ import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
-import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
@@ -97,7 +100,7 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public void onServerFailed(TransportConnectionInfo server) {
+        public void onServerFailed(TransportConnectionInfo server, FailoverStatus status) {
 
         }
 
@@ -194,12 +197,12 @@ public class DefaultBootstrapManagerTest {
     @Test
     public void testReceiveOperationsServerList() throws TransportException {
         BootstrapTransport transport = mock(BootstrapTransport.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null, null);
 
         boolean exception = false;
         try {
             manager.receiveOperationsServerList();
-            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -213,11 +216,11 @@ public class DefaultBootstrapManagerTest {
     @Test
     public void testOperationsServerInfoRetrieving() throws TransportException, NoSuchAlgorithmException, InvalidKeySpecException {
         ExecutorContext executorContext = mock(ExecutorContext.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext, null);
 
         boolean exception = false;
         try {
-            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
         } catch (BootstrapRuntimeException e) {
             exception = true;
         }
@@ -237,14 +240,15 @@ public class DefaultBootstrapManagerTest {
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        FailoverStrategy strategy = new DefaultFailoverStrategy(1, 1, 1, TimeUnit.MILLISECONDS);
         FailoverManager failoverManager =
-                spy(new DefaultFailoverManager(channelManager, executorContext, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
+                spy(new DefaultFailoverManager(channelManager, executorContext, strategy, 1, TimeUnit.MILLISECONDS));
 
         manager.setChannelManager(channelManager);
         manager.setFailoverManager(failoverManager);
         manager.setTransport(transport);
         manager.onProtocolListUpdated(list);
-        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
         assertTrue(channelManager.isServerUpdated());
         assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
@@ -254,7 +258,7 @@ public class DefaultBootstrapManagerTest {
 
     @Test
     public void testUseServerByDnsName() throws NoSuchAlgorithmException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null, null);
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         manager.setChannelManager(channelManager);

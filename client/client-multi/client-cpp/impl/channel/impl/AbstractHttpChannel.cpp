@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || defined (KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
@@ -63,29 +63,30 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
                                               reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
         }
     } catch (HttpTransportException& e) {
+        KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: %3%")
+                     % currentServer_->getHost() % currentServer_->getPort() % e.getHttpStatusCode());
+
+        KaaFailoverReason reason;
         switch (e.getHttpStatusCode()) {
         case HttpStatusCode::UNAUTHORIZED:
-            KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: bad credentials. Going to re-register...")
-                                                            % currentServer_->getHost() % currentServer_->getPort());
+            reason = KaaFailoverReason::ENDPOINT_NOT_REGISTERED;
             context_.getStatus().setRegistered(false);
             context_.getStatus().save();
-            setServer(currentServer_);
+            break;
+        case HttpStatusCode::FORBIDDEN:
+            reason = KaaFailoverReason::CREDENTIALS_REVOKED;
             break;
         default:
-            KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
-                    % currentServer_->getHost() % currentServer_->getPort() % e.what());
-            onServerFailed();
+            reason = KaaFailoverReason::BOOTSTRAP_SERVERS_NA;
             break;
         }
-    } catch (std::exception& e) {
-        KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
-            % currentServer_->getHost() % currentServer_->getPort() % e.what());
-        onServerFailed();
+
+        onServerFailed(reason);
     }
 }
 
 
-void AbstractHttpChannel::onServerFailed()
+void AbstractHttpChannel::onServerFailed(KaaFailoverReason reason)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
@@ -97,7 +98,7 @@ void AbstractHttpChannel::onServerFailed()
     KAA_UNLOCK(lockInternal);
     KAA_MUTEX_UNLOCKED("channelGuard_");
 
-    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_), reason);
 }
 
 void AbstractHttpChannel::sync(TransportType type)

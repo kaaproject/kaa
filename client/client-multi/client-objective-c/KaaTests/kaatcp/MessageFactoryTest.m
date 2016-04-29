@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -332,32 +332,32 @@
 
 - (void)onConnAckMessage:(KAATcpConnAck *)message {
     switch (message.returnCode) {
-        case RETURN_CODE_ACCEPTED:
-            KAATestEqual(RETURN_CODE_ACCEPTED, message.returnCode);
+        case ReturnCodeAccepted:
+            KAATestEqual(ReturnCodeAccepted, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_BAD_CREDENTIALS:
-            KAATestEqual(RETURN_CODE_REFUSE_BAD_CREDENTIALS, message.returnCode);
+        case ReturnCodeRefuseBadCredentials:
+            KAATestEqual(ReturnCodeRefuseBadCredentials, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_ID_REJECT:
-            KAATestEqual(RETURN_CODE_REFUSE_ID_REJECT, message.returnCode);
+        case ReturnCodeRefuseIdReject:
+            KAATestEqual(ReturnCodeRefuseIdReject, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_BAD_PROTOCOL:
-            KAATestEqual(RETURN_CODE_REFUSE_BAD_PROTOCOL, message.returnCode);
+        case ReturnCodeRefuseBadProtocol:
+            KAATestEqual(ReturnCodeRefuseBadProtocol, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_NO_AUTH:
-            KAATestEqual(RETURN_CODE_REFUSE_NO_AUTH, message.returnCode);
+        case ReturnCodeRefuseNoAuth:
+            KAATestEqual(ReturnCodeRefuseNoAuth, message.returnCode);
             break;
             
-        case RETURN_CODE_REFUSE_SERVER_UNAVAILABLE:
-            KAATestEqual(RETURN_CODE_REFUSE_SERVER_UNAVAILABLE, message.returnCode);
+        case ReturnCodeRefuseServerUnavailable:
+            KAATestEqual(ReturnCodeRefuseServerUnavailable, message.returnCode);
             break;
             
-        case RETURN_CODE_UNDEFINED:
-            KAATestEqual(RETURN_CODE_UNDEFINED, message.returnCode);
+        case ReturnCodeUndefined:
+            KAATestEqual(ReturnCodeUndefined, message.returnCode);
             break;
             
         default:
@@ -418,7 +418,7 @@
 }
 
 - (void)onDisconnectMessage:(KAATcpDisconnect *)message {
-    KAATestEqual(DISCONNECT_REASON_INTERNAL_ERROR, message.reason);
+    KAATestEqual(DisconnectReasonInternalError, message.reason);
 }
 
 - (NSData *)generateTag {

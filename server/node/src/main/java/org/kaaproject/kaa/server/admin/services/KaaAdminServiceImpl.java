@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.services;
@@ -21,6 +21,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,11 +31,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -79,6 +82,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -130,6 +135,7 @@ import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.operations.service.filter.DefaultFilterEvaluator;
 import org.kaaproject.kaa.server.operations.service.filter.el.GenericRecordPropertyAccessor;
 import org.slf4j.Logger;
@@ -674,7 +680,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            return checkApplicationToken(applicationToken);
+            if (isEmpty(applicationToken)) {
+                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+            }
+            ApplicationDto application = controlService.getApplicationByApplicationToken(applicationToken);
+            checkApplication(application);
+            return application;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -733,6 +744,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getSchemaVersionsByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -786,6 +802,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
+    }
+
+    @Override
+    public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getSdkProfilesByApplicationId(checkApplicationToken(applicationToken));
     }
 
     @Override
@@ -1003,6 +1024,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return  getProfileSchemasByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1101,6 +1127,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getServerProfileSchemasByApplicationId(checkApplicationToken(applicationToken));
     }
 
     @Override
@@ -1332,6 +1363,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getConfigurationSchemasByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1409,6 +1445,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getNotificationSchemasByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1417,6 +1458,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getUserNotificationSchemasByApplicationId(checkApplicationToken(applicationToken));
     }
 
     @Override
@@ -1520,6 +1566,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getLogSchemasByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public LogSchemaDto getLogSchema(String logSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1620,6 +1671,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getEndpointGroupsByApplicationId(checkApplicationToken(applicationToken));
     }
 
     @Override
@@ -2080,6 +2136,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getTopicsByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -2271,6 +2332,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException {
+        return getRestLogAppendersByApplicationId(checkApplicationToken(appToken));
+    }
+
+    @Override
     public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
         LogAppenderDto logAppender = getLogAppender(appenderId);
         setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
@@ -2378,6 +2444,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
         }
         return userVerifiers;
+    }
+
+    @Override
+    public List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException {
+        return getRestUserVerifiersByApplicationId(checkApplicationToken(appToken));
     }
 
     @Override
@@ -2603,7 +2674,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkEventClassFamilyId(eventClassFamilyId);
             String schema = new String(data);
-            validateSchema(schema, false);
+            SchemaUtil.compileAvroSchema(validateSchema(schema, false));
 
             EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(storedEventClassFamily);
@@ -2642,6 +2713,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken)
+            throws KaaAdminServiceException {
+        return getApplicationEventFamilyMapsByApplicationId(checkApplicationToken(applicationToken));
     }
 
     @Override
@@ -2690,6 +2767,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getVacantEventClassFamiliesByApplicationId(checkApplicationToken(applicationToken));
+    }
+
+    @Override
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -2698,6 +2780,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        return getEventClassFamiliesByApplicationId(checkApplicationToken(applicationToken));
     }
 
     @Override
@@ -2800,6 +2887,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     private void validateRecordSchema(Schema schema) throws KaaAdminServiceException {
+        SchemaUtil.compileAvroSchema(schema);
         if (schema.getType() != Schema.Type.RECORD) {
             throw new KaaAdminServiceException("Schema " + schema.getFullName() + " is not a record schema!", ServiceErrorCode.INVALID_SCHEMA);
         }
@@ -2855,14 +2943,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private ApplicationDto checkApplicationToken(String applicationToken) throws KaaAdminServiceException {
+    private String checkApplicationToken(String applicationToken) throws KaaAdminServiceException {
         try {
             if (isEmpty(applicationToken)) {
                 throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
             }
             ApplicationDto application = controlService.getApplicationByApplicationToken(applicationToken);
             checkApplication(application);
-            return application;
+            return application.getId();
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2946,7 +3034,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-    
+
     private CTLSchemaScopeDto detectScope(String tenantId, String applicationId) {
         CTLSchemaScopeDto scope = CTLSchemaScopeDto.SYSTEM;
         if (tenantId != null && !tenantId.isEmpty()) {
@@ -2958,7 +3046,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
         return scope;
     }
-    
+
     private void checkCTLSchemaReadScope(String tenantId, String applicationId) throws KaaAdminServiceException {
         AuthUserDto currentUser = getCurrentUser();
         CTLSchemaScopeDto scope = detectScope(tenantId, applicationId);
@@ -2990,7 +3078,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED);
         }
     }
-    
+
     private void checkCTLSchemaEditScope(String tenantId, String applicationId) throws KaaAdminServiceException {
         AuthUserDto currentUser = getCurrentUser();
         CTLSchemaScopeDto scope = detectScope(tenantId, applicationId);
@@ -3024,7 +3112,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new IllegalArgumentException("Missing CTL schema ID!");
         }
     }
-    
+
     private void checkCTLSchemaMetaInfoId(String metaInfoId) throws KaaAdminServiceException {
         if (metaInfoId == null || metaInfoId.isEmpty()) {
             throw new IllegalArgumentException("Missing CTL schema meta info ID!");
@@ -3055,7 +3143,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
      * @return A string that contains fully qualified names and version numbers
      *         of the given CTL schemas
      */
-    
     private String asText(Collection<CTLSchemaDto> types) {
         StringBuilder message = new StringBuilder();
         if (types != null) {
@@ -3083,7 +3170,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
+    @Override
+    public CTLSchemaDto saveCTLSchemaWithAppToken(String body, String tenantId, String applicationToken) throws KaaAdminServiceException {
+        String applicationId = null;
+        if (!isEmpty(applicationToken)) {
+            applicationId = checkApplicationToken(applicationToken);
+        }
+        return saveCTLSchema(body, tenantId, applicationId);
+    }
+
     @Override
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
@@ -3091,7 +3187,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Utils.checkNotNull(schema);
             checkCTLSchemaVersion(schema.getVersion());
             checkCTLSchemaEditScope(schema.getMetaInfo().getTenantId(), schema.getMetaInfo().getApplicationId());
-             // Check if the schema dependencies are present in the database
+            // Check if the schema dependencies are present in the database
             List<FqnVersion> missingDependencies = new ArrayList<>();
             Set<CTLSchemaDto> dependencies = new HashSet<>();
             if (schema.getDependencySet() != null) {
@@ -3169,6 +3265,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String fqn, Integer version, String tenantId, String applicationToken) throws KaaAdminServiceException {
+        String applicationId = null;
+        if (!isEmpty(applicationToken)) {
+            applicationId = checkApplicationToken(applicationToken);
+        }
+        deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+    }
+
+    @Override
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
@@ -3183,7 +3288,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) throws KaaAdminServiceException {
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId)
+            throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
             this.checkCTLSchemaFqn(fqn);
@@ -3199,7 +3305,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
+    @Override
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(String fqn, Integer version, String tenantId, String applicationToken)
+            throws KaaAdminServiceException {
+        String applicationId = null;
+        if (!isEmpty(applicationToken)) {
+            applicationId = checkApplicationToken(applicationToken);
+        }
+        return getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+    }
+
     @Override
     public boolean checkFqnExists(String fqn, String tenantId, String applicationId)
             throws KaaAdminServiceException {
@@ -3214,6 +3330,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public boolean checkFqnExistsWithAppToken(String fqn, String tenantId, String applicationToken) throws KaaAdminServiceException {
+        String applicationId = null;
+        if (!isEmpty(applicationToken)) {
+            applicationId = checkApplicationToken(applicationToken);
+        }
+        return checkFqnExists(fqn, tenantId, applicationId);
+    }
+
+    @Override
     public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo)
             throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
@@ -3224,7 +3349,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.values());
@@ -3234,7 +3359,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -3245,7 +3370,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -3257,7 +3382,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(String applicationToken) throws KaaAdminServiceException {
+        return getApplicationLevelCTLSchemas(checkApplicationToken(applicationToken));
+    }
+
     @Override
     public List<CtlSchemaReferenceDto> getAvailableApplicationCTLSchemaReferences(String applicationId)
             throws KaaAdminServiceException {
@@ -3277,7 +3407,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     private CtlSchemaFormDto toCtlSchemaForm(CTLSchemaDto ctlSchema) throws KaaAdminServiceException {
         try {
             CtlSchemaFormDto ctlSchemaForm = new CtlSchemaFormDto(ctlSchema);
@@ -3294,7 +3424,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public CtlSchemaFormDto getLatestCTLSchemaForm(String metaInfoId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.values());
@@ -3308,7 +3438,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public CtlSchemaFormDto getCTLSchemaFormByMetaInfoIdAndVer(String metaInfoId, int version) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
@@ -3323,7 +3453,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
     @Override
     public CtlSchemaFormDto createNewCTLSchemaFormInstance(String metaInfoId, 
             Integer sourceVersion, String applicationId) throws KaaAdminServiceException {
@@ -3539,7 +3669,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-    
+
+    @Override
+    public FileData exportCTLSchemaByAppToken(String fqn, int version, String applicationToken, CTLSchemaExportMethod method) throws KaaAdminServiceException {
+        String applicationId = null;
+        if (!isEmpty(applicationToken)) {
+            applicationId = checkApplicationToken(applicationToken);
+        }
+        return exportCTLSchema(fqn, version, applicationId, method);
+    }
+
     @Override
     public String prepareCTLSchemaExport(String ctlSchemaId,
             CTLSchemaExportMethod method) throws KaaAdminServiceException {
@@ -3568,7 +3707,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    @Override
     public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(String endpointUserExternalId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -3577,6 +3715,100 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 throw new IllegalArgumentException(message);
             }
             return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId(endpointUserExternalId, getCurrentUser().getTenantId());
+
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    private ServerProfileSchemaDto getServerProfileSchema(String applicationId, Integer serverProfileVersion) throws Exception {
+        ServerProfileSchemaDto serverProfileSchema = this.controlService.getServerProfileSchemaByApplicationIdAndVersion(applicationId, serverProfileVersion);
+        if (serverProfileSchema == null) {
+            throw new NotFoundException("No server-side endpoint profile schema found!");
+        }
+        return serverProfileSchema;
+    }
+
+    private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema, String serverProfileBody) throws Exception {
+        CTLSchemaDto commonType = this.controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
+        Schema typeSchema = this.controlService.exportCTLSchemaFlatAsSchema(commonType);
+        try {
+            new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
+        } catch (Exception cause) {
+            throw new IllegalArgumentException("Invalid server-side endpoint profile body provided!");
+        }
+    }
+
+    @Override
+    public CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            return this.controlService.provisionCredentials(applicationId, credentialsBody);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId).isPresent(), "No credentials with the given ID found!");
+            this.controlService.revokeCredentials(applicationId, credentialsId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+    
+
+    @Override
+    public void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() == CredentialsStatus.REVOKED, "Credentails with the given ID are not revoked!");
+            this.controlService.onCredentailsRevoked(applicationId, credentials.get().getId());
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }        
+    }
+
+    @Override
+    public void provisionRegistration(
+            String applicationToken,
+            String credentialsId,
+            Integer serverProfileVersion,
+            String serverProfileBody)
+                    throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            Validate.isTrue(credentials.get().getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
+            if (serverProfileVersion != null && serverProfileBody != null) {
+                ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
+                this.validateServerProfile(serverProfileSchema, serverProfileBody);
+            } else if (serverProfileVersion != null || serverProfileBody != null) {
+                String missingParameter = (serverProfileVersion == null ? "schema version" : "body");
+                String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
+                throw new IllegalArgumentException(message);
+            }
+            this.controlService.provisionRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<String> getCredentialsServiceNames() throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            return this.controlService.getCredentialsServiceNames();
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

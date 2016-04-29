@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /**
@@ -29,6 +29,7 @@
 #include "../kaa_error.h"
 #include "../platform/defaults.h"
 #include "../platform/stdio.h"
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,13 +64,8 @@ extern "C" {
 #define KAA_LOG_LEVEL_TRACE_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE)
 
 
-/**
- * @brief Kaa logger type
- */
-#ifndef KAA_LOGGER_T
-#define KAA_LOGGER_T
-typedef struct kaa_logger_t             kaa_logger_t;
-#endif
+struct kaa_logger_t;
+typedef struct kaa_logger_t kaa_logger_t;
 
 /**
  * @brief Log level type
@@ -81,11 +77,11 @@ typedef uint8_t kaa_log_level_t;
  *
  * @param[in,out]   logger          Address of a pointer to the newly created logger.
  * @param[in]       buffer_size     Size of the log message buffer to allocate to the logger.
- * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
+ * @param[in]       max_log_level   Max log level to be used. Use @link KAA_LOG_LEVEL_NONE @endlink to switch the logger off.
  * @param[in]       sink            Valid, opened file to write logs to. Will use @c stdout if @c NULL is provided.
  * @return                          Error code.
  */
-kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
+kaa_error_t kaa_log_create(kaa_logger_t **logger, size_t buffer_size, kaa_log_level_t max_log_level, FILE* sink);
 
 /**
  * @brief Deinitializes and destroys the logger instance.
@@ -99,7 +95,9 @@ kaa_error_t kaa_log_destroy(kaa_logger_t *logger);
  * @brief Retrieves the current log level.
  *
  * @param[in]   self    Pointer to a logger.
- * @return              Log level. Returns @link KAA_LOG_NONE @endlink if this is NULL.
+ *
+ * @return Log level.
+ * @retval KAA_LOG_LEVEL_NONE @p self is @c NULL.
  */
 kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self);
 
@@ -107,7 +105,7 @@ kaa_log_level_t kaa_get_max_log_level(const kaa_logger_t *self);
  * @brief Sets the maximum log level.
  *
  * @param[in]   self            Pointer to a logger.
- * @param[in]   max_log_level   Max log level to be used. Use @link KAA_LOG_NONE @endlink to switch the logger off.
+ * @param[in]   max_log_level   Max log level to be used. Use @ref KAA_LOG_LEVEL_NONE to switch the logger off.
  * @return                      Error code.
  */
 kaa_error_t kaa_set_max_log_level(kaa_logger_t *self, kaa_log_level_t max_log_level);

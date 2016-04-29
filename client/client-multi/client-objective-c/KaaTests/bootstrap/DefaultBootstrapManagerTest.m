@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -30,6 +30,7 @@
 #import "KeyPair.h"
 #import "DefaultFailoverManager.h"
 #import "TestsHelper.h"
+#import "DefaultFailoverStrategy.h"
 
 #pragma mark - ChannelManagerMock
 
@@ -73,8 +74,8 @@
     return nil;
 }
 
-- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server {
-#pragma unused(server)
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server failoverStatus:(FailoverStatus)status {
+#pragma unused(server, status)
 }
 
 - (void)setFailoverManager:(id<FailoverManager>)failoverManager {
@@ -154,12 +155,15 @@
 
 - (void)testReceiveOperationsServerList {
     id<BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport executorContext:nil];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport
+                                                                          executorContext:nil
+                                                                          failureDelegate:nil];
     
     self.exceptionCaught = NO;
     @try {
         [manager receiveOperationsServerList];
-        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                         failoverStatus:FailoverStatusNoConnectivity];
     }
     @catch (NSException *exception) {
         self.exceptionCaught = YES;
@@ -172,12 +176,15 @@
 
 - (void)testOperationsServerInfoRetrieving {
     id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:executorContext];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil
+                                                                          executorContext:executorContext
+                                                                          failureDelegate:nil];
     
     self.exceptionCaught = NO;
     
     @try {
-        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                         failoverStatus:FailoverStatusNoConnectivity];
     }
     @catch (NSException *exception) {
         self.exceptionCaught = YES;
@@ -195,13 +202,15 @@
     [opQue setMaxConcurrentOperationCount:1];
     ChannelManagerMock *channelManager = [[ChannelManagerMock alloc] init];
     [given([executorContext getSheduledExecutor]) willReturn:[opQue underlyingQueue]];
-    DefaultFailoverManager *failoverManager = [[DefaultFailoverManager alloc] initWithChannelManager:channelManager context:executorContext failureResolutionTimeout:1 bootstrapServersRetryPeriod:1 operationsServersRetryPeriod:1 noConnectivityRetryPeriod:1 timeUnit:TIME_UNIT_MILLISECONDS];
+    id<FailoverStrategy> strategy = [[DefaultFailoverStrategy alloc] initWithBootstrapServersRetryPeriod:1 operationsServersRetryPeriod:1 noConnectivityRetryPeriod:1 timeUnit:TIME_UNIT_MILLISECONDS];
+    DefaultFailoverManager *failoverManager = [[DefaultFailoverManager alloc] initWithChannelManager:channelManager context:executorContext failoverStrategy:strategy failureResolutionTimeout:1 timeUnit:TIME_UNIT_MILLISECONDS];
     
     [manager setChannelManager:channelManager];
     [manager setFailoverManager:failoverManager];
     [manager setTransport:transport];
     [manager onProtocolListUpdated:array];
-    [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
+    [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]
+                                     failoverStatus:FailoverStatusNoConnectivity];
     
     XCTAssertTrue(channelManager.serverUpdated);
     XCTAssertEqualObjects(@"http://localhost:9889", [channelManager receivedURL]);
@@ -211,7 +220,9 @@
 }
 
 - (void)testUseServerByDNSName {
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:nil];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil
+                                                                          executorContext:nil
+                                                                          failureDelegate:nil];
     
     ChannelManagerMock *channelManager = [[ChannelManagerMock alloc] init];
     [manager setChannelManager:channelManager];

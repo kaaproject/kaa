@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel;
@@ -29,7 +29,11 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.AbstractKaaClient;
-import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
@@ -170,7 +174,8 @@ public class DefaultOperationsChannelTest {
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
         ExecutorContext context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        FailoverManager flManager = new DefaultFailoverManager(manager, context, 100, 1, 1, 1, TimeUnit.MILLISECONDS);
+        FailoverStrategy failoverStrategy = new DefaultFailoverStrategy(1, 1, 1, TimeUnit.MILLISECONDS);
+        FailoverManager flManager = new DefaultFailoverManager(manager, context, failoverStrategy, 100, TimeUnit.MILLISECONDS);
         FailoverManager failoverManager = Mockito.spy(flManager);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),
@@ -197,7 +202,7 @@ public class DefaultOperationsChannelTest {
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
-        Mockito.verify(failoverManager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
+        Mockito.verify(failoverManager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class), Mockito.any(FailoverStatus.class));
     }
 
     @Test

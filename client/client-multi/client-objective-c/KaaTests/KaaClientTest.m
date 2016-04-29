@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #define HC_SHORTHAND
@@ -21,15 +21,21 @@
 #import <OCMockito/OCMockito.h>
 
 #import <XCTest/XCTest.h>
-#import "KaaClient.h"
-#import "KaaClientPlatformContext.h"
-#import "KaaClientProperties.h"
-#import "KaaClientStateDelegate.h"
-#import "DefaultBootstrapManager.h"
-#import "SimpleExecutorContext.h"
-#import "AbstractKaaClient.h"
-#import "GenericTransportInfo.h"
-#import "KAADummyProfile.h"
+#import <Kaa/Kaa.h>
+
+@interface TestFailoverStrategy : DefaultFailoverStrategy
+
+@end
+
+@implementation TestFailoverStrategy
+
+- (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
+#pragma unused(status)
+    return [[FailoverDecision alloc] initWithFailoverAction:FailoverActionFailure];
+}
+
+@end
+
 
 @interface TestClientProfileContainer : NSObject <ProfileContainer>
 
@@ -177,6 +183,25 @@
     
     [NSThread sleepForTimeInterval:1];
     [verifyCount(self.delegate, times(1)) onResumeFailureWithException:anything()];
+}
+
+- (void)testDefaultFailureDelegate {
+    [self.client setFailoverStrategy:[[TestFailoverStrategy alloc] init]];
+    
+    [self.client start];
+    
+    ProtocolVersionPair *protocolPair = [[ProtocolVersionPair alloc] initWithId:1 version:1];
+    ProtocolMetaData *metaData = [[ProtocolMetaData alloc] initWithAccessPointId:1
+                                                             protocolVersionInfo:protocolPair
+                                                                  connectionInfo:nil];
+    id<TransportConnectionInfo> connectionInfo = [[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP
+                                                                                             meta:metaData];
+    [[self.client getChannelManager] onServerFailedWithConnectionInfo:connectionInfo
+                                                       failoverStatus:FailoverStatusBootstrapServersNotAvailable];
+    
+    [NSThread sleepForTimeInterval:0.5];
+    
+    [verifyCount(self.delegate, times(1)) onStopped];
 }
 
 #pragma mark - Supporting methods

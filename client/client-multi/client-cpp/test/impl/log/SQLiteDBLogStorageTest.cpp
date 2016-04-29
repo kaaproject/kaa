@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <boost/test/unit_test.hpp>
@@ -139,16 +139,44 @@ BOOST_AUTO_TEST_CASE(GetAllRecordsTest)
         logStorage.addLogRecord(createSerializedLogRecord());
     }
 
-    auto logs = logStorage.getNextBucket();
+    auto bucket = logStorage.getNextBucket();
 
-    BOOST_CHECK_EQUAL(logs.getRecords().size(), recordCount);
+    BOOST_CHECK_EQUAL(bucket.getRecords().size(), recordCount);
 
     std::size_t totalSize = 0;
-    for (auto& record : logs.getRecords()) {
+    for (auto& record : bucket.getRecords()) {
         totalSize += record.getSize();
     }
 
     BOOST_CHECK_EQUAL(totalSize, recordCount * sizeOfOneRecord);
+
+    removeDatabase(clientContext.getProperties().getLogsDatabaseFileName());
+}
+
+BOOST_AUTO_TEST_CASE(FillInBucketGetItAndAddNewLogTest)
+{
+    std::size_t recordCount = 5;
+
+    auto clientContext = getClientContext();
+    SQLiteDBLogStorage logStorage(clientContext,
+                                 testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                 recordCount);
+
+
+    for (std::size_t i = 0; i < recordCount; ++i) {
+        logStorage.addLogRecord(createSerializedLogRecord());
+    }
+
+    auto bucket1 = logStorage.getNextBucket();
+    BOOST_CHECK_EQUAL(bucket1.getRecords().size(), recordCount);
+
+    logStorage.addLogRecord(createSerializedLogRecord());
+    auto bucket2 = logStorage.getNextBucket();
+    BOOST_CHECK_EQUAL(bucket2.getRecords().size(), 1);
+
+    BOOST_CHECK(bucket1.getBucketId() != bucket2.getBucketId());
 
     removeDatabase(clientContext.getProperties().getLogsDatabaseFileName());
 }
@@ -328,13 +356,92 @@ BOOST_AUTO_TEST_CASE(TruncateTest)
     }
 
     auto clientContext = getClientContext();
-    SQLiteDBLogStorage logStorage1(clientContext, testLogStorageName,
+    SQLiteDBLogStorage logStorage2(clientContext, testLogStorageName,
                                  (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
                                  LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
                                  recordInBucket - 1);
 
-    BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), 0);
-    BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), 0);
+    BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), 0);
+    BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), 0);
+
+    removeDatabase(clientContext.getProperties().getLogsDatabaseFileName());
+}
+
+BOOST_AUTO_TEST_CASE(ReuseNotFullBucketAfterRestart)
+{
+    std::size_t recordInBucket = 5;
+    std::size_t recordInBucketBeforeRestart = recordInBucket - 1;
+    BucketInfo bucketBeforeRestart;
+
+    {
+        auto clientContext = getClientContext();
+        SQLiteDBLogStorage logStorage1(clientContext, testLogStorageName,
+                                     (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                     LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                     recordInBucket);
+
+        /*
+         * Add (recordInBucket - 1) records
+         */
+        bucketBeforeRestart = logStorage1.addLogRecord(createSerializedLogRecord());
+        for (std::size_t i = 1; i < recordInBucketBeforeRestart; ++i) {
+            auto currentBucket = logStorage1.addLogRecord(createSerializedLogRecord());
+            BOOST_CHECK_EQUAL(bucketBeforeRestart.getBucketId(), currentBucket.getBucketId());
+            bucketBeforeRestart = currentBucket;
+        }
+
+        BOOST_CHECK_EQUAL(bucketBeforeRestart.getLogCount(), recordInBucketBeforeRestart);
+    }
+
+    auto clientContext = getClientContext();
+    SQLiteDBLogStorage logStorage2(clientContext, testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                 recordInBucket);
+
+    BOOST_CHECK_EQUAL(logStorage2.getRecordsCount(), recordInBucketBeforeRestart);
+
+    auto bucketAfterRestart = logStorage2.addLogRecord(createSerializedLogRecord());
+    BOOST_CHECK_EQUAL(bucketBeforeRestart.getBucketId(), bucketAfterRestart.getBucketId());
+
+    auto newBucketAfterRestart = logStorage2.addLogRecord(createSerializedLogRecord());
+    BOOST_CHECK(newBucketAfterRestart.getBucketId() != bucketAfterRestart.getBucketId());
+
+    removeDatabase(clientContext.getProperties().getLogsDatabaseFileName());
+}
+
+BOOST_AUTO_TEST_CASE(AddNewBucketAfterRestart)
+{
+    std::size_t recordInBucket = 5;
+    BucketInfo bucketBeforeRestart;
+
+    {
+        auto clientContext = getClientContext();
+        SQLiteDBLogStorage logStorage1(clientContext, testLogStorageName,
+                                     (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                     LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                     recordInBucket);
+
+        bucketBeforeRestart = logStorage1.addLogRecord(createSerializedLogRecord());
+        for (std::size_t i = 1; i < recordInBucket; ++i) {
+            auto currentBucket = logStorage1.addLogRecord(createSerializedLogRecord());
+            BOOST_CHECK_EQUAL(bucketBeforeRestart.getBucketId(), currentBucket.getBucketId());
+            bucketBeforeRestart = currentBucket;
+        }
+
+        BOOST_CHECK_EQUAL(bucketBeforeRestart.getLogCount(), recordInBucket);
+    }
+
+    auto clientContext = getClientContext();
+    SQLiteDBLogStorage logStorage2(clientContext, testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                 recordInBucket);
+
+    BOOST_CHECK_EQUAL(logStorage2.getRecordsCount(), recordInBucket);
+
+    auto bucketAfterRestart = logStorage2.addLogRecord(createSerializedLogRecord());
+    BOOST_CHECK(bucketAfterRestart.getBucketId() != bucketBeforeRestart.getBucketId());
 
     removeDatabase(clientContext.getProperties().getLogsDatabaseFileName());
 }

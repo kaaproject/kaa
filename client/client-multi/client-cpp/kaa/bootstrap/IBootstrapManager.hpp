@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef IBOOTSTRAPMANAGER_HPP_
@@ -47,8 +47,10 @@ public:
      *
      * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
      * @see ChannelType
+     *
+     * @param failoverReason The reason why failover occured.
      */
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId) = 0;
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason failoverReason) = 0;
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.

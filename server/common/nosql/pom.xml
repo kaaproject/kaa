@@ -66,6 +66,12 @@
                 <artifactId>cassandra-unit</artifactId>
                 <version>${cassandra-unit.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-handler</artifactId>
+                    </exclusion>
+            </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

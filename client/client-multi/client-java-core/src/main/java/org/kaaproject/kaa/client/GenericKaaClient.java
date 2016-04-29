@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.client;
@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -599,4 +600,21 @@ public interface GenericKaaClient {
      * @see     org.kaaproject.kaa.client.logging.LogDeliveryListener
      */
     void setLogDeliveryListener(LogDeliveryListener listener);
+
+    /**
+     * @param failoverStrategy strategy that will be used to resolve failovers.
+     *
+     * @see org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy
+     */
+    void setFailoverStrategy(FailoverStrategy failoverStrategy);
+
+    /**
+     * Set listener which is notified on critical failures that are treated as something
+     * that client should not handle on its own.
+     *
+     * @param failureListener listener to handle critical failures
+     *
+     * @see org.kaaproject.kaa.client.FailureListener
+     */
+    void setFailureListener(FailureListener failureListener);
 }

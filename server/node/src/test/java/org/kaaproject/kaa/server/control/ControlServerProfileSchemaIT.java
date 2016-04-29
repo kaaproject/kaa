@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
@@ -134,7 +134,46 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
             assertSchemasEquals(profileSchema, storedProfileSchema);
         }
     }
-    
+
+    /**
+     * Test get profile schema versions by application token.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetProfileSchemaVersionsByApplicationToken() throws Exception {
+
+        List<EndpointProfileSchemaDto> profileSchemas  = new ArrayList<>(11);
+        ApplicationDto application = createApplication(tenantAdminDto);
+
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+        List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
+        profileSchemas.addAll(defaultProfileSchemas);
+
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+
+        for (int i=0;i<10;i++) {
+            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
+            profileSchemas.add(profileSchema);
+        }
+
+        Collections.sort(profileSchemas, new IdComparator());
+
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+
+        List<VersionDto> storedProfileSchemas = schemaVersions.getProfileSchemaVersions();
+
+        Collections.sort(storedProfileSchemas, new IdComparator());
+
+        Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
+        for (int i=0;i<profileSchemas.size();i++) {
+            EndpointProfileSchemaDto profileSchema = profileSchemas.get(i);
+            VersionDto storedProfileSchema = storedProfileSchemas.get(i);
+            assertSchemasEquals(profileSchema, storedProfileSchema);
+        }
+    }
+
     /**
      * Test update profile schema.
      *

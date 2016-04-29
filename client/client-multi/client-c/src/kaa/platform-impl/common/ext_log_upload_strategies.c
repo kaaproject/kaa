@@ -1,17 +1,17 @@
 /*
- *  Copyright 2014-2016 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
@@ -163,9 +163,10 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
         kaa_transport_protocol_id_t protocol_id;
         kaa_error_t error_code = channel->get_protocol_id(channel->context, &protocol_id);
         KAA_RETURN_IF_ERR(error_code);
-        error_code = kaa_bootstrap_manager_on_access_point_failed(self->bootstrap_manager
-                                                                , &protocol_id
-                                                                , KAA_SERVER_OPERATIONS);
+        error_code = kaa_bootstrap_manager_on_access_point_failed(self->bootstrap_manager,
+                                                                  &protocol_id,
+                                                                  KAA_SERVER_OPERATIONS,
+                                                                  KAA_OPERATION_SERVERS_NA);
         return error_code;
     }
 

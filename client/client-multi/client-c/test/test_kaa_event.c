@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdint.h>
@@ -111,13 +111,13 @@ void test_kaa_event_listeners_serialize_request(void **state)
     ASSERT_EQUAL(kaa_event_request_get_size(event_manager, &actual_size), KAA_ERR_NONE);
     ASSERT_EQUAL(actual_size, expected_size);
 
-    char buffer[actual_size];
+    uint8_t buffer[actual_size];
     kaa_platform_message_writer_t *writer;
     ASSERT_EQUAL(kaa_platform_message_writer_create(&writer, buffer, actual_size), KAA_ERR_NONE);
 
     ASSERT_EQUAL(kaa_event_request_serialize(event_manager, 1, writer), KAA_ERR_NONE);
 
-    char *cursor = buffer + KAA_EXTENSION_HEADER_SIZE;
+    uint8_t *cursor = buffer + KAA_EXTENSION_HEADER_SIZE;
     ASSERT_EQUAL((*(uint8_t *) cursor), 0); // verifying field id 0
     cursor += sizeof(uint16_t); // skipping field id + reserved
 
@@ -152,9 +152,9 @@ void test_kaa_event_listeners_handle_sync(void **state)
     (void)state;
 
     const uint32_t extension_size = 52;
-    char buffer[extension_size];
+    uint8_t buffer[extension_size];
 
-    char *cursor = buffer;
+    uint8_t *cursor = buffer;
     *cursor = 0; // field id (0)
     cursor += sizeof(uint16_t); // skipping field id + reserved
 
@@ -217,7 +217,7 @@ void test_kaa_event_sync_get_size(void **state)
     kaa_endpoint_id target = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
     const size_t buffer_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t);
-    char buffer[buffer_size];
+    uint8_t buffer[buffer_size];
     kaa_platform_message_writer_t *writer;
     error_code = kaa_platform_message_writer_create(&writer, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -342,7 +342,7 @@ void test_event_sync_serialize(void **state)
     kaa_endpoint_id target = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
     const size_t server_sync_buffer_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t);
-    char server_sync_buffer[server_sync_buffer_size];
+    uint8_t server_sync_buffer[server_sync_buffer_size];
     kaa_platform_message_writer_t *server_sync_writer;
     error_code = kaa_platform_message_writer_create(&server_sync_writer, server_sync_buffer, server_sync_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -370,11 +370,11 @@ void test_event_sync_serialize(void **state)
     error_code = kaa_event_request_get_size(event_manager, &event_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char manual_buffer[event_sync_size];
-    char auto_buffer[event_sync_size];
+    uint8_t manual_buffer[event_sync_size];
+    uint8_t auto_buffer[event_sync_size];
 
-    char *manual_buffer_ptr = manual_buffer;
-    char *auto_buffer_ptr = auto_buffer;
+    uint8_t *manual_buffer_ptr = manual_buffer;
+    uint8_t *auto_buffer_ptr = auto_buffer;
 
     kaa_platform_message_writer_t *manual_writer;
     error_code = kaa_platform_message_writer_create(&manual_writer, manual_buffer, event_sync_size);
@@ -482,7 +482,7 @@ void test_event_blocks(void **state)
 
     size_t server_sync_buffer_size = sizeof(uint32_t);
 
-    char server_sync_buffer[server_sync_buffer_size];
+    uint8_t server_sync_buffer[server_sync_buffer_size];
     memset(server_sync_buffer, 0, server_sync_buffer_size);
 
     kaa_platform_message_reader_t *server_sync_reader;
@@ -571,7 +571,7 @@ void test_kaa_server_sync_with_event_callbacks(void **state)
                               + event_get_size(unimportant_fqn, NULL, 0, source)
                               + event_get_size(important_fqn, event_data, event_data_size, source);
 
-     char server_sync_buffer[server_sync_buffer_size];
+     uint8_t server_sync_buffer[server_sync_buffer_size];
      kaa_platform_message_writer_t *server_sync_writer;
      error_code = kaa_platform_message_writer_create(&server_sync_writer, server_sync_buffer, server_sync_buffer_size);
      ASSERT_EQUAL(error_code, KAA_ERR_NONE);

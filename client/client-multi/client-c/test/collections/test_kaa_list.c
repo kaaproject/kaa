@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <stdio.h>
@@ -24,8 +24,6 @@
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
-
-static kaa_logger_t *logger = NULL;
 
 typedef struct {
     uint64_t id;
@@ -45,7 +43,7 @@ static uint64_t test_kaa_list_hash(void *node)
 }
 
 
-void test_list_create()
+static void test_list_create()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -57,7 +55,7 @@ void test_list_create()
     kaa_list_destroy(list, NULL);
 }
 
-void test_list_push_front()
+static void test_list_push_front()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -65,7 +63,7 @@ void test_list_push_front()
     int32_t *number;
     size_t node_number = 2;
     for (size_t i = 0; i < node_number; ++i) {
-        number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
+        number = KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();
         kaa_list_push_front(list, number);
@@ -81,7 +79,7 @@ void test_list_push_front()
     kaa_list_destroy(list, NULL);
 }
 
-void test_list_push_back()
+static void test_list_push_back()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
@@ -89,7 +87,7 @@ void test_list_push_back()
     int32_t *number;
     int node_number = 2;
     for (int i = 0; i < node_number; ++i) {
-        number = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
+        number = KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number);
         *number = rand();
         kaa_list_push_back(list, number);
@@ -101,15 +99,14 @@ void test_list_push_back()
     kaa_list_destroy(list, NULL);
 }
 
-void test_list_sort()
+static void test_list_sort()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
-    test_list_node_t *node;
     uint64_t node_number = 100;
     for (uint64_t i = 0; i < node_number; ++i) {
-        node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        test_list_node_t *node = KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
         node->id = (uint64_t) rand();
         kaa_list_push_back(list, node);
@@ -143,15 +140,14 @@ static void test_list_empty_sort()
 }
 
 
-void test_list_hash()
+static void test_list_hash()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
-    test_list_node_t *node;
     uint64_t node_number = 100;
     for (uint64_t i = 0; i < node_number; ++i) {
-        node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        test_list_node_t *node = KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
         node->id = (uint64_t) node_number - i;
         kaa_list_push_back(list, node);
@@ -166,20 +162,19 @@ void test_list_hash()
     kaa_list_destroy(list, NULL);
 }
 
-void test_process_data(int32_t *value, int32_t *new_value)
+static void test_process_data(int32_t *value, int32_t *new_value)
 {
     *value = *new_value;
 }
 
-void test_list_for_each()
+static void test_list_for_each()
 {
     kaa_list_t *list = kaa_list_create();
     ASSERT_NOT_NULL(list);
 
-    int32_t *number1_ptr;
     int node_number = 4;
     for (int i = 0; i < node_number; ++i) {
-        number1_ptr = (int32_t *)KAA_MALLOC(sizeof(int32_t *));
+        int32_t *number1_ptr = KAA_MALLOC(sizeof(int32_t *));
         ASSERT_NOT_NULL(number1_ptr);
         *number1_ptr = rand();
         kaa_list_push_back(list, number1_ptr);
@@ -197,26 +192,18 @@ void test_list_for_each()
     kaa_list_destroy(list, NULL);
 }
 
-int test_init()
+static int test_init(void)
 {
     srand(time(NULL));
-
-    kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    if (error || !logger)
-        return error;
-
     return 0;
 }
 
-int test_deinit(void)
+static int test_deinit(void)
 {
-    kaa_log_destroy(logger);
-
     return 0;
 }
 
-KAA_SUITE_MAIN(List, test_init, test_deinit
-        ,
+KAA_SUITE_MAIN(List, test_init, test_deinit,
         KAA_TEST_CASE(list_create, test_list_create)
         KAA_TEST_CASE(list_push_front, test_list_push_front)
         KAA_TEST_CASE(list_push_back, test_list_push_back)

@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.kaaproject.kaa.server.sync.platform;
@@ -276,7 +276,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
-        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 8);
         buf.putInt(sync.getRequestId());
         buf.putInt(sync.getStatus().ordinal());
     }
@@ -368,8 +368,14 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, 4);
         List<LogDeliveryStatus> statusList = logSync.getDeliveryStatuses();
+
+        int extensionSize = 4;
+        if (statusList != null) {
+            extensionSize += 4 * statusList.size();
+        }
+
+        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, extensionSize);
 
         if (statusList != null && !statusList.isEmpty()) {
             buf.putInt(statusList.size());

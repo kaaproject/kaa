@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <string.h>
@@ -48,7 +48,7 @@ static kaa_profile_manager_t *profile_manager = NULL;
 
 
 #define TEST_PUB_KEY_SIZE 20
-static const char test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
+static const uint8_t test_ep_key[TEST_PUB_KEY_SIZE] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 
 
 
@@ -105,13 +105,13 @@ static kaa_error_t get_protocol_id(void *ctx, kaa_transport_protocol_id_t *id)
     return KAA_ERR_NONE;
 }
 static kaa_error_t get_services(void *ctx,
-                                kaa_extension_id **supported_list,
+                                const kaa_extension_id **supported_list,
                                 size_t *count)
 {
     (void)ctx;
     /* Only profile service is "supported" by this mock */
-    static kaa_extension_id service = KAA_EXTENSION_PROFILE;
-    *supported_list = &service;
+    static const kaa_extension_id services[] = { KAA_EXTENSION_PROFILE };
+    *supported_list = services;
     *count = 1;
     return KAA_ERR_NONE;
 }
@@ -131,13 +131,13 @@ static kaa_error_t sync_handler(void *ctx,
 }
 
 static kaa_transport_channel_interface_t channel = {
-        .context = NULL,
-        .destroy = NULL,
-        .sync_handler = sync_handler,
-        .init = init_channel,
-        .set_access_point = set_access_point,
-        .get_protocol_id = get_protocol_id,
-        .get_supported_services = get_services,
+    .context = NULL,
+    .destroy = NULL,
+    .sync_handler = sync_handler,
+    .init = init_channel,
+    .set_access_point = set_access_point,
+    .get_protocol_id = get_protocol_id,
+    .get_supported_services = get_services,
 };
 
 /*----------------------------------------------------------------------------*/
@@ -198,7 +198,6 @@ void test_profile_sync_get_size(void **state)
 {
     (void)state;
 
-    kaa_error_t error_code = KAA_ERR_NONE;
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
     profile->profile_body = kaa_string_copy_create("dummy");
 
@@ -213,7 +212,7 @@ void test_profile_sync_get_size(void **state)
 
     size_t profile_sync_size = 0;
 
-    error_code = kaa_profile_manager_update_profile(profile_manager, profile);
+    kaa_error_t error_code = kaa_profile_manager_update_profile(profile_manager, profile);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     status->is_registered = true;
@@ -233,6 +232,7 @@ void test_profile_sync_get_size(void **state)
 
     const char *access_token = "access token";
     error_code = kaa_profile_manager_set_endpoint_access_token(profile_manager, access_token);
+    assert_int_equal(KAA_ERR_NONE, error_code);
 
     expected_size += sizeof(uint32_t)
                    + strlen(access_token);
@@ -274,7 +274,7 @@ void test_profile_sync_serialize(void **state)
     error_code = kaa_profile_request_get_size(profile_manager, &profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer[profile_sync_size];
+    uint8_t buffer[profile_sync_size];
     error_code = kaa_platform_message_writer_create(&manual_writer, buffer, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -314,7 +314,7 @@ void test_profile_sync_serialize(void **state)
     error_code = kaa_platform_message_write_aligned(manual_writer, access_token, access_token_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char buffer2[profile_sync_size];
+    uint8_t buffer2[profile_sync_size];
     error_code = kaa_platform_message_writer_create(&auto_writer, buffer2, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -336,13 +336,12 @@ void test_profile_handle_sync(void **state)
     (void)state;
 
     bool need_resync = false;
-    kaa_error_t error_code = KAA_ERR_NONE;
     uint16_t extension_options = 0x1; /* Need resync */
 
     const size_t buffer_size = 6;
-    char buffer[buffer_size];
+    uint8_t buffer[buffer_size];
     kaa_platform_message_reader_t *reader;
-    error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
+    kaa_error_t error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_profile_handle_server_sync(profile_manager, reader, extension_options, 0);
@@ -370,8 +369,10 @@ static void test_profile_force_sync(void **state)
     ASSERT_TRUE(mock_sync_handler_called);
 }
 
-int test_init(void)
+int test_init(void **state)
 {
+    (void)state;
+
     kaa_error_t error = kaa_log_create(&logger,
                                        KAA_MAX_LOG_MESSAGE_LENGTH,
                                        KAA_MAX_LOG_LEVEL,
@@ -404,8 +405,10 @@ int test_init(void)
     return 0;
 }
 
-int test_deinit(void)
+int test_deinit(void **state)
 {
+    (void)state;
+
     kaa_profile_manager_destroy(profile_manager);
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
@@ -413,12 +416,15 @@ int test_deinit(void)
     return 0;
 }
 
-KAA_SUITE_MAIN(Profile, test_init, test_deinit,
-        KAA_TEST_CASE(profile_is_set, test_profile_is_set)
-        KAA_TEST_CASE(profile_update, test_profile_update)
-        KAA_TEST_CASE(profile_request, test_profile_sync_get_size)
-        KAA_TEST_CASE(profile_sync_serialize, test_profile_sync_serialize)
-        KAA_TEST_CASE(profile_handle_sync, test_profile_handle_sync)
-        KAA_TEST_CASE(profile_force_sync, test_profile_force_sync)
-
-)
+int main(void)
+{
+    const struct CMUnitTest tests[] = {
+        cmocka_unit_test_setup_teardown(test_profile_is_set, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_update, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_sync_get_size, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_sync_serialize, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_handle_sync, test_init, test_deinit),
+        cmocka_unit_test_setup_teardown(test_profile_force_sync, test_init, test_deinit),
+    };
+    return cmocka_run_group_tests(tests, NULL, NULL);
+}

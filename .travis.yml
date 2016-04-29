@@ -18,12 +18,20 @@ language: python
 python: "3.4"
 sudo: required
 dist: trusty
-install: |
-  cd client/client-multi/client-c
-  ./scripts/install.sh --arg cc3200Support false
-  . $HOME/.nix-profile/etc/profile.d/nix.sh
-  cd ../../..
+install:
+  - ./scripts/setup_nix.sh
+  - . $HOME/.nix-profile/etc/profile.d/nix.sh
 
-script: |
-  cd client/client-multi/client-c
-  ./scripts/build.sh --arg cc3200Support false
+  - cd client/client-multi/client-c/ && nix-shell -Q --pure --run true --arg cc3200Support false && cd ../../..
+  - cd client/client-multi/client-cpp/ && nix-shell -Q --pure --run true && cd ../../..
+
+script:
+  - nix-shell --pure --packages pkgs.maven --run 'mvn -q apache-rat:check'
+
+  - cd client/client-multi/client-c
+  - nix-shell --arg cc3200Support false --pure --run ./scripts/build.sh
+  - cd ../../..
+
+  - cd client/client-multi/client-cpp
+  - nix-shell --pure --run './build.sh test'
+  - cd ../../..

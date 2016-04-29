@@ -1,17 +1,17 @@
-/**
- *  Copyright 2014-2016 CyberVision, Inc.
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "cc32xx_file_utils.h"
@@ -36,7 +36,11 @@
 
 #define MAX_FILE_SIZE 8L*1024L
 
-bool file_is_exist(const char *filename)
+// TODO: KAA-845
+// There is no file consistency check when parsing persistence data. This causes
+// bugs when data inside a file is misinterpreted.
+#if 0
+static bool file_is_exist(const char *filename)
 {
     uint32_t ul_token;
     int32_t l_file_handle;
@@ -51,7 +55,7 @@ bool file_is_exist(const char *filename)
     return true;
 }
 
-bool create_file(const char *filename)
+static bool create_file(const char *filename)
 {
     uint32_t ul_token;
     int32_t  l_file_handle;
@@ -68,9 +72,14 @@ bool create_file(const char *filename)
     }
     return true;
 }
+#endif
 
 int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
+// TODO: KAA-845
+// There is no file consistency check when parsing persistence data. This causes
+// bugs when data inside a file is misinterpreted.
+#if 0
     KAA_RETURN_IF_NIL4(file_name, buffer, buffer_size, needs_deallocation, -1);
     *buffer = NULL;
     *buffer_size = 0;
@@ -114,10 +123,21 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
 
     sl_FsClose(l_file_handle, 0, 0, 0);
     return 0;
+#else
+    (void)file_name;
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
+#endif
+    return -1;
 }
 
 int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size)
 {
+// TODO: KAA-845
+// There is no file consistency check when parsing persistence data. This causes
+// bugs when data inside a file is misinterpreted.
+#if 0
     KAA_RETURN_IF_NIL3(file_name, buffer, buffer_size, -1);
 
     int32_t ret = -1;
@@ -137,22 +157,36 @@ int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t b
         sl_FsClose(l_file_handle, 0, 0, 0);
     }
     return ret;
+#else
+    (void)file_name;
+    (void)buffer;
+    (void)buffer_size;
+    return -1;
+#endif
 }
 
 int cc32xx_binary_file_delete(const char *file_name)
 {
+// TODO: KAA-845
+// There is no file consistency check when parsing persistence data. This causes
+// bugs when data inside a file is misinterpreted.
+#if 0
     int32_t ret = 0;
     uint32_t ul_token;
     int32_t l_file_handle;
 
-    ret = sl_FsOpen((const unsigned char*)file_name, FS_MODE_OPEN_READ, &ul_token, &l_file_handle);
+    ret = sl_FsOpen((unsigned char*)file_name, FS_MODE_OPEN_READ, &ul_token, &l_file_handle);
     sl_FsClose(l_file_handle, 0, 0, 0);
     if (ret < 0)
         return -1;
 
-    ret = sl_FsDel((const unsigned char *)file_name, 0);
+    ret = sl_FsDel(file_name, 0);
     if (ret < 0)
         return -1;
 
     return 0;
+#else
+    (void)file_name;
+    return -1;
+#endif
 }
