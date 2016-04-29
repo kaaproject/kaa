@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codahale.metrics.Gauge;
+import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
@@ -38,6 +39,8 @@ public class DefaultMerticsService implements MetricsService {
     private final MetricRegistry metrics = new MetricRegistry();
     private volatile boolean enabled;
     private Slf4jReporter reporter;
+
+    private JmxReporter jmx;
 
     @Autowired
     private SystemMonitoringInfo monitor;
@@ -75,12 +78,17 @@ public class DefaultMerticsService implements MetricsService {
                 .convertDurationsTo(TimeUnit.MILLISECONDS).build();
         registerSystemMonitor();
         reporter.start(30, TimeUnit.SECONDS);
+
+        this.jmx = JmxReporter.forRegistry(this.metrics).inDomain(KAA_METRICS_LOGGER_NAME).build();
+        this.jmx.start();
     }
 
     @Override
     public void stopReport() {
         LOG.info("Stoping metrics report!");
         reporter.stop();
+
+        this.jmx.stop();
     }
 
     private void registerSystemMonitor() {

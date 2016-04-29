@@ -36,6 +36,8 @@ set(CMAKE_MODULE_PATH
 # in the corresponding platform CMake script(s).
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic")
 
+set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Os")
+
 # Compiler specific flags.
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND APPLE)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")

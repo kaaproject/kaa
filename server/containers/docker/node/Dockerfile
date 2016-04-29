@@ -16,8 +16,10 @@ FROM nimmis/java:oracle-8-jdk
 MAINTAINER Dmitry Sergeev <dsergeev@cybervisiontech.com>
 #Install build dependencies
 RUN apt-get update && apt-get install -y maven gcc cmake wget
-RUN mkdir kaa && cd kaa && wget https://github.com/kaaproject/kaa/releases/download/v0.9.0/kaa-deb-0.9.0.tar.gz
-RUN cd kaa && tar -xvf kaa-deb-0.9.0.tar.gz && dpkg -i deb/kaa-node.deb
+
+ARG setupfile
+ADD ["$setupfile", "/kaa-node.deb"]
+RUN dpkg -i /kaa-node.deb
 
 RUN service kaa-node stop
 

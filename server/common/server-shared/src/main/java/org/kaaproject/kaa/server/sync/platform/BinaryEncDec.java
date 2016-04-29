@@ -276,7 +276,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
-        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 8);
         buf.putInt(sync.getRequestId());
         buf.putInt(sync.getStatus().ordinal());
     }
@@ -368,8 +368,14 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, 4);
         List<LogDeliveryStatus> statusList = logSync.getDeliveryStatuses();
+
+        int extensionSize = 4;
+        if (statusList != null) {
+            extensionSize += 4 * statusList.size();
+        }
+
+        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, extensionSize);
 
         if (statusList != null && !statusList.isEmpty()) {
             buf.putInt(statusList.size());

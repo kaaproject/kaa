@@ -40,7 +40,7 @@ in stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/lib/esp8266-rtos-sdk
     cp -r * $out/lib/esp8266-rtos-sdk
-    cp ${libhal} $out/lib/esp8266-rtos-sdk
+    cp ${libhal} $out/lib/esp8266-rtos-sdk/lib/libhal.a
   '';
 
   dontStrip = true;
