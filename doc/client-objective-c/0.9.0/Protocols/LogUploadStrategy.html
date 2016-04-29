@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>LogUploadStrategy Protocol Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Kaa client Objective-C SDK </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">CyberVision</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/getBatchCount">- getBatchCount</option>
+		
+		<option value="//api/name/getBatchSize">- getBatchSize</option>
+		
+		<option value="//api/name/getMaxParallelUploads">- getMaxParallelUploads</option>
+		
+		<option value="//api/name/getTimeout">- getTimeout</option>
+		
+		<option value="//api/name/getUploadCheckPeriod">- getUploadCheckPeriod</option>
+		
+		<option value="//api/name/isUploadNeededForStorageStatus:">- isUploadNeededForStorageStatus:</option>
+		
+		<option value="//api/name/onFailureForController:errorCode:">- onFailureForController:errorCode:</option>
+		
+		<option value="//api/name/onTimeoutForController:">- onTimeoutForController:</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">LogUploadStrategy Protocol Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Declared in</th>
+	<td>LogUploadStrategy.h</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Interface for log upload strategy.</p>
+
+<p>Used by log collector on each adding of the new log record in order to check
+whether to send logs to server or clean up local storage.</p>
+
+<p>Reference implementation used by default &lt; DefaultLogUploadStrategy ></p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/isUploadNeededForStorageStatus:" title="isUploadNeededForStorageStatus:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/isUploadNeededForStorageStatus:">&ndash;&nbsp;isUploadNeededForStorageStatus:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves log upload decision based on current storage status and defined
+upload configuration.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (LogUploadStrategyDecision)isUploadNeededForStorageStatus:(id&lt;LogStorageStatus&gt;)<em>status</em></code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Upload decision.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves log upload decision based on current storage status and defined
+upload configuration.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getBatchSize" title="getBatchSize"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getBatchSize">&ndash;&nbsp;getBatchSize</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves maximum size of the report pack
+that will be delivered in single request to server.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (int64_t)getBatchSize</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Size of the batch</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves maximum size of the report pack
+that will be delivered in single request to server.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getBatchCount" title="getBatchCount"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getBatchCount">&ndash;&nbsp;getBatchCount</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves maximum count of the records in report pack
+that will be delivered in single request to server.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (int32_t)getBatchCount</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Size of the batch</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves maximum count of the records in report pack
+that will be delivered in single request to server.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getTimeout" title="getTimeout"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getTimeout">&ndash;&nbsp;getTimeout</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Maximum time to wait log delivery response.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (int32_t)getTimeout</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Time in seconds.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Maximum time to wait log delivery response.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getUploadCheckPeriod" title="getUploadCheckPeriod"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getUploadCheckPeriod">&ndash;&nbsp;getUploadCheckPeriod</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>If there are records in storage we need to periodically check isUploadNeeded method.
+This is useful if client want to upload logs on certain timing conditions instead of log storage checks</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (int32_t)getUploadCheckPeriod</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Time in seconds</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>If there are records in storage we need to periodically check isUploadNeeded method.
+This is useful if client want to upload logs on certain timing conditions instead of log storage checks</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getMaxParallelUploads" title="getMaxParallelUploads"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getMaxParallelUploads">&ndash;&nbsp;getMaxParallelUploads</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Number of maximum parallel uploads.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (int64_t)getMaxParallelUploads</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Number of maximum parallel uploads.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/onTimeoutForController:" title="onTimeoutForController:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/onTimeoutForController:">&ndash;&nbsp;onTimeoutForController:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Handles timeout of log delivery</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)onTimeoutForController:(id&lt;LogFailoverCommand&gt;)<em>controller</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Handles timeout of log delivery</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/onFailureForController:errorCode:" title="onFailureForController:errorCode:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/onFailureForController:errorCode:">&ndash;&nbsp;onFailureForController:errorCode:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Handles failure of log delivery</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)onFailureForController:(id&lt;LogFailoverCommand&gt;)<em>controller</em> errorCode:(LogDeliveryErrorCode)<em>code</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Handles failure of log delivery</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">LogUploadStrategy.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 CyberVision. All rights reserved. Updated: 2016-04-28</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>
