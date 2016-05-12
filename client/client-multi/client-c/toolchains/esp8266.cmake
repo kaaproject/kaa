@@ -38,6 +38,7 @@ endif ()
 
 CMAKE_FORCE_C_COMPILER(${TOOLCHAIN_PATH}/bin/xtensa-lx106-elf-gcc GNU)
 
+set(CMAKE_OBJCOPY ${TOOLCHAIN_PATH}/bin/xtensa-lx106-elf-objcopy CACHE PATH "")
 
 #########################
 ### ESP8266 SDK setup ###
@@ -61,5 +62,5 @@ set(ESP8266_INCDIRS
     ${TOOLCHAIN_PATH}/lib/gcc/xtensa-lx106-elf/4.8.2/include/
     )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -fno-builtin -Wno-implicit-function-declaration -Os -Wpointer-arith  -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections")
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -fno-builtin -Wno-implicit-function-declaration -Os -Wpointer-arith  -Wl,-EL,--gc-sections -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections" CACHE FORCE "")
+set(CMAKE_EXE_LINK_EXECUTABLE "<CMAKE_C_COMPILER> <OBJECTS> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> -o <TARGET>")
