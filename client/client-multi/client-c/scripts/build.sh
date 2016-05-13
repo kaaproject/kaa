@@ -18,9 +18,7 @@
 set -e
 set -v
 
-# Stupid doxygen can't create a directory
-mkdir -p target/apidocs
-doxygen
+make doxygen
 
 make
 

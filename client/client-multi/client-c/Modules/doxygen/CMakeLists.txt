@@ -21,7 +21,8 @@ include (FindDoxygen)
 if(DOXYGEN_FOUND)
 
    add_custom_target(doxygen
-     ${DOXYGEN_EXECUTABLE}
+     COMMAND ${CMAKE_COMMAND} -E make_directory target/apidocs/doxygen
+     COMMAND ${DOXYGEN_EXECUTABLE}
      Doxyfile
      WORKING_DIRECTORY
      ${KAA_SDK_DIR}
