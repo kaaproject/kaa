@@ -189,3 +189,5 @@ install(TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION lib)
 if(KAA_UNITTESTS_COMPILE)
     include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/UnitTest.cmake)
 endif()
+
+add_subdirectory(Modules/doxygen)
