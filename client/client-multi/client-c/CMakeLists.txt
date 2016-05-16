@@ -191,3 +191,5 @@ if(KAA_UNITTESTS_COMPILE)
 endif()
 
 add_subdirectory(Modules/doxygen)
+
+add_subdirectory(Modules/cppcheck)

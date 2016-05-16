@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2014-2016 CyberVision, Inc.
 #
@@ -15,13 +14,13 @@
 # limitations under the License.
 #
 
-set -e
-set -v
+# This cmake list is resposible for cppcheck.
 
-make
+add_custom_target(cppcheck
+    COMMAND cppcheck --quiet --enable=all --std=c99	--suppress=unusedFunction --force
+                     --error-exitcode=1 --template=gcc -I src/kaa --inline-suppr src/ test/
+    WORKING_DERICTORY ${KAA_SDK_DIR} 
+    COMMENT "Running cppcheck"
+    VERBATIM
+    )
 
-make -C build-posix doxygen
-
-./build.sh test
-
-make -C build-posix cppcheck
