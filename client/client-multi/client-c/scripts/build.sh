@@ -20,8 +20,8 @@ set -v
 
 make
 
-make -C build-posix doxygen
-
 ./build.sh test
+
+make -C build-posix doxygen
 
 make -C build-posix cppcheck
