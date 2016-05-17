@@ -1048,11 +1048,6 @@ static float *create_float(void)
     return float_value;
 }
 
-void kaa_null_destroy(void *data)
-{
-    (void)data;
-}
-
 static void test_array_deserialize_wo_ctx(void **state)
 {
     (void)state;

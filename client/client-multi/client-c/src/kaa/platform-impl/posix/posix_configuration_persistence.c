@@ -22,16 +22,19 @@
 
 #define KAA_CONFIGURATION_STORAGE    "kaa_configuration.bin"
 
+__attribute__((weak))
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     posix_binary_file_read(KAA_CONFIGURATION_STORAGE, buffer, buffer_size, needs_deallocation);
 }
 
+__attribute__((weak))
 void ext_configuration_store(const char *buffer, size_t buffer_size)
 {
     posix_binary_file_store(KAA_CONFIGURATION_STORAGE, buffer, buffer_size);
 }
 
+__attribute__((weak))
 void ext_configuration_delete(void)
 {
     posix_binary_file_delete(KAA_CONFIGURATION_STORAGE);

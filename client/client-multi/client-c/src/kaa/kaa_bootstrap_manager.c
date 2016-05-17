@@ -528,6 +528,8 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     return error_code;
 }
 
+// TODO(KAA-1089): Remove weak linkage
+__attribute__((weak))
 kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self,
                                                          kaa_transport_protocol_id_t *protocol_id,
                                                          kaa_server_type_t type,
