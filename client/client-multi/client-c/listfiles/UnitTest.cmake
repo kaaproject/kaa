@@ -137,14 +137,6 @@ kaa_add_unit_test(NAME test_status
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
 
-kaa_add_unit_test(NAME test_profile
-        SOURCES
-        test/test_kaa_profile.c
-        test/kaa_test_external.c
-        ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
 kaa_add_unit_test(NAME test_common
         SOURCES
         test/test_kaa_common.c

@@ -33,7 +33,6 @@
 #include <kaa_platform_common.h>
 #include <stdint.h>
 #include <kaa_context.h>
-#include <kaa_profile.h>
 #include <platform/ext_kaa_failover_strategy.h>
 #include <utilities/kaa_log.h>
 
@@ -49,11 +48,6 @@ void kaa_user_manager_destroy(kaa_user_manager_t *user_manager);
 kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 kaa_error_t kaa_status_save(kaa_status_t *kaa_status_p);
 void kaa_status_destroy(kaa_status_t *self);
-
-kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status,
-        kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-void kaa_profile_manager_destroy(kaa_profile_manager_t *self);
-bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
 
 kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
@@ -87,8 +81,6 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(
     kaa_transport_protocol_id_t *protocol_id);
 
 
-kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
-
 kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
 
@@ -97,8 +89,6 @@ kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
 kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 
 kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered);
-
-kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
 
 struct kaa_status_holder_t {
     kaa_status_t *status_instance;
@@ -156,7 +146,6 @@ kaa_error_t kaa_extension_user_server_sync(void *context, uint32_t request_id,
  */
 
 kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self, size_t *expected_size);
-kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 
 kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
@@ -164,12 +153,9 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
 kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self,
         kaa_platform_message_writer_t* writer);
 kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
-kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self,
-        kaa_platform_message_writer_t* writer);
 kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status,
         kaa_platform_message_writer_t* writer, uint32_t request_id);
 
-kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 #ifdef __cplusplus

@@ -20,6 +20,7 @@ project(Kaa-c)
 enable_language(C)
 enable_testing()
 
+option(WITH_EXTENSION_PROFILE "Enable profile extension" ON)
 option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
 option(WITH_EXTENSION_EVENT "Enable event extension" ON)
 option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
@@ -116,7 +117,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
         ${KAA_SRC_FOLDER}/kaa_channel_manager.c
         ${KAA_SRC_FOLDER}/kaa_common_schema.c
-        ${KAA_SRC_FOLDER}/kaa_profile.c
         ${KAA_SRC_FOLDER}/kaa_status.c
         ${KAA_SRC_FOLDER}/kaa_user.c
         ${KAA_SRC_FOLDER}/kaa.c
@@ -143,6 +143,15 @@ target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
 target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 
 # Disables Kaa library modules.
+if(WITH_EXTENSION_PROFILE)
+    message("PROFILE ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/profile/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_profile)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_PROFILE)
+endif()
+
 if(WITH_EXTENSION_CONFIGURATION)
     message("CONFIGURATION ENABLED")
 

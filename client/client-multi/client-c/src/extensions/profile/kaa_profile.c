@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#include <kaa_profile.h>
+#include "kaa_profile_private.h"
+
 #include "kaa_private.h"
 
 #include <string.h>
@@ -25,7 +28,6 @@
 #include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"
 #include "kaa_status.h"
-#include "kaa_profile.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_defaults.h"

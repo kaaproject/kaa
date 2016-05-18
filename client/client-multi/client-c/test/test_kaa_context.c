@@ -38,7 +38,9 @@ void test_create_context()
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     ASSERT_NOT_NULL(context->event_manager);
 #endif
+#ifndef KAA_DISABLE_FEATURE_PROFILE
     ASSERT_NOT_NULL(context->profile_manager);
+#endif
     ASSERT_NOT_NULL(context->status);
     ASSERT_NOT_NULL(context->user_manager);
 

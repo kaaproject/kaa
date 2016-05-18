@@ -23,7 +23,13 @@ static void test_kaa_extension_get_all_extensions(void **state)
 {
     (void)state;
     assert_non_null(kaa_extension_get(KAA_EXTENSION_BOOTSTRAP));
+
+#ifndef KAA_DISABLE_FEATURE_PROFILE
     assert_non_null(kaa_extension_get(KAA_EXTENSION_PROFILE));
+#else
+    assert_null(kaa_extension_get(KAA_EXTENSION_PROFILE));
+#endif
+
     assert_non_null(kaa_extension_get(KAA_EXTENSION_USER));
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
