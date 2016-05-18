@@ -20,6 +20,7 @@
 #include "platform/ext_sha.h"
 
 #include "kaa_user.h"
+#include "kaa_user_private.h"
 
 #include "kaa_test.h"
 

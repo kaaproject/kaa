@@ -103,13 +103,6 @@ if(WITH_EXTENSION_LOGGING)
         kaac ${OPENSSL_LIBRARIES})
 endif()
 
-kaa_add_unit_test(NAME test_user_extension
-        SOURCES
-        test/test_kaa_user.c
-        test/kaa_test_external.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
 kaa_add_unit_test(NAME test_meta_extension
         SOURCES
         test/test_meta_extension.c

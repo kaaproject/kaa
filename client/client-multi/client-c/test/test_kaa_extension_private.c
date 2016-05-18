@@ -30,7 +30,11 @@ static void test_kaa_extension_get_all_extensions(void **state)
     assert_null(kaa_extension_get(KAA_EXTENSION_PROFILE));
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_USER
     assert_non_null(kaa_extension_get(KAA_EXTENSION_USER));
+#else
+    assert_null(kaa_extension_get(KAA_EXTENSION_USER));
+#endif
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     assert_non_null(kaa_extension_get(KAA_EXTENSION_LOGGING));

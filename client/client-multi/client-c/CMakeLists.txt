@@ -25,6 +25,7 @@ option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
 option(WITH_EXTENSION_EVENT "Enable event extension" ON)
 option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
 option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
+option(WITH_EXTENSION_USER "Enable user extension" ON)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -118,7 +119,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_channel_manager.c
         ${KAA_SRC_FOLDER}/kaa_common_schema.c
         ${KAA_SRC_FOLDER}/kaa_status.c
-        ${KAA_SRC_FOLDER}/kaa_user.c
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
@@ -150,6 +150,15 @@ if(WITH_EXTENSION_PROFILE)
     target_link_libraries(kaac PRIVATE extension_profile)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_PROFILE)
+endif()
+
+if(WITH_EXTENSION_USER)
+    message("USER EXTENSION ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/user/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_user)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_USER)
 endif()
 
 if(WITH_EXTENSION_CONFIGURATION)

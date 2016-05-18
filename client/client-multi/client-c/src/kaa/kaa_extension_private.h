@@ -93,6 +93,7 @@ static struct kaa_extension kaa_extension_notification = {
 };
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_USER
 static struct kaa_extension kaa_extension_user = {
     .id = KAA_EXTENSION_USER,
     .init = kaa_extension_user_init,
@@ -100,6 +101,7 @@ static struct kaa_extension kaa_extension_user = {
     .request_serialize = kaa_extension_user_request_serialize,
     .server_sync = kaa_extension_user_server_sync,
 };
+#endif
 
 // I'm not sure in what order they should be, so just kept order from
 // kaa_context_init().
@@ -126,5 +128,7 @@ static const struct kaa_extension *kaa_extensions[] = {
     &kaa_extension_notification,
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_USER
     &kaa_extension_user,
+#endif
 };
