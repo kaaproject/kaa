@@ -650,26 +650,28 @@ typedef enum {
 }
 
 - (void)main {
-    [NSThread sleepForTimeInterval:PING_TIMEOUT_SEC];
-    
-    if (self.isCancelled || self.isFinished) {
-        DDLogInfo(@"%@ Can't execute ping task for channel [%@]. Task was cancelled.", TAG, [self.channel getId]);
-        return;
-    }
-    
-    @try {
-        DDLogInfo(@"%@ Executing ping task for channel [%@]", TAG, [self.channel getId]);
-        [self.channel sendPingRequest];
-        if (self.isCancelled) {
-            DDLogInfo(@"%@ Can't schedule new ping task for channel [%@]. Task was cancelled.", TAG, [self.channel getId]);
-        } else {
-            [self.channel schedulePingTask];
+    dispatch_time_t time =  dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
+    dispatch_queue_t queue =  dispatch_queue_create("com.kaaproject.pingtask", NULL);
+    dispatch_after(time, queue, ^{
+        if (self.isCancelled || self.isFinished) {
+            DDLogInfo(@"%@ Can't execute ping task for channel [%@]. Task was cancelled.", TAG, [self.channel getId]);
+            return;
         }
-    }
-    @catch (NSException *ex) {
-        DDLogError(@"%@ Failed to send ping request for channel [%@]: %@. Reason: %@", TAG, [self.channel getId], ex.name, ex.reason);
-        [self.channel onServerFailed];
-    }
+        
+        @try {
+            DDLogInfo(@"%@ Executing ping task for channel [%@]", TAG, [self.channel getId]);
+            [self.channel sendPingRequest];
+            if (self.isCancelled) {
+                DDLogInfo(@"%@ Can't schedule new ping task for channel [%@]. Task was cancelled.", TAG, [self.channel getId]);
+            } else {
+                [self.channel schedulePingTask];
+            }
+        }
+        @catch (NSException *ex) {
+            DDLogError(@"%@ Failed to send ping request for channel [%@]: %@. Reason: %@", TAG, [self.channel getId], ex.name, ex.reason);
+            [self.channel onServerFailed];
+        }
+    });
 }
 
 @end
