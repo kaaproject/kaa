@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "../platform/platform.h"
+#include <stddef.h>
 #include "../utilities/kaa_mem.h"
 
 

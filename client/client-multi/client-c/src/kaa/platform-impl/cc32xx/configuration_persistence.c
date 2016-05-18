@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-#include <stddef.h>
+
 #include <stdbool.h>
-#include "../../platform/ext_configuration_persistence.h"
+#include <stddef.h>
+#include <platform/ext_configuration_persistence.h>
+#include <platform/file_utils.h>
 
-#define KAA_CONFIGURATION_STORAGE "" /* there is no filesystem on esp8266 */
+#define KAA_CONFIGURATION_STORAGE    "kaa_configuration.bin"
 
-void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) {
-    (void)buffer;
-    (void)buffer_size;
-    (void)needs_deallocation;
+void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+{
+    cc32xx_binary_file_read(KAA_CONFIGURATION_STORAGE, buffer, buffer_size, needs_deallocation);
 }
 
-void ext_configuration_store(const char *buffer, size_t buffer_size) {
-    (void)buffer;
-    (void)buffer_size;
+void ext_configuration_store(const char *buffer, size_t buffer_size)
+{
+    cc32xx_binary_file_store(KAA_CONFIGURATION_STORAGE, buffer, buffer_size);
 }
 
 void ext_configuration_delete(void)
 {
-
+    cc32xx_binary_file_delete(KAA_CONFIGURATION_STORAGE);
 }

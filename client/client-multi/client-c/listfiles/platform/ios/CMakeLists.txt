@@ -29,7 +29,7 @@ if(NOT KAA_WITHOUT_TCP_CHANNEL)
             ${KAA_SOURCE_FILES}
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
-            ${KAA_SRC_FOLDER}/platform-impl/posix/posix_tcp_utils.c
+            ${KAA_SRC_FOLDER}/platform-impl/posix/tcp_utils.c
             ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
         )
 endif()

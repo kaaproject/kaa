@@ -17,8 +17,8 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include "../../platform/ext_configuration_persistence.h"
-#include "posix_file_utils.h"
+#include <platform/ext_configuration_persistence.h>
+#include <platform/file_utils.h>
 
 #define KAA_CONFIGURATION_STORAGE    "kaa_configuration.bin"
 

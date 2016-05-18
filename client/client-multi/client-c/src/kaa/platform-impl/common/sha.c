@@ -20,8 +20,7 @@
 #include <string.h>
 #include "../../kaa_common.h"
 #include "../../platform/ext_sha.h"
-#include "../../platform/sock.h"
-
+#include <platform/sock.h>
 
 
 kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)

@@ -24,7 +24,7 @@
 #include "../../platform/ext_key_utils.h"
 #include "../../utilities/kaa_mem.h"
 #include "../../kaa_common.h"
-#include "posix_file_utils.h"
+#include <platform/file_utils.h>
 
 
 #define KAA_KEY_STORAGE       "kaa_key.pub"

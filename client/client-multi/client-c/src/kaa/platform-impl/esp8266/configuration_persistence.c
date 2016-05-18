@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef STDIO_H_
-#define STDIO_H_
+#include <stddef.h>
+#include <stdbool.h>
+#include <platform/ext_configuration_persistence.h>
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_stdio.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_stdio.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_stdio.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_stdio.h"
-#else
-#include "../platform-impl/posix/posix_stdio.h"
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
-#endif /* ESP8266_PLATFORM */
-#endif //ifdef ECONAIS_PLATFORM
+#define KAA_CONFIGURATION_STORAGE "" /* there is no filesystem on esp8266 */
 
-#endif /* STDIO_H_ */
+void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) {
+    (void)buffer;
+    (void)buffer_size;
+    (void)needs_deallocation;
+}
+
+void ext_configuration_store(const char *buffer, size_t buffer_size) {
+    (void)buffer;
+    (void)buffer_size;
+}
+
+void ext_configuration_delete(void)
+{
+
+}

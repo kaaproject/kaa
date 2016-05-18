@@ -20,7 +20,7 @@
 
 #include "../../kaa_error.h"
 #include "../../platform/ext_transport_channel.h"
-#include "../../platform/defaults.h"
+#include <platform/defaults.h>
 #include "../../platform/ext_tcp_utils.h"
 
 #ifdef __cplusplus

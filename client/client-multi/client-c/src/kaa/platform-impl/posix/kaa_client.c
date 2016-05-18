@@ -28,13 +28,13 @@
 #include "../../kaa_common.h"
 #include "../../utilities/kaa_mem.h"
 #include "../../utilities/kaa_log.h"
-#include "../../platform/time.h"
+#include <platform/time.h>
 #include "../../kaa_context.h"
-#include "../../platform/kaa_client.h"
+#include <platform/kaa_client.h>
 #include "../../platform/ext_transport_channel.h"
 #include "../../platform-impl/common/kaa_tcp_channel.h"
 #include "../../platform-impl/common/ext_log_upload_strategies.h"
-#include "../../platform-impl/posix/posix_kaa_failover_strategy.h"
+#include <platform/kaa_failover_strategy.h>
 #include "../../kaa_logging.h"
 #include "../../kaa_channel_manager.h"
 #include "../../kaa_platform_utils.h"
