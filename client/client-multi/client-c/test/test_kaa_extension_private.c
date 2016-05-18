@@ -44,7 +44,11 @@ static void test_kaa_extension_get_all_extensions(void **state)
     assert_null(kaa_extension_get(KAA_EXTENSION_EVENT));
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
     assert_non_null(kaa_extension_get(KAA_EXTENSION_NOTIFICATION));
+#else
+    assert_null(kaa_extension_get(KAA_EXTENSION_NOTIFICATION));
+#endif
 }
 
 int main(void)

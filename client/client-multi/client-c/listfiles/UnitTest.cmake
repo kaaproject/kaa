@@ -187,12 +187,6 @@ kaa_add_unit_test(NAME test_kaa_common_schema
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
 
-kaa_add_unit_test(NAME test_kaa_notification_manager
-        SOURCES
-        test/test_kaa_notification.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
 kaa_add_unit_test(NAME test_kaa_reallocation
         SOURCES
         test/utilities/test_kaa_reallocation.c

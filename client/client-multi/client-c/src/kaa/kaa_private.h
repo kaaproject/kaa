@@ -34,7 +34,6 @@
 #include <stdint.h>
 #include <kaa_context.h>
 #include <kaa_profile.h>
-#include <kaa_notification_manager.h>
 #include <platform/ext_kaa_failover_strategy.h>
 #include <utilities/kaa_log.h>
 
@@ -70,11 +69,6 @@ kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_prot
 void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self);
 
 kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
-
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
-#endif
 
 kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa_logger_t *logger);
 void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy);
@@ -163,7 +157,6 @@ kaa_error_t kaa_extension_user_server_sync(void *context, uint32_t request_id,
 
 kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 
 kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
@@ -173,13 +166,10 @@ kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_mana
 kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
 kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self,
         kaa_platform_message_writer_t* writer);
-kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self,
-        kaa_platform_message_writer_t *writer);
 kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status,
         kaa_platform_message_writer_t* writer, uint32_t request_id);
 
 kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
 kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 #ifdef __cplusplus
