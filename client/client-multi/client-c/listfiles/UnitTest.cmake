@@ -123,13 +123,6 @@ kaa_add_unit_test(NAME test_context
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
 
-kaa_add_unit_test(NAME test_event
-        SOURCES
-        test/test_kaa_event.c
-        test/kaa_test_external.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
 kaa_add_unit_test(NAME test_status
         SOURCES
         test/test_kaa_status.c

@@ -21,6 +21,7 @@ enable_language(C)
 enable_testing()
 
 option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
+option(WITH_EXTENSION_EVENT "Enable event extension" ON)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -113,7 +114,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
         ${KAA_SRC_FOLDER}/kaa_channel_manager.c
         ${KAA_SRC_FOLDER}/kaa_common_schema.c
-        ${KAA_SRC_FOLDER}/kaa_event.c
         ${KAA_SRC_FOLDER}/kaa_logging.c
         ${KAA_SRC_FOLDER}/kaa_profile.c
         ${KAA_SRC_FOLDER}/kaa_status.c
@@ -152,10 +152,13 @@ else()
     add_definitions(-DKAA_DISABLE_FEATURE_CONFIGURATION)
 endif()
 
-if (KAA_WITHOUT_EVENTS)
-    add_definitions(-DKAA_DISABLE_FEATURE_EVENTS)
-else ()
+if (WITH_EXTENSION_EVENT)
     message("EVENTS ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/event/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_event)
+else ()
+    add_definitions(-DKAA_DISABLE_FEATURE_EVENTS)
 endif ()
 
 if (KAA_WITHOUT_LOGGING)

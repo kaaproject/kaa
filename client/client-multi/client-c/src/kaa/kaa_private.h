@@ -27,7 +27,6 @@
 #include <kaa_error.h>
 #include <kaa_user.h>
 #include <kaa_status.h>
-#include <kaa_event.h>
 #include <kaa_channel_manager.h>
 #include <kaa_platform_utils.h>
 #include <platform/kaa_client.h>
@@ -62,21 +61,6 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
 void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
         kaa_extension_id service_type);
-
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p, kaa_status_t *status,
-        kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
-void kaa_event_manager_destroy(kaa_event_manager_t *self);
-kaa_error_t kaa_event_manager_send_event(kaa_event_manager_t *self, const char *fqn, const char *event_data,
-    size_t event_data_size, kaa_endpoint_id_p target);
-
-kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self, kaa_event_block_id trx_id,
-    const char *fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p target);
-
-kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn,
-    kaa_event_callback_t callback);
-
-#endif
 
 kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context);
 
@@ -195,13 +179,10 @@ kaa_error_t kaa_extension_user_server_sync(void *context, uint32_t request_id,
 
 kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
 kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
 kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 
-kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id,
-        kaa_platform_message_writer_t *writer);
 kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
         kaa_platform_message_writer_t* writer);
 kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self,
@@ -219,7 +200,6 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status,
 kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
-kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
 kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 #ifdef __cplusplus
