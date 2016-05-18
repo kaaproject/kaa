@@ -16,8 +16,10 @@
 
 enable_testing()
 
-find_package(cmocka REQUIRED)
-find_package(OpenSSL REQUIRED)
+if(KAA_UNITTESTS_COMPILE)
+    find_package(cmocka REQUIRED)
+    find_package(OpenSSL REQUIRED)
+endif()
 
 ################################################################################
 # Creates an unit test with given name and dependencies.
@@ -33,40 +35,44 @@ find_package(OpenSSL REQUIRED)
 #                   [DEPENDS list_of_dependencies...]
 #                   [INC_DIRS list_of_include_directories...])
 function(kaa_add_unit_test)
-    cmake_parse_arguments(
+    if(KAA_UNITTESTS_COMPILE)
+        cmake_parse_arguments(
             UNIT_TEST
-            "OPTIONAL"
+            ""
             "NAME"
             "SOURCES;DEPENDS;INC_DIRS"
-            ${ARGN}
-    )
+            ${ARGN})
 
-    if (NOT DEFINED UNIT_TEST_NAME AND DEFINED UNIT_TEST_SOURCES)
-        message(FATAL_ERROR "Test sources and name must be defined!")
-    endif()
+        if (NOT DEFINED UNIT_TEST_NAME AND DEFINED UNIT_TEST_SOURCES)
+            message(FATAL_ERROR "Test sources and name must be defined!")
+        endif()
 
-    message("-----------------------------------------------")
-    message("	Test added: ${UNIT_TEST_NAME}")
-    message("	Test sources: ${UNIT_TEST_SOURCES}")
+        add_executable(${UNIT_TEST_NAME} ${UNIT_TEST_SOURCES})
+        add_test(NAME ${UNIT_TEST_NAME} COMMAND ${UNIT_TEST_NAME})
+        target_link_libraries(${UNIT_TEST_NAME} ${CMOCKA_LIBRARIES})
 
-    add_executable(${UNIT_TEST_NAME} ${UNIT_TEST_SOURCES})
-    add_test(NAME ${UNIT_TEST_NAME} COMMAND ${UNIT_TEST_NAME})
-    target_link_libraries(${UNIT_TEST_NAME} ${CMOCKA_LIBRARIES})
+        if(UNIT_TEST_DEPENDS)
+            target_link_libraries(${UNIT_TEST_NAME} ${UNIT_TEST_DEPENDS})
+        endif()
 
-    if(UNIT_TEST_DEPENDS)
-        message("	Test dependencies: ${UNIT_TEST_DEPENDS}")
-        target_link_libraries(${UNIT_TEST_NAME} ${UNIT_TEST_DEPENDS})
-    endif()
-
-    if(UNIT_TEST_INC_DIRS)
-        message("	Test includes: ${UNIT_TEST_INC_DIRS}")
         target_include_directories(
+            ${UNIT_TEST_NAME}
+            PRIVATE
+            test)
+        if(UNIT_TEST_INC_DIRS)
+            target_include_directories(
                 ${UNIT_TEST_NAME}
                 PRIVATE
                 ${UNIT_TEST_INC_DIRS})
-    endif()
+        endif()
 
-    message("-----------------------------------------------")
+        message("-----------------------------------------------")
+        message("    Test added: ${UNIT_TEST_NAME}")
+        message("    Test sources: ${UNIT_TEST_SOURCES}")
+        message("    Test dependencies: ${UNIT_TEST_DEPENDS}")
+        message("    Test includes: ${UNIT_TEST_INC_DIRS}")
+        message("-----------------------------------------------")
+    endif()
 endfunction()
 
 ################################################################################
@@ -195,13 +201,6 @@ kaa_add_unit_test(NAME test_kaatcp_request
 kaa_add_unit_test(NAME test_kaa_tcp_channel_bootstrap
         SOURCES
         test/kaa_tcp_channel/test_kaa_tcp_channel_bootstrap.c
-        test/kaa_test_external.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
-kaa_add_unit_test(NAME test_kaa_configuration_manager
-        SOURCES
-        test/test_kaa_configuration.c
         test/kaa_test_external.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})

@@ -26,7 +26,13 @@ static void test_kaa_extension_get_all_extensions(void **state)
     assert_non_null(kaa_extension_get(KAA_EXTENSION_PROFILE));
     assert_non_null(kaa_extension_get(KAA_EXTENSION_USER));
     assert_non_null(kaa_extension_get(KAA_EXTENSION_LOGGING));
+
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     assert_non_null(kaa_extension_get(KAA_EXTENSION_CONFIGURATION));
+#else
+    assert_null(kaa_extension_get(KAA_EXTENSION_CONFIGURATION));
+#endif
+
     assert_non_null(kaa_extension_get(KAA_EXTENSION_EVENT));
     assert_non_null(kaa_extension_get(KAA_EXTENSION_NOTIFICATION));
 }
