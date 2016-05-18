@@ -22,6 +22,7 @@ enable_testing()
 
 option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
 option(WITH_EXTENSION_EVENT "Enable event extension" ON)
+option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -114,7 +115,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
         ${KAA_SRC_FOLDER}/kaa_channel_manager.c
         ${KAA_SRC_FOLDER}/kaa_common_schema.c
-        ${KAA_SRC_FOLDER}/kaa_logging.c
         ${KAA_SRC_FOLDER}/kaa_profile.c
         ${KAA_SRC_FOLDER}/kaa_status.c
         ${KAA_SRC_FOLDER}/kaa_user.c
@@ -161,10 +161,13 @@ else ()
     add_definitions(-DKAA_DISABLE_FEATURE_EVENTS)
 endif ()
 
-if (KAA_WITHOUT_LOGGING)
-    add_definitions(-DKAA_DISABLE_FEATURE_LOGGING)
-else ()
+if (WITH_EXTENSION_LOGGING)
     message("LOGGING ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/logging/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_logging)
+else ()
+    add_definitions(-DKAA_DISABLE_FEATURE_LOGGING)
 endif ()
 
 if (KAA_WITHOUT_NOTIFICATION)

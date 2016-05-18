@@ -81,19 +81,27 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties.in"
         "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties")
 
 
-kaa_add_unit_test(NAME test_ext_log_storage_memory
+if(WITH_EXTENSION_LOGGING)
+    kaa_add_unit_test(NAME test_ext_log_storage_memory
         SOURCES
         test/platform-impl/test_ext_log_storage_memory.c
         test/kaa_test_external.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
 
-kaa_add_unit_test(NAME test_ext_log_upload_strategy_by_volume
+    kaa_add_unit_test(NAME test_ext_log_upload_strategy_by_volume
         SOURCES
         test/platform-impl/test_ext_log_upload_strategies.c
         test/kaa_test_external.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
+
+    kaa_add_unit_test(NAME test_platform_protocol
+        SOURCES
+        test/test_platform_protocol.c
+        DEPENDS
+        kaac ${OPENSSL_LIBRARIES})
+endif()
 
 kaa_add_unit_test(NAME test_user_extension
         SOURCES
@@ -141,32 +149,6 @@ kaa_add_unit_test(NAME test_common
         SOURCES
         test/test_kaa_common.c
         test/kaa_test_external.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
-kaa_add_unit_test(NAME test_log
-        SOURCES
-        test/test_kaa_log.c
-        test/kaa_test_external.c
-        ${KAA_SRC_FOLDER}/gen/kaa_logging_gen.c
-        ${KAA_SRC_FOLDER}/avro_src/io.c
-        ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
-        ${KAA_SRC_FOLDER}/collections/kaa_list.c
-        ${KAA_SRC_FOLDER}/utilities/kaa_log.c
-        ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
-        ${KAA_SRC_FOLDER}/kaa_platform_utils.c
-        ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
-        ${KAA_SRC_FOLDER}/kaa_channel_manager.c
-        ${KAA_SRC_FOLDER}/kaa_common_schema.c
-        ${KAA_SRC_FOLDER}/kaa_logging.c
-        ${KAA_SRC_FOLDER}/kaa_status.c
-        ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
-        DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
-
-kaa_add_unit_test(NAME test_platform_protocol
-        SOURCES
-        test/test_platform_protocol.c
         DEPENDS
         kaac ${OPENSSL_LIBRARIES})
 

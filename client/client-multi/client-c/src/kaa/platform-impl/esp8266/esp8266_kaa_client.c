@@ -23,12 +23,18 @@
 #include "../../platform/ext_transport_channel.h"
 #include "../../utilities/kaa_mem.h"
 #include "../../utilities/kaa_log.h"
-#include "../../kaa_logging.h"
 #include "../../platform/time.h"
 #include "../../kaa_channel_manager.h"
 #include "../../platform-impl/common/kaa_tcp_channel.h"
 #include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform/ext_kaa_failover_strategy.h"
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+#include "kaa_logging.h"
+#include "kaa_logging_private.h"
+
+static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
+#endif
 
 #include "kaa_private.h"
 
@@ -421,7 +427,7 @@ void kaa_client_destroy(kaa_client_t *self)
 
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
+static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code  = ext_unlimited_log_storage_create(&kaa_client->log_storage_context,

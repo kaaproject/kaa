@@ -23,8 +23,7 @@
 #include "platform/ext_sha.h"
 
 #include "kaa_logging.h"
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
+#include "kaa_logging_private.h"
 
 #include "kaa_test.h"
 
@@ -1596,8 +1595,6 @@ KAA_TEST_CASE_EX(log_advanced_timeouts, few_buckets)
 /* End of log delivery test groups                                            */
 /* ---------------------------------------------------------------------------*/
 
-#endif
-
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
@@ -1607,7 +1604,6 @@ int test_init(void)
 
     kaa_context.logger = logger;
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
     error = kaa_status_create(&status);
     if (error || !status) {
         return error;
@@ -1617,7 +1613,6 @@ int test_init(void)
     if (error || !channel_manager) {
         return error;
     }
-#endif
     return 0;
 }
 
@@ -1625,17 +1620,13 @@ int test_init(void)
 
 int test_deinit(void)
 {
-#ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
-#endif
     kaa_log_destroy(logger);
 
     return 0;
 }
 
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
 KAA_SUITE_MAIN(Log, test_init, test_deinit,
         KAA_TEST_CASE(create_request, test_create_request)
         KAA_TEST_CASE(process_response, test_response)
@@ -1655,6 +1646,3 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit,
         KAA_RUN_TEST(log_callback_with_storage, on_fail_and_success_called)
         KAA_RUN_TEST(log_callback_with_storage_and_strategy, on_timeout_called)
         KAA_RUN_TEST(log_advanced_timeouts, few_buckets))
-#else
-KAA_SUITE_MAIN(Log, test_init, test_deinit)
-#endif

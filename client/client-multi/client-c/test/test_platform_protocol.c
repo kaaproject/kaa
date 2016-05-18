@@ -23,7 +23,6 @@
 #include "platform/ext_sha.h"
 
 #include "kaa.h"
-#include "kaa_logging.h"
 #include "kaa_test.h"
 #include "kaa_context.h"
 #include "kaa_platform_protocol.h"
@@ -37,6 +36,9 @@
 #include "platform-impl/common/ext_log_upload_strategies.h"
 
 #include "kaa_private.h"
+
+#include "kaa_logging.h"
+#include "kaa_logging_private.h"
 
 void test_empty_log_collector_extension_count(void **state)
 {
