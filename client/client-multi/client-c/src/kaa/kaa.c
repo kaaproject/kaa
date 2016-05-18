@@ -159,7 +159,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         return error;
     }
 
-    return KAA_ERR_NONE;
+    return kaa_status_set_updated((*kaa_context_p)->status->status_instance, true);
 }
 
 kaa_error_t kaa_start(kaa_context_t *kaa_context)

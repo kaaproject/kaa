@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2014-2016 CyberVision, Inc.
 #
@@ -15,16 +14,19 @@
 # limitations under the License.
 #
 
-set -e
-set -v
+# This cmake list is resposible for building doxygen documentation.
 
-make doxygen
+find_package (Doxygen REQUIRED)
 
-make
+if(DOXYGEN_FOUND)
 
-./build.sh test
+   add_custom_target(doxygen
+     COMMAND ${CMAKE_COMMAND} -E make_directory target/apidocs/doxygen
+     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+     WORKING_DIRECTORY
+     ${KAA_SDK_DIR}
+     COMMENT "Generating doxygen docs"
+     VERBATIM
+     )
 
-cppcheck --quiet --enable=all --std=c99 --suppress=unusedFunction \
-         --force --error-exitcode=1 --template=gcc -I src/kaa \
-         --inline-suppr \
-         src/ test/
+endif()
