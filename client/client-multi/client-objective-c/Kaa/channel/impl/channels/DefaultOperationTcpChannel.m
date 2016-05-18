@@ -281,9 +281,11 @@ typedef enum {
             __weak typeof(self) weakSelf = self;
             [self.executor addOperationWithBlock:^{
                 [weakSelf sendConnect];
-                [weakSelf schedulePingTask];
             }];
-            
+            dispatch_time_t time =  dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
+            dispatch_after(time, dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+                [weakSelf schedulePingTask];
+            });
         }
            break;
         case NSStreamEventErrorOccurred:
