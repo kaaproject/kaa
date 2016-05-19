@@ -20,7 +20,9 @@ set -v
 
 make
 
-./build.sh test
+cd build-posix
+ctest -T memcheck
+cd ..
 
 make -C build-posix doxygen
 

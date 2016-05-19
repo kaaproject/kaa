@@ -18,7 +18,6 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(Kaa-c)
 enable_language(C)
-enable_testing()
 
 option(WITH_EXTENSION_PROFILE "Enable profile extension" ON)
 option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)

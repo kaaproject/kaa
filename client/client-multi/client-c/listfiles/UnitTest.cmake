@@ -14,11 +14,14 @@
 # limitations under the License.
 #
 
-enable_testing()
-
 if(KAA_UNITTESTS_COMPILE)
     find_package(cmocka REQUIRED)
     find_package(OpenSSL REQUIRED)
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ValgrindReports")
+    find_program(MEMORYCHECK_COMMAND  valgrind)
+    set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-reachable=yes --trace-children=yes -v \
+                                     --xml=yes --xml-file=ValgrindReports/%p.memreport.xml")
+    include(CTest)
 endif()
 
 ################################################################################
