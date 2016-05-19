@@ -22,6 +22,7 @@ make
 
 cd build-posix
 ctest -T memcheck
+ctest -T coverage
 cd ..
 
 make -C build-posix doxygen
