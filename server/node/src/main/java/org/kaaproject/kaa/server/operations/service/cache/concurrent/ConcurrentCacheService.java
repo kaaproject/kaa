@@ -813,6 +813,19 @@ public class ConcurrentCacheService implements CacheService {
         return endpointKey;
     }
 
+    /**
+     *
+     * Remove key from hash
+     *
+     * @param hash
+     * @param endpointKey
+     */
+    @Override
+    @CacheEvict(value = "endpointKeys", key = "#key")
+    public void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey){
+        // Do nothing
+    }
+
     /*
      * (non-Javadoc)
      * 

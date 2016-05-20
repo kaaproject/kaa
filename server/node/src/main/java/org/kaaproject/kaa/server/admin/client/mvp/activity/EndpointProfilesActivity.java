@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -70,7 +71,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         bind();
         containerWidget.setWidget(listView.asWidget());
     }
-    
+
     private void bind() {
 
         listView.clearError();
@@ -88,6 +89,17 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                 String id = event.getClickedId();
                 if (event.getAction()==RowActionEvent.CLICK) {
                     goTo(new EndpointProfilePlace(applicationId, id, gridLoaded));
+                } else if (event.getAction()==RowActionEvent.DELETE) {
+                    deleteEntity(id, new BusyAsyncCallback<Void>() {
+                        @Override
+                        public void onFailureImpl(Throwable caught) {
+                            Utils.handleException(caught, listView);
+                        }
+
+                        @Override
+                        public void onSuccessImpl(Void result) {}
+                    });
+                    dataProvider.update();
                 }
             }
         }));
@@ -126,8 +138,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 findByEndpointKeyHash();
             }
-        }));        
-        
+        }));
+
         reset();
     }
     
@@ -199,6 +211,10 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             registration.removeHandler();
         }
         registrations.clear();
+    }
+
+    private void deleteEntity(String endpointKeyHash, AsyncCallback<Void> callback){
+        KaaAdmin.getDataSource().removeEndpointProfileByKeyHash(endpointKeyHash, callback);
     }
 
 }

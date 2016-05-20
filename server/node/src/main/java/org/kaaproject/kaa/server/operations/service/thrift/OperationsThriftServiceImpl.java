@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.thrift;
 
+import java.security.PublicKey;
 import java.util.List;
 
 import org.apache.thrift.TException;
@@ -23,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
@@ -210,11 +212,17 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     public void onServerProfileUpdate(ThriftServerProfileUpdateMessage message) throws TException {
         clusterService.onServerProfileUpdateMessage(message);
     }
-    
+
     @Override
     public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws TException {
         LOG.debug("Received Event about endpoint deregistration {}", message);
+        byte[] address = message.getAddress().getEntityId();
+        EndpointObjectHash hash = EndpointObjectHash.fromBytes(address);
         clusterService.onEndpointDeregistrationMessage(message);
+        PublicKey endpointPublickKey = cacheService.getEndpointKey(hash);
+        LOG.error("ENDPOINT_PUBLICK_KEY {}", endpointPublickKey);
+        if(endpointPublickKey != null){
+            cacheService.resetEndpointKey(hash, endpointPublickKey);
+        }
     }
-
 }
