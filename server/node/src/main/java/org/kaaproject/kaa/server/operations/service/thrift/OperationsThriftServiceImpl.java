@@ -220,7 +220,6 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         EndpointObjectHash hash = EndpointObjectHash.fromBytes(address);
         clusterService.onEndpointDeregistrationMessage(message);
         PublicKey endpointPublickKey = cacheService.getEndpointKey(hash);
-        LOG.error("ENDPOINT_PUBLICK_KEY {}", endpointPublickKey);
         if(endpointPublickKey != null){
             cacheService.resetEndpointKey(hash, endpointPublickKey);
         }
