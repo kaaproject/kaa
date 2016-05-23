@@ -317,12 +317,6 @@ typedef enum {
     }
 }
 
-- (void)initiatePingTask {
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
-        [self schedulePingTask];
-    });
-}
-
 - (KAASocket *)createSocket {
     return [KAASocket socketWithHost:[self.currentServer getHost] port:[self.currentServer getPort]];
 }
