@@ -21,7 +21,7 @@ set -e
 RUN_DIR=`pwd`
 
 help() {
-    echo "Choose one of the following: {build|install|test|clean}"
+    echo "Choose one of the following: {build|install|test|analyze|clean}"
     exit 1
 }
 
@@ -42,7 +42,7 @@ COLLECT_COVERAGE=0
 prepare_build() {
     mkdir -p build-posix
     cd build-posix
-    cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE .. -DCMAKE_C_FLAGS="-Werror"
+    cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE -DKAA_CPPCHECK=1 .. -DCMAKE_C_FLAGS="-Werror"
     cd ..
 }
 
@@ -52,68 +52,6 @@ build() {
     cd ..
 }
 
-execute_tests() {
-    cd build-posix
-    ctest --output-on-failure .
-    cd ..
-}
-
-check_installed_software() {
-    if hash rats 2>/dev/null
-    then
-        RATS_INSTALLED=1
-    else
-        echo "Rats is not installed, skipping..."
-        RATS_INSTALLED=0
-    fi
-
-    if hash cppcheck 2>/dev/null
-    then
-        CPPCHECK_INSTALLED=1
-    else
-        CPPCHECK_INSTALLED=0
-        echo "cppcheck not installed, skipping..."
-    fi
-
-
-    if hash valgrind 2>/dev/null
-    then
-        VALGRIND_INSTALLED=1
-    else
-        VALGRIND_INSTALLED=0
-        echo "valgrind not installed, skipping..."
-    fi
-}
-
-run_valgrind() {
-    echo "Starting valgrind..."
-    cd build-posix
-    if [ ! -d valgrindReports ]
-    then
-        mkdir valgrindReports
-    fi
-
-    # CMake supports running memory checker (like valgrind) only as a step
-    # of CDash.
-    # Calling valgrind externally in relation to CTest is viable workaround.
-    # Possibly, this will be moved someday into the Kaa build system in a form
-    # of a cmake script.
-    valgrind --leak-check=full --show-reachable=yes --trace-children=yes -v \
-    --log-file=valgrind.log --xml=yes --xml-file=valgrindReports/%p.memreport.xml \
-    ctest --output-on-failure
-
-    cd ..
-    echo "Valgrind analysis finished."
-}
-
-run_cppcheck() {
-    echo "Starting Cppcheck..."
-    cppcheck --enable=all --std=c99 --xml --suppress=unusedFunction src/ test/ 2>build-posix/cppcheck_.xml > build-posix/cppcheck.log
-    sed 's@file=\"@file=\"client\/client-multi\/client-c\/@g' build-posix/cppcheck_.xml > build-posix/cppcheck.xml
-    rm build-posix/cppcheck_.xml
-    echo "Cppcheck analysis finished."
-}
-
 run_rats() {
     echo "Starting RATS..."
     rats --xml `find src/ -name *.[ch]` > build-posix/rats-report.xml
@@ -121,19 +59,21 @@ run_rats() {
 }
 
 run_analysis() {
-    check_installed_software
-
-    if [ $VALGRIND_INSTALLED -eq 1 ]; then
-        run_valgrind
-    fi
-
-    if [ $CPPCHECK_INSTALLED -eq 1 ]; then
-        run_cppcheck
-    fi
-
-    if [ $RATS_INSTALLED -eq 1 ]; then
+    cd build-posix
+    ctest -T memcheck
+    ctest -T  coverage
+    make cppcheck
+    if hash rats 2>/dev/null
+    then
         run_rats
     fi
+    cd ..
+}
+
+run_tests() {
+    cd build-posix
+    ctest --output-on-failure .
+    cd ..
 }
 
 clean() {
@@ -168,7 +108,10 @@ case "$cmd" in
         UNITTESTS_COMPILE=1
         prepare_build
         build
-        execute_tests
+        run_tests
+    ;;
+
+    analyze)
         run_analysis
     ;;
 
