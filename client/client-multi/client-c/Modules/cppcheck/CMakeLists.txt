@@ -16,12 +16,19 @@
 
 # This cmake list is resposible for cppcheck.
 
-add_custom_target(cppcheck
-    COMMAND cppcheck --quiet --enable=all --std=c99 --suppress=unusedFunction
-                     --force --error-exitcode=1 --template=gcc -I src/kaa
-                     --inline-suppr src/ test/
-    WORKING_DERICTORY ${KAA_SDK_DIR} 
-    COMMENT "Running cppcheck"
-    VERBATIM
-    )
+if(KAA_CPPCHECK)
+   find_program(CPPCHECK_COMMAND cppcheck)
+   if(CPPCHECK_COMMAND)
+     add_custom_target(cppcheck
+       COMMAND ${CPPCHECK_COMMAND} --quiet --enable=all --std=c99 --suppress=unusedFunction
+                                   --force --error-exitcode=1 --template=gcc -I src/kaa
+                                   --inline-suppr src/ test/
+       WORKING_DERICTORY ${KAA_SDK_DIR}
+       COMMENT "Running cppcheck"
+       VERBATIM
+       )
+     else()
+       message (FATAL_ERROR "cppcheck NOT FOUND")
+     endif()
 
+endif()

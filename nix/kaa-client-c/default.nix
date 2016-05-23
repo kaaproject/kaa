@@ -85,7 +85,7 @@ let
         __propagate:;
       ''
       + target posixSupport "posix"
-              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DKAA_UNITTESTS_COMPILE=on -DKAA_COLLECT_COVERAGE=1''}"
+              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DKAA_UNITTESTS_COMPILE=on -DKAA_COLLECT_COVERAGE=1 -DKAA_BUILD_DOCS=1 -DKAA_CPPCHECK=1''}"
       + target posixSupport "nologs"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DKAA_MAX_LOG_LEVEL=0"
       + target clangSupport "clang"
