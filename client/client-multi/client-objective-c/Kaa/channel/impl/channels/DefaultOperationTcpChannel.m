@@ -274,11 +274,8 @@ typedef enum {
             __weak typeof(self) weakSelf = self;
             [self.executor addOperationWithBlock:^{
                 [weakSelf sendConnect];
-            }];
-            dispatch_time_t time =  dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
-            dispatch_after(time, dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
                 [weakSelf schedulePingTask];
-            });
+            }];
         }
             break;
         case NSStreamEventErrorOccurred:
@@ -375,25 +372,24 @@ typedef enum {
 - (void)schedulePingTask {
     if (self.executor) {
         [self.executor addOperationWithBlock:^{
-            @try {
-                DDLogInfo(@"%@ Executing ping task for channel [%@]", TAG, [self getId]);
-                if (self.isPingTaskCancelled)   {
-                    DDLogInfo(@"%@ Can't schedule new ping task for channel [%@]. Task was cancelled.", TAG, [self getId]);
-                } else {
-                    [self sendPingRequest];
-                    dispatch_time_t time =  dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
-                    dispatch_after(time, dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
+            dispatch_after(time, dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+                @try {
+                    DDLogInfo(@"%@ Executing ping task for channel [%@]", TAG, [self getId]);
+                    if (self.isPingTaskCancelled)   {
+                        DDLogInfo(@"%@ Can't schedule new ping task for channel [%@]. Task was cancelled.", TAG, [self getId]);
+                    } else {
+                        [self sendPingRequest];
                         [self schedulePingTask];
-                    });
+                    }
                 }
-            }
-            @catch (NSException *ex) {
-                DDLogError(@"%@ Failed to send ping request for channel [%@]: %@. Reason: %@", TAG, [self getId], ex.name, ex.reason);
-                [self onServerFailed];
-            }
+                @catch (NSException *ex) {
+                    DDLogError(@"%@ Failed to send ping request for channel [%@]: %@. Reason: %@", TAG, [self getId], ex.name, ex.reason);
+                    [self onServerFailed];
+                }
+            });
         }];
         DDLogDebug(@"%@ Submitting a ping task for channel [%@]", TAG, [self getId]);
-        
     } else {
         DDLogWarn(@"%@ Executor is nil, can't schedule ping connection task", TAG);
     }
