@@ -79,6 +79,7 @@
                         <exclude>**/.cproject</exclude>
                         <exclude>**/kaa_status.file</exclude>
                         <exclude>**/FindSqlite3.cmake</exclude>
+                        <exclude>**/tools/avro-cpp-disable-tests.patch</exclude>
                         <exclude>**/artik.cmake</exclude>
                     </excludes>
                 </configuration>
@@ -99,6 +100,7 @@
                             <excludes>
                                 <exclude>Modules/FindAvro.cmake</exclude>
                                 <exclude>Modules/FindSqlite3.cmake</exclude>
+                                <exclude>tools/avro-cpp-disable-tests.patch</exclude>
                                 <exclude>templates/event/addSupportedEventClassFqns.template</exclude>
                                 <exclude>templates/event/eventFamilyFactoryAddConcreteEventFamily.template</exclude>
                                 <exclude>templates/event/eventFamilyFactoryGetConcreteEventFamily.template</exclude>
