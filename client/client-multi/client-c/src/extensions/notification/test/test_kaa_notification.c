@@ -21,7 +21,7 @@
 
 #include "kaa_notification_manager.h"
 #include "kaa.h"
-#include "platform-impl/posix/posix_sock.h"
+#include <platform/sock.h>
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "kaa_context.h"

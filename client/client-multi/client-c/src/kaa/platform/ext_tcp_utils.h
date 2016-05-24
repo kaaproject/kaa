@@ -25,7 +25,7 @@
 #ifndef EXT_TCP_UTILS_H_
 #define EXT_TCP_UTILS_H_
 
-#include "sock.h"
+#include <platform/sock.h>
 #include "../kaa_error.h"
 
 #ifdef __cplusplus

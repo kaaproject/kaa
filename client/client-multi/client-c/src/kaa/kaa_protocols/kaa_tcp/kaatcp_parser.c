@@ -23,7 +23,7 @@
 #include "kaatcp_parser.h"
 
 #include "../../kaa_common.h"
-#include "../../platform/sock.h"
+#include <platform/sock.h>
 #include "../../utilities/kaa_mem.h"
 
 

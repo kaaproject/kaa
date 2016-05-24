@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-
 #include <stdbool.h>
 #include <stddef.h>
-#include "../../platform/ext_configuration_persistence.h"
-#include "posix_file_utils.h"
+#include <platform/ext_status.h>
+#include <platform/file_utils.h>
 
-#define KAA_CONFIGURATION_STORAGE    "kaa_configuration.bin"
+#define KAA_STATUS_STORAGE    "kaa_status.bin"
 
-__attribute__((weak))
-void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-    posix_binary_file_read(KAA_CONFIGURATION_STORAGE, buffer, buffer_size, needs_deallocation);
+    cc32xx_binary_file_read(KAA_STATUS_STORAGE, buffer, buffer_size, needs_deallocation);
 }
 
-__attribute__((weak))
-void ext_configuration_store(const char *buffer, size_t buffer_size)
+void ext_status_store(const char *buffer, size_t buffer_size)
 {
-    posix_binary_file_store(KAA_CONFIGURATION_STORAGE, buffer, buffer_size);
+    cc32xx_binary_file_store(KAA_STATUS_STORAGE, buffer, buffer_size);
 }
 
-__attribute__((weak))
-void ext_configuration_delete(void)
+void ext_status_delete(void)
 {
-    posix_binary_file_delete(KAA_CONFIGURATION_STORAGE);
+    cc32xx_binary_file_delete(KAA_STATUS_STORAGE);
 }
+
+

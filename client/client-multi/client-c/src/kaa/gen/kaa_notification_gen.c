@@ -16,7 +16,7 @@
 
 # include <inttypes.h>
 # include <string.h>
-# include "../platform/stdio.h"
+# include <platform/stdio.h>
 # include "kaa_notification_gen.h"
 # include "../avro_src/avro/io.h"
 # include "../avro_src/encoding.h"

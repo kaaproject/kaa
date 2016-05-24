@@ -14,40 +14,25 @@
  * limitations under the License.
  */
 
-#include "cc32xx_time.h"
 
-#include "systick.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <platform/ext_configuration_persistence.h>
+#include <platform/file_utils.h>
 
-#define MPU_FREQUENCY 80000000
+#define KAA_CONFIGURATION_STORAGE    "kaa_configuration.bin"
 
-static long long milliTimer = 1;
-
-static void sysTickIntHandler(void)
+void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-    ++milliTimer;
+    cc32xx_binary_file_read(KAA_CONFIGURATION_STORAGE, buffer, buffer_size, needs_deallocation);
 }
 
-void cc32xx_init_timer(void)
+void ext_configuration_store(const char *buffer, size_t buffer_size)
 {
-    static int init = 0;
-
-    if (!init) {
-        SysTickEnable();
-        SysTickIntEnable();
-        SysTickIntRegister(sysTickIntHandler);
-        SysTickPeriodSet(MPU_FREQUENCY / 1000);/* 1 ms */
-        init = 1;
-    }
+    cc32xx_binary_file_store(KAA_CONFIGURATION_STORAGE, buffer, buffer_size);
 }
 
-long long cc32xx_clock_getms(void)
+void ext_configuration_delete(void)
 {
-    cc32xx_init_timer();
-    return milliTimer;
-}
-
-long cc32xx_time(void)
-{
-    cc32xx_init_timer();
-    return milliTimer / 1000;
+    cc32xx_binary_file_delete(KAA_CONFIGURATION_STORAGE);
 }

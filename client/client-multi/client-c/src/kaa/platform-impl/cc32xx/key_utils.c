@@ -16,24 +16,23 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include "../../platform/ext_status.h"
-#include "cc32xx_file_utils.h"
+#include <stdint.h>
+#include <platform/stdio.h>
+#include <platform/ext_key_utils.h>
+#include "../../utilities/kaa_mem.h"
+#include "../../kaa_common.h"
+#include <platform/file_utils.h>
+#include "cc32xx_rsa_key.h"
 
-#define KAA_STATUS_STORAGE    "kaa_status.bin"
+#define KAA_KEY_STORAGE       "kaa_key.pub"
 
-void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+static char *kaa_public_key = (char*)KAA_PUBLIC_KEY_DATA;
+static size_t kaa_public_key_length = KAA_PUBLIC_KEY_LENGTH;
+
+void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-    cc32xx_binary_file_read(KAA_STATUS_STORAGE, buffer, buffer_size, needs_deallocation);
+    KAA_RETURN_IF_NIL3(buffer, buffer_size, needs_deallocation,);
+    *buffer = kaa_public_key;
+    *buffer_size = kaa_public_key_length;
+    *needs_deallocation = false;
 }
-
-void ext_status_store(const char *buffer, size_t buffer_size)
-{
-    cc32xx_binary_file_store(KAA_STATUS_STORAGE, buffer, buffer_size);
-}
-
-void ext_status_delete(void)
-{
-    cc32xx_binary_file_delete(KAA_STATUS_STORAGE);
-}
-
-

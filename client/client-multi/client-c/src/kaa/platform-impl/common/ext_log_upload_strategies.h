@@ -17,7 +17,7 @@
 #ifndef KAA_EXT_LOG_UPLOAD_STRATEGIES_H_
 #define KAA_EXT_LOG_UPLOAD_STRATEGIES_H_
 
-#include "../../platform/platform.h"
+#include <stdint.h>
 #include "../../kaa_common.h"
 
 #ifdef __cplusplus

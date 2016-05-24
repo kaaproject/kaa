@@ -16,9 +16,9 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "../../platform/platform.h"
-
-#include "../../platform/ext_log_storage.h"
+#include <stdint.h>
+#include <string.h>
+#include <platform/ext_log_storage.h>
 
 #include "../../kaa_common.h"
 #include "../../collections/kaa_list.h"
