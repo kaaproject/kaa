@@ -14,14 +14,13 @@
 # limitations under the License.
 #
 
-# This cmake list is resposible for cppcheck.
+# This cmake list is responsible for running cppcheck against sources.
 
 add_custom_target(cppcheck
     COMMAND cppcheck --quiet --enable=all --std=c99 --suppress=unusedFunction
                      --force --error-exitcode=1 --template=gcc -I src/kaa
                      --inline-suppr src/ test/
-    WORKING_DERICTORY ${KAA_SDK_DIR} 
+    WORKING_DIRECTORY ${KAA_SDK_DIR}
     COMMENT "Running cppcheck"
     VERBATIM
     )
-
