@@ -14,19 +14,40 @@
  * limitations under the License.
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include "../../platform/ext_status.h"
-#include "posix_file_utils.h"
+#include <platform/time.h>
 
-#define KAA_STATUS_STORAGE    "kaa_status.bin"
+#include "systick.h"
 
-void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+#define MPU_FREQUENCY 80000000
+
+static long long milliTimer = 1;
+
+static void sysTickIntHandler(void)
 {
-    posix_binary_file_read(KAA_STATUS_STORAGE, buffer, buffer_size, needs_deallocation);
+    ++milliTimer;
 }
 
-void ext_status_store(const char *buffer, size_t buffer_size)
+void cc32xx_init_timer(void)
 {
-    posix_binary_file_store(KAA_STATUS_STORAGE, buffer, buffer_size);
+    static int init = 0;
+
+    if (!init) {
+        SysTickEnable();
+        SysTickIntEnable();
+        SysTickIntRegister(sysTickIntHandler);
+        SysTickPeriodSet(MPU_FREQUENCY / 1000);/* 1 ms */
+        init = 1;
+    }
+}
+
+long long cc32xx_clock_getms(void)
+{
+    cc32xx_init_timer();
+    return milliTimer;
+}
+
+long cc32xx_time(void)
+{
+    cc32xx_init_timer();
+    return milliTimer / 1000;
 }

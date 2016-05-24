@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "cc32xx_file_utils.h"
+#include <platform/file_utils.h>
 #include <stdint.h>
-#include "../../platform/stdio.h"
+#include <platform/stdio.h>
 #include "../../utilities/kaa_mem.h"
 #include "../../kaa_common.h"
 
-#include "cc32xx_sock.h"
+#include <platform/sock.h>
 
 //Driverlib includes
 #include "hw_types.h"

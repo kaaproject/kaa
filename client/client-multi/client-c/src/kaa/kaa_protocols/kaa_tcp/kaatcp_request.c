@@ -22,7 +22,7 @@
 #include "kaatcp_request.h"
 
 #include "../../kaa_common.h"
-#include "../../platform/sock.h"
+#include <platform/sock.h>
 
 
 

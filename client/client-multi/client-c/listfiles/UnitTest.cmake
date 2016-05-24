@@ -176,7 +176,7 @@ kaa_add_unit_test(NAME test_list
         test/collections/test_kaa_list.c
         src/kaa/collections/kaa_list.c
         INC_DIRS
-        src/kaa)
+        src/kaa ${KAA_INCLUDE_PATHS})
 
 kaa_add_unit_test(NAME test_kaatcp_parser
         SOURCES
@@ -235,7 +235,7 @@ kaa_add_unit_test(NAME test_kaa_extension_private
         SOURCES
         test/test_kaa_extension_private.c src/kaa/kaa_extension.c
         INC_DIRS
-        src/kaa)
+        src/kaa ${KAA_INCLUDE_PATHS})
 
 # KAA-985
 #kaa_add_unit_test(NAME test_kaa_tcp_channel_operation

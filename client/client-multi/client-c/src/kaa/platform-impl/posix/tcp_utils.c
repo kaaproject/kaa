@@ -14,48 +14,44 @@
  * limitations under the License.
  */
 
-#include <stdint.h>
-#include <stddef.h>
-#include <unistd.h>
+// See feature_test_macros(7) man page
+#define _POSIX_C_SOURCE 200112L
 
-#include <esp_libc.h>
-
-#include "../../platform/sock.h"
 #include "../../platform/ext_tcp_utils.h"
+#include <platform/stdio.h>
 #include "../../kaa_common.h"
+#include <unistd.h>
+#include <errno.h>
+#include <netdb.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
-#include <lwip/lwip/netdb.h>
 
-kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd,
-                                            const kaa_sockaddr_t *destination,
-                                            kaa_socklen_t destination_size)
+
+kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 {
-    KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
-    kaa_fd_t sock = socket(destination->sa_family, SOCK_STREAM, 0);
-
-    int flags = lwip_fcntl(sock, F_GETFL, 0);
-    if (flags < 0) {
-        ext_tcp_utils_tcp_socket_close(sock);
-        printf("Error getting sicket access flags\n");
-        return KAA_ERR_SOCKET_ERROR;
+    KAA_RETURN_IF_NIL2(addr, port, KAA_ERR_BADPARAM);
+    switch (addr->sa_family) {
+        case AF_INET: {
+            struct sockaddr_in *s_in = (struct sockaddr_in *) addr;
+            s_in->sin_port = KAA_HTONS(port);
+            break;
+        }
+        case AF_INET6: {
+            struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) addr;
+            s_in6->sin6_port = KAA_HTONS(port);
+            break;
+        }
+        default:
+            return KAA_ERR_SOCKET_INVALID_FAMILY;
     }
-
-    if (lwip_fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
-        ext_tcp_utils_tcp_socket_close(sock);
-        printf("Error setting socket flags. fcntl(F_GETFL): %d\n", lwip_fcntl(sock, F_GETFL, 0));
-        return KAA_ERR_SOCKET_ERROR;
-    }
-
-    if (connect(sock, destination, destination_size) && errno != EINPROGRESS) {
-        ext_tcp_utils_tcp_socket_close(sock);
-        printf("Error connecting to destination\n");
-        return KAA_ERR_SOCKET_CONNECT_ERROR;
-    }
-
-    *fd = sock;
-
     return KAA_ERR_NONE;
 }
+
+
 
 ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
@@ -70,9 +66,8 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolv
     struct addrinfo hints;
     memset(&hints, 0 , sizeof(struct addrinfo));
     hints.ai_socktype = SOCK_STREAM;
-    /* LWIP does not support ipv6, so sockaddr_in6 is not even defined in lwip/sockets.h */
-    /* if (*result_size < sizeof(struct sockaddr_in6)) */
-    hints.ai_family = AF_INET;
+    if (*result_size < sizeof(struct sockaddr_in6))
+        hints.ai_family = AF_INET;
 
     char hostname_str[resolve_props->hostname_length + 1];
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
@@ -103,6 +98,40 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolv
     return RET_STATE_VALUE_READY;
 }
 
+
+
+kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
+                                        , const kaa_sockaddr_t *destination
+                                        , kaa_socklen_t destination_size)
+{
+    KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
+
+    kaa_fd_t sock = socket(destination->sa_family, SOCK_STREAM, 0);
+    if (sock < 0)
+        return KAA_ERR_SOCKET_ERROR;
+
+    int flags = fcntl(sock, F_GETFL);
+    if (flags < 0) {
+        ext_tcp_utils_tcp_socket_close(sock);
+        return KAA_ERR_SOCKET_ERROR;
+    }
+
+    if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+        ext_tcp_utils_tcp_socket_close(sock);
+        return KAA_ERR_SOCKET_ERROR;
+    }
+
+    if (connect(sock, destination, destination_size) && errno != EINPROGRESS) {
+        ext_tcp_utils_tcp_socket_close(sock);
+        return KAA_ERR_SOCKET_CONNECT_ERROR;
+    }
+
+    *fd = sock;
+    return KAA_ERR_NONE;
+}
+
+
+
 ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
                                                     , const kaa_sockaddr_t *destination
                                                     , kaa_socklen_t destination_size)
@@ -120,6 +149,8 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
     }
     return KAA_TCP_SOCK_CONNECTED;
 }
+
+
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
                                                         , const char *buffer
@@ -152,6 +183,8 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
         *bytes_read = (read_result > 0) ? read_result : 0;
     return KAA_TCP_SOCK_IO_OK;
 }
+
+
 
 kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 {
