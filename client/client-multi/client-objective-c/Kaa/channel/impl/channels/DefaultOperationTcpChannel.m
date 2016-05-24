@@ -370,7 +370,7 @@ typedef enum {
 }
 
 - (void)schedulePingTask {
-    self.isPingTaskCancelled = YES;
+    self.isPingTaskCancelled = NO;
     if (self.executor) {
         [self.executor addOperationWithBlock:^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
