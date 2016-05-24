@@ -61,7 +61,7 @@ run_rats() {
 run_analysis() {
     cd build-posix
     ctest -T memcheck
-    ctest -T  coverage
+    ctest -T coverage
     make cppcheck
     if hash rats 2>/dev/null
     then
