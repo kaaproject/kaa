@@ -254,6 +254,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     return KAA_ERR_NONE;
 }
 
+// TODO(KAA-1089): Remove weak linkage
+__attribute__((weak))
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self,
         const uint8_t *buffer, size_t buffer_size)
 {
@@ -381,6 +383,8 @@ fail:
     return error_code;
 }
 
+// TODO(KAA-1089): Remove weak linkage
+__attribute__((weak))
 kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
         const kaa_extension_id *services, size_t services_count,
         uint8_t **buffer, size_t *buffer_size)
