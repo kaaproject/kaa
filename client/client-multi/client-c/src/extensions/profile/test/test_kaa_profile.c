@@ -19,6 +19,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "kaa_profile.h"
+#include "kaa_profile_private.h"
+
 #include "kaa_status.h"
 #include "kaa_test.h"
 
@@ -27,7 +30,6 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_context.h"
-#include "kaa_profile.h"
 #include "kaa_defaults.h"
 #include "gen/kaa_profile_gen.h"
 #include "kaa_platform_utils.h"

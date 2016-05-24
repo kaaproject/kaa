@@ -35,9 +35,13 @@
 #include "../../platform-impl/common/kaa_tcp_channel.h"
 #include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform-impl/posix/posix_kaa_failover_strategy.h"
-#include "../../kaa_logging.h"
 #include "../../kaa_channel_manager.h"
 #include "../../kaa_platform_utils.h"
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+#include "kaa_logging.h"
+#include "kaa_logging_private.h"
+#endif
 
 #include "kaa_private.h"
 

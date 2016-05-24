@@ -16,12 +16,14 @@
 
 #include "kaa_private.h"
 
+#include "kaa_user.h"
+#include "kaa_user_private.h"
+
 #include <stdint.h>
 #include <string.h>
 #include "platform/stdio.h"
 #include "platform/sock.h"
 #include "kaa_defaults.h"
-#include "kaa_user.h"
 #include "platform/ext_sha.h"
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"

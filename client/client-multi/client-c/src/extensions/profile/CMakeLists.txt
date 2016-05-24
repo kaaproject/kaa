@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Copyright 2014-2016 CyberVision, Inc.
 #
@@ -15,16 +14,20 @@
 # limitations under the License.
 #
 
-set -e
-set -v
+set(EXTENSION_PROFILE_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/kaa_profile.c)
 
-make
+set(EXTENSION_PROFILE_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/kaa_profile.h)
 
-cd build-posix
-ctest -T memcheck
-ctest -T coverage
-cd ..
+add_library(extension_profile ${EXTENSION_PROFILE_SOURCE_FILES})
+target_include_directories(extension_profile PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(extension_profile PUBLIC kaac)
 
-make -C build-posix doxygen
-
-make -C build-posix cppcheck
+kaa_add_unit_test(NAME test_profile
+    SOURCES
+    ${CMAKE_CURRENT_LIST_DIR}/test/test_kaa_profile.c
+    test/kaa_test_external.c
+    ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
+    DEPENDS
+    kaac ${OPENSSL_LIBRARIES})

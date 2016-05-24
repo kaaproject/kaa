@@ -18,7 +18,13 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(Kaa-c)
 enable_language(C)
-enable_testing()
+
+option(WITH_EXTENSION_PROFILE "Enable profile extension" ON)
+option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
+option(WITH_EXTENSION_EVENT "Enable event extension" ON)
+option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
+option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
+option(WITH_EXTENSION_USER "Enable user extension" ON)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -91,34 +97,6 @@ message("KAA_PLATFORM = ${KAA_PLATFORM}")
 message("KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
 message("==================================")
 
-# Disables Kaa library modules.
-if (KAA_WITHOUT_EVENTS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
-else ()
-    message("EVENTS ENABLED")
-endif ()
-
-if (KAA_WITHOUT_LOGGING)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
-else ()
-    message("LOGGING ENABLED")
-endif ()
-
-if (KAA_WITHOUT_CONFIGURATION)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
-else ()
-    message("CONFIGURATION ENABLED")
-endif ()
-
-if (KAA_WITHOUT_NOTIFICATION)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_NOTIFICATION")
-else ()
-    message("NOTIFICATION ENABLED")
-endif ()
-
-message("==================================")
-
-
 # Sets path(s) to header files.
 set(KAA_SRC_FOLDER "${CMAKE_CURRENT_LIST_DIR}/src/kaa")
 
@@ -139,14 +117,8 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
         ${KAA_SRC_FOLDER}/kaa_channel_manager.c
         ${KAA_SRC_FOLDER}/kaa_common_schema.c
-        ${KAA_SRC_FOLDER}/kaa_event.c
-        ${KAA_SRC_FOLDER}/kaa_logging.c
-        ${KAA_SRC_FOLDER}/kaa_profile.c
-        ${KAA_SRC_FOLDER}/kaa_configuration_manager.c
         ${KAA_SRC_FOLDER}/kaa_status.c
-        ${KAA_SRC_FOLDER}/kaa_user.c
         ${KAA_SRC_FOLDER}/kaa.c
-        ${KAA_SRC_FOLDER}/kaa_notification_manager.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
         )
@@ -161,22 +133,74 @@ set(KAA_INCLUDE_DIRS
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
 
-# Builds Kaa libraries.
+# Build unit tests.
+include(${CMAKE_CURRENT_LIST_DIR}/listfiles/UnitTest.cmake)
 
+# Build Kaa libraries.
 add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
 target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
+
+# Disables Kaa library modules.
+if(WITH_EXTENSION_PROFILE)
+    message("PROFILE ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/profile/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_profile)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_PROFILE)
+endif()
+
+if(WITH_EXTENSION_USER)
+    message("USER EXTENSION ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/user/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_user)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_USER)
+endif()
+
+if(WITH_EXTENSION_CONFIGURATION)
+    message("CONFIGURATION ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/configuration/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_configuration)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_CONFIGURATION)
+endif()
+
+if(WITH_EXTENSION_EVENT)
+    message("EVENTS ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/event/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_event)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_EVENTS)
+endif()
+
+if(WITH_EXTENSION_LOGGING)
+    message("LOGGING ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/logging/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_logging)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_LOGGING)
+endif()
+
+if(WITH_EXTENSION_NOTIFICATION)
+    message("NOTIFICATION ENABLED")
+
+    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/notification/CMakeLists.txt)
+    target_link_libraries(kaac PRIVATE extension_notification)
+else()
+    add_definitions(-DKAA_DISABLE_FEATURE_NOTIFICATION)
+endif()
 
 message("KAA WILL BE INSTALLED TO  ${CMAKE_INSTALL_PREFIX} ")
 install(DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION include/kaa
         FILES_MATCHING PATTERN *.h)
 
 install(TARGETS kaac DESTINATION lib)
-
-# Builds unit tests.
-if(KAA_UNITTESTS_COMPILE)
-    include(${CMAKE_CURRENT_LIST_DIR}/listfiles/UnitTest.cmake)
-endif()
 
 add_subdirectory(Modules/doxygen)
 

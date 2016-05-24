@@ -43,6 +43,7 @@ static struct kaa_extension kaa_extension_bootstrap = {
     .server_sync = kaa_extension_bootstrap_server_sync,
 };
 
+#ifndef KAA_DISABLE_FEATURE_PROFILE
 static struct kaa_extension kaa_extension_profile = {
     .id = KAA_EXTENSION_PROFILE,
     .init = kaa_extension_profile_init,
@@ -50,6 +51,7 @@ static struct kaa_extension kaa_extension_profile = {
     .request_serialize = kaa_extension_profile_request_serialize,
     .server_sync = kaa_extension_profile_server_sync,
 };
+#endif
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
 static struct kaa_extension kaa_extension_event = {
@@ -91,6 +93,7 @@ static struct kaa_extension kaa_extension_notification = {
 };
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_USER
 static struct kaa_extension kaa_extension_user = {
     .id = KAA_EXTENSION_USER,
     .init = kaa_extension_user_init,
@@ -98,12 +101,16 @@ static struct kaa_extension kaa_extension_user = {
     .request_serialize = kaa_extension_user_request_serialize,
     .server_sync = kaa_extension_user_server_sync,
 };
+#endif
 
 // I'm not sure in what order they should be, so just kept order from
 // kaa_context_init().
 static const struct kaa_extension *kaa_extensions[] = {
     &kaa_extension_bootstrap,
+
+#ifndef KAA_DISABLE_FEATURE_PROFILE
     &kaa_extension_profile,
+#endif
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     &kaa_extension_event,
@@ -121,5 +128,7 @@ static const struct kaa_extension *kaa_extensions[] = {
     &kaa_extension_notification,
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_USER
     &kaa_extension_user,
+#endif
 };

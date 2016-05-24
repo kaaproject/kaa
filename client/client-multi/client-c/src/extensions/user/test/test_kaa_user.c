@@ -20,6 +20,7 @@
 #include "platform/ext_sha.h"
 
 #include "kaa_user.h"
+#include "kaa_user_private.h"
 
 #include "kaa_test.h"
 
@@ -28,7 +29,6 @@
 #include "kaa_platform_protocol.h"
 #include "kaa_channel_manager.h"
 #include "kaa_status.h"
-#include "kaa_profile.h"
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"

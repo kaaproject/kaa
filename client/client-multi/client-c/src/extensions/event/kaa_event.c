@@ -14,39 +14,37 @@
  * limitations under the License.
  */
 
-# ifndef KAA_DISABLE_FEATURE_EVENTS
+#include "kaa_event.h"
+#include "kaa_event_private.h"
 
 #include "kaa_private.h"
 
-# include <stdbool.h>
-# include <stdint.h>
-# include <string.h>
-# include <stdarg.h>
-# include <sys/types.h>
-# include "platform/stdio.h"
-# include "platform/sock.h"
-# include "platform/ext_sha.h"
-# include "kaa_event.h"
-# include "kaa_status.h"
-# include "kaa_channel_manager.h"
-# include "kaa_platform_utils.h"
-# include "kaa_platform_common.h"
-# include "kaa_common_schema.h"
-# include "collections/kaa_list.h"
-# include "utilities/kaa_mem.h"
-# include "utilities/kaa_log.h"
-# include "platform/ext_system_logger.h"
-# include "gen/kaa_event_fqn_definitions.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include "platform/stdio.h"
+#include "platform/sock.h"
+#include "platform/ext_sha.h"
+#include "kaa_status.h"
+#include "kaa_channel_manager.h"
+#include "kaa_platform_utils.h"
+#include "kaa_platform_common.h"
+#include "kaa_common_schema.h"
+#include "collections/kaa_list.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
+#include "platform/ext_system_logger.h"
+#include "gen/kaa_event_fqn_definitions.h"
 
+#define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_RECEIVE_EVENTS         0x1
+#define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC   0x2
 
+#define KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT   0x1
 
-# define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_RECEIVE_EVENTS         0x1
-# define KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC   0x2
-
-# define KAA_EVENT_SERVER_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_PRESENT   0x1
-
-# define KAA_EVENT_OPTION_TARGET_ID_PRESENT    0x1
-# define KAA_EVENT_OPTION_EVENT_HAS_DATA       0x2
+#define KAA_EVENT_OPTION_TARGET_ID_PRESENT    0x1
+#define KAA_EVENT_OPTION_EVENT_HAS_DATA       0x2
 
 typedef enum {
     EVENT_LISTENERS_FIELD = 0x00,
@@ -121,7 +119,6 @@ struct kaa_event_manager_t {
 };
 
 static kaa_extension_id event_sync_services[1] = { KAA_EXTENSION_EVENT };
-
 
 kaa_error_t kaa_extension_event_init(kaa_context_t *kaa_context, void **context)
 {
@@ -1204,5 +1201,3 @@ const char *kaa_find_class_family_name(const char *fqn)
     }
     return NULL;
 }
-
-# endif
