@@ -34,6 +34,7 @@
 #include <kaa_context.h>
 #include <platform/ext_kaa_failover_strategy.h>
 #include <utilities/kaa_log.h>
+#include <kaa_bootstrap_manager.h>
 
 #ifdef __cplusplus
 extern "C" {

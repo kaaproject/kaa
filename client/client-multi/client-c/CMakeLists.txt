@@ -115,7 +115,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
         ${KAA_SRC_FOLDER}/kaa_platform_utils.c
         ${KAA_SRC_FOLDER}/kaa_platform_protocol.c
-        ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
         ${KAA_SRC_FOLDER}/kaa_channel_manager.c
         ${KAA_SRC_FOLDER}/kaa_common_schema.c
         ${KAA_SRC_FOLDER}/kaa_status.c
@@ -142,7 +141,10 @@ add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
 target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 
-# Disables Kaa library modules.
+message("BOOTSTRAP ENABLED")
+include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
+target_link_libraries(kaac PUBLIC extension_bootstrap)
+
 if(WITH_EXTENSION_PROFILE)
     message("PROFILE ENABLED")
 

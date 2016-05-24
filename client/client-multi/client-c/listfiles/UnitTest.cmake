@@ -188,20 +188,13 @@ kaa_add_unit_test(NAME test_kaa_extension_private
         SOURCES
         test/test_kaa_extension_private.c src/kaa/kaa_extension.c
         INC_DIRS
-        src/kaa)
+        src/kaa src/extensions/bootstrap)
 
 # KAA-985
 #kaa_add_unit_test(NAME test_kaa_tcp_channel_operation
 #        SOURCES
 #        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
 #        test/kaa_test_external.c
-#        DEPENDS
-#        kaac ${OPENSSL_LIBRARIES})
-
-# KAA-989
-#kaa_add_unit_test(NAME test_kaa_bootstrap_manager
-#        SOURCES
-#        test/test_kaa_bootstrap_manager.c
 #        DEPENDS
 #        kaac ${OPENSSL_LIBRARIES})
 

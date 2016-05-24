@@ -35,7 +35,6 @@ kaa_add_unit_test(NAME test_log
     ${KAA_SRC_FOLDER}/utilities/kaa_log.c
     ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
     ${KAA_SRC_FOLDER}/kaa_platform_utils.c
-    ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
     ${KAA_SRC_FOLDER}/kaa_channel_manager.c
     ${KAA_SRC_FOLDER}/kaa_common_schema.c
     ${KAA_SRC_FOLDER}/kaa_status.c

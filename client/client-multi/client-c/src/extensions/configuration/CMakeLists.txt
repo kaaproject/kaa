@@ -27,6 +27,7 @@ target_link_libraries(extension_configuration PUBLIC kaac)
 kaa_add_unit_test(NAME test_kaa_configuration_manager
     SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/test/test_kaa_configuration.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
     test/kaa_test_external.c
     DEPENDS
     kaac extension_configuration ${OPENSSL_LIBRARIES})
