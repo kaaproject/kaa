@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+#include "kaa_configuration_manager_private.h"
+#include "kaa_configuration_manager.h"
 
 #include "kaa_private.h"
 
@@ -24,7 +25,6 @@
 #include <sys/types.h>
 #include "platform/stdio.h"
 #include "platform/sock.h"
-#include "kaa_configuration_manager.h"
 
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
@@ -305,6 +305,3 @@ kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manage
 
     return KAA_ERR_NONE;
 }
-
-
-#endif /* KAA_DISABLE_FEATURE_CONFIGURATION */

@@ -266,3 +266,6 @@ kaa_error_t ext_log_upload_strategy_set_upload_retry_period(void *strategy, size
 }
 
 #endif
+
+/* ISO C forbids an empty translation unit */
+typedef int make_iso_compilers_happy;

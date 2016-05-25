@@ -18,8 +18,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "kaa_configuration_manager.h"
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+#include "kaa_configuration_manager_private.h"
 
 #include "platform/sock.h"
 #include "platform/ext_sha.h"
@@ -118,48 +117,34 @@ void test_response(void **state)
     kaa_platform_message_reader_destroy(reader);
 }
 
-
-#endif
-
-
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    if (error || !logger)
+    if (error || !logger) {
         return error;
+    }
 
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     error = kaa_status_create(&status);
-    if (error || !status)
+    if (error || !status) {
         return error;
+    }
 
     error = kaa_configuration_manager_create(&config_manager, NULL, status, logger);
-    if (error || config_manager)
+    if (error || config_manager) {
         return error;
-#endif
+    }
+
     return 0;
 }
-
-
 
 int test_deinit(void)
 {
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     kaa_status_destroy(status);
     kaa_configuration_manager_destroy(config_manager);
-#endif
     kaa_log_destroy(logger);
-
     return 0;
 }
 
-
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 KAA_SUITE_MAIN(Log, test_init, test_deinit,
        KAA_TEST_CASE(create_request, test_create_request)
        KAA_TEST_CASE(process_response, test_response))
-#else
-KAA_SUITE_MAIN(Log, test_init, test_deinit)
-#endif

@@ -38,6 +38,8 @@
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
 
+#include <kaa_bootstrap_manager.h>
+
 #define ACCESS_POINT_SOCKET_FD 5
 
 typedef struct {

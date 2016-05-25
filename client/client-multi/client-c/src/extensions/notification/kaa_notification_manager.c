@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-
 #include "kaa_private.h"
 
 #include "kaa_notification_manager.h"
@@ -53,18 +51,18 @@ struct kaa_notification_manager_t {
 
 typedef enum {
     KAA_CLIENT_WANTS_TO_RECEIVE_NOTIFICATIONS = 0x01,
-    KAA_SUBSCRIBED_TOPIC_HASH_IS_PRESENT = 0x02
+    KAA_SUBSCRIBED_TOPIC_HASH_IS_PRESENT = 0x02,
 } kaa_notification_extension_flags_t;
 
 typedef enum {
     KAA_NO_DELTA,
     KAA_DELTA,
-    KAA_RESYNC
+    KAA_RESYNC,
 } kaa_sync_response_status;
 
 typedef enum {
     SYSTEM = 0x0,
-    CUSTOM = 0x1
+    CUSTOM = 0x1,
 } kaa_notification_type;
 
 typedef struct {
@@ -93,6 +91,14 @@ typedef struct {
     uint32_t id;
     kaa_topic_listener_t listener;
 } kaa_topic_listener_wrapper_t;
+
+static kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status, kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
+
+static kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
+static kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self,
+        kaa_platform_message_writer_t *writer);
+static kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
 
 kaa_error_t kaa_extension_notification_init(kaa_context_t *kaa_context, void **context)
 {
@@ -1360,4 +1366,3 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
 
     return do_sync(self);
 }
-#endif

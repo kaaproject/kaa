@@ -24,11 +24,8 @@
 extern "C" {
 #endif
 
-
 struct kaa_configuration_manager_t;
 typedef struct kaa_configuration_manager_t kaa_configuration_manager_t;
-
-
 
 /**
  * @brief Retrieves the current configuration data.
@@ -40,8 +37,6 @@ typedef struct kaa_configuration_manager_t kaa_configuration_manager_t;
  */
 const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self);
 
-
-
 /**
  * @brief Sets the new receiver of updated configuration data. See @link kaa_configuration_root_receiver_t @endlink .
  *
@@ -51,8 +46,6 @@ const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_
  * @return  Error code.
  */
 kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver);
-
-
 
 #ifdef __cplusplus
 } // extern "C"

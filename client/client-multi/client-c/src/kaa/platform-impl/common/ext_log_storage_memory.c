@@ -382,3 +382,6 @@ kaa_error_t ext_log_storage_destroy(void *context)
 }
 
 #endif
+
+/* ISO C forbids an empty translation unit */
+typedef int make_iso_compilers_happy;

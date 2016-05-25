@@ -14,9 +14,19 @@
 # limitations under the License.
 #
 
-set (KAA_SOURCE_FILES  ${KAA_SOURCE_FILES}
-                       ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_logging_gen.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_configuration_gen.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_notification_gen.c
-)
+set(EXTENSION_BOOTSTRAP_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/kaa_bootstrap_manager.c)
+
+set(EXTENSION_BOOTSTRAP_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/kaa_bootstrap_manager.h)
+
+add_library(extension_bootstrap ${EXTENSION_BOOTSTRAP_SOURCE_FILES})
+target_include_directories(extension_bootstrap PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(extension_bootstrap PUBLIC kaac)
+
+# KAA-989
+#kaa_add_unit_test(NAME test_kaa_bootstrap_manager
+#        SOURCES
+#        ${CMAKE_CURRENT_LIST_DIR}/test/test_kaa_bootstrap_manager.c
+#        DEPENDS
+#        kaac ${OPENSSL_LIBRARIES})

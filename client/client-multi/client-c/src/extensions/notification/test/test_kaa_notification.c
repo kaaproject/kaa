@@ -327,7 +327,6 @@ void test_subscriptions(void **state)
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 }
 
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 KAA_SUITE_MAIN(Notification, test_init, test_deinit,
        KAA_TEST_CASE(deserializing, test_deserializing)
        KAA_TEST_CASE(removing_and_adding_notifications_listeners, test_notification_listeners_adding_and_removing)
@@ -335,6 +334,3 @@ KAA_SUITE_MAIN(Notification, test_init, test_deinit,
        KAA_TEST_CASE(topic_list_retrieving, test_retrieving_topic_list)
        KAA_TEST_CASE(serializing, test_serializing)
        KAA_TEST_CASE(subscriptions, test_subscriptions))
-#else
-KAA_SUITE_MAIN(Notification, test_init, test_deinit)
-#endif

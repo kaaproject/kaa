@@ -693,7 +693,7 @@ kaa_error_t kaa_init_security_stuff(void)
 /*
  * Initializes Kaa log collector.
  */
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
+static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 

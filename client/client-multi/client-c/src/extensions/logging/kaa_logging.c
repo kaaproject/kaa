@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef KAA_DISABLE_FEATURE_LOGGING
+#include "kaa_logging_private.h"
+#include "kaa_logging.h"
 
 #include "kaa_private.h"
 
@@ -26,7 +27,6 @@
 #include "platform/sock.h"
 #include "platform/time.h"
 #include "platform/ext_sha.h"
-#include "kaa_logging.h"
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
@@ -843,6 +843,3 @@ void ext_log_upload_timeout(kaa_log_collector_t *self)
         handle_timeout(self);
     }
 }
-
-#endif
-

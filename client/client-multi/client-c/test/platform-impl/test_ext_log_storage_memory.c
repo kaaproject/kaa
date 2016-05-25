@@ -33,6 +33,8 @@
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
 
+#include "kaa_logging_private.h"
+
 #define TEST_RECORD_BUCKET_ID 1
 
 static kaa_logger_t *logger = NULL;
