@@ -16,8 +16,7 @@
 
 cmake_minimum_required(VERSION 2.8.8)
 
-project(Kaa-c)
-enable_language(C)
+project(Kaa-c C)
 enable_testing()
 
 # Expose Kaa SDK directory to all modules
