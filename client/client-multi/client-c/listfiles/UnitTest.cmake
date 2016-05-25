@@ -14,11 +14,13 @@
 # limitations under the License.
 #
 
-enable_testing()
-
 if(KAA_UNITTESTS_COMPILE)
     find_package(cmocka REQUIRED)
     find_package(OpenSSL REQUIRED)
+    find_program(MEMORYCHECK_COMMAND  valgrind)
+    set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-reachable=yes --trace-children=yes -v")
+
+    include(CTest)
 endif()
 
 ################################################################################
