@@ -1,11 +1,28 @@
-+{
-+    "type" : "record",
-+    "name" : "ServerProfileTest",
-+    "namespace" : "org.kaaproject.kaa",
-+    "fields" : [
-+        {
-+            "name" : "serverField",
-+            "type" : "int"
-+        }
-+    ]
-+}
+{
+    "type":"record",
+    "name":"Profile",
+    "namespace":"org.kaaproject.kaa.schema.sample.profile",
+    "fields":[
+        {
+            "name":"country.$",
+            "type":"string"
+        },
+        {
+            "name":"country$IsoCode",
+            "type" : "string"
+        },
+        {
+            "name" : "city",
+            "type" : "string"
+        },
+        {
+            "name":"Obj",
+            "type": "record",
+            "namespace":"org.kaaproject.kaa.schema.sample.profile.Obj",
+            "fields" : [
+                "name" : "name",
+                "type" : "string"
+            ]
+        },
+    ]
+}
