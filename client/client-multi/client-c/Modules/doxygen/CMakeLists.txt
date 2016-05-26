@@ -16,16 +16,13 @@
 
 # This cmake list is responsible for building doxygen documentation.
 
-find_package(Doxygen REQUIRED)
+find_package(Doxygen)
 
-if(DOXYGEN_FOUND)
-
-   add_custom_target(doxygen
-     COMMAND ${CMAKE_COMMAND} -E make_directory target/apidocs/doxygen
-     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-     WORKING_DIRECTORY ${KAA_SDK_DIR}
-     COMMENT "Generating doxygen docs"
-     VERBATIM
-     )
-
-endif()
+add_custom_target(doxygen
+  COMMAND ${CMAKE_COMMAND} -E make_directory target/apidocs/doxygen
+  COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+  WORKING_DIRECTORY
+  ${KAA_SDK_DIR}
+  COMMENT "Generating doxygen docs"
+  VERBATIM
+  )
