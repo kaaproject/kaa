@@ -196,6 +196,11 @@ public class ESTestCacheService implements CacheService {
         return null;
     }
 
+    @Override
+    public void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey) {
+
+    }
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#setApplicationService(org.kaaproject.kaa.server.common.dao.ApplicationService)
      */
