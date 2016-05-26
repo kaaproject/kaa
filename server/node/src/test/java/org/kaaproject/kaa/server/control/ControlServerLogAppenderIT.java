@@ -28,19 +28,6 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 public class ControlServerLogAppenderIT extends AbstractTestControlServer {
 
     /**
-     * Gets the log appenders by application id test.
-     *
-     * @return the log appenders by application id test
-     * @throws Exception the exception
-     */
-    @Test
-    public void getLogAppendersByApplicationIdTest() throws Exception {
-        LogAppenderDto appenderDto = createLogAppender(null, null);
-        List<LogAppenderDto> found = client.getLogAppenders(appenderDto.getApplicationId());
-        Assert.assertEquals(1, found.size());
-    }
-
-    /**
      * Gets the log appenders by application token test.
      *
      * @return the log appenders by application token test

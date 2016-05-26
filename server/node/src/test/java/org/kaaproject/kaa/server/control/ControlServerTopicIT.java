@@ -63,21 +63,6 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test get topic by app id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetTopicByAppId() throws Exception {
-        TopicDto topic = createTopic(null, TopicTypeDto.MANDATORY);
-        LOG.debug("Created topic with id {}", topic.getId());
-        List<TopicDto> storedTopic = client.getTopicsByApplicationId(topic.getApplicationId());
-        Assert.assertNotNull(storedTopic);
-        Assert.assertFalse(storedTopic.isEmpty());
-        Assert.assertEquals(topic, storedTopic.get(0));
-    }
-
-    /**
      * Test get topic by app token.
      *
      * @throws Exception the exception

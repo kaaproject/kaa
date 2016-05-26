@@ -31,19 +31,6 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 public class ControlServerLogSchemaIT extends AbstractTestControlServer {
 
     /**
-     * Gets the log schemas by application id test.
-     *
-     * @return the log schemas by application id test
-     * @throws Exception the exception
-     */
-    @Test
-    public void getLogSchemasByApplicationIdTest() throws Exception {
-        LogSchemaDto logSchemaDto = createLogSchema();
-        List<LogSchemaDto> found = client.getLogSchemas(logSchemaDto.getApplicationId());
-        Assert.assertEquals(2, found.size());
-    }
-
-    /**
      * Gets the log schemas by application token test.
      *
      * @return the log schemas by application token test
@@ -82,20 +69,6 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
         LogSchemaDto logSchemaDto = createLogSchema(app.getId());
         LogSchemaDto found = client.getLogSchemaByApplicationTokenAndSchemaVersion(app.getApplicationToken(), logSchemaDto.getVersion());
         Assert.assertEquals(logSchemaDto, found);
-    }
-
-    /**
-     * Gets the log schema versions by application id test.
-     *
-     * @return the log schema versions by application id test
-     * @throws Exception the exception
-     */
-    @Test
-    public void getLogSchemaVersionsByApplicationIdTest() throws Exception {
-        LogSchemaDto logSchemaDto = createLogSchema();
-        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(logSchemaDto.getApplicationId());
-        List<VersionDto> found = schemaVersions.getLogSchemaVersions();
-        Assert.assertEquals(2, found.size());
     }
 
     /**
