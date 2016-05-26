@@ -120,11 +120,9 @@ kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) 
     (void)props;
     KAA_RETURN_IF_NIL(client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     kaa_client_t *self = (kaa_client_t*)KAA_CALLOC(1, sizeof(kaa_client_t));
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOMEM);
-    error_code = kaa_init(&self->context);
+    kaa_error_t error_code = kaa_init(&self->context);
 
     if(error_code) {
         printf("Error initialising kaa_context\n");

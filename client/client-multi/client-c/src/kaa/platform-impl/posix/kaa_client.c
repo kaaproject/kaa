@@ -132,12 +132,10 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
     (void)props;
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     kaa_client_t *self = KAA_CALLOC(1, sizeof(kaa_client_t));
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOMEM);
 
-    error_code = kaa_init(&self->kaa_context);
+    kaa_error_t error_code = kaa_init(&self->kaa_context);
     if (error_code) {
         kaa_client_destroy(self);
         return error_code;
