@@ -405,6 +405,18 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public void removeEndpointProfileByKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointProfileDto endpointProfile = controlService.getEndpointProfileByKeyHash(endpointKeyHash);
+            Utils.checkNotNull(endpointProfile);
+            controlService.removeEndpointProfile(endpointProfile);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPluginConfig.class));
