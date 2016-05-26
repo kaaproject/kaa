@@ -350,9 +350,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             EndpointProfileBodyDto profileBodyDto = controlService.getEndpointProfileBodyByKeyHash(endpointProfileKeyHash);
-            if (profileBodyDto == null) {
-                throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
-            }
+            Utils.checkNotNull(profileBodyDto);
             checkApplicationId(profileBodyDto.getAppId());
             return profileBodyDto;
         } catch (Exception e) {
@@ -366,10 +364,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            EndpointProfileDto profileDto = controlService.getEndpointProfileByKeyHash(endpointKeyHash);            
+            EndpointProfileDto profileDto = controlService.getEndpointProfileByKeyHash(endpointKeyHash);
+            Utils.checkNotNull(profileDto);
             checkApplicationId(profileDto.getApplicationId());
             ServerProfileSchemaDto serverProfileSchema = controlService.getServerProfileSchemaByApplicationIdAndVersion(
                     profileDto.getApplicationId(), serverProfileVersion);
+            Utils.checkNotNull(serverProfileSchema);
             RecordField record;
             try {
                 record = createRecordFieldFromCtlSchemaAndBody(serverProfileSchema.getCtlSchemaId(), 
@@ -1747,7 +1747,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkEndpointGroupId(endpointGroupId);
             ProfileFilterRecordDto record = controlService.getProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
-            Utils.checkNotNull(record);
             return record;
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1866,7 +1865,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             ProfileFilterRecordDto record = controlService.getProfileFilterRecord(endpointProfileSchemaId,
                     serverProfileSchemaId, endpointGroupId);
-            Utils.checkNotNull(record);
             checkEndpointGroupId(record.getEndpointGroupId());
             String username = getCurrentUser().getUsername();
             controlService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId, username);
@@ -1894,7 +1892,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             checkEndpointGroupId(endpointGroupId);
             ConfigurationRecordDto record = controlService.getConfigurationRecord(schemaId, endpointGroupId);
-            Utils.checkNotNull(record);
             return record;
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -2115,7 +2112,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             StructureRecordDto<ConfigurationDto> record = controlService.getConfigurationRecord(schemaId, endpointGroupId);
-            Utils.checkNotNull(record);
             checkEndpointGroupId(record.getEndpointGroupId());
             String username = getCurrentUser().getUsername();
             controlService.deleteConfigurationRecord(schemaId, endpointGroupId, username);

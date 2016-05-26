@@ -34,6 +34,7 @@ import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
@@ -198,8 +199,9 @@ public class ProfileServiceImpl implements ProfileService {
             }
         }
         if (record.isEmpty()) {
-            LOG.debug("Can't find related profile filter record for endpoint schema {}, server schema {} and group {}.", endpointProfileSchemaId, endpointGroupId);
-            throw new IncorrectParameterException("Profile filter record not found, endpointProfileSchemaId: " + endpointProfileSchemaId
+            LOG.debug("Can't find related profile filter record for endpoint schema {}, server schema {} and group {}.", endpointProfileSchemaId,
+                    serverProfileSchemaId, endpointGroupId);
+            throw new NotFoundException("Profile filter record not found, endpointProfileSchemaId: " + endpointProfileSchemaId
                     + ", serverProfileSchemaId: " + serverProfileSchemaId + " endpointGroupId: " + endpointGroupId);
         }
         return record;
