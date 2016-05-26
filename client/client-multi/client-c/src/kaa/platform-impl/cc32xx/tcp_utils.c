@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "../../platform/ext_tcp_utils.h"
+#include "platform/ext_tcp_utils.h"
 #include <platform/stdio.h>
-#include "../../kaa_common.h"
+#include "kaa_common.h"
 #include <errno.h>
 
 //Driverlib includes

@@ -27,7 +27,7 @@ posix_sock.h
 #include <sys/select.h>
 #include <arpa/inet.h>
 
-#include "../common/kaa_htonll.h"
+#include "platform-impl/common/kaa_htonll.h"
 
 typedef int kaa_fd_t;
 

@@ -87,14 +87,18 @@ if(WITH_EXTENSION_LOGGING)
         test/platform-impl/test_ext_log_storage_memory.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac ${OPENSSL_LIBRARIES}
+        INC_DIRS
+        test)
 
     kaa_add_unit_test(NAME test_ext_log_upload_strategy_by_volume
         SOURCES
         test/platform-impl/test_ext_log_upload_strategies.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac ${OPENSSL_LIBRARIES}
+        INC_DIRS
+        test)
 
     kaa_add_unit_test(NAME test_platform_protocol
         SOURCES
@@ -142,28 +146,34 @@ kaa_add_unit_test(NAME test_list
         test/collections/test_kaa_list.c
         src/kaa/collections/kaa_list.c
         INC_DIRS
-        src/kaa ${KAA_INCLUDE_PATHS})
+        src/kaa ${KAA_INCLUDE_PATHS} test)
 
 kaa_add_unit_test(NAME test_kaatcp_parser
         SOURCES
         test/kaatcp/kaatcp_parser_test.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac ${OPENSSL_LIBRARIES}
+        INC_DIRS
+        test)
 
 kaa_add_unit_test(NAME test_kaatcp_request
         SOURCES
         test/kaatcp/kaatcp_request_test.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac ${OPENSSL_LIBRARIES}
+        INC_DIRS
+        test)
 
 kaa_add_unit_test(NAME test_kaa_tcp_channel_bootstrap
         SOURCES
         test/kaa_tcp_channel/test_kaa_tcp_channel_bootstrap.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac ${OPENSSL_LIBRARIES}
+        INC_DIRS
+        test)
 
 kaa_add_unit_test(NAME test_kaa_common_schema
         SOURCES
@@ -176,7 +186,9 @@ kaa_add_unit_test(NAME test_kaa_reallocation
         SOURCES
         test/utilities/test_kaa_reallocation.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac ${OPENSSL_LIBRARIES}
+        INC_DIRS
+        test)
 
 kaa_add_unit_test(NAME test_kaa_extension
         SOURCES
@@ -196,7 +208,9 @@ kaa_add_unit_test(NAME test_kaa_extension_private
 #        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
 #        test/kaa_test_external.c
 #        DEPENDS
-#        kaac ${OPENSSL_LIBRARIES})
+#        kaac ${OPENSSL_LIBRARIES}
+#        INC_DIRS
+#        test)
 
 # KAA-988
 #kaa_add_unit_test(NAME test_kaa_channel_manager

@@ -17,8 +17,8 @@
 #include <CommonCrypto/CommonDigest.h>
 #include <stdint.h>
 #include <stddef.h>
-#include "../../kaa_common.h"
-#include "../../platform/ext_sha.h"
+#include "kaa_common.h"
+#include "platform/ext_sha.h"
 #include <string.h>
 
 

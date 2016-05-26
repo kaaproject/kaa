@@ -32,7 +32,7 @@ extern "C" {
 
 #include <platform/time.h>
 
-#include "../kaa_context.h"
+#include "kaa_context.h"
 #include <platform/kaa_client_properties.h>
 
 struct kaa_client_t;

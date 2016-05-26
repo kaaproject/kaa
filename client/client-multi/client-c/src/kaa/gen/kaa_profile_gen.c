@@ -18,9 +18,9 @@
 # include <string.h>
 # include <platform/stdio.h>
 # include "kaa_profile_gen.h"
-# include "../avro_src/avro/io.h"
-# include "../avro_src/encoding.h"
-# include "../utilities/kaa_mem.h"
+# include "avro_src/avro/io.h"
+# include "avro_src/encoding.h"
+# include "utilities/kaa_mem.h"
 
 /*
  * AUTO-GENERATED CODE

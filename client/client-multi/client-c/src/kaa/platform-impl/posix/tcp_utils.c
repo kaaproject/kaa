@@ -17,9 +17,9 @@
 // See feature_test_macros(7) man page
 #define _POSIX_C_SOURCE 200112L
 
-#include "../../platform/ext_tcp_utils.h"
+#include "platform/ext_tcp_utils.h"
 #include <platform/stdio.h>
-#include "../../kaa_common.h"
+#include "kaa_common.h"
 #include <unistd.h>
 #include <errno.h>
 #include <netdb.h>

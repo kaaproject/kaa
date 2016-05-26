@@ -17,8 +17,8 @@
 
 #include <sndc_sdk_api.h>
 #include <sndc_crypto_api.h>
-#include "../../../kaa_common.h"
-#include "../../../platform/ext_sha.h"
+#include "kaa_common.h"
+#include "platform/ext_sha.h"
 
 
 

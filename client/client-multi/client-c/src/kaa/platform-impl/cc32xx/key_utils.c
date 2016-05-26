@@ -19,8 +19,8 @@
 #include <stdint.h>
 #include <platform/stdio.h>
 #include <platform/ext_key_utils.h>
-#include "../../utilities/kaa_mem.h"
-#include "../../kaa_common.h"
+#include "utilities/kaa_mem.h"
+#include "kaa_common.h"
 #include <platform/file_utils.h>
 #include "cc32xx_rsa_key.h"
 

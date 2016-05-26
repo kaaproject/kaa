@@ -17,7 +17,7 @@
 #ifndef EXT_SYSTEM_LOGGER_H_
 #define EXT_SYSTEM_LOGGER_H_
 
-#include "../kaa_error.h"
+#include "kaa_error.h"
 #include <platform/time.h>
 
 #ifdef __cplusplus

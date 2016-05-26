@@ -21,9 +21,9 @@
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <sys/stat.h>
-#include "../../platform/ext_key_utils.h"
-#include "../../utilities/kaa_mem.h"
-#include "../../kaa_common.h"
+#include "platform/ext_key_utils.h"
+#include "utilities/kaa_mem.h"
+#include "kaa_common.h"
 #include <platform/file_utils.h>
 
 

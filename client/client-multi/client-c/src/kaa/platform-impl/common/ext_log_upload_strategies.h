@@ -18,7 +18,7 @@
 #define KAA_EXT_LOG_UPLOAD_STRATEGIES_H_
 
 #include <stdint.h>
-#include "../../kaa_common.h"
+#include "kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {

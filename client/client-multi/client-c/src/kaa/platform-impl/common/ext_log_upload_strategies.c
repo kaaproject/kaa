@@ -21,7 +21,7 @@
 #include <platform/ext_log_upload_strategy.h>
 #include <platform/ext_transport_channel.h>
 #include <platform/time.h>
-#include "../../utilities/kaa_mem.h"
+#include "utilities/kaa_mem.h"
 #include "kaa_channel_manager.h"
 
 /**

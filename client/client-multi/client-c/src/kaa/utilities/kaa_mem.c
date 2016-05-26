@@ -15,7 +15,7 @@
  */
 
 #include <stddef.h>
-#include "../utilities/kaa_mem.h"
+#include "utilities/kaa_mem.h"
 
 
 

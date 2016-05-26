@@ -17,7 +17,7 @@
 #ifndef POSIX_KAA_STRATEGY_H_
 #define POSIX_KAA_STRATEGY_H_
 
-#include "../../platform/ext_kaa_failover_strategy.h"
+#include "platform/ext_kaa_failover_strategy.h"
 
 /**
 * @brief Sets decision that will be made in case of failover.

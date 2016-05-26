@@ -20,8 +20,8 @@
 # define KAA_${EVENT_FAMILY_NAME}_H
 
 # include "kaa_${event_family_name}_definitions.h" 
-# include "../kaa_event.h"
-# include "../kaa_error.h"
+# include "kaa_event.h"
+# include "kaa_error.h"
 
 # ifdef __cplusplus
 extern "C" {
