@@ -23,7 +23,7 @@
 #ifndef EXT_USER_CALLBACK_H_
 #define EXT_USER_CALLBACK_H_
 
-#include "../kaa_common.h"
+#include "kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {

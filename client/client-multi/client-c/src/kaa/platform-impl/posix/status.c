@@ -16,7 +16,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include "../../platform/ext_status.h"
+#include "platform/ext_status.h"
 #include <platform/file_utils.h>
 
 #define KAA_STATUS_STORAGE    "kaa_status.bin"

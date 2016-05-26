@@ -24,7 +24,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "../kaa_error.h"
+#include "kaa_error.h"
 
 typedef struct kaa_list_node_t kaa_list_node_t;
 typedef struct kaa_list_t kaa_list_t;

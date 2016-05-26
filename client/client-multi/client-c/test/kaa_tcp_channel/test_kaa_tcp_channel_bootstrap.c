@@ -27,7 +27,7 @@
 #include <netdb.h>
 #include <string.h>
 
-#include "../kaa_test.h"
+#include "kaa_test.h"
 
 #include "kaa_common.h"
 #include "kaa_error.h"

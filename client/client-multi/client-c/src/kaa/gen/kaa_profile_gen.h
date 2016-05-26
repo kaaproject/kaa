@@ -17,8 +17,8 @@
 # ifndef KAA_PROFILE_GEN_H_
 # define KAA_PROFILE_GEN_H_
 
-# include "../kaa_common_schema.h"
-# include "../collections/kaa_list.h"
+# include "kaa_common_schema.h"
+# include "collections/kaa_list.h"
 
 # ifdef __cplusplus
 extern "C" {

@@ -23,8 +23,8 @@
 #ifndef EXT_CONFIGURATION_RECEIVER_H_
 #define EXT_CONFIGURATION_RECEIVER_H_
 
-#include "../kaa_error.h"
-#include "../gen/kaa_configuration_definitions.h"
+#include "kaa_error.h"
+#include "gen/kaa_configuration_definitions.h"
 
 #ifdef __cplusplus
 extern "C" {

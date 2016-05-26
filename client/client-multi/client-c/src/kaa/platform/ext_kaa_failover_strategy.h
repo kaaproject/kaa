@@ -18,7 +18,7 @@
 #define EXT_FAILOVER_STRATEGY_H_
 
 #include <stddef.h>
-#include "../kaa_error.h"
+#include "kaa_error.h"
 #include <platform/time.h>
 
 #define KAA_FAILOVER_RETRY_PERIOD     2

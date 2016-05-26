@@ -18,8 +18,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include "kaa_log.h"
-#include "../kaa_common.h"
-#include "../platform/ext_system_logger.h"
+#include "kaa_common.h"
+#include "platform/ext_system_logger.h"
 #include "kaa_mem.h"
 
 #include <platform/stdio.h>

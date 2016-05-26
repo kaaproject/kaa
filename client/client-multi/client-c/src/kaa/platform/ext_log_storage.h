@@ -30,7 +30,7 @@ extern "C" {
 
 #include <stddef.h>
 
-#include "../kaa_error.h"
+#include "kaa_error.h"
 
 
 /**

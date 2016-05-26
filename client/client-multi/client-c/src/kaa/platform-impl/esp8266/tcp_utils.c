@@ -22,7 +22,7 @@
 
 #include <platform/sock.h>
 #include <platform/ext_tcp_utils.h>
-#include "../../kaa_common.h"
+#include "kaa_common.h"
 
 #include <lwip/lwip/netdb.h>
 

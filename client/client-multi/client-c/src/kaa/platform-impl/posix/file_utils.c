@@ -17,8 +17,8 @@
 #include <platform/file_utils.h>
 #include <stdint.h>
 #include <platform/stdio.h>
-#include "../../utilities/kaa_mem.h"
-#include "../../kaa_common.h"
+#include "utilities/kaa_mem.h"
+#include "kaa_common.h"
 
 
 int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)

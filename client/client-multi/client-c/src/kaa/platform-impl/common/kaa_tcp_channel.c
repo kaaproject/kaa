@@ -25,14 +25,14 @@
 
 #include <platform/stdio.h>
 
-#include "../../kaa_common.h"
-#include "../../utilities/kaa_mem.h"
-#include "../../utilities/kaa_buffer.h"
-#include "../../utilities/kaa_log.h"
-#include "../../kaa_protocols/kaa_tcp/kaatcp.h"
-#include "../../platform/ext_system_logger.h"
+#include "kaa_common.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_buffer.h"
+#include "utilities/kaa_log.h"
+#include "kaa_protocols/kaa_tcp/kaatcp.h"
+#include "platform/ext_system_logger.h"
 #include <platform/time.h>
-#include "../../kaa_platform_common.h"
+#include "kaa_platform_common.h"
 #include "kaa_tcp_channel.h"
 
 

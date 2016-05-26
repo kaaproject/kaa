@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdarg.h>
-#include "../../platform/ext_system_logger.h"
+#include "platform/ext_system_logger.h"
 
 
 

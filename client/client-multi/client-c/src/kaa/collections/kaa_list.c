@@ -18,8 +18,8 @@
 #include <stdint.h>
 
 #include "kaa_list.h"
-#include "../kaa_common.h"
-#include "../utilities/kaa_mem.h"
+#include "kaa_common.h"
+#include "utilities/kaa_mem.h"
 
 
 

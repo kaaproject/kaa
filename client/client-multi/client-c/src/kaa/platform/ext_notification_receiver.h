@@ -17,7 +17,7 @@
 #ifndef KAA_NOTIFICATION_RECEIVER
 #define KAA_NOTIFICATION_RECEIVER
 
-#include "../gen/kaa_notification_definitions.h"
+#include "gen/kaa_notification_definitions.h"
 
 #ifdef __cplusplus
 extern "C" {

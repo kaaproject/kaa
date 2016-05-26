@@ -21,7 +21,7 @@
 
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 
-#include "../utilities/kaa_log.h"
+#include "utilities/kaa_log.h"
 
 #ifdef __cplusplus
 extern "C" {

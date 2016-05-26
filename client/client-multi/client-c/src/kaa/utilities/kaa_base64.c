@@ -23,7 +23,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "kaa_mem.h"
-#include "../kaa_common.h"
+#include "kaa_common.h"
 #include "kaa_base64.h"
 
 

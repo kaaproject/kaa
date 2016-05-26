@@ -24,7 +24,7 @@
 #ifndef KAA_BASE64_H_
 #define KAA_BASE64_H_
 
-#include "../kaa_error.h"
+#include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {
