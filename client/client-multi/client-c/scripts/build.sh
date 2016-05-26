@@ -21,6 +21,7 @@ set -v
 make
 
 cd build-posix
+ctest -T test
 ctest -T memcheck
 ctest -T coverage
 cd ..
