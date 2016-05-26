@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -46,11 +47,9 @@ import org.slf4j.LoggerFactory;
  * This class is used to parse and validate CTL schemas on save.
  *
  * @author Bohdan Khablenko
- *
- * @since v0.8.0
- *
  * @see #parse(String, String)
  * @see #validate(CTLSchemaDto)
+ * @since v0.8.0
  */
 public class CTLSchemaParser {
 
@@ -66,7 +65,9 @@ public class CTLSchemaParser {
 
     private static final String DEPENDENCIES = "dependencies";
 
-    /** The Constant LOG. */
+    /**
+     * The Constant LOG.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(CTLSchemaParser.class);
 
     private final Schema.Parser parser = new Schema.Parser();
@@ -78,12 +79,12 @@ public class CTLSchemaParser {
         this.controlService = controlService;
         this.tenantId = tenantId;
     }
-    
+
     public CTLSchemaDto parse(String body, String applicationId) throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
         CTLSchemaDto schema = new CTLSchemaDto();
         CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
         String fqn = null;
-        
+
         ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
 
         if (!object.has(TYPE) || !object.get(TYPE).isTextual() || !object.get(TYPE).getTextValue().equals("record")) {
@@ -102,7 +103,7 @@ public class CTLSchemaParser {
 
         if (!object.has(VERSION) || !object.get(VERSION).isInt()) {
             object.put(VERSION, 1);
-        } 
+        }
         schema.setVersion(object.get(VERSION).asInt());
 
         Set<CTLSchemaDto> dependencies = new HashSet<>();
@@ -119,7 +120,7 @@ public class CTLSchemaParser {
                 } else {
                     String dependencyFqn = child.get(FQN).asText();
                     int dependencyVersion = child.get(VERSION).asInt();
-                    
+
                     CTLSchemaDto dependency = controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(dependencyFqn, dependencyVersion, tenantId, applicationId);
                     if (dependency != null) {
                         dependencies.add(dependency);
@@ -143,14 +144,10 @@ public class CTLSchemaParser {
      * Parses the given CTL schema along with its dependencies as an
      * {@link org.apache.avro.Schema Avro schema}.
      *
-     * @param schema
-     *            A CTL schema to parse
-     *
+     * @param schema A CTL schema to parse
      * @return A parsed CTL schema as an Avro schema
-     *
-     * @throws KaaAdminServiceException
-     *             - if the given CTL schema is invalid and thus cannot be
-     *             parsed.
+     * @throws KaaAdminServiceException - if the given CTL schema is invalid and thus cannot be
+     *                                  parsed.
      */
     public Schema validate(CTLSchemaDto schema) throws KaaAdminServiceException {
         if (schema.getDependencySet() != null) {
@@ -177,33 +174,36 @@ public class CTLSchemaParser {
             return parser.parse(schema.getBody());
         } catch (Exception cause) {
             LOG.error("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): ", cause);
-            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());        }
+            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
+        }
     }
-    
+
     /**
      * Parses the given string CTL schema along with its dependencies as an
      * {@link org.apache.avro.Schema Avro schema}.
      *
-     * @param avroSchema
-     *            A string CTL schema to parse
-     *
+     * @param avroSchema A string CTL schema to parse
      * @return A parsed CTL schema as an Avro schema
-     *
-     * @throws Exception
-     *             - if the given CTL schema is invalid and thus cannot be
-     *             parsed.
-     */    
+     * @throws Exception - if the given CTL schema is invalid and thus cannot be
+     *                   parsed.
+     */
     public static Schema parseStringCtlSchema(String avroSchema) throws Exception {
         Schema.Parser parser = new Schema.Parser();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(avroSchema);
         JsonNode dependenciesNode = node.get(DEPENDENCIES);
         if (dependenciesNode != null && dependenciesNode.isArray()) {
-            Map<String,Schema> types = new HashMap<>();
-            for (int i=0;i<dependenciesNode.size();i++) {
+            Map<String, Schema> types = new HashMap<>();
+            for (int i = 0; i < dependenciesNode.size(); i++) {
                 JsonNode dependencyNode = dependenciesNode.get(i);
                 Fqn fqn = new Fqn(dependencyNode.get(FQN).asText());
-                types.put(fqn.getFqnString(), Schema.createRecord(fqn.getName(), null, fqn.getNamespace(), false));
+
+                Schema fakeSchema = SchemaBuilder
+                        .record(fqn.getName()).namespace(fqn.getNamespace())
+                        .fields()
+                        .endRecord();
+
+                types.put(fqn.getFqnString(), fakeSchema);
             }
             parser.addTypes(types);
         }
