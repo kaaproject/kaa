@@ -244,12 +244,12 @@ public class ApplicationActor extends UntypedActor {
             }
         }
     }
-    
+
     private boolean processCommonThriftEndpointActorMsg(EndpointObjectHash endpointId, ThriftEndpointActorMsg<?> msg) {
         if (msg.getMsg() instanceof ThriftEndpointDeregistrationMessage) {
             forwardMessageQuietly(globalEndpointSessions.get(endpointId), msg);
             forwardMessageQuietly(localEndpointSessions.get(endpointId), msg);
-            throw new RuntimeException("TODO: remove key from hash");
+            return true;
         } else {
             return false;
         }

@@ -18,8 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
 import com.google.common.io.BaseEncoding;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.view.client.Range;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -28,7 +29,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
     public EndpointProfileGrid(int pageSize) {
-        super(Style.Unit.PX, false, pageSize);
+        super(Style.Unit.PX, true, pageSize);
     }
 
     @Override
@@ -88,6 +89,27 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 }, 80);
 
         return prefWidth;
+    }
+
+    @Override
+    protected float constructActions(DataGrid<EndpointProfileDto> table, float prefWidth) {
+        if (enableActions) {
+            float result = 0;
+
+            if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
+                Header<SafeHtml> deleteHeader = new SafeHtmlHeader(
+                        SafeHtmlUtils.fromSafeConstant(embedded ? Utils.constants.remove() : Utils.constants.delete()));
+
+                deleteColumn = constructDeleteColumn("");
+                table.addColumn(deleteColumn, deleteHeader);
+                table.setColumnWidth(deleteColumn, 40, Style.Unit.PX);
+                result+= 40;
+            }
+
+            return result;
+        } else {
+            return 0;
+        }
     }
 
     @Override

@@ -2243,6 +2243,7 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public void removeEndpointProfile(EndpointProfileDto endpointProfile) throws ControlServiceException {
+        checkNeighbors();
         byte[] endpointKeyHash = endpointProfile.getEndpointKeyHash();
         this.endpointService.removeEndpointProfileByKeyHash(endpointKeyHash);
         ApplicationDto appDto = getApplication(endpointProfile.getApplicationId());
