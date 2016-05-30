@@ -25,6 +25,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,10 +115,11 @@ public class ServerProfileServiceImplTest extends AbstractTest {
     }
 
     @Test
-    public void testSaveServerProfile() {
+    public void testSaveServerProfile() throws IOException {
         ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
         EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
-        EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), schemaDto.getVersion(), TEST_PROFILE_BODY);
+        EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), schemaDto.getVersion(),
+                readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
         Assert.assertArrayEquals(ep.getEndpointKeyHash(), updated.getEndpointKeyHash());
         Assert.assertNotEquals(ep.getServerProfileBody(), updated.getServerProfileBody());
         Assert.assertEquals(ep.getServerProfileVersion(), updated.getServerProfileVersion());

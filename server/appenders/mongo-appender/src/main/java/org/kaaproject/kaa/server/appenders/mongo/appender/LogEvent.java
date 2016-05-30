@@ -93,9 +93,10 @@ public final class LogEvent implements Serializable {
 
     @Override
     public String toString() {
-        return "LogEvent [id=" + id + ", header=" + MongoDaoUtil.decodeReservedCharacteres(header) + ", event=" +
-                MongoDaoUtil.decodeReservedCharacteres(event) + ", clientProfile=" + MongoDaoUtil.decodeReservedCharacteres(clientProfile) +
-                ", serverProfile=" + MongoDaoUtil.decodeReservedCharacteres(serverProfile) + "]";
+        return "LogEvent [id=" + id + ", header=" + header != null ? MongoDaoUtil.decodeReservedCharacteres(header).toString() : "" + ", event=" +
+                event != null ? MongoDaoUtil.decodeReservedCharacteres(event).toString() : "" + ", clientProfile=" +
+                clientProfile != null ? MongoDaoUtil.decodeReservedCharacteres(clientProfile).toString() : "" + ", serverProfile=" +
+                serverProfile != null ? MongoDaoUtil.decodeReservedCharacteres(serverProfile).toString() : "" + "]";
     }
 
 }
