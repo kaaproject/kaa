@@ -1275,8 +1275,8 @@ public class AdminClient {
         }
     }
 
-    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
-        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/updateScope", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
+        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/promoteScopeToTenant", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
     }
 
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {

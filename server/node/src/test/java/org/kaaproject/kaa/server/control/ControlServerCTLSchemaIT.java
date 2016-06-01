@@ -31,10 +31,8 @@ import org.kaaproject.kaa.common.dto.file.FileData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * @author Bohdan Khablenko
@@ -428,8 +426,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         this.loginTenantDeveloper(tenantDeveloperUser);
         CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
         CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
-        metaInfo.setApplicationId(null);
-        CTLSchemaMetaInfoDto updatedMetaInfo = client.updateCTLSchemaMetaInfoScope(metaInfo);
+        metaInfo.setVersions(Arrays.asList(1));
+        CTLSchemaMetaInfoDto updatedMetaInfo = client.promoteScopeToTenant(metaInfo);
         Assert.assertNull(updatedMetaInfo.getApplicationId());
         Assert.assertNotNull(updatedMetaInfo.getTenantId());
         Assert.assertEquals(tenantDeveloperDto.getTenantId(), updatedMetaInfo.getTenantId());
@@ -437,46 +435,50 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     }
 
     @Test
-    public void updateCTLSchemaScopeForbiddenTest() throws Exception {
+    public void promoteScopeToTenantForbiddenTest() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
         CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
         final CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
-        metaInfo.setApplicationId(null);
+
+        metaInfo.setVersions(Arrays.asList(1));
         metaInfo.setTenantId(null);
+
         this.checkForbidden(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.updateCTLSchemaMetaInfoScope(metaInfo);
+                client.promoteScopeToTenant(metaInfo);
             }
         });
+
         saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
         final CTLSchemaMetaInfoDto metaInfo2 = saved.getMetaInfo();
+
+        metaInfo2.setVersions(Arrays.asList(1));
         Assert.assertNull(metaInfo2.getApplicationId());
         metaInfo2.setApplicationId(application.getId());
+
         this.checkRestErrorStatusCode(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.updateCTLSchemaMetaInfoScope(metaInfo2);
+                client.promoteScopeToTenant(metaInfo2);
             }
-        }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }, HttpStatus.NOT_FOUND);
         
         this.loginTenantAdmin(tenantAdminUser);
         saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null,  null, null);
         final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
+
+        metaInfo3.setVersions(Arrays.asList(1));
         Assert.assertNull(metaInfo3.getApplicationId());
         metaInfo3.setApplicationId(application.getId());
+
         this.checkForbidden(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.updateCTLSchemaMetaInfoScope(metaInfo3);
+                client.promoteScopeToTenant(metaInfo3);
             }
         });
-        
-        //Assert.assertNull(updatedMetaInfo.getApplicationId());
-        //Assert.assertNotNull(updatedMetaInfo.getTenantId());
-        //Assert.assertEquals(tenantDeveloperDto.getTenantId(), updatedMetaInfo.getTenantId());
-        //Assert.assertEquals(CTLSchemaScopeDto.TENANT, updatedMetaInfo.getScope());
     }
     
 }

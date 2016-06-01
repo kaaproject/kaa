@@ -98,8 +98,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 @Override
                 public void onClick(ClickEvent event) {
                     CTLSchemaMetaInfoDto metaInfo = entity.getMetaInfo();
-                    metaInfo.setApplicationId(null);
-                    KaaAdmin.getDataSource().updateCtlSchemaScope(metaInfo, new BusyAsyncCallback<CTLSchemaMetaInfoDto>() {
+                    KaaAdmin.getDataSource().promoteScopeToTenant(metaInfo, new BusyAsyncCallback<CTLSchemaMetaInfoDto>() {
                         @Override
                         public void onFailureImpl(Throwable caught) {
                             Utils.handleException(caught, detailsView);
