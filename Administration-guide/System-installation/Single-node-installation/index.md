@@ -664,16 +664,20 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
 
 ### SQL database configuration
 
-Check that the PostgreSQL or MariaDB password is up to date in the server configuration files.
+Check that the PostgreSQL or MariaDB password and username is up to date in the server configuration files.
 
 ```bash
 $ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_password
 jdbc_password=admin
 $ cat /etc/kaa-node/conf/dao.properties | grep jdbc_password
 jdbc_password=admin
-```
 
-In case of the password mismatch, edit the configuration file to set a new password.
+$ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_username
+jdbc_username=admin
+$ cat /etc/kaa-node/conf/dao.properties | grep jdbc_username
+jdbc_username=admin
+```
+In case of the password or username mismatch, edit the configuration file to set a new password.
 
 ```bash
 $ sudo nano /etc/kaa-node/conf/admin-dao.properties
