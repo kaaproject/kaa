@@ -409,8 +409,9 @@ To send a notification for the application, do the following:
 1. In the **Notification topics**, click the mail icon next to the appropriate notification topic.
 2. In the **Send notification** window, create a notification either by using the **Notification body** [record form](#record-form) or by uploading the data in the JSON format from a file.
 **NOTE:** The contents of the file should match the corresponding notification schema.
+**NOTE:** If **Endpoint KeyHash** field is empty will be sent a broadcast notification.
 
-    <img src="attach/image2015-3-4%2019-18-15.png" width="800" height="300">
+    <img src="attach/SendNotification.png" width="800" height="300">
 3. Click **Send** to send the notification.
 
 For example, the default sandbox notification schema structure is the following:
