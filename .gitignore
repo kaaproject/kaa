@@ -28,7 +28,8 @@ pom.xml.versionsBackup
 examples/*/source/lib/
 examples/*/source/java/lib/
 server/common/dao/src/main/resources/dao.properties
-
+server/common/dao/src/main/resources/sql-dao.properties
+server/node/src/main/resources/admin-dao.properties
 build/
 DerivedData
 Pods/
