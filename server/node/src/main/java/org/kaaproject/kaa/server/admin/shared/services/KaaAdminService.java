@@ -93,6 +93,8 @@ public interface KaaAdminService extends RemoteService {
 
     EndpointProfileDto updateServerProfile(String endpointKeyHash, int serverProfileVersion, RecordField serverProfileRecord) throws KaaAdminServiceException;
 
+    void removeEndpointProfileByKeyHash(String endpointKeyHash) throws KaaAdminServiceException;;
+
     List<TenantUserDto> getTenants() throws KaaAdminServiceException;
 
     TenantUserDto getTenant(String userId) throws KaaAdminServiceException;

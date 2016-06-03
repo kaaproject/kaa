@@ -264,7 +264,15 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash) {
         validateHash(endpointProfileKeyHash, "Can't remove endpoint profile by key hash. Invalid key hash " + endpointProfileKeyHash);
-        endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
+        EndpointProfile endpointProfile = endpointProfileDao.findByKeyHash(endpointProfileKeyHash);
+        if(endpointProfile != null){
+            if (isValidId(endpointProfile.getEndpointUserId())) {
+                detachEndpointFromUser(getDto(endpointProfile));
+            }
+            endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
+        } else {
+            throw new DatabaseProcessingException("Endpoint profile is not present in db.");
+        }
     }
 
     @Override
