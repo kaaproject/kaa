@@ -1275,8 +1275,11 @@ public class AdminClient {
         }
     }
 
-    public CTLSchemaMetaInfoDto promoteScopeToTenant(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
-        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/promoteScopeToTenant", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("applicationId", applicationId);
+        params.add("fqn", fqn);
+        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/promoteScopeToTenant", params, CTLSchemaMetaInfoDto.class);
     }
 
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {

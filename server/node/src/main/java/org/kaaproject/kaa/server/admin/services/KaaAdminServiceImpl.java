@@ -3343,24 +3343,30 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
 
     @Override
-    public CTLSchemaMetaInfoDto promoteScopeToTenant(CTLSchemaMetaInfoDto ctlSchemaMetaInfo)
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.values());
-        checkCTLSchemaEditScope(ctlSchemaMetaInfo.getTenantId(), ctlSchemaMetaInfo.getApplicationId());
+        final String tenantId = getTenantId();
+        checkCTLSchemaEditScope(tenantId, applicationId);
 
-        final String fqn = ctlSchemaMetaInfo.getFqn();
-        final String tenantId = ctlSchemaMetaInfo.getTenantId();
-        final String applicationId = ctlSchemaMetaInfo.getApplicationId();
-        List<Integer> versions = ctlSchemaMetaInfo.getVersions();
-        ctlSchemaMetaInfo.setApplicationId(null); // promote scope to tenant
         try {
             Set<CTLSchemaDto> dependencies = new HashSet<>();
+            List<Integer> versions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId);
+            ApplicationDto application = controlService.getApplication(applicationId);
+            checkApplicationToken(application.getApplicationToken());
+
+            if(versions.isEmpty()) {
+                throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
+            }
+
+            // meta info same for all versions
+            CTLSchemaMetaInfoDto ctlSchemaMetaInfo = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, versions.get(0), tenantId, applicationId).getMetaInfo();
+            ctlSchemaMetaInfo.setApplicationId(null); //promote to tenant
 
             // get dep of all versions
             for (Integer version : versions) {
-                CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
-                Utils.checkNotNull(schemaFound);
-                Set<CTLSchemaDto> schemaDependents = schemaFound.getDependencySet();
+                CTLSchemaDto schema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+                Set<CTLSchemaDto> schemaDependents = schema.getDependencySet();
                 dependencies.addAll(schemaDependents.stream()
                         .filter(dep -> dep.getMetaInfo().getScope() == CTLSchemaScopeDto.APPLICATION)
                         .collect(Collectors.toList()));
@@ -3372,7 +3378,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                         + asText(dependencies);
                 throw new KaaAdminServiceException(message, ServiceErrorCode.GENERAL_ERROR);
             }
-
 
             return controlService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
         } catch (Exception cause) {

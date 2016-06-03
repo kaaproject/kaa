@@ -856,9 +856,9 @@ public class DataSource {
         });
     }
     
-    public void promoteScopeToTenant(CTLSchemaMetaInfoDto metaInfo,
+    public void promoteScopeToTenant(String applicationId, String fqn,
                                      final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
-        rpcService.promoteScopeToTenant(metaInfo,
+        rpcService.promoteScopeToTenant(applicationId, fqn,
                 new DataCallback<CTLSchemaMetaInfoDto>(callback) {
                     @Override
                     protected void onResult(CTLSchemaMetaInfoDto result) {

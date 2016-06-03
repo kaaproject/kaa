@@ -36,7 +36,6 @@ import java.util.*;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.8.0
  */
 public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
@@ -167,7 +166,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void deleteCTLSchemaWithDependents() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        final CTLSchemaDto dependency = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        final CTLSchemaDto dependency = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
 
         Set<FqnVersion> dependencies = new HashSet<>();
         dependencies.add(new FqnVersion(dependency.getMetaInfo().getFqn(), dependency.getVersion()));
@@ -192,7 +191,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     public void deleteCTLSchemaByAppTokenWithDependents() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
         final CTLSchemaDto dependency = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(),
-                null,  null, null);
+                null, null, null);
 
         Set<FqnVersion> dependencies = new HashSet<>();
         dependencies.add(new FqnVersion(dependency.getMetaInfo().getFqn(), dependency.getVersion()));
@@ -252,7 +251,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void getCTLSchemaByFqnAndVersionTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         CTLSchemaDto loaded = client.getCTLSchemaByFqnVersionTenantIdAndApplicationId(saved.getMetaInfo().getFqn(), saved.getVersion(), tenantDeveloperDto.getTenantId(), null);
         Assert.assertNotNull(loaded);
         Assert.assertEquals(saved, loaded);
@@ -266,7 +265,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void getCTLSchemaWithAppTokenByFqnAndVersionTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         CTLSchemaDto loaded = client.getCTLSchemaByFqnVersionTenantIdAndApplicationToken(saved.getMetaInfo().getFqn(), saved.getVersion(),
                 tenantDeveloperDto.getTenantId(), null);
         Assert.assertNotNull(loaded);
@@ -313,7 +312,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void getCTLSchemaByIdTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         CTLSchemaDto loaded = client.getCTLSchemaById(saved.getId());
         Assert.assertNotNull(loaded);
         Assert.assertEquals(saved, loaded);
@@ -328,7 +327,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     public void downloadCtlSchemaTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
         String name = this.ctlRandomFieldType();
-        CTLSchemaDto saved = this.createCTLSchema(name, CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(name, CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         FileData fd = client.downloadCtlSchema(client.getCTLSchemaById(saved.getId()), CTLSchemaExportMethod.FLAT);
         Assert.assertNotNull(fd);
         Schema loaded = new Parser().parse(new String(fd.getFileData()));
@@ -345,7 +344,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
         String name = this.ctlRandomFieldType();
-        CTLSchemaDto saved = this.createCTLSchema(name, CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(name, CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(), null, null);
         FileData fd = client.downloadCtlSchemaByAppToken(client.getCTLSchemaById(saved.getId()), CTLSchemaExportMethod.FLAT, application.getApplicationToken());
         Assert.assertNotNull(fd);
         Schema loaded = new Parser().parse(new String(fd.getFileData()));
@@ -360,7 +359,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void checkCTLFqnExistsTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         String fqn = saved.getMetaInfo().getFqn();
         boolean result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), null);
         Assert.assertFalse(result);
@@ -368,21 +367,21 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         Assert.assertFalse(result);
         result = client.checkFqnExists(fqn, null, null);
         Assert.assertFalse(result);
-        
+
         ApplicationDto application1 = createApplication(tenantAdminDto);
         ApplicationDto application2 = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto schema1 = this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application1.getId(),  null, null);
-        this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application2.getId(),  null, null);
-        
+        CTLSchemaDto schema1 = this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application1.getId(), null, null);
+        this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application2.getId(), null, null);
+
         fqn = schema1.getMetaInfo().getFqn();
-        
+
         result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), application1.getId());
         Assert.assertTrue(result);
-        
+
         result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), application2.getId());
         Assert.assertTrue(result);
-        
+
         result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), null);
         Assert.assertFalse(result);
     }
@@ -395,7 +394,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void checkCTLFqnExistsWithAppTokenTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         String fqn = saved.getMetaInfo().getFqn();
         boolean result = client.checkFqnExistsWithAppToken(fqn, tenantDeveloperDto.getTenantId(), null);
         Assert.assertFalse(result);
@@ -405,8 +404,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         ApplicationDto application1 = createApplication(tenantAdminDto);
         ApplicationDto application2 = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto schema1 = this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application1.getId(),  null, null);
-        this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application2.getId(),  null, null);
+        CTLSchemaDto schema1 = this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application1.getId(), null, null);
+        this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application2.getId(), null, null);
 
         fqn = schema1.getMetaInfo().getFqn();
 
@@ -424,10 +423,9 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     public void updateCTLSchemaScopeTest() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(), null, null);
         CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
-        metaInfo.setVersions(Arrays.asList(1));
-        CTLSchemaMetaInfoDto updatedMetaInfo = client.promoteScopeToTenant(metaInfo);
+        CTLSchemaMetaInfoDto updatedMetaInfo = client.promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn());
         Assert.assertNull(updatedMetaInfo.getApplicationId());
         Assert.assertNotNull(updatedMetaInfo.getTenantId());
         Assert.assertEquals(tenantDeveloperDto.getTenantId(), updatedMetaInfo.getTenantId());
@@ -438,47 +436,31 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     public void promoteScopeToTenantForbiddenTest() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
-        final CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
-
-        metaInfo.setVersions(Arrays.asList(1));
-        metaInfo.setTenantId(null);
-
-        this.checkForbidden(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.promoteScopeToTenant(metaInfo);
-            }
-        });
-
-        saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto saved  = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         final CTLSchemaMetaInfoDto metaInfo2 = saved.getMetaInfo();
-
-        metaInfo2.setVersions(Arrays.asList(1));
         Assert.assertNull(metaInfo2.getApplicationId());
         metaInfo2.setApplicationId(application.getId());
 
         this.checkRestErrorStatusCode(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.promoteScopeToTenant(metaInfo2);
+                client.promoteScopeToTenant(metaInfo2.getApplicationId(), metaInfo2.getFqn());
             }
         }, HttpStatus.NOT_FOUND);
-        
+
         this.loginTenantAdmin(tenantAdminUser);
-        saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null,  null, null);
+        saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
         final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
 
-        metaInfo3.setVersions(Arrays.asList(1));
         Assert.assertNull(metaInfo3.getApplicationId());
         metaInfo3.setApplicationId(application.getId());
 
         this.checkForbidden(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.promoteScopeToTenant(metaInfo3);
+                client.promoteScopeToTenant(metaInfo3.getApplicationId(), metaInfo3.getFqn());
             }
         });
     }
-    
+
 }

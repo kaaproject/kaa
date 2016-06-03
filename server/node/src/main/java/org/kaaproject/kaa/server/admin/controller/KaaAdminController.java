@@ -994,8 +994,6 @@ public class KaaAdminController {
     /**
      * Promote existing CTL schema meta info from application to tenant scope
      *
-     * @param ctlSchemaMetaInfo
-     *            the CTL schema meta info object.
      *            
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
@@ -1004,9 +1002,9 @@ public class KaaAdminController {
      */    
     @RequestMapping(value = "CTL/promoteScopeToTenant", method = RequestMethod.POST)
     @ResponseBody
-    public CTLSchemaMetaInfoDto promoteScopeToTenant(@RequestBody CTLSchemaMetaInfoDto ctlSchemaMetaInfo)
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(@RequestParam String applicationId, @RequestParam String fqn)
             throws KaaAdminServiceException {
-        return kaaAdminService.promoteScopeToTenant(ctlSchemaMetaInfo);
+        return kaaAdminService.promoteScopeToTenant(applicationId, fqn);
     }
 
     /**
