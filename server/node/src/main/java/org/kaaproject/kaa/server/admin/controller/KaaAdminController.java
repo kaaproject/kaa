@@ -434,20 +434,6 @@ public class KaaAdminController {
     }
 
     /**
-     * Delete tenant by user id.
-     *
-     * @param userId
-     *            the user id
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "delTenant", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteTenant(@RequestParam(value = "userId") String userId) throws KaaAdminServiceException {
-        kaaAdminService.deleteTenant(userId);
-    }
-
-    /**
      * Gets all applications.
      *
      * @return the list application dto

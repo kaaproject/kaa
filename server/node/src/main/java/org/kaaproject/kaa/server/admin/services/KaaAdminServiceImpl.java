@@ -649,6 +649,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             UserDto user = controlService.getUser(userId);
             Utils.checkNotNull(user);
             checkTenantId(user.getTenantId());
+            if (KaaAuthorityDto.KAA_ADMIN.equals(user.getAuthority()) || KaaAuthorityDto.TENANT_ADMIN.equals(user.getAuthority())) {
+                throw new KaaAdminServiceException("Can't delete KAA admin or Tenant admin user!", ServiceErrorCode.PERMISSION_DENIED);
+            }
             userFacade.deleteUser(Long.valueOf(user.getExternalUid()));
             controlService.deleteUser(user.getId());
         } catch (Exception e) {
