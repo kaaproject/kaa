@@ -23,6 +23,7 @@ public enum ServiceErrorCode {
     PERMISSION_DENIED("permissionDenied", false),
     INVALID_ARGUMENTS("invalidArguments", false),
     BAD_REQUEST_PARAMS("badRequestParams", true),
+    CONFLICT("updateConflict", true),
     INVALID_SCHEMA("invalidSchema", true),
     FILE_NOT_FOUND("fileNotFound", true),
     ITEM_NOT_FOUND("itemNotFound", false);

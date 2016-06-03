@@ -856,9 +856,9 @@ public class DataSource {
         });
     }
     
-    public void updateCtlSchemaScope(CTLSchemaMetaInfoDto metaInfo,
-            final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
-        rpcService.updateCTLSchemaMetaInfoScope(metaInfo, 
+    public void promoteScopeToTenant(String applicationId, String fqn,
+                                     final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
+        rpcService.promoteScopeToTenant(applicationId, fqn,
                 new DataCallback<CTLSchemaMetaInfoDto>(callback) {
                     @Override
                     protected void onResult(CTLSchemaMetaInfoDto result) {

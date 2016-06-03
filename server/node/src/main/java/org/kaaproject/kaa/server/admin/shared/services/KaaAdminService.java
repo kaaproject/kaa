@@ -409,7 +409,7 @@ public interface KaaAdminService extends RemoteService {
 
     boolean checkFqnExistsWithAppToken(String fqn, String tenantId, String applicationToken) throws KaaAdminServiceException;
 
-    CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) throws KaaAdminServiceException;
+    CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationToken, String fqn) throws KaaAdminServiceException;
 
     List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException;
 
