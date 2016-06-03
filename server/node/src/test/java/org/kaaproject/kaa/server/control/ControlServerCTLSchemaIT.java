@@ -495,7 +495,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
             public void executeRestCall() throws Exception {
                 client.promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn());
             }
-        }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }, HttpStatus.CONFLICT);
     }
 
 }

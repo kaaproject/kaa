@@ -3374,7 +3374,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (!dependencies.isEmpty()) {
                 String message = "Can't promote the common type version as it has references on following common type(s) with application scope: "
                         + asText(dependencies);
-                throw new KaaAdminServiceException(message, ServiceErrorCode.GENERAL_ERROR);
+                throw new KaaAdminServiceException(message, ServiceErrorCode.CONFLICT);
             }
 
             return controlService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
