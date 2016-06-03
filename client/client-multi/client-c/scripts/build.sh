@@ -18,13 +18,14 @@
 set -e
 set -v
 
-make doxygen
-
 make
 
-./build.sh test
+cd build-posix
+ctest -T test
+ctest -T memcheck
+ctest -T coverage
+cd ..
 
-cppcheck --quiet --enable=all --std=c99 --suppress=unusedFunction \
-         --force --error-exitcode=1 --template=gcc -I src/kaa \
-         --inline-suppr \
-         src/ test/
+make -C build-posix doxygen
+
+make -C build-posix cppcheck

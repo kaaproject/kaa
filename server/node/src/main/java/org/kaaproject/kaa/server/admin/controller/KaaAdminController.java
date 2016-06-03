@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -421,6 +422,11 @@ public class KaaAdminController {
     @ResponseBody
     public TenantUserDto editTenant(@RequestBody TenantUserDto tenantUser) throws KaaAdminServiceException {
         try {
+            if (isEmpty(tenantUser.getAuthority())) {
+                tenantUser.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
+            } else if (!KaaAuthorityDto.TENANT_ADMIN.equals(tenantUser.getAuthority())) {
+                throw new KaaAdminServiceException("Incorrect authority for tenant. Authority must be TENANT_ADMIN.", ServiceErrorCode.INVALID_ARGUMENTS);
+            }
             CreateUserResult result = userFacade.saveUserDto(tenantUser, passwordEncoder);
             tenantUser.setExternalUid(result.getUserId().toString());
             TenantUserDto tenant = kaaAdminService.editTenant(tenantUser);
@@ -431,20 +437,6 @@ public class KaaAdminController {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
-    }
-
-    /**
-     * Delete tenant by user id.
-     *
-     * @param userId
-     *            the user id
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "delTenant", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteTenant(@RequestParam(value = "userId") String userId) throws KaaAdminServiceException {
-        kaaAdminService.deleteTenant(userId);
     }
 
     /**

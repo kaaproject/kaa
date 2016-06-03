@@ -47,10 +47,7 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
@@ -61,7 +58,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.mongodb.DBObject;
-import com.mongodb.BasicDBObject;
 import com.mongodb.util.JSON;
 
 @Document(collection = ENDPOINT_PROFILE)
@@ -493,6 +489,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
                 ", systemNfVersion=" + systemNfVersion +
                 ", userNfVersion=" + userNfVersion +
                 ", sdkToken=" + sdkToken +
+                ", version=" + version +
                 '}';
     }
 
@@ -510,7 +507,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setClientProfileBody(MongoDaoUtil.decodeReservedCharacteres(profile));
+        dto.setClientProfileBody(profile != null ? MongoDaoUtil.decodeReservedCharacteres(profile).toString() : "");
         dto.setProfileHash(profileHash);
         dto.setClientProfileVersion(profileVersion);
         dto.setServerProfileVersion(serverProfileVersion);
@@ -524,7 +521,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEcfVersionStates(DaoUtil.convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
-        dto.setServerProfileBody(MongoDaoUtil.decodeReservedCharacteres(serverProfile));
+        dto.setServerProfileBody(serverProfile != null ? MongoDaoUtil.decodeReservedCharacteres(serverProfile).toString() : "");
         dto.setVersion(version);
         return dto;
     }

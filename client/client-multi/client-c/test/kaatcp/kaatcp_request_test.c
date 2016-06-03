@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../kaa_test.h"
+#include "kaa_test.h"
 
 #include "utilities/kaa_log.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"

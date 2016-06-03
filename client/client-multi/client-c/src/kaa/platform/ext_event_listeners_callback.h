@@ -24,8 +24,8 @@
 #ifndef EXT_EVENT_LISTENERS_CALLBACK_H_
 #define EXT_EVENT_LISTENERS_CALLBACK_H_
 
-#include "../kaa_common.h"
-#include "../kaa_error.h"
+#include "kaa_common.h"
+#include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {

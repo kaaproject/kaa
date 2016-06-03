@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <time.h>
 
-#include "../kaa_test.h"
+#include "kaa_test.h"
 #include "collections/kaa_list.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"

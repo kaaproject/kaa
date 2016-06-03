@@ -59,7 +59,7 @@ public class TenantsActivity extends AbstractListActivity<TenantUserDto, Tenants
 
     @Override
     protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteTenant(id, callback);
+        callback.onSuccess((Void) null);
     }
 
 }

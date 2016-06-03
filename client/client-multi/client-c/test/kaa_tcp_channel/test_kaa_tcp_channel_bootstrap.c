@@ -27,7 +27,7 @@
 #include <netdb.h>
 #include <string.h>
 
-#include "../kaa_test.h"
+#include "kaa_test.h"
 
 #include "kaa_common.h"
 #include "kaa_error.h"
@@ -37,6 +37,8 @@
 #include "platform/ext_tcp_utils.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
+
+#include <kaa_bootstrap_manager.h>
 
 #define ACCESS_POINT_SOCKET_FD 5
 
