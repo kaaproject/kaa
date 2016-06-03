@@ -46,12 +46,6 @@ let
       patches = [ ./astyle/max_indent.patch ];
     });
 
-    # avro-cpp was merged into upstream
-    # (https://github.com/NixOS/nixpkgs/pull/14811)
-    #
-    # Remove next line, once it gets into channel.
-    avro-cpp = callPackage ./avro-cpp { };
-
     kaa-client-c = callPackage ./kaa-client-c { };
 
     kaa-client-cpp = callPackage ./kaa-client-cpp { };
