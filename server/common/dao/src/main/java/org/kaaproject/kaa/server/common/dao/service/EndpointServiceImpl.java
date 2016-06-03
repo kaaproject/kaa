@@ -326,6 +326,9 @@ public class EndpointServiceImpl implements EndpointService {
             endpointIds = new ArrayList<>();
             endpointUser.setEndpointIds(endpointIds);
         }
+        else if (endpointIds != null && endpointIds.contains(profile.getId())) {
+            LOG.warn("Endpoint is already assigned to current user {}. Unassign it first!.", profile.getEndpointUserId());
+        }
         endpointIds.add(profile.getId());
         endpointUser = endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
@@ -356,7 +359,6 @@ public class EndpointServiceImpl implements EndpointService {
                     List<String> endpointIds = endpointUser.getEndpointIds();
                     if (endpointIds != null && endpointIds.contains(endpoint.getId())) {
                         LOG.warn("Endpoint is already assigned to current user {}. Unassign it first!.", endpoint.getEndpointUserId());
-                        throw new DatabaseProcessingException("Endpoint is already assigned to current user.");
                     }
                     if (endpointIds == null) {
                         endpointIds = new ArrayList<>();
