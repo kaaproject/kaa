@@ -119,6 +119,25 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     }
 
     @Test
+    public void editConfigurationObjectTest() {
+        List<ConfigurationDto> configs = generateConfigurationDto(null, null, 1, false, false);
+        ConfigurationDto saved = configurationService.findConfigurationById(configs.get(0).getId());
+        ConfigurationDto configurationToEdit = new ConfigurationDto();
+        configurationToEdit.setId(saved.getId());
+        configurationToEdit.setApplicationId(saved.getApplicationId());
+        configurationToEdit.setEndpointGroupId(saved.getEndpointGroupId());
+        configurationToEdit.setSchemaId(saved.getSchemaId());
+        configurationToEdit.setVersion(saved.getVersion());
+        configurationToEdit.setBody(saved.getBody());
+        ConfigurationDto updated = configurationService.saveConfiguration(configurationToEdit);
+        Assert.assertNotNull(saved);
+        Assert.assertNotNull(updated);
+        Assert.assertEquals(saved.getSchemaVersion(), updated.getSchemaVersion());
+        Assert.assertEquals(saved.getCreatedTime(), updated.getCreatedTime());
+        Assert.assertEquals(saved.getCreatedUsername(), updated.getCreatedUsername());
+    }
+
+    @Test
     public void findConfSchemaByIdTest() {
         List<ConfigurationSchemaDto> schemas = generateConfSchemaDto(null, 1);
         ConfigurationSchemaDto schema = schemas.get(0);
