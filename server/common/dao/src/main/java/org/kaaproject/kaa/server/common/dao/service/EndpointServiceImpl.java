@@ -327,7 +327,8 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUser.setEndpointIds(endpointIds);
         }
         else if (endpointIds != null && endpointIds.contains(profile.getId())) {
-            LOG.warn("Endpoint is already assigned to current user {}. Unassign it first!.", profile.getEndpointUserId());
+            LOG.warn("Endpoint is already assigned to current user {}.", profile.getEndpointUserId());
+            return profile;
         }
         endpointIds.add(profile.getId());
         endpointUser = endpointUserDao.save(endpointUser);
@@ -358,7 +359,8 @@ public class EndpointServiceImpl implements EndpointService {
                     LOG.debug("Attach endpoint profile with id {} to endpoint user with id {} ", endpoint.getId(), endpointUser.getId());
                     List<String> endpointIds = endpointUser.getEndpointIds();
                     if (endpointIds != null && endpointIds.contains(endpoint.getId())) {
-                        LOG.warn("Endpoint is already assigned to current user {}. Unassign it first!.", endpoint.getEndpointUserId());
+                        LOG.warn("Endpoint is already assigned to current user {}.", endpoint.getEndpointUserId());
+                        return getDto(endpoint);
                     }
                     if (endpointIds == null) {
                         endpointIds = new ArrayList<>();
