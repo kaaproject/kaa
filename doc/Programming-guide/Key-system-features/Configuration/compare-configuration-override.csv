@@ -1,0 +1,18 @@
+Configuration schema,Override schema
+"Mandatory field: ``` { ""name"": ""stringField"", ""type"": ""string"", ""by_default"": ""default string value"" }```","Optional field: ``` { ""name"": ""stringField"", ""type"": [ ""string"", { ""name"": ""unchangedT"", ""namespace"": ""org.kaaproject.configuration"", ""type"": ""enum"", ""symbols"": [""unchanged""] } ], ""by_default"": ""default string value"" }```"
+"Optional field: ```{
+    ""name"": ""optionalBytesField"",
+    ""type"": [
+        ""null"",
+        ""bytes""
+    ],
+    ""optional"": true
+}```","becomes: ```{
+    ""name"": ""optionalBytesField"",
+    ""type"": [
+        ""null"",
+        ""bytes"",
+        ""org.kaaproject.configuration.unchangedT""
+    ],
+    ""optional"": true
+}```"
