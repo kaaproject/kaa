@@ -110,10 +110,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
 
     @Override
     protected boolean validate() {
-        boolean result = firstName.getValue().length()>0;
-        result &= lastName.getValue().length()>0;
-        result &= Utils.validateEmail(email.getValue());
-        return result;
+        return !firstName.getValue().isEmpty() && !lastName.getValue().isEmpty() && Utils.validateEmail(email.getValue());
     }
 
     @Override
