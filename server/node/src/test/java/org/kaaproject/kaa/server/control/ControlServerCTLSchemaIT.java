@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.control;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Parser;
+import org.apache.http.annotation.Immutable;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.avro.ui.shared.FqnVersion;
@@ -423,21 +426,25 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     public void updateCTLSchemaScopeTest() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
+
         CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(), null, null);
         CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
         CTLSchemaMetaInfoDto updatedMetaInfo = client.promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn());
+
         Assert.assertNull(updatedMetaInfo.getApplicationId());
         Assert.assertNotNull(updatedMetaInfo.getTenantId());
         Assert.assertEquals(tenantDeveloperDto.getTenantId(), updatedMetaInfo.getTenantId());
         Assert.assertEquals(CTLSchemaScopeDto.TENANT, updatedMetaInfo.getScope());
     }
 
+
     @Test
-    public void promoteScopeToTenantForbiddenTest() throws Exception {
+    public void  promoteScopeToTenantNotFoundTest() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaDto saved  = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
         final CTLSchemaMetaInfoDto metaInfo2 = saved.getMetaInfo();
+
         Assert.assertNull(metaInfo2.getApplicationId());
         metaInfo2.setApplicationId(application.getId());
 
@@ -447,9 +454,14 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
                 client.promoteScopeToTenant(metaInfo2.getApplicationId(), metaInfo2.getFqn());
             }
         }, HttpStatus.NOT_FOUND);
+    }
 
+    @Test
+    public void promoteScopeToTenantForbiddenTest() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);;
         this.loginTenantAdmin(tenantAdminUser);
-        saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
         final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
 
         Assert.assertNull(metaInfo3.getApplicationId());
@@ -461,6 +473,29 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
                 client.promoteScopeToTenant(metaInfo3.getApplicationId(), metaInfo3.getFqn());
             }
         });
+    }
+
+
+    @Test
+    public void promoteScopeToTenantWithDependenciesInAppScopeTest() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        loginTenantDeveloper(tenantDeveloperUser);
+
+        CTLSchemaDto dep = createCTLSchema(ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(), null, null);
+        String fqn = dep.getMetaInfo().getFqn();
+        int version = dep.getVersion();
+        Map<String, String> fields = ImmutableMap.of("test", fqn);
+        Set<FqnVersion> deps = ImmutableSet.of(new FqnVersion(fqn, version));
+        CTLSchemaDto schema = createCTLSchema(ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(), deps, fields);
+
+        final CTLSchemaMetaInfoDto metaInfo = schema.getMetaInfo();
+
+        checkRestErrorStatusCode(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn());
+            }
+        }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

@@ -3346,13 +3346,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.values());
         final String tenantId = getTenantId();
+        checkApplicationId(applicationId);
         checkCTLSchemaEditScope(tenantId, applicationId);
 
         try {
             Set<CTLSchemaDto> dependencies = new HashSet<>();
             List<Integer> versions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId);
-            ApplicationDto application = controlService.getApplication(applicationId);
-            checkApplicationToken(application.getApplicationToken());
 
             if(versions.isEmpty()) {
                 throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
