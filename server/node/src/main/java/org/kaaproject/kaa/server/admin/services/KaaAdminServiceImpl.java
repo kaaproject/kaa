@@ -410,6 +410,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             EndpointProfileDto endpointProfile = controlService.getEndpointProfileByKeyHash(endpointKeyHash);
             Utils.checkNotNull(endpointProfile);
+            checkApplicationId(endpointProfile.getApplicationId());
             controlService.removeEndpointProfile(endpointProfile);
         } catch (Exception cause) {
             throw Utils.handleException(cause);

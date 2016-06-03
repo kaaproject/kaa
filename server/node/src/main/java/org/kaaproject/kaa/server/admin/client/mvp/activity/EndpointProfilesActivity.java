@@ -97,9 +97,10 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                         }
 
                         @Override
-                        public void onSuccessImpl(Void result) {}
+                        public void onSuccessImpl(Void result) {
+                            dataProvider.update();
+                        }
                     });
-                    dataProvider.update();
                 }
             }
         }));
