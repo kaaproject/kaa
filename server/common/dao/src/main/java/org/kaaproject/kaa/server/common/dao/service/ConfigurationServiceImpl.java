@@ -64,6 +64,7 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
@@ -186,7 +187,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         if (record.isEmpty()) {
             LOG.debug("Can't find related Configuration record.");
-            throw new IncorrectParameterException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
+            throw new NotFoundException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
                     + endpointGroupId); // NOSONAR
         }
         return record;

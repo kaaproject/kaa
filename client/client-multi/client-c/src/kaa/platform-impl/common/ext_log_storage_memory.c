@@ -16,14 +16,14 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "../../platform/platform.h"
+#include <stdint.h>
+#include <string.h>
+#include <platform/ext_log_storage.h>
 
-#include "../../platform/ext_log_storage.h"
-
-#include "../../kaa_common.h"
-#include "../../collections/kaa_list.h"
-#include "../../utilities/kaa_mem.h"
-#include "../../utilities/kaa_log.h"
+#include "kaa_common.h"
+#include "collections/kaa_list.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 
 #include <assert.h>
 
@@ -382,3 +382,6 @@ kaa_error_t ext_log_storage_destroy(void *context)
 }
 
 #endif
+
+/* ISO C forbids an empty translation unit */
+typedef int make_iso_compilers_happy;

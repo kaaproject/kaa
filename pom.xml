@@ -20,7 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -584,6 +584,7 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                         <exclude>**/security.policy</exclude>
                         <exclude>nix/astyle/max_indent.patch</exclude>
+                        <exclude>doc/</exclude>
                     </excludes>
                 </configuration>
             </plugin>

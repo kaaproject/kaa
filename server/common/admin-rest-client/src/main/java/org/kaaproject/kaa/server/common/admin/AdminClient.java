@@ -205,12 +205,6 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantUserDto.class);
     }
 
-    public void deleteTenant(String userId) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("userId", userId);
-        restTemplate.postForLocation(restTemplate.getUrl() + "delTenant", params);
-    }
-
     public ApplicationDto editApplication(ApplicationDto application) throws Exception {
         return restTemplate.postForObject(restTemplate.getUrl() + "application", application, ApplicationDto.class);
     }

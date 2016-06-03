@@ -1,0 +1,145 @@
+Configuration schema,Override schema
+"```{
+    ""name"": ""rootT"",
+    ""namespace"": ""org.kaaproject.sample"",
+    ""type"": ""record"",
+    ""fields"": [
+        {
+            ""name"": ""arrayOfRecords"",
+            ""type"": {
+                ""type"": ""array"",
+                ""items"": {
+                    ""name"": ""addressableRecordT"",
+                    ""namespace"": ""org.kaaproject.sample"",
+                    ""type"": ""record"",
+                    ""fields"": [
+                        {
+                            ""name"": ""booleanField"",
+                            ""type"": ""boolean"",
+                            ""by_default"": false
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            ""name"": ""arrayOfPrimitives"",
+            ""type"": {
+                ""type"": ""array"",
+                ""items"": {
+                    ""name"": ""primitiveRecordT"",
+                    ""namespace"": ""org.kaaproject.sample"",
+                    ""type"": ""record"",
+                    ""addressable"": false,
+                    ""fields"": [
+                        {
+                            ""name"": ""intField"",
+                            ""type"": ""int"",
+                            ""optional"": true
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+} ```","```{
+    ""type"": ""array"",
+    ""items"": {
+        ""name"": ""deltaT"",
+        ""namespace"": ""org.kaaproject.configuration"",
+        ""type"": ""record"",
+        ""fields"": [
+            {
+                ""name"": ""delta"",
+                ""type"": [
+                    {
+                        ""name"": ""rootT"",
+                        ""namespace"": ""org.kaaproject.sample"",
+                        ""type"": ""record"",
+                        ""fields"": [
+                            {
+                                ""name"": ""arrayOfRecords"",
+                                ""type"": [
+                                    {
+                                        ""type"": ""array"",
+                                        ""items"": [
+                                            {
+                                                ""name"": ""addressableRecordT"",
+                                                ""namespace"": ""org.kaaproject.sample"",
+                                                ""type"": ""record"",
+                                                ""fields"": [
+                                                    {
+                                                        ""name"": ""booleanField"",
+                                                        ""type"": [
+                                                            ""boolean"",
+                                                            {
+                                                                ""name"": ""unchangedT"",
+                                                                ""namespace"": ""org.kaaproject.configuration"",
+                                                                ""type"": ""enum"",
+                                                                ""symbols"": [""unchanged""]
+                                                            }
+                                                        ],
+                                                        ""by_default"": ""false""
+                                                    },
+                                                    {
+                                                        ""name"": ""__uuid"",
+                                                        ""type"": {
+                                                            ""name"": ""uuidT"",
+                                                            ""namespace"": ""org.kaaproject.configuration"",
+                                                            ""type"": ""fixed"",
+                                                            ""size"": 16
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            ""org.kaaproject.configuration.uuidT""
+                                        ]
+                                    },
+                                    {
+                                        ""name"": ""resetT"",
+                                        ""namespace"": ""org.kaaproject.configuration"",
+                                        ""type"": ""enum"",
+                                        ""symbols"": [""reset""]
+                                    },
+                                    ""org.kaaproject.configuration.unchangedT""
+                                ]
+                            },
+                            {
+                                ""name"": ""arrayOfPrimitives"",
+                                ""type"": [
+                                    {
+                                        ""type"": ""array"",
+                                        ""items"": {
+                                            ""name"": ""primitiveRecordT"",
+                                            ""namespace"": ""org.kaaproject.sample"",
+                                            ""type"": ""record"",
+                                            ""addressable"": false,
+                                            ""fields"": [
+                                                {
+                                                    ""name"": ""intField"",
+                                                    ""type"": [
+                                                        ""null"",
+                                                        ""int"",
+                                                        ""org.kaaproject.configuration.unchangedT""
+                                                    ],
+                                                    ""optional"": true
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    ""org.kaaproject.configuration.resetT"",
+                                    ""org.kaaproject.configuration.unchangedT""
+                                ]
+                            },
+                            {
+                                ""name"": ""__uuid"",
+                                ""type"": ""org.kaaproject.configuration.uuidT""
+                            }
+                        ]
+                    },
+                    ""org.kaaproject.sample.addressableRecordT""
+                ]
+            }
+        ]
+    }
+}```"

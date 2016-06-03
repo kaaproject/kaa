@@ -33,6 +33,10 @@
 
 #include <kaa_extension.h>
 
+#ifndef KAA_DISABLE_FEATURE_PROFILE
+#include "kaa_profile_private.h"
+#endif
+
 /** Resync flag indicating that profile manager should be resynced */
 #define KAA_PROFILE_RESYNC_FLAG     0x1
 
@@ -254,6 +258,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     return KAA_ERR_NONE;
 }
 
+// TODO(KAA-1089): Remove weak linkage
+__attribute__((weak))
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self,
         const uint8_t *buffer, size_t buffer_size)
 {
@@ -337,6 +343,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                 KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Profile resync is requested");
                 self->status->profile_needs_resync = true;
 
+#ifndef KAA_DISABLE_FEATURE_PROFILE
                 void *profile_ctx = kaa_extension_get_context(KAA_EXTENSION_PROFILE);
                 if (!profile_ctx) {
                     error_code = KAA_ERR_NOT_FOUND;
@@ -350,6 +357,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                     KAA_LOG_ERROR(self->logger, error_code, "Failed to force-sync profile");
                     goto fail;
                 }
+#endif
             }
         } else {
             error_code = kaa_extension_server_sync(extension_type, request_id,
@@ -381,6 +389,8 @@ fail:
     return error_code;
 }
 
+// TODO(KAA-1089): Remove weak linkage
+__attribute__((weak))
 kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
         const kaa_extension_id *services, size_t services_count,
         uint8_t **buffer, size_t *buffer_size)

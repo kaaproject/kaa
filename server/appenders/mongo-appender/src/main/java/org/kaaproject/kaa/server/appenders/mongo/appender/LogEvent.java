@@ -22,6 +22,7 @@ import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
@@ -44,10 +45,10 @@ public final class LogEvent implements Serializable {
 
     public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
         this.id = dto.getId();
-        this.header = (DBObject) JSON.parse(dto.getHeader());
-        this.event = (DBObject) JSON.parse(dto.getEvent());
-        this.clientProfile = (clientProfile != null) ? (DBObject) JSON.parse(clientProfile.getBody()) : null;
-        this.serverProfile = (serverProfile != null) ? (DBObject) JSON.parse(serverProfile.getBody()) : null;
+        this.header = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getHeader()));
+        this.event = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getEvent()));
+        this.clientProfile = (clientProfile != null) ? MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(clientProfile.getBody())) : null;
+        this.serverProfile = (serverProfile != null) ? MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(serverProfile.getBody())) : null;
     }
 
     public String getId() {
@@ -63,7 +64,7 @@ public final class LogEvent implements Serializable {
     }
 
     public void setEvent(DBObject event) {
-        this.event = event;
+        this.event = MongoDaoUtil.encodeReservedCharacteres(event);
     }
 
     public DBObject getHeader() {
@@ -71,7 +72,7 @@ public final class LogEvent implements Serializable {
     }
 
     public void setHeader(DBObject header) {
-        this.header = header;
+        this.header = MongoDaoUtil.encodeReservedCharacteres(header);
     }
 
     public DBObject getClientProfile() {
@@ -79,7 +80,7 @@ public final class LogEvent implements Serializable {
     }
 
     public void setClientProfile(DBObject clientProfile) {
-        this.clientProfile = clientProfile;
+        this.clientProfile = MongoDaoUtil.encodeReservedCharacteres(clientProfile);
     }
 
     public DBObject getServerProfile() {
@@ -87,12 +88,15 @@ public final class LogEvent implements Serializable {
     }
 
     public void setServerProfile(DBObject serverProfile) {
-        this.serverProfile = serverProfile;
+        this.serverProfile = MongoDaoUtil.encodeReservedCharacteres(serverProfile);
     }
 
     @Override
     public String toString() {
-        return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + ", clientProfile=" + clientProfile + ", serverProfile=" + serverProfile + "]";
+        return "LogEvent [id=" + id + ", header=" + header != null ? MongoDaoUtil.decodeReservedCharacteres(header).toString() : "" + ", event=" +
+                event != null ? MongoDaoUtil.decodeReservedCharacteres(event).toString() : "" + ", clientProfile=" +
+                clientProfile != null ? MongoDaoUtil.decodeReservedCharacteres(clientProfile).toString() : "" + ", serverProfile=" +
+                serverProfile != null ? MongoDaoUtil.decodeReservedCharacteres(serverProfile).toString() : "" + "]";
     }
 
 }

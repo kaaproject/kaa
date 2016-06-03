@@ -27,4 +27,3 @@ STYLE="--style=1tbs --indent=spaces=4 --pad-header --align-pointer=name --indent
 if [ -z "$@" ]; then echo "You must specify source files"; exit 1; fi
 
 astyle $STYLE $@
-

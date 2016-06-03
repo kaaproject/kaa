@@ -26,9 +26,9 @@
 #ifndef KAA_LOG_H_
 #define KAA_LOG_H_
 
-#include "../kaa_error.h"
-#include "../platform/defaults.h"
-#include "../platform/stdio.h"
+#include "kaa_error.h"
+#include <platform/defaults.h>
+#include <platform/stdio.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
