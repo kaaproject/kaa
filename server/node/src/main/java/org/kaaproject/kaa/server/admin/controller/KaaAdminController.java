@@ -767,17 +767,17 @@ public class KaaAdminController {
 
     /**
      * Saves a CTL schema.
-     * 
+     *
      * @param body
      *            the ctl body
      * @param applicationId
      *            id of the application
      * @param tenantId
      *            id of the tenant
-     * 
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
-     * 
+     *
      * @return CTL schema info
      * @deprecated  As of release 0.9.0, replaced by {@link #saveCTLSchemaWithAppToken(String, String, String)}
      */
@@ -813,7 +813,7 @@ public class KaaAdminController {
 
     /**
      * Removes a CTL schema by its fully qualified name and version number.
-     * 
+     *
      * @param fqn
      *            the fqn
      * @param version
@@ -822,7 +822,7 @@ public class KaaAdminController {
      *            id of the tenant
      * @param applicationId
      *            id of the application
-     *            
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @deprecated  As of release 0.9.0, replaced by {@link #deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String, int, String, String)}
@@ -862,7 +862,7 @@ public class KaaAdminController {
 
     /**
      * Retrieves a CTL schema by its fully qualified name and version number.
-     * 
+     *
      * @param fqn
      *            the fqn
      * @param version
@@ -874,7 +874,7 @@ public class KaaAdminController {
      *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
-     * 
+     *
      * @return CTL schema info
      * @deprecated  As of release 0.9.0, replaced by {@link #getCTLSchemaByFqnVersionTenantIdAndApplicationToken(String, int, String, String)}
      */
@@ -935,7 +935,7 @@ public class KaaAdminController {
 
     /**
      * Checks if CTL schema with same fqn is already exists in the sibling application.
-     * 
+     *
      * @param fqn
      *            the fqn
      * @param tenantId
@@ -945,7 +945,7 @@ public class KaaAdminController {
      *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
-     * 
+     *
      * @return true if CTL schema with same fqn is already exists in other scope
      * @deprecated  As of release 0.9.0, replaced by {@link #checkFqnExistsWithAppToken(String, String, String)}
      */
@@ -986,12 +986,12 @@ public class KaaAdminController {
     /**
      * Promote existing CTL schema meta info from application to tenant scope
      *
-     *            
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     *             
+     * @param applicationId the id of application where schema was created
+     * @param fqn the fqn of promoting CTL schema
+     * @throws KaaAdminServiceException the kaa admin service exception
+     *
      * @return CTLSchemaMetaInfoDto the promoted CTL schema meta info object.
-     */    
+     */
     @RequestMapping(value = "CTL/promoteScopeToTenant", method = RequestMethod.POST)
     @ResponseBody
     public CTLSchemaMetaInfoDto promoteScopeToTenant(@RequestParam String applicationId, @RequestParam String fqn)
@@ -1001,7 +1001,7 @@ public class KaaAdminController {
 
     /**
      * Retrieves a list of available system CTL schemas.
-     * 
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
@@ -1011,10 +1011,10 @@ public class KaaAdminController {
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
         return kaaAdminService.getSystemLevelCTLSchemas();
     }
-    
+
     /**
      * Retrieves a list of available CTL schemas for tenant.
-     * 
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
@@ -1024,13 +1024,13 @@ public class KaaAdminController {
     public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException {
         return kaaAdminService.getTenantLevelCTLSchemas();
     }
-    
+
     /**
      * Retrieves a list of available CTL schemas for application.
-     * 
+     *
      * @param applicationId
      *            id of the application
-     *            
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
@@ -1062,7 +1062,7 @@ public class KaaAdminController {
     /**
      * Exports a CTL schema and, depending on the export method specified, all
      * of its dependencies.
-     * 
+     *
      * @param fqn
      *            - the schema fqn
      * @param version
@@ -1075,9 +1075,9 @@ public class KaaAdminController {
      *            - the http request
      * @param response
      *            - the http response
-     * 
+     *
      * @see CTLSchemaExportMethod
-     * 
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @deprecated  As of release 0.9.0, replaced by {@link #exportCTLSchemaByAppToken(String, int, String, String, HttpServletRequest, HttpServletResponse)}
@@ -1086,7 +1086,7 @@ public class KaaAdminController {
     @RequestMapping(value = "CTL/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void exportCTLSchema(@RequestParam String fqn, @RequestParam int version, @RequestParam String method,
-            @RequestParam(required = false) String applicationId, 
+            @RequestParam(required = false) String applicationId,
             HttpServletRequest request, HttpServletResponse response) throws KaaAdminServiceException {
         try {
             FileData output = kaaAdminService.exportCTLSchema(fqn, version, applicationId, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
@@ -1242,7 +1242,7 @@ public class KaaAdminController {
 
     /**
      * Gets the profile schema by its id.
-     * 
+     *
      * @param profileSchemaId
      *            the profile schema id
      * @return the endpoint profile schema dto
