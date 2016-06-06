@@ -1,8 +1,7 @@
 ---
 layout: page
-title: Configuration
+title: System configuration
 permalink: /:path/
-nav: /:path/Administration-guide/System-Configuration/
 sort_idx: 30
 ---
 
