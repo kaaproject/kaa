@@ -8,9 +8,6 @@ sort_idx: 10
 
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
 
 - [Kaa sandbox](#kaa-sandbox)
   - [Video tutorial](#video-tutorial)
@@ -28,15 +25,9 @@ sort_idx: 10
     - [Avro UI](#avro-ui)
 - [Your first Kaa application](#your-first-kaa-application)
   - [Adding application](#adding-application)
-  - [Create notification schema](#create-notification-schema)
-  - [Generate SDK](#generate-sdk)
-  - [Sample client application](#sample-client-application)
-  - [Create notification topic](#create-notification-topic)
-  - [Create notification](#create-notification)
 - [Next Steps](#next-steps)
 - [Further reading](#further-reading)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 This section provides guidance on how to create your first Kaa application that will work with the Kaa platform. In this guide we will show you how to create a simple desktop java application that will receive notifications from the Kaa server and display them on the console. We will define our own notification schema and use the generated java classes within our application.
 
@@ -47,9 +38,10 @@ With the use of Kaa Sandbox, anyone can learn Kaa, build a proof of concept and 
 
 ## Video tutorial
 
-<iframe width="800" height="500"
-src="https://www.youtube.com/embed/ynbxcRdgXFU">
-</iframe>
+<p align="center">
+  <iframe width="800" height="500" src="https://www.youtube.com/embed/ynbxcRdgXFU">
+  </iframe>
+</p>
 
 ## Installation Sandbox
 
@@ -65,6 +57,17 @@ To use Kaa Sandbox, your system must meet the following minimum system requireme
 
 ### Installation steps
 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#VirtualBox">VirtualBox</a></li>
+  <li><a data-toggle="tab" href="#Amazon">Amazon</a></li>
+</ul>
+
+<div class="tab-content">
+
+<div id="VirtualBox" class="tab-pane fade in active" markdown="1">
+
+<br>
+
 To install Kaa Sandbox, perform the following steps:
 
 1. Install the virtualization environment.
@@ -73,6 +76,66 @@ The current version of Kaa Sandbox supports [Oracle VirtualBox 4.2+](https://www
 2. Download the Sandbox image from [Kaa download page](http://www.kaaproject.org/download-kaa/).
 
 3. Import the Sandbox image using this [guide](https://www.virtualbox.org/manual/ch01.html#ovf).
+
+<br>
+
+</div><div id="Amazon" class="tab-pane fade" markdown="1">
+
+<br>
+
+To launch the Kaa sanbox on Amazon Elastic Compute Cloud (Amazon EC2), go through the following steps.
+
+1. Launch the AMI using the links in the following table:
+
+   Amazon EC2 offers a number of [geographic regions](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) for launching the AMI. Factors for choosing a region include: reduce latency, cost, or regulatory requirements.
+
+   To launch an AMI for a specific region, please use the [download](http://www.kaaproject.org/download-kaa/) page.
+
+2. On **Choose an Instance Type** step, choose the appropriate instance type. For optimal performance we recommended that you use at least _m3.large_ instance type, or more powerful.
+
+3. On **Configure Instance Details** step, change values in the fields as appropriate or leave default values.
+
+4. On **Add Storage** step, add additional volumes as appropriate.
+
+   The number of instance store devices available on the machine depends on the instance type. EBS volumes are not recommended for the database storage.
+
+5. On **Tag Instance** step, give a name to your instance, for example, kaa-sandbox-0.10.0
+
+6. On **Configure Security Group** step, select one of the following options.
+
+   * Create a new security group with the inbound open ports:
+
+      | Protocol | Port | RangeSource|
+      |----------|------|------------|
+      | TCP      | 22   | 0.0.0.0/0  |
+      | TCP      | 8080 | 0.0.0.0/0  |
+      | TCP      | 9999 | 0.0.0.0/0  |
+      | TCP      | 9998 | 0.0.0.0/0  |
+      | TCP      | 9997 | 0.0.0.0/0  |
+      | TCP      | 9889 | 0.0.0.0/0  |
+      | TCP      | 9888 | 0.0.0.0/0  |
+      | TCP      | 9887 | 0.0.0.0/0  |
+      | TCP      | 9080 | 0.0.0.0/0  |
+
+   * Select the created security group.
+
+7. On **Review Instance Launch** step, make any changes as appropriate.
+
+8. Click **Launch** and then in the **Select an existing key pair** or **Create a new key pair** dialog, do one of the following:
+
+  * Select an existing key pair from the **Select a key pair** drop list.
+
+  * If you need to create a new key pair, click **Create a new key pair**. Then create the new key pair as described in [Creating a key pair](http://docs.aws.amazon.com/gettingstarted/latest/wah/getting-started-prereq.html).
+
+9. Click **Launch Instances**. The **Launch Status** page will be displayed.
+
+10. Click **View Instances**.
+
+11. After launching Kaa Sandbox instance, go to **<your\_instance\_public\_dns\>:9080/sandbox** or **<your\_instance\_public\_ip\>:9080/sandbox** URL. Public DNS or IP of your instance are available from your instance description.
+
+<br>
+
+</div></div>
 
 ### Known issues
 
@@ -105,15 +168,25 @@ By default, Kaa Sandbox components are accessible from a host machine only. But 
 
 <div id="Sandbox-web-ui" class="tab-pane fade in active" markdown="1">
 
+<br>
+
 Go to Kaa Sandbox web UI and in a upper right corner select "Management" menu item. Input new host/IP and click the "Update" button in the "Kaa host/IP" section.
 
-<img src="attach/managment_tab.png" width="800" height="500">
+<br>
+
+<p align="center">
+  <img src="attach/managment_tab.png" width="800" height="500">
+</p>
 
 </div><div id="Console" class="tab-pane fade" markdown="1">
+
+<br>
 
 ```sh
 sudo /usr/lib/kaa-sandbox/bin/change_kaa_host.sh <new host/ip>
 ```
+
+<br>
 
 </div></div>
 
@@ -125,7 +198,11 @@ Kaa Sandbox web UI provides you with access to Kaa demo projects and some basic 
 
 You can download both source and binary distributions for each demo project. A downloaded binary already contains Kaa SDK that targets current Kaa Sandbox. Thus, if you successfully configure the [networking](#networking) for your SDK, the downloaded application will be able to access it and will work correctly.
 
-<img src="attach/Sandbox.png" width="800" height="400">
+<br>
+
+<p align="center">
+  <img src="attach/Sandbox.png" width="800" height="400">
+</p>
 
 ## Admin UI
 
@@ -141,418 +218,6 @@ Kaa Sandbox provides default credentials for all three types of Kaa users, as fo
 
 You can access Avro UI by clicking **Avro UI sandbox console** at the top of the window.
 Refer to the [Avro UI guide]({{root_url}}Administration-guide/Tenants-and-applications-management)  for working instructions.
-
-# Your first Kaa application
-
-To register a new application within a fresh Kaa server installation, you need to create users with the _tenant administrator_ and _tenant developer_ roles. The tenant administrator is responsible for creating new applications in Kaa, and the tenant developer configures and generates SDKs for those applications. We suggest that you use Kaa Sandbox, which has a tenant administrator and tenant developer users already created.
-
-## Add application
-
-To add an application, proceed as follows:
-
-1. Open the Kaa admin UI in your browser ( [http://127.0.0.1:8080](http://127.0.0.1:8080) ) and log in as a tenant administrator (user/password: admin/admin123).
-2. Select **Applications** on the navigation panel on the left side and, in the **Applications** window that opens, click **Add new application.**
-3. In the **Add new application** window, fill in the fields as required and then click **Add**.  
-![](attach/image2015-6-15 20-2-55.png)
-
-After the application has been added, you may log out. We will not be using the tenant administrator role in this guide anymore.
-
-## Create notification schema
-
-The application that you have created in the previous step already includes the default versions of the profile, configuration, notification and log schemas ready for use. However, in this sample application, we will use a custom notification schema for demonstration purposes. To create and upload the schema, proceed as follows:
-
-1. Create the _schema.json_ file on your PC with the following schema definition:
-
-   ```json
-   {
-     "type": "record",
-     "name": "Notification",
-     "namespace": "org.kaaproject.kaa.schema.example",
-     "fields":[
-        {
-          "name": "message",
-          "type": "string"
-        }
-      ]
-    }
-```
-
-2. Open the admin UI in your browser ( [http://127.0.0.1:8080](http://127.0.0.1:8080/) ) and log in as a tenant developer (user/password: devuser/devuser123).
-3. Open the relevant **Notification schemas** window (**Applications =\> My First Kaa Application =\> Schemas =\> Notification**) and click **Add new schema**.
-4. In the **Add new schema** window, fill in the fields as shown in the following screenshot and then click **Add**.   
-<img src="attach/image2015-6-15 20-9-14.png" width="800" height="400">
-
-5. Scroll down and use the Upload from file function to find the previously created json file with the schema. Alternatively, you can use the Schema [Avro UI form***]() to create the schema.
-6. Click Upload.  
-<img src="attach/image2015-6-19 14-51-26.png" width="900" height="500">
-7. Click Add at the top of the window.
-
-As a result of this operation you will see two notification schemas in the list:
-<img src="attach/image2015-6-15 20-18-54.png" width="1200" height="300">
-
-In this screenshot, version 2.0 is the notification schema that was just created. We will use this version for the SDK generation in the next step.
-
-## Generate SDK
-
-To generate the SDK for the new application, proceed as follows:
-
-1. Select the **My First Kaa Application** application and click **Generate SDK**.   
-<img src="attach/sdk_gen0.png" width="494" height="430">
-
-2. Click **Add SDK profile**.   
-<img src="attach/sdk_gen1.png" width="700" height="210">
-
-3. In the **Add SDK profile** window, fill in the fields as shown in the following screenshot  and then click **Add**.   
-<img src="attach/sdk_gen2.png" width="500" height="500">
-
-4. Click **Generate SDK** for corresponding SDK profile. In the **Generate SDK window** select the target platform for your SDK and click **Generate SDK**.  
-<img src="attach/sdk_gen3.png" width="350" height="350">
-
-After the SDK is generated, you will be presented with a window asking you to save a .jar file with the generated SDK. Specify the file name and location on your computer and then click **Save**. The SDK is now downloaded to your computer.
-
-Please note that we are generating an SDK based on the default configuration, profile, and log schemas. These schemas are automatically populated during the application's creation. If necessary, you can overwrite them using the [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management).
-
-## Sample client application
-
-Once you have downloaded the SDK, you can use it in your sample project. The following code block illustrates a simple desktop java application that will receive notifications from the Kaa server and display them on the console.
-
-**NOTE**: After generating the C/C++/Objective-C SDKs, you need to build them before creating the application.
-
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
-  <li><a data-toggle="tab" href="#Cpp">C++</a></li>
-  <li><a data-toggle="tab" href="#C">C</a></li>
-  <li><a data-toggle="tab" href="#Objectve-C">Objectve-C</a></li>
-</ul>
-
-<div class="tab-content">
-
-<div id="Java" class="tab-pane fade in active" markdown="1">
-
-```Java
-    package org.kaaproject.kaa.samples.nf;
-
-    import java.util.List;
-
-    import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
-    import org.kaaproject.kaa.client.Kaa;
-    import org.kaaproject.kaa.client.KaaClient;
-    import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
-    import org.kaaproject.kaa.client.notification.NotificationListener;
-    import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
-    import org.kaaproject.kaa.common.endpoint.gen.Topic;
-    import org.kaaproject.kaa.schema.example.Notification;
-    import org.slf4j.Logger;
-    import org.slf4j.LoggerFactory;
-
-    public class NotificationSystemTestApp {
-
-        private static final Logger LOG = LoggerFactory.getLogger(NotificationSystemTestApp.class);
-
-        public static void main(String[] args) {
-            new NotificationSystemTestApp().launch();
-        }
-
-        private void launch() {
-            // Create client for Kaa SDK
-            KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
-                    new SimpleKaaClientStateListener() {
-                        @Override
-                        public void onStarted() {
-                            LOG.info("Kaa SDK client started!");
-                        }
-                    });
-
-            // Registering listener for topic updates
-            kaaClient.addTopicListListener(new NotificationTopicListListener() {
-                @Override
-                public void onListUpdated(List<Topic> topicList) {
-                    LOG.info("Topic list updated!");
-                    for (Topic topic : topicList) {
-                        LOG.info("Received topic with id {} and name {}", topic.getId(), topic.getName());
-                    }
-                }
-            });
-
-            // Registering listener for notifications
-            kaaClient.addNotificationListener(new NotificationListener() {
-                @Override
-                public void onNotification(String topicId, Notification notification) {
-                    LOG.info("Received notification {} for topic with id {}", notification, topicId);
-                }
-            });
-
-            // Starts Kaa SDK client
-            kaaClient.start();
-        }
-    }
-```
-
-</div><div id="Cpp" class="tab-pane fade" markdown="1">
-
-```C
-    #include <cstdint>
-    #include <iostream>
-    #include <memory>
-
-    #include <kaa/Kaa.hpp>
-    #include <kaa/notification/INotificationListener.hpp>
-    #include <kaa/notification/INotificationTopicListListener.hpp>
-
-    using namespace kaa;
-
-    class SimpleKaaClientStateListener : public IKaaClientStateListener {
-    public:
-        virtual void onStarted() {
-            std::cout << "Kaa SDK client started!" << std::endl;
-        }
-
-        virtual void onStartFailure(const KaaException& exception) {}
-        virtual void onPaused()  {}
-        virtual void onPauseFailure(const KaaException& exception) {}
-        virtual void onResumed() {}
-        virtual void onResumeFailure(const KaaException& exception) {}
-
-        virtual void onStopped() {}
-        virtual void onStopFailure(const KaaException& exception) {}
-    };
-
-    class BasicNotificationTopicListListener : public INotificationTopicListListener {
-    public:
-        virtual void onListUpdated(const Topics& topics)
-        {
-            std::cout << "Topic list was updated" << std::endl;
-            for (const auto& topic : topics) {
-            std::cout << "Received topic with id " << topic.id << " and name '" << topic.name << "'" << std::endl;
-        }
-        }
-    };
-
-    class BasicNotificationListener : public INotificationListener {
-    public:
-        virtual void onNotification(const std::int64_t topicId, const KaaNotification& notification)
-        {
-            std::cout << "Received notification '" << notification.message << "'"
-                      << "for topic with id '" << topicId  << "'" << std::endl;
-        }
-    };
-
-    int main()
-    {
-        BasicNotificationTopicListListener topicListListener;
-        BasicNotificationListener commonNotificationListener;
-        // Create client for Kaa SDK
-        auto kaaClient = Kaa::newClient(std::make_shared<KaaClientPlatformContext>(),
-                                    std::make_shared<SimpleKaaClientStateListener>());
-        kaaClient->addTopicListListener(topicListListener);
-        kaaClient->addNotificationListener(commonNotificationListener);
-        // Start Kaa SDK client
-        kaaClient->start();
-
-        std::cout << "Presss any key to stop Kaa SDK client" << std::endl;
-        std::getchar();
-
-        // Stop Kaa SDK client
-        kaaClient->stop();
-
-        return 0;
-    }
-```
-
-</div><div id="C" class="tab-pane fade" markdown="1">
-
-```C
-    #include <stdint.h>
-    #include <stdio.h>
-    #include <string.h>
-    #include <time.h>
-    #include <kaa/kaa_error.h>
-    #include <kaa/platform/kaa_client.h>
-    #include <kaa/utilities/kaa_log.h>
-    #include <kaa/kaa_notification_manager.h>
-
-    #define KAA_DEMO_RETURN_IF_ERROR(error, message) \
-        if ((error)) { \
-            printf(message ", error code %d\n", (error)); \
-            return (error); \
-        }
-
-    static kaa_client_t *kaa_client = NULL;
-
-    void on_notification(void \*context, uint64_t \*topic_id, kaa_notification_t \*notification)
-    {
-        (void)context;
-        kaa_string_t \*message = (kaa_string_t \*)notification->message;
-        printf("Notification for topic id '%lu' received\n", \*topic_id);
-        printf("Notification body: %s\n", message->data);
-    }
-
-    void on_topics_received(void \*context, kaa_list_t \*topics)
-    {
-        printf("Topic list was updated\n");
-        if (!topics || !kaa_list_get_size(topics)) {
-            printf("Topic list is empty");
-            return;
-        }
-
-        kaa_list_node_t \*it = kaa_list_begin(topics);
-        while (it) {
-            kaa_topic_t \*topic = (kaa_topic_t \*)kaa_list_get_data(it);
-            printf("Topic: id '%lu', name: %s\n", topic->id, topic->name);
-            it = kaa_list_next(it);
-        }
-    }
-
-    int main()
-    {
-        printf("Kaa SDK client started\n");
-
-        kaa_error_t error_code = kaa_client_create(&kaa_client, NULL);
-        KAA_DEMO_RETURN_IF_ERROR(error_code, "Failed create Kaa client");
-
-        kaa_topic_listener_t topic_listener = { &on_topics_received, kaa_client };
-        kaa_notification_listener_t notification_listener = { &on_notification, kaa_client };
-
-        uint32_t topic_listener_id = 0;
-        uint32_t notification_listener_id = 0;
-
-        error_code = kaa_add_topic_list_listener(kaa_client_get_context(kaa_client)->notification_manager
-                                           , &topic_listener
-                                           , &topic_listener_id);
-        KAA_DEMO_RETURN_IF_ERROR(error_code, "Failed add topic listener");
-
-        error_code = kaa_add_notification_listener(kaa_client_get_context(kaa_client)->notification_manager
-                                             , &notification_listener
-                                             , &notification_listener_id);
-        KAA_DEMO_RETURN_IF_ERROR(error_code, "Failed add notification listener");
-
-        error_code = kaa_client_start(kaa_client, NULL, NULL, 0);
-        KAA_DEMO_RETURN_IF_ERROR(error_code, "Failed to start Kaa main loop");
-
-        kaa_client_destroy(kaa_client);
-
-        return error_code;
-    }
-```
-
-</div><div id="Objectve-C" class="tab-pane fade" markdown="1">
-
-```Objective-C
-    #import "ViewController.h"
-    #import <Kaa/Kaa.h>
-
-    #define TAG @"NotificationSystemTestApp >>>"
-
-    @interface ViewController () <KaaClientStateDelegate, NotificationTopicListDelegate, NotificationDelegate, ProfileContainer>
-
-    @property (nonatomic, strong) id<KaaClient> kaaClient;
-
-    @end
-
-    @implementation ViewController
-
-    - (void)viewDidLoad {
-      [super viewDidLoad];
-      //Create a Kaa client with default Kaa context.
-      self.kaaClient = [Kaa clientWithContext:[[DefaultKaaPlatformContext alloc] init]];
-
-      // A listener that listens to the notification topic list updates.
-      [self.kaaClient addTopicListDelegate:self];
-
-      // Add a notification listener that listens to all notifications.
-      [self.kaaClient addNotificationDelegate:self];
-
-      // Set up profile container, needed for ProfileManager
-      [self.kaaClient setProfileContainer:self];
-
-      // Start the Kaa client and connect it to the Kaa server.
-      [self.kaaClient start];
-
-    }
-    - (void)onListUpdated:(NSArray \*)list {
-      NSLog(@"%@ Topic list updated!", TAG);
-
-      if ([list count] == 0) {
-          NSLog(@"%@ Topic list is empty!", TAG);
-          return;
-      }
-
-      for (Topic \*topic in list) {
-        NSLog(@"%@ Received topic with id %lld and name %@", TAG, topic.id, topic.name);
-      }
-    }
-
-    - (KAAEmptyData \*)getProfile {
-        return [[KAAEmptyData alloc] init];
-      }
-
-    - (void)onNotification:(KAANotification \*)notification withTopicId:(int64_t)topicId {
-      NSLog(@"%@ Received notification %@ for topic with id %lld", TAG, notification.message, topicId);
-    }
-
-    - (void)onStarted {
-      NSLog(@"%@ Kaa SDK client started", TAG);
-    }
-    @end
-```
-</div></div>
-
-You can find the project source code (including Java, C, C++ and Objective-C) in the attached [archive](attach/kaa-first-app.zip).
-
-- **For Java**, the project is built using Apache Maven. Note that the downloaded SDK must be placed into the lib folder in order for the build to work. Import this project into your IDE as a Maven project and launch the _NotificationSystemTestApp_ application. Once the application is launched, you will see the following output:  
-
-    [...  INFO  NotificationSystemTestApp]  Kaa SDK client started!
-
-- **For C, C++ and Objective-C**, place the downloaded SDK into the _libs_ folder and then run _build.sh_ or _build.bat_ script depending on your platform. Launch the _demo_client_ application. Once the application is launched, you will see the following output:  
-
-    Kaa SDK client started!
-
-## Create notification topic
-
-To send your first Kaa notification, you need to create a notification topic and assign this topic to the default endpoint group.
-
-To create a notification topic, proceed as follows:
-
-1. Open the relevant **Notification topics** window (**Applications =\> My First Kaa Application =\> Notification topics**) and click **Add new notification topic**.
-2. In the **Add notification topic** window, fill in the fields as shown in the following screenshot and then click **Add**.  
-![](attach/image2014-7-28 13-38-3.png)
-
-**NOTE:** We set the topic as mandatory in order to automatically subscribe the client application to notifications on this topic.
-
-Once the topic is created, we will assign it to the default endpoint group, which contains all endpoints, including endpoints with our application.
-
-To assign a notification topic to the default endpoint group, proceed as follows:
-
-1. In the relevant **Endpoint groups** window (**Applications=\>My First Kaa Application=\>Endpoint groups**), select the _All_ group.
-2. In the **Endpoint group details** window, click **Add notification topic** at the bottom of the window.
-3. In the **Add topic to endpoint group** window, select the recently created notification topic and then click **Add**.  
-![](attach/image2014-7-28 13-43-38.png)
-
-After the topic is added to the endpoint group, you will see the following output in the application:
-
-    [...  INFO  NotificationSystemTestApp]  Topic list updated!
-    [...  INFO  NotificationSystemTestApp]  Received topic with id X and name Notification Topic
-
-This is the first update from the Kaa server that provides the client with the information about the changes in the topic list. Now you can send notifications on this topic, and they will be delivered to your application.
-
-## Create notification
-
-To create a notification, proceed as follows:
-
-1. Create a _notification.json_ file on your PC with the following contents:
-
-    {"message":"Hello from Kaa!"}
-
-2. Open the relevant **Notification topics** window (**Applications =\> My First Kaa Application =\> Notification topics**) and click **Send notification** in the **Notification Topic** row.  
-<img src="attach/image2015-6-19 14-51-26.png" width="800" height="500">
-3. In the **Send notification** window, fill in the fields as shown in the following screenshot and then click **Send**.  
-![](attach/image2014-7-28 13-52-48.png)
-
-Once the notification is sent, you can see the following output in the application:
-
-    [...  INFO  NotificationSystemTestApp]  Received notification {"message": "Hello from Kaa!"} for topic with id X
-
-**Congratulations with your first Kaa application!**
 
 # Next steps
 To create a real-world IoT solution, you will most likely need to implement more features into your application. Kaa provides you with practically everything you might need. The following overview will help you grasp the scope of Kaa capabilities as well as get familiar with the essential documentation, such as [Programming guide]({{root_url}}Programming-guide) and [Administration UI]({{root_url}}Administration-guide/Tenants-and-applications-management) guide.
