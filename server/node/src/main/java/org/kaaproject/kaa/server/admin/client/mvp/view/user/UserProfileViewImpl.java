@@ -29,6 +29,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProfileView {
 
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+
     private SizedTextBox authority;
     private SizedTextBox firstName;
     private SizedTextBox lastName;
@@ -69,6 +71,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         firstName.addInputHandler(this);
 
         Label firstNameLabel = new Label(Utils.constants.firstName());
+        firstNameLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(1, 0, firstNameLabel);
         detailsTable.setWidget(1, 1, firstName);
 
@@ -77,6 +80,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         lastName.addInputHandler(this);
 
         Label lastNameLabel = new Label(Utils.constants.lastName());
+        lastNameLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(2, 0, lastNameLabel);
         detailsTable.setWidget(2, 1, lastName);
 
@@ -85,7 +89,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         email.addInputHandler(this);
 
         Label emailLabel = new Label(Utils.constants.email());
-        emailLabel.addStyleName(Utils.avroUiStyle.requiredField());
+        emailLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(3, 0, emailLabel);
         detailsTable.setWidget(3, 1, email);
 
@@ -106,7 +110,10 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
 
     @Override
     protected boolean validate() {
-        return email.getValue().length()>0;
+        boolean result = firstName.getValue().length()>0;
+        result &= lastName.getValue().length()>0;
+        result &= Utils.validateEmail(email.getValue());
+        return result;
     }
 
     @Override

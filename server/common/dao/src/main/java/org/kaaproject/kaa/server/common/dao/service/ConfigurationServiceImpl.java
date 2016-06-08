@@ -225,6 +225,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 throw new UpdateStatusConflictException("Can't update configuration, invalid id " + id);
             }
             configurationSchemaDto = findConfSchemaById(configurationDto.getSchemaId());
+            configurationDto.setSchemaVersion(configurationSchemaDto.getVersion());
+            configurationDto.setCreatedTime(oldConfiguration.getCreatedTime());
+            configurationDto.setCreatedUsername(oldConfiguration.getCreatedUsername());
             LOG.debug("Update existing configuration with id: [{}]", configurationDto.getId());
         } else {
             String schemaId = configurationDto.getSchemaId();
