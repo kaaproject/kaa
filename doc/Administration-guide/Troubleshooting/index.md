@@ -3,7 +3,7 @@ layout: page
 title: Troubleshooting
 permalink: /:path/
 nav: /:path/Administration-guide/Troubleshooting
-sort_idx: 60
+sort_idx: 888888880
 ---
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
