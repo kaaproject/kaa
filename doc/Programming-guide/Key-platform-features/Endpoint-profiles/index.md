@@ -9,12 +9,6 @@ sort_idx: 20
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-<!--<style>
-    pre{
-        display:none;
-    }
-</style>-->
-
 * [Client-side endpoint profile](#client-side-endpoint-profile)
   * [Client-side endpoint profile example](#client-side-endpoint-profile-example)
   * [Client-side endpoint profile update](#client-side-endpoint-profile-update)
@@ -52,8 +46,6 @@ it detects profile data changes and submits the new data to the Kaa cluster as a
 
 The following code block provides a simple client-side endpoint profile schema example.
 
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
-
 ```json
 {  
    "namespace":"org.myproject",
@@ -85,8 +77,6 @@ The following code block provides a simple client-side endpoint profile schema e
 
 The following client-side profile would be compatible with our schema example.
 
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
-
 ```json
 {  
    "country":"US",
@@ -114,8 +104,6 @@ due to your client application logic or device state.
 You can configure your own client-side profile schema using the 
 [Admin UI](#setting-client-side-endpoint-profile-update-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs). 
 For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
-
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
 
 ```json{
     "type":"record",
@@ -347,8 +335,6 @@ the latest server-side profile schema of particular application. Both server-sid
 
 The following code block provides a simple server-side profile schema example.
 
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
-
 ```json
 {  
    "namespace":"org.myproject",
@@ -367,8 +353,6 @@ The following code block provides a simple server-side profile schema example.
 }
 ```
 The following server-side profile would be compatible with our schema example.
-
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
 
 ```json
 {
@@ -390,8 +374,6 @@ Server-side endpoint profile is designed to be accessed and modified by various 
 not accessible from endpoint SDK or other client application logic but you can configure your own server-side profile schema using the 
 [Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs). 
 For the purpose of this guide we will use a fairly abstract server-side profile schema shown below.
-
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
 
 ```json
 {  
