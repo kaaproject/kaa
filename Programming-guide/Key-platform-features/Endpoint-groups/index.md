@@ -6,12 +6,6 @@ nav: /:path/Programming-guide/Key-platform-features/Endpoint-groups
 sort_idx: 30
 ---
 
-<!--<style>
-    pre{
-        display:none;
-    }
-</style>-->
-
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
@@ -128,8 +122,6 @@ The following example illustrates the general idea of profile filters.
 
 1. Let's assume the following client-side profile schema.
 
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
-
 ```json
 [  
    {  
@@ -189,8 +181,6 @@ The following example illustrates the general idea of profile filters.
 2. Let's assume the following server-side profile schema. Please note that this schema is less complex only for demonstration purposes. 
 Both Client-side and Server-side profile schemas support same level of complexity.
 
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
-
 ```json
 [  
    {  
@@ -215,8 +205,6 @@ Both Client-side and Server-side profile schemas support same level of complexit
 ```
 
 3. Second, let's assume the following client-side endpoint profile, which corresponds to the schema.
-
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
 
 ```json
 {  
@@ -244,8 +232,6 @@ Both Client-side and Server-side profile schemas support same level of complexit
 ```
 
 4. Let's assume the following server-side endpoint profile, which corresponds to the schema.
-
-<a onclick="$(this).parent().next('pre').slideToggle('slow');" href="javascript://">Example</a>
 
 ```json
 {  
