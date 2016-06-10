@@ -8,68 +8,7 @@ sort_idx: 20
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-<style scoped>
-	#imgbox 
-	{
-	    position:fixed !important;
-		top:0;
-		right:0;
-		bottom:0;
-		left:0;    
-	    visibility: hidden;
-	    opacity:0;
-	    transition:opacity 0.25s linear;
-	    z-index : 50;
-	    overflow : hidden;
-	    cursor: pointer;
-	    background: rgba(0,0,0,0.4);
-	    text-align : center;
-	    font: 0/0 a;
-	}
-	
-	#imgbox:before {
-	    content: ' ';
-	    display: inline-block;
-	    vertical-align: middle;
-	    height: 100%;
-	}
-	
-	#imgbox img {
-		border: 5px solid #aabbcc;
-		border-radius: 5px;
-		vertical-align: middle;
-		display: inline-block;
-	}
-</style>
-
-<div id="imgbox">
-</div>
-
-<script type="text/javascript">
-
-	function Large(obj)
-	{
-	    var imgbox = $("#imgbox");
-	    imgbox.css('visibility', 'visible');
-	    imgbox.css('opacity', '1');
-	    imgbox.on('click', Out);
-
-	    var img = document.createElement("img");
-	    img.src=obj.src;
-	    imgbox.empty();
-	    imgbox.append(img);
-	}
-	
-	function Out()
-	{
-		var imgbox = $("#imgbox");
-	    imgbox.css('opacity', '0');
-	    imgbox.css('visibility', 'hidden');
-	}
-
-</script>
-
-Common Type Library
+## Common Type Library ##
 
 * [CT types definitions and FQNs](#ct-types-definitions-and-fqns)
 * [CT schema versioning and dependencies](#ct-schema-versioning-and-dependencies)
@@ -125,7 +64,7 @@ Matching FQN in a different Application of the same Tenant | N/A | N/A | warning
 
 ## CT management ##
 
-CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) calls or via Administration UI. Management of CTs in Administration UI is separated according to CT scope.
+CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#) calls or via Administration UI. Management of CTs in Administration UI is separated according to CT scope.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#managing-system-ctl">Managing System CTL</a></li>
@@ -141,15 +80,15 @@ CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs
 
 The **System CTL** window displays a list of CTs with the system scope. The Kaa admin can add new system CTs and delete system CTs.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/system_ctl.png"/>
+![System CTL](attach/system_ctl.png)
 
 To create a new system CT, click **Add new type** and then fill in all the required fields. Click **Add** to apply the changes.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/create_system_ctl.png"/>
+![Create System CTL](attach/create_system_ctl.png)
 
 To view a system CT, open the CT details window by clicking the row in the list in the **System CTL** window.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/view_system_ctl.png"/>
+![View System CTL](attach/view_system_ctl.png)
 
 To view another version of the system CT, click on the version drop-down and select the appropriate version. To create a new version of the system CT of the same FQN, click **Create new version** at the top of CT details window. To export the system CT, click **Export** and select export method from drop-down. See [CT schema import and export](#ct-schema-import-and-export) for export details. To delete the system CT version, click **Delete** at the top of the CT details window.
 
@@ -161,17 +100,17 @@ To view another version of the system CT, click on the version drop-down and sel
 
 The **Tenant** CTL window displays a list of CTs with the tenant and system scopes. The tenant admin can add new tenant CTs and delete tenant CTs from the system. It has read-only access to the system CTs.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/tenant_ctl.png"/>
+![Tenant CTL](attach/tenant_ctl.png)
 
 To display/hide higher scopes of CTs, check/uncheck **Display higher scopes**.
 
 To create a new tenant CT, click **Add new type** and then fill in all the required fields. Click **Add** to apply the changes.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/create_tenant_ctl.png"/>
+![Create Tenant CTL](attach/create_tenant_ctl.png)
 
 To view a CT, open the CT details window by clicking the row in the list in the **Tenant** CTL window.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/view_tenant_ctl.png"/>
+![View Tenant CTL](attach/view_tenant_ctl.png)
 
 To view another version of the CT, click on the version drop-down and select the appropriate version. To create a new version of the tenant CT of the same FQN, click **Create new version** at the top of the CT details window. To export the CT, click **Export** and select an export method from the drop-down. See [CT schema import and export](#ct-schema-import-and-export) for export details. To delete the tenant CT version, click Delete at the top of the CT details window.
 
@@ -183,17 +122,17 @@ To view another version of the CT, click on the version drop-down and select the
 
 The **Application CTL** window displays a list of CTs of the current application, of the current tenant and all CTs with system scope. The tenant developer can add new application CTs and delete application CTs from the system. It has read-only access to the system CTs and to the tenant CTs within **Application CTL** window. Tenant developer is still able to manage tenant CTs within **Tenant CTL** window.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/application_ctl.png"/>
+![Application CTL](attach/application_ctl.png)
 
 To display/hide higher scopes of CTs, check/uncheck **Display higher scopes** checkbox.
 
 To create a new application CT, click **Add new type** and then fill in all the required fields. Click **Add** to apply the changes.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/create_application_ctl.png"/>
+![Create Application CTL](attach/create_application_ctl.png)
 
 To view a CT, open the CT details window by clicking the row in the list in the **Application CTL** window.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/view_application_ctl.png"/>
+![View Application CTL](attach/view_application_ctl.png)
 
 To view another version of the CT, click on the version drop-down and select the appropriate version. To create a new version of the application CT of the same FQN, click **Create new version** on the top of CT details. To export the CT, click **Export** and select export method from drop-down. See [CT schema import and export](#ct-schema-import-and-export) for export details. To delete the application CT version, click **Delete** on the top of the CT details. To promote the application CT from application to tenant scope, click **Promote**.
 
@@ -202,18 +141,18 @@ To view another version of the CT, click on the version drop-down and select the
 
 ## CT promotion ##
 
-Users are able to promote the CT's scope from APPLICATION to TENANT, provided that there is no other CT with the identical FQN within the given tenant, and that they have a permission to do so. Otherwise an appropriate error will be displayed. Promotion procedure updates scope of CT including all its versions. Promotion of CT can be performed in two ways: via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or by clicking **Promote** in the **Application CTL** window of Administration UI as shown below.
+Users are able to promote the CT's scope from APPLICATION to TENANT, provided that there is no other CT with the identical FQN within the given tenant, and that they have a permission to do so. Otherwise an appropriate error will be displayed. Promotion procedure updates scope of CT including all its versions. Promotion of CT can be performed in two ways: via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#) call or by clicking **Promote** in the **Application CTL** window of Administration UI as shown below.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/application_ctl_promote.png"/>
+![Promote Application CTL](attach/application_ctl_promote.png)
 
 ## CT schema import and export ##
 
 The import of CT schema can be done in two ways: 
 
-* perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call. 
+* perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs#) call. 
 * add new CT in Administration UI and upload schema json file as shown below.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/ctl_import.png"/>
+![CTL Import](attach/ctl_import.png)
 
 There are four ways of CT schema export:
 
@@ -222,8 +161,6 @@ There are four ways of CT schema export:
 3.	"**flat**" export will retrieve the given schema as one file with all referenced CTs inline.
 4.	"**library**" export will retrieve the given schema and all referenced CTs as compiled java classes compressed to a java archive file.
 
-To export CT schema either use [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call by providing appropriate export method or use export functionality provided by Administration UI. In CT window  click "Export" drop down and select desired export method as shown below.
+To export CT schema either use [REST API]({{root_url}}Programming-guide/Server-REST-APIs#) call by providing appropriate export method or use export functionality provided by Administration UI. In CT window  click "Export" drop down and select desired export method as shown below.
 
-<img width="50%" height="50%" style="cursor: pointer;" onclick="Large(this)" src="attach/ctl_export.png"/>
-
-
+![CTL export](attach/ctl_export.png)
