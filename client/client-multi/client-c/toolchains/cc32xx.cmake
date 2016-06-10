@@ -54,7 +54,6 @@ set(CMAKE_FIND_ROOT_PATH "${TOOLCHAIN_PATH}/arm-none-eabi/")
 
 set(CMAKE_C_COMPILER   "${TOOLCHAIN_PATH}/bin/arm-none-eabi-gcc${CMAKE_EXECUTABLE_SUFFIX}")
 set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH}/bin/arm-none-eabi-g++${CMAKE_EXECUTABLE_SUFFIX}")
-set(CMAKE_C_LINKER     "${TOOLCHAIN_PATH}/bin/arm-none-eabi-ld${CMAKE_EXECUTABLE_SUFFIX}")
 set(CMAKE_CXX_LINKER   "${TOOLCHAIN_PATH}/bin/arm-none-eabi-ld${CMAKE_EXECUTABLE_SUFFIX}")
 set(CMAKE_OBJCOPY
         "${TOOLCHAIN_PATH}/bin/arm-none-eabi-objcopy${CMAKE_EXECUTABLE_SUFFIX}"
@@ -77,7 +76,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)    # remove -rdynamic
 set(CMAKE_EXE_LINK_DYNAMIC_C_FLAGS)       # remove -Wl,-Bdynamic
 
 set(CMAKE_C_LINK_EXECUTABLE
-        "${CMAKE_C_LINKER} --entry ResetISR --gc-sections -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+    "<CMAKE_C_COMPILER> -Wl,--entry=ResetISR,--gc-sections -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 
 # These includes placed here intentionally. Include dirs must be moved to
 # the target-level support modules when such will be ready.

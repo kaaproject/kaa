@@ -18,10 +18,10 @@
 
 #include "kaa_private.h"
 #include "ext_log_upload_strategies.h"
-#include "../../platform/ext_log_upload_strategy.h"
-#include "../../platform/ext_transport_channel.h"
-#include "../../platform/time.h"
-#include "../../utilities/kaa_mem.h"
+#include <platform/ext_log_upload_strategy.h>
+#include <platform/ext_transport_channel.h>
+#include <platform/time.h>
+#include "utilities/kaa_mem.h"
 #include "kaa_channel_manager.h"
 
 /**
@@ -266,3 +266,6 @@ kaa_error_t ext_log_upload_strategy_set_upload_retry_period(void *strategy, size
 }
 
 #endif
+
+/* ISO C forbids an empty translation unit */
+typedef int make_iso_compilers_happy;

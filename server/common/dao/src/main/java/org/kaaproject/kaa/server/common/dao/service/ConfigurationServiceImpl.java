@@ -64,6 +64,7 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
@@ -186,7 +187,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         if (record.isEmpty()) {
             LOG.debug("Can't find related Configuration record.");
-            throw new IncorrectParameterException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
+            throw new NotFoundException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
                     + endpointGroupId); // NOSONAR
         }
         return record;
@@ -224,6 +225,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 throw new UpdateStatusConflictException("Can't update configuration, invalid id " + id);
             }
             configurationSchemaDto = findConfSchemaById(configurationDto.getSchemaId());
+            configurationDto.setSchemaVersion(configurationSchemaDto.getVersion());
+            configurationDto.setCreatedTime(oldConfiguration.getCreatedTime());
+            configurationDto.setCreatedUsername(oldConfiguration.getCreatedUsername());
             LOG.debug("Update existing configuration with id: [{}]", configurationDto.getId());
         } else {
             String schemaId = configurationDto.getSchemaId();

@@ -1,3 +1,16 @@
 {
-    "serverField" : 111
+    "Profile" : {
+        "org.kaaproject.kaa.schema.sample.profile" : {
+            "country.$" : "1.0.$.",
+            "country$IsoCode" : "2.0.$.",
+            "city" : "3.0.$.",
+            "Obj" : {
+                "org.kaaproject.kaa.schema.sample.profile.Obj" : {
+                    "name" : {
+                        "string" : "Obj.name$"
+                    }
+                }
+            }
+        }
+    }
 }

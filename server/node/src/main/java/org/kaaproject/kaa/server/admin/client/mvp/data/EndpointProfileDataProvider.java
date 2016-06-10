@@ -112,6 +112,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     
                         @Override
                         public void onSuccess(EndpointProfilesPageDto result) {
+                            endpointProfilesList.clear();
                             endpointProfilesList.addAll(result.getEndpointProfiles());
                             offset = result.getPageLinkDto().getOffset();
                             callback.onSuccess(endpointProfilesList);

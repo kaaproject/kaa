@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-/*
-posix_platform.h
- Created on: Jan 15, 2015
-     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
-*/
-
 #ifndef POSIX_PLATFORM_H_
 #define POSIX_PLATFORM_H_
 

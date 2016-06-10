@@ -1,0 +1,73 @@
+#+TITLE: How to Contribute
+#+OPTIONS: toc:nil
+
+This guide is dedicated to self-review and contribution process of Kaa project. It involves comments and code introspection, functional and unit testing, commits preparation and external code review.
+
+* Code introspection
+  When you about to finish your feature or bug fix you need to check your changes following the procedure below:
+  1. Code MUST use C99 (for C SDK) or C++11 (for C++ SDK) standards without using any compiler extensions, like GNU.
+  2. Code MUST compile for every [[http://docs.kaaproject.org/display/KAA/Supported+platforms][supported platform]].
+  3. Code MUST NOT contain any compiler warnings.
+  4. Corresponding doxygen comments SHOULD be added to new or changed interfaces/modules.
+  5. Every TODO item MUST reference an issue on Jira and issue key must be placed in a comment next to the TODO. (e.g., =// TODO(KAA-982): Use asserts=)
+  6. Bottlenecks and magic places MUST be well-commented. (/Well, ideally there should be no magic places./)
+  7. Commented-out chunks of code are forbidden.
+  8. Code style MUST be consistent. Check out our [[./code-style.org][Code Style Guide]].
+  9. It is RECOMMENDED to use a source formatting script against modified sources. The script is placed in =client/client-multi/client-c/scripts/srcformat.sh=.
+
+* Instrumentation
+  This section describes requirements that every developer must follow using existing tooling, like code analyzers, test frameworks etc.
+
+  1. Changes SHOULD be covered with unit tests, reflecting the essence of these changes. (Check out our [[./testing.org][Testing Tutorial]].)
+  2. If possible and required, changes SHOULD be covered with functional tests too.
+  3. Changes MUST NOT break any existing unit or functional tests. A fix SHOULD be provided if any of tests is failing due to introduced changes, except cases when test is no longer valid.
+  4. A sample app that directly or indirectly relies on changes SHOULD be well tested in automated or manual fashion to make sure that nothing was broken. If it did break, a fix must be provided either in sample applications or SDK or both.
+  5. Cppcheck MUST be triggered against changes; reported issues MUST be reviewed, and important ones MUST be fixed.
+
+  See also: [[./sandbox-updating.org][sandbox updating guide]].
+
+* Pre-commit checklist
+  The following checklist guarantees your patch will pass the Travis build and increases chance for passing code review process:
+
+  #+begin_src sh
+    # The next commands must be executed from the client-c/ directory
+    cd client/client-multi/client-c/
+
+    # Clean up source tree
+    rm -rf target build-*
+
+    # Check license headers
+    nix-shell -p maven --run 'mvn apache-rat:check'
+    # If you have installed maven on your system you can use the following command:
+    # mvn apache-rat:check
+    # If it finds any violations, check ./target/rat.txt for the list of files.
+
+    # Format changed files
+    nix-shell --run './scripts/srcformat.sh <changed files>'
+
+    # Check SDK builds for all platforms, passes cppcheck and builds doxygen
+    nix-shell --arg withWerror true --pure --run './scripts/build.sh'
+  #+end_src
+
+  Note: You should use nix-shell for source formatting as it contains a patch for the astyle to allow max-instatement-indent values lower than 40 (https://sourceforge.net/p/astyle/bugs/396/). Alternatively, you can patch your astyle with the [[../../../../nix/astyle/max_indent.patch][following patch]] manually.
+
+* Committing
+  1. All of the changes MUST be added to commit(s), and commit messages SHOULD NOT be too long.
+  2. The commit message SHOULD begin with ticket number: =KAA-[TICKET NUMBER] Description=.
+  3. Changes in commits SHOULD be as atomic as possible. It means that single commit of a pull request contains changes to a single entity (e.g., a module).
+  4. Single pull request SHOULD expose single feature or bug fix if possible. That will help reviewers to do their job.
+
+  # TODO: Complete git guide of Kaa (using http://git.kernel.org/cgit/git/git.git/tree/Documentation/SubmittingPatches?id=HEAD as an example)
+
+* Review
+  According to our [[http://docs.kaaproject.org/display/KAA/Git+Flow][Git Flow]], every Pull Request must be reviewed and approved by at least two members of the responsible team. When you receive a comment, you should address it; that means either changing the code or answering a question in the comments.
+
+  If you do a small fix, don't add a new commit but rather squash your changes to the old commits. That's required to avoid commit chains as the next one:
+  #+begin_src example
+    KAA-XXX Implement feature xxx
+    KAA-XXX Fix formatting
+    KAA-XXX Fix typo
+    KAA-XXX Address CR questions
+    KAA-XXX Address CR questions
+    KAA-XXX Fix typo
+  #+end_src

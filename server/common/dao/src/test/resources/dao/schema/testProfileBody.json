@@ -1,0 +1,24 @@
+{ "Profile" : {
+    "org.kaaproject.kaa.schema.sample.profile" : {
+        "country.$" : "1.$.",
+        "country$IsoCode" : "2.$.",
+        "city" : "3.$.",
+        "Obj" : {
+            "org.kaaproject.kaa.schema.sample.profile.Obj" : {
+                "name" : {
+                    "string" : "Obj.name$"
+                }
+            }
+        }
+    }
+},
+    "OS" : {
+        "org.kaaproject.kaa.schema.sample.profile.OS" : "Linux"
+    },
+    "array" : [ "one", "two", "three" ],
+    "arrayWithRecord" : [ {
+        "nameInArray." : "one.one"
+    }, {
+        "nameInArray." : "two$two"
+    } ]
+}

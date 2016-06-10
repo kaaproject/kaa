@@ -323,7 +323,7 @@ public class ConcurrentCacheService implements CacheService {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
                         ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
-                        if (supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
+                        if (profileFilter != null && supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
@@ -811,6 +811,19 @@ public class ConcurrentCacheService implements CacheService {
     @CachePut(value = "endpointKeys", key = "#key")
     public PublicKey putEndpointKey(EndpointObjectHash key, PublicKey endpointKey) {
         return endpointKey;
+    }
+
+    /**
+     *
+     * Remove key from hash
+     *
+     * @param hash
+     * @param endpointKey
+     */
+    @Override
+    @CacheEvict(value = "endpointKeys", key = "#key")
+    public void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey){
+        // Do nothing
     }
 
     /*

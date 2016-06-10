@@ -1,0 +1,60 @@
+#+TITLE: Nix Guide
+#+AUTHOR: Alexey Shmalko
+#+OPTIONS: toc:nil
+
+[[http://nixos.org/nix/][Nix]] is a powerful Linux package manager. We use it to create a better development environment for C client and manage all dependencies.
+
+* Setup Nix
+  The easiest way to setup Nix is next:
+  #+begin_src sh
+    curl https://nixos.org/nix/install | sh
+    source $HOME/.nix-profile/etc/profile.d/nix.sh
+  #+end_src
+
+  And add =source $HOME/.nix-profile/et/profile.d/nix.sh= to your =.bashrc=.
+
+  If you don't trust piping shell scripts from the Internet (and you shouldn't), feel free to examine the script or use alternate setup. (Though, you should google it up yourself.)
+
+* Install all dependencies and enter the shell
+  The first time you enter shell environment, the Nix will install all dependencies needed for development.
+  #+begin_src sh
+    nix-shell
+  #+end_src
+
+  As CC3200 SDK is not freely available, nix-shell will abort and ask you to download the file manually and add it to nix-store -- follow instructions. Then re-run the command above.
+
+* Using shell
+  After dependencies are installed you'll find yourself in a custom bash shell (you can enter it with =nix-shell= whenever you want).
+
+  You can use all your development tools from there, =./build.sh=, =cmake=. Furthermore, a custom top-level Makefile is provided that propagates your commands to all targets (it also configures all targets appropriately). So just run =make= to build C SDK for all platforms.
+
+  If you want to run a single command within a shell, you can use =--run= option. For example:
+  #+begin_src sh
+    nix-shell --run make
+  #+end_src
+
+* Options
+  | Option             | Default value | Meaning                                       |
+  |--------------------+---------------+-----------------------------------------------|
+  | posixSupport       | true          | Host build with gcc. Goes to =build-posix=.   |
+  | clangSupport       | true          | Host build with clang. Goes to =build-clang=. |
+  | cc3200Support      | true          | CC3200. Goes to =build-cc3200=.               |
+  | esp8266Support     | true          | ESP8266. Goes to =build-esp8266=.             |
+  | raspberrypiSupport | true          | Raspberry Pi. Goes to =build-rpi=.            |
+  | testSupport        | true          | Add all tools for build verification.         |
+  | withTooling        | true          | Add tools for building docs.                  |
+  | withWerror         | false         | Enable =-Werror= for all builds.              |
+
+  You can override any option with the following command:
+  #+begin_src sh
+    nix-shell --arg optionName value
+  #+end_src
+
+  For example:
+  #+begin_src sh
+    nix-shell --arg withWerror true
+  #+end_src
+
+* Further reading
+  - [[http://lethalman.blogspot.com/2014/07/nix-pill-1-why-you-should-give-it-try.html][Nix pills series]]
+  - [[https://nixos.org/nixpkgs/manual/][Nixpkgs Contributors Guide]]

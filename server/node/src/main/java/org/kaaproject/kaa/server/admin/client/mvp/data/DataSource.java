@@ -856,9 +856,9 @@ public class DataSource {
         });
     }
     
-    public void updateCtlSchemaScope(CTLSchemaMetaInfoDto metaInfo,
-            final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
-        rpcService.updateCTLSchemaMetaInfoScope(metaInfo, 
+    public void promoteScopeToTenant(String applicationId, String fqn,
+                                     final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
+        rpcService.promoteScopeToTenant(applicationId, fqn,
                 new DataCallback<CTLSchemaMetaInfoDto>(callback) {
                     @Override
                     protected void onResult(CTLSchemaMetaInfoDto result) {
@@ -1216,6 +1216,17 @@ public class DataSource {
                     protected void onResult(Void result) {
                         eventBus.fireEvent(new DataEvent(
                                 TopicDto.class));
+                    }
+                });
+    }
+
+    public void removeEndpointProfileByKeyHash(String endpointKeyHash, final AsyncCallback<Void> callback){
+        rpcService.removeEndpointProfileByKeyHash(endpointKeyHash,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                        eventBus.fireEvent(new DataEvent(
+                                EndpointProfileDto.class));
                     }
                 });
     }

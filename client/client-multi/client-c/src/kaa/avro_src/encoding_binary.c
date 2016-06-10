@@ -21,7 +21,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <string.h>
-#include "../utilities/kaa_mem.h"
+#include "utilities/kaa_mem.h"
 #include "avro_private.h"
 
 #define MAX_VARINT_BUF_SIZE 10

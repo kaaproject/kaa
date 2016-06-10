@@ -205,12 +205,6 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantUserDto.class);
     }
 
-    public void deleteTenant(String userId) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("userId", userId);
-        restTemplate.postForLocation(restTemplate.getUrl() + "delTenant", params);
-    }
-
     public ApplicationDto editApplication(ApplicationDto application) throws Exception {
         return restTemplate.postForObject(restTemplate.getUrl() + "application", application, ApplicationDto.class);
     }
@@ -336,6 +330,12 @@ public class AdminClient {
         params.add("endpointGroupId", endpointGroupId);
         params.add("topicId", topicId);
         restTemplate.postForObject(restTemplate.getUrl() + "removeTopicFromEpGroup", params, Void.class);
+    }
+
+    public void removeEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointProfileKeyHash", endpointProfileKeyHash);
+        restTemplate.postForObject(restTemplate.getUrl() + "removeEndpointProfileByKeyHash", params, Void.class);
     }
 
     public NotificationDto sendNotification(NotificationDto notification, String notificationResource) throws Exception {
@@ -1027,8 +1027,11 @@ public class AdminClient {
         }
     }
 
-    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
-        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/updateScope", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("applicationId", applicationId);
+        params.add("fqn", fqn);
+        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/promoteScopeToTenant", params, CTLSchemaMetaInfoDto.class);
     }
 
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {

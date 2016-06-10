@@ -93,6 +93,8 @@ public interface KaaAdminService extends RemoteService {
 
     EndpointProfileDto updateServerProfile(String endpointKeyHash, int serverProfileVersion, RecordField serverProfileRecord) throws KaaAdminServiceException;
 
+    void removeEndpointProfileByKeyHash(String endpointKeyHash) throws KaaAdminServiceException;;
+
     List<TenantUserDto> getTenants() throws KaaAdminServiceException;
 
     TenantUserDto getTenant(String userId) throws KaaAdminServiceException;
@@ -409,7 +411,7 @@ public interface KaaAdminService extends RemoteService {
 
     boolean checkFqnExistsWithAppToken(String fqn, String tenantId, String applicationToken) throws KaaAdminServiceException;
 
-    CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) throws KaaAdminServiceException;
+    CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationToken, String fqn) throws KaaAdminServiceException;
 
     List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException;
 
