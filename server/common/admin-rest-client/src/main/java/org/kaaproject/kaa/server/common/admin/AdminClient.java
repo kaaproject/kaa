@@ -347,6 +347,12 @@ public class AdminClient {
         restTemplate.postForObject(restTemplate.getUrl() + "removeTopicFromEpGroup", params, Void.class);
     }
 
+    public void removeEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointProfileKeyHash", endpointProfileKeyHash);
+        restTemplate.postForObject(restTemplate.getUrl() + "removeEndpointProfileByKeyHash", params, Void.class);
+    }
+
     public NotificationDto sendNotification(NotificationDto notification, String notificationResource) throws Exception {
         return sendNotification(notification, getFileResource(notificationResource));
     }
@@ -1269,8 +1275,11 @@ public class AdminClient {
         }
     }
 
-    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
-        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/updateScope", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("applicationId", applicationId);
+        params.add("fqn", fqn);
+        return restTemplate.postForObject(restTemplate.getUrl() + "CTL/promoteScopeToTenant", params, CTLSchemaMetaInfoDto.class);
     }
 
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {
