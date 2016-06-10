@@ -32,14 +32,18 @@ The CT schema version must be explicitly defined in the type schema as shown bel
 
 ```json
 {
-  "type" : "record",
-  "name" : "SampleCT",
-  "namespace" : "org.kaaproject.sample",
-  "version" : 1,
-  "dependencies" : [{ "fqn": "org.kaaproject.sample.ReferencedCT", "version" : 2}]
-  "fields" : [
-    ...
-  ]
+   "type":"record",
+   "name":"SampleCT",
+   "namespace":"org.kaaproject.sample",
+   "version":1,
+   "dependencies":[
+      {
+         "fqn":"org.kaaproject.sample.ReferencedCT",
+         "version":2
+      }
+   ]   "fields":[
+      ...
+   ]
 }
 ```
 
