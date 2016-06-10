@@ -41,7 +41,8 @@ The CT schema version must be explicitly defined in the type schema as shown bel
             "fqn":"org.kaaproject.sample.ReferencedCT",
             "version":2
         }
-    ]    "fields":[
+    ],
+    "fields":[
         ...
     ]
 }
