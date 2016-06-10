@@ -24,7 +24,7 @@ sort_idx: 20
 ## Introduction
 
 This page will guide you through Kaa C SDK installation and compilation process for ESP8266 platform.
-All steps described here were tested on `Linux Ubuntu 14.04 x86_64`.
+All steps described here were tested on *Linux Ubuntu 14.04 x86_64*.
 
 ## Connecting ESP8266
 
@@ -73,7 +73,7 @@ The table below summarizes wiring scheme for both boot modes.
 
 ### NodeMCU
 
-Connecting NodeMCU is much simpler --- just connect it via micro-USB cable.
+Connecting NodeMCU is much simpler---just connect it via micro-USB cable.
 
 ## Installing requirements
 
@@ -112,14 +112,14 @@ You are free to set it to whatever you like.
         git checkout 169a436ce10155015d056eab80345447bfdfade5
         wget -O lib/libhal.a https://github.com/esp8266/esp8266-wiki/raw/master/libs/libhal.a
         cd $ESP_SDK_HOME/include/lwip/arch
-        sed -i 's:#include "c_types.h"//#include "c_types.h":' $ESP_SDK_HOME/include/lwip/arch/cc.h
+        sed -i 's:#include "c_types.h"://#include "c_types.h":' $ESP_SDK_HOME/include/lwip/arch/cc.h
 
 5. Install esptool.py
 
         cd $ESPRESSIF_HOME
         git clone https://github.com/RostakaGmfun/esptool.git
         cd esptool
-        sudo python setup.py install
+        python setup.py install --user
 
 ## Writing applications
 
@@ -164,17 +164,16 @@ Each ESP8266 application starts its execution form `user_init()` function.
 Here we initialize UART and set it's baudrate to 115200 baud:
 
 ```c
-    #include <freertos/FreeRTOS.h>
-    #include <freertos/task.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
-    #include "uart.h"
+#include "uart.h"
 
-    void user_init(void)
-    {
-        uart_init_new();
-        UART_SetBaudrate(UART0, 115200);
-        UART_SetPrintPort(UART0);
-    }
+void user_init(void)
+{
+    uart_init_new();
+    UART_SetBaudrate(UART0, 115200);
+    UART_SetPrintPort(UART0);
 ```
 
 Next, we should start a system task in `user_init()`, since we run in FreeRTOS environment:
@@ -185,57 +184,56 @@ Next, we should start a system task in `user_init()`, since we run in FreeRTOS e
     if (error < 0) {
         printf("Error creating main_task! Error code: %ld\r\n", error);
     }
+}
 ```
 
 In scope of this example, `main_task()` just calls `main()` function:
 
 ```c
-    static void main_task(void *pvParameters)
-    {
-        (void)pvParameters;
-        main();
-        for (;;);
-    }
+static void main_task(void *pvParameters)
+{
+    (void)pvParameters;
+    main();
+    for (;;);
+}
 ```
 
 The `main()` function is defined in `src/kaa_demo.c` and starts minimal Kaa client using Kaa C SDK:
 
 ```c
-    #include <stddef.h>
-    #include <kaa/kaa_error.h>
-    #include <kaa/kaa_context.h>
-    #include <kaa/platform/kaa_client.h>
+#include <stddef.h>
+#include <kaa/kaa_error.h>
+#include <kaa/kaa_context.h>
+#include <kaa/platform/kaa_client.h>
 
-    static void loop_fn(void *context)
-    {
-        for (int i = 0;i < 5;i++) {
-            printf("Hello, Kaa!\r\n");
-        }
+static void loop_fn(void *context)
+{
+    printf("Hello, Kaa!\r\n");
 
-        kaa_client_stop(context);
+    kaa_client_stop(context);
+}
+
+int main(void)
+{
+    printf("Initializing Kaa client\r\n");
+
+    kaa_client_t *kaa_client;
+
+    kaa_error_t error_code = kaa_client_create(&kaa_client, NULL);
+    if (error_code) {
+        printf("Failed to create Kaa client\r\n");
+        return 1;
     }
 
-    int main(void)
-    {
-        printf("Initializing Kaa client\r\n");
-
-        kaa_client_t *kaa_client;
-
-        kaa_error_t error_code = kaa_client_create(&kaa_client, NULL);
-        if (error_code) {
-            printf("Failed to create Kaa client\r\n");
-            return 1;
-        }
-
-        error_code = kaa_client_start(kaa_client, loop_fn, (void*)kaa_client, 0);
-        if (error_code) {
-            printf("Failed to start Kaa main loop\r\n");
-            return 1;
-        }
-
-        kaa_client_destroy(kaa_client);
-        return 0;
+    error_code = kaa_client_start(kaa_client, loop_fn, (void*)kaa_client, 0);
+    if (error_code) {
+        printf("Failed to start Kaa main loop\r\n");
+        return 1;
     }
+
+    kaa_client_destroy(kaa_client);
+    return 0;
+}
 ```
 
 ### Build system overview
@@ -295,8 +293,11 @@ We also need to use custom linker script.
 Below, two linker scripts, required for ESP8266 applications, are moved to binary directory so that linker can locate them.
 
 ```CMake
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.rom.addr.v6.ld ${CMAKE_BINARY_DIR})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.app.v6.ld ${CMAKE_BINARY_DIR})
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.rom.addr.v6.ld
+    ${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.app.v6.ld
+    DESTINATION
+    ${CMAKE_BINARY_DIR})
 ```
 
 Next, we should tell CMake what libraries we would like to link with.
@@ -375,7 +376,7 @@ If everything done correctly, invoke this command:
 
         sudo esptool.py write_flash 0x00000 build/kaa_demo-0x00000.bin 0x40000 build/kaa_demo-0x40000.bin
 
-This will take some time to flash, and, eventually, when the firmware starts, you will be presented with `Hello, Kaa!` message, printed 5 times.
+This will take some time to flash, and, eventually, when the firmware starts, you will be presented with `Hello, Kaa!` message.
 
 ## What's next?
 
