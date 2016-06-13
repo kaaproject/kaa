@@ -160,7 +160,7 @@ You can download both source and binary distributions for each demo project. A d
 <br>
 
 <p align="center">
-  <img src="attach/Sandbox.png" width="800" height="400">
+  <img src="attach/sandbox_demo_projects.png" width="800" height="400">
 </p>
 
 ## Admin UI
@@ -176,7 +176,7 @@ You can access Admin UI by clicking **Administrative console** at the top of the
 ## Avro UI
 
 You can access Avro UI by clicking **Avro UI sandbox console** at the top of the window.
-Refer to the [Avro UI guide]({{root_url}}Administration-guide/Tenants-and-applications-management)  for working instructions.
+Refer to the [Avro UI guide###](#) for working instructions.
 
 ## Configuration
 
@@ -205,12 +205,14 @@ Go to Kaa Sandbox web UI and in a upper right corner select "Management" menu it
 <br>
 
 <p align="center">
-  <img src="attach/managment_tab.png" width="800" height="500">
+  <img src="attach/sandbox_managment_tab.png" width="800" height="500">
 </p>
 
 </div><div id="Console" class="tab-pane fade" markdown="1">
 
 <br>
+
+Paste next line in Sandbox terminal:
 
 ```sh
 sudo /usr/lib/kaa-sandbox/bin/change_kaa_host.sh <new host/ip>
@@ -227,24 +229,24 @@ So let's run your first Kaa aplication. Navigate to Demo projects page and selec
 <br>
 
 <p align="center">
-  <img src="attach/sandbox1.png" width="800" height="400">
+  <img src="attach/sandbox_first_app_bundle_view.png" width="800" height="400">
 </p>
 
 <br>
 
-Than select application for your platform and follow instructions provided in application description.
+Than select application for your platform, download sources or binaries and follow instructions provided in application description.
 
 <br>
 
 <p align="center">
-  <img src="attach/sandbox2.png" width="800" height="400">
+  <img src="attach/sandbox_first_app_view.png" width="800" height="400">
 </p>
 
 <br>
 
 # Next steps
 
-After you get acquainted with Kaa Sandbox and its demo applications, you can take one step further: install Kaa into your environment and create your own Kaa applications! We will give you [something to start with***]({{root_url}}Programming-guide/Your-first-Kaa-application). Kaa installation is available in the single node mode or in the distributed mode, as described in the [Installation guide]({{root_url}}Administration-guide/System-installation).
+After you get acquainted with Kaa Sandbox and its demo applications, you can take one step further: install Kaa into your environment and create your own Kaa applications! We will give you [something to start with]({{root_url}}Programming-guide/Your-first-Kaa-application). Kaa installation is available in the single node mode or in the distributed mode, as described in the [Installation guide]({{root_url}}Administration-guide/System-installation).
 
 # Further reading
 
@@ -252,6 +254,6 @@ Use the following guides and references to make the most of Kaa.
 
 | Guide                                                          | What it is for                                                                                                                                                                                           |
 |----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Key system features]({{root_url}}Programming-guide/Key-system-features/)                           | Use this reference to learn about features and capabilities of Kaa \([Endpoint profiling***]({{root_url}}Programming-guide/Key-system-features/Endpoint-profiling/), [Events***](#), [Notifications***](#), [Logging***](#), and other features\). |
+| [Key platform features]({{root_url}}Programming-guide/Key-platform-features/)                           | Use this reference to learn about features and capabilities of Kaa \( [Endpoint profiling###](#), [Events###](#), [Notifications###](#), [Logging###](#), and other features\). |
 | [Installation guide]({{root_url}}Administration-guide/System-installation)                       | Use this guide to install and configure Kaa either on a single Linux node or in a cluster environment.                                                                                                    |
 | [Contribute To Kaa]({{root_url}}Customization-guide/How-to-contribute/)                       | Use this guide to learn how to contribute to Kaa project and which code/documentation style conventions we adhere to.                                                                                                   |
