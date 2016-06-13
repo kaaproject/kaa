@@ -19,10 +19,10 @@ There may be develop branches for releases after next; they took a form of `deve
 
 ## Clonning
 
-The main Kaa repository is located here: <https://github.com/kaaproject/kaa>. The best way to contribute is to fork it (click fork button at the page), then clone your new repo:
+The main Kaa repository is located here: <https://github.com/kaaproject/kaa>. To contribute to the Kaa you need to fork it (click fork button on the page), then clone your new repo:
 
 ```sh
-git clone git@github.com:your_github_name/kaa.git
+git clone git@github.com:<your_github_name>/kaa.git # Replace <your_github_name> with your github name.
 cd kaa
 ```
 
@@ -32,13 +32,7 @@ You may need to sync with the main repo, so it's good to add it to remotes:
 git remote add upstream https://github.com/kaaproject/kaa.git
 ```
 
-The rest of the guide assumes upstream points to `kaaproject/kaa`.
-
-## Merge requirements
-
-### Branch off from appropriate branch
-
-First of all, you should decide what branch you will base your changes on. Generally, that's the `develop` branch.
+The rest of the guide assumes the above command was executed, so `upstream` points to `kaaproject/kaa`.
 
 ## Merge requirements
 
@@ -53,7 +47,7 @@ The rules are next:
 - `develop-xxx` if your change shouldn't go to the next release. Usually, you know that; if you don't, that's a wrong branch.
 - `master` -- never.
 
-Take into account fix version field in Jira.
+Consult fix version field in Jira to see release version for your change.
 
 Note also that that's is a branch you will open pull request against later.
 
@@ -88,7 +82,7 @@ GitHub will automatically update your pull request.
 
 ### Tests
 
-All pull requests are automatically checked with Travis and Jenkins. If build fails any test, the pull request must not be merged.
+All pull requests are automatically checked with Travis and Jenkins. The build should pass all tests to get merged.
 
 ### Review
 

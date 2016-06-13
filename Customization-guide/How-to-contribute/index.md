@@ -11,7 +11,7 @@ sort_idx: 60
 
 We welcome you to join our rapidly growing community!
 
-As an open-source project, we thrive from contributions by people like to you to create the best possible platform for developing IoT solutions. We would love to see you mastering Kaa’s source code, however, writing code is not the only way to contribute. There are many other options, such as providing ideas, suggestions and comments in [Kaa forum](https://groups.google.com/forum/#!forum/kaaproject) discussions, testing features and new releases, and reviewing and improving the documentation. Every contribution counts -- below you will find more information on how you can play a role.
+As an open-source project, we thrive from contributions by people like you to create the best possible platform for developing IoT solutions. We would love to see you mastering Kaa's source code, however, writing code is not the only way to contribute. There are many other options, such as providing ideas, suggestions and comments in [Kaa forum](https://groups.google.com/forum/#!forum/kaaproject) discussions, testing features and new releases, and reviewing and improving the documentation. Every contribution counts -- below you will find more information on how you can play a role.
 
 ## Joining the forum
 You can join our [forum](https://groups.google.com/forum/#!forum/kaaproject) to provide feedback, make features and functionality suggestions, ask questions, help other community members, or get in touch with our engineering team.
