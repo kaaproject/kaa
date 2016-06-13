@@ -16,10 +16,10 @@
           {% assign postfix = ""  %}
         {% endif %}
         <li>
-          {% if val.nav == navurl %}
-            <a class="menu-selected li-{{ include.lvl }}" href="{{ val.url }}">{{ val.text }}{{ postfix }}</a>
+          {% if val.url == navurl %}
+            <a class="menu-selected li-{{ include.lvl }}" href="{{ val.url }}">{{ postfix }}{{ val.text }}</a>
           {% else %}
-            <a class="{{ li-class }} li-{{ include.lvl }}" href="{{ val.url }}">{{ val.text }}{{ postfix }}</a>
+            <a class="{{ li-class }} li-{{ include.lvl }}" href="{{ val.url }}">{{ postfix }}{{ val.text }}</a>
           {% endif %}  
         </li>
         {% if val.subitems and navurl contains val.url %}
