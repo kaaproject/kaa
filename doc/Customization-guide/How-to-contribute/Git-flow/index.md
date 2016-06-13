@@ -9,24 +9,26 @@ sort_idx: 10
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-We use a [GitHub flow](https://guides.github.com/introduction/flow/). That means, you should branch from the main repo and contribute back via pull requests. That's de facto standard workflow on GitHub—nothing fancy here.
+We use a [GitHub flow](https://guides.github.com/introduction/flow/). That means, you should branch from the main repository and contribute back via pull requests. That's de facto standard workflow on GitHub with a couple of additional rules.
 
-However, there is a thing you should know about Kaa branches. We have two main long-running branches: `master` and `develop`. `master` always points to the latest released version—**no pull requests are accepted to master**. `develop` is a main development branch; it reflects the latest development status. Usually, new changes should go there.
+## Main branches
+
+We have two main long-running branches: `master` and `develop`. `master` always points to the latest released version—**no pull requests are accepted to master**. `develop` is a main development branch; it reflects the latest development status. Usually, new changes should go there.
 
 There may be a number of short-living branches; most of them are used for specific jira tickets. However, `release-xxx` branches are special. They are pre-release branches which are used to test and stabilize everything before actual release. (Actual releases are tagged.) **Only bugfixes are accepted to release branches.**
 
-There may be develop branches for releases after next; they took a form of `develop-xxx` (e.g., `develop-1.0.0`). Usually, you should avoid committing to them and use branches for specific features.
+There may be develop branches for releases following after the next one; they took a form of `develop-xxx` (e.g., `develop-1.0.0`). Usually, you should avoid committing to them and use branches for specific features.
 
 ## Clonning
 
-The main Kaa repository is located here: <https://github.com/kaaproject/kaa>. To contribute to the Kaa you need to fork it (click fork button on the page), then clone your new repo:
+The main Kaa repository is located here: <https://github.com/kaaproject/kaa>. To contribute to the Kaa you need to fork it (click fork button on the page), then clone your new repository:
 
 ```sh
 git clone git@github.com:<your_github_name>/kaa.git # Replace <your_github_name> with your github name.
 cd kaa
 ```
 
-You may need to sync with the main repo, so it's good to add it to remotes:
+You may need to sync with the main repository, so it's good to add it to remotes:
 
 ```sh
 git remote add upstream https://github.com/kaaproject/kaa.git
@@ -60,11 +62,11 @@ git pull
 
 ### Opened against appropriate branch
 
-You must open the pull request against the branch you've branched from. That means no pull requests to master are accepted.
+You must open the pull request against the branch you've branched from.
 
 ### No merge conflicts
 
-The pull request shouldn't have have any merge conflicts. If there is one, you should resolve it and update pull request.
+Resolve any merge conflicts that may arise. (GitHub will display a warning on the pull request page.)
 
 You can do that with the following commands:
 
@@ -82,7 +84,7 @@ GitHub will automatically update your pull request.
 
 ### Tests
 
-All pull requests are automatically checked with Travis and Jenkins. The build should pass all tests to get merged.
+All pull requests are automatically checked with Travis and Jenkins. If any of the tests fails, fix it or describe why it can't be done.
 
 ### Review
 
@@ -90,6 +92,6 @@ The pull request must have at least two LGTM (Looks Good To Me) from the members
 
 ## Gatekeepers
 
-Gatekeeper is a person who is responsible for the final review and merge; he is also responsible for managing git repos. That is the only person who can write to master, develop and release branches.
+Gatekeeper is a person who is responsible for the final review and merge; he is also responsible for managing git repositories. That is the only person who can write to master, develop and release branches.
 
-If a pull request satisfies all merge requirements, one of gatekeepers must do a final review and merge.
+If a pull request satisfies all merge requirements, one of gatekeepers should do a final review and merge.
