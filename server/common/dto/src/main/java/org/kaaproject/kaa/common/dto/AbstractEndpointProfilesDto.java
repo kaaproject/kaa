@@ -19,6 +19,7 @@ package org.kaaproject.kaa.common.dto;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 public class AbstractEndpointProfilesDto implements Serializable {
 
@@ -26,6 +27,8 @@ public class AbstractEndpointProfilesDto implements Serializable {
 
     @JsonIgnore
     protected PageLinkDto pageLinkDto;
+
+    @ApiModelProperty(hidden = true)
     protected String next;
 
     public PageLinkDto getPageLinkDto() {

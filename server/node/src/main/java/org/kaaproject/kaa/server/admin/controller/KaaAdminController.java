@@ -26,6 +26,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -102,6 +108,9 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * The Class KaaAdminController.
  */
+@Api(value = "admin api",
+        description = "This api provides function for manage Kaa cluster",
+        basePath = "kaaAdmin/rest")
 @Controller
 @RequestMapping("api")
 public class KaaAdminController {
@@ -201,12 +210,22 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
+    @ApiOperation(value = "Returns endpoint profile by endpoint group ID",
+            notes = "Some notes")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Invalid ID supplied",
+                    responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class)),
+            @ApiResponse(code = 404, message = "Pet not found") })
     @RequestMapping(value = "endpointProfileByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(@RequestParam(value = "endpointGroupId") String endpointGroupId,
-            @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) String limit,
-            @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) String offset, HttpServletRequest request)
-            throws KaaAdminServiceException {
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
+            @RequestParam("endpointGroupId") @ApiParam(name = "Endpoint Group ID",
+            value = "the id of the endpoint group.") String endpointGroupId,
+            @RequestParam(value = "limit",  defaultValue = DEFAULT_LIMIT) @ApiParam(name = "limit",
+                                                                               value = "maximum number of shown profiles. (optional parameter)") String limit,
+            @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) @ApiParam(name = "offset",
+                                                                               value = "offset from beginning of profiles list. (optional parameter)") String offset,
+                                                                       HttpServletRequest request) throws KaaAdminServiceException {
         EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit,
                 offset);
         if (endpointProfilesPageDto.hasEndpointProfiles()) {
