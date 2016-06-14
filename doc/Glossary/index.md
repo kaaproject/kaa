@@ -208,6 +208,10 @@ A user-defined specification of the application data model that Kaa Profiling su
 
 <div id="t"/>
 
+## Tenant
+
+A separate business entity which contains its own endpoints, applications and users.
+
 ## Tenant admin
 
 A Kaa user who is responsible for managing applications, users and event class families. See also Kaa admin and tenant developer. Refer to Administration UI guide for more information.
