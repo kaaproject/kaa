@@ -33,6 +33,7 @@ kramdown:
   toc_levels:     1..6
   enable_coderay: false
   entity_output:  as_char
+  hard_wrap: false
 
 github:
   repo:           https://github.com/poole/hyde
