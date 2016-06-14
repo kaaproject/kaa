@@ -295,7 +295,7 @@ Use the following guides and references to make the most of Kaa.
 
 * **[Key platform features]({{root_url}}Programming-guide/Key-platform-features/)** - 
 Use this reference to learn about features and capabilities of Kaa
- \( [Endpoint profiling]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), 
+ \([Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), 
 [Events]({{root_url}}Programming-guide/Key-platform-features/Events/), 
 [Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), 
 [Logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), 
