@@ -2543,7 +2543,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public RecordField getDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
+    public RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             byte[] body = getFileContent(fileItemName);

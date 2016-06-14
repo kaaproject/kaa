@@ -1288,9 +1288,9 @@ public class DataSource {
                 });
     }
 
-    public void getDataFromFile(String schema, String fileItemName,
+    public void getConfigurationRecordDataFromFile(String schema, String fileItemName,
                                 final AsyncCallback<RecordField> callback) {
-        rpcService.getDataFromFile(schema, fileItemName,
+        rpcService.getConfigurationRecordDataFromFile(schema, fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
