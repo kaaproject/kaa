@@ -164,11 +164,11 @@ hr {
     /* padding-left:5px; */
 }
 
-.doctoc+ol, .doctoc+ul , .doctoc+ul ul, .doctoc+ol ol{
+#markdown-toc, #markdown-toc ol, #markdown-toc ul{
 	list-style-type: none !important;
 }
 
-.doctoc+ul ul, .doctoc+ol ol{
+#markdown-toc ol, #markdown-toc ul{
 	padding-left: 20px;
 }
 
