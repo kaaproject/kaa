@@ -17,7 +17,6 @@ This page describes Kaa C++ SDK build process on Linux system.
 **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
 
 ## Installing prerequisites
-
 **NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#quick-way-to-build).
 (Only applicable for x86\_64 platform.)
 
