@@ -8,17 +8,8 @@ sort_idx: 80
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-- [Documentation style guide](#documentation-style-guide)
-  - [Sentences and grammar](#sentences-and-grammar)
-  - [Headings and capitalization](#headings-and-capitalization)
-  - [Technical terms and abbreviations](#technical-terms-and-abbreviations)
-  - [Font conventions](#font-conventions)
-  - [Code formatting](#code-formatting)
-  - [Page structure](#page-structure)
-  - [Markdown formatting](#markdown-formatting)
-  - [Jekyll formatting](#jekyll-formatting)
-- [Documentation contribution](#documentation-contribution)
-  - [Documentation preview](#documentation-preview)
+* TOC
+{:toc}
 
 This guide introduces documentation conventions applicable to the Kaa project. The intent of this guide is to unify the look and feel of the documentation, make navigation predictable, usage and contribution simple.
 
@@ -37,11 +28,11 @@ This guide introduces documentation conventions applicable to the Kaa project. T
 ## Headings and capitalization
 * Capitalize only the first word in titles and headings.
 * Do not use capitalization for no apparent reason. Use lowercase unless uppercase is justified.
-* Use Heading 4 (e.g. ####) as the last level heading.
+* Use Heading 4 (i.e. `####`) as the last level heading. All other levels are not displayed in table of contents.
 
 ## Technical terms and abbreviations
-* Spell out a technical abbreviation on its first mention on the page.
-* Ensure that an important technical term or abbreviation is included in  [Glossary]({{{root_url}}Glossary).
+* Spell out an acronym on its first mention on the page, e.g. *CTL* (Common Type Library).
+* Ensure that an important technical term or abbreviation is included in  [Glossary]({{root_url}}Glossary).
 
 ## Font conventions
 * Use **bold** for the titles of windows and dialog boxes; for the names of commands, attributes, constants, methods, fields, predefined classes, databases, events, UI elements; for the user input.
@@ -51,7 +42,7 @@ This guide introduces documentation conventions applicable to the Kaa project. T
 
 ## Code formatting
 * Format all JSON files with this [online tool](https://jsonformatter.curiousconcept.com/), "4 space tab" profile.
-* Code example should follow [Code style]({{{root_url}}Customization-guide/Code-style/) for the given language.
+* Code example should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.). See detailed description in [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example, whenever available.
 * Start the schema namespace, which we use for examples and documentation purposes, with the org.kaaproject.kaa.schema.sample prefix.
@@ -66,14 +57,16 @@ This guide introduces documentation conventions applicable to the Kaa project. T
 
 ## Markdown formatting
 * Use [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/) for all documentation.
+* Start every sentence with a new line to make future merging easier.
 * Do not use Emoji.
-* Use next template for TOC.
+* Use the following template to auto-generate the table of page contents:
 
+{% raw %}
   ```
-  - [Documentation style guide](#documentation-style-guide)
-    - [Sentences and grammar](#sentences-and-grammar)
-    - [Word choice](#word-choice)
+  * TOC
+  {:toc}
 ```
+{% endraw %}
 
 * Use pure Markdown without HTML tags when possible.
 * Markdown table can be enhanced with [Jekyll](https://jekyllrb.com/).
@@ -118,7 +111,7 @@ permalink: /:path/
 ---
 ```
 
-* Capture root_url to refer another page.
+* Capture `root_url` to refer another page.
 
 {% raw %}
   ```
@@ -127,7 +120,7 @@ permalink: /:path/
 ```
 {% endraw %}
 
-* Refer to another page through root_url , e.g.,  [Glossary]({{{root_url}}Glossary).
+* Refer to another page through `root_url`, e.g.,  [Glossary]({{root_url}}Glossary).
 
 {% raw %}
   ```
@@ -156,19 +149,19 @@ permalink: /:path/
 <div class="tab-content">
 <div id="Ubuntu" class="tab-pane fade in active" markdown="1" >
 
-### Ubuntu
+##### Ubuntu
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
 </div><div id="Fedora" class="tab-pane fade" markdown="1" >
 
-### Fedora
+##### Fedora
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
 
 </div><div id="CentOS" class="tab-pane fade" markdown="1" >
 
-### CentOS
+##### CentOS
 
 Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
@@ -186,19 +179,19 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 <div class="tab-content">
 <div id="Ubuntu" class="tab-pane fade in active" markdown="1" >
 
-### Ubuntu
+##### Ubuntu
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
 </div><div id="Fedora" class="tab-pane fade" markdown="1" >
 
-### Fedora
+##### Fedora
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
 
 </div><div id="CentOS" class="tab-pane fade" markdown="1" >
 
-### CentOS
+##### CentOS
 
 Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
