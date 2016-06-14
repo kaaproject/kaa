@@ -295,8 +295,11 @@ Use the following guides and references to make the most of Kaa.
 
 * **[Key platform features]({{root_url}}Programming-guide/Key-platform-features/)** - 
 Use this reference to learn about features and capabilities of Kaa
- \( [Endpoint profiling###](#), [Events###](#), [Notifications###](#), 
-[Logging###](#), and other features\).
+ \( [Endpoint profiling]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), 
+[Events]({{root_url}}Programming-guide/Key-platform-features/Events/), 
+[Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), 
+[Logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), 
+and other features\).
 * **[Installation guide]({{root_url}}Administration-guide/System-installation)** - 
 Use this guide to install and configure Kaa either on a single Linux node or
  in a cluster 
