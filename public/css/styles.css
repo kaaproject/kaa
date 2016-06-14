@@ -465,6 +465,10 @@ img {
     display: block;
 }
 
+.content img{
+	cursor: pointer;
+}
+
 blockquote{
 	border-left: 5px solid #F7AD41;
     background: #FFF2DF;
