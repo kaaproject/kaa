@@ -1220,6 +1220,17 @@ public class DataSource {
                 });
     }
 
+    public void removeEndpointProfileByKeyHash(String endpointKeyHash, final AsyncCallback<Void> callback){
+        rpcService.removeEndpointProfileByKeyHash(endpointKeyHash,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                        eventBus.fireEvent(new DataEvent(
+                                EndpointProfileDto.class));
+                    }
+                });
+    }
+
     public void editTopic(
             TopicDto topic,
             final AsyncCallback<TopicDto> callback) {

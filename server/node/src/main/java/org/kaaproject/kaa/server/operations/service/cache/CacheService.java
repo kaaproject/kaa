@@ -257,6 +257,15 @@ public interface CacheService {
     PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
     /**
+     *
+     * Remove key from hash
+     *
+     * @param hash
+     * @param endpointKey
+     */
+    void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
+
+    /**
      * Setter for test purpose only.
      *
      * @param applicationService the new application service
