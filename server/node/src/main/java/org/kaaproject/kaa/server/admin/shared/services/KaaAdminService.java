@@ -297,7 +297,7 @@ public interface KaaAdminService extends RemoteService {
 
     RecordField getRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
 
-    RecordField getDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
+    RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
 
     void sendNotification(NotificationDto notification, RecordField notificationData) throws KaaAdminServiceException;
 

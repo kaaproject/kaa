@@ -71,7 +71,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     public RecordPanel(String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly, boolean customLoader) {
         this(null, title, hasErrorMessage, optional, readOnly);
         if (customLoader) {
-            formDataLoader = new CustomFormDataLoader();
+            formDataLoader = new ConfigurationFormDataLoader();
         }
     }
 
@@ -243,13 +243,13 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         
     }
 
-    private class CustomFormDataLoader implements FormDataLoader {
+    private class ConfigurationFormDataLoader implements FormDataLoader {
 
         @Override
         public void loadFormData(String fileItemName,
                                  final AsyncCallback<RecordField> callback) {
             String schema = recordFieldWidget.getValue().getSchema();
-            KaaAdmin.getDataSource().getDataFromFile(schema, fileItemName,
+            KaaAdmin.getDataSource().getConfigurationRecordDataFromFile(schema, fileItemName,
                     new AsyncCallback<RecordField>() {
                         @Override
                         public void onSuccess(RecordField result) {
