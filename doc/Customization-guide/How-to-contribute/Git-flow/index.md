@@ -42,7 +42,7 @@ The rest of the guide assumes the above command was executed, so `upstream` poin
 
 First of all, you should decide what branch you will base your changes on. Generally, that's the `develop` branch.
 
-The rules are next:
+The rules are the following:
 
 - `release-xxx` if your change is a **bugfix** that should go to the release *xxx* and there is such branch. That's either updates to patch releases or pre-release hotfixes.
 - `develop` if you want your change in the next minor version bump. (Minor is a second version component. e.g. 0.8.1 -> 0.9.0 is a minor bump. Note also that 0.9.1 -> 1.0.0 is a minor bump as well.)
@@ -94,4 +94,4 @@ The pull request must have at least two LGTM (Looks Good To Me) from the members
 
 Gatekeeper is a person who is responsible for the final review and merge; he is also responsible for managing git repositories. That is the only person who can write to master, develop and release branches.
 
-If a pull request satisfies all merge requirements, one of gatekeepers should do a final review and merge.
+If the pull request satisfies all merge requirements, one of gatekeepers should do a final review and merge.
