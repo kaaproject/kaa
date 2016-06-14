@@ -10,7 +10,9 @@ sort_idx: 15
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [High-level architecture](#high-level-architecture)
+- [Kaa cluster](#kaa-cluster)
+- [Endpoint SDK](#endpoint-sdk)
+- [Kaa instance](#kaa-instance)
 - [Further reading](#further-reading)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -38,7 +40,7 @@ A system administrator can enable or disable any of the services on a particular
 
 ## Control service
 
-Kaa Control service is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering corresponding notifications to Operations services.
+Kaa Control service is responsible for managing overall system data, processing [API calls]({{root_url}}Programming-guide/Server-REST-APIs/) from the web UI and external integrated systems, and delivering corresponding notifications to Operations services.
 Control service maintains an up-to-date list of available Operations services by continuously receiving this information from ZooKeeper.
 Additionally, Control service runs embedded Administrative web UI component, which uses Control service APIs to provide platform users with a convenient web-based interface for managing tenants, user accounts, applications, application data, etc.
 
@@ -89,8 +91,8 @@ Kaa officially supports [Apache Cassandra](http://cassandra.apache.org/) and [Mo
 
 ## Internode communications
 
-Kaa services use Apache Thirft to communicate across processes and nodes.
-Each service obtains metadata about its siblings using Apache Zookeeper.
+Kaa services use [Apache Thirft](https://thrift.apache.org/) to communicate across processes and nodes.
+Each service obtains metadata about its siblings using [Apache ZooKeeper](https://zookeeper.apache.org/).
 This metadata contain information about Thrift host and port.
 
 ## High availability and scalability
@@ -114,16 +116,17 @@ Doing so requires setting of a custom load balancing strategy.
 
 # Endpoint SDK
 
-TODO: explain in more detail about SDKs.
-The Kaa endpoint SDK provides functionality for communicating with the Kaa server, managing data locally in the client application, as well as provides integration APIs. 
+The Kaa endpoint SDK is a library which provides communication, data marshalling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. [C-based](Using-Kaa-C-endpoint-SDK), [C++-based](Using-Kaa-Cpp-endpoint-SDK), [Java-based](Using-Kaa-Java-endpoint-SDK), [Android-based](), [Objective-C-based](Using-Kaa-Objective-C-endpoint-SDK)).
 The client SDK abstracts the communication protocol, data persistence, and other implementation details that may be specific for any concrete solution based on Kaa.
+
+Endpoint SDK helps to save time on development routine and allows to concentrate on your business logic.
 
 
 # Kaa instance
 
 <img src="attach/logical-concepts.png" width="1382" height="703" style="display: block;margin-left: auto;margin-right: auto;">
 
-*Kaa instance* (interchangeable with *Kaa deployment*) is a particular installation of the Kaa platform, either as a single node, or a clustered deployment.
+*Kaa instance* (interchangeable with *Kaa deployment*) is a particular installation of the Kaa platform, either as a [single node]({{root_url}}Administration-guide/System-installation/Single-node-installation/), or a [clustered deployment]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
 
 An *application* in Kaa defines the set of data models, the corresponding flows among the endpoints and Kaa server, and processing rules.
 Kaa applications are agnostic to the specific target platform, operating system, or the client software implementation.
@@ -137,18 +140,18 @@ Practically speaking, an endpoint is a specific Kaa client registered (or waitin
 Depending on the use case, different level physical entities may be considered as endpoints.
 In the industrial setting, a single air quality sensor may represent an individual endpoint, while in a fleet tracking application, a truck (despite carrying on board multiple sensors reporting data) may be a more appropriate entity to be declared as an endpoint.
 
-In order to be able to distinguish endpoints not only by their *endpoint IDs*, but also associated properties, Kaa introduces a concept of *endpoint profiles*.
+In order to be able to distinguish endpoints not only by their *endpoint IDs*, but also associated properties, Kaa introduces a concept of [*endpoint profiles*]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/).
 Endpoint profile is a custom structured data set that contains characteristics of a specific endpoint within an application.
 Profiles are comprised of the *client-side*, *server-side*, and *system* part.
 Client-side profile part contents is provided by the endpoint; server-side and system parts are managed by the server.
 Structure of client-side or server-side endpoint profile is defined by application developer by defining a corresponding (versioned) *data schema*.
 Data schemas play an important role in virtually every aspect of Kaa functionality.
 
-Profile data is used to attribute endpoints to *endpoint groups*: independent managed entities defined via *profile filters*.
+Profile data is used to attribute endpoints to [*endpoint groups*]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/): independent managed entities defined via *profile filters*.
 Those endpoints whose profiles match the profile filters of a specific endpoint group automatically become members of this group. 
 There is no restriction on the amount of groups an endpoint may be a member of at the same time.
 
-Endpoints may also be associated with *owners*.
+Endpoints may also be associated with [*owners*]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/).
 Depending on the application, owners may be persons, groups of people, or organizations.
 
 # Further reading
