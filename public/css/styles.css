@@ -153,22 +153,32 @@ hr {
 
 #sidebar {
     padding:0px;
-	padding-top:15px;
+	/* padding-top:15px; */
 }
 
 #sidebar, #sidebar a, #sidebar-footer a {
-    color:#ffffff;
-    background-color:#444444;
+    color:#ccc;
+    background-color:#4b4b4b;
+	font-weight: 800;
 	/* text-shadow:0 0 2px #3c3c3c; */
     /* padding-left:5px; */
 }
+
+.doctoc+ol, .doctoc+ul , .doctoc+ul ul, .doctoc+ol ol{
+	list-style-type: none !important;
+}
+
+.doctoc+ul ul, .doctoc+ol ol{
+	padding-left: 20px;
+}
+
 #sidebar .nav li>a:hover {
     background-color:#f7ad41;
     color:#393939;
 }
 
 #sidebar .nav > li > .dropdown-menu {
-    background-color:#444444
+    background-color:#4b4b4b;
 }
 
 #sidebar .nav > li> .menu-selected {
@@ -178,7 +188,7 @@ hr {
 
 #sidebar .nav > li> .menu-has-child {
     /* background-color:#3c3c3c; */
-    color:#ffffff;
+    color:#ccc;
 }
 
 #sidebar .nav > li> .li-0 {padding-left:5px;}
@@ -189,7 +199,7 @@ hr {
 #sidebar .nav > li> .li-5 {padding-left:55px;}
 
 #sidebar .nav > .sidebar-header{
-    background-color:#444444;
+    /* background-color:#444444; */
     color:#f7ad41;
 }
 
@@ -355,11 +365,14 @@ small.text-muted {
     position: absolute;
     top: 0;
     width: 33%;
-    margin-left: 5px;
   }
 
   #sidebar, #sidebar a, #sidebar-footer a {
-    padding-left:3px;
+    padding-left:0px;
+  }
+  
+  #sidebar .nav a{
+	padding-left: 10px;
   }
 }
 
@@ -452,6 +465,11 @@ img {
     display: block;
 }
 
+blockquote{
+	border-left: 5px solid #F7AD41;
+    background: #FFF2DF;
+}
+
 /* tables */
 table{
 	margin: 20px auto;
@@ -493,6 +511,11 @@ pre, .nav-tabs>li>a {
 .logo img{
 	transform: initial;
 	max-width: 100% !important;
+	margin: 0 auto;
+}
+
+#sidebar .logo{
+	padding: 0px 15px;
 }
 
 .logo:hover{
@@ -507,10 +530,22 @@ pre, .nav-tabs>li>a {
 
 a.dropdown-toggle{
 	text-align: center;
+	max-width: 164px;
+    margin: 0 auto;
+    background-color: #434343 !important;
+	color: #f7ad41 !important;
+	margin-bottom: 10px;
+	font-weight: 800;
 }
 /* sidebar drop-down */
 
 /* navigation*/
+#sidebar h2, #sidebar h4{
+	color: #f7ad41;
+	text-align: center;
+	font-weight: 800;
+}
+
 #sidebar .nav>li{
 	text-align: initial;
 }
@@ -541,6 +576,10 @@ a.dropdown-toggle{
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
 	margin: 0px 4px 0px;
+}
+
+.dropdown-toggle .caret{
+	margin: 4px 4px 0px;
 }
 /* navigation*/
 /* sidebar*/
