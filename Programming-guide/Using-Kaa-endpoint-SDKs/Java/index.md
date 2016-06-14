@@ -143,13 +143,9 @@ In the end, when you no longer need client, call <code>stop()</code> to close co
 In order to connect to server Kaa client generate public and private key and save them in appropriate files &ndash; _key.private_ and _key.public_.
 Also client create file _state.properties_ that contains important information about communication with server.
 
-***
-**Note**
-    As default all those files are created in folder where application running, but you can specify folder explicitly using <code>KaaClientProperties</code>.
-    Just set path to your folder using <code>setWorkingDirectory()</code> and then pass client properties object as argument to <code>DesktopKaaPlatformContext</code> constructor.
+>**NOTE:** As default all those files are created in folder where application running, but you can specify folder explicitly using <code>KaaClientProperties</code>.
+Just set path to your folder using <code>setWorkingDirectory()</code> and then pass client properties object as argument to <code>DesktopKaaPlatformContext</code> constructor.
     
-***
-
 
 ## Comparing platforms
 The main difference between android and desktop client lies in KaaPlatformContext implementation. Only this entity distinguishes these platforms.
@@ -194,10 +190,7 @@ on <code>KaaDataChannel</code> (<code>DefaultBootstrapChannell</code>). And fina
  </center>
 <br>
 
-***
-**Note**
-  <code>SyncWorker</code> &ndash; class that extends <code>Thread</code> and responsible for serving ongoing tasks from client to channels. 
-  ChannelManager creates for each channel new instance of this class.
+>**NOTE:** <code>SyncWorker</code> &ndash; class that extends <code>Thread</code> and responsible for serving ongoing tasks from client to channels. 
+ChannelManager creates for each channel new instance of this class.
 
-***
 
