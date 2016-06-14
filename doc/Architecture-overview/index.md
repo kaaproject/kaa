@@ -7,15 +7,9 @@ sort_idx: 15
 
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Kaa cluster](#kaa-cluster)
-- [Endpoint SDK](#endpoint-sdk)
-- [Kaa instance](#kaa-instance)
-- [Further reading](#further-reading)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+* TOC
+{:toc}
 
 First things first, let us take a look at some fundamental concepts necessary for understanding the Kaa architecture and the logical design.
 
