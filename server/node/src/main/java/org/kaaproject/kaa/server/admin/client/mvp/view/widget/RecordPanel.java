@@ -68,6 +68,13 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         this(config, true, title, hasErrorMessage, optional, readOnly);
     }
 
+    public RecordPanel(String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly, boolean customLoader) {
+        this(null, title, hasErrorMessage, optional, readOnly);
+        if (customLoader) {
+            formDataLoader = new CustomFormDataLoader();
+        }
+    }
+
     public RecordPanel(AvroWidgetsConfig config, boolean showCaption, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
         this.showCaption = showCaption;
         this.optional = optional;
@@ -234,6 +241,28 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
                     });
         }
         
+    }
+
+    private class CustomFormDataLoader implements FormDataLoader {
+
+        @Override
+        public void loadFormData(String fileItemName,
+                                 final AsyncCallback<RecordField> callback) {
+            String schema = recordFieldWidget.getValue().getSchema();
+            KaaAdmin.getDataSource().getDataFromFile(schema, fileItemName,
+                    new AsyncCallback<RecordField>() {
+                        @Override
+                        public void onSuccess(RecordField result) {
+                            callback.onSuccess(result);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        }
+
     }
     
     public static interface FormDataLoader {
