@@ -181,7 +181,7 @@ It is also important to provide your class with the @KaaPluginConfig annotation.
 **NOTE**  
 A log appender descriptor is optional if you are going to configure your log appenders using only REST API.
 
-The following code example illustrates the implementation of a log appender descriptor. 
+The following code example illustrates the implementation of a log appender descriptor.
 
 ```Java
 package org.kaaproject.kaa.sample.appender.config;
@@ -259,7 +259,7 @@ To implement a custom transport, you need to complete the following steps.
 
 We recommend that you use one of the existing [transport implementations](https://github.com/kaaproject/kaa/tree/v0.9.0/server/transports) as a reference and also review the [transports design reference999](999).
 
-Please note that once a new transport is implemented, you will most likely need to [implement a corresponding transport channel](#creating-custom-transport-channel) for one or multiple endpoint SDK platforms. 
+Please note that once a new transport is implemented, you will most likely need to [implement a corresponding transport channel](#creating-custom-transport-channel) for one or multiple endpoint SDK platforms.
 
 ## Transport configuration schema
 
@@ -304,7 +304,7 @@ A transport descriptor should implement the [TransportConfig](https://github.com
 
 **Note:** all transport descriptors should be inside the `org.kaaproject.kaa.server.transport` package or its subpackages.
 
-The following example illustrates a transport descriptor implementation based on the schema defined in the previous section. 
+The following example illustrates a transport descriptor implementation based on the schema defined in the previous section.
 
 ```Java
 package org.kaaproject.kaa.server.transport.custom.config;
@@ -390,7 +390,7 @@ public class CustomTransportConfig implements TransportConfig {
 
 All transport implementations should implement the [Transport](https://github.com/kaaproject/kaa/tree/v0.9.0/server/common/transport-shared/src/main/java/org/kaaproject/kaa/server/transport/Transport.java) interface. We recommend extending [AbstractKaaTransport](https://github.com/kaaproject/kaa/tree/v0.9.0/server/common/transport-shared/src/main/java/org/kaaproject/kaa/server/transport/AbstractKaaTransport.java) for convenience.
 
-The following example illustrates a transport implementation based on the defined transport configuration schema. 
+The following example illustrates a transport implementation based on the defined transport configuration schema.
 
 ```Java
 package org.kaaproject.kaa.server.transports.tcp.transport;
@@ -566,7 +566,7 @@ Notice that in java sdk, after adding new data channel multiplexer and demultipl
 
 To send a request to the server and get a response please follow the steps described below.
 
-## Step 1 - Get an instance of KaaDataMultiplexer 
+## Step 1 - Get an instance of KaaDataMultiplexer
 
 To prepare a request to the server, you have to use a data multiplexer that combines and serializes requests from different Kaa services.
 
@@ -676,7 +676,7 @@ Insert the data returned  by compileRequest into your transfer protocol and send
 
 The response  is received as a byte array, and it contains serialized responses for all the services from which requests were sent.
 
-## Step 4 - Get an instance of KaaDataDemultiplexer 
+## Step 4 - Get an instance of KaaDataDemultiplexer
 
 To deserialize the received response and provide a response to each service, you have to use a data demultiplexer.
 
@@ -834,10 +834,10 @@ A user verifier descriptor provides Kaa with the information on how to locate an
 
 It is also important to provide your class with the @KaaPluginConfig annotiation. This annotation helps Kaa Admin UI to find all available user verifiers in the class path.
 
-**NOTE**  
+**NOTE**
 A user verifier descriptor is optional if you are going to configure your user verifiers using only REST API.
 
-The following code example illustrates the implementation of a user verifier descriptor. 
+The following code example illustrates the implementation of a user verifier descriptor.
 
 ```Java
 package org.kaaproject.kaa.sample.verifier.config;
