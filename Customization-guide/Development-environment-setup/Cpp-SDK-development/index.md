@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Cpp SDK development
+title: C++ SDK development
 permalink: /:path/
 nav: /:path/Customization-guide/Development-environment-setup/Cpp-SDK-development
 sort_idx: 30
