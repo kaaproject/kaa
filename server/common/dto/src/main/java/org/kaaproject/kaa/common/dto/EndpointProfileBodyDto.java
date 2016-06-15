@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -28,6 +30,7 @@ public class EndpointProfileBodyDto implements Serializable {
     private String serverSideProfile;
     private int clientSideProfileVersion;
     private int serverSideProfileVersion;
+    @JsonIgnore
     private String appId;
 
     public EndpointProfileBodyDto() {}
