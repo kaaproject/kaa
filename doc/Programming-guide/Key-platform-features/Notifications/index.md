@@ -92,8 +92,7 @@ Assuming that you have created custom endpoint groups from the [Using endpoint g
         <td>false</td>                  
         <td>false</td>                    
         <td>false</td>           
-        <
-        td>false</td>                     
+        <td>false</td>                     
     </tr>
 </table>
 
