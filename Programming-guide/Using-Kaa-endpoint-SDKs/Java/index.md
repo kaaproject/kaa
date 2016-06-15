@@ -7,15 +7,18 @@ sort_idx: 40
 ---
 **Table of Contents**
 
-- [Minimum Requirements](#minimum-requirements)
-- [Using endpoint SDK in your appication](#using-endpoint-sdk-in-your-appication)
+* TOC
+{:toc}
 
-# What you’ll need
+# Prerequisites 
 
 - A favorite text editor or IDE
 - JDK 1.7 or later
 
-# Using endpoint SDK in your appication
+# Using endpoint SDK in your application
+
+This guide describes about how to configure environment to start using Kaa SDK in you application, base API overview of java client and comparison desktop and android SDKs. 
+Java client SDK should be preferred if you want to run your application on different platforms or you are going to develop android application.
 
 ## Preparing environment 
 
@@ -58,7 +61,7 @@ dependencies {
 </div>
 </div>
 
-Also you need add following dependencies to enable logging:
+Also you need add the following dependencies to enable logging:
 
 
 <ul class="nav nav-tabs">
@@ -105,9 +108,9 @@ After configuring all this stuff you can start to write your client.
 
 ## Base API overview
 
-First, you have to create <code>KaaClient</code>. SDK provide you class factory  <code>Kaa</code> that responsible for creating new instance of client.
+First, you have to create an instance of <code>KaaClient</code>. SDK provides you with class factory  <code>Kaa</code> which is responsible for creating new instance of client.
 
-So, hear example code how to do this :
+So, here is an example code showing how it should be done:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java">Java</a></li>
@@ -131,25 +134,28 @@ KaaClient client = Kaa.newClient(new AndroidKaaPlatformContext(), new SimpleKaaC
 </div>
 </div>
 
-Static method <code>newClient()</code> received two mandatory arguments &ndash; implementation of platform context and state listener.
+Static method <code>newClient()</code> received two mandatory arguments &ndash; platform specific context and 
+implementation of the client state listener interface.
 
-First argument is <code>DesktopKaaPlatformContext</code> for desktop or <code>AndroidKaaPlatformContext</code> for mobile applications.
+The first argument can be either <code>DesktopKaaPlatformContext</code> for java desktop or <code>AndroidKaaPlatformContext</code> for android applications.
 
-Second argument is out of the box implementation of <code>KaaClientStateListener</code> &ndash; <code>SimpleKaaClientStateListener</code> that just logged current state of Kaa client. 
-After getting the client, call method <code>start()</code> to begin communication with server. Now, you can use features provided by Kaa platform like data collection, notifications and etc.
-In the end, when you no longer need client, call <code>stop()</code> to close communication with server. 
+In this example the second argument is default implementation of <code>KaaClientStateListener</code> &ndash; <code>SimpleKaaClientStateListener</code> which performs only logging of client state changes. 
+When the new instance of the client is created the method <code>start()</code> should be invoked in order to start client operation and communication with server.Starting from this point you can use 
+features API provided by Kaa platform such as data collection, notifications and etc. In the end, when the client is no longer needed, call <code>stop()</code> in order to release resources and stop 
+communication with the server.
  
 ## State of client
-In order to connect to server Kaa client generate public and private key and save them in appropriate files &ndash; _key.private_ and _key.public_.
-Also client create file _state.properties_ that contains important information about communication with server.
+When the client is started for the first time it generates private/public key pair and save them in appropriate files &ndash; _key.private_ and _key.public_.
+These keys is used afterwards to maintain secure communication with the server.
+Also client creates _state.properties_ file used for persistence of the parameters which reflect client state during operation with the server.
 
->**NOTE:** As default all those files are created in folder where application running, but you can specify folder explicitly using <code>KaaClientProperties</code>.
-Just set path to your folder using <code>setWorkingDirectory()</code> and then pass client properties object as argument to <code>DesktopKaaPlatformContext</code> constructor.
+>**NOTE:** In case of Java desktop application by default all these files are created in the working directory, but you are able to specify different folder using <code>KaaClientProperties</code>. 
+Set path to the new folder using <code>setWorkingDirectory()</code> method and then pass client properties instance as argument of <code>DesktopKaaPlatformContext</code> constructor.
     
 
 ## Comparing platforms
-The main difference between android and desktop client lies in KaaPlatformContext implementation. Only this entity distinguishes these platforms.
-Below the table describing two implementation of this interface:
+The main difference between android and desktop client is reflected in KaaPlatformContext implementation. Only this entity distinguishes these endpoint SDKs.
+The comparison table showing key differences between two implementations of this interface is presented below:
 
 |Method/Platform|Desktop|Android| Description |
 |---|---|---|
@@ -161,36 +167,6 @@ Below the table describing two implementation of this interface:
 |getProperties| the same  | the same  | Return KaaClientProperties that holds important information of client SDK | 
 |needToCheckClientState| Return true  | Return false | Off/on checking of feasibility of the transition between lifecycle states |
 
-## Architecture overview 
 
-### Lifecycle of client
-Diagram below describe lifecycle of Kaa client &ndash; allowed transitions between states.
-
-<center>
-<img src="img/lifecycle.png"/>
-</center>
-
-### High level overview of Kaa client structure
-All calls of Kaa client APIs go through several layers those can be presented by the next scheme:
-
-<br>
- <center>
- <img src="img/layers.png"/>
- </center>
-<br>
-
-When we call some method on client for example <code>start()</code> Kaa client delegate responsibility for processing call to appropriate _manager_,
-in our case &ndash; <code>BootstrapManager</code>. The manager calls corresponding method of _BootstrapTransport_ in turn. Next, the transport address to 
-<code>KaaChannelManager</code> that creates <code>SyncTask</code> and put it in queue from which <code>SyncWorker</code> will take **task** and call <code>sync()</code>
-on <code>KaaDataChannel</code> (<code>DefaultBootstrapChannell</code>). And finally, channel makes request to server.
-
-<br>
- <center>
- <img src="img/sequence.png"/>
- </center>
-<br>
-
->**NOTE:** <code>SyncWorker</code> &ndash; class that extends <code>Thread</code> and responsible for serving ongoing tasks from client to channels. 
-ChannelManager creates for each channel new instance of this class.
 
 
