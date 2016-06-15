@@ -1,6 +1,6 @@
 # Dependencies
 markdown:         kramdown
-highlighter:      pygments
+highlighter:      rouge
 
 # Permalinks
 permalink:        pretty
@@ -34,6 +34,7 @@ kramdown:
   enable_coderay: false
   entity_output:  as_char
   hard_wrap: false
+  syntax_highlighter: rouge
 
 github:
   repo:           https://github.com/poole/hyde
