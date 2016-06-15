@@ -9,15 +9,12 @@ sort_idx: 10
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Creating Cassandra log appender with Admin UI](#creating-cassandra-log-appender-with-admin-ui)
-* [Creating Cassandra log appender with REST API](#creating-cassandra-log-appender-with-rest-api)
-  * [Configuration](#configuration)
-  * [Administration](#administration)
-* [Playing with Cassandra log appender](#playing-with-cassandra-log-appender)
+* TOC
+{:toc}
 
 The Cassandra log appender is responsible for transferring logs from the Operations server to the Cassandra database.
 
-### Creating Cassandra log appender with Admin UI
+# Creating Cassandra log appender with Admin UI
 
 The easiest way to create a Cassandra log appender for your application is by using Admin UI.
 
@@ -31,12 +28,12 @@ To create a log appender do the following:
 
 <img src="attach/create-cassandra-log-appender-admin-ui.png">
 
-### Creating Cassandra log appender with REST API
+# Creating Cassandra log appender with Admin REST API
 
-It is also possible to create a Cassandra log appender instance by using [REST API]({{root_url}}Programming-guide/Server-REST-APIs). The following example 
-illustrates how to provision the Cassandra log appender via REST API.
+It is also possible to create a Cassandra log appender instance by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+The following example illustrates how to provision the Cassandra log appender via Admin REST API.
 
-### Configuration
+## Configuration
 
 The Cassandra log appender configuration should match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/cassandra-appender/src/main/avro/cassandra-appender-config.avsc) Avro schema.
@@ -160,9 +157,9 @@ The following configuration example matches the previous schema.
 }
 ```
 
-### Administration
+## Administration
 
-The following REST API call example illustrates how to create an instance of the Cassandra log appender.
+The following Admin REST API call example illustrates how to create an instance of the Cassandra log appender.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d '{"pluginClassName":"org.kaaproject.kaa.server.appenders.cassandra.appender.CassandraLogAppender", "applicationId":"113", "applicationToken":"08690892651366457342", "jsonConfiguration":"{\"cassandraServers\" : [ { \"host\" : \"127.0.0.1\", \"port\" : 9042   } ],   \"cassandraCredential\" : { \"org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential\" : {   \"user\" : \"user\",   \"password\" : \"password\" }   },   \"keySpace\" : \"kaa_logs\",   \"tableNamePattern\" : \"logs_$app_token_$config_hash\",   \"columnMapping\" : [ { \"type\" : \"CLIENT_FIELD\", \"value\" : {   \"string\" : \"applicationToken\" }, \"columnName\" : \"application_token\", \"columnType\" : \"BOOLEAN\", \"partitionKey\" : false, \"clusteringKey\" : false   }, { \"type\" : \"SERVER_FIELD\", \"value\" : {   \"string\" : \"applicationToken\" }, \"columnName\" : \"application_token\", \"columnType\" : \"BOOLEAN\", \"partitionKey\" : false, \"clusteringKey\" : false   } ],   \"clusteringMapping\" : [ { \"columnName\" : \"application_token\", \"order\" : \"DESC\"   } ],   \"cassandraBatchType\" : { \"org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType\" : \"UNLOGGED\"   },   \"cassandraSocketOption\" : { \"org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption\" : {   \"sendBufferSize\" : { \"int\" : 8192   },   \"receiveBufferSize\" : { \"int\" : 8192   },   \"soLinger\" : { \"int\" : 0   },   \"connectionTimeout\" : { \"int\" : 5000   },   \"readTimeout\" : { \"int\" : 12000   },   \"reuseAddress\" : { \"boolean\" : false   },   \"keepAlive\" : { \"boolean\" : false   },   \"tcpNoDelay\" : { \"boolean\" : false   } }   },   \"executorThreadPoolSize\" : 1,   \"callbackThreadPoolSize\" : 2,   \"dataTTL\" : 0,   \"cassandraWriteConsistencyLevel\" : { \"org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel\" : \"ONE\"   },   \"cassandraCompression\" : { \"org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression\" : \"NONE\"   },   \"cassandraExecuteRequestType\" : { \"org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType\" : \"SYNC\"   } }", "description":"New sample Cassandra log appender", "headerStructure":["KEYHASH", "TIMESTAMP"], "name":"New Cassandra DB appender", "maxLogSchemaVersion":2147483647, "minLogSchemaVersion":1, "tenantId":"10"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
@@ -193,7 +190,7 @@ Example result:
 }
 ```
 
-### Playing with Cassandra log appender
+# Playing with Cassandra log appender
 
 We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) from Kaa Sendbox. Our example will send data 
 to Kaa and then persist it to Cassandra. Also, we'll do selection queries on persisted data.
