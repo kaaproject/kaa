@@ -5,11 +5,9 @@ target 'Kaa' do
   pod 'CocoaLumberjack'
   pod 'AFNetworking', '~> 3.x'
   pod 'sqlite3', :inhibit_warnings => true
+end
 
-
-  target :KaaTests do
-    inherit! :search_paths
-    pod 'OCMockito', '~> 2.0.1'
-  end
+target :KaaTests, :exclusive => true do
+  pod 'OCMockito', '~> 2.0.1'
 end
 
