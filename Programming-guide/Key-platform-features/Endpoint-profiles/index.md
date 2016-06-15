@@ -9,23 +9,15 @@ sort_idx: 20
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Client-side endpoint profile](#client-side-endpoint-profile)
-  * [Client-side endpoint profile example](#client-side-endpoint-profile-example)
-  * [Client-side endpoint profile update](#client-side-endpoint-profile-update)
-  * [Setting client-side endpoint profile schema from Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui)
-  * [REST API for Client-side endpoint profile](#rest-api-for-client-side-endpoint-profile)
-* [Server-side endpoint profile](#server-side-endpoint-profile)
-  * [Server-side endpoint profile example](#server-side-endpoint-profile-example)
-  * [Server-side endpoint profile update](#server-side-endpoint-profile-update)
-  * [Setting server-side endpoint profile schema from Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui)
-  * [REST API for Server-side endpoint profile schema](#rest-api-for-server-side-endpoint-profile)
-* [System part of endpoint profile](#system-part-of-endpoint-profile)
+* TOC
+{:toc}
 
-The endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint. Endpoint profiles are used to classify endpoints into 
+The endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint . Endpoint profiles are used to classify endpoints into 
 endpoint groups and are comprised of the client-side, server-side and system part. The structure of both client-side and server-side of endpoint profile is defined by 
 application developer using the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) format. Application developer may reuse and share certain data 
 structures using CTL.  
-Client-side structure is used during SDK generation and changes to the client-side structure requires generation of new SDK. Application developer is able to define and 
+Client-side structure is used during SDK generation and changes to the client-side structure requires generation of new SDK(for more information use 
+[Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)). Application developer is able to define and 
 change server-side structure of endpoint profile at any time. The structure of the system part is identical across the applications and is used by Kaa internally for its 
 functions. Both client-side and server-side profile schemas are maintained within the corresponding application, with its own version that distinguishes it from the previous 
 schemas. Multiple schema versions and corresponding endpoint profiles created upon those schemas can coexist within a single application.
@@ -47,65 +39,68 @@ it detects profile data changes and submits the new data to the Kaa cluster as a
 The following code block provides a simple client-side endpoint profile schema example.
 
 ```json
-{  
-   "namespace":"org.myproject",
-   "type":"record",
-   "name":"MyClientSideProfile",
-   "fields":[  
-      {  
-         "name":"country",
-         "type":"string"
-      },
-      {  
-         "name":"city",
-         "type":"string"
-      },
-      {  
-         "name":"age",
-         "type":"int"
-      },
-      {  
-         "name":"hobbies",
-         "type":{  
-            "type":"array",
-            "items":"string"
-         }
-      }
-   ]
+{
+    "type":"record",
+    "name":"Profile",
+    "namespace":"org.kaaproject.kaa.schema.sample.profile",
+    "fields":[
+        {
+            "name":"id",
+            "type":"string"
+        },
+        {
+            "name":"os",
+            "type":{
+                "type":"enum",
+                "name":"OS",
+                "symbols":[
+                    "Android",
+                    "iOS",
+                    "Linux"
+                ]
+            }
+        },
+        {
+            "name":"os_version",
+            "type":"string"
+        },
+        {
+            "name":"build",
+            "type":"string"
+        }
+    ]
 }
 ```
 
 The following client-side profile would be compatible with our schema example.
 
 ```json
-{  
-   "country":"US",
-   "city":"San Francisco",
-   "age":32,
-   "hobbies":[  
-      "skydiving",
-      "hiking"
-   ]
+{
+  "id" : "1",
+  "os" : "Android",
+  "os_version" : "1",
+  "build" : "1"
 }
 ```
 The schema structure from our example allows filtering the endpoints by the owner's country (for example, to show only US news), city (for example, to push weather 
 notifications only for the specified cities), age (for example, to apply age restrictions), and hobbies (for example, to push football scores for those whose hobby list 
 contains "football"). It is allowed to create complex filtering conditions by combining as many filtering conditions as needed.
 
-### Client-side endpoint profile update ###
+### Endpoint profile SDK API ###
 
 Endpoint profile information changes as the result of the client operation or user's actions, it is the client implementation responsibility to update the 
 profile via the endpoint SDK API calls. The endpoint SDK detects profile changes by comparing the new profile hash against the previously persisted one. Should there be a change, 
-the endpoint profile management module passes it to the Operations server, which in turn updates the endpoint profile information in the database and revises the endpoint 
+the endpoint profile management module passes it to the Operations service, which in turn updates the endpoint profile information in the database and revises the endpoint 
 groups membership.
 
 Think about the client-side profile schema as of a structured data set of your endpoint application that will later be available to you in Kaa server and may change 
 due to your client application logic or device state.
 You can configure your own client-side profile schema using the 
-[Admin UI](#setting-client-side-endpoint-profile-update-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs). 
+[Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/create-create-dk-profile). 
 For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
 
-```json{
+```json
+{
     "type":"record",
     "name":"Profile",
     "namespace":"org.kaaproject.kaa.schema.sample.profile",
@@ -337,17 +332,17 @@ The following code block provides a simple server-side profile schema example.
 
 ```json
 {  
-   "namespace":"org.myproject",
    "type":"record",
-   "name":"MyServerSideProfile",
+   "name":"ServerProfile",
+   "namespace":"org.kaaproject.kaa.schema.sample.profile",
    "fields":[  
       {  
-         "name":"serialNumber",
+         "name":"subscriptionPlan",
          "type":"string"
       },
       {  
-         "name":"customerId",
-         "type":"string"
+         "name":"activationFlag",
+         "type":"boolean"
       }
    ]
 }
@@ -356,8 +351,8 @@ The following server-side profile would be compatible with our schema example.
 
 ```json
 {
-    "serialNumber": "SN-777",
-    "customerId": "Customer A"
+    "subscriptionPlan": "plan",
+    "activationFlag": "false"
 }
 ```
 
@@ -394,7 +389,7 @@ For the purpose of this guide we will use a fairly abstract server-side profile 
 ```
 
 Once this schema is configured, you are able to assign server-side endpoint profile body to certain endpoints based on their ids using 
-Admin UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs).
+[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs).
 
 ### Setting server-side endpoint profile schema from Admin UI
 
