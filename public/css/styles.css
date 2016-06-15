@@ -17,7 +17,7 @@ table, th, td {
 }
 
 table {
-    width: 75%;
+   /* width: 75%; */
 }
 
 th, td {
@@ -463,6 +463,10 @@ img {
 	max-width: 100%;
     margin: 20px auto;
     display: block;
+}
+
+.content img{
+	cursor: pointer;
 }
 
 blockquote{
