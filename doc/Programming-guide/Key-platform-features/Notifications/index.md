@@ -5,16 +5,8 @@ permalink: /:path/
 sort_idx: 70
 ---
 
-* [Basic architecture](#basic-architecture-2)
-* [Configuring Kaa](#configuring-kaa-2)
-  * [Notification topics](#notification-topics)
-  * [Sending notifications](#sending-notifications)
-* [Coding](#coding)
-  * [Get available topics](#get-available-topics)
-  * [Subscribe to updates on available topics](#subscribe-to-updates-on-available-topics)
-  * [Default notification listener](#default-notification-listener)
-  * [Topic specific notification listener](#topic-specific-notification-listener)
-  * [Subscribe to optional topics](#subscribe-to-optional-topics)
+* TOC
+{:toc}
 
 The Kaa notification subsystem enables delivery of messages from the Kaa server to endpoints. The structure of the data that is carried by notifications is defined by the notification schema, which is configured on the Kaa server and built into Kaa endpoints. Please review the Kaa [notifications design reference]() for more details.
 
@@ -26,6 +18,7 @@ Notifications are generated based on the notification schema created by the deve
 The user or admin sends a notification using either Admin UI or REST API
 
 The following diagram illustrates basic entities and data flows in scope of the notification management:
+
 * Notifications are generated based on the [notification schema]() created by the developer for the application 
 * The user or admin sends a notification using either [Admin UI]() or [REST API]()
 
@@ -60,18 +53,49 @@ Notifications in Kaa are organized into topics. Each topic may be associated wit
 Topics can be mandatory or optional. Mandatory topic notifications are delivered in an enforced manner. Optional topics require subscription. It is responsibility of the client code to add notification listeners and subscribe to optional topics.
 You can manage notification topics via [Admin UI]() or [REST API]().
 
-***Once created, a notification topic does not impact any endpoints. To deliver notifications to some endpoint, at first you need to assign the topic to an endpoint group containing this endpoint via [Admin UI]() or [REST API]().***
+> Once created, a notification topic does not impact any endpoints. To deliver notifications to some endpoint, at first you need to assign the topic to an endpoint group containing this endpoint via [Admin UI]() or [REST API]().
 
 
 Assuming that you have created custom endpoint groups from the [Using endpoint groups guide](), it would be logical to create and assign the following topics:
 
-|                           | Endpoint Group Name |||||
-|---------------------------|-----------------------|-------------------------|--------------------------|-----------------|----------------------------|
-| Topic id                  | All                   | Android Froyo endpoints | Android endpoints        | iOS 8 endpoints | 3.0 RC1 QA group endpoints |
-| Android notifications     | false                 | true                    | true                     | false           | false                      |
-| iOS 8 notifications       | false                 | false                   | false                    | true            | false                      |
-| All devices notifications | true                  | false                   | false                    | false           | false                      |
-
+<table>
+    <tr>
+        <th rowspan="2">Topic id</th>
+        <th colspan="5"><center>Endpoint Group Name</center></th>
+    </tr>
+    <tr>
+        <th>All</th>
+        <th>Android Froyo endpoints</th>
+        <th>Android endpoints</th>
+        <th>iOS 8 endpoints</th>
+        <th>3.0 RC1 QA group endpoints</th>
+    </tr>
+    <tr>
+        <td>Android notifications</td>     
+        <td>false</td> 
+        <td>true</td>   
+        <td>true</td>    
+        <td>false</td>
+        <td>false</td>      
+    </tr>
+    <tr>
+        <td>iOS 8 notifications</td>      
+        <td>false</td>                 
+        <td>false</td>                   
+        <td>false</td>                    
+        <td>true</td>            
+        <td>false</td>                      
+    </tr>
+    <tr>
+        <td>All devices notifications</td> 
+        <td>true</td>                 
+        <td>false</td>                  
+        <td>false</td>                    
+        <td>false</td>           
+        <
+        td>false</td>                     
+    </tr>
+</table>
 
 #### Sending notifications
 To send a notification, you can issue the REST API request or use Admin UI.
