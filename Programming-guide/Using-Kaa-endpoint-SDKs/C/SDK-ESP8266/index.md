@@ -8,18 +8,8 @@ sort_idx: 20
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-- [Introduction](#introduction)
-- [Connecting ESP8266](#connecting-esp8266)
-    - [ESP8266-01](#esp8266-01)
-    - [NodeMCU](#nodemcu)
-- [Installing requirements](#installing-requirements)
-- [Writing applications](#writing-appllications)
-    - [Directory structure](#directory-structure)
-    - [Minimal code](#minimal-code)
-    - [Build system overview](#build-system-overview)
-- [Bulding](#building)
-- [Flashing](#flashing)
-- [What's next?](#whats-next)
+* TOC
+{:toc}
 
 ## Introduction
 
@@ -73,11 +63,11 @@ The table below summarizes wiring scheme for both boot modes.
 
 ### NodeMCU
 
-Connecting NodeMCU is much simpler---just connect it via micro-USB cable.
+Connecting NodeMCU is much simpler -- just connect it via micro-USB cable.
 
-## Installing requirements
+## Installing dependencies
 
-Prior to developing Kaa applications for ESP8266 some requirements should be installed.
+Prior to developing Kaa applications for ESP8266 some dependencies should be installed.
 The detailed installation instructions can be found below.
 
 1. Prerequisites
@@ -88,22 +78,26 @@ The detailed installation instructions can be found below.
 This variable will be used throughout installation process, and denotes a directory where ESP8266 SDK and toolchain will be placed.
 You are free to set it to whatever you like.
 
-            export ESPRESSIF_HOME=/opt/Espressif/
+        export ESPRESSIF_HOME=/opt/Espressif/
 
 3. Install toolchain
+<!-- TODO: KAA-928 -->
 
         cd $ESPRESSIF_HOME
         git clone -b lx106 git://github.com/jcmvbkbc/crosstool-NG.git
         cd crosstool-NG
-        ./bootstrap && ./configure --prefix=$(pwd) && make && sudo make install
+        ./bootstrap && ./configure --prefix=$(pwd)
+        make
+        sudo make install
         ./ct-ng xtensa-lx106-elf
         ./ct-ng build
 
-4. Add path to toolchain binaries to your .bashrc:
+4. Add path to toolchain binaries to your `.bashrc`:
+<!--TODO: KAA-1183 -->
 
         echo "export PATH=$ESPRESSIF_HOME/crosstool-NG/builds/xtensa-lx106-elf/bin:\$PATH" >> ~/.bashrc
 
-4. Install ESP8266 RTOS SDK
+5. Install ESP8266 RTOS SDK
 
         cd $ESPRESSIF_HOME
         export ESP_SDK_HOME=$ESPRESSIF_HOME/esp-rtos-sdk
@@ -114,7 +108,7 @@ You are free to set it to whatever you like.
         cd $ESP_SDK_HOME/include/lwip/arch
         sed -i 's:#include "c_types.h"://#include "c_types.h":' $ESP_SDK_HOME/include/lwip/arch/cc.h
 
-5. Install esptool.py
+6. Install esptool.py
 
         cd $ESPRESSIF_HOME
         git clone https://github.com/RostakaGmfun/esptool.git
@@ -138,7 +132,7 @@ driver/
 ld/
     eagle.app.v6.ld
     eagle.rom.addr.v6.ld
-libs/kaa
+kaa/
     <put Kaa SDK here>
 user/
     user_main.c
@@ -150,10 +144,10 @@ Some notes:
 
 * `CMakeLists.txt` is a CMake script (see below)
 * `driver/uart.c` and `driver/uart.h` files implement driver for ESP8266 UART interface.
-* The `ld` directory contains two linker scripts required for ESP8266 applications.
-* You should put generated Kaa C SDK tarball into `libs/kaa` directory and unpack it:
+* The `ld/` directory contains two linker scripts required for ESP8266 applications.
+* You should put generated Kaa C SDK tarball into `kaa/` directory and unpack it:
 
-        cd libs/kaa && tar zxf kaa-c*.tar.gz
+        cd kaa && tar zxf kaa-c*.tar.gz
 * `user/user_main.c` contains ESP8266 application entry ponit (`user_init()` function)
 and performs ESP8266-specific initizalizations (e.g. initialize UART).
 * `src/kaa_demo.c` is a platofrm-independent source file with minimal Kaa code.
@@ -179,7 +173,7 @@ void user_init(void)
 Next, we should start a system task in `user_init()`, since we run in FreeRTOS environment:
 
 ```c
-    portBASE_TYPE error = xTaskCreate(main_task, (const signed char *)"main_task",
+    portBASE_TYPE error = xTaskCreate(main_task, "main_task",
             512, NULL, 2, NULL );
     if (error < 0) {
         printf("Error creating main_task! Error code: %ld\r\n", error);
@@ -225,7 +219,7 @@ int main(void)
         return 1;
     }
 
-    error_code = kaa_client_start(kaa_client, loop_fn, (void*)kaa_client, 0);
+    error_code = kaa_client_start(kaa_client, loop_fn, kaa_client, 0);
     if (error_code) {
         printf("Failed to start Kaa main loop\r\n");
         return 1;
@@ -238,8 +232,8 @@ int main(void)
 
 ### Build system overview
 
-The Kaa C SDK makes use of CMake build system and though you can choose any build system of your preference, it is recommended to use CMake for Kaa applications as well.
-This will make possible to tightly integrate your application's bulid system with Kaa SDK and use already provided ESP8266 toolchain file.
+The Kaa C SDK makes use of CMake build system generator. Although you can choose any build system of your preference, it is recommended to use CMake for Kaa applications as well.
+This will make possible to tightly integrate your application's build system with Kaa SDK and use already provided ESP8266 toolchain file.
 
 #### CMakeLists.txt
 
@@ -253,7 +247,7 @@ project(kaa_demo C)
 We also add Kaa SDK subdirectory, so that we can build it together with application.
 
 ```CMake
-add_subdirectory(libs/kaa)
+add_subdirectory(kaa)
 ```
 
 Next, let's create a static library with demo source files.
@@ -289,25 +283,18 @@ target_include_directories(kaa_demo_s PUBLIC
                            )
 ```
 
-We also need to use custom linker script.
-Below, two linker scripts, required for ESP8266 applications, are moved to binary directory so that linker can locate them.
-
-```CMake
-file(COPY
-    ${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.rom.addr.v6.ld
-    ${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.app.v6.ld
-    DESTINATION
-    ${CMAKE_BINARY_DIR})
-```
 
 Next, we should tell CMake what libraries we would like to link with.
 Here the required libraries from ESP8266 RTOS SDK, linker script and Kaa SDK are specified.
+We also add `ld/` directory to linker search paths in order to use linker scripts.
 
 ```CMake
 exec_program(xtensa-lx106-elf-gcc .
             ARGS -print-libgcc-file-name
             OUTPUT_VARIABLE ESP8266_LIBGCC
             )
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/ld)
 
 target_link_libraries(kaa_demo_s PUBLIC
                       kaac
@@ -322,7 +309,7 @@ target_link_libraries(kaa_demo_s PUBLIC
                       ${ESP_RTOS_SDK}/lib/libssl.a
                       ${ESP_RTOS_SDK}/lib/libhal.a
                       ${ESP8266_LIBGCC}
-                      -T${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.app.v6.ld
+                      -Teagle.app.v6.ld
                       )
 ```
 
@@ -343,7 +330,7 @@ target_link_libraries(kaa_demo kaa_demo_s);
 ```
 
 ## Building
-To actually invoke CMake, proceed as follows:
+To invoke CMake, proceed as follows:
 
         mkdir build
         cd build
@@ -358,10 +345,9 @@ To actually invoke CMake, proceed as follows:
             -DKAA_WITH_EXTENSION_USER=OFF \
             -DKAA_WITH_EXTENSION_PROFILE=OFF \
             -DKAA_MAX_LOG_LEVEL=3
+        make
 
-This will generate `Makefile` in `build` directory. To actually build application invoke `make`.
-
-For detailed description of available options refer to [this]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C) page.
+For detailed description of available options refer to [Kaa C SDK page]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C) page.
 
 ## Flashing
 Once the application has been built, you'll get a `kaa_demo` ELF executable in `build` directory.
@@ -380,4 +366,4 @@ This will take some time to flash, and, eventually, when the firmware starts, yo
 
 ## What's next?
 
-This guide shows just the basic part of setting up Kaa on ESP8266. To actually make something useful with it, take a look at [Data Collection](TODO) demo.
+This guide shows just the basic part of setting up Kaa on ESP8266. To actually make something useful with it, take a look at [Data Collection]({{root_url}}/Programming-guide/Key-platform-features/Data-collection/) demo.
