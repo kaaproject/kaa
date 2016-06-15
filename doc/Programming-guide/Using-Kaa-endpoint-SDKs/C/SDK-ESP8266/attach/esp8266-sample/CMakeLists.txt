@@ -26,16 +26,12 @@ target_include_directories(kaa_demo_s PUBLIC
                            ${ESP_RTOS_SDK}/include/espressif/
                            )
 
-file(COPY
-    ${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.rom.addr.v6.ld
-    ${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.app.v6.ld
-    DESTINATION
-    ${CMAKE_BINARY_DIR})
-
 exec_program(xtensa-lx106-elf-gcc .
             ARGS -print-libgcc-file-name
             OUTPUT_VARIABLE ESP8266_LIBGCC
             )
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/ld)
 
 target_link_libraries(kaa_demo_s PUBLIC
                       kaac
@@ -50,7 +46,7 @@ target_link_libraries(kaa_demo_s PUBLIC
                       ${ESP_RTOS_SDK}/lib/libssl.a
                       ${ESP_RTOS_SDK}/lib/libhal.a
                       ${ESP8266_LIBGCC}
-                      -T${CMAKE_CURRENT_SOURCE_DIR}/ld/eagle.app.v6.ld
+                      -Teagle.app.v6.ld
                       )
 
 file(WRITE ${CMAKE_BINARY_DIR}/blank.c "")

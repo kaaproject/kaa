@@ -27,40 +27,33 @@ xQueueHandle xQueueUart;
 LOCAL STATUS
 uart_tx_one_char(uint8 uart, uint8 TxChar)
 {
-    while (true) {
-        uint32 fifo_cnt = READ_PERI_REG(UART_STATUS(uart)) & (UART_TXFIFO_CNT << UART_TXFIFO_CNT_S);
+    uint32 fifo_cnt;
+    do {
+        fifo_cnt = READ_PERI_REG(UART_STATUS(uart)) & (UART_TXFIFO_CNT << UART_TXFIFO_CNT_S);
 
-        if ((fifo_cnt >> UART_TXFIFO_CNT_S & UART_TXFIFO_CNT) < 126) {
-            break;
-        }
-    }
+    } while(((fifo_cnt >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT) >= 126);
 
     WRITE_PERI_REG(UART_FIFO(uart), TxChar);
     return OK;
 }
 
-LOCAL void
-uart1_write_char(char c)
-{
+void uart_write_char(uint8 uart, char c) {
     if (c == '\n') {
-        uart_tx_one_char(UART1, '\r');
-        uart_tx_one_char(UART1, '\n');
-    } else if (c == '\r') {
-    } else {
-        uart_tx_one_char(UART1, c);
+        uart_tx_one_char(uart, '\r');
+        uart_tx_one_char(uart, '\n');
+    } else if (c != '\r') {
+        uart_tx_one_char(uart, c);
     }
 }
 
-void
-uart0_write_char(char c)
+void uart0_write_char(char c)
 {
-    if (c == '\n') {
-        uart_tx_one_char(UART0, '\r');
-        uart_tx_one_char(UART0, '\n');
-    } else if (c == '\r') {
-    } else {
-        uart_tx_one_char(UART0, c);
-    }
+    uart_write_char(UART0, c);
+}
+
+void uart1_write_char(char c)
+{
+    uart_write_char(UART1, c);
 }
 
 void ICACHE_FLASH_ATTR
