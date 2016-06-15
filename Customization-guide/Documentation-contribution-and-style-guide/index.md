@@ -11,24 +11,29 @@ sort_idx: 80
 * TOC
 {:toc}
 
-This guide introduces documentation conventions applicable to the Kaa project. The intent of this guide is to unify the look and feel of the documentation, make navigation predictable, usage and contribution simple.
+This guide introduces documentation conventions applicable to the Kaa project.
+The intent of this guide is to unify the look and feel of the documentation, make navigation predictable, usage and contribution simple.
 
 # Documentation style guide
 
 ## Sentences and grammar
-* Use consistent terminology, so that every term means the same thing and is spelled in the same way throughout the entire documentation. If not properly introduced, synonyms can confuse the reader.
+* Use consistent terminology, so that every term means the same thing and is spelled in the same way throughout the entire documentation.
+If not properly introduced, synonyms can confuse the reader.
 * Give preference to present tense over past and future tenses; give preference to simple verb forms over perfect and continuous forms.
 * Use numbered lists for step-by-step procedures and bulleted list for an unordered set of items. Capitalize the first word of each list entry.
 * Use parallel sentence structures in bulleted and numbered lists.
-* End each entry of the list with a period if all the entries are complete sentences or if they are a mixture of fragments and complete sentences. If all entries are fragments, do not end them with periods or any other punctuation mark.
+* End each entry of the list with a period if all the entries are complete sentences or if they are a mixture of fragments and complete sentences.
+If all entries are fragments, do not end them with periods or any other punctuation mark.
 * Use imperative mood in procedures, that is, formulate your instructions as giving commands to the user.
 * Avoid inventing new words or assigning words an unusual meaning.
 * Avoid using please in instructions unless some step in the procedure causes inconvenience for the user or represents a workaround for some system limitation.
 
 ## Headings and capitalization
 * Capitalize only the first word in titles and headings.
-* Do not use capitalization for no apparent reason. Use lowercase unless uppercase is justified.
-* Use Heading 4 (i.e. `####`) as the last level heading. All other levels are not displayed in table of contents.
+* Do not use capitalization for no apparent reason.
+Use lowercase unless uppercase is justified.
+* Use Heading 4 (i.e. `####`) as the last level heading.
+All other levels are not displayed in table of contents.
 
 ## Technical terms and abbreviations
 * Spell out an acronym on its first mention on the page, e.g. *CTL* (Common Type Library).
@@ -43,23 +48,27 @@ This guide introduces documentation conventions applicable to the Kaa project. T
 ## Code formatting
 * Format all JSON files with this [online tool](https://jsonformatter.curiousconcept.com/), "4 space tab" profile.
 * Code example should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
-* When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.). See detailed description in [Jekyll formatting](#jekyll-formatting).
+* When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
+See detailed description in [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example, whenever available.
 * Start the schema namespace, which we use for examples and documentation purposes, with the org.kaaproject.kaa.schema.sample prefix.
 * Use inline code in documentation only for short code examples, for referring to code related entities (function names, variables, parameters, arguments, etc.), for source file names and for numbers when they are used as code.
 
 ## Page structure
 * Add the table of contents to the top of every page having two or more headings.
-* For every documentation page, include an introduction section that immediately follows the table of contents (or top of the page for pages with no TOC). In the introduction, explain the purpose of the page and what the reader can learn from it.
+* For every documentation page, include an introduction section that immediately follows the *TOC* (table of contents) (or top of the page for pages with no TOC).
+In the introduction, explain the purpose of the page and what the reader can learn from it.
 * Do not add copyright - it is generated automatically.
-* Links are good! Think of the documentation modularity similarly to how you think about the code modularity. Rather than explaining the same topic multiple times in multiple locations, modularize and use links to fragment identifiers when applicable.
+* Links are good!
+Think of the documentation modularity similarly to how you think about the code modularity.
+Rather than explaining the same topic multiple times in multiple locations, modularize and use links to fragment identifiers when applicable.
 
 
 ## Markdown formatting
 * Use [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/) for all documentation.
 * Start every sentence with a new line to make future merging easier.
 * Do not use Emoji.
-* Use the following template to auto-generate the table of page contents:
+* Use the following template to auto-generate the TOC:
 
 {% raw %}
   ```
@@ -204,20 +213,25 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 
 # Documentation contribution
 
-Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/kaa) - it can be found in the `doc/` folder. A full description of contributing to Kaa project can be found at [How to contribute]({{root_url}}Customization-guide/How-to-contribute/). Key differences between contributing source code and documentation are :
+Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/kaa) - it can be found in the `doc/` folder.
+A full description of contributing to Kaa project can be found at [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
+Key differences between contributing source code and documentation are :
 
 * Select `Component : Documentation` in the [Jira](http://jira.kaaproject.org/) ticket.
 * Generate and check documentation locally.
 
 ## Documentation preview
 
-* Install [Jekyll](https://jekyllrb.com/). See [Jekyll Installation page](https://jekyllrb.com/docs/installation/) for detail instructions.
-* Install [jekyll-sitemap](https://github.com/jekyll/jekyll-sitemap). Jekyll-sitemap can be installed using [RubyGems](https://rubygems.org/pages/download).
+* Install [Jekyll](https://jekyllrb.com/).
+See [Jekyll Installation page](https://jekyllrb.com/docs/installation/) for detail instructions.
+* Install [jekyll-sitemap](https://github.com/jekyll/jekyll-sitemap).
+Jekyll-sitemap can be installed using [RubyGems](https://rubygems.org/pages/download).
 
   ```bash
 gem install jekyll-sitemap
 ```
-* Install [rouge](https://github.com/jneen/rouge) for syntax highlighting. Rouge can be installed using [RubyGems](https://rubygems.org/pages/download).
+* Install [rouge](https://github.com/jneen/rouge) for syntax highlighting.
+Rouge can be installed using [RubyGems](https://rubygems.org/pages/download).
 
   ```bash
 gem install -N rouge
