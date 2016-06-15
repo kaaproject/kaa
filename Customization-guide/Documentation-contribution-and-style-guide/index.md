@@ -217,6 +217,11 @@ Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/k
   ```bash
 gem install jekyll-sitemap
 ```
+* Install [rouge](https://github.com/jneen/rouge) for syntax highlighting. Rouge can be installed using [RubyGems](https://rubygems.org/pages/download).
+
+  ```bash
+gem install -N rouge
+```
 
 * Create local git branch gh-pages-stub with same content as origin/gh-pages-stub .
 
