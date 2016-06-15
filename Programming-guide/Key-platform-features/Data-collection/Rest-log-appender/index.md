@@ -11,13 +11,12 @@ sort_idx: 90
 
 
 
-* [Creating REST log appender with Admin UI](#creating-rest-log-appender-with-admin-ui)
-* [Configuration](#configuration)
-* [Creating application that uses REST log appender](#creating-application-that-uses-rest-log-appender)
+* TOC
+{:toc}
 
 The REST log appender is responsible for transferring logs from Operation server to your custom service.
 
-### Creating REST log appender with Admin UI
+# Creating REST log appender with Admin UI
 
 The easiest way to create a Cassandra log appender for your application is by using Admin UI.
 
@@ -32,11 +31,11 @@ To create a log appender for access via REST, do the following:
 <img src="attach/add-log-appender-in-admin-ui.png">
 
 
-It's also possible to create REST appender using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs).
+It's also possible to create REST appender using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
 
-### Configuration
+# Configuration
 
-The REST log appender configuration should match to
+The Admin REST log appender configuration should match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
 
 Parameters for defining REST log appender
@@ -81,7 +80,7 @@ The following configuration schema matches to previously introduced Avro schema:
 
 Based on this configuration, you'd be able to perform "POST" request to 10.2.2.65:9000/encrypt url. Let's look at more definitive example.
 
-### Creating application that uses REST log appender
+# Creating application that uses REST log appender
 
 1. Log in Admin UI like admin and create an application.
 To create a new application, do the following: <br/>

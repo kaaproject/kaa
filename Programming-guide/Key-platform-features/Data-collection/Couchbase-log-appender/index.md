@@ -9,11 +9,8 @@ sort_idx: 30
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Creating Couchbase log appender in Admin UI](#creating-couchbase-log-appender-in-admin-ui)
-* [Creating Couchbase log appender with REST API](#creating-couchbase-log-appender-with-rest-api)
-  * [Configuration](#configuration)
-  * [Administration](#administration)
-  * [Setup Couchbase and run sample application](#setup-couchbase-and-run-sample-application)
+* TOC
+{:toc}
 
 The Couchbase log appender is responsible for transferring logs from the Operations server to the Couchbase storage. Logs are stored in document storage.
 
@@ -29,7 +26,7 @@ when logs were uploaded to the key/value storage)
 
 Values are stored as serialized Generic Records using record wrapper avro schema.
 
-### Creating Couchbase log appender in Admin UI
+# Creating Couchbase log appender in Admin UI
 
 The easiest way to create a Couchbase log appender for your application is by using Admin UI.
 
@@ -43,12 +40,12 @@ To create a log appender of the Couchbase storage type, do the following:
 
 <img src="attach/create-couchbase-log-appende.png">
 
-### Creating Couchbase log appender with REST API
+# Creating Couchbase log appender with Admin REST API
 
-It is also possible to create a Couchbase log appender for your application by using REST API. The following example illustrates how to provision 
-the Couchbase log appender via REST API.
+It is also possible to create a Couchbase log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+The following example illustrates how to provision the Couchbase log appender via Admin REST API.
 
-### Configuration
+## Configuration
 
 The Couchbase log appender configuration should match the to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/couchbase-appender/src/main/avro/couchbase-appender-config.avsc) Avro schema.
@@ -67,9 +64,9 @@ The following configuration example matches the previous schema.
 }
 ```
 
-### Administration
+## Administration
 
-The following REST API call example illustrates how to create a new Couchbase log appender.
+The following Admin REST API call example illustrates how to create a new Couchbase log appender.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.couchbase.appender.CouchbaseLogAppender", "applicationId": 5, "applicationToken": "82635305199158071549", "jsonConfiguration": "{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091/pools\"}],\"bucket\":\"default\",\"password\":null},   \"includeServerProfile\" : { \"boolean\" : false   } }", "description": "New sample Couchbase log appender", "headerStructure": ["KEYHASH", "TIMESTAMP"], "name": "New Couchbase log appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "1"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
@@ -100,7 +97,7 @@ Example result:
 }
 ```
 
-### Setup Couchbase and run sample application
+## Setup Couchbase and run sample application
 
 1. Download and install Couchbase by following [link](http://developer.couchbase.com/documentation/server/current/getting-started/installing.html#installing)
 2. After successful installation open http://%your_host_name%:8091/. <br/>

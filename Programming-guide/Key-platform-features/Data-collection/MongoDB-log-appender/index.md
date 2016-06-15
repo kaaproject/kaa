@@ -9,16 +9,13 @@ sort_idx: 70
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Creating MongoDB log appender in Admin UI](#creating-mongodb-log-appender-in-admin-ui)
-* [Creating MongoDB log appender with REST API](#creating-mongodb-log-appender-with-rest-api)
-  * [Configuration](#configuration)
-  * [Administration](#administration)
-* [Using with MongoDB log appender](#using-with-mongodb-log-appender)
+* TOC
+{:toc}
 
 The MongoDB log appender is responsible for transferring logs from the Operations server to the MongoDB database. The logs are stored in the table named
 <i>logs_$applicationToken</i>, where <i>$applicationToken<i> matches the token of the current application.
 
-### Creating MongoDB log appender in Admin UI
+# Creating MongoDB log appender in Admin UI
 
 The easiest way to create a MongoDB log appender for your application is by using Admin UI.
 
@@ -32,12 +29,12 @@ To create a log appender of the MongoDB storage type, do the following:
 
 <img src="attach/add-log-appender-in-admin-ui.png">
 
-### Creating MongoDB log appender with REST API
+# Creating MongoDB log appender with Admin REST API
 
-It is also possible to create a MongoDB log appender for your application by using REST API. The following example illustrates how to provision
-the MongoDB log appender for the Cell Monitor demo application available in Kaa Sandbox.
+It is also possible to create a MongoDB log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+The following example illustrates how to provision the MongoDB log appender for the Cell Monitor demo application available in Kaa Sandbox.
 
-### Configuration
+## Configuration
 
 The MongoDB log appender configuration should match to
  [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc) Avro schema.
@@ -102,9 +99,9 @@ The following configuration taken from the Cell Monitor demo matches the previou
 }
 ```
 
-### Administration
+## Administration
 
-The following REST API call example illustrates how to create a new MongoDB log appender.
+The following Admin REST API call example illustrates how to create a new MongoDB log appender.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender", "applicationId": 119, "applicationToken": "91786338058670361194", "jsonConfiguration": "{   \"mongoServers\" : [ { \"host\" : \"127.0.0.1\", \"port\" : 27017   } ],   \"mongoCredentials\" : [ { \"user\" : \"user\", \"password\" : \"password\"   } ],   \"dbName\" : \"kaa\",   \"connectionsPerHost\" : { \"int\" : 30   },   \"maxWaitTime\" : { \"int\" : 120000   },   \"connectionTimeout\" : { \"int\" : 5000   },   \"socketTimeout\" : { \"int\" : 0   },   \"socketKeepalive\" : { \"boolean\" : false   },   \"includeClientProfile\" : { \"boolean\" : false   },   \"includeServerProfile\" : { \"boolean\" : false   } }", "description": "New sample Mongo db log appender", "headerStructure": [ "KEYHASH","TIMESTAMP" ], "name": "New Mongo DB appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "70"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
@@ -135,7 +132,7 @@ Example result:
 }
 ```
 
-### Using with MongoDB log appender
+# Using with MongoDB log appender
 
 We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) from Kaa Sendbox. Our example will send data
 to Kaa and then persist it to MongoDB. Also, we'll do selection queries on persisted data.

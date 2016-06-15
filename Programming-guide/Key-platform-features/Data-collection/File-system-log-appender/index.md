@@ -9,11 +9,8 @@ sort_idx: 40
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui)
-* [Creating file system log appender with REST API](#creating-file-system-log-appender-with-rest-api)
-  * [Configuration](#configuration)
-  * [Administration](#administration)
-* [Using with File system log appender](#using-with-file-system-log-appender)
+* TOC
+{:toc}
 
 The file system log appender stores received logs into the local file system of the Operations server. This log appender may be used for test purposes 
 or in pair with tools like Flume and others. Logs are stored in files under the ```/$logsRootPath/tenant_$tenantId/application_$applicationId``` folder, 
@@ -23,7 +20,7 @@ the application respectively. Access to the logs is controlled via Linux file sy
 You can log in to the Operations server host and browse logs using the ```kaa_log_user_$applicationToken``` user name and the pubic key which is created as 
 a part of the configuration.
 
-### Creating file system log appender in Admin UI
+# Creating file system log appender in Admin UI
 
 The easiest way to create a file system log appender for your application is by using Admin UI.
 To create a log appender of the file system storage type, do the following:
@@ -36,12 +33,12 @@ To create a log appender of the file system storage type, do the following:
 
 <img src="attach/file-system-log-appender.png">
 
-### Creating file system log appender with REST API
+# Creating file system log appender with Admin REST API
 
-It is also possible to create a file system log appender for your application by using REST API. The following example illustrates how to provision 
-the file system log appender via REST API.
+It is also possible to create a file system log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+The following example illustrates how to provision the file system log appender via Admin REST API.
 
-### Configuration
+## Configuration
 
 The file system log appender configuration should match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
@@ -116,9 +113,9 @@ The following configuration example matches the previous schema.
 }
 ```
 
-### Administration
+## Administration
 
-The following REST API call example illustrates how to create a new file system log appender.
+The following Admin REST API call example illustrates how to create a new file system log appender.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender", "applicationId": 119, "applicationToken": "91786338058670361194", "jsonConfiguration": "{\"publicKey\":\"XXXXXXXXXXXXXXXXXXXXXXXXXX\",\"logsRootPath\":\"/kaa_log_uploads\",\"rollingFileNamePatern\":\"logFile.%d{yyyy-MM-dd}.log\",\"rollingMaxHistory\":30,\"triggerMaxFileSize\":\"1GB\",\"encoderPattern\":\"%-4relative [%thread] %-5level %logger{35} - %msg%n\" }", "description": "New sample file system log appender", "headerStructure": [ "KEYHASH","TIMESTAMP" ], "name": "New file system appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "70"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
@@ -149,7 +146,7 @@ Example result:
 }
 ```
 
-### Using with File system log appender
+# Using with File system log appender
 
 You can create your application where you will use file system log appender
 
