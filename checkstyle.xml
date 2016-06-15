@@ -30,6 +30,9 @@ limitations under the License.
   <module name="FileTabCharacter">
     <property name="fileExtensions" value="java,xml"/>
   </module>
+  <module name="LineLength">
+     <property name="max" value="180"/>
+  </module>
   <module name="TreeWalker">
     <property name="cacheFile" value="target/cachefile"/>
     <module name="AvoidStarImport"/>
