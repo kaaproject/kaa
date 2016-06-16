@@ -11,6 +11,11 @@ sort_idx: 10
 * TOC
 {:toc}
 
+By walking through this guide you will learn essential skills of creating
+Kaa-based applications as well as understanding of the Kaa approach in general.
+We'll cover here basic yet realistic example of collecting data from the sensor devices. For
+more advanced Kaa features, refer to the [next steps section](#next-steps).
+
 # Prerequisites
 
 To register a new application within a fresh Kaa server installation,
@@ -67,12 +72,12 @@ collection and configuration schemas for demonstration purposes.
 
 To create and upload the schemas, proceed as follows:
 
-1. Create the *data-schema.json* file on your PC with the following schema definition:
+1. Create the `data-schema.json` file on your PC with the following schema definition:
 
         {
             "type": "record",
             "name": "DataCollection",
-            "namespace": "org.kaaproject.kaa.schema.example",
+            "namespace": "org.kaaproject.kaa.schema.sample",
             "fields": [
                 {
                     "name": "temperature",
@@ -80,12 +85,12 @@ To create and upload the schemas, proceed as follows:
                 }
             ]
         }
-1. Create the *configuration-schema.json* file and add the following schema:
+1. Create the `configuration-schema.json` file and add the following schema:
 
         {
             "type": "record",
             "name": "Configuration",
-            "namespace": "org.kaaproject.kaa.schema.example",
+            "namespace": "org.kaaproject.kaa.schema.sample",
             "fields": [
                 {
                     "name": "samplePeriod",
@@ -207,7 +212,7 @@ commands.
 
         add_executable(kaa-app main.c)
         target_link_libraries(kaa-app kaac crypto)
-1. Create source file with empty main routine (for now).
+1. Create source file `main.c` with empty main routine (for now).
 
         int main(void)
         {
@@ -439,6 +444,7 @@ int main(void)
 <div id="run-c" class="tab-pane fade in active" markdown="1" >
 
 In order to launch C appliation next steps should be performed.
+
 1. Rebuild application with decreased log level. This will decrease a mess that can
 appear when debug logs are enabled.
 
@@ -534,7 +540,7 @@ endpoint.
         Sampled temperature: 25
 
     You notice that sampling period is  equal to the new
-    sample period we set in **Admin UI**
+    sample period we set in **Admin UI**.
 
 
 # Next steps
