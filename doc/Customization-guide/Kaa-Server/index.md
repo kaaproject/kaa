@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Kaa Server
-permalink /:path/
+permalink: /:path/
 sort_idx: 20
 ---
 
