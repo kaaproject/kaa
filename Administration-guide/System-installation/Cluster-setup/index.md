@@ -21,10 +21,11 @@ node1 172.1.1.1
 node2 172.2.2.2
 node3 172.3.3.3
 ```
+MariaDB come with out of the box master-master replication support thus we recommend to use this database in your Kaa cluster. 
+PostgreSQL requires third party components to be installed in order to set up a cluster, so in scope of this guide we assume that you have only one instance of PostgreSQL database. 
+So let's consider that if we decided to use MariaDB - we have three instances installed on each of nodes (172.1.1.1, 172.2.2.2, 172.3.3.3) and if PostgreSQL - we have only one instance that running on 172.1.1.1 node. 
 
-On each of nodes we have installed SQL database node (PostgreSql), NoSQl node (MongoDB) and also installed Zookeeper service.
-
-We had successfully installed Kaa on every node and everything that left is to configure kaa-node services.
+On each of nodes we have installed NoSQl databases (MongoDB and Cassandra), Zookeeper service and Kaa node service and everything that left is to configure kaa-node services.
 
 ## Cluster configuration
 
@@ -120,6 +121,14 @@ We assume that zookeeper with default port (2181) is running on every node. For 
 
 For every node insert node id in file ```/etc/zookeeper/myid```. The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing else. The id must be unique within the ensemble and should have a value between 1 and 255. For example we have 3 nodes so we will have next values 1, 2, 3. For more details visit this [documentation page](https://zookeeper.apache.org/doc/r3.3.2/zookeeperAdmin.html#sc_zkMulitServerSetup).
 
+Paste next command in command line of each node:
+
+```bash
+ sudo su -c 'echo $N > /etc/zookeeper/myid'
+```
+
+where **`$N`** is proper node ID from range(1-255).
+
 So for ```node1``` myid would look like this
 
 ```bash
@@ -140,40 +149,84 @@ And for ```node3```
 
 ### SQL database configuration
 
-Configure SQL database host and port ```/etc/kaa-node/conf/dao.properties```
+Refer to [Single node installation guide - SQL database configuration]({{root_url}}Administration-guide/System-installation/Single-node-installation/#sql-database-configuration) section for more details.
 
-```bash
- # specify jdbc database host
- jdbc_host=<postgresql_ip>
+In order to configure SQL database in a cluster follow next steps:
 
- # specify jdbc database post
- jdbc_port=<postgresql_port>
-```
+1. Set SQL database host and port properties in ```/etc/kaa-node/conf/sql-dao.properties``` configuration file
 
-Configurations for all three nodes would look like this
+   <ul class="nav nav-tabs">
+     <li class="active"><a data-toggle="tab" href="#MariaDB">MariaDB</a></li>
+     <li><a data-toggle="tab" href="#PostgreSQL">PostgreSQL</a></li>
+   </ul>
 
-```bash
- jdbc_host=172.1.1.1
- jdbc_port=5432
-```
+   <div class="tab-content">
+   
+   <div id="MariaDB" class="tab-pane fade in active" markdown="1">
 
-and ```/etc/kaa-node/conf/admin-dao.properties```
+   Configurations for all three nodes would look like this
+   
+   ```bash
+   # specify jdbc database hosts and ports
+   jdbc_host_port=127.1.1.1:3306,127.2.2.2:3306,127.3.3.3:3306
+   
+   # specify jdbc database provider name
+   sql_provider_name=mysql:failover
+   ```
+   
+   </div><div id="PostgreSQL" class="tab-pane fade" markdown="1">
 
-```bash
- # specify jdbc database url
- jdbc_url=jdbc:mysql:failover://host1,host2,host3/kaa
-```
+   Configurations for all three nodes would look like this
 
-For all three nodes it would be like this
+   ```bash
+    # specify jdbc database url
+    jdbc_url=jdbc:postgresql://172.1.1.1:5432/kaa
+   ```
+   
+   </div></div>
 
-```bash
- jdbc_url=jdbc:mysql:failover://172.1.1.1:5432,172.2.2.2:5432,172.3.3.3:5432/kaa
-```
+2. and ```/etc/kaa-node/conf/admin-dao.properties```
+
+   <ul class="nav nav-tabs">
+     <li class="active"><a data-toggle="tab" href="#MariaDB1">MariaDB</a></li>
+     <li><a data-toggle="tab" href="#PostgreSQL1">PostgreSQL</a></li>
+   </ul>
+   
+   <div class="tab-content">
+   
+   <div id="MariaDB1" class="tab-pane fade in active" markdown="1">
+   
+   <br>
+   
+   For all three nodes it would be like this
+   
+   ```bash
+   # specify jdbc database url
+   jdbc_url=jdbc:mysql:failover://172.1.1.1:5432,172.2.2.2:5432,172.3.3.3:5432/kaa
+   ```
+   
+   <br>
+   
+   </div><div id="PostgreSQL1" class="tab-pane fade" markdown="1">
+   
+   <br>
+   
+   For all three nodes it would be like this
+   
+   ```bash
+    # specify jdbc database url
+    jdbc_url=jdbc:postgresql://172.1.1.1:5432/kaa
+   ```
+   
+   <br>
+   
+   </div></div>
 
 And also configure [username and password]({{root_url}}Administration-guide/System-installation/Single-node-installation#sql-database-configuration)
 
 ### NoSQL database configuration
 
+Refer to [Single node installation guide - NoSQL database configuration]({{root_url}}Administration-guide/System-installation/Single-node-installation/#nosql-database-configuration) section for more details. 
 Select NoSQL database ```mongo``` or ```cassandra```in ```/etc/kaa-node/conf/dao.properties``` file.
 
 ```bash
@@ -182,37 +235,54 @@ Select NoSQL database ```mongo``` or ```cassandra```in ```/etc/kaa-node/conf/dao
  nosql_db_provider_name=<no_sql_database_name>
 ```
 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#MongoDB">MongoDB</a></li>
+  <li><a data-toggle="tab" href="#Cassandra">Cassandra</a></li>
+</ul>
+
+<div class="tab-content">
+
+<div id="MongoDB" class="tab-pane fade in active" markdown="1">
+
+<br>
+
 For all three nodes it would be like this
 
 ```bash
  nosql_db_provider_name=mongodb
 ```
 
-Setup MongoDB host IP ```/etc/kaa-node/conf/common-dao-mongodb.properties```
-
-```bash
- # list of mongodb nodes, possible to use multiply servers
- servers=<mongo_database_ip>:<mongo_database_port>
-```
-
+Setup MongoDB host IP in ```/etc/kaa-node/conf/common-dao-mongodb.properties``` file. 
 Assuming that we peek standard MongoDB port, for all three nodes property would look like this
 
 ```bash
- servers=172.1.1.1:27017
+ # list of mongodb nodes, possible to use multiply servers
+ servers=172.1.1.1:27017,172.2.2.2:27017,172.3.3.3:27017
 ```
 
-Setup Cassandra host ip ```/etc/kaa-node/conf/common-dao-cassandra.properties```
+<br>
+
+</div><div id="Cassandra" class="tab-pane fade" markdown="1">
+
+<br>
+
+For all three nodes it would be like this
 
 ```bash
- # Specify node list
-node_list=<cassandra_database_ip>:<cassandra_database_port>
+ nosql_db_provider_name=cassandra
 ```
 
+Setup Cassandra host ip in ```/etc/kaa-node/conf/common-dao-cassandra.properties``` file. 
 Assuming that we peek standard Cassandra port, for all three nodes property would look like this
 
 ```bash
- servers=172.1.1.1:9042
+ # Specify node list
+ node_list=127.1.1.1:9042,127.2.2.2:9042,127.3.3.3:9042
 ```
+
+<br>
+
+</div></div>
 
 ### Firewall rules configuration
 
@@ -239,9 +309,9 @@ We need at least 3 hosts running together with Ubuntu 14.04 Operating system to 
 The following is the hosts list that we had setup for this article, where we will deploy the MariaDB Galera cluster:
 
 ```bash
-  ubuntu-node1 172.25.10.21 
-  ubuntu-node2 172.25.10.22 
-  ubuntu-node3 172.25.10.23
+  ubuntu-node1 172.1.1.1 
+  ubuntu-node2 172.2.2.2 
+  ubuntu-node3 172.3.3.3
 ```
 
 Now we will install the its required packages `rsync`, `galera` and `mariadb-galera-server` that need to be installed on all the three nodes.
@@ -283,9 +353,7 @@ You can now install the Galera patches through the apt interface.
 
 During the installation process you will be asked to configure the root password for the MariaDB, so make sure that **you configured the same root password on all the three nodes**.
 
-<p align="center">
-  <img src="attach/mariadb_galera_password.png">
-</p>
+![alt MariaDB root user password](attach/mariadb_galera_password.png)
 
 Once the installations of these packages are done, you will get a MariaDB server on each one of your three nodes but they aren't yet configured.
 
@@ -342,8 +410,8 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_node_address="ubuntu-node1"
   wsrep_node_name="ubuntu-node1"
   wsrep_sst_auth="root:'password for the MariaDB'"
-  wsrep_node_incoming_address=172.25.10.21
-  wsrep_sst_receive_address=172.25.10.21
+  wsrep_node_incoming_address=172.1.1.1
+  wsrep_sst_receive_address=172.1.1.1
   wsrep_slave_threads=16
 ```
 
@@ -358,8 +426,8 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_node_address="ubuntu-node2"
   wsrep_node_name="ubuntu-node2"
   wsrep_sst_auth="root:'password for the MariaDB'"
-  wsrep_node_incoming_address=172.25.10.22
-  wsrep_sst_receive_address=172.25.10.22
+  wsrep_node_incoming_address=172.2.2.2
+  wsrep_sst_receive_address=172.2.2.2
   wsrep_slave_threads=16
 ```
 
@@ -374,8 +442,8 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_node_address="ubuntu-node3"
   wsrep_node_name="ubuntu-node3"
   wsrep_sst_auth="root:'password for the MariaDB'"
-  wsrep_node_incoming_address=172.25.10.23
-  wsrep_sst_receive_address=172.25.10.23
+  wsrep_node_incoming_address=172.3.3.3
+  wsrep_sst_receive_address=172.3.3.3
   wsrep_slave_threads=16
 ```
 
