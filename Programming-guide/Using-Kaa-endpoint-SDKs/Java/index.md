@@ -12,7 +12,7 @@ sort_idx: 40
 
 # Prerequisites 
 
-- A favorite text editor or IDE
+- Your favorite text editor or IDE
 - JDK 1.7 or later
 
 # Using endpoint SDK in your application
@@ -108,7 +108,7 @@ After configuring all this stuff you can start to write your client.
 
 ## Base API overview
 
-First, you have to create an instance of <code>KaaClient</code>. SDK provides you with class factory  <code>Kaa</code> which is responsible for creating new instance of client.
+First, you have to create an instance of `KaaClient`. SDK provides you with class factory  `Kaa` which is responsible for creating new instance of client.
 
 So, here is an example code showing how it should be done:
 
@@ -134,23 +134,23 @@ KaaClient client = Kaa.newClient(new AndroidKaaPlatformContext(), new SimpleKaaC
 </div>
 </div>
 
-Static method <code>newClient()</code> received two mandatory arguments &ndash; platform specific context and 
+Static method `newClient()` received two mandatory arguments -- platform specific context and 
 implementation of the client state listener interface.
 
-The first argument can be either <code>DesktopKaaPlatformContext</code> for java desktop or <code>AndroidKaaPlatformContext</code> for android applications.
+The first argument can be either `DesktopKaaPlatformContext` for java desktop or `AndroidKaaPlatformContext` for android applications.
 
-In this example the second argument is default implementation of <code>KaaClientStateListener</code> &ndash; <code>SimpleKaaClientStateListener</code> which performs only logging of client state changes. 
-When the new instance of the client is created the method <code>start()</code> should be invoked in order to start client operation and communication with server.Starting from this point you can use 
-features API provided by Kaa platform such as data collection, notifications and etc. In the end, when the client is no longer needed, call <code>stop()</code> in order to release resources and stop 
+In this example the second argument is default implementation of `KaaClientStateListener` -- `SimpleKaaClientStateListener` which performs only logging of client state changes. 
+When the new instance of the client is created the method `start()` should be invoked in order to start client operation and communication with server.Starting from this point you can use 
+features API provided by Kaa platform such as data collection, notifications and etc. In the end, when the client is no longer needed, call `stop()` in order to release resources and stop 
 communication with the server.
  
 ## State of client
-When the client is started for the first time it generates private/public key pair and save them in appropriate files &ndash; _key.private_ and _key.public_.
+When the client is started for the first time it generates private/public key pair and save them in appropriate files -- _key.private_ and _key.public_.
 These keys is used afterwards to maintain secure communication with the server.
 Also client creates _state.properties_ file used for persistence of the parameters which reflect client state during operation with the server.
 
->**NOTE:** In case of Java desktop application by default all these files are created in the working directory, but you are able to specify different folder using <code>KaaClientProperties</code>. 
-Set path to the new folder using <code>setWorkingDirectory()</code> method and then pass client properties instance as argument of <code>DesktopKaaPlatformContext</code> constructor.
+>**NOTE:** In case of Java desktop application by default all these files are created in the working directory, but you are able to specify different folder using `KaaClientProperties`. 
+Set path to the new folder using `setWorkingDirectory()` method and then pass client properties instance as argument of `DesktopKaaPlatformContext` constructor.
     
 
 ## Comparing platforms
@@ -163,7 +163,7 @@ The comparison table showing key differences between two implementations of this
 |createPersistentStorage|  Use file storage | Use android internal storage | For persisting state of client|
 |getBase64|  Use Apache Base64 |  Use Android Base64 | Need to encode/decod some date, i. e. endpoint key hash|
 |createConnectivityChecker|  the same  |  the same | Just check connection to network|
-|getExecutorContext| the same  | the same  | Responsible for creation of <code>ExecutorService</code> instances for SDK internal usage |
+|getExecutorContext| the same  | the same  | Responsible for creation of `ExecutorService` instances for SDK internal usage |
 |getProperties| the same  | the same  | Return KaaClientProperties that holds important information of client SDK | 
 |needToCheckClientState| Return true  | Return false | Off/on checking of feasibility of the transition between lifecycle states |
 
