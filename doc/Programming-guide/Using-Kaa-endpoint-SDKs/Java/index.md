@@ -3,8 +3,8 @@ layout: page
 title: Java
 permalink: /:path/
 sort_idx: 40
-
 ---
+
 **Table of Contents**
 
 * TOC
