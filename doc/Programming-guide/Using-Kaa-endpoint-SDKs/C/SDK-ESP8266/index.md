@@ -13,17 +13,18 @@ sort_idx: 20
 
 ## Introduction
 
-This page will guide you through Kaa C SDK installation and compilation process for ESP8266 platform.
+This page will guide you through Kaa C SDK installation and compilation process for the ESP8266 platform.
 All steps described here were tested on *Linux Ubuntu 14.04 x86_64*.
 
 ## Connecting ESP8266
 
-To flash ESP8266 chip you need to connect it to your PC. This may differ depending on module you use.
+To flash ESP8266 chip you need to connect it to your PC. That may differ depending on the module you use.
 This guide covers instructions for ESP8266-01 and NodeMCU modules.
 
 ### ESP8266-01
 
 To connect the ESP8266-01 to PC, a 3.3V USB-to-TTL connector is required.
+A 3.3V USB-to-TTL connector is required to connect the ESP8266-01 to PC.
 There are two boot modes for ESP8266: flash mode and run mode.
 The table below summarizes wiring scheme for both boot modes.
 
@@ -67,7 +68,7 @@ Connecting NodeMCU is much simpler -- just connect it via micro-USB cable.
 
 ## Installing dependencies
 
-Prior to developing Kaa applications for ESP8266 some dependencies should be installed.
+Before developing Kaa applications for ESP8266, some dependencies should be installed.
 The detailed installation instructions can be found below.
 
 1. Prerequisites
@@ -75,7 +76,7 @@ The detailed installation instructions can be found below.
         sudo apt-get install autoconf libtool libtool-bin bison build-essential gawk git gperf flex texinfo libtool libncurses5-dev libc6-dev-amd64 python-serial libexpat-dev python-setuptools
 
 2. Set the `ESPRESSIF_HOME` variable.
-This variable will be used throughout installation process, and denotes a directory where ESP8266 SDK and toolchain will be placed.
+This variable will be used throughout the installation process, and denotes a directory where ESP8266 SDK and toolchain will be placed.
 You are free to set it to whatever you like.
 
         export ESPRESSIF_HOME=/opt/Espressif/
@@ -117,7 +118,7 @@ You are free to set it to whatever you like.
 
 ## Writing applications
 
-After successfull installation of requirements you can proceed to application development.
+After successful installation of requirements, you can proceed to application development.
 This section shows how to setup minimal Kaa application for ESP8266.
 
 ### Directory structure
@@ -233,7 +234,7 @@ int main(void)
 ### Build system overview
 
 The Kaa C SDK makes use of CMake build system generator. Although you can choose any build system of your preference, it is recommended to use CMake for Kaa applications as well.
-This will make possible to tightly integrate your application's build system with Kaa SDK and use already provided ESP8266 toolchain file.
+That will make possible to tightly integrate your application's build system with Kaa SDK and use already provided ESP8266 toolchain file.
 
 #### CMakeLists.txt
 
@@ -244,7 +245,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(kaa_demo C)
 ```
 
-We also add Kaa SDK subdirectory, so that we can build it together with application.
+We also add Kaa SDK subdirectory, so that we can build it together with the application.
 
 ```CMake
 add_subdirectory(kaa)
@@ -285,8 +286,8 @@ target_include_directories(kaa_demo_s PUBLIC
 
 
 Next, we should tell CMake what libraries we would like to link with.
-Here the required libraries from ESP8266 RTOS SDK, linker script and Kaa SDK are specified.
-We also add `ld/` directory to linker search paths in order to use linker scripts.
+Here the required libraries from ESP8266 RTOS SDK, linker script, and Kaa SDK are specified.
+We also add `ld/` directory to linker search paths to use linker scripts.
 
 ```CMake
 exec_program(xtensa-lx106-elf-gcc .
@@ -315,7 +316,7 @@ target_link_libraries(kaa_demo_s PUBLIC
 
 This is required due to ESP8266 specific requirements regarding linked executable.
 The blank.c file is a placeholder for CMake's `add_executable()`.
-All the code (Kaa SDK, ESP8266 SDK and demo) is compiled as static libraries
+All the code (Kaa SDK, ESP8266 SDK, and demo) is compiled as static libraries
 and linked into that executable.
 
 ```CMake
@@ -351,7 +352,7 @@ For detailed description of available options refer to [Kaa C SDK page]({{root_u
 
 ## Flashing
 Once the application has been built, you'll get a `kaa_demo` ELF executable in `build` directory.
-However, to flash the application to ESP8266, you should first make a firmware images.
+However, to flash the application to ESP8266, you should first make firmware images.
 This is done with a help of `esptool.py` tool, and produces two binaries -- `kaa_demo-0x00000.bin` and `kaa_demo-0x40000.bin`
 which will be flashed to 0x00000 and 0x40000 flash addresses respectively.
 
@@ -362,7 +363,7 @@ If everything done correctly, invoke this command:
 
         sudo esptool.py write_flash 0x00000 build/kaa_demo-0x00000.bin 0x40000 build/kaa_demo-0x40000.bin
 
-This will take some time to flash, and, eventually, when the firmware starts, you will be presented with `Hello, Kaa!` message.
+That will take some time to flash, and, eventually, when the firmware starts, you will be presented with `Hello, Kaa!` message.
 
 ## What's next?
 
