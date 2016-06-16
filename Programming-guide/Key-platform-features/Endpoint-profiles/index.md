@@ -96,7 +96,7 @@ groups membership.
 Think about the client-side profile schema as of a structured data set of your endpoint application that will later be available to you in Kaa server and may change 
 due to your client application logic or device state.
 You can configure your own client-side profile schema using the 
-[Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/create-create-dk-profile). 
+[Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
 For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
 
 ```json
@@ -316,13 +316,13 @@ If you want to review the added Avro schema, open the corresponding **Client-sid
 
 ### REST API for Client-side endpoint profile
 
-Use this link [REST API]({{root_url}}Programming-guide/Server-REST-APIs) for getting more information.
+Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
 
 ## Server-side endpoint profile ##
 
 The server-side endpoint profile is initially generated at the stage of a new endpoint registration. By default, server side profile record is auto-generated based on 
 the latest server-side profile schema of particular application. Both server-side endpoint profile schema and data can be updated at run time using 
-[REST API]({{root_url}}Programming-guide/Server-REST-APIs) call. In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) call. In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
 
 <img src="endpoint-profile-generation/ServerSideEndpointProfileGeneration_0_8_0.png">
 
@@ -367,7 +367,7 @@ during manufacturing and should not be controlled by client application.
 
 Server-side endpoint profile is designed to be accessed and modified by various server-side applications through Kaa REST API integration layer. Server-side profile is 
 not accessible from endpoint SDK or other client application logic but you can configure your own server-side profile schema using the 
-[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs). 
+[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
 For the purpose of this guide we will use a fairly abstract server-side profile schema shown below.
 
 ```json
@@ -389,7 +389,7 @@ For the purpose of this guide we will use a fairly abstract server-side profile 
 ```
 
 Once this schema is configured, you are able to assign server-side endpoint profile body to certain endpoints based on their ids using 
-[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs).
+[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 
 ### Setting server-side endpoint profile schema from Admin UI
 
@@ -422,7 +422,7 @@ If you want to review the added Avro schema, open the corresponding **Server-sid
 
 ### REST API for Server-side endpoint profile
 
-Use this link [REST API]({{root_url}}Programming-guide/Server-REST-APIs) for getting more information.
+Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
 
 ## System part of endpoint profile ##
 
