@@ -8,7 +8,7 @@ sort_idx: 10
 * TOC
 {:toc}
 
-*C SDK* is a portable, lightweight and fast client-side tool that provides full set of Kaa
+*C SDK* is a portable, lightweight and fast client-side tool that provides the full set of Kaa
 application-level features. It specially designed to reduce development efforts and decrease
 time-to-market when developing your IoT embedded solutions.
 
@@ -20,7 +20,7 @@ Using C SDK requires **no operating system**, so you can use it on bare metal sy
 
 # Major components
 
-From usage point of view, C SDK consists of following parts.
+From a usage point of view, C SDK consists of following parts.
 
 - **Extensions** - application-level modules shipped within SDK;
 [implement set of Kaa features]({{root_url}}/Programming-guide/Key-platform-features/).
@@ -28,10 +28,10 @@ Extensions are exposed to the user in a form of headers that one can find in `sr
 directory.
 
 - **SDK core** - part responsible for starting an application main loop and execution control of
-the SDK itself. You may check corresponding API in the `kaa/platform/kaa_client.h` directory.
+the SDK itself. You may check the corresponding API in the `kaa/platform/kaa_client.h` directory.
 
 - **Build system** - written using CMake, it allows to generate and customize project files
-without necessity of creating build infrastructure for every compiler or IDE used.
+without the necessity of creating build infrastructure for every compiler or IDE used.
 To get more familiar with CMake, refer to [the official documentation](https://cmake.org/).
 
 # Target support and portability
@@ -54,21 +54,21 @@ of the platform layer.
 - [ESP8266]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
 - [CC3200]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
 
-If you haven't found interested target or you want know more about working with platform layer, refer to [the porting guide for C SDK]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Porting-guide/)
+If you haven't found interested target, or you want to know more about working with platform layer, refer to [the porting guide for C SDK]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Porting-guide/)
 
 # Build environment
 
 During compilation, C SDK and derived applications requires:
  - Compiler for given target, such as `arm-none-eabi` for bare metal ARM targets.
  - Vendor SDK, e.g. TI SDK for the CC3200 processor.
- - java, in order to generate keypairs.
+ - java, to generate keypairs.
 
 [Nix is the prefferable way]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Environment-setup/)
 to deploy build environment.
 
 Manual installation of required packages varies between targets.
 [Use links previous section](#target-support-and-portability) to find how to build and use SDK
-for desired platform.
+for the desired platform.
 
 ## Build configuration
 
@@ -77,12 +77,12 @@ To pass any configuration parameter, it should be prefixed with `-D`, e.g.:
 
     cmake -DCMAKE_INSTALL_PREFIX=/home/username/installdir
 
-In such way you can customize build for Kaa C SDK. For example, you can disable debug logging
-thus decrease memory footprint.
+In such way, you can customize build for Kaa C SDK. For example, you can disable debug logging
+thus, decrease memory footprint.
 
 The available configuration parameters list:
 
--  `KAA_MAX_LOG_LEVEL` - Maximum log level used by C SDK. The higher value the more detailed logs.
+-  `KAA_MAX_LOG_LEVEL` - Maximum log level used by C SDK. The higher value, the more detailed logs.
 
     Values:
 
@@ -112,9 +112,9 @@ The available configuration parameters list:
     - `ON` - enable extension
     - `OFF` - disable extension
 
-    Default: `ON` - all extensions are included to the build.
+    Default: `ON` - all extensions are included in the build.
 
-- `KAA_PLATFORM` - build sdk for a specific target.
+- `KAA_PLATFORM` - build SDK for a particular target.
 
     Values:
 
