@@ -2,8 +2,7 @@
 layout: page
 title: How to contribute
 permalink: /:path/
-nav: /:path/Customization-guide/How-to-contribute
-sort_idx: 60
+sort_idx: 50
 ---
 
 {% assign root_url = page.url | split: '/'%}
