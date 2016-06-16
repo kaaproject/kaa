@@ -89,7 +89,7 @@ To launch the Kaa sanbox on Amazon Elastic Compute Cloud (Amazon EC2), go throug
 
 6. On **Configure Security Group** step, select one of the following options.
 
-   * Create a new security group with the inbound open ports:
+   - Create a new security group with the inbound open ports:
 
       | Protocol | Port | RangeSource|
       |----------|------|------------|
@@ -103,21 +103,21 @@ To launch the Kaa sanbox on Amazon Elastic Compute Cloud (Amazon EC2), go throug
       | TCP      | 9887 | 0.0.0.0/0  |
       | TCP      | 9080 | 0.0.0.0/0  |
 
-   * Select the created security group.
+   - Select the created security group.
 
 7. On **Review Instance Launch** step, make any changes as appropriate.
 
 8. Click **Launch** and then in the **Select an existing key pair** or **Create a new key pair** dialog, do one of the following:
 
-   * Select an existing key pair from the **Select a key pair** drop list.
+   - Select an existing key pair from the **Select a key pair** drop list.
 
-   * If you need to create a new key pair, click **Create a new key pair**. Then create the new key pair as described in [Creating a key pair](http://docs.aws.amazon.com/gettingstarted/latest/wah/getting-started-prereq.html).
+   - If you need to create a new key pair, click **Create a new key pair**. Then create the new key pair as described in [Creating a key pair](http://docs.aws.amazon.com/gettingstarted/latest/wah/getting-started-prereq.html).
 
 9. Click **Launch Instances**. The **Launch Status** page will be displayed.
 
 10. Click **View Instances**.
 
-11. After launching Kaa Sandbox instance, go to **<your\_instance\_public\_dns\>:9080/sandbox** or **<your\_instance\_public\_ip\>:9080/sandbox** URL. Public DNS or IP of your instance are available from your instance description.
+11. After launching Kaa Sandbox instance, go to **<your\_instance\_public\_domain\_name\>:9080/sandbox** or **<your\_instance\_public\_ip\>:9080/sandbox** URL. Public DNS or IP of your instance are available from your instance description.
 
 <br>
 
@@ -135,29 +135,27 @@ Thus, if you successfully configure the [networking](#networking) for your SDK, 
 
 <br>
 
-<p align="center">
-  <img src="attach/sandbox_demo_projects.png" width="500" height="400">
-</p>
+![alt Demo projects view](attach/sandbox_demo_projects.png)
 
 ## Admin UI
 
 You can access Admin UI by clicking **Administrative console** at the top of the window. Refer to the [Admin UI guide]({{root_url}}Administration-guide/Tenants-and-applications-management) for working instructions.
 
-> **NOTE:** Kaa Sandbox provides default credentials for all three types of Kaa users, as follows:
+> **NOTE:** Kaa Sandbox provides default credentials for all three types of Kaa users, as follows (username/password):
 >
-> * Kaa admin - kaa/kaa123
-> * Tenant admin - admin/admin123
-> * Tenant developer - devuser/devuser123
+> - Kaa admin - \`kaa\`/\`kaa123\`
+> - Tenant admin - \`admin\`/\`admin123\`
+> - Tenant developer - \`devuser\`/\`devuser123\`
 
 ## Avro UI
 
-<!-- TODO: update link on Avro UI guide -->
+<!-- TODO: update link on Avro UI guide http://jira.kaaproject.org/browse/KAA-1181 -->
 You can access Avro UI by clicking **Avro UI sandbox console** at the top of the window. 
 Refer to the [Avro UI guide](#) for working instructions.
 
 ## Configuration
 
-### Outgoing mail settings
+### Outgoing email settings
 
 Outgoing mail settings are used to send emails to newly created users with the information about their passwords, as well as other notifications. 
 By default, outgoing mail settings are not configured for Admin UI. 
@@ -165,8 +163,8 @@ To target Admin UI to your SMTP server refer to the [Admin UI guide]({{root_url}
 
 ### Networking
 
-By default, Kaa Sandbox components are accessible from a host machine only. But if you want to share Kaa Sandbox in the local network you need to reconfigure the network interface for this virtual machine in [Bridge mode](https://www.virtualbox.org/manual/ch06.html#network_bridged). 
-Once the virtual box is available to devices on your local/test network, you need to change Sandbox host/IP on [web UI](#kaa-sandbox-web-ui) or execute the script on Sandbox.
+By default, Kaa Sandbox components are accessible from a host machine only. If you want to share Kaa Sandbox in the local network, you need to reconfigure the network interface for the virtual machine in [Bridge mode](https://www.virtualbox.org/manual/ch06.html#network_bridged). 
+Once the virtual box is available to devices on your network, you need to change Sandbox host name/IP on [web UI](#kaa-sandbox-web-ui) or execute the script on Sandbox.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Sandbox-web-ui">Sandbox web UI</a></li>
@@ -179,13 +177,11 @@ Once the virtual box is available to devices on your local/test network, you nee
 
 <br>
 
-Go to Kaa Sandbox web UI and in a upper right corner select "Management" menu item. Input new host/IP and click the "Update" button in the "Kaa host/IP" section.
+Go to Kaa Sandbox web UI and in a upper right corner select "Management" menu item. Input new host name/IP and click the "Update" button in the "Kaa host/IP" section.
 
 <br>
 
-<p align="center">
-  <img src="attach/sandbox_managment_tab.png" width="500" height="400">
-</p>
+![alt Sandbox management tab](attach/sandbox_managment_tab.png)
 
 </div><div id="Console" class="tab-pane fade" markdown="1">
 
@@ -194,7 +190,7 @@ Go to Kaa Sandbox web UI and in a upper right corner select "Management" menu it
 Paste next line in Sandbox terminal:
 
 ```sh
-sudo /usr/lib/kaa-sandbox/bin/change_kaa_host.sh <new host/ip>
+sudo /usr/lib/kaa-sandbox/bin/change_kaa_host.sh <new host name/ip>
 ```
 
 <br>
@@ -207,9 +203,7 @@ So let's run your first Kaa aplication. Navigate to Demo projects page and selec
 
 <br>
 
-<p align="center">
-  <img src="attach/sandbox_first_app_bundle_view.png" width="500" height="400">
-</p>
+![alt First application bundle page](attach/sandbox_first_app_bundle_view.png)
 
 <br>
 
@@ -217,25 +211,23 @@ Than select application for your platform, download sources or binaries and foll
 
 <br>
 
-<p align="center">
-  <img src="attach/sandbox_first_app_view.png" width="500" height="400">
-</p>
+![alt First application page](attach/sandbox_first_app_view.png)
 
 <br>
 
 # Next steps
 
 After you get acquainted with Kaa Sandbox and its demo applications, you can take one step further: install Kaa into your environment and create your own Kaa applications! 
-We will give you [something to start with]({{root_url}}Programming-guide/Your-first-Kaa-application). 
+We also encourage you to follow this step by step guide for creating [your first Kaa application]({{root_url}}Programming-guide/Your-first-Kaa-application)! 
 Kaa installation is available in the single node mode or in the distributed mode, as described in the [Installation guide]({{root_url}}Administration-guide/System-installation).
 
 # Troubleshooting
 
-Common issues covered in this [guide]({{root_url}}Administration-guide/Troubleshooting/).
+Common issues are covered in the [Troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting/).
 
 Please take into account the following known issues and limitations of Kaa Sandbox.
 
-* Without the SMTP server configured, you will not be able to create new users. 
+- Without the SMTP server configured, you will not be able to create new users. 
 See the [Outgoing mail settings section](#outgoing-mail-settings) for more details.
 
 # Further reading
