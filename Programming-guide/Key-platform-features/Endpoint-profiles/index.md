@@ -36,7 +36,7 @@ it detects profile data changes and submits the new data to the Kaa cluster as a
 
 ### Client-side endpoint profile example ###
 
-The following code block provides a simple client-side endpoint profile schema example.
+For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
 
 ```json
 {
@@ -97,42 +97,6 @@ Think about the client-side profile schema as of a structured data set of your e
 due to your client application logic or device state.
 You can configure your own client-side profile schema using the 
 [Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
-For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
-
-```json
-{
-    "type":"record",
-    "name":"Profile",
-    "namespace":"org.kaaproject.kaa.schema.sample.profile",
-    "fields":[
-        {
-            "name":"id",
-            "type":"string"
-        },
-        {
-            "name":"os",
-            "type":{
-                "type":"enum",
-                "name":"OS",
-                "symbols":[
-                    "Android",
-                    "iOS",
-                    "Linux"
-                ]
-            }
-        },
-        {
-            "name":"os_version",
-            "type":"string"
-        },
-        {
-            "name":"build",
-            "type":"string"
-        }
-    ]
-}
-```
-
 Client-side endpoint profile updates are reported to the endpoint SDK using a profile container. The profile related API varies depending on the target SDK platform, 
 however the general approach is the same.
 
