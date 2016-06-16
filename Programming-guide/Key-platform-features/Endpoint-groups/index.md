@@ -9,13 +9,8 @@ sort_idx: 30
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Using endpoint groups](#using-endpoint-groups)
-* [Profile filters](#profile-filters)
-  * [Profile filter examples](#profile-filter-examples)
-* [Custom endpoint groups](#custom-endpoint-groups)
-* [Adding endpoint groups](#adding-endpoint-groups)
-  * [Add profile filter to endpoint group](#add-profile-filter-to-endpoint-group)
-* [REST API](#rest-api)
+* TOC
+{:toc}
 
 Kaa provides a mechanism for endpoints aggregation within the application that is based on groups. Grouping endpoints enables you to activate specific configuration parameters, 
 control access to notification topics, etc.
@@ -33,77 +28,6 @@ profile to figure out whether or not the endpoint belongs to the group
 
 **NOTE**: Different profile schema versions may require separate profile filters due to the schema structural differences. 
 In case a group has no filter assigned for a specific profile schema version, the group does not apply to the endpoints that use the profile of this schema version.
-
-## Using endpoint groups ##
-
-Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. The associated profile filter is automatically set equal to "true" for each profile 
-schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
-[Admin UI](#adding-endpoint-groups) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs).
-
-**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
-
-Each group can be associated with multiple profile filters, each specific to a separate client-side and server-side profile schema version combination. 
-Only one profile filter can be defined for a profile schema version combination. However, you may also define profile filters that are agnostic to either 
-client-side or server-side profile part. In this case, either client-side profile or server-side profile will not be accessible in the filter. 
-This is useful in case you want to specify an endpoint group that is based on certain client-side profile property and is not affected by server-side profile updates and vice-versa. 
- 
-Client-side Endpoint Profile A
-
-```json
-{ 
-    "id":"device1",
-    "os":"Android",
-    "os_version":"2.2",
-    "build":"2.0.1"
-}
-```
-Server-side Endpoint Profile A
-
-```json
-{ 
-    "subscriptionPlan": "Regular",
-    "activationFlag": "true"
-}
-```
-Client-side Endpoint Profile B
-
-```json
-{ 
-    "id":"device2",
-    "os":"Android",
-    "os_version":"4.0.1",
-    "build":"3.0 RC1"
-}
-```
-Server-side Endpoint Profile B
-
-```json
-{ 
-    "subscriptionPlan": "Regular",
-    "activationFlag": "false"
-}
-```
-
-Client-side Endpoint Profile C 
-
-```json
-{ 
-    "id":"device3",
-    "os":"iOS",
-    "os_version":"8.0.1",
-    "build":"3.0 RC1"
-}
-```
-Server-side Endpoint Profile C
-
-```json
-{ 
-    "subscriptionPlan": "Premium",
-    "activationFlag": "true"
-}
-```
-
-**NOTE**: Once a profile filter is created, you need to activate it. Filters that are not activated do not impact endpoint groups and do not affect the endpoints. 
 
 ## Profile filters ##
 
@@ -256,7 +180,78 @@ At last, the following filters will yield true when applied to the given endpoin
 |#cp.arrayRecordField[1].otherSimpleField==789 |The client-side endpoint profile contains arrayRecordField, which is an array. This array contains an element in the position 1, which is a record containing otherSimpleField set to '789'.|
 |#cp.nullableRecordField==null |An example of how to check a field for the null value.|
 |#cp.arraySimpleField[0]=='CLIENT_SIDE_VALUE_1' and # sp.arraySimpleField[0]=='SERVER_SIDE_VALUE_1'|An example of how to combine several conditions in a query.|
-|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The arrayRecordField field is an array of records. It contains at least one element that contains otherSimpleField with the value 456.|
+|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The arrayRecordField field is an array of records. It contains at least one element that contains otherSimpleField with the value 
+
+## Using endpoint groups ##
+
+Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. The associated profile filter is automatically set equal to "true" for each profile 
+schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
+[Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+
+**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
+
+Each group can be associated with multiple profile filters, each specific to a separate client-side and server-side profile schema version combination. 
+Only one profile filter can be defined for a profile schema version combination. However, you may also define profile filters that are agnostic to either 
+client-side or server-side profile part. In this case, either client-side profile or server-side profile will not be accessible in the filter. 
+This is useful in case you want to specify an endpoint group that is based on certain client-side profile property and is not affected by server-side profile updates and vice-versa. 
+ 
+Client-side Endpoint Profile A
+
+```json
+{ 
+    "id":"device1",
+    "os":"Android",
+    "os_version":"2.2",
+    "build":"2.0.1"
+}
+```
+Server-side Endpoint Profile A
+
+```json
+{ 
+    "subscriptionPlan": "Regular",
+    "activationFlag": "true"
+}
+```
+Client-side Endpoint Profile B
+
+```json
+{ 
+    "id":"device2",
+    "os":"Android",
+    "os_version":"4.0.1",
+    "build":"3.0 RC1"
+}
+```
+Server-side Endpoint Profile B
+
+```json
+{ 
+    "subscriptionPlan": "Regular",
+    "activationFlag": "false"
+}
+```
+
+Client-side Endpoint Profile C 
+
+```json
+{ 
+    "id":"device3",
+    "os":"iOS",
+    "os_version":"8.0.1",
+    "build":"3.0 RC1"
+}
+```
+Server-side Endpoint Profile C
+
+```json
+{ 
+    "subscriptionPlan": "Premium",
+    "activationFlag": "true"
+}
+```
+
+**NOTE**: Once a profile filter is created, you need to activate it. Filters that are not activated do not impact endpoint groups and do not affect the endpoints. 
 
 ## Custom endpoint groups
 
@@ -315,4 +310,4 @@ To add a profile filter to the endpoint group, do the following:
 
 ## REST API ##
 
-Use this link [REST API]({{root_url}}Programming-guide/Server-REST-APIs) for getting more information.
+Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
