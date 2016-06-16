@@ -34,7 +34,7 @@ sort_idx: 20
         CROSS_PREFIX="${CROSS}-" ./configure --prefix=${INSTALLDIR}
         make && make install
 
-3. Download and install bzib2.
+3. Download and install bzip2.
 
         cd $RPI_ROOT
         wget http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
