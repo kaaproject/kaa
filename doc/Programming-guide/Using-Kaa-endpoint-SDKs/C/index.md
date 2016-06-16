@@ -5,18 +5,80 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-- [Intruduction](#introduction)
-- [Build configuration](#build-configuration)
+* TOC
+{:toc}
 
-# Introduction
+*C SDK* is a portable, lightweight and fast client-side tool that provides full set of Kaa
+application-level features. It specially designed to reduce development efforts and decrease
+time-to-market when developing your IoT embedded solutions.
 
-*C SDK* was designed to be the best fit for the embedded devices. Small footprint, modularity, low memory consumption, portability with the C's execution speed make C SDK the best choice for using it even with low-power microcontrollers. Using C SDK requires no operating system, so you can use it on bare metal systems.
+# Field of application
 
-# Build configuration
+C SDK is the best fit for the embedded devices. Small footprint, modularity, low memory consumption, portability with the C's execution speed make C SDK the best choice for using it even with low-power and low-cost microcontrollers.
 
-C SDK uses CMake as a build system. So, build configuration is performed on the make file generation stage. To pass any configuration parameter, it should be prefixed with `-D`, e.g.:
+Using C SDK requires **no operating system**, so you can use it on bare metal systems.
+
+# Major components
+
+From usage point of view, C SDK consists of following parts.
+
+- **Extensions** - application-level modules shipped within SDK;
+[implement set of Kaa features]({{root_url}}/Programming-guide/Key-platform-features/).
+Extensions are exposed to the user in a form of headers that one can find in `src/extensions`
+directory.
+
+- **SDK core** - part responsible for starting an application main loop and execution control of
+the SDK itself. You may check corresponding API in the `kaa/platform/kaa_client.h` directory.
+
+- **Build system** - written using CMake, it allows to generate and customize project files
+without necessity of creating build infrastructure for every compiler or IDE used.
+To get more familiar with CMake, refer to [the official documentation](https://cmake.org/).
+
+# Target support and portability
+
+C SDK contains platform abstraction layer, which hides differences across platforms,
+such as memory allocation procedures or time routines. Its interface is placed under
+`kaa/platform/` directory.
+
+Below is the list of the targets for which C SDK already has an implementation
+of the platform layer.
+
+- POSIX
+    - [Linux]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
+    - [UDOO]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-UDOO/)
+    - [Windows (cygwin)]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Windows)
+    - [Snappy Ubuntu Core]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Ubuntu-Snappy/)
+    - [Raspberry PI]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-RPi/)
+    - [Beaglebone]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/)
+    - [QNX Neutrino]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino/)
+- [ESP8266]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
+- [CC3200]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
+
+If you haven't found interested target or you want know more about working with platform layer, refer to [the porting guide for C SDK]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Porting-guide/)
+
+# Build environment
+
+During compilation, C SDK and derived applications requires:
+ - Compiler for given target, such as `arm-none-eabi` for bare metal ARM targets.
+ - Vendor SDK, e.g. TI SDK for the CC3200 processor.
+ - java, in order to generate keypairs.
+
+[Nix is the prefferable way]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Environment-setup/)
+to deploy build environment.
+
+Manual installation of required packages varies between targets.
+[Use links previous section](#target-support-and-portability) to find how to build and use SDK
+for desired platform.
+
+## Build configuration
+
+Build configuration is performed on the make file generation stage.
+To pass any configuration parameter, it should be prefixed with `-D`, e.g.:
 
     cmake -DCMAKE_INSTALL_PREFIX=/home/username/installdir
+
+In such way you can customize build for Kaa C SDK. For example, you can disable debug logging
+thus decrease memory footprint.
 
 The available configuration parameters list:
 
