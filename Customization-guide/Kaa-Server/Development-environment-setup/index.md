@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Development environment setup
-permalink /:path/
+permalink: /:path/
 sort_idx: 20
 ---
 
