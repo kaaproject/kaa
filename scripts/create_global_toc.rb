@@ -1,5 +1,18 @@
 require 'yaml'
 
+if not (Array.new).methods.include?(:to_h)
+  class Array
+    def to_h
+      hash = Hash.new
+      self.each do |element|
+        array_pair = element.to_a
+        hash[array_pair[0]] = array_pair[1]
+      end
+      return hash
+    end
+  end
+end
+
 class GlobalMenu
   def initialize
     @root ||= {}
