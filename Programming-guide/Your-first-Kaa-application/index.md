@@ -11,8 +11,8 @@ sort_idx: 10
 * TOC
 {:toc}
 
-By walking through this guide you will learn essential skills of creating
-Kaa-based applications as well as understanding of the Kaa approach in general.
+By walking through this guide, you will learn essential skills of creating
+Kaa-based applications, as well as the understanding of the Kaa approach in general.
 We'll cover here basic yet realistic example of collecting data from the sensor devices. For
 more advanced Kaa features, refer to the [next steps section](#next-steps).
 
@@ -23,27 +23,27 @@ you need to create users with the [tenant administrator]({{root_url}}/Administra
 
 The tenant administrator is responsible for creating new applications in Kaa,
 and the tenant developer configures and generates SDKs for those applications.
-We suggest that you use Kaa Sandbox, which has a tenant administrator and tenant
+We suggest you to use Kaa Sandbox, which has a tenant administrator and tenant
 developer users already created.
 
 # Application description
 
 Application created trough this guide covers the basic case of collecting
-temperature data from a sensor. Usually, simple sensors stream data at constant
-rate, no matter what. However, rising demand of mobility and power efficiency dictates own
-rules of game. It is not viable to keep sensors streaming all the time, especially
-if a data is not required at this moment. That's a point where we can save power by
+temperature data from a sensor. Usually, simple sensors stream data at a constant
+rate, no matter what. However, rising demand for mobility and power efficiency dictates own
+rules of the game. It is not viable to keep sensors streaming all the time, especially
+if data is not required at this moment. That's a point where we can save power by
 configuring sample period.
 
-To satisfy application requirements two of main Kaa features are used:
+To satisfy application requirements, two main Kaa features are used:
 
-- **Data Collection** feature that allows to send data from endpoints
-to the Kaa server. In this example Data Collection is used to reliably transmit
-temperature samples from sensor to the Kaa.
+- **Data Collection** feature allows sending data from endpoints
+to the Kaa server. In this example, Data Collection is used to transmit
+temperature samples from the sensor to the Kaa reliably.
 
-- **Configuration** feature that allows to broadcast configuration parameters
-from the Kaa server to Kaa endpoints. In this guide Configuration is used
-to pass a sample period of the temperature to endpoint.
+- **Configuration** feature allows broadcasting configuration parameters
+from the Kaa server to Kaa endpoints. In this guide, Configuration is used
+to pass a sample period of the temperature to the endpoint.
 
 # Adding application
 
@@ -55,20 +55,20 @@ use the correct credentials if you changed the default).
 1. Select **Applications** on the navigation panel on the left side and, in the
 Applications window that opens, click **Add application**.
 1. In the Add application window, enter the application name and then click **Add**.
-For this guide we will use **Trustful** credential service and our application will be
-named "My First Kaa Application"
+For this guide, we use **Trustful** credential service, and our application is
+named "My First Kaa Application."
 
     ![Admin Console](attach/new_app.png)
 
-After the application has been added, you may log out. We will not be using
+After the application has been added, you may log out. We will not use
 the tenant administrator role in this guide anymore.
 
 # Creating schemas
 
-The application that you have created in [the previous step](#adding-application)
-already includes the default versions of the profile, configuration, notification
-and log schemes ready for use. However, in this sample application, we will use a custom data
-collection and configuration schemas for demonstration purposes.
+The application that was created in [the previous step](#adding-application)
+already includes the default versions of the profile, configuration, notification,
+and log schemes ready for use. However, in this sample application, we use a custom data
+collection and configuration schemes for demonstration purposes.
 
 To create and upload the schemas, proceed as follows:
 
@@ -100,10 +100,10 @@ To create and upload the schemas, proceed as follows:
             ]
         }
 
-    `by_default` field defines the default value for sampling period, which is in our example
+    `by_default` field defines the default value for the sampling period, which is in our example
     is set to 1 second.
 1. Open the admin UI in your browser and log in as a tenant developer
-(default user/password in sandbox: devuser/devuser123; use the correct credentials if
+(default user/password in the sandbox: `devuser`/`devuser123`; use the correct credentials if
 you changed the default).
 1. Open the relevant **Log schemas** window (**Applications =>
 My First Kaa Application => Schemas => Log**) and click **Add schema**.
@@ -112,30 +112,30 @@ the new data collection schema.
 
     ![Data collection scheme](attach/new_data_schema.png)
 1. Scroll down and use the **Upload from file** function to find the previously
-    created json file with the schema. Alternatively, you can use the
+    created JSON file with the schema. Alternatively, you can use the
     [Schema Avro UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#avro-ui-forms)
     form to create the schema.
 1. Click **Upload**.
 1. Click **Add** at the top of the window.
 1. Repeat uploading and adding for the configuration schema
-    (*configuration-schema.json*) scheme:
+    (`configuration-schema.json`) scheme:
 
     ![Data collection scheme](attach/new_config_schema.png)
 
-As a result of these operations you will see configuration and data collection
-schemas in the list. Note that every time you adding new schema, Kaa will assign
-to it new version. So if you already added your own schemas then versions you can
+As a result of these operations, you will see configuration and data collection
+schemas in the list. Note that every time you add a new schema, Kaa assigns
+a new version number to it. So if you already added your schemas then versions you can
 observe could be different from that provided on the screenshots.
 ![Data collection schema complete](attach/log_schema_list.png)
 ![Configuraion schema complete](attach/config_schema_list.png)
 
-In this screenshot, version 2 is log and configuraion schema version that
-was just created. We will use this version for the SDK generation later.
+In this screenshot, version 2 is log and configuration schema version that
+was just created. We use this version for the SDK generation later.
 
 # Log appenders setup
 
-In order to use Data Collection feature it is required to setup **Log Appender**.
-In this example we will use MongoDB log appender.
+It is required to setup **Log Appender** to use Data Collection feature.
+In this example, we use MongoDB log appender.
 Refer to [Admin UI section describing how to setup it]({{root_url}}/Administration-guide/Tenants-and-applications-management/#mongodb-log-appender).
 
 # Generating SDK
@@ -150,9 +150,9 @@ To generate an SDK for the new application, proceed as below:
     ![Add SDK](attach/add_sdk.png)
 1. In the **Add SDK profile** window, fill in the fields as shown.
 Note that schema versions that are used in the following screenshot correspond
-to versions that was previously assigned by the Kaa during [the creating schemas step](#creating-schemas).
-If you are using your own additional schemas then version numbers may be different.
-After picking right versions for schemas used in SDK click **Add**.
+to versions that were previously assigned by the Kaa during [the creating schemas step](#creating-schemas).
+If you are using your additional schemas, version numbers may be different.
+After picking correct versions for schemas used in SDK click **Add**.
 
     ![Configure SDK](attach/configure_sdk.png)
 1. Now the SDK is configured and ready to be generated. Click **Generate SDK** for
@@ -175,7 +175,7 @@ If necessary, you can overwrite them using [Admin UI]({{root_url}}/Administratio
 # Sample client application
 
 Once you have downloaded the SDK, you can use it in your sample project. The following
-code block illustrates a simple desktop application that will send virtual temperature
+code block illustrates a simple desktop application that sends virtual temperature
 data from the Kaa endpoint with required configuration.
 
 ## Preparation
@@ -224,7 +224,7 @@ commands.
         cd build
         cmake ..
         make
-1. Check that demo application executable is present in build directory.
+1. Check that demo application executable is present in the build directory.
 
         $ ls -l kaa-app
         -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
@@ -398,7 +398,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    /* Start Kaa SDK's main loop. example_callback will be called 1 time per second. */
+    /* Start Kaa SDK's main loop. example_callback is called once per second. */
 
     error = kaa_client_start(kaa_client, example_callback, kaa_client, 1);
 
@@ -443,9 +443,9 @@ int main(void)
 <div class="tab-content">
 <div id="run-c" class="tab-pane fade in active" markdown="1" >
 
-In order to launch C appliation next steps should be performed.
+To launch C application next steps should be performed.
 
-1. Rebuild application with decreased log level. This will decrease a mess that can
+1. Rebuild application with decreased log level. That reduces a mess that can
 appear when debug logs are enabled.
 
         cd build
@@ -475,7 +475,7 @@ appear when debug logs are enabled.
 
 ## Expected output
 
-After application start following logs will appear on the console.
+After application starts, following logs will appear on the console.
 
 ```
 Default sample period: 1 seconds
@@ -486,25 +486,25 @@ Sampled temperature: 31
 Sampled temperature: 28
 Sampled temperature: 28
 ```
-Note that temperature value must be sampled 1 time per second as stated in the
+Note that temperature value must be sampled once per second as stated in the
 configuration scheme.
 Refer to the [Troubleshooting](#troubleshooting) section if something goes wrong.
 
 ## Retrieving collected data
 
-In order to obtain temperature data stored on the server, following steps should be
+To obtain temperature data stored on the server, following steps should be
 performed.
 
 1. Grab application token. It is a token that you can copy from the main window
     of the application the Administration UI.
 
     ![Generate SDK](attach/app_token.png)
-1. Login to your machine running Kaa server (in case you are using sandbox
-    default username and password are *kaa / kaa*).
+1. Login to your machine running Kaa server (in case you are using sandbox,
+    default username and password are `kaa`/`kaa`).
 1. Start MongoDB shell
 
         mongo kaa
-1. Retrieve data using application token retrieved at first step within this sectino.
+1. Fetch data using application token retrieved at the first step within this section.
 
         db.logs_$your_application_token$.find()
 
@@ -543,32 +543,28 @@ endpoint.
     sample period we set in **Admin UI**.
 
 
-# Next steps
+# Further reading
 
-To create a real-world IoT solution, you will most likely need to implement more
+To create a real-world IoT solution, you need to add more
 features into your application.
 
-Kaa provides you with practically everything you might need.
-Links in [following section](#further-reading) will help you grasp the scope of Kaa capabilities
+Kaa provides many ones you might need.
+Follow the links below to grasp the scope of Kaa capabilities
 as well as get familiar with the essential documentation, such as Programming guide and
 Administration UI guide.
 
-# Further reading
-
-Use the following guides and references to make the most of Kaa.
-
  - [Key Kaa features]({{root_url}}/Programming-guide/Key-platform-features/)
 
-    Use this reference to learn about features and capabilities of Kaa.
+    Learn about Kaa features and capabilities.
 
  - [Using endpoint SDKs]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/)
 
-    Use this guide to create advanced applications with Kaa using SDKs.
+    Create advanced applications using Kaa SDKs.
 
  - [Administration UI guide]({{root_url}}/Administration-guide/)
 
-    Use this guide to learn how to install, configure and manage Kaa platform in details.
+    Learn how to install, configure and manage Kaa platform in details.
 
  - [Contribute to Kaa]({{root_url}}/Customization-guide/How-to-contribute/)
 
-    Use this guide to learn how to contribute to Kaa project and which code/documentation style conventions we adhere to.
+    Learn how to contribute to the Kaa project.
