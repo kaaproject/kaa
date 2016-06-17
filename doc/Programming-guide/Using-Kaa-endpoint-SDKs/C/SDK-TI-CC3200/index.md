@@ -77,7 +77,7 @@ the following installation.
 Before building the C SDK for the CC3200 platform on Windows, you need to perform
 the following installation.
 
-1. Install [cygwin](https://www.cygwin.com/) with the additional following packages:
+1. Install [Cygwin](https://www.cygwin.com/) with the additional following packages:
     * `Archive/unzip`
     * `Archive/zip`
     * `Devel/autoconf`
@@ -92,17 +92,19 @@ the following installation.
     * `Devel/mingw-runtime`
 
 
-    Refer to [SO question page](http://superuser.com/questions/304541/how-to-install-new-packages-on-cygwin) for details how to install packages on CygWin.
+    Refer to [SO question page](http://superuser.com/questions/304541/how-to-install-new-packages-on-cygwin) for details how to install packages on Cygwin.
 1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded)
-to the `opt\kaa` directory under the cygwin root directory (default is `c:\cygwin`)
+to the `opt\kaa` directory under the Cygwin root directory (default is `C:\cygwin`)
 1. Install [CC3200SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa`
-(if this directory doesn't exist create it) directory under the cygwin root directory.
+(if the directory doesn't exist, create it) directory under the Cygwin root directory.
 1. Install [cmake](http://www.cmake.org/) and add it bin directory to the system environment.
 
 To enable debugging for your CC3200 applications, you will also need to build OpenOCD as
-described in [the official CC3200-Getting_Started_Guide](http://www.ti.com/lit/ug/swru376c/swru376c.pdf) (item 3.3.3)
+described in [the official CC3200-Getting_Started_Guide][cc3200-getting-started-guide] (item 3.3.3)
 
-For more information, please refer to the official [CC3200-Getting_Started_Guide](http://www.ti.com/lit/ug/swru376d/swru376d.pdf)
+For more information, please refer to the official [CC3200-Getting_Started_Guide][cc3200-getting-started-guide]
+
+[cc3200-getting-started-guide]: http://www.ti.com/lit/ug/swru376d/swru376d.pdf
 
 
 # Creating applications based on C SDK
@@ -124,7 +126,7 @@ For more details on building the C SDK for Linux, please refer to [this page]({{
 
 ## Building C SDK for Windows
 
-Open the cygwin terminal and execute the following:
+Open the Cygwin terminal and execute the following:
 
 ```
 mkdir -p build
@@ -135,7 +137,7 @@ make
 
 # Example
 
-To quickly start with the Kaa IoT platform, you can download one of the Kaa demo applications from the [Kaa Sandbox]({{root_url}}/Getting-started/) and run it on the CC3200 board. We recommend that you start with the ConfigurationDemo.
+To quickly start with the Kaa IoT platform, you can download one of the Kaa demo applications from the [Kaa Sandbox]({{root_url}}/Getting-started/) and run it on the CC3200 board. We recommend you to start with the ConfigurationDemo.
 
 Connect CC3200 LaunchPad to your PC through a micro-USB connector and execute the following in your terminal:
 
@@ -162,4 +164,3 @@ Jumpers on the CC3200 board should be connected as shown below.
 To run an application, remove SOP2 and J8 jumpers, and then connect J2 and J3 jumpers.
 
 For more information, see the official [UniFlash Quick Start Guide](http://processors.wiki.ti.com/index.php/CC31xx_%26_CC32xx_UniFlash_Quick_Start_Guide).
-
