@@ -18,8 +18,8 @@
         <li>
           {% if val.url == navurl %}
             <a class="menu-selected li-{{ include.lvl }}" href="{{ val.url }}">{{ postfix }}{{ val.text }}</a>
-		  {% elsif navurl contains val.url %}
-			<a class="menu-opened li-{{ include.lvl }}" href="{{ val.url }}">{{ postfix }}{{ val.text }}</a>
+	  {% elsif navurl contains val.url %}
+	    <a class="menu-opened li-{{ include.lvl }}" href="{{ val.url }}">{{ postfix }}{{ val.text }}</a>
           {% else %}
             <a class="{{ li-class }} li-{{ include.lvl }}" href="{{ val.url }}">{{ postfix }}{{ val.text }}</a>
           {% endif %}  
