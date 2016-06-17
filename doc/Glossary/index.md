@@ -18,7 +18,7 @@ sort_idx: 50
 
 <div id="a"/>
 
-## Access Token
+## User Access Token
 
 Identifier of user in case of attaching endpoints to it.Endpoint send access token to Kaa Cluster and if this access token compares with user access token and if true endpoint attaches to user.
 
@@ -32,7 +32,7 @@ The application in Kaa represents a family of available implementations of a spe
 
 ## Avro UI form                                            
 
-A GUI component in Admin UI that allows the user to either create Kaa schemas or enter corresponding data records, in both cases without using the Avro/JSON syntax. Refer toAvro UI forms for more information.
+A GUI component in Admin UI that allows the user to either create Kaa schemas or enter corresponding data records, in both cases without using the Avro/JSON syntax. Refer to Avro UI forms for more information.
 
 ## Application Token
 
@@ -44,9 +44,9 @@ A unique auto-generated application identifier.
 
 A derivative schema obtained from the configuration schema and used within the given application for updating configuration of all endpoints belonging to that configuration schema. Refer to Configuration and its Schema-specific configuration management section for more information.
 
-## Bootstrap server                                        
+## Bootstrap service                                        
 
-One of the three server types in Kaa, with the other two being the Control server and Operations server. A Bootstrap server is responsible for directing endpoints to Operations servers. On their part, Kaa endpoints have a built-in list of Bootstrap servers set up in the given Kaa deployment. The endpoints use this list to query the Bootstrap servers and retrieve from them a list of currently available Operations servers, as well as security credentials. Bootstrap servers maintain their lists of available Operations servers by coordinating with the ZooKeeper service. Refer to Design reference main page for more information.
+Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints. Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc. Kaa SDKs contain a pre-generated list of Bootstrap services available in the Kaa cluster that was used to generate the SDK library. Endpoints query Bootstrap services from this list to retrieve connection parameters for the currently available Operations services. Bootstrap services maintain their lists of available Operations services by coordinating with ZooKeeper.
 
 <div id="c"/>
 
@@ -66,9 +66,9 @@ A user-defined specification of the application data model that Kaa Configuratio
 
 A set of configuration values specified by the user based on the corresponding configuration schema. Having been specified on the server, these values are then distributed to the endpoints that belong to the corresponding application and support the corresponding configuration schema. Refer to Configuration for more information.
 
-## Control server                                          
+## Control service                                          
 
-One of the three server types in Kaa, with the other two being the Bootstrap server and Operations server. It is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering notifications to Operations servers. A Control server manages data stored in a database (independently for each tenant) and notifies every Operations server on most data updates via a Thrift-based protocol. A Control server maintains an up-to-date list of available Operations servers by continuously obtaining this information from ZooKeeper.To support high availability, a Kaa cluster must include at least two Control servers, with one of them being active and the other(s) being in a standby mode. In case of the active Control server failure, ZooKeeper notifies one of the standby Control servers and promotes it to the active Control server.Refer to Design reference main page for more information.
+One of the three services types in Kaa, with the other two being the Bootstrap service and Operations service. It is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering notifications to nodes with enabled Operations service. A Control service manages data stored in a database (independently for each tenant) and notifies every node with enabled Operations service on most data updates via a Thrift-based protocol. A Control service maintains an up-to-date list of nodes with available Operations service by continuously obtaining this information from ZooKeeper.To support high availability, a Kaa cluster must include at least two nodes with enabled Control service, with one of them being active and the other(s) being in a standby mode. In case of the active Control service failure, ZooKeeper notifies one of the standby nodes with enabled Control service and promotes it to node with the active Control service. Refer to Design reference main page for more information.
 
 <div id="d"/>
 
@@ -100,7 +100,7 @@ Defines an endpoint profile structure. A profile schema can be used across multi
 
 ## Endpoint SDK (also, Kaa SDK)
 
-A library which provides communication, data marshaling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. Java endpoint SDK, C++ endpoint SDK, C endpoint SDK). This SDK can be used to create Kaa clients, which are any pieces of software that utilize Kaa functionality and are installed on some connected devices. Refer to Design reference main page for more information.
+The Kaa endpoint SDK is a library which provides communication, data marshalling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. C-based, C++-based, Java-based, Android-based, Objective-C-based). The client SDK abstracts the communication protocol, data persistence, and other implementation details that may be specific for any concrete solution based on Kaa.
 
 ## External user id
 
@@ -132,7 +132,7 @@ A default, non-editable group created for each Kaa application. The profile filt
 
 ## Kaa admin
 
-The highest-level administrator of Kaa. He is able to create, edit, and delete tenant admins. See also tenant admin and tenant developer. Refer to Administration UI guidefor more information.
+The highest-level administrator of Kaa. He is able to create, edit, and delete tenant admins. See also tenant admin and tenant developer. Refer to Administration UI guide for more information.
 
 ## Kaa framework
 
@@ -142,15 +142,19 @@ The Kaa framework consists of the Kaa server and endpoint SDKs. The Kaa server i
 
 A particular implementation of the Kaa framework and it consists of a Kaa cluster and endpoints. A Kaa cluster represents a number of interconnected Kaa servers. An endpoint is an abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa. Refer to Design reference main page for more information.
 
+## Kaa Node
+
+A part of Kaa Cluster that contains Control, Operations, and Bootstrap services. Every service in Node can be enabled or disabled.
+
 <div id="l"/>
 
 ## Load balancing strategy
 
-A particular way of re-balancing workload between the Operations servers within a Kaa cluster to achieve more or less equal load for each server. Kaa implements a number of load balancing strategies and automatically uses them at run time.
+A particular way of re-balancing workload between nodes with enabled Operations service within a Kaa cluster to achieve more or less equal load for each node. Kaa implements a number of load balancing strategies and automatically uses them at run time.
 
 ## Log appender
 
-A service utility which resides on the Operations server. This utility is responsible for writing logs (received by the Operations server from endpoints) to a single specific storage, as defined by the log appender's type. Each Kaa application may use only one log appender at a time. A Kaa developer is able to add, update and delete log appenders using Admin UI or REST API. Kaa provides several default implementations of log appenders. It is also possible to create custom log appenders. Refer to Log appenders for more information.
+A service utility which resides in the Operations service. This utility is responsible for writing logs (received by the Operations server from endpoints) to a single specific storage, as defined by the log appender's type. Each Kaa application may use multiple log appenders at a time. A Kaa developer is able to add, update and delete log appenders using Admin UI or REST API. Kaa provides several default implementations of log appenders. It is also possible to create custom log appenders. Refer to Log appenders for more information.
 
 ## Log schema
 
@@ -178,9 +182,9 @@ Allows grouping related notifications within the application. It is required tha
 
 <div id="o"/>
 
-## Operations server
+## Operations service
 
-One of the three server types in Kaa, with the other two being the Bootstrap server and Control server. An Operations server is a “worker” server that is responsible for concurrently handling multiple requests from multiple clients. Most common Operations server tasks include endpoint registration, endpoint profile updating, configuration updates distribution, and notifications delivery.Multiple Operations servers may be set up in a Kaa cluster for the purpose of horizontal scaling. In this case, all the Operations servers will function concurrently. In case an Operations server outage happens, the corresponding endpoints switch to the other available Operations server automatically. A Kaa cluster provides instruments for the workload re-balancing at run time, thus effectively routing endpoints to the less loaded Operations servers in the cluster. Refer to Design reference main page for more information.
+Kaa Operations service is a “worker” service, the primary role of which is concurrent communication with multiple endpoints. Operations services process endpoint requests and serve them with data. Multiple nodes with Operations service enabled may be set up in a Kaa cluster for the purpose of horizontal scaling. In this case, all instances of Operations service will function concurrently. In case of an Operations service outage, previously connected endpoints switch to other available Operations services automatically. Kaa server provides instruments for the load re-balancing at run time, thus effectively routing endpoints to the less loaded nodes in the cluster.
 
 ## Override schema
 
@@ -198,7 +202,7 @@ See endpoint profile schema.
 
 ## Protocol schema
 
-Determines the structure of the data updates that Kaa server sends to the endpoints and possible update actions (change, add, reset, and leave unchanged). A protocol schema is automatically generated by the Control server for each configuration schema (when the configuration schema is loaded by the user). Refer to Configuration for more information.
+Determines the structure of the data updates that Kaa server sends to the endpoints and possible update actions (change, add, reset, and leave unchanged). A protocol schema is automatically generated by the Control service for each configuration schema (when the configuration schema is loaded by the user). Refer to Configuration for more information.
 
 <div id="q"/><div id="r"/><div id="s"/>
 
