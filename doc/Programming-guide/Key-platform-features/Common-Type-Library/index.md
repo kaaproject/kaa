@@ -129,16 +129,16 @@ Promotion of CT can be performed in two ways: via [REST API]({{root_url}}Program
 
 The import of CT schema can be done in two ways: 
 
-* perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call. 
-* add new CT in Administration UI and upload schema json file as shown below.
+* Perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call. 
+* Add new CT in Administration UI and upload schema json file as shown below.
 ![CTL Import](attach/ctl_import.png)
 
 There are four ways of CT schema export:
 
-1.	"**shallow**" export simply retrieves the given schema as a file.
-2.	"**deep**" export retrieves the given schema as one file, and all of the referenced CTs as a separate file, recursively.
-3.	"**flat**" export will retrieve the given schema as one file with all referenced CTs inline.
-4.	"**library**" export will retrieve the given schema and all referenced CTs as compiled java classes compressed to a java archive file (jar).
+* "**shallow**" export simply retrieves the given schema as a file.
+* "**deep**" export retrieves the given schema as one file, and all of the referenced CTs as a separate file, recursively.
+* "**flat**" export will retrieve the given schema as one file with all referenced CTs inline.
+* "**library**" export will retrieve the given schema and all referenced CTs as compiled java classes compressed to a java archive file (jar).
 This java library provides all necessary java structures according to CT schema including nested types. 
 For instance these java structures can be used in external application to serialize binary log records which was produced as a result of data collection.   
    
@@ -146,3 +146,6 @@ To export CT schema either use [REST API]({{root_url}}Programming-guide/Server-R
 In **CT details** window click **Export** drop down and select desired export method as shown below.
 
 ![CTL export](attach/ctl_export.png)
+
+# Further reading
+* [Apache Avro](http://avro.apache.org)
