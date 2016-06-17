@@ -532,6 +532,30 @@ pre, .nav-tabs>li>a {
 	background-color: transparent !important;
 }
 
+/* Search */
+#search{
+	position: fixed;
+    bottom: 0;
+    background: #4b4b4b;
+	width: 16.66666667%;
+}
+#search input{
+    width: 84%;
+    margin: 13px 8%;
+    padding: 6px 6px 6px 40px;
+    background: url('/public/search.png') #434343;
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position-y: center;
+    background-position-x: 5px;
+    font-size: 16px;
+    border: none;
+}
+#sidebar{
+	height: calc(100% - 60px);
+}
+/* Search */
+
 /* sidebar drop-down */
 .dropdown-menu{
 	left: 50%;
