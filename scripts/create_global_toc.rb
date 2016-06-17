@@ -38,6 +38,8 @@ class GlobalMenu
       ["text","url"].each do |tag|
         @versions[key][tag] = @root[key][tag]
       end
+      # According to new structure
+      @versions[key]["text"] = (@versions[key]["url"].split("/"))[2]
       @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
       @versions[key]["version"] = @versions[key]["text"].gsub(/K[Aa]{2} (.*)/,'\1')
     end
@@ -76,7 +78,7 @@ class GlobalMenu
   ##  
   # Load all markdown files and parce yaml headers to extract nav information
   ##   
-  def loadDoc(key)   
+  def loadDoc(key)
     Dir.glob("#{key}/**/index.md") do |md_file|
       dirname = File.dirname(md_file)
       header = YAML.load(loadHeader(md_file))
