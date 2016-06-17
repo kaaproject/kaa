@@ -19,9 +19,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -35,6 +37,7 @@ import com.google.gwt.user.client.ui.HasValue;
 public class ConfigFormStructView extends BaseStructView<ConfigurationRecordFormDto, RecordField> {
 
     private Button downloadConfigurationButton;
+    private ConfigurationFormDataLoader configurationFormDataLoader;
 
     public ConfigFormStructView(HasErrorMessage hasErrorMessage) {
         super(hasErrorMessage);
@@ -43,6 +46,8 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
     @Override
     protected HasValue<RecordField> createBody(HasErrorMessage hasErrorMessage) {
         RecordPanel field = new RecordPanel(Utils.constants.configurationBody(), hasErrorMessage, false, false);
+        configurationFormDataLoader = new ConfigurationFormDataLoader();
+        field.setFormDataLoader(configurationFormDataLoader);
         field.getRecordWidget().setForceNavigation(true);
         field.setPreferredHeightPx(200);
         return field;
@@ -60,6 +65,11 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
 
     @Override
     protected void setBodyValue(ConfigurationRecordFormDto struct) {
+        String schema = null;
+        if (struct.getConfigurationRecord() != null) {
+            schema = struct.getConfigurationRecord().getSchema();
+        }
+        configurationFormDataLoader.setSchema(schema);
         body.setValue(struct.getConfigurationRecord());
     }
 
@@ -115,4 +125,29 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
         ((RecordPanel)body).getRecordWidget().onShown();
     }
 
+    private static class ConfigurationFormDataLoader implements RecordPanel.FormDataLoader {
+
+        private String schema = null;
+
+        public void setSchema(String schema) {
+            this.schema = schema;
+        }
+
+        @Override
+        public void loadFormData(String fileItemName,
+                                 final AsyncCallback<RecordField> callback) {
+            KaaAdmin.getDataSource().getConfigurationRecordDataFromFile(schema, fileItemName,
+                    new AsyncCallback<RecordField>() {
+                        @Override
+                        public void onSuccess(RecordField result) {
+                            callback.onSuccess(result);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        }
+    }
 }
