@@ -554,6 +554,17 @@ pre, .nav-tabs>li>a {
 #sidebar{
 	height: calc(100% - 60px);
 }
+@media screen and (max-width: 768px) {
+  #search{
+	width: 33%;
+  }
+  #search input{
+	visibility: hidden;
+  }
+  .active #search input{
+	visibility: visible;
+  }
+}
 /* Search */
 
 /* sidebar drop-down */
