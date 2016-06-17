@@ -122,7 +122,7 @@ cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
 make
 ```
 
-For more details on building the C SDK for Linux, please refer to [this page]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/).
+Refer to [C SDK Linux page]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for more details.
 
 ## Building C SDK for Windows
 
