@@ -5,10 +5,8 @@ permalink: /:path/
 sort_idx: 40
 ---
 
-* [Configuration schema](#configuration-schema)
-* [User verifier implementation](#user-verifier-implementation)
-* [User verifier descriptor](#user-verifier-descriptor)
-* [User verifier provisioning](#user-verifier-provisioning)
+* TOC
+{:toc}
 
 To implement a custom user verifier, you need to complete the following steps.
 
@@ -17,18 +15,18 @@ To implement a custom user verifier, you need to complete the following steps.
 3. Develop the user verifier descriptor.
 4. Provision the user verifier.
 
-We recommend that you use one of the [existing user verifier ]()[implementations]() as a reference.
+We recommend that you use one of the [existing user verifier implementations](https://github.com/kaaproject/kaa/tree/master/server/verifiers) as a reference.
 
 ## Configuration schema
 
 A user verifier configuration schema is an Avro compatible schema that defines configuration parameters of the user verifier. The following parameters in the schema affect Kaa Admin UI layout.
 
 * displayName - displays the name of the field on UI
-* by\_default - displays the default value of the field on UI  
+* by_default - displays the default value of the field on UI  
   
 ```json
     {
-     "namespace": "org.kaaproject.kaa.schema.sample",
+     "namespace": "org.kaaproject.kaa.sample.verifier.config.gen",
      "type": "record",
      "name": "CustomUserVerifierConfiguration",
      "fields": [
@@ -195,11 +193,17 @@ The following code example illustrates the implementation of a user verifier des
 
 To provision your user verifier, do the following:
 
-1. Create and compile user verifier configuration schema.
-2. Create and compile user verifier implementation.
-3. Create and compile user verifier descriptor.
-4. Place the user verifier descriptor and configuration classes into the Admin UI class path. Usually it is ```/usr/lib/kaa-node/lib```.
-5. Place the user verifier implementation classes into the Operations Server class path (```/usr/lib/kaa-node/lib```).
-6. Use [Admin UI]() or [REST API]() to create/update/delete your user verifier instances.
+1. Create maven or gradle project.
+2. Create similar classes as defined above and put them in appropriate packages.
+3. Add your verification logic to methods of `CustomUserVerifier` and compile project to jar file.
+4. Place created jar file into _/usr/lib/kaa-node/lib_.
+5. If you using different package than _org.kaaproject.kaa.server.verifiers.*_  you need to edit kaa-node.properties file in /usr/lib/kaa-node/conf folder. Specify additional package to scan kaa plugins configuration in parameter additional_plugins_scan_package, 
+   in our case -- _org.kaaproject.kaa.sample_.
+6. Restart kaa-node service:
+
+   ```bash
+   sudo service kaa-node restart
+   ```
+7. Use [Admin UI]() or [REST API]() to create/update/delete your user verifier instances.
 
 ---
