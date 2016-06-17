@@ -38,7 +38,7 @@ if [[ -d doc ]]; then
   jekyll serve
 elif [[ $gh_pages == $(git rev-parse --symbolic-full-name --abbrev-ref HEAD) ]]; then
   jekyll_root=$PWD
-  latest=$(git tag | sort -r | head -1)
+  latest=$(git tag | sort -V -r | head -1)
   git merge gh-pages-stub -m "merged jekyll files"
   mkdir -p $jekyll_root/_data
   for version in $versions; do

@@ -11,6 +11,11 @@
     <div id="page-content-wrapper">
         <div class="container-fluid">
           <div class="row row-full content">
+            {% if page.permalink != "404.html" %}
+                {% comment %}  HTML file can also be included for test `include test.html` {% endcomment %}
+                {% capture test_version %}{% include test.md %}{% endcapture %}
+                {{ test_version | markdownify }}
+            {% endif %}
             {{ content }}  
           </div>        
          </div>   
