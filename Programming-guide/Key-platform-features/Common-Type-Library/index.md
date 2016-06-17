@@ -7,13 +7,11 @@ sort_idx: 20
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-**Table of Contents**
-
 * TOC
 {:toc}
 
 The *Common Type Library (CTL)* is a repository of reusable data type schemas that can be referenced and reused as the user creates specific schema definitions for Kaa modules.
-The *Common Type (CT)* is an unit of CTL which represents set of *data type schema versions (CT schemas)*.
+The *Common Type (CT)* is a unit of CTL which represents set of *data type schema versions (CT schemas)*.
 This capability unifies management of all schemas in a Kaa server instance.
 
 # CT types definitions and FQNs
