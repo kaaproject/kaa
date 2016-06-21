@@ -292,7 +292,7 @@ Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) doc
 
 The server-side endpoint profile is initially generated at the stage of a new endpoint registration. By default, server side profile record is auto-generated based on 
 the latest server-side profile schema of particular application. Both server-side endpoint profile schema and data can be updated at run time using 
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) call. In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
 
 <img src="endpoint-profile-generation/ServerSideEndpointProfileGeneration_0_8_0.png">
 
