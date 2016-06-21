@@ -80,140 +80,81 @@ The following configuration schema matches to previously introduced Avro schema:
 
 Based on this configuration, you'd be able to perform "POST" request to 10.2.2.65:9000/encrypt url. Let's look at more definitive example.
 
-# Creating application that uses REST log appender
+# Playing with REST log appender
 
-1. Log in Admin UI like admin and create an application.
+Log in Admin UI like admin and create an application.
 To create a new application, do the following: <br/>
 Open the Applications window by clicking the corresponding link on the navigation panel. <br/>
 <img src="attach/add-application1.png"> <br/>
-Click <b>Add application</b> at the top of the window.
-Enter the title of your application and then click <b>Add</b>. <br/>
+Click **Add application** at the top of the window.
+Enter the title of your application, select Trustful credentials service type and then click **Add**. <br/>
 <img src="attach/add-application2.png"> <br/>
->**NOTE:**
+
+> **NOTE:**
 > If you open the Application details window of the newly created application (by clicking this application on either the Applications menu on the
-navigation panel or the Applications window), you will notice that the Application Token field has been filled in automatically. This is a unique
-auto-generated application ID.
-2. Log in as a tenant developer and create log schema in your previously created application:
-yourApp->Schemas->Log->Add schema
-<img src="attach/rest-log-appender1.png">
-upload the following configuration schema:
+navigation panel or the Applications window), you will notice that the [Application Token]({{root_url}}Glossary) field has been filled in automatically.
+
+Log in as a tenant developer and create log schema in your previously created application: yourApp->Schemas->Log->Add schema <br/>
+<img src="attach/rest-log-appender1.png"> <br/>
+Upload the following configuration schema:
 
 ```json
 {
-    "type":"record",
-    "name":"RecordWrapper",
-    "namespace":"org.kaaproject.kaa.log",
-    "fields":[
+    "name":"recordData",
+    "type":[
         {
-            "name":"recordHeader",
-            "type":[
+            "type":"record",
+            "name":"Data",
+            "namespace":"org.kaaproject.kaa.example.mobile.log",
+            "fields":[
                 {
-                    "type":"record",
-                    "name":"RecordHeader",
-                    "namespace":"org.kaaproject.kaa.server.common.log.shared.avro.gen",
-                    "fields":[
-                        {
-                            "name":"endpointKeyHash",
-                            "type":[
-                                {
-                                    "type":"string",
-                                    "avro.java.string":"String"
-                                },
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"applicationToken",
-                            "type":[
-                                {
-                                    "type":"string",
-                                    "avro.java.string":"String"
-                                },
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"headerVersion",
-                            "type":[
-                                "int",
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"timestamp",
-                            "type":[
-                                "long",
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"logSchemaVersion",
-                            "type":[
-                                "int",
-                                "null"
-                            ]
-                        }
+                    "name":"timestamp",
+                    "type":[
+                        "long",
+                        "null"
                     ]
                 },
-                "null"
+                {
+                    "name":"data",
+                    "type":[
+                        "bytes",
+                        "null"
+                    ]
+                },
+                {
+                    "name":"endpointKeyHash",
+                    "type":[
+                        {
+                            "type":"string",
+                            "avro.java.string":"String"
+                        },
+                        "null"
+                    ]
+                },
+                {
+                    "name":"hashFunction",
+                    "type":[
+                        {
+                            "type":"string",
+                            "avro.java.string":"String"
+                        },
+                        "null"
+                    ]
+                }
             ]
         },
-        {
-            "name":"recordData",
-            "type":[
-                {
-                    "type":"record",
-                    "name":"Data",
-                    "namespace":"org.kaaproject.kaa.example.mobile.log",
-                    "fields":[
-                        {
-                            "name":"timestamp",
-                            "type":[
-                                "long",
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"data",
-                            "type":[
-                                "bytes",
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"endpointKeyHash",
-                            "type":[
-                                {
-                                    "type":"string",
-                                    "avro.java.string":"String"
-                                },
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"hashFunction",
-                            "type":[
-                                {
-                                    "type":"string",
-                                    "avro.java.string":"String"
-                                },
-                                "null"
-                            ]
-                        }
-                    ]
-                },
-                "null"
-            ]
-        }
+        "null"
     ]
 }
 ```
 
-3. Go to <b>Log appenders</b> menu and add <b>REST log appender</b> to your app using your custom configuration:
+Go to **Log appenders** menu and add <b>REST log appender</b> to your app using your custom configuration:
 your app-> Log appenders -> Add log appender
 <img src="attach/rest-log-appender2.png">
-4. Write appropriate configuration for your appender and save results.
-5. Then <b>generate SDK<b> appropriate to your platform. Add downloaded sdk to your project directory.
+
+Write appropriate configuration for your appender and save results.
+
+Then <b>generate SDK<b> appropriate to your platform. Add downloaded sdk to your project directory.
 
 The following code snippet illustrates handling POST request from Kaa server:
 

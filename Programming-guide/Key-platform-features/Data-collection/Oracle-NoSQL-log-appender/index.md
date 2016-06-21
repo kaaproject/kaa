@@ -12,7 +12,7 @@ sort_idx: 80
 * TOC
 {:toc}
 
-The Oracle NoSQL log appender is responsible for transferring logs from the Operations server to the Oracle NoSQL key/value storage.
+The Oracle NoSQL log appender is responsible for transferring logs from the Operations service to the Oracle NoSQL key/value storage.
 Logs are stored in the storage using the following key path:
 
 ```bash
@@ -88,37 +88,65 @@ The following configuration example matches the previous schema.
 The following Admin REST API call example illustrates how to create a new instance of the Oracle NoSQL log appender:
 
 ```bash
-curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.oraclenosql.appender.OracleNoSqlLogAppender", "applicationId": 119, "applicationToken": "91786338058670361194", "jsonConfiguration": "{\"storeName\":\"kvstore\",\"kvStoreNodes\":[{\"host\":\"localhost\",\"port\":5000}],\"username\":null,\"walletDir\":null,\"pwdFile\":null,\"securityFile\":null,\"transport\":null,\"ssl\":null,\"sslCipherSuites\":null,\"sslProtocols\":null,\"sslHostnameVerifier\":null,\"sslTrustStore\":null,\"sslTrustStoreType\":null}", "description": "Sample Oracle NoSQL appender", "headerStructure": [], "name": "Oracle NoSQL appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "70"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @oracleNoSQLlogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```
+
+where file ```oracleNoSQLlogAppender.json``` contains following data:
+
+```
+{
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.oraclenosql.appender.OracleNoSqlLogAppender",
+    "pluginTypeName":"Oracle NoSQL",
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "name":"Sample Oracle NoSQL log appender",
+    "description":"Sample Oracle NoSQL log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "tenantId":"1",
+    "jsonConfiguration":"{\"storeName\":\"kvstore\",\"kvStoreNodes\":[{\"host\":\"localhost\",\"port\":5000}],\"username\":null,\"walletDir\":null,\"pwdFile\":null,\"securityFile\":null,\"transport\":null,\"ssl\":null,\"sslCipherSuites\":null,\"sslProtocols\":null,\"sslHostnameVerifier\":null,\"sslTrustStore\":null,\"sslTrustStoreType\":null}"
+}
 ```
 
 Example result:
 
 ```json
 {
-    "appenderClassName":"org.kaaproject.kaa.server.appenders.oraclenosql.appender.OracleNoSqlLogAppender",
-    "applicationId":"70",
-    "applicationToken":"946558468095768",
-    "configuration":"{\"storeName\":\"kvstore\",\"kvStoreNodes\":[{\"host\":\"localhost\",\"port\":5000}],\"username\":null,\"walletDir\":null,\"pwdFile\":null,\"securityFile\":null,\"transport\":null,\"ssl\":null,\"sslCipherSuites\":null,\"sslProtocols\":null,\"sslHostnameVerifier\":null,\"sslTrustStore\":null,\"sslTrustStoreType\":null}",
-    "createdTime":1417107992158,
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "confirmDelivery":true,
+    "createdTime":1466506070066,
     "createdUsername":"devuser",
-    "description":"Sample Oracle NoSQL appender",
+    "description":"Sample Oracle NoSQL log appender",
     "headerStructure":[
-
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
     ],
-    "id":"167",
-    "name":"Oracle NoSQL appender",
+    "id":"163842",
+    "jsonConfiguration":"{\"storeName\":\"kvstore\",\"kvStoreNodes\":[{\"host\":\"localhost\",\"port\":5000}],\"username\":null,\"walletDir\":null,\"pwdFile\":null,\"securityFile\":null,\"transport\":null,\"ssl\":null,\"sslCipherSuites\":null,\"sslProtocols\":null,\"sslHostnameVerifier\":null,\"sslTrustStore\":null,\"sslTrustStoreType\":null}",
     "maxLogSchemaVersion":2147483647,
     "minLogSchemaVersion":1,
-    "status":"REGISTERED",
-    "tenantId":"10",
-    "typeName":"Oracle NoSQL"
+    "name":"Sample Oracle NoSQL log appender",
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.oraclenosql.appender.OracleNoSqlLogAppender",
+    "pluginTypeName":"Oracle NoSQL",
+    "tenantId":"1"
 }
 ```
 
-# Example
+# Playing with Oracle NoSQL log appender
 
-1. Download archive with [Oracle nosql database](#http://www.oracle.com/technetwork/database/database-technologies/nosqldb/downloads/index.html)
-and install it to your kaa server.
+1. Download archive with [Oracle nosql database](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/downloads/index.html)
+and install it to your Kaa server.
 2. Use [following](https://blogs.oracle.com/charlesLamb/entry/oracle_nosql_database_in_5) tutorial for more information about this database.
 3. Create an application using Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
 4. Add custom log schema that will be using for saving logs in database.<br/>
@@ -139,21 +167,21 @@ client.addLogRecord(data);
 ...
 ```
 
-<b>To see logs<b>:
+To verify that our logs have been persisted in Oracle NoSQL storage do following:
 
-open admin console:
+Open admin console and run following command:
 
 ```bash
 java -jar path_to_oracle_db/lib/kvstore.jar runadmin -port $your_port$ -host $your_host$
 ```
 
-connect to your store:
+Connect to your storage:
 
 ```bash
 connect store -name kvstore  -host $oracle_db_host$  -port $oracle_db_port$;
 ```
 
-to see logs from kaa:
+Run:
 
 ```bash
 get kv -start /${applicationToken} -all

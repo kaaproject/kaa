@@ -12,12 +12,12 @@ sort_idx: 40
 * TOC
 {:toc}
 
-The file system log appender stores received logs into the local file system of the Operations server. This log appender may be used for test purposes 
+The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
 or in pair with tools like Flume and others. Logs are stored in files under the ```/$logsRootPath/tenant_$tenantId/application_$applicationId``` folder, 
 where <i>logsRootPath</i> is a configuration parameter, <i>tenantId</i> and <i>applicationId</i> are ids of the current tenant and 
 the application respectively. Access to the logs is controlled via Linux file system permissions.
 
-You can log in to the Operations server host and browse logs using the ```kaa_log_user_$applicationToken``` user name and the pubic key which is created as 
+You can log in to the Operations service host and browse logs using the ```kaa_log_user_$applicationToken``` user name and the pubic key which is created as
 a part of the configuration.
 
 # Creating file system log appender in Admin UI
@@ -90,21 +90,22 @@ The file system log appender configuration should match to
 }
 ```
 
-|Name|Description|
-|---|---|
-|publicKey|Name of public key|
-|logsRootPath|Root path for logs|
-|rollingFileNamePatern|Pattern for creating file name|
-|rollingMaxHistory|Max number for records in file|
-|triggerMaxFileSize|Max size of file|
-|encoderPattern|Pattern for encoder|
+|Name                   |Description|
+|-----------------------|-------------------------------|
+|publicKey              |Name of public key             |
+|logsRootPath           |Root path for logs             |
+|rollingFileNamePatern  |Pattern for creating file name |
+|rollingMaxHistory      |Max number for records in file |
+|triggerMaxFileSize     |Max size of file               |
+|encoderPattern         |Pattern for encoder            |
+
 <br/>
 
 The following configuration example matches the previous schema.
 
 ```json
 {
-    "publicKey":"XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "publicKey":"public Key",
     "logsRootPath":"/kaa_log_uploads",
     "rollingFileNamePatern":"logFile.%d{yyyy-MM-dd}.log",
     "rollingMaxHistory":30,
@@ -118,78 +119,116 @@ The following configuration example matches the previous schema.
 The following Admin REST API call example illustrates how to create a new file system log appender.
 
 ```bash
-curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender", "applicationId": 119, "applicationToken": "91786338058670361194", "jsonConfiguration": "{\"publicKey\":\"XXXXXXXXXXXXXXXXXXXXXXXXXX\",\"logsRootPath\":\"/kaa_log_uploads\",\"rollingFileNamePatern\":\"logFile.%d{yyyy-MM-dd}.log\",\"rollingMaxHistory\":30,\"triggerMaxFileSize\":\"1GB\",\"encoderPattern\":\"%-4relative [%thread] %-5level %logger{35} - %msg%n\" }", "description": "New sample file system log appender", "headerStructure": [ "KEYHASH","TIMESTAMP" ], "name": "New file system appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "70"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @fileSystemLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```
+
+where file ```fileSystemLogAppender.json``` contains following data:
+
+```json
+{
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender",
+    "pluginTypeName":"File",
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "name":"Sample File system log appender",
+    "description":"Sample File system log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "tenantId":"1",
+    "jsonConfiguration":"{\"publicKey\":\"public Key\",\"logsRootPath\":\"/kaa_log_uploads\",\"rollingFileNamePatern\":\"logFile.%d{yyyy-MM-dd}.log\",\"rollingMaxHistory\":30,\"triggerMaxFileSize\":\"1GB\",\"encoderPattern\":\"%-4relative [%thread] %-5level %logger{35} - %msg%n\"}"
+}
 ```
 
 Example result:
 
 ```json
 {
-    "appenderClassName":"org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender",
-    "applicationId":"70",
-    "applicationToken":"946558468095768",
-    "configuration":"{\"publicKey\":\"XXXXXXXXXXXXXXXXXXXXXXXXXX\",\"logsRootPath\":\"/kaa_log_uploads_new\",\"rollingFileNamePatern\":\"logFile.%d{yyyy-MM-dd}.log\",\"rollingMaxHistory\":30,\"triggerMaxFileSize\":\"1GB\",\"encoderPattern\":\"%-4relative [%thread] %-5level %logger{35} - %msg%n\"}",
-    "createdTime":1417006362287,
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "confirmDelivery":true,
+    "createdTime":1466154396923,
     "createdUsername":"devuser",
-    "description":"New sample file system log appender",
+    "description":"Sample File system log appender",
     "headerStructure":[
         "KEYHASH",
-        "TIMESTAMP"
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
     ],
-    "id":"161",
-    "name":"New file system appender",
+    "id":"131072",
+    "jsonConfiguration":"{\"publicKey\":\"public Key\",\"logsRootPath\":\"/kaa_log_uploads\",\"rollingFileNamePatern\":\"logFile.%d{yyyy-MM-dd}.log\",\"rollingMaxHistory\":30,\"triggerMaxFileSize\":\"1GB\",\"encoderPattern\":\"%-4relative [%thread] %-5level %logger{35} - %msg%n\"}",
     "maxLogSchemaVersion":2147483647,
     "minLogSchemaVersion":1,
-    "status":"REGISTERED",
-    "tenantId":"10",
-    "typeName":"File"
+    "name":"Sample File system log appender",
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender",
+    "pluginTypeName":"File",
+    "tenantId":"1"
 }
 ```
 
-# Using with File system log appender
+# Playing with File system log appender
 
-You can create your application where you will use file system log appender
-
-For this you should create application in Admin UI
-
-<img src="attach/create-application-in-admin-ui.png" width="75%" height="75%" />
-
-After that add new appender to your application
-
-<img src="attach/add-new-appender.png" width="75%" height="75%" />
-
-Enter name of the new appender 
-
-Select <b>File</b> appender type.
-
-<img src="attach/select-file-appender-type.png">
-
-Add new parameters of configuration or replace old.
-
-<img src="attach/add-new-parameters-of-configuration.png">
-
-Now click <b>Add</b> button on the top of the screen to create and deploy appender.
-
-<img src="attach/add-button.png">
-
-Verify that newly created appender has appeared in list.
-
-<img src="attach/verify-created-appender.png" width="75%" height="75%" />
-
-After that you can go to Data collection demo in Sandbox.
+Go to Data collection demos in Sandbox. And download binary.
 
 <img src="attach/data-collection-demo-in-sandbox.png">
 
-Run the application using the following command in the console:
+Next, in the Admin UI follow to <b>Data collection demo</b> application.
+
+Go to application's <b>Log appenders</b> configuration and add a new one.
+
+<img src="attach/data-collection-demo-application.png">
+
+Enter name of the new appender (we use “Sample FileSystem log appender”)
+
+Add Log metadata fields.
+
+Select _File_ appender type.
+
+Please, see [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
+
+Verify that newly created appender has appeared in list.
+
+<img src="attach/verify-created-appender.png">
+
+Now run Data collection demo application:
 
 ```bash
-$ java -jar DataCollectionDemo.jar
+java -jar DataCollectionDemo.jar
+2016-06-17 11:59:24,004 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
+2016-06-17 11:59:25,457 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
+2016-06-17 11:59:25,459 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466153965458} sent
+2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466153965458} sent
+2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466153965458} sent
+2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466153965458} sent
+2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466153965458} sent
+2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+2016-06-17 11:59:27,103 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
+2016-06-17 11:59:27,104 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
 ```
 
-<img src="attach/run-app-in-console.png">
+Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
+```/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log```.
+In this example path to file ```application.log``` is ```kaa_log_uploads/tenant_1/application_82635305199158071549/```.
 
-This logs you can fined in ```/kaa_log_uploads/tenant_'number of tenant'/application_'your_application_token'/application.log```
+Your ```application.log``` should contain similar content:
 
-In this example: ```/kaa_log_uploads/tenant_70/application_46527342666485986401/application.log```
+```
+261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466153965458}}
+261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466153965458}}
+261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466153965458}}
+261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466153965458}}
+261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466153965458}}
+```
 
-<img src="attach/run-app-in-console-logs.png">

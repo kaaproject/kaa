@@ -12,7 +12,7 @@ sort_idx: 70
 * TOC
 {:toc}
 
-The MongoDB log appender is responsible for transferring logs from the Operations server to the MongoDB database. The logs are stored in the table named
+The MongoDB log appender is responsible for transferring logs from the Operations service to the MongoDB database. The logs are stored in the table named
 <i>logs_$applicationToken</i>, where <i>$applicationToken<i> matches the token of the current application.
 
 # Creating MongoDB log appender in Admin UI
@@ -53,8 +53,8 @@ Fields of avro schema:
 |connectionTimeout|Connection timeout (ms)|
 |socketTimeout|Socket timeout (ms)|
 |socketKeepalive|Turn on socket keep alive (boolean value)|
-|includeClientProfile|Include or not client profile data (boolean value)|
-|includeServerProfile|Include or not server profile data (boolean value)|
+|includeClientProfile|Include or not client-side endpoint profile data (boolean value)|
+|includeServerProfile|Include or not server-side endpoint profile data (boolean value)|
 
 <br/>
 
@@ -104,37 +104,64 @@ The following configuration taken from the Cell Monitor demo matches the previou
 The following Admin REST API call example illustrates how to create a new MongoDB log appender.
 
 ```bash
-curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender", "applicationId": 119, "applicationToken": "91786338058670361194", "jsonConfiguration": "{   \"mongoServers\" : [ { \"host\" : \"127.0.0.1\", \"port\" : 27017   } ],   \"mongoCredentials\" : [ { \"user\" : \"user\", \"password\" : \"password\"   } ],   \"dbName\" : \"kaa\",   \"connectionsPerHost\" : { \"int\" : 30   },   \"maxWaitTime\" : { \"int\" : 120000   },   \"connectionTimeout\" : { \"int\" : 5000   },   \"socketTimeout\" : { \"int\" : 0   },   \"socketKeepalive\" : { \"boolean\" : false   },   \"includeClientProfile\" : { \"boolean\" : false   },   \"includeServerProfile\" : { \"boolean\" : false   } }", "description": "New sample Mongo db log appender", "headerStructure": [ "KEYHASH","TIMESTAMP" ], "name": "New Mongo DB appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "70"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @mongoDBLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```
+
+where file ```mongoDBLogAppender.json``` contains following data:
+
+```
+{
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
+    "pluginTypeName":"MongoDB",
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "name":"Sample MongoDB log appender",
+    "description":"Sample MngoDB log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "tenantId":"1",
+    "jsonConfiguration":"{\"mongoServers\":[{\"host\":\"localhost\",\"port\":27017}],\"mongoCredentials\":[],\"dbName\":\"kaa\",\"connectionsPerHost\":{\"int\":30},\"maxWaitTime\":{\"int\":120000},\"connectionTimeout\":{\"int\":5000},\"socketTimeout\":{\"int\":0},\"socketKeepalive\":{\"boolean\":false},\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false}}"
+}
 ```
 
 Example result:
 
 ```json
 {
-    "appenderClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
-    "applicationId":"70",
-    "applicationToken":"946558468095768",
-    "configuration":"{   \"mongoServers\" : [ { \"host\" : \"127.0.0.1\", \"port\" : 27017   } ],   \"mongoCredentials\" : [ { \"user\" : \"user\", \"password\" : \"password\"   } ],   \"dbName\" : \"kaa\",   \"connectionsPerHost\" : { \"int\" : 30   },   \"maxWaitTime\" : { \"int\" : 120000   },   \"connectionTimeout\" : { \"int\" : 5000   },   \"socketTimeout\" : { \"int\" : 0   },   \"socketKeepalive\" : { \"boolean\" : false   },   \"includeClientProfile\" : { \"boolean\" : false   },   \"includeServerProfile\" : { \"boolean\" : false   } }",
-    "createdTime":1417105170741,
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "confirmDelivery":true,
+    "createdTime":1466504475844,
     "createdUsername":"devuser",
     "description":"Sample MongoDB log appender",
     "headerStructure":[
         "KEYHASH",
-        "TOKEN"
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
     ],
-    "id":"164",
-    "name":"MongoDB appender",
+    "id":"163840",
+    "jsonConfiguration":"{\"mongoServers\":[{\"host\":\"localhost\",\"port\":27017}],\"mongoCredentials\":[],\"dbName\":\"kaa\",\"connectionsPerHost\":{\"int\":30},\"maxWaitTime\":{\"int\":120000},\"connectionTimeout\":{\"int\":5000},\"socketTimeout\":{\"int\":0},\"socketKeepalive\":{\"boolean\":false},\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false}}",
     "maxLogSchemaVersion":2147483647,
     "minLogSchemaVersion":1,
-    "status":"REGISTERED",
-    "tenantId":"10",
-    "typeName":"Mongo"
+    "name":"Sample MngoDB log appender",
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
+    "pluginTypeName":"MongoDB",
+    "tenantId":"1"
 }
 ```
 
-# Using with MongoDB log appender
+# Playing with MongoDB log appender
 
-We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) from Kaa Sendbox. Our example will send data
+We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) from Kaa Sandbox. Our example will send data
 to Kaa and then persist it to MongoDB. Also, we'll do selection queries on persisted data.
 
 We have next log schema:
@@ -167,6 +194,10 @@ We have next log schema:
         {
             "name":"message",
             "type":"string"
+        },
+        {
+            "name":"timeStamp",
+            "type":"long"
         }
     ]
 }
@@ -184,8 +215,10 @@ The following JSON example matches the previous schema.
 {
     "level":"KAA_INFO",
     "tag":"TEST_TAG",
-    "message":"My simple message"
+    "message":"My simple message",
+    "timeStamp":"1466075369795"
 }
+
 ```
 
 Go to Data collection demos in Sandbox.
@@ -228,14 +261,24 @@ Verify that newly created appender has appeared in list.
 
 <img src="attach/mongodb-log-appender9.png" width="75%" height="75%" />
 
-Now run Data collection demo application. Verify that logs have been successfully sent to Kaa
+Now run Data collection demo application. Verify that logs have been successfully sent to Kaa:
 
-<img src="attach/mongodb-log-appender10.png">
-
-Run the application using the following command in the console:
-
-```bash
-$ java -jar DataCollectionDemo.jar
+```
+java -jar DataCollectionDemo.jar
+2016-06-21 12:38:12,260 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
+2016-06-21 12:38:13,337 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
+2016-06-21 12:38:13,339 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466501893337} sent
+2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466501893337} sent
+2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466501893337} sent
+2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466501893337} sent
+2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466501893337} sent
+2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+2016-06-21 12:38:13,628 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
+2016-06-21 12:38:13,629 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
 ```
 
 Let's verify that our logs have been persisted in MongoDB. Go to Sandbox VM and run next command to connect MongoDB:
@@ -247,4 +290,11 @@ db.logs_$your_application_token$.find()
 
 You should observe similar output:
 
-<img src="attach/mongodb-log-appender11.png" width="75%" height="75%" />
+```bash
+ db.logs_82635305199158071549.find();
+{ "_id" : ObjectId("57690b05d55fb20804a7f40e"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_0", "timeStamp" : NumberLong("1466501893337") } }
+{ "_id" : ObjectId("57690b05d55fb20804a7f40f"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_1", "timeStamp" : NumberLong("1466501893337") } }
+{ "_id" : ObjectId("57690b05d55fb20804a7f410"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_2", "timeStamp" : NumberLong("1466501893337") } }
+{ "_id" : ObjectId("57690b05d55fb20804a7f411"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_3", "timeStamp" : NumberLong("1466501893337") } }
+{ "_id" : ObjectId("57690b05d55fb20804a7f412"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_4", "timeStamp" : NumberLong("1466501893337") } }
+```
