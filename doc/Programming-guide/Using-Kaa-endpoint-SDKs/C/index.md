@@ -20,13 +20,13 @@ Using C SDK requires **no operating system**, so you can use it on bare metal sy
 
 From a usage point of view, C SDK consists of following parts.
 
-- **SDK core** - part responsible for starting an application main loop and execution control of the SDK itself.
+- **SDK core** -- part responsible for starting an application main loop and execution control of the SDK itself.
 You may check the corresponding API in the `kaa/platform/kaa_client.h` directory.
 
-- **Build system** - written using CMake, it allows to generate and customize project files without the necessity of creating build infrastructure for every compiler or IDE used.
+- **Build system** -- written using CMake, it allows to generate and customize project files without the necessity of creating build infrastructure for every compiler or IDE used.
 To get more familiar with CMake, refer to [the official documentation](https://cmake.org/).
 
-- **Extensions** - application-level modules shipped within SDK; [implement set of Kaa features]({{root_url}}/Programming-guide/Key-platform-features/).
+- **Extensions** -- application-level modules shipped within SDK; implement [the set of Kaa features]({{root_url}}/Programming-guide/Key-platform-features/).
 Extensions are exposed to the user in a form of headers that one can find in `src/extensions` directory.
 
 # Target support and portability
@@ -64,7 +64,7 @@ Manual installation of the required packages varies between targets.
 
 ## Build configuration
 
-Build configuration is performed on the make file generation stage.
+Build configuration is performed on the Makefile generation stage.
 To pass any configuration parameter, it should be prefixed with `-D`, e.g.:
 
     cmake -DCMAKE_INSTALL_PREFIX=/home/username/installdir
@@ -72,4 +72,3 @@ To pass any configuration parameter, it should be prefixed with `-D`, e.g.:
 In such way, you can customize build for Kaa C SDK. For example, you can disable debug logging thus, decrease memory footprint.
 
 The available configuration parameters list can be found in the root `CMakeLists.txt` file.
-
