@@ -23,7 +23,7 @@ sort_idx: 50
 
 ## User Access Token
 
-Identifier of user in case of attaching endpoints to it.Endpoint send access token to Kaa Cluster and if this access token compares with user access token and if true endpoint attaches to user. Refer to [User verifiers page]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) for more information.
+Identifier of user in case of attaching endpoints to it. Endpoint send access token to Kaa Cluster and if this access token compares with user access token and if true endpoint attaches to user. Refer to [User verifiers page]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) for more information.
 
 ## Administration UI (also,Admin UI and web UI)             
 
@@ -31,7 +31,7 @@ An online tool for managing Kaa users, applications, schemas, etc. Refer to [App
 
 ## Application  
 
-The application in Kaa represents a family of available implementations of a specific software application used by endpoints. For example, two versions of a sound frequency measuring application which differ by their implementation for, respectively, Arduino and STM32 platforms would be considered the same application in Kaa. Refer to [System-components-overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
+The application in Kaa represents a family of available implementations of a specific software application used by endpoints. For example, two versions of a sound frequency measuring application which differ by their implementation for, respectively, Arduino and STM32 platforms would be considered the same application in Kaa. Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
 
 ## Avro UI form                                            
 
@@ -55,11 +55,11 @@ Kaa Bootstrap service is responsible for distributing Operations services connec
 
 ## Client (also, Kaa client)                                
 
-A particular application or piece of software which uses the Kaa endpoint SDK and resides on a particular connected device. It is the responsibility of the Kaa client to process structured data provided by the Kaa server (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.). Refer to [System-components-overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
+A particular application or piece of software which uses the Kaa endpoint SDK and resides on a particular connected device. It is the responsibility of the Kaa client to process structured data provided by the Kaa server (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.). Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
 
 ## Client-side endpoint profile
 
-A user-defined specification of the application data model that Kaa Profiling subsystem uses to allows endpoints change your group dynamic under the application. Client-side endpoint profile can changed in client application. Refer to [System-components-overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
+A user-defined specification of the application data model that Kaa Profiling subsystem uses to allows endpoints change your group dynamic under the application. Client-side endpoint profile can changed in client application. Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
 
 ## Configuration schema                                    
 
@@ -82,7 +82,7 @@ The difference between the new configuration created on the server (and due to b
 
 ## Endpoint (EP)
 
-An abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client (see [Client](#client-also-kaa-client) registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa. Refer to [System-components-overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
+An abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client (see [Client](#client-also-kaa-client) registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa. Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
 
 ## Endpoint group
 
@@ -153,7 +153,7 @@ A server application part of Kaa Cluster that contains Control, Operations, and 
 
 ## Load balancing strategy
 
-A particular way of re-balancing workload between nodes with enabled Operations service within a Kaa cluster to achieve more or less equal load for each node. Kaa implements a number of load balancing strategies and automatically uses them at run time. Refer to [System-components-overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
+A particular way of re-balancing workload between nodes with enabled Operations service within a Kaa cluster to achieve more or less equal load for each node. Kaa implements a number of load balancing strategies and automatically uses them at run time. Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
 
 ## Log appender
 
