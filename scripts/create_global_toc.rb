@@ -33,15 +33,19 @@ class GlobalMenu
     @root = sortSubitems(@root)
     File.open("_data/menu.yml", 'w') { |f| YAML.dump(@root, f) }
     @keys_kaa.each do |key|
-      key = "/#{key}/"
-      @versions[key] ||= {}
-      ["text","url"].each do |tag|
-        @versions[key][tag] = @root[key][tag]
+      begin
+        key = "/#{key}/"
+        @versions[key] ||= {}
+        ["text","url"].each do |tag|
+          @versions[key][tag] = @root[key][tag]
+        end
+        # According to new structure
+        @versions[key]["text"] = (@versions[key]["url"].split("/"))[2]
+        @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
+        @versions[key]["version"] = @versions[key]["text"].gsub(/K[Aa]{2} (.*)/,'\1')
+      rescue => e
+        puts "caught exception #{e}! for key : #{key}."
       end
-      # According to new structure
-      @versions[key]["text"] = (@versions[key]["url"].split("/"))[2]
-      @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
-      @versions[key]["version"] = @versions[key]["text"].gsub(/K[Aa]{2} (.*)/,'\1')
     end
     File.open("_data/versions.yml", 'w') { |f| YAML.dump(@versions, f) }    
 #     puts @root.to_yaml
