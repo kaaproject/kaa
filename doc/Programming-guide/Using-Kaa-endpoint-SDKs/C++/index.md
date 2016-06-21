@@ -19,7 +19,7 @@ It is good at building high-performance gateways and endpoints for you IoT infra
 
 In case you need to run Kaa endpoints on bare metal hardware, consider using [the C SDK]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C).
 
-For in-depth architecture overview, refer to [C++ SDK architecture overview page]({{root_url}}/Customization-guide/Endpoint-SDKs/C++-SDK/Architecture-overview/) page.
+For in-depth architecture overview, refer to [C++ SDK architecture overview page]({{root_url}}/Customization-guide/Endpoint-SDKs/C++-SDK/Architecture-overview/).
 
 ## Environment setup
 
