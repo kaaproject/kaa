@@ -147,6 +147,13 @@ cd CConfigurationDemo
 ./build.sh build
 ```
 
+You will be asked for desired platform. Type `cc32xx` into the console.
+
+```
+Please enter a target (default is x86-64):
+cc32xx
+```
+
 To launch the application, execute the following:
 
 ```
