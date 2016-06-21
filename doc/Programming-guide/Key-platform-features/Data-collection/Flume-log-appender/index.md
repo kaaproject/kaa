@@ -332,36 +332,64 @@ The following configuration example matches the previous schema.
 
 The following Admin REST API call example illustrates how to create a new Flume log appender.
 
-```bash 
-curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d'{"pluginClassName": "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender", "applicationId": 119, "applicationToken": "91786338058670361194", "jsonConfiguration": "{   \"executorThreadPoolSize\" : 1,   \"callbackThreadPoolSize\" : 2,   \"clientsThreadPoolSize\" : 2,   \"includeClientProfile\" : { \"boolean\" : true   },   \"includeServerProfile\" : { \"boolean\" : true   },   \"flumeEventFormat\" : \"RECORDS_CONTAINER\",   \"hostsBalancing\" : { \"org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes\" : {   \"flumeNodes\" : [ { \"host\" : \"localhost\", \"port\" : 7070   }, { \"host\" : \"notlocalhost\", \"port\" : 7070   } ] }   } }", "description": "Sample Flume log appender", "headerStructure": [ "KEYHASH","TIMESTAMP" ], "name": "Flume appender", "maxLogSchemaVersion": 2147483647, "minLogSchemaVersion": 1, "tenantId": "70"}' "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```bash
+curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @flumeLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```
+
+where file ```flumeLogAppender.json``` contains following data:
+
+```json
+{
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
+    "pluginTypeName":"Flume",
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "name":"Sample Flume log appender",
+    "description":"Sample Flume log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "tenantId":"1",
+    "jsonConfiguration":"{\"executorThreadPoolSize\":1,\"callbackThreadPoolSize\":2,\"clientsThreadPoolSize\":2,\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false},\"flumeEventFormat\":\"RECORDS_CONTAINER\",\"hostsBalancing\":{\"org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes\":{\"flumeNodes\":[{\"host\":\"10.2.3.93\",\"port\":7070,\"priority\":1},{\"host\":\"10.1.5.67\",\"port\":8070,\"priority\":2},{\"host\":\"10.2.6.44\",\"port\":7090,\"priority\":3}]}}}"
+}
 ```
 
 Example result:
 
 ```json
 {
-    "appenderClassName":"org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
-    "applicationId":"70",
-    "applicationToken":"517279666821995",
-    "configuration":"{   \"executorThreadPoolSize\" : 1,   \"callbackThreadPoolSize\" : 2,   \"clientsThreadPoolSize\" : 2,   \"includeClientProfile\" : { \"boolean\" : true   },   \"includeServerProfile\" : { \"boolean\" : true   },   \"flumeEventFormat\" : \"RECORDS_CONTAINER\",   \"hostsBalancing\" : { \"org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes\" : {   \"flumeNodes\" : [ { \"host\" : \"localhost\", \"port\" : 7070   }, { \"host\" : \"notlocalhost\", \"port\" : 7070   } ] }   } }",
-    "createdTime":1418318046577,
-    "createdUsername":"devuser",
-    "description":"Sample Flume log appender",
-    "headerStructure":[
+    "applicationId": "5",
+    "applicationToken": "82635305199158071549",
+    "confirmDelivery": true,
+    "createdTime": 1466496979110,
+    "createdUsername": "devuser",
+    "description": "Sample Flume log appender",
+    "headerStructure": [
         "KEYHASH",
-        "TIMESTAMP"
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
     ],
-    "id":"163",
-    "maxLogSchemaVersion":2147483647,
-    "minLogSchemaVersion":1,
-    "name":"Flume appender",
-    "status":"REGISTERED",
-    "tenantId":"10",
-    "typeName":"Flume"
+    "id": "131074",
+    "jsonConfiguration": "{\"executorThreadPoolSize\":1,\"callbackThreadPoolSize\":2,\"clientsThreadPoolSize\":2,\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false},\"flumeEventFormat\":\"RECORDS_CONTAINER\",\"hostsBalancing\":{\"org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes\":{\"flumeNodes\":[{\"host\":\"10.2.3.93\",\"port\":7070,\"priority\":1},{\"host\":\"10.1.5.67\",\"port\":8070,\"priority\":2},{\"host\":\"10.2.6.44\",\"port\":7090,\"priority\":3}]}}}",
+    "maxLogSchemaVersion": 2147483647,
+    "minLogSchemaVersion": 1,
+    "name": "Sample Flume log appender",
+    "pluginClassName": "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
+    "pluginTypeName": "Flume",
+    "tenantId": "1"
 }
 ```
 
-If you want to use Flume agents together with the Flume log appender, create necessary Kaa Flume agents as described in Installing Kaa flume agents.
+If you want to use Flume agents together with the Flume log appender, create necessary Kaa Flume agents as described in
+[Installing Kaa flume agents](#TODO Add link to Installing Kaa flume agents).
 
 # Setting up Flume log appender
 
