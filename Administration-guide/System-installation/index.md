@@ -19,11 +19,11 @@ To use Kaa, your system must meet the following minimum system requirements:
 
    * 64-bit OS
    
-   for single kaa-node
+   for single kaa-node service with all third party components (SQL, NoSQL, Zookeeper, etc.) deployed remotely
    
    * 256 Mb RAM
    
-   for kaa-node with all third party components
+   for kaa-node with all third party components deployed on the same node
    
    * 4 Gb RAM
 
