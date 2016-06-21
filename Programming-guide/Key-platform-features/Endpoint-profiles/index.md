@@ -12,12 +12,12 @@ sort_idx: 20
 * TOC
 {:toc}
 
-The endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint . Endpoint profiles are used to classify endpoints into 
+The structure of both client-side and server-side endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint. Endpoint profiles are used to classify endpoints into 
 endpoint groups and are comprised of the client-side, server-side and system part. The structure of both client-side and server-side of endpoint profile is defined by 
 application developer using the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) format. Application developer may reuse and share certain data 
 structures using CTL.  
-Client-side structure is used during SDK generation and changes to the client-side structure requires generation of new SDK(for more information use 
-[Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)). Application developer is able to define and 
+Client-side structure is used during SDK generation. Thus, change to the client-side structure requires re-generation of the SDK 
+(for more details see [Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)). Application developer is able to define and 
 change server-side structure of endpoint profile at any time. The structure of the system part is identical across the applications and is used by Kaa internally for its 
 functions. Both client-side and server-side profile schemas are maintained within the corresponding application, with its own version that distinguishes it from the previous 
 schemas. Multiple schema versions and corresponding endpoint profiles created upon those schemas can coexist within a single application.
@@ -37,6 +37,13 @@ it detects profile data changes and submits the new data to the Kaa cluster as a
 ### Client-side endpoint profile example ###
 
 For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
+
+The schema defines 4 fields:
+
+* id - unique identifier
+* os - operating system name
+* os_version - version of operating system
+* build - build version
 
 ```json
 {
@@ -72,7 +79,7 @@ For the purpose of this guide we will use a fairly abstract client-side profile 
 }
 ```
 
-The following client-side profile would be compatible with our schema example.
+The following client-side profile is based on the rules that sets schema.
 
 ```json
 {
@@ -82,9 +89,8 @@ The following client-side profile would be compatible with our schema example.
   "build" : "1"
 }
 ```
-The schema structure from our example allows filtering the endpoints by the owner's country (for example, to show only US news), city (for example, to push weather 
-notifications only for the specified cities), age (for example, to apply age restrictions), and hobbies (for example, to push football scores for those whose hobby list 
-contains "football"). It is allowed to create complex filtering conditions by combining as many filtering conditions as needed.
+The schema structure from our example allows filtering the endpoints by the operation systems of device (for example, to show only Android devices), os_version (for example, to push some 
+notifications only for the specified os version). It is allowed to create complex filtering conditions by combining as many filtering conditions as needed.
 
 ### Endpoint profile SDK API ###
 
@@ -263,11 +269,11 @@ As a tenant developer, you can create new client-side EP schemas for the applica
 1. In the **Client-side EP profile schemas** window for the application, click **Add schema**.
 2. In the **Add profile schema** window enter the name of the schema.
 3. Then create a schema using one of the two options:
-    1. Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
+    * Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
     
     <img src="admin-ui/Create client-side endpoint profile schema 1.png">
     
-    2. Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using 
+    * Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using 
     the schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
     
     <img src="admin-ui/Create client-side endpoint profile schema 2.png">
@@ -280,7 +286,7 @@ If you want to review the added Avro schema, open the corresponding **Client-sid
 
 ### REST API for Client-side endpoint profile
 
-Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
 
 ## Server-side endpoint profile ##
 
