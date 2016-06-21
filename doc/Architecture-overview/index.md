@@ -38,17 +38,9 @@ Kaa Control service is responsible for managing overall system data, processing 
 Control service maintains an up-to-date list of available Operations services by continuously receiving this information from ZooKeeper.
 Additionally, Control service runs embedded Administrative web UI component, which uses Control service APIs to provide platform users with a convenient web-based interface for managing tenants, user accounts, applications, application data, etc.
 
-To support high availability, a Kaa cluster must include at least two nodes with Control service enabled.
-In HA configuration one of the Control services acts as active and other(s) function in standby mode.
+To support high availability (HA), a Kaa cluster must include at least two nodes with Control service enabled.
+In HA mode one of the Control services acts as active and other(s) function in standby mode.
 In case of the active Control service failure, ZooKeeper notifies one of the standby Control service and promotes it to the active Control service.
-
-## Bootstrap service
-
-Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints.
-Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc.
-Kaa SDKs contain a pre-generated list of Bootstrap services available in the Kaa cluster that was used to generate the SDK library.
-Endpoints query Bootstrap services from this list to retrieve connection parameters for the currently available Operations services.
-Bootstrap services maintain their lists of available Operations services by coordinating with ZooKeeper.
 
 ## Operations service
 
@@ -59,6 +51,14 @@ Multiple nodes with Operations service enabled may be set up in a Kaa cluster fo
 In this case, all instances of Operations service will function concurrently.
 In case of an Operations service outage, previously connected endpoints switch to other available Operations services automatically.
 Kaa server provides instruments for the load re-balancing at run time, thus effectively routing endpoints to the less loaded nodes in the cluster.
+
+## Bootstrap service
+
+Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints.
+Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc.
+Kaa SDKs contain a pre-generated list of Bootstrap services available in the Kaa cluster that was used to generate the SDK library.
+Endpoints query Bootstrap services from this list to retrieve connection parameters for the currently available Operations services.
+Bootstrap services maintain their lists of available Operations services by coordinating with ZooKeeper.
 
 ## Third-party components
 
@@ -73,7 +73,7 @@ Active Control service uses information about available Bootstrap services and t
 
 SQL database instance is used to store tenants, applications, endpoint groups and other metadata that does not grow with the increase in the amount of endpoints.
 
-High availability of a Kaa cluster is achieved by deploying the SQL database in HA cluster mode.
+High availability of a Kaa cluster is achieved by deploying the SQL database in HA mode.
 Kaa officially supports [MariaDB](https://mariadb.org/) and [PostgreSQL](https://www.postgresql.org/) as embedded SQL databases at the moment.
 
 ### NoSQL database
@@ -127,14 +127,14 @@ Kaa applications are agnostic to the specific target platform, operating system,
 For example, two firmware implementations for a pressure sensor will differ between Arduino and STM32 platforms, yet will be considered the same application in Kaa, as long as they report identically structured telemetry data.
 
 The Kaa platform is *multi-tenant*, and may support multiple independent business entities out of a single instance.
-As illustrated in the following diagram, applications belong to tenants, while endpoints register within applications.
+As illustrated in the preceding diagram, applications belong to tenants, while endpoints register within applications.
 
 An *endpoint* (also commonly shortcut as *EP*), on its part, is an abstraction that represents a separate managed entity within a Kaa deployment.
 Practically speaking, an endpoint is a specific Kaa client registered (or waiting to be registered) within a Kaa instance.
 Depending on the use case, different level physical entities may be considered as endpoints.
 In the industrial setting, a single air quality sensor may represent an individual endpoint, while in a fleet tracking application, a truck (despite carrying on board multiple sensors reporting data) may be a more appropriate entity to be declared as an endpoint.
 
-In order to be able to distinguish endpoints not only by their *endpoint IDs*, but also associated properties, Kaa introduces a concept of [*endpoint profiles*]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/).
+In order to be able to distinguish endpoints not only by their *IDs*, but also associated properties, Kaa introduces a concept of [*endpoint profiles*]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/).
 Endpoint profile is a custom structured data set that contains characteristics of a specific endpoint within an application.
 Profiles are comprised of the *client-side*, *server-side*, and *system* part.
 Client-side profile part contents is provided by the endpoint; server-side and system parts are managed by the server.
