@@ -63,11 +63,7 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.*;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -666,8 +662,8 @@ public class DataSource {
     }
 
     public void editConfigurationSchemaForm(
-            ConfigurationSchemaDto configurationSchema,
-            final AsyncCallback<ConfigurationSchemaDto> callback) {
+            ConfigurationSchemaViewDto configurationSchema,
+            final AsyncCallback<ConfigurationSchemaViewDto> callback) {
         rpcService.editConfigurationSchemaForm(configurationSchema,
                 new DataCallback<ConfigurationSchemaDto>(callback) {
                     @Override
@@ -679,7 +675,7 @@ public class DataSource {
     }
 
     public void getConfigurationSchemaForm(String configurationSchemaId,
-            final AsyncCallback<ConfigurationSchemaDto> callback) {
+            final AsyncCallback<ConfigurationSchemaViewDto> callback) {
         rpcService.getConfigurationSchemaForm(configurationSchemaId,
                 new DataCallback<ConfigurationSchemaDto>(callback) {
                     @Override

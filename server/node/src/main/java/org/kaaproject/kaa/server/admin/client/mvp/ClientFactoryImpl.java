@@ -153,8 +153,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseCtlSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
     private final BaseListView<ConfigurationSchemaDto> configurationSchemasView = new ConfigurationSchemasViewImpl();
-    private final BaseSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
-    private final BaseSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
+    private final BaseCtlSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
+    private final BaseCtlSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
 
     private final BaseListView<NotificationSchemaDto> notificationSchemasView = new NotificationSchemasViewImpl();
     private final BaseSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
@@ -346,12 +346,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getConfigurationSchemaView() {
+    public BaseCtlSchemaView getConfigurationSchemaView() {
         return configurationSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateConfigurationSchemaView() {
+    public BaseCtlSchemaView getCreateConfigurationSchemaView() {
         return createConfigurationSchemaView;
     }
 
