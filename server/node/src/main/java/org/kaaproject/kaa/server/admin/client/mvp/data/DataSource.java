@@ -661,25 +661,25 @@ public class DataSource {
 
     }
 
-    public void editConfigurationSchemaForm(
+    public void saveConfigurationSchemaView(
             ConfigurationSchemaViewDto configurationSchema,
             final AsyncCallback<ConfigurationSchemaViewDto> callback) {
-        rpcService.editConfigurationSchemaForm(configurationSchema,
-                new DataCallback<ConfigurationSchemaDto>(callback) {
+        rpcService.saveConfigurationSchemaView(configurationSchema,
+                new DataCallback<ConfigurationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationSchemaDto result) {
+                    protected void onResult(ConfigurationSchemaViewDto result) {
                         eventBus.fireEvent(new DataEvent(
                                 ConfigurationSchemaDto.class));
                     }
                 });
     }
 
-    public void getConfigurationSchemaForm(String configurationSchemaId,
-            final AsyncCallback<ConfigurationSchemaViewDto> callback) {
-        rpcService.getConfigurationSchemaForm(configurationSchemaId,
-                new DataCallback<ConfigurationSchemaDto>(callback) {
+    public void getConfigurationSchemaView(String configurationSchemaId,
+                                           final AsyncCallback<ConfigurationSchemaViewDto> callback) {
+        rpcService.getConfigurationSchemaView(configurationSchemaId,
+                new DataCallback<ConfigurationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationSchemaDto result) {
+                    protected void onResult(ConfigurationSchemaViewDto result) {
                     }
                 });
     }

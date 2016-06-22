@@ -182,6 +182,8 @@ public class CtlSchemaPlace extends TreePlace {
             if (schemaType != null) { 
                 if (schemaType == SchemaType.ENDPOINT_PROFILE) {
                     return new ProfileSchemasPlace(applicationId);
+                } if(schemaType == SchemaType.CONFIGURATION) {
+                    return new ConfigurationSchemasPlace(applicationId);
                 } else {
                     return new ServerProfileSchemasPlace(applicationId);
                 }
@@ -197,8 +199,8 @@ public class CtlSchemaPlace extends TreePlace {
         }
     }
     
-    public static enum SchemaType {
-        
+    public enum SchemaType {
+        CONFIGURATION,
         ENDPOINT_PROFILE,
         SERVER_PROFILE
         

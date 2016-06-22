@@ -23,12 +23,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 
 public class ConfigurationSchemaActivity extends
         AbstractBaseCtlSchemaActivity<ConfigurationSchemaDto, ConfigurationSchemaViewDto, BaseCtlSchemaView, ConfigurationSchemaPlace> {
@@ -56,13 +54,13 @@ public class ConfigurationSchemaActivity extends
 
     @Override
     protected void getEntity(String id, AsyncCallback<ConfigurationSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().getConfigurationSchemaForm(id, callback); // refactor on server
+        KaaAdmin.getDataSource().getConfigurationSchemaView(id, callback);
     }
 
 
     @Override
     protected void editEntity(ConfigurationSchemaViewDto entity, AsyncCallback<ConfigurationSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().editConfigurationSchemaForm(entity, callback); // refactor on server
+        KaaAdmin.getDataSource().saveConfigurationSchemaView(entity, callback);
     }
 
     @Override
@@ -80,7 +78,7 @@ public class ConfigurationSchemaActivity extends
 
     @Override
     protected CtlSchemaPlace.SchemaType getPlaceSchemaType() {
-        return CtlSchemaPlace.SchemaType.ENDPOINT_PROFILE;
+        return CtlSchemaPlace.SchemaType.CONFIGURATION;
     }
 
 
