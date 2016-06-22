@@ -45,9 +45,9 @@ Profile filters are evaluated using following context variables:
 
 The following example illustrates the general idea of profile filters.
 
-1. Let's assume the following client-side profile schema.
+About which filters we can use, see the table below. 
 
-    It's a simple schema with some fields for filtration.
+1. Let's assume the following client-side profile schema.
 
 ```json
 [  
@@ -182,7 +182,7 @@ At last, the following filters will yield true when applied to the given endpoin
 |#cp.arrayRecordField[1].otherSimpleField==789 |The client-side endpoint profile contains arrayRecordField, which is an array. This array contains an element in the position 1, which is a record containing otherSimpleField set to '789'.|
 |#cp.nullableRecordField==null |An example of how to check a field for the null value.|
 |#cp.arraySimpleField[0]=='CLIENT_SIDE_VALUE_1' and # sp.arraySimpleField[0]=='SERVER_SIDE_VALUE_1'|An example of how to combine several conditions in a query.|
-|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The arrayRecordField field is an array of records. It contains at least one element that contains otherSimpleField with the value 
+|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The arrayRecordField field is an array of records. It contains at least one element that contains otherSimpleField with the value.| 
 
 ## Using endpoint groups ##
 
