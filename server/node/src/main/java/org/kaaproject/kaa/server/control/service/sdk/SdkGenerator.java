@@ -16,20 +16,15 @@
 
 package org.kaaproject.kaa.server.control.service.sdk;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.List;
 
 /**
  * The Class SdkGenerator.
@@ -40,34 +35,6 @@ public abstract class SdkGenerator {
      * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(SdkGenerator.class);
-
-    /**
-     * Generate sdk.
-     *
-     * @param buildVersion the build version
-     * @param bootstrapNodes the bootstrap nodes
-     * @param sdkProfile the sdk profile
-     * @param profileSchemaBody the profile schema body
-     * @param notificationSchemaBody the notification schema body
-     * @param configurationProtocolSchemaBody the configuration protocol schema body
-     * @param configurationBaseSchemaBody the configuration base schema body
-     * @param defaultConfigurationData the default configuration data
-     * @param eventFamilies the event families meta information
-     * @param logSchemaBody the log schema body
-     *
-     * @return the sdk
-     * @throws Exception the exception
-     */
-    public abstract FileData generateSdk(String buildVersion,
-            List<BootstrapNodeInfo> bootstrapNodes,
-            SdkProfileDto sdkProfile,
-            String profileSchemaBody,
-            String notificationSchemaBody,
-            String configurationProtocolSchemaBody,
-            String configurationBaseSchemaBody,
-            byte[] defaultConfigurationData,
-            List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception; //NOSONAR
 
     /**
      * Read file.
@@ -126,4 +93,31 @@ public abstract class SdkGenerator {
         }
         return result;
     }
+
+    /**
+     * Generate sdk.
+     *
+     * @param buildVersion                    the build version
+     * @param bootstrapNodes                  the bootstrap nodes
+     * @param sdkProfile                      the sdk profile
+     * @param profileSchemaBody               the profile schema body
+     * @param notificationSchemaBody          the notification schema body
+     * @param configurationProtocolSchemaBody the configuration protocol schema body
+     * @param configurationBaseSchemaBody     the configuration base schema body
+     * @param defaultConfigurationData        the default configuration data
+     * @param eventFamilies                   the event families meta information
+     * @param logSchemaBody                   the log schema body
+     * @return the sdk
+     * @throws Exception the exception
+     */
+    public abstract FileData generateSdk(String buildVersion,
+                                         List<BootstrapNodeInfo> bootstrapNodes,
+                                         SdkProfileDto sdkProfile,
+                                         String profileSchemaBody,
+                                         String notificationSchemaBody,
+                                         String configurationProtocolSchemaBody,
+                                         String configurationBaseSchemaBody,
+                                         byte[] defaultConfigurationData,
+                                         List<EventFamilyMetadata> eventFamilies,
+                                         String logSchemaBody, boolean isTrustfulCredentialService) throws Exception; //NOSONAR
 }

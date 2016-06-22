@@ -24,4 +24,7 @@ public class KaaInvalidConfigurationException extends KaaRuntimeException {
         super(cause);
     }
 
+    public KaaInvalidConfigurationException(String message) {
+        super(message);
+    }
 }

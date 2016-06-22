@@ -134,7 +134,7 @@ public class CppSdkGenerator extends SdkGenerator {
             String configurationBaseSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception {
+            String logSchemaBody, boolean isTrustfulCredentialService) throws Exception {
 
         String sdkToken = sdkProfile.getToken();
         Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();

@@ -122,7 +122,7 @@ public class CSdkGenerator extends SdkGenerator {
                            String configurationBaseSchemaBody,
                            byte[] defaultConfigurationData,
                            List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody) throws Exception {
+                           String logSchemaBody, boolean isTrustfulCredentialService) throws Exception {
 
         String sdkToken = sdkProfile.getToken();
         Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
