@@ -370,7 +370,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
         } else {
             LOG.debug("Error loading public key", "Project is not trustful and key pair is not found");
-            throw new KaaInvalidConfigurationException("This project isn't trustful, is it?");
+            throw new KaaInvalidConfigurationException("Credential service in this project isn't trustful, is it?");
         }
         return keyPair;
     }
