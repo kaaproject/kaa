@@ -17,7 +17,7 @@
 
 
 generate_docs() {
-	appledoc --project-name "Kaa client Objective-C SDK" --project-company CyberVision --output ./ --no-create-docset --ignore *.m --explicit-crossref --verbose 2 --index-desc mainpage.html Kaa
+	appledoc --project-name "Kaa client Objective-C SDK" --project-company CyberVision --output ./ --no-create-docset --ignore ./*.m --explicit-crossref --verbose 2 --index-desc mainpage.html Kaa
 }
 
 compile() {
