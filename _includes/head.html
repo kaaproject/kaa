@@ -33,6 +33,10 @@
 		$content = $(this).attr('src');
 		$.featherlight($content, configuration);
 	  });
+	  $('.car-field').click(function(event){
+		event.preventDefault();
+		$(this).parents("li").toggleClass("menu-opened");
+	  });
   });
   </script>
   <!-- lightbox -->
