@@ -9,16 +9,8 @@ sort_idx: 20
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-* [Introduction](#introduction)
-* [Installation steps](#installation-steps)
-  * [Third party components installation](#third-party-components-instalation)
-  * [Kaa server components](#kaa-server-components)
-* [Configuration steps](#configuration-steps)
-  * [SQL database configuration](#sql-database-configuration)
-  * [NoSQL database configuration](#nosql-database-configuration)
-  * [Network interface configuration](#network-interface-configuration)
-  * [Firewall rules configuration](#firewall-rules-configuration)
-* [Startup steps](#startup-steps)
+* auto generated TOC:
+{:toc}
 
 
 > **Verified against host OS:**
@@ -67,16 +59,17 @@ Refer to the following guides for more details.
 
 Kaa requires the following third party components to be installed and configured. For more information refer to [required third party](../#third-party-components) list.
 
+<ul>
+<li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Ubuntu16">Ubuntu 16.04</a></li>
-  <li><a data-toggle="tab" href="#Ubuntu14">Ubuntu 14.04</a></li>
+  <li class="active"><a data-toggle="tab" href="#Ubuntu">Ubuntu 14.04/16.04</a></li>
   <li><a data-toggle="tab" href="#CentOS">CentOS 6.7</a></li>
 </ul>
 
 <div class="tab-content">
-<div id="Ubuntu16" class="tab-pane fade in active" markdown="1" >
+<div id="Ubuntu" class="tab-pane fade in active" markdown="1" >
 
-### Ubuntu 16.04
+#### Ubuntu 14.04/16.04
 
 
 1. Install common utils.
@@ -112,111 +105,127 @@ Kaa requires the following third party components to be installed and configured
 
 
 
-3. Install [MariaDB 5.5](https://mariadb.com/).
+3. Install SQL DB:
 
-   Install the python-software-properties package.
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#maria">MariaDB</a></li>
+  <li><a data-toggle="tab" href="#postgre">PostgreSQL</a></li>
+</ul>
 
-   ```bash
-   $ sudo apt-get install python-software-properties
-   ```
+<div class="tab-content">
+<div id="maria" class="tab-pane fade in active" markdown="1" >
 
-   Now, we can add the key files for the MariaDB repository. 
+Install [MariaDB 5.5](https://mariadb.com/).
 
-   ```bash
-   $ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-   ```
+Install the python-software-properties package.
 
-   After that we add repository:
+```bash
+$ sudo apt-get install python-software-properties
+```
 
-   ```bash
-   $ sudo add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu precise main'
-   ```
+Now, we can add the key files for the MariaDB repository. 
 
-   Install MariaDB with Galera Patches:
+```bash
+$ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
+```
 
-   ```bash
-   $ sudo apt-get update
-   $ sudo apt-get install mariadb-galera-server-5.5 mariadb-client-5.5
-   ```
-   
-   If, for some reason, you do not already have rsync installed on your machines, you should install it now by typing:
+After that we add repository:
 
-   ```bash   
-   $ sudo apt-get install rsync
-   ```
-   
-   You can check if the MariaDB service is running by executing the following command:
+```bash
+$ sudo add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu trusty main'
+```
 
-   ```bash   
-   $ sudo netstat -ntlp | grep 3306
-   ```
-   
-   Connect to the mysql-server by executing the following command:
+Install MariaDB with Galera Patches:
 
-   ```bash   
-   $ mysql -u root -p
-   ```
-   
-   Specify the login and password for user (the default login and password in Kaa configuration files is "sqladmin" and "admin"):
-   
+```bash
+$ sudo apt-get update
+$ sudo apt-get install mariadb-galera-server-5.5 mariadb-client-5.5
+```
 
-   ```sql
-   CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
-   ```
-   
-   Create the Kaa database by executing the following command:
-   
-   ```sql   
-   CREATE DATABASE kaa;
-   ```
+If, for some reason, you do not already have rsync installed on your machines, you should install it now by typing:
 
+```bash   
+$ sudo apt-get install rsync
+```
 
+You can check if the MariaDB service is running by executing the following command:
 
-4. Install [PostgreSQL 9.4](http://www.postgresql.org/download/).
+```bash   
+$ sudo netstat -ntlp | grep 3306
+```
 
-   Add official PostgreSQL repository.
+Connect to the mysql-server by executing the following command:
 
-   ```bash
-   $ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-   $ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-   ```
+```bash   
+$ mysql -u root -p
+```
 
-   Install PostgreSQL 9.4.
-
-   ```bash
-   $ sudo apt-get update
-   $ sudo apt-get install postgresql-9.4
-   ```
-
-   You can check if the Postgresql service is running by executing the following command.
-
-   ```bash
-   $ sudo netstat -ntlp | grep 5432
-   ```
-
-   For more details, please refer to the [official page](https://wiki.postgresql.org/wiki/Apt).
-
-   Connect to the postgresql-server via the psql utility by executing the following command.
-
-   ```bash
-   $ sudo -u postgres psql
-   ```
-
-   Specify the password for the postgres user (the default password in Kaa configuration files is "admin").
-
-   ```bash
-   postgres=# \password Enter new password: admin Enter it again: admin
-   ```
-
-   Create the Kaa database by executing the following command.
-
-   ```sql
-   CREATE DATABASE kaa;
-   ```
+Specify the login and password for user (the default login and password in Kaa configuration files is "sqladmin" and "admin"):
 
 
+```sql
+CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
+```
 
-5. Install [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.6/).
+Create the Kaa database by executing the following command:
+
+```sql   
+CREATE DATABASE kaa;
+```
+
+</div><div id="postgre" class="tab-pane fade" markdown="1" >
+
+Install [PostgreSQL 9.4](http://www.postgresql.org/download/).
+
+Add official PostgreSQL repository.
+
+```bash
+$ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+$ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+```
+
+Install PostgreSQL 9.4.
+
+```bash
+$ sudo apt-get update
+$ sudo apt-get install postgresql-9.4
+```
+
+You can check if the Postgresql service is running by executing the following command.
+
+```bash
+$ sudo netstat -ntlp | grep 5432
+```
+
+For more details, please refer to the [official page](https://wiki.postgresql.org/wiki/Apt).
+
+Connect to the postgresql-server via the psql utility by executing the following command.
+
+```bash
+$ sudo -u postgres psql
+```
+
+Specify the password for the postgres user (the default password in Kaa configuration files is "admin").
+
+```bash
+postgres=# \password Enter new password: admin Enter it again: admin
+```
+
+Create the Kaa database by executing the following command.
+
+```sql
+CREATE DATABASE kaa;
+```
+
+</div>
+</div>
+</li>
+</ul>
+
+
+4. Install [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.6/).
 
    ```bash
    $ sudo apt-get install zookeeperd
@@ -228,352 +237,197 @@ Kaa requires the following third party components to be installed and configured
    $ netstat -ntlp | grep 2181
    ```
 
+5. Install No-SQL DB:
 
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#mongo">MongoDB</a></li>
+  <li><a data-toggle="tab" href="#cassandra">Cassandra</a></li>
+</ul>
 
-6. Install [MongoDB](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 3.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
+<div class="tab-content">
+<div id="mongo" class="tab-pane fade in active" markdown="1" >
 
-   If you have installed previous version, this is how you can completely uninstall it:
+Install [MongoDB](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 3.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
 
-   ```bash
-   $ sudo dpkg -l | grep mongo
-   $ sudo apt-get remove mongodb* --purge
-   ```
+If you have installed previous version, this is how you can completely uninstall it:
 
-   Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
+```bash
+$ sudo dpkg -l | grep mongo
+$ sudo apt-get remove mongodb* --purge
+```
 
-   ```bash
-   $ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-   $ echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
-   ```
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#mongo_ubuntu16">Ubuntu 16.04</a></li>
+  <li><a data-toggle="tab" href="#mongo_ubuntu14">Ubuntu 14.04</a></li>
+</ul>
 
-   Install MongoDB.
+<div class="tab-content">
+<div id="mongo_ubuntu16" class="tab-pane fade in active" markdown="1" >
 
-   ```bash
-   $ sudo apt-get update
-   $ sudo apt-get install -y --allow-unauthenticated mongodb-org
-   ```
+Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
 
-   Before start edit file:
+```bash
+$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+$ echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+```
 
-   ```bash
-   $ sudo nano /etc/systemd/system/mongodb.service
+Install MongoDB.
 
- 
-   [Unit]
-   Description=High-performance, schema-free document-oriented database
-   After=network.target
- 
-   [Service]
-   User=mongodb
-   ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
- 
-   [Install]
-   WantedBy=multi-user.target
-   ```
+```bash
+$ sudo apt-get update
+$ sudo apt-get install -y --allow-unauthenticated mongodb-org
+```
 
-   Start the MongoDB.
+Before start edit file:
 
-   ```bash
-   $ sudo systemctl start mongodb
-   ```
+```bash
+$ sudo nano /etc/systemd/system/mongodb.service
 
-   Verify that MongoDB has started successfully.
 
-   ```bash
-   $ sudo systemctl status mongodb
-   $ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
-   2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
-   ```
- 
- 
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=network.target
 
-7. Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
+[Service]
+User=mongodb
+ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
 
-   Since Cassandra requires python-support and this package was removed in Ubuntu 16.04 , manually install python-support.
-   Download deb package and unpack it:
+[Install]
+WantedBy=multi-user.target
+```
 
-   ```bash
-   $ sudo wget "http://launchpadlibrarian.net/109052632/python-support_1.0.15_all.deb"
-   $ sudo dpkg --install python-support_1.0.15_all.deb
-   ```
+Start the MongoDB.
 
-   Set Apache repo. Change the 35x to match the latest version. For example, use 36x if Cassandra 3.6 is the latest version:
+```bash
+$ sudo systemctl start mongodb
+```
 
-   ```bash
-   $ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-   $ curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
-   ```
+</div><div id="mongo_ubuntu14" class="tab-pane fade" markdown="1" >
 
-   Install Cassandra 3.5.
+Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
 
-   ```bash
-   $ sudo apt-get update
-   $ sudo apt-get install -y --allow-unauthenticated cassandra=3.5
-   ```
+```bash
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+$ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+```
 
-   You can check if the Cassandra service is running by executing the following command.
+Install MongoDB.
 
-   ```bash
-   $ sudo netstat -ntlp | grep 9042
-   ```
+```bash  
+$ sudo apt-get update
+$ sudo apt-get install -y mongodb-org=2.6.9 mongodb-org-server=2.6.9 mongodb-org-shell=2.6.9 mongodb-org-mongos=2.6.9 mongodb-org-tools=2.6.9
+```
 
-   Install Java Native Access (JNA).
+Start the MongoDB.
 
-   ```bash
-   $ sudo apt-get install libjna-java
-   ```
+```bash
+$ sudo service mongod start
+```
 
-   Check cassandra cql shell.
+</div>
+</div>
+</li>
+</ul>
 
-   ```bash
-   $ cqlsh
-   Connected to Test Cluster at 127.0.0.1:9042.
-   [cqlsh 5.0.1 | Cassandra 3.5 | CQL spec 3.4.0 | Native protocol v4]
-   Use HELP for help.
-   cqlsh>
-   ```
+Verify that MongoDB has started successfully.
 
+```bash
+$ sudo systemctl status mongodb
+$ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
+2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
+```
 
+</div><div id="cassandra" class="tab-pane fade" markdown="1" >
 
-</div><div id="Ubuntu14" class="tab-pane fade" markdown="1" >
+Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
 
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16</a></li>
+  <li><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14</a></li>
+</ul>
 
-### Ubuntu 14.04
+<div class="tab-content">
+<div id="cassandra_ubuntu16" class="tab-pane fade in active" markdown="1" >
 
+Since Cassandra requires python-support and this package was removed in Ubuntu 16.04 , manually install python-support.
+Download deb package and unpack it:
 
-1. Install common utils.
+```bash
+$ sudo wget "http://launchpadlibrarian.net/109052632/python-support_1.0.15_all.deb"
+$ sudo dpkg --install python-support_1.0.15_all.deb
+```
 
-   Download and install wget, ca-certificates, curl.
+Set Apache repo. Change the 35x to match the latest version. For example, use 36x if Cassandra 3.6 is the latest version:
 
-   ```bash
-   $ sudo apt-get install wget ca-certificates curl
-   ```
+```bash
+$ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+$ curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
+```
 
+Install Cassandra 3.5.
 
+```bash
+$ sudo apt-get update
+$ sudo apt-get install -y --allow-unauthenticated cassandra=3.5
+```
+</div><div id="cassandra_ubuntu14" class="tab-pane fade" markdown="1" >
 
-2. Install [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  
-   Add java apt repository. This repository is not official, for a different way to install Oracle JDK, see the [official page](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+Add the DataStax Community repository to the /etc/apt/sources.list.d/cassandra.sources.list.
 
-   ```bash
-   $ sudo add-apt-repository ppa:webupd8team/java
-   $ sudo apt-get update
-   $ sudo apt-get install oracle-java8-installer
-   ```
+```bash
+$ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+$ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+```
 
-   You can check if Oracle JDK is installed by executing the following command.
+Install Cassandra 3.5.
 
-   ```bash
-   $ javac -version
-   ```
+```bash 
+$ sudo apt-get update
+$ sudo apt-get install cassandra=3.5
+```
 
-   In case of successful installation, you will receive the JDK version.
+</div>
+</div>
+</li>
+</ul>
 
-   ```bash
-   javac 1.8.0_66
-   ```
+You can check if the Cassandra service is running by executing the following command.
 
+```bash
+$ sudo netstat -ntlp | grep 9042
+```
 
+Install Java Native Access (JNA).
 
-3. Install [MariaDB 5.5](https://mariadb.com/).
+```bash
+$ sudo apt-get install libjna-java
+```
 
-   Install the python-software-properties package.
+Check cassandra cql shell.
 
-   ```bash
-   $ sudo apt-get install python-software-properties
-   ```
+```bash
+$ cqlsh
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.5 | CQL spec 3.4.0 | Native protocol v4]
+Use HELP for help.
+cqlsh>
+```
 
-   Now, we can add the key files for the MariaDB repository. 
-
-   ```bash
-   $ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-   ```
-
-   After that we add repository:
-
-   ```bash
-   $ sudo add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu precise main'
-   ```
-
-   Install MariaDB with Galera Patches:
-
-   ```bash
-   $ sudo apt-get update
-   $ sudo apt-get install mariadb-galera-server galera
-   ```
-   
-   If, for some reason, you do not already have rsync installed on your machines, you should install it now by typing:
-
-   ```bash   
-   $ sudo apt-get install rsync
-   ```
-   
-   You can check if the MariaDB service is running by executing the following command:
-
-   ```bash   
-   $ sudo netstat -ntlp | grep 3306
-   ```
-   
-   Connect to the mysql-server by executing the following command:
-
-   ```bash   
-   $ mysql -u root -p
-   ```
-   
-   Specify the login and password for user (the default login and password in Kaa configuration files is "sqladmin" and "admin"):
-   
-
-   ```sql
-   CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
-   ```
-   
-   Create the Kaa database by executing the following command:
-   
-   ```sql   
-   CREATE DATABASE kaa;
-   ```
-
-
-
-4. Install [PostgreSQL 9.4](http://www.postgresql.org/download/).
-
-   Add official PostgreSQL repository.
-
-   ```bash
-   $ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-   $ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-   ```
-
-   Install PostgreSQL 9.4.
-
-   ```bash
-   $ sudo apt-get update
-   $ sudo apt-get install postgresql-9.4
-   ```
-
-   You can check if the Postgresql service is running by executing the following command.
-
-   ```bash
-   $ sudo netstat -ntlp | grep 5432
-   ```
-
-   For more details, please refer to the [official page](https://wiki.postgresql.org/wiki/Apt).
-
-   Connect to the postgresql-server via the psql utility by executing the following command.
-
-   ```bash
-   $ sudo -u postgres psql
-   ```
-
-   Specify the password for the postgres user (the default password in Kaa configuration files is "admin").
-
-   ```bash
-   postgres=# \password Enter new password: admin Enter it again: admin
-   ```
-
-   Create the Kaa database by executing the following command.
-
-   ```sql
-   CREATE DATABASE kaa;
-   ```
-
-
-
-5. Install [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.6/).
-
-   ```bash
-   $ sudo apt-get install zookeeperd
-   ```
-
-   You can check if the Zookeeper service is running by executing the following command.
-
-   ```bash
-   $ netstat -ntlp | grep 2181
-   ```
-
-
-
-6. Install [MongoDB](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 3.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
-
-   If you have installed previous version, this is how you can completely uninstall it:
-
-   ```bash
-   $ sudo dpkg -l | grep mongo
-   $ sudo apt-get remove mongodb* --purge
-   ```
-
-   Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
-
-   ```bash
-   $ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
-   $ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
-   ```
-
-   Install MongoDB.
-
-   ```bash  
-   $ sudo apt-get update
-   $ sudo apt-get install -y mongodb-org=2.6.9 mongodb-org-server=2.6.9 mongodb-org-shell=2.6.9 mongodb-org-mongos=2.6.9 mongodb-org-tools=2.6.9
-   ```
-
-   Start the MongoDB.
-
-   ```bash
-   $ sudo service mongod start
-   ```
-
-   Verify that MongoDB has started successfully.
-
-   ```bash
-   $ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
-   2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
-   ```
- 
- 
-
-7. Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
-
-   Add the DataStax Community repository to the /etc/apt/sources.list.d/cassandra.sources.list.
-
-   ```bash
-   $ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-   $ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
-   ```
-
-   Install Cassandra 3.5.
-
-   ```bash 
-   $ sudo apt-get update
-   $ sudo apt-get install cassandra=3.5
-   ```
-
-   You can check if the Cassandra service is running by executing the following command.
-
-   ```bash
-   $ sudo netstat -ntlp | grep 9042
-   ```
-
-   Install Java Native Access (JNA).
-
-   ```bash
-   $ sudo apt-get install libjna-java
-   ```
-
-   Check cassandra cql shell.
-
-   ```bash
-   $ cqlsh
-   Connected to Test Cluster at 127.0.0.1:9042.
-   [cqlsh 5.0.1 | Cassandra 3.5 | CQL spec 3.4.0 | Native protocol v4]
-   Use HELP for help.
-   cqlsh>
-   ```
-
-
+</div>
+</div>
+</li>
+</ul>
 
 </div><div id="CentOS" class="tab-pane fade" markdown="1" >
 
 
-### CentOS 6.7
+#### CentOS 6.7
 
 1. Install common utils.
 
@@ -617,167 +471,186 @@ Kaa requires the following third party components to be installed and configured
    Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
    ```
 
-3. Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ) (Optional, you may install [MariaDB 5.5](https://mariadb.org/download/) instead).
+3. Install SQL DB:
 
-   Exclude old PostgreSQL from the default repository, append a line ```exclude=postgresql*``` to the sections **[base]** and **[updates]**.
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#maria_centos">MariaDB</a></li>
+  <li><a data-toggle="tab" href="#postgre_centos">PostgreSQL</a></li>
+</ul>
 
-   ```bash
-   $ sudo nano /etc/yum.repos.d/CentOS-Base.repo
+<div class="tab-content">
+<div id="maria_centos" class="tab-pane fade in active" markdown="1" >
 
-   ...
+Install [MariaDB 5.5](https://mariadb.org/download/) (Optional, you may install [PostgreSQL 9.4](http://www.postgresql.org/download/) instead).
 
-   [base]
-   name=CentOS-$releasever - Base
-   mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
-   #baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
-   gpgcheck=1
-   gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-   exclude=postgresql*
+Install MariaDB 5.5 for CentOS 6.7 64-bit.
+Add MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (name it MariaDB.repo or something similar).
 
-   ...
+```bash
+# MariaDB 5.5 CentOS repository list - created 2016-04-01 10:22 UTC
+# http://mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/5.5/centos6-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+```
+Then execute folowing commands
 
-   [updates]
-   name=CentOS-$releasever - Updates
-   mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
-   #baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
-   gpgcheck=1
-   gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-   exclude=postgresql*
-   
-   ...
-   ```
+```bash
+$ sudo yum -y update
+$ sudo service mysqld stop
+$ sudo yum -y remove mysql-server mysql
+```
 
-   Install PostgreSQL 9.4 PGDG file for CentOS 6 64-bit.
+With the repo file in place you can now install MariaDB like so:
 
-   ```bash
-   $ sudo yum localinstall http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
-   ```
+```bash
+$ sudo yum install MariaDB-server MariaDB-client
+$ sudo service mysql start
+```
 
-   List available PostgreSQL installations and install the PostgreSQL server.
+You can check if the MariaDB server is running by executing the following command.
 
-   ```bash
-   $ sudo yum list postgres*
-   $ sudo yum install postgresql94-server
-   ```
+```bash
+$ sudo netstat -ntlp | grep 3306
 
-   Initialize the PostgreSQL database.
+tcp      0     0 127.0.0.1:3306        0.0.0.0:*            LISTEN     7386/mysqld
+```
 
-   ```bash
-   $ sudo service postgresql-9.4 initdb
-   Initializing database:                            [  OK  ]
-   ```
+For more details, please refer to the [official page](https://mariadb.org/).
 
-   Configure the database to start automatically when OS starts.
+Connect to the mariadb-server by executing the following command.
 
-   ```bash
-   $ sudo chkconfig postgresql-9.4 on
-   ```
+```bash
+$ mysql
+```
 
-   Start the database.
+Create new user for database by executing the following command.
 
-   ```bash
-   $ sudo service postgresql-9.4 start
-   Starting postgresql-9.4 service:                     [  OK  ]
-   ```
+```bash
+MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
+```
 
-   Connect to the postgresql-server via the psql utility by executing the following command.
+Create the Kaa database by executing the following command.
 
-   ```bash
-   $ sudo -u postgres psql
-   ```
+```bash
+MariaDB [(none)]> CREATE DATABASE kaa;
+```
 
-   Specify the password for the postgres user (default password in kaa configuration files is "admin").
+</div><div id="postgre_centos" class="tab-pane fade" markdown="1" >
 
-   ```bash
-   postgres=# \password
-   Enter new password: admin
-   Enter it again: admin
-   ```
+Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ) (Optional, you may install [MariaDB 5.5](https://mariadb.org/download/) instead).
 
-   Create the Kaa database by executing the following command.
+Exclude old PostgreSQL from the default repository, append a line ```exclude=postgresql*``` to the sections **[base]** and **[updates]**.
 
-   ```bash
-   CREATE DATABASE kaa;
-   ```
+```bash
+$ sudo nano /etc/yum.repos.d/CentOS-Base.repo
 
-   Update pg\_hba.conf file to allow local connections.
+...
 
-   ```bash
-   sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
-   remove lines:
-   local   all          all                            ident
-   host   all          all          127.0.0.1/32         ident
-   add lines:
-   local   all          all                            trust
-   host   all          all          127.0.0.1/32         trust
-   ```
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
-   Restart the database.
+...
 
-   ```bash
-   sudo service postgresql-9.4 restart
-   Stopping postgresql-9.4 service:                     [  OK  ]
-   Starting postgresql-9.4 service:                     [  OK  ]
-   ```
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+exclude=postgresql*
 
-4. Install [MariaDB 5.5](https://mariadb.org/download/) (Optional, you may install [PostgreSQL 9.4](http://www.postgresql.org/download/) instead).
+...
+```
 
-   Install MariaDB 5.5 for CentOS 6.7 64-bit.
-   Add MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (name it MariaDB.repo or something similar).
+Install PostgreSQL 9.4 PGDG file for CentOS 6 64-bit.
 
-   ```bash
-   # MariaDB 5.5 CentOS repository list - created 2016-04-01 10:22 UTC
-   # http://mariadb.org/mariadb/repositories/
-   [mariadb]
-   name = MariaDB
-   baseurl = http://yum.mariadb.org/5.5/centos6-amd64
-   gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-   gpgcheck=1
-   ```
-   Then execute folowing commands
+```bash
+$ sudo yum localinstall http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
+```
 
-   ```bash
-   $ sudo yum -y update
-   $ sudo service mysqld stop
-   $ sudo yum -y remove mysql-server mysql
-   ```
+List available PostgreSQL installations and install the PostgreSQL server.
 
-   With the repo file in place you can now install MariaDB like so:
+```bash
+$ sudo yum list postgres*
+$ sudo yum install postgresql94-server
+```
 
-   ```bash
-   $ sudo yum install MariaDB-server MariaDB-client
-   $ sudo service mysql start
-   ```
+Initialize the PostgreSQL database.
 
-   You can check if the MariaDB server is running by executing the following command.
+```bash
+$ sudo service postgresql-9.4 initdb
+Initializing database:                            [  OK  ]
+```
 
-   ```bash
-   $ sudo netstat -ntlp | grep 3306
-   
-   tcp      0     0 127.0.0.1:3306        0.0.0.0:*            LISTEN     7386/mysqld
-   ```
+Configure the database to start automatically when OS starts.
 
-   For more details, please refer to the [official page](https://mariadb.org/).
+```bash
+$ sudo chkconfig postgresql-9.4 on
+```
 
-   Connect to the mariadb-server by executing the following command.
+Start the database.
 
-   ```bash
-   $ mysql
-   ```
+```bash
+$ sudo service postgresql-9.4 start
+Starting postgresql-9.4 service:                     [  OK  ]
+```
 
-   Create new user for database by executing the following command.
+Connect to the postgresql-server via the psql utility by executing the following command.
 
-   ```bash
-   MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
-   ```
+```bash
+$ sudo -u postgres psql
+```
 
-   Create the Kaa database by executing the following command.
+Specify the password for the postgres user (default password in kaa configuration files is "admin").
 
-   ```bash
-   MariaDB [(none)]> CREATE DATABASE kaa;
-   ```
+```bash
+postgres=# \password
+Enter new password: admin
+Enter it again: admin
+```
 
-5. Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.5/).
+Create the Kaa database by executing the following command.
+
+```bash
+CREATE DATABASE kaa;
+```
+
+Update pg\_hba.conf file to allow local connections.
+
+```bash
+sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
+remove lines:
+local   all          all                            ident
+host   all          all          127.0.0.1/32         ident
+add lines:
+local   all          all                            trust
+host   all          all          127.0.0.1/32         trust
+```
+
+Restart the database.
+
+```bash
+sudo service postgresql-9.4 restart
+Stopping postgresql-9.4 service:                     [  OK  ]
+Starting postgresql-9.4 service:                     [  OK  ]
+```
+
+</div>
+</div>
+</li>
+</ul>
+
+4. Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.5/).
 
    Download and extract Zookeeper packages.
 
@@ -855,128 +728,138 @@ Kaa requires the following third party components to be installed and configured
    tcp      0     0 :::2181                :::*                  LISTEN     2132/java
    ```
 
-6. Install [MongoDB 2.6](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 2.2.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
 
-   Add the MongoDB yum repository.
+5. Install No-SQL DB:
+ 
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#mongo_centos">MongoDB</a></li>
+  <li><a data-toggle="tab" href="#cassandra_centos">Cassandra</a></li>
+</ul>
 
-   ```bash
-   $ sudo nano /etc/yum.repos.d/mongodb.repo
-   [mongodb]
-   name=MongoDB Repository
-   baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
-   gpgcheck=0
-   enabled=1
-   ```
+<div class="tab-content">
+<div id="mongo_centos" class="tab-pane fade in active" markdown="1" >
 
-   Install MongoDB.
+Install [MongoDB 2.6](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 2.2.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
 
-   ```bash
-   $ sudo yum install -y mongodb-org
-   ```
+Add the MongoDB yum repository.
 
-   Start MongoDB.
+```bash
+$ sudo nano /etc/yum.repos.d/mongodb.repo
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+```
 
-   ```   
-   $ sudo service mongod startStarting mongod: [ OK ]
-   ```
+Install MongoDB.
 
-   Verify that MongoDB has started successfully.
+```bash
+$ sudo yum install -y mongodb-org
+```
 
-   ```bash
-   $ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
-   2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
-   ```
+Start MongoDB.
 
-   Configure database to start automatically when OS starts.
+```   
+$ sudo service mongod startStarting mongod: [ OK ]
+```
 
-   ```
-   $ sudo chkconfig mongod on
-   ```
+Verify that MongoDB has started successfully.
 
-7. Install [Cassandra 2.2.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB 2.6](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
+```bash
+$ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
+2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
+```
 
-   Add the DataStax Community yum repository.
+Configure database to start automatically when OS starts.
 
-   ```bash
-   $ sudo nano /etc/yum.repos.d/datastax.repo
-   [datastax]
-   name = DataStax Repo for Apache Cassandra
-   baseurl = http://rpm.datastax.com/community
-   enabled = 1
-   gpgcheck = 0
-   ```
+```
+$ sudo chkconfig mongod on
+```
 
-   Install Java Native Access (JNA).   
+</div><div id="cassandra_centos" class="tab-pane fade" markdown="1" >
 
-   ```bash
-   $ sudo yum install jna
-   ```
+Install [Cassandra 2.2.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB 2.6](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
 
-   Install Cassandra.
+Add the DataStax Community yum repository.
 
-   ```bash
-   $ sudo yum install dsc22
-   ```
+```bash
+$ sudo nano /etc/yum.repos.d/datastax.repo
+[datastax]
+name = DataStax Repo for Apache Cassandra
+baseurl = http://rpm.datastax.com/community
+enabled = 1
+gpgcheck = 0
+```
 
-   Export java variables.
+Install Java Native Access (JNA).   
 
-   ```bash
-   $ export JAVA_HOME=/usr/java/jdk1.8.0_60/
-   $ export PATH=$PATH:/usr/java/jdk1.8.0_60/bin/
-   ```
+```bash
+$ sudo yum install jna
+```
 
-   Start Cassandra.
+Install Cassandra.
 
-   ```bash
-   $ service cassandra start
-   ```
+```bash
+$ sudo yum install dsc22
+```
 
-   Configure the database to start automatically when OS starts.
+Export java variables.
 
-   ```bash
-   $ sudo chkconfig cassandra on
-   ```
+```bash
+$ export JAVA_HOME=/usr/java/jdk1.8.0_60/
+$ export PATH=$PATH:/usr/java/jdk1.8.0_60/bin/
+```
 
-   Check cassandra cql shell.
+Start Cassandra.
 
-   ```bash
-   $ cqlsh
-   Connected to Test Cluster at 127.0.0.1:9042.
-   [cqlsh 5.0.1 | Cassandra 2.2.5 | CQL spec 3.2.0 | Native protocol v3]
-   Use HELP for help.
-   cqlsh>
-   ```
+```bash
+$ service cassandra start
+```
 
-</div></div>
+Configure the database to start automatically when OS starts.
+
+```bash
+$ sudo chkconfig cassandra on
+```
+
+Check cassandra cql shell.
+
+```bash
+$ cqlsh
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 2.2.5 | CQL spec 3.2.0 | Native protocol v3]
+Use HELP for help.
+cqlsh>
+```
+
+</div>
+</div>
+</li>
+</ul>
+
+
+</div>
+</div>
+</li>
+</ul>
 
 
 ### Kaa server components
 
 To install Kaa you will need to [download](http://www.kaaproject.org/download-kaa/) pre-built packages or [build](../Planning-your-deployment#building-kaa-from-source) them from the [source code](https://github.com/kaaproject/kaa). We will use pre-built packages in this guide.
 
+
+<ul>
+<li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Ubuntu16_">Ubuntu 16.04</a></li>
-  <li><a data-toggle="tab" href="#Ubuntu14_">Ubuntu 14.04</a></li>
+  <li class="active"><a data-toggle="tab" href="#Ubuntu_">Ubuntu 14.04/16.04</a></li>
   <li><a data-toggle="tab" href="#CentOS_">CentOS 6.7</a></li>
 </ul>
 
-<div class="tab-content"><div id="Ubuntu16_" class="tab-pane fade in active" markdown="1" >
-
-1. Download the latest Debian package from the [Kaa download page](http://www.kaaproject.org/download-kaa/).
-2. Unpack the downloaded tarball by executing the following command.
-
-   ```bash
-   $ tar -xvf kaa-deb-*.tar.gz
-   ```
-
-
-3. Install the Node service by executing the following command.
-
-   ```bash
-   $ sudo dpkg -i kaa-node.deb
-   ```
-
-</div><div id="Ubuntu14_" class="tab-pane fade" markdown="1" >
+<div class="tab-content"><div id="Ubuntu_" class="tab-pane fade in active" markdown="1" >
 
 1. Download the latest Debian package from the [Kaa download page](http://www.kaaproject.org/download-kaa/).
 2. Unpack the downloaded tarball by executing the following command.
@@ -1007,31 +890,252 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
    $ sudo rpm -i kaa-node.rpm
    ```
 
-</div></div>
+</div>
+</div>
+</li>
+</ul>
 
 ## Configuration steps
 
 ### SQL database configuration
 
-Check that the PostgreSQL or MariaDB password and username is up to date in the server configuration files.
+You can find SQL database configuration property file templates in "/etc/kaa-node/conf/" folder: mariadb-dao.properties.template file for MariaDB database and postgresql-dao.properties.template file for PostgreSQL.
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#maria_conf">MariaDB</a></li>
+  <li><a data-toggle="tab" href="#postgre_conf">PostgreSQL</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="maria_conf" class="tab-pane fade in active" markdown="1" >
+
+Check that the MariaDB login and password is up to date in the server configuration files.
 
 ```bash
+$ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_username
+jdbc_username=sqladmin
+
 $ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_password
 jdbc_password=admin
-$ cat /etc/kaa-node/conf/dao.properties | grep jdbc_password
-jdbc_password=admin
 
-$ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_username
-jdbc_username=admin
-$ cat /etc/kaa-node/conf/dao.properties | grep jdbc_username
-jdbc_username=admin
+$ cat /etc/kaa-node/conf/sql-dao.properties | grep jdbc_username
+jdbc_username=sqladmin
+
+$ cat /etc/kaa-node/conf/sql-dao.properties | grep jdbc_password
+jdbc_password=admin
 ```
 In case of the password or username mismatch, edit the configuration file to set a new password.
 
 ```bash
 $ sudo nano /etc/kaa-node/conf/admin-dao.properties
-$ sudo nano /etc/kaa-node/conf/dao.properties
+
+$ sudo nano /etc/kaa-node/conf/sql-dao.properties
 ```
+
+</div><div id="postgre_conf" class="tab-pane fade" markdown="1" >
+
+Check that the PostgreSQL password is up to date in the server configuration files.
+
+```bash
+$ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_password
+jdbc_password=admin
+
+$ cat /etc/kaa-node/conf/sql-dao.properties | grep jdbc_password
+jdbc_password=admin
+```
+In case of the password or username mismatch, edit the configuration file to set a new password.
+
+```bash
+$ sudo nano /etc/kaa-node/conf/admin-dao.properties
+
+$ sudo nano /etc/kaa-node/conf/sql-dao.properties
+```
+
+</div>
+</div>
+</li>
+</ul>
+
+#### Switching between MariaDB and PostgreSQL
+
+To switch between databases change contents of sql-dao.properties and admin-dao.properties files (see /etc/kaa-node/conf/).
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#maria_switch">MariaDB</a></li>
+  <li><a data-toggle="tab" href="#postgre_switch">PostgreSQL</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="maria_switch" class="tab-pane fade in active" markdown="1" >
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#maria_sqldao">sql-dao.properties</a></li>
+  <li><a data-toggle="tab" href="#maria_admindao">admin-dao.properties</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="maria_sqldao" class="tab-pane fade in active" markdown="1" >
+
+```bash
+# Database name
+db_name=kaa
+ 
+# Specific configurations for DAO layer
+# Max wait time in seconds for history dao class. Custom property for Kaa History Service.
+dao_max_wait_time=5
+ 
+# specify hibernate sql dialect for mariaDB
+hibernate_dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+ 
+# specify if hibernate will format sql request
+hibernate_format_sql=false
+ 
+# specify if show hibernate sql request
+hibernate_show_sql=false
+ 
+# specify hibernate hbm2ddl strategy
+hibernate_hbm2ddl_auto=update
+ 
+# specify jdbc mariaDB driver class
+jdbc_driver_className=org.mariadb.jdbc.Driver
+ 
+# specify jdbc database user name
+jdbc_username=sqladmin
+ 
+# specify jdbc mariaDB database password root
+jdbc_password=admin
+ 
+# specify jdbc database hosts and ports
+jdbc_host_port=localhost:3306
+ 
+# specify jdbc database provider name
+sql_provider_name=mysql:failover
+```
+
+</div><div id="maria_admindao" class="tab-pane fade" markdown="1" >
+
+```bash
+# specify hibernate sql dialect
+hibernate_dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+ 
+# specify if hibernate will format sql request
+hibernate_format_sql=false
+ 
+# specify if show hibernate sql request
+hibernate_show_sql=false
+ 
+# specify hibernate hbm2ddl strategy
+hibernate_hbm2ddl_auto=update
+ 
+# specify jdbc driver class
+jdbc_driver_className=org.mariadb.jdbc.Driver
+ 
+# specify jdbc database user name
+jdbc_username=sqladmin
+ 
+# specify jdbc database password
+jdbc_password=admin
+ 
+# specify jdbc database url
+jdbc_url=jdbc:mysql:failover://localhost:3306/kaa
+```
+
+</div>
+</div>
+</li>
+</ul>
+
+</div><div id="postgre_switch" class="tab-pane fade" markdown="1" >
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#postgre_sqldao">sql-dao.properties</a></li>
+  <li><a data-toggle="tab" href="#postgre_admindao">admin-dao.properties</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="postgre_sqldao" class="tab-pane fade in active" markdown="1" >
+
+```bash
+# Database name
+db_name=kaa
+ 
+# Specific configurations for DAO layer
+# Max wait time in seconds for history dao class. Custom property for Kaa History Service.
+dao_max_wait_time=5
+ 
+# specify hibernate sql dialect
+hibernate_dialect=org.hibernate.dialect.PostgreSQL82Dialect
+ 
+# specify if hibernate will format sql request
+hibernate_format_sql=false
+ 
+# specify if show hibernate sql request
+hibernate_show_sql=false
+ 
+# specify hibernate hbm2ddl strategy
+hibernate_hbm2ddl_auto=update
+ 
+# specify jdbc driver class
+jdbc_driver_className=org.postgresql.Driver
+ 
+# specify jdbc database user name
+jdbc_username=postgres
+ 
+# specify jdbc database password
+jdbc_password=admin
+ 
+# specify jdbc database host
+jdbc_host_port=localhost:5432
+ 
+# specify jdbc database provider name
+sql_provider_name=postgresql
+```
+
+</div><div id="postgre_admindao" class="tab-pane fade" markdown="1" >
+
+```bash
+# specify hibernate sql dialect
+hibernate_dialect=org.hibernate.dialect.PostgreSQL82Dialect
+ 
+# specify if hibernate will format sql request
+hibernate_format_sql=false
+ 
+# specify if show hibernate sql request
+hibernate_show_sql=false
+ 
+# specify hibernate hbm2ddl strategy
+hibernate_hbm2ddl_auto=update
+ 
+# specify jdbc driver class
+jdbc_driver_className=org.postgresql.Driver
+ 
+# specify jdbc database user name
+jdbc_username=postgres
+ 
+# specify jdbc database password
+jdbc_password=admin
+ 
+# specify jdbc database url
+jdbc_url=jdbc:postgresql://localhost:5432/kaa
+```
+
+</div>
+</div>
+</li>
+</ul>
+
+</div>
+</div>
+</li>
+</ul>
 
 ### NoSQL database configuration
 
@@ -1064,7 +1168,7 @@ transport_public_interface=localhost=YOUR_PUBLIC_INTERFACE
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Ubuntu16__">Ubuntu 16.04</a></li>
   <li><a data-toggle="tab" href="#Ubuntu14__">Ubuntu 14.04</a></li>
-  <li><a data-toggle="tab" href="#CentOS__">CentOS</a></li>
+  <li><a data-toggle="tab" href="#CentOS__">CentOS 6.7</a></li>
 </ul>
 
 <div class="tab-content">
