@@ -1118,7 +1118,7 @@ public class DefaultControlService implements ControlService {
 
         boolean isTrustfulCredentialService = isTrustfulCredentialService(sdkProfile.getApplicationId());
         if (!(generator instanceof JavaSdkGenerator)) {
-            isTrustfulCredentialService = true; // only for java, APP-1190
+            isTrustfulCredentialService = true; 
         }
 
         FileData sdkFile = null;
