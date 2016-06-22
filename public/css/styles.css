@@ -643,7 +643,7 @@ li.menu-opened + ul{
     border-top: 4px dashed;
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
-	margin: 0px 6px 0px 0px;
+	margin: 0px 6px 0px 2px;
 }
 
 .dropdown-toggle .car-field:hover .caret, .menu-opened .car-field:hover .caret{
