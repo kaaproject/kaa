@@ -11,7 +11,10 @@ sort_idx: 10
 * TOC
 {:toc}
 
-This guide describes how to use *C SDK* on linux-based systems.
+The application code based on Kaa C SDK is similar for most of the platform used.
+However, build system is not.
+
+Throughout the guide, we focus on details of the CMake-based build system that is used to tie application code together with the C SDK.
 
 **Verified against:**
 
@@ -61,9 +64,11 @@ After you generated archive with C SDK, proceed as follows:
 
 This section is about how to build your Kaa application using C SDK.
 
-In this guide we use *CMake* as a build system for the application, so focus on the writing the build system rather than the application code. If you want to master writing application code go to the [Programming guide]({{root_url}}/Programming-guide) page. Before continuing, make sure that all [dependencies](#dependencies) are installed.
+If you want to master writing application code go to the [Programming guide]({{root_url}}/Programming-guide) page.
+Before continuing, make sure that all [dependencies](#dependencies) are installed.
 
-1. First of all, let's create some directories. The directories determine the build structure. To keep it clean and transparent, let's create the following directories:
+1. The directories determine the build structure.
+    To keep it clean and transparent, let's create the following directories:
 
     - `my-kaa-application` -- a root directory, which contains all files;
     - `my-kaa-application/kaa` -- for the C SDK source files;
@@ -117,11 +122,13 @@ In this guide we use *CMake* as a build system for the application, so focus on 
             return EXIT_SUCCESS;
         }
 
-4. Create `CMakeLists.txt` file in the `my-kaa-application` directory. It is a top-level cmake file which is responsible for the application build.
+4. Create `CMakeLists.txt` file in the `my-kaa-application` directory.
+    It is a top-level cmake file which is responsible for the application build.
 
         touch CMakeLists.txt
 
-    Add the following code to top-level `CMakeLists.txt`.The first line sets the minimum cmake version required to build kaa-application project. The second line sets project name and the language of the project:
+    Add the following code to top-level `CMakeLists.txt`.
+    The first line sets the minimum cmake version required to build kaa-application project. The second line sets project name and the language of the project:
 
         cmake_minimum_required(VERSION 3.5.2)
         project(kaa-application C)
@@ -165,7 +172,9 @@ In this guide we use *CMake* as a build system for the application, so focus on 
            - src
              - kaa-application.c
 
-8. Finally, we can build the application. The procedure should have already become familiar to you. Firstly create the directory where the build is performed:
+8. Finally, we can build the application.
+    The procedure should have already become familiar to you.
+    Firstly create the directory where the build is performed:
 
         mkdir build
         cd build
@@ -175,7 +184,8 @@ In this guide we use *CMake* as a build system for the application, so focus on 
         cmake -DKAA_MAX_LOG_LEVEL=3 ..
         make
 
-    `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution. Now run your application. Output should be the following one:
+    `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
+    Now run your application. Output should be the following one:
 
         Hello, I am a Kaa Application!
 
