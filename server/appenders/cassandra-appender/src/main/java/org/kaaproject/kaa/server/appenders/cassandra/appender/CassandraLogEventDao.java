@@ -16,21 +16,22 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.CodecRegistry;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ProtocolOptions;
+import com.datastax.driver.core.ProtocolVersion;
+import com.datastax.driver.core.RegularStatement;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.SocketOptions;
+import com.datastax.driver.core.querybuilder.Batch;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression;
@@ -42,30 +43,34 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteCo
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.DataMappingElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.ProtocolOptions;
-import com.datastax.driver.core.RegularStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.SocketOptions;
-import com.datastax.driver.core.querybuilder.Batch;
-import com.datastax.driver.core.querybuilder.Insert;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.security.InvalidParameterException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CassandraLogEventDao implements LogEventDao {
-
-    private static final String $CONFIG_HASH = "$config_hash";
-
-    private static final String $APP_TOKEN = "$app_token";
-
+    public static final String DATA_FIELD = "data";
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLogEventDao.class);
-
+    private static final String $CONFIG_HASH = "$config_hash";
+    private static final String $APP_TOKEN = "$app_token";
+    private static final String $DELIMITER = ".";
+    private static final String POINT_SPLITTER = "\\.";
     private static final String TABLE_NAME = "$table_name";
     private static final String KEYSPACE_NAME = "$keyspace_name";
     private static final String COLUMNS_DEFINITION = "$columns_definition";
@@ -73,18 +78,19 @@ public class CassandraLogEventDao implements LogEventDao {
     private static final String CLUSTERING_DEFINITION = "$clustering_definition";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
             + "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
-
     private static final String ABSENT_CLIENT_PROFILE_ERROR = "Client profile is not set!";
     private static final String ABSENT_SERVER_PROFILE_ERROR = "Server profile is not set!";
-
-    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
+    private static final int KILOBYTE = 1024;
+    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<>();
 
     private Cluster cluster;
     private Session session;
     private CassandraBatchType batchType;
+    private int maxBatchSize;
     private ConsistencyLevel writeConsistencyLevel;
     private String keyspaceName;
     private CassandraConfig configuration;
+    private Map<String, DataMappingElement> mappingConfiguration = new HashMap<>();
 
     public CassandraLogEventDao(CassandraConfig configuration) throws UnknownHostException {
         if (configuration == null) {
@@ -150,34 +156,15 @@ public class CassandraLogEventDao implements LogEventDao {
             LOG.trace("Init cassandra cluster with compression {}", cassandraCompression.name());
         }
         batchType = configuration.getCassandraBatchType();
+        maxBatchSize = configuration.getCassandraMaxBatchSize() * KILOBYTE;
         cluster = builder.build();
+        for (DataMappingElement mappingElement: configuration.getColumnMappingList()) {
+            mappingConfiguration.put(mappingElement.getRecordClassName(), mappingElement);
+        }
     }
 
-    @Override
-    public String createTable(String appToken) {
-        // We need to add hash code of configuration in order to make sure that
-        // we are working with up-to-date instance of the table.
-        String tableName = toFullTableName(appToken);
-        LOG.info("Create table {} in cassandra keyspace {}", tableName, keyspaceName);
-        String createTableStmt = CREATE_TABLE.replace(TABLE_NAME, tableName);
-        createTableStmt = createTableStmt.replace(KEYSPACE_NAME, keyspaceName);
-        createTableStmt = createTableStmt.replace(COLUMNS_DEFINITION, generateColumnsDefinition(configuration));
-        createTableStmt = createTableStmt.replace(PRIMARY_KEY_DEFINITION, generatePrimaryKeyDefinition(configuration));
-        createTableStmt = createTableStmt.replace(CLUSTERING_DEFINITION, generateClusteringDefinition(configuration));
-        LOG.info("Executing table creation stmt {}", createTableStmt);
-        getSession().execute(createTableStmt);
-        return tableName;
-    }
-
-    private String toFullTableName(String appToken) {
-        String tableName = configuration.getTableNamePattern();
-        tableName = tableName.replace($APP_TOKEN, appToken);
-        tableName = tableName.replace($CONFIG_HASH, Integer.toString(Math.abs(configuration.hashCode())));
-        return tableName;
-    }
-
-    private static String generateColumnsDefinition(CassandraConfig configuration) {
-        List<ColumnMappingElement> mappings = configuration.getColumnMapping();
+    private static String generateColumnsDefinition(DataMappingElement mappingElement) {
+        List<ColumnMappingElement> mappings = mappingElement.getColumnMapping();
         StringBuilder sb = new StringBuilder();
         for (ColumnMappingElement element : mappings) {
             sb.append(element.getColumnName());
@@ -188,8 +175,8 @@ public class CassandraLogEventDao implements LogEventDao {
         return sb.toString();
     }
 
-    private static String generatePrimaryKeyDefinition(CassandraConfig configuration) {
-        List<ColumnMappingElement> mappings = configuration.getColumnMapping();
+    private static String generatePrimaryKeyDefinition(DataMappingElement mappingElement) {
+        List<ColumnMappingElement> mappings = mappingElement.getColumnMapping();
         StringBuilder partitionKey = new StringBuilder();
         StringBuilder clusteringKey = new StringBuilder();
         for (ColumnMappingElement element : mappings) {
@@ -216,8 +203,8 @@ public class CassandraLogEventDao implements LogEventDao {
         return primaryKey;
     }
 
-    private static String generateClusteringDefinition(CassandraConfig configuration) {
-        List<ClusteringElement> mapping = configuration.getClusteringMapping();
+    private static String generateClusteringDefinition(DataMappingElement mappingElement) {
+        List<ClusteringElement> mapping = mappingElement.getClusteringMapping();
         if (mapping != null && mapping.size() > 0) {
             StringBuilder columnList = new StringBuilder();
             for (ClusteringElement element : mapping) {
@@ -235,25 +222,32 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     @Override
-    public List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
-            String clientProfileJson, String serverProfileJson)
-            throws IOException {
-        LOG.debug("Execute bath request for cassandra table {}", tableName);
-        executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter,
-                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
-        return logEventDtoList;
+    public void createTable(String appToken, DataMappingElement mappingElement) {
+        // We need to add hash code of configuration in order to make sure that
+        // we are working with up-to-date instance of the table.
+        String tableName = toFullTableName(appToken, mappingElement.getTableNamePattern());
+        LOG.info("Create table {} in cassandra keyspace {}", tableName, keyspaceName);
+        String createTableStmt = CREATE_TABLE.replace(TABLE_NAME, tableName);
+        createTableStmt = createTableStmt.replace(KEYSPACE_NAME, keyspaceName);
+        createTableStmt = createTableStmt.replace(COLUMNS_DEFINITION, generateColumnsDefinition(mappingElement));
+        createTableStmt = createTableStmt.replace(PRIMARY_KEY_DEFINITION, generatePrimaryKeyDefinition(mappingElement));
+        createTableStmt = createTableStmt.replace(CLUSTERING_DEFINITION, generateClusteringDefinition(mappingElement));
+        LOG.info("Executing table creation stmt {}", createTableStmt);
+        getSession().execute(createTableStmt);
+    }
+
+    private String toFullTableName(String appToken, String tableName) {
+        tableName = tableName.replace($APP_TOKEN, appToken);
+        tableName = tableName.replace($CONFIG_HASH, Integer.toString(Math.abs(configuration.hashCode())));
+        return tableName;
     }
 
     @Override
-    public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
-            String clientProfileJson, String serverProfileJson)
+    public ListenableFuture<List<ResultSet>> save(List<CassandraLogEventDto> logEventDtoList, GenericAvroConverter<GenericRecord> eventConverter,
+                                                  GenericAvroConverter<GenericRecord> headerConverter, GenericAvroConverter<GenericRecord> clientProfileConverter,
+                                                  GenericAvroConverter<GenericRecord> serverProfileConverter, String clientProfileJson, String serverProfileJson)
             throws IOException {
-        LOG.debug("Execute async bath request for cassandra table {}", tableName);
-        return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter,
+        return executeQuery(prepareQuery(logEventDtoList, eventConverter, headerConverter,
                 clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
     }
 
@@ -285,12 +279,59 @@ public class CassandraLogEventDao implements LogEventDao {
         return writeConsistencyLevel;
     }
 
-    private void executeBatch(RegularStatement... statement) {
-        getSession().execute(prepareBatch(statement));
+    private ListenableFuture<List<ResultSet>> executeQuery(RegularStatement... statements) {
+        List<ListenableFuture<ResultSet>> resultFutures = new ArrayList<>();
+        for (Batch batch : divideIntoSeveralBatchesWithAppropriateSize(statements)) {
+            resultFutures.add(getSession().executeAsync(batch));
+        }
+        return Futures.allAsList(resultFutures);
     }
 
-    private ResultSetFuture executeBatchAsync(RegularStatement... statement) {
-        return getSession().executeAsync(prepareBatch(statement));
+    private List<Batch> divideIntoSeveralBatchesWithAppropriateSize(RegularStatement... statements) {
+        LOG.debug("Received logs: {}", statements.length);
+        List<Batch> batches = new ArrayList<>();
+        List<RegularStatement> batch = new ArrayList<>();
+        int batchSize = 0;
+        for (RegularStatement statement : statements) {
+            LOG.trace("Current batch size: {}/{} ", batchSize, maxBatchSize);
+            int statementSize = getStatementSize(statement);
+            LOG.trace("Statement: {}. Size: {}", statement.getQueryString(), statementSize);
+            if (batchSize + statementSize > maxBatchSize && batchSize != 0) {
+                LOG.trace("Add new batch (number of statements: {})", batch.size());
+                batches.add(prepareBatch(batch));
+                batch = new ArrayList<>();
+                batchSize = 0;
+            }
+
+            if (statementSize <= maxBatchSize) {
+                LOG.trace("Add statement to batch");
+                batch.add(statement);
+                batchSize += statementSize;
+            } else {
+                LOG.warn("Statement greater that allowed batch size (statement size: {})", statementSize);
+            }
+        }
+
+        if (batchSize != 0) {
+            LOG.trace("Add new batch (number of statements: {})", batch.size());
+            batches.add(prepareBatch(batch));
+        }
+        LOG.debug("Divided into {} batch(es)", batches.size());
+        return batches;
+    }
+
+    private int getStatementSize(RegularStatement statement) {
+        int statementSize = 0;
+        ByteBuffer[] values = statement.getValues(ProtocolVersion.NEWEST_SUPPORTED, CodecRegistry.DEFAULT_INSTANCE);
+        for (ByteBuffer buf : values) {
+            statementSize += buf.array().length;
+        }
+        statementSize += statement.getQueryString().getBytes().length;
+        return statementSize;
+    }
+
+    private Batch prepareBatch(List<RegularStatement> statements) {
+        return prepareBatch(statements.toArray(new RegularStatement[statements.size()]));
     }
 
     private Batch prepareBatch(RegularStatement... statement) {
@@ -304,13 +345,11 @@ public class CassandraLogEventDao implements LogEventDao {
         return batch;
     }
 
-    private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
-            String clientProfileJson, String serverProfileJson)
-            throws IOException {
+    private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, GenericAvroConverter<GenericRecord> eventConverter,
+                                  GenericAvroConverter<GenericRecord> headerConverter, GenericAvroConverter<GenericRecord> clientProfileConverter,
+                                  GenericAvroConverter<GenericRecord> serverProfileConverter, String clientProfileJson, String serverProfileJson) throws IOException {
         String reuseTsValue = null;
-        Insert[] insertArray = new Insert[logEventDtoList.size()];
+        List<Insert> insertArray = new ArrayList<>(logEventDtoList.size());
 
         // Process client profile data
         GenericRecord clientProfile = null;
@@ -330,89 +369,106 @@ public class CassandraLogEventDao implements LogEventDao {
 
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
-            Insert insert = QueryBuilder.insertInto(keyspaceName, collectionName);
-            for (ColumnMappingElement element : configuration.getColumnMapping()) {
-                switch (element.getType()) {
-                case HEADER_FIELD:
-                    insert.value(element.getColumnName(),
-                            formatField(element.getColumnType(), dto.getHeader().get(element.getValue())));
-                    break;
-                case EVENT_FIELD:
-                    insert.value(element.getColumnName(),
-                            formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
-                    break;
-                case CLIENT_FIELD:
-                    if (clientProfile != null) {
-                        insert.value(element.getColumnName(), formatField(element.getColumnType(), clientProfile.get(element.getValue())));
-                    } else {
-                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+            GenericRecord dataRecord = (GenericRecord) dto.getEvent().get(DATA_FIELD);
+            if (dataRecord != null) {
+                String className = dataRecord.getSchema().getFullName();
+                LOG.trace("Get mapping configuration for the type {}", className);
+                DataMappingElement mappingElement = mappingConfiguration.get(className);
+                if (mappingElement != null) {
+                    Insert insert = QueryBuilder.insertInto(keyspaceName, mappingElement.getTableNamePattern());
+                    for (ColumnMappingElement element : mappingElement.getColumnMapping()) {
+                        switch (element.getType()) {
+                            case HEADER_FIELD:
+                                insert.value(element.getColumnName(),
+                                        formatField(element.getColumnType(), element.getValue(), dto.getHeader()));
+                                break;
+                            case EVENT_FIELD:
+                                insert.value(element.getColumnName(),
+                                        formatField(element.getColumnType(), element.getValue(), dto.getEvent()));
+                                break;
+                            case CLIENT_FIELD:
+                                if (clientProfile != null) {
+                                    insert.value(element.getColumnName(), formatField(element.getColumnType(), clientProfile.get(element.getValue())));
+                                } else {
+                                    throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                                }
+                                break;
+                            case SERVER_FIELD:
+                                if (serverProfile != null) {
+                                    insert.value(element.getColumnName(), formatField(element.getColumnType(), serverProfile.get(element.getValue())));
+                                } else {
+                                    throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                                }
+                                break;
+                            case HEADER_JSON:
+                                insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
+                                break;
+                            case HEADER_BINARY:
+                                insert.value(element.getColumnName(), ByteBuffer.wrap(headerConverter.encode(dto.getHeader())));
+                                break;
+                            case EVENT_JSON:
+                                if (StringUtils.isEmpty(element.getValue())) {
+                                    insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
+                                } else {
+                                    GenericRecord gr = dto.getEvent();
+                                    GenericRecord currentRecord = (GenericRecord) gr.get(element.getValue());
+                                    if (currentRecord != null) {
+                                        insert.value(element.getColumnName(), eventConverter.encodeToJson(currentRecord));
+                                    } else {
+                                        insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
+                                    }
+                                }
+                                break;
+                            case EVENT_BINARY:
+                                insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
+                                break;
+                            case CLIENT_JSON:
+                                if (clientProfileJson != null) {
+                                    insert.value(element.getColumnName(), clientProfileJson);
+                                } else {
+                                    throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                                }
+                                break;
+                            case CLIENT_BINARY:
+                                if (clientProfileBinary != null) {
+                                    insert.value(element.getColumnName(), clientProfileBinary);
+                                } else {
+                                    throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                                }
+                                break;
+                            case SERVER_JSON:
+                                if (serverProfileJson != null) {
+                                    insert.value(element.getColumnName(), serverProfileJson);
+                                } else {
+                                    throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                                }
+                            case SERVER_BINARY:
+                                if (serverProfileBinary != null) {
+                                    insert.value(element.getColumnName(), clientProfileBinary);
+                                } else {
+                                    throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                                }
+                                break;
+                            case UUID:
+                                insert.value(element.getColumnName(), UUID.randomUUID());
+                                break;
+                            case TS:
+                                reuseTsValue = formatTs(reuseTsValue, element);
+                                insert.value(element.getColumnName(), reuseTsValue);
+                                break;
+                        }
                     }
-                    break;
-                case SERVER_FIELD:
-                    if (serverProfile != null) {
-                        insert.value(element.getColumnName(), formatField(element.getColumnType(), serverProfile.get(element.getValue())));
-                    } else {
-                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
-                    }
-                    break;
-                case HEADER_JSON:
-                    insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
-                    break;
-                case HEADER_BINARY:
-                    insert.value(element.getColumnName(), ByteBuffer.wrap(headerConverter.encode(dto.getHeader())));
-                    break;
-                case EVENT_JSON:
-                    insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
-                    break;
-                case EVENT_BINARY:
-                    insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
-                    break;
-                case CLIENT_JSON:
-                    if (clientProfileJson != null) {
-                        insert.value(element.getColumnName(), clientProfileJson);
-                    }
-                    else {
-                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
-                    }
-                    break;
-                case CLIENT_BINARY:
-                    if (clientProfileBinary != null) {
-                        insert.value(element.getColumnName(), clientProfileBinary);
-                    } else {
-                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
-                    }
-                    break;
-                case SERVER_JSON:
-                    if (serverProfileJson != null) {
-                        insert.value(element.getColumnName(), serverProfileJson);
-                    }
-                    else {
-                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
-                    }
-                case SERVER_BINARY:
-                    if (serverProfileBinary != null) {
-                        insert.value(element.getColumnName(), clientProfileBinary);
-                    } else {
-                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
-                    }
-                    break;
-                case UUID:
-                    insert.value(element.getColumnName(), UUID.randomUUID());
-                    break;
-                case TS:
-                    reuseTsValue = formatTs(reuseTsValue, element);
-                    insert.value(element.getColumnName(), reuseTsValue);
-                    break;
+                    // Here we get ttl parameter from config and add it to insert query
+                    insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
+                    insertArray.add(insert);
+                } else {
+                    LOG.warn("Not found mapping configuration for the type {}", className);
                 }
+            } else {
+                throw new InvalidParameterException("Data field inside log event is empty.");
             }
-
-            // Here we get ttl parameter from config and add it to insert query
-            insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
-
-            insertArray[i] = insert;
-
         }
-        return insertArray;
+        return insertArray.toArray(new Insert[insertArray.size()]);
     }
 
     private String formatTs(String tsValue, ColumnMappingElement element) {
@@ -448,6 +504,39 @@ public class CassandraLogEventDao implements LogEventDao {
             return elementValue.toString();
         } else {
             return elementValue;
+        }
+    }
+
+    private Object formatField(ColumnType type, String name, GenericRecord record) {
+        LOG.trace("Formatting value for the type {} name {} and record {}", type, name, record);
+        if (!StringUtils.isEmpty(name)) {
+            if (name.contains($DELIMITER)) {
+                Object value = null;
+                String[] path = name.split(POINT_SPLITTER);
+                GenericRecord rcd = record;
+                int size = path.length;
+                int last = size - 1;
+                for (int i = 0; i < size; i++) {
+                    String point = path[i];
+                    if (i == last) {
+                        value = rcd.get(point);
+                        if (ColumnType.TEXT.equals(type) && value != null) {
+                            value = value.toString();
+                        }
+                        break;
+                    } else {
+                        rcd = (GenericRecord) rcd.get(point);
+                        if (rcd == null) {
+                            throw new RuntimeException("Invalid field record name " + name);
+                        }
+                    }
+                }
+                return value;
+            } else {
+                return formatField(type, record.get(name));
+            }
+        } else {
+            throw new RuntimeException("Invalid value name " + name);
         }
     }
 }
