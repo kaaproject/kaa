@@ -13,7 +13,7 @@ sort_idx: 20
 {:toc}
 
 
-> **Verified against host OS:**
+> **Verified against host OS:** 
 >
 > * Ubuntu 14.04 LTS Desktop 64-bit
 > * Ubuntu 16.04 LTS Desktop 64-bit
@@ -69,9 +69,6 @@ Kaa requires the following third party components to be installed and configured
 <div class="tab-content">
 <div id="Ubuntu" class="tab-pane fade in active" markdown="1" >
 
-#### Ubuntu 14.04/16.04
-
-
 1. Install common utils.
 
    Download and install wget, ca-certificates, curl.
@@ -103,9 +100,9 @@ Kaa requires the following third party components to be installed and configured
    javac 1.8.0_91
    ```
 
-
-
 3. Install SQL DB:
+
+> **Note:** Kaa requires one of possible options: MariaDB or PostgresSQL. MariaDB is the default choice.
 
 <ul>
 <li style="list-style-type: none;">
@@ -239,6 +236,8 @@ CREATE DATABASE kaa;
 
 5. Install No-SQL DB:
 
+> **Note:** Kaa requires one of possible options: MongoDB or Cassandra. MongoDB is the default choice.
+
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
@@ -261,8 +260,8 @@ $ sudo apt-get remove mongodb* --purge
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#mongo_ubuntu16">Ubuntu 16.04</a></li>
-  <li><a data-toggle="tab" href="#mongo_ubuntu14">Ubuntu 14.04</a></li>
+  <li class="active"><a data-toggle="tab" href="#mongo_ubuntu14">Ubuntu 14.04</a></li>
+  <li><a data-toggle="tab" href="#mongo_ubuntu16">Ubuntu 16.04</a></li>
 </ul>
 
 <div class="tab-content">
@@ -348,8 +347,8 @@ Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you ma
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16</a></li>
-  <li><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14</a></li>
+  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14</a></li>
+  <li><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16</a></li>
 </ul>
 
 <div class="tab-content">
@@ -426,9 +425,6 @@ cqlsh>
 
 </div><div id="CentOS" class="tab-pane fade" markdown="1" >
 
-
-#### CentOS 6.7
-
 1. Install common utils.
 
    Download and install wget, nc, gzip.
@@ -472,6 +468,8 @@ cqlsh>
    ```
 
 3. Install SQL DB:
+
+> **Note:** Kaa requires one of possible options: MariaDB or PostgresSQL. MariaDB is the default choice.
 
 <ul>
 <li style="list-style-type: none;">
@@ -731,6 +729,8 @@ Starting postgresql-9.4 service:                     [  OK  ]
 
 5. Install No-SQL DB:
  
+> **Note:** Kaa requires one of possible options: MongoDB or Cassandra. MongoDB is the default choice.
+
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
@@ -899,7 +899,8 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
 
 ### SQL database configuration
 
-You can find SQL database configuration property file templates in "/etc/kaa-node/conf/" folder: mariadb-dao.properties.template file for MariaDB database and postgresql-dao.properties.template file for PostgreSQL.
+You can choose which SQL database to use: MariaDB (used by default) or PostgreSQL.
+You can find SQL database configuration property file templates in "/etc/kaa-node/conf/" folder: maria-dao.properties.template, mariadb-dao.properties.template files for MariaDB database and postgre-dao.properties.template, postgresql-dao.properties.template files for PostgreSQL.
 
 <ul>
 <li style="list-style-type: none;">
@@ -934,6 +935,13 @@ $ sudo nano /etc/kaa-node/conf/admin-dao.properties
 $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 ```
 
+If you wish to switch from PostgreSQL to MariaDB you should copy content of MariaDB config files to Kaa DB config files:
+
+```bash
+$ sudo cat /etc/kaa-node/conf/maria-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties
+$ sudo cat /etc/kaa-node/conf/mariadb-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties
+```
+
 </div><div id="postgre_conf" class="tab-pane fade" markdown="1" >
 
 Check that the PostgreSQL password is up to date in the server configuration files.
@@ -953,184 +961,12 @@ $ sudo nano /etc/kaa-node/conf/admin-dao.properties
 $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 ```
 
-</div>
-</div>
-</li>
-</ul>
-
-#### Switching between MariaDB and PostgreSQL
-
-To switch between databases change contents of sql-dao.properties and admin-dao.properties files (see /etc/kaa-node/conf/).
-
-<ul>
-<li style="list-style-type: none;">
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#maria_switch">MariaDB</a></li>
-  <li><a data-toggle="tab" href="#postgre_switch">PostgreSQL</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="maria_switch" class="tab-pane fade in active" markdown="1" >
-
-<ul>
-<li style="list-style-type: none;">
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#maria_sqldao">sql-dao.properties</a></li>
-  <li><a data-toggle="tab" href="#maria_admindao">admin-dao.properties</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="maria_sqldao" class="tab-pane fade in active" markdown="1" >
+If you wish to switch from MariaDB to PostgreSQL you should copy content of PostgreSQL config files to Kaa DB config files:
 
 ```bash
-# Database name
-db_name=kaa
- 
-# Specific configurations for DAO layer
-# Max wait time in seconds for history dao class. Custom property for Kaa History Service.
-dao_max_wait_time=5
- 
-# specify hibernate sql dialect for mariaDB
-hibernate_dialect=org.hibernate.dialect.MySQL5InnoDBDialect
- 
-# specify if hibernate will format sql request
-hibernate_format_sql=false
- 
-# specify if show hibernate sql request
-hibernate_show_sql=false
- 
-# specify hibernate hbm2ddl strategy
-hibernate_hbm2ddl_auto=update
- 
-# specify jdbc mariaDB driver class
-jdbc_driver_className=org.mariadb.jdbc.Driver
- 
-# specify jdbc database user name
-jdbc_username=sqladmin
- 
-# specify jdbc mariaDB database password root
-jdbc_password=admin
- 
-# specify jdbc database hosts and ports
-jdbc_host_port=localhost:3306
- 
-# specify jdbc database provider name
-sql_provider_name=mysql:failover
+$ sudo cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties
+$ sudo cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties
 ```
-
-</div><div id="maria_admindao" class="tab-pane fade" markdown="1" >
-
-```bash
-# specify hibernate sql dialect
-hibernate_dialect=org.hibernate.dialect.MySQL5InnoDBDialect
- 
-# specify if hibernate will format sql request
-hibernate_format_sql=false
- 
-# specify if show hibernate sql request
-hibernate_show_sql=false
- 
-# specify hibernate hbm2ddl strategy
-hibernate_hbm2ddl_auto=update
- 
-# specify jdbc driver class
-jdbc_driver_className=org.mariadb.jdbc.Driver
- 
-# specify jdbc database user name
-jdbc_username=sqladmin
- 
-# specify jdbc database password
-jdbc_password=admin
- 
-# specify jdbc database url
-jdbc_url=jdbc:mysql:failover://localhost:3306/kaa
-```
-
-</div>
-</div>
-</li>
-</ul>
-
-</div><div id="postgre_switch" class="tab-pane fade" markdown="1" >
-
-<ul>
-<li style="list-style-type: none;">
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#postgre_sqldao">sql-dao.properties</a></li>
-  <li><a data-toggle="tab" href="#postgre_admindao">admin-dao.properties</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="postgre_sqldao" class="tab-pane fade in active" markdown="1" >
-
-```bash
-# Database name
-db_name=kaa
- 
-# Specific configurations for DAO layer
-# Max wait time in seconds for history dao class. Custom property for Kaa History Service.
-dao_max_wait_time=5
- 
-# specify hibernate sql dialect
-hibernate_dialect=org.hibernate.dialect.PostgreSQL82Dialect
- 
-# specify if hibernate will format sql request
-hibernate_format_sql=false
- 
-# specify if show hibernate sql request
-hibernate_show_sql=false
- 
-# specify hibernate hbm2ddl strategy
-hibernate_hbm2ddl_auto=update
- 
-# specify jdbc driver class
-jdbc_driver_className=org.postgresql.Driver
- 
-# specify jdbc database user name
-jdbc_username=postgres
- 
-# specify jdbc database password
-jdbc_password=admin
- 
-# specify jdbc database host
-jdbc_host_port=localhost:5432
- 
-# specify jdbc database provider name
-sql_provider_name=postgresql
-```
-
-</div><div id="postgre_admindao" class="tab-pane fade" markdown="1" >
-
-```bash
-# specify hibernate sql dialect
-hibernate_dialect=org.hibernate.dialect.PostgreSQL82Dialect
- 
-# specify if hibernate will format sql request
-hibernate_format_sql=false
- 
-# specify if show hibernate sql request
-hibernate_show_sql=false
- 
-# specify hibernate hbm2ddl strategy
-hibernate_hbm2ddl_auto=update
- 
-# specify jdbc driver class
-jdbc_driver_className=org.postgresql.Driver
- 
-# specify jdbc database user name
-jdbc_username=postgres
- 
-# specify jdbc database password
-jdbc_password=admin
- 
-# specify jdbc database url
-jdbc_url=jdbc:postgresql://localhost:5432/kaa
-```
-
-</div>
-</div>
-</li>
-</ul>
 
 </div>
 </div>
@@ -1166,8 +1002,8 @@ transport_public_interface=localhost=YOUR_PUBLIC_INTERFACE
 ### Firewall rules configuration
 
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Ubuntu16__">Ubuntu 16.04</a></li>
-  <li><a data-toggle="tab" href="#Ubuntu14__">Ubuntu 14.04</a></li>
+  <li class="active"><a data-toggle="tab" href="#Ubuntu14__">Ubuntu 14.04</a></li>
+  <li><a data-toggle="tab" href="#Ubuntu16__">Ubuntu 16.04</a></li>
   <li><a data-toggle="tab" href="#CentOS__">CentOS 6.7</a></li>
 </ul>
 
