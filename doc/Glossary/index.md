@@ -6,13 +6,6 @@ nav: /:path/Glossary/
 sort_idx: 50
 ---
 
----
-layout: page
-title: Glossary
-permalink: /:path/
-nav: /:path/Glossary/
-sort_idx: 50
----                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
@@ -21,11 +14,7 @@ sort_idx: 50
 
 <div id="a"/>
 
-## User Access Token
-
-Identifier of user in case of attaching endpoints to it. Endpoint send access token to Kaa Cluster and if this access token compares with user access token and if true endpoint attaches to user. Refer to [User verifiers page]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) for more information.
-
-## Administration UI (also,Admin UI and web UI)             
+## Administration UI (also, Admin UI and web UI)             
 
 An online tool for managing Kaa users, applications, schemas, etc. Refer to [Applications management guide]({{root_url}}Administration-guide/Tenants-and-applications-management/) for more information.
 
@@ -49,7 +38,7 @@ A derivative schema obtained from the configuration schema and used within the g
 
 ## Bootstrap service                                        
 
-Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints. Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc. Kaa SDKs contain a pre-generated list of Bootstrap services available in the Kaa cluster that was used to generate the SDK library. Endpoints query Bootstrap services from this list to retrieve connection parameters for the currently available Operations services. Bootstrap services maintain their lists of available Operations services by coordinating with ZooKeeper. Refer to [Architecture-overview]({{root_url}}Architecture-overview/) for more information.
+Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints. Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc. Kaa SDKs contain a pre-generated list of Bootstrap services available in the Kaa cluster that was used to generate the SDK library. Endpoints query Bootstrap services from this list to retrieve connection parameters for the currently available Operations services. Bootstrap services maintain their lists of available Operations services by coordinating with ZooKeeper. Refer to [Architecture overview]({{root_url}}Architecture-overview/) for more information.
 
 <div id="c"/>
 
@@ -59,23 +48,23 @@ A particular application or piece of software which uses the Kaa endpoint SDK an
 
 ## Client-side endpoint profile
 
-A user-defined specification of the application data model that Kaa Profiling subsystem uses to allows endpoints change your group dynamic under the application. Client-side endpoint profile can changed in client application. Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
+A user-defined specification of the application data model that Kaa Profiling subsystem uses to allows endpoints change your group dynamic under the application. Client-side endpoint profile can changed in client application. Refer to [Endpoint profiling guide]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles) for more information.
 
 ## Configuration schema                                    
 
 A user-defined specification of the application data model that Kaa Configuration subsystem uses to configure endpoints registered under the application. In other words, the configuration schema defines in which format the actual configuration data should be entered by the user/developer and then transferred to the endpoints. Note that there can be several schemas created for a single application. The version of the schema for the endpoint is selected during [SDK generation]({{root_url}}Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk). Refer to [Configuration guide]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/) for more information.
 
-## Configuration data (in short,configuration)
+## Configuration data (in short, configuration)
 
 A set of configuration values specified by the user based on the corresponding configuration schema. Having been specified on the server, these values are then distributed to the endpoints that belong to the corresponding application and support the corresponding configuration schema. Refer to [Configuration guide]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/) for more information.
 
 ## Control service                                          
 
-Kaa Control service is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering corresponding notifications to Operations services. Control service maintains an up-to-date list of available Operations services by continuously receiving this information from ZooKeeper. Additionally, Control service runs embedded Administrative web UI component, which uses Control service APIs to provide platform users with a convenient web-based interface for managing tenants, user accounts, applications, application data, etc. Refer to [Architecture-overview]({{root_url}}Architecture-overview/) for more information.
+Kaa Control service is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering corresponding notifications to Operations services. Control service maintains an up-to-date list of available Operations services by continuously receiving this information from ZooKeeper. Additionally, Control service runs embedded Administrative web UI component, which uses Control service APIs to provide platform users with a convenient web-based interface for managing tenants, user accounts, applications, application data, etc. Refer to [Architecture overview]({{root_url}}Architecture-overview/) for more information.
 
 <div id="d"/>
 
-## Delta (also,delta update)
+## Delta (also, delta update)
 
 The difference between the new configuration created on the server (and due to be applied to the endpoint) and the current configuration used by the endpoint. The delta is sent to the endpoint and then merged with the endpoint current configuration to achieve the required up-to-date configuration. Using deltas instead of full configuration resets is an effective way to reduce load on available data channels. Refer to [Configuration guide]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/) and its [Endpoint data synchronization section]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/index.md#endpoint-data-synchronization) for more information.
 <div id="e"/>
@@ -84,6 +73,10 @@ The difference between the new configuration created on the server (and due to b
 
 An abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client (see [Client](#client-also-kaa-client) registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa. Refer to [System components overview]({{root_url}}Administration-guide/System-components-overview/) for more information.
 
+## Endpoint Access Token
+
+Security token that is used during endpoint attachment procedure using endpoint access token flow. Refer to [User verifiers page]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) for more information.
+
 ## Endpoint group
 
 An independent managed entity which is defined by the profile filters assigned to it. Those endpoints whose profiles match the profile filters of the specific endpoint group become automatically registered as members of this group. There is no restriction for endpoints on having membership in more than one group at a time. Refer to [Endpoint grouping guide]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) for more information.
@@ -91,10 +84,6 @@ An independent managed entity which is defined by the profile filters assigned t
 ## Endpoint group profile filter (in short, profile filter)
 
 A predicate expression based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) which defines characteristics of the corresponding group members (endpoints). These filters are executed against the endpoint profile to figure out whether or not the endpoint belongs to the group. Refer to Endpoint profiling for more information. Refer to [Endpoint grouping guide]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) for more information.
-
-## Endpoint profile
-
-A structured data set of custom-defined complexity that describes specific characteristics of the endpoint. Endpoint profiles are used to classify endpoints into endpoint groups. Refer to [Endpoint grouping guide]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) for more information.
 
 ## Endpoint profile schema (in short, profile schema)
 
@@ -139,11 +128,11 @@ The highest-level administrator of Kaa. He is able to create, edit, and delete t
 
 ## Kaa framework
 
-The Kaa framework consists of the Kaa server and endpoint SDKs. The Kaa server implements the back-end part of the framework, exposes integration interfaces, and offers administrative capabilities. An endpoint SDK is a library which provides communication, data marshaling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. Java-based, C++-based, C-based). This SDK can be used to create *Kaa clients*, which are any pieces of software that utilize Kaa functionality and are installed on some connected devices. It is the responsibility of the Kaa client to process structured data provided by the Kaa server (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.). Refer to [Architecture-overview]({{root_url}}Architecture-overview/) for more information.
+The Kaa framework consists of the Kaa server and endpoint SDKs. The Kaa server implements the back-end part of the framework, exposes integration interfaces, and offers administrative capabilities. An endpoint SDK is a library which provides communication, data marshaling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. Java-based, C++-based, C-based). This SDK can be used to create *Kaa clients*, which are any pieces of software that utilize Kaa functionality and are installed on some connected devices. It is the responsibility of the Kaa client to process structured data provided by the Kaa server (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.). Refer to [Architecture overview]({{root_url}}Architecture-overview/) for more information.
 
-## Kaa instance (also,Kaa deployment)
+## Kaa instance (also, Kaa deployment)
 
-A particular implementation of the Kaa framework and it consists of a Kaa cluster and endpoints. A Kaa cluster represents a number of interconnected Kaa servers. An endpoint is an abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa. Refer to [Architecture-overview]({{root_url}}Architecture-overview/) for more information.
+A particular implementation of the Kaa framework and it consists of a Kaa cluster and endpoints. A Kaa cluster represents a number of interconnected Kaa servers. An endpoint is an abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa. Refer to [Architecture overview]({{root_url}}Architecture-overview/) for more information.
 
 ## Kaa Node
 
@@ -187,7 +176,7 @@ Allows grouping related notifications within the application. It is required tha
 
 ## Operations service
 
-Kaa Operations service is a “worker” service, the primary role of which is concurrent communication with multiple endpoints. Operations services process endpoint requests and serve them with data. Multiple nodes with Operations service enabled may be set up in a Kaa cluster for the purpose of horizontal scaling. In this case, all instances of Operations service will function concurrently. In case of an Operations service outage, previously connected endpoints switch to other available Operations services automatically. Kaa server provides instruments for the load re-balancing at run time, thus effectively routing endpoints to the less loaded nodes in the cluster. Refer to [Architecture-overview]({{root_url}}Architecture-overview/) for more information.
+Kaa Operations service is a “worker” service, the primary role of which is concurrent communication with multiple endpoints. Operations services process endpoint requests and serve them with data. Multiple nodes with Operations service enabled may be set up in a Kaa cluster for the purpose of horizontal scaling. In this case, all instances of Operations service will function concurrently. In case of an Operations service outage, previously connected endpoints switch to other available Operations services automatically. Kaa server provides instruments for the load re-balancing at run time, thus effectively routing endpoints to the less loaded nodes in the cluster. Refer to [Architecture overview]({{root_url}}Architecture-overview/) for more information.
 
 ## Override schema
 
@@ -236,6 +225,10 @@ A Kaa server component responsible for communication with a Kaa client. **TODO:*
 A Kaa client component responsible for communication with a Kaa server. **TODO:** Refer to somewhere
 
 <div id="u"/>
+
+## User Access Token
+
+Security token that is used during endpoint attachment procedure using user access token flow. Refer to [User verifiers page]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) for more information.
 
 ## User verifier
 
