@@ -63,7 +63,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     private LongAdder cassandraFailureLogCount = new LongAdder();
     private LongAdder inputLogCount = new LongAdder();
 
-    private long appenderId;
+    private volatile String appenderName;
     private LogEventDao logEventDao;
     private boolean closed = false;
 
@@ -77,7 +77,6 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     public CassandraLogAppender() {
         super(CassandraConfig.class);
         LOG.debug("Starting statistic request scheduler...");
-        appenderId = appenderCounter.incrementAndGet();
         scheduler.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -86,8 +85,8 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                 long successLogCount = cassandraSuccessLogCount.sumThenReset();
                 long failureLogCount = cassandraFailureLogCount.sumThenReset();
                 if (inLogCount > 0L || successLogCount > 0 || failureLogCount > 0) {
-                    LOG.info("Appender({}): [{}] Received {} log record count, {} success cassandra callbacks, {}  failure cassandra callbacks / second.",
-                            appenderId, second, inLogCount, successLogCount, failureLogCount);
+                    LOG.info("Appender[{}]: [{}] Received {} log record count, {} success cassandra callbacks, {}  failure cassandra callbacks / second.",
+                            appenderName, second, inLogCount, successLogCount, failureLogCount);
                 }
             }
         }, 0L, 1L, TimeUnit.SECONDS);
@@ -151,6 +150,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             int callbackPoolSize = Math.min(configuration.getCallbackThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
             executor = Executors.newFixedThreadPool(executorPoolSize);
             callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
+            appenderName = appender.getName();
             LOG.info("Cassandra log appender initialized");
         } catch (Exception e) {
             LOG.error("Failed to init cassandra log appender with configuration: {}", configuration, e);
