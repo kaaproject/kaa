@@ -231,8 +231,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                             LOG.warn("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
                             LOG.warn("Socket connection for channel [{}] was interrupted: ", e);
                         } else {
-                            LOG.debug("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
-                            LOG.debug("Socket connection for channel [{}] was interrupted: ", e);
+                            LOG.debug("Failed to read from the socket for channel [{}]. Stack trace: ", getId());
+                            LOG.debug("Socket connection for channel [{}] was interrupted: ");
                         }
                     }
 
