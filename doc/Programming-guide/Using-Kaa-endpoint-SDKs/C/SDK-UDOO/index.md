@@ -11,7 +11,7 @@ sort_idx: 40
 * TOC
 {:toc}
 
-[UDOO](http://www.udoo.org/) is a family of Open Source Arduino-powered Mini PC, compatible with Android and Linux, that you can exploit both as embedded systems for DIY-electronics projects and as low power consumption, fanless computers for everyday use.
+[UDOO](http://www.udoo.org/) is a family of Open Source Arduino-powered Mini PCs, compatible with Android and Linux that you can exploit both as embedded systems for DIY-electronics projects and as low power consumption, fanless computers for everyday use.
 
 This guide explains how to build applications based on the Kaa C endpoint SDKs for the UDOO board.
 
@@ -19,7 +19,7 @@ This guide explains how to build applications based on the Kaa C endpoint SDKs f
 
 If this is the first time you use the UDOO technology, you have to start with configuring your board. For this purpose, refer to [the UDOO official documentation](http://www.udoo.org/docs/Introduction/Introduction.html).
 
-The UDOO platform allows building the source code directly on the board. The only thing you need to do prior to that is export your code onto the board. For this purpose you can use, for example, the `scp` utility:
+The UDOO platform allows building the source code directly on the board. The only thing you need to do before that is export your code onto the board. For this purpose you can use, for example, the `scp` utility:
 
 1. Find the IP address of the UDOO board.
 
@@ -31,4 +31,4 @@ The UDOO platform allows building the source code directly on the board. The onl
 
 # Creating an application
 
-Since UDOO board is powerful enough to run Linux and build applications directly on it, you can follow [the C SDK Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) in order to create Kaa client application for this target.
+Since UDOO board is powerful enough to run Linux and build applications directly on it, you can follow [the C SDK Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) to create Kaa client application for this target.
