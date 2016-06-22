@@ -16,19 +16,18 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.security;
 
-import java.io.File;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
-import javax.annotation.PostConstruct;
-
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.server.common.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 /**
  * The Class BootstrapFileKeyStoreService.
@@ -105,7 +104,7 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
      * Generate key pair.
      *
      * @param privateKeyLocation the private key location
-     * @param publicKeyLocation the public key location
+     * @param publicKeyLocation  the public key location
      * @return the key pair
      */
     private KeyPair generateKeyPair(String privateKeyLocation, String publicKeyLocation) {
@@ -115,6 +114,7 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
 
     /**
      * PrivateKeyLocation getter.
+     *
      * @return String the privateKeyLocation
      */
     public String getPrivateKeyLocation() {
@@ -123,6 +123,7 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
 
     /**
      * PrivateKeyLocation setter.
+     *
      * @param privateKeyLocation String the privateKeyLocation to set
      */
     public void setPrivateKeyLocation(String privateKeyLocation) {
@@ -131,6 +132,7 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
 
     /**
      * PublicKeyLocation getter.
+     *
      * @return String the publicKeyLocation
      */
     public String getPublicKeyLocation() {
@@ -139,6 +141,7 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
 
     /**
      * PublicKeyLocation setter.
+     *
      * @param publicKeyLocation String the publicKeyLocation to set
      */
     public void setPublicKeyLocation(String publicKeyLocation) {

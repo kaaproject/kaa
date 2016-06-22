@@ -109,7 +109,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
                            String configurationBaseSchemaBody,
                            byte[] defaultConfigurationData,
                            List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody) throws Exception {
+                           String logSchemaBody, boolean isTrustfulCredentialService) throws Exception {
 
         String sdkToken = sdkProperties.getToken();
         String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();

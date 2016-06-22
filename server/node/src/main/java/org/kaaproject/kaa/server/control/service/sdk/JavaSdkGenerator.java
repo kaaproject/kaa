@@ -16,27 +16,6 @@
 
 package org.kaaproject.kaa.server.control.service.sdk;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
-import javax.tools.JavaFileObject.Kind;
-
 import org.apache.avro.Schema;
 import org.apache.avro.compiler.specific.SpecificCompiler;
 import org.apache.avro.compiler.specific.SpecificCompiler.FieldVisibility;
@@ -56,6 +35,18 @@ import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.tools.JavaFileObject.Kind;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.SecureRandom;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 /**
  * The Class JavaSdkGenerator.
@@ -148,6 +139,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String CONFIGURATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationListener.java.template";
 
     /**
+     * The Constant KAA_CLIENT_PROPERTIES_STATE_SOURCE_TEMPLATE.
+     */
+    private static final String KAA_CLIENT_PROPERTIES_STATE_SOURCE_TEMPLATE = "sdk/java/KaaClientPropertiesState.java.template";
+
+    /**
      * The Constant CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE.
      */
     private static final String CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationDeserializer.java.template";
@@ -228,6 +224,11 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String CONFIGURATION_DESERIALIZER = "ConfigurationDeserializer";
 
     /**
+     * The Constant CONFIGURATION_DESERIALIZER.
+     */
+    private static final String KAA_CLIENT_PROPERTIES_STATE = "KaaClientPropertiesState";
+
+    /**
      * The Constant NOTIFICATION_LISTENER.
      */
     private static final String NOTIFICATION_LISTENER = "NotificationListener";
@@ -246,7 +247,7 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant DEFAULT_SCHEMA_VERSION.
      */
     private static final int DEFAULT_SCHEMA_VERSION = 1;
-    
+
     /**
      * The Constant DEFAULT_PROFILE_SCHEMA_VERSION.
      */
@@ -321,12 +322,17 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR.
      */
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
-    
+
+    /**
+     * The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR.
+     */
+    private static final String IS_TRUSTFUL_CREDENTIALS_SERVICE_VAR = "\\$\\{isTrustfulService\\}";
+
     /**
      * The Constant JAVA_SOURCE_COMPILER_RELEASE.
      */
     private static final String JAVA_SOURCE_COMPILER_RELEASE = "7";
-    
+
     /**
      * The Constant JAVA_TARGET_COMPILER_RELEASE.
      */
@@ -343,9 +349,80 @@ public class JavaSdkGenerator extends SdkGenerator {
         this.sdkPlatform = sdkPlatform;
     }
 
+    /**
+     * Generate schema class.
+     *
+     * @param schema        the schema
+     * @param uniqueSchemas the unique schemas
+     * @return the list
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static List<JavaDynamicBean> generateSchemaSources(Schema schema, Map<String, Schema> uniqueSchemas) throws IOException {
+        SpecificCompiler compiler = new SpecificCompiler(schema);
+        compiler.setStringType(StringType.String);
+        compiler.setFieldVisibility(FieldVisibility.PRIVATE);
+
+        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        long n = RANDOM.nextLong();
+        if (n == Long.MIN_VALUE) {
+            // corner case
+            n = 0;
+        } else {
+            n = Math.abs(n);
+        }
+        File tmpOutputDir = new File(tmpdir, "tmp-gen-" + Long.toString(n));
+        tmpOutputDir.mkdirs();
+
+        compiler.compileToDestination(null, tmpOutputDir);
+
+        List<JavaDynamicBean> sources = getJavaSources(tmpOutputDir, uniqueSchemas);
+
+        tmpOutputDir.delete();
+
+        return sources;
+    }
+
+    /**
+     * Gets the java sources.
+     *
+     * @param srcDir the src dir
+     * @return the java sources
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private static List<JavaDynamicBean> getJavaSources(File srcDir, Map<String, Schema> uniqueSchemas) throws IOException {
+        List<JavaDynamicBean> result = new ArrayList<JavaDynamicBean>();
+        File[] files = srcDir.listFiles();
+        for (File f : files) {
+            if (f.isDirectory()) {
+                result.addAll(getJavaSources(f, uniqueSchemas));
+            } else if (f.getName().endsWith(Kind.SOURCE.extension)) {
+                int index = f.getName().indexOf('.');
+                String className = f.getName().substring(0, index);
+                String sourceCode = readFile(f);
+
+                String classPackageAndName = "";
+
+                String[] sourceLines = sourceCode.split("\n");
+                for (String ss : sourceLines) {
+                    if (ss.startsWith("package ")) {
+                        classPackageAndName = ss.replace("package ", "").trim().replaceAll(";", ".") + className;
+                        break;
+                    }
+                }
+
+                if (uniqueSchemas.containsKey(classPackageAndName)) {
+                    uniqueSchemas.remove(classPackageAndName);
+                    JavaDynamicBean sourceObject = new JavaDynamicBean(className, sourceCode);
+                    result.add(sourceObject);
+                }
+            }
+        }
+        return result;
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk
      * (java.lang.String, java.util.List, java.lang.String, int, int, int,
@@ -354,9 +431,9 @@ public class JavaSdkGenerator extends SdkGenerator {
      */
     @Override
     public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, SdkProfileDto sdkProfile,
-                           String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
-                           String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody)
+                                String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
+                                String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
+                                String logSchemaBody, boolean isTrustfulCredentialService)
             throws Exception {
 
         String sdkToken = sdkProfile.getToken();
@@ -445,6 +522,14 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicBean configurationDeserializerClassBean = new JavaDynamicBean(CONFIGURATION_DESERIALIZER,
                 configurationDeserializerSource);
         javaSources.add(configurationDeserializerClassBean);
+
+        String kaaClientPropertiesStateSourceTemplate = readResource(KAA_CLIENT_PROPERTIES_STATE_SOURCE_TEMPLATE);
+        String kaaClientPropertiesStateSource = kaaClientPropertiesStateSourceTemplate
+                .replaceAll(IS_TRUSTFUL_CREDENTIALS_SERVICE_VAR, "" + isTrustfulCredentialService);
+
+        JavaDynamicBean kaaClientPropertiesClassBean = new JavaDynamicBean(KAA_CLIENT_PROPERTIES_STATE,
+                kaaClientPropertiesStateSource);
+        javaSources.add(kaaClientPropertiesClassBean);
 
         String profileClassName = profileSchema.getName();
         String profileClassPackage = profileSchema.getNamespace();
@@ -594,39 +679,6 @@ public class JavaSdkGenerator extends SdkGenerator {
     }
 
     /**
-     * Generate schema class.
-     *
-     * @param   schema          the schema
-     * @param   uniqueSchemas   the unique schemas
-     * @return  the list
-     * @throws  IOException Signals that an I/O exception has occurred.
-     */
-    public static List<JavaDynamicBean> generateSchemaSources(Schema schema, Map<String, Schema> uniqueSchemas) throws IOException {
-        SpecificCompiler compiler = new SpecificCompiler(schema);
-        compiler.setStringType(StringType.String);
-        compiler.setFieldVisibility(FieldVisibility.PRIVATE);
-
-        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-        long n = RANDOM.nextLong();
-        if (n == Long.MIN_VALUE) {
-            // corner case
-            n = 0;
-        } else {
-            n = Math.abs(n);
-        }
-        File tmpOutputDir = new File(tmpdir, "tmp-gen-" + Long.toString(n));
-        tmpOutputDir.mkdirs();
-
-        compiler.compileToDestination(null, tmpOutputDir);
-
-        List<JavaDynamicBean> sources = getJavaSources(tmpOutputDir, uniqueSchemas);
-
-        tmpOutputDir.delete();
-
-        return sources;
-    }
-
-    /**
      * Package sources.
      *
      * @param javaSources the java sources
@@ -643,7 +695,7 @@ public class JavaSdkGenerator extends SdkGenerator {
             String sourceFileName = packageLine.replaceAll("package", "").replaceAll("\\.|;", "/").trim() + bean.getName();
             data.put(sourceFileName, new ZipEntryData(new ZipEntry(sourceFileName), bean.getCharContent(true).getBytes()));
         }
-        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources, 
+        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources,
                 "-source", JAVA_SOURCE_COMPILER_RELEASE,
                 "-target", JAVA_TARGET_COMPILER_RELEASE);
         for (JavaDynamicBean compiledObject : compiledObjects) {
@@ -653,44 +705,6 @@ public class JavaSdkGenerator extends SdkGenerator {
             ZipEntryData zipEntryData = new ZipEntryData(classFile, compiledObject.getBytes());
             data.put(classFileName, zipEntryData);
         }
-    }
-
-    /**
-     * Gets the java sources.
-     *
-     * @param srcDir the src dir
-     * @return the java sources
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private static List<JavaDynamicBean> getJavaSources(File srcDir, Map<String, Schema> uniqueSchemas) throws IOException {
-        List<JavaDynamicBean> result = new ArrayList<JavaDynamicBean>();
-        File[] files = srcDir.listFiles();
-        for (File f : files) {
-            if (f.isDirectory()) {
-                result.addAll(getJavaSources(f, uniqueSchemas));
-            } else if (f.getName().endsWith(Kind.SOURCE.extension)) {
-                int index = f.getName().indexOf('.');
-                String className = f.getName().substring(0, index);
-                String sourceCode = readFile(f);
-
-                String classPackageAndName = "";
-
-                String[] sourceLines = sourceCode.split("\n");
-                for (String ss : sourceLines) {
-                    if (ss.startsWith("package ")) {
-                        classPackageAndName = ss.replace("package ", "").trim().replaceAll(";", ".") + className;
-                        break;
-                    }
-                }
-
-                if (uniqueSchemas.containsKey(classPackageAndName)) {
-                    uniqueSchemas.remove(classPackageAndName);
-                    JavaDynamicBean sourceObject = new JavaDynamicBean(className, sourceCode);
-                    result.add(sourceObject);
-                }
-            }
-        }
-        return result;
     }
 
     /**
