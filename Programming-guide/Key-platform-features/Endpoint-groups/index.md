@@ -15,16 +15,18 @@ sort_idx: 30
 Kaa provides a mechanism for endpoints aggregation within the application that is based on groups. Grouping endpoints enables you to activate specific configuration parameters, 
 control access to notification topics, etc.
 This guide will familiarize you with the basic concepts of designing endpoint groups. It is assumed that you have either set up a Kaa Sandbox, or a fully-blown Kaa cluster 
-already and that you have created a tenant and an application in Kaa. It is also strongly recommended to review 
-[Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/) before you proceed with this one. 
+already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) or 
+[Admin UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins)). 
+It is strongly recommended to get familiar with Endpoint profiles before you proceed.
 
-Endpoint profile is a virtual identity or "passport" of the endpoint. By filtering against the data in the profiles, endpoints may be aggregated into independently managed groups.
-Kaa allows for aggregating endpoints related to the same application into endpoint groups. The _endpoint group_ represents an independent managed entity which is 
-defined by the profile filters assigned to the group. Those endpoints whose profiles match the profile filters of the specific endpoint group become automatically 
+[Endpoint profile]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/) is a virtual identity or "passport" of the endpoint. 
+Kaa allows for aggregating endpoints related to the same application into endpoint groups this is achieved by filtering the data in the profiles.
+The _endpoint group_ represents an independent managed entity which is defined by the profile filters assigned to the group. 
+Those endpoints whose profiles match the profile filters of the specific endpoint group become automatically 
 registered as members of this group. There is no restriction for endpoints on having membership in a number of groups at a time.
 
 Endpoint group profile filters are predicate expressions which define characteristics of group members (endpoints). These filters are executed against the endpoint 
-profile to figure out whether or not the endpoint belongs to the group
+profile to figure out whether or not the endpoint belongs to the group.
 
 **NOTE**: Different profile schema versions may require separate profile filters due to the schema structural differences. 
 In case a group has no filter assigned for a specific profile schema version, the group does not apply to the endpoints that use the profile of this schema version.
@@ -33,7 +35,6 @@ In case a group has no filter assigned for a specific profile schema version, th
 
 Profile filters in Kaa are based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) (SpEL). 
 All filters must be specified as predicates (statements which may be either true or false). 
-For further reference on the filters syntax, please refer to the Spring documentation.
 Profile filters are evaluated using following context variables: 
 
 * "cp" - Client-side endpoint profile
@@ -45,6 +46,8 @@ Profile filters are evaluated using following context variables:
 The following example illustrates the general idea of profile filters.
 
 1. Let's assume the following client-side profile schema.
+
+    It's a simple schema with some fields for filtration.
 
 ```json
 [  
@@ -103,7 +106,6 @@ The following example illustrates the general idea of profile filters.
 ```
 
 2. Let's assume the following server-side profile schema. Please note that this schema is less complex only for demonstration purposes. 
-Both Client-side and Server-side profile schemas support same level of complexity.
 
 ```json
 [  
@@ -184,7 +186,17 @@ At last, the following filters will yield true when applied to the given endpoin
 
 ## Using endpoint groups ##
 
-Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. The associated profile filter is automatically set equal to "true" for each profile 
+Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. Weight of group responsible for her priority. Group with the biggest weight is the most priority.   
+Also group has:
+
+* Name
+* Weight
+* Description
+* [Profile filters](#profile-filters)
+* [Configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#configuration-schema)
+* [Notification topics]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#notification-topics)
+
+The associated profile filter is automatically set equal to "true" for each profile 
 schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
 [Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 
@@ -274,16 +286,17 @@ To add a new endpoint group, do the following:
 
 1. Open the **Endpoint groups** window by clicking **Endpoint groups** under the application menu on the navigation panel and then click **Add endpoint group**.
 
-<img src="admin-ui/endpoint-groups.png">
+![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
+
 
 2. In the **Add endpoint group** window, fill in the required fields and then click **Add**.
 
-<img src="admin-ui/create-endpoint-group.png">
+![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
 
 3. In the **Endpoint group** window, add profile filters, configurations, and notifications topics to the group, 
     if necessary (see the following paragraphs for instructions).
 
-<img src="admin-ui/add-profile-filters-to-group.png">
+![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
 
 ### Add profile filter to endpoint group ###
 
@@ -293,13 +306,13 @@ To add a profile filter to the endpoint group, do the following:
 2. In the **Profile filter** window, select the schema version.
 3. On the **Draft** tab, enter the description and [filter body](#profile-filters).
 
-    <img src="admin-ui/profile-filter-details.png">
+    ![profile-filter-details](admin-ui/profile-filter-details.png "profile-filter-details.png")
 
     **NOTE**: In order to test profile filter click Test filter. Afterwards the Test profile filter window will be displayed. 
     Complete the endpoint and/or server profile forms and then click Test filter.
 
-<img src="admin-ui/test-profile-filter.png">
-
+    ![test-profile-filter](admin-ui/test-profile-filter.png "test-profile-filter.png")
+    
 4. Click **Save** to save the profile filter.
    
     **NOTE**: You can save the data on the **Draft** tab and return to update it later as many times as needed until you click **Activate**.
@@ -310,4 +323,12 @@ To add a profile filter to the endpoint group, do the following:
 
 ## REST API ##
 
-Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
+Use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
+
+## Further reading ##
+
+* [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html)
+
+* [Avro](http://avro.apache.org/)
+
+
