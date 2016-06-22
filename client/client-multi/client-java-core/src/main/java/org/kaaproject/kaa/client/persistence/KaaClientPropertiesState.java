@@ -28,7 +28,6 @@ import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
-import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
 import org.kaaproject.kaa.client.notification.TopicListHashCalculator;
 import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
@@ -352,25 +351,22 @@ public class KaaClientPropertiesState implements KaaClientState {
                 IOUtils.closeQuietly(privateKeyInput);
             }
         }
-        if (keyPair == null) {
-            LOG.debug("Generating Client Key pair");
-            OutputStream privateKeyOutput = null;
-            OutputStream publicKeyOutput = null;
-            try {
-                privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
-                publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
-                keyPair = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
-            } catch (IOException e) {
-                LOG.error("Error generating Client Key pair", e);
-                throw new RuntimeException(e);
-            } finally {
-                IOUtils.closeQuietly(privateKeyOutput);
-                IOUtils.closeQuietly(publicKeyOutput);
-            }
-        } else {
-            LOG.debug("Error loading public key", "Project is not trustful and key pair is not found");
-            throw new KaaInvalidConfigurationException("This project isn't trustful, is it?");
+
+        LOG.debug("Generating Client Key pair");
+        OutputStream privateKeyOutput = null;
+        OutputStream publicKeyOutput = null;
+        try {
+            privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
+            publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
+            keyPair = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
+        } catch (IOException e) {
+            LOG.error("Error generating Client Key pair", e);
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(privateKeyOutput);
+            IOUtils.closeQuietly(publicKeyOutput);
         }
+
         return keyPair;
     }
 

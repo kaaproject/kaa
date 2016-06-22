@@ -352,8 +352,8 @@ public class KaaClientPropertiesState implements KaaClientState {
                 IOUtils.closeQuietly(privateKeyInput);
             }
         }
-        if (keyPair == null
-                && ${isTrustfulService}) { // Trustful Credential Service
+
+        if (${isTrustfulService}) { // Trustful Credential Service
             LOG.debug("Generating Client Key pair");
             OutputStream privateKeyOutput = null;
             OutputStream publicKeyOutput = null;
