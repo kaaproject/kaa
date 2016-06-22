@@ -142,14 +142,5 @@ in stdenv.mkDerivation {
 
       cp ${kaa-generic-makefile}/Makefile .
       chmod 644 Makefile
-
-      cat <<EOF > ./.zshrc
-      source \$HOME/.zshrc
-      PROMPT="%B%F{red}[kaa]%f%b \$PROMPT"
-      EOF
-
-      export ZDOTDIR=.;
-
-      # zsh -i; exit
     '';
 }
