@@ -38,7 +38,7 @@ sort_idx: 60
         window.SwaggerTranslator.translate();
       }
       window.swaggerUi = new SwaggerUi({
-        url: "http://localhost:8000",
+        url: "http://localhost:4000/kaa/latest/Programming-guide/Server-REST-APIs/swagger.json",
         dom_id: "swagger-ui-container",
         supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
         onComplete: function(swaggerApi, swaggerUi){
