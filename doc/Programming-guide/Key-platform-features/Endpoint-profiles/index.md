@@ -410,5 +410,8 @@ The system part of the endpoint profile is used by Kaa internally for its functi
 
 ## Further reading
 
-* [Apache Avro](http://avro.apache.org/docs/current/spec.html)
+* [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups)
+* [Configuration]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/)
+* [Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/)
+* [Data-collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection)
 * [Common Type Library (CTL)]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library)
