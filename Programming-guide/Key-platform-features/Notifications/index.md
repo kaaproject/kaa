@@ -10,20 +10,17 @@ sort_idx: 70
 * TOC
 {:toc}
 
-The Kaa notification subsystem enables delivery of messages from the Kaa server to endpoints. The structure of the data that is carried by notifications is defined by the notification schema, which is configured on the Kaa server and built into Kaa endpoints. Please review the Kaa [notifications design reference]() for more details.
+The Kaa notification subsystem enables delivery of messages from the Kaa server to endpoints. The structure of the data that is carried by notifications is defined by the notification schema, which is configured on the Kaa server and built into Kaa endpoints. Please review the Kaa [notifications design reference](#TODO) for more details.
 
-This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox]() or a [full-blown Kaa cluster]() and that you have created at least one [tenant]() and one [application]() in Kaa. 
-We also recommend that you review [collecting endpoint profiles guide]() and [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) before you proceed with this guide.
+This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox](http://www.kaaproject.org/download-kaa/) or a [full-blown Kaa cluster]({{root_url}}Administration-guide/System-installation/Single-node-installation) and that you have created at least one [tenant]({{root_url}}Administration-guide/Tenants-and-applications-management/#TODO) and one [application]({{root_url}}Administration-guide/Tenants-and-applications-management/#managing-applications) in Kaa. 
+We also recommend that you review [collecting endpoint profiles guide]({{root_url}}Programming-guide/Key-platform-features/Data-collection/) and [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) before you proceed with this guide.
 
 ### Basic architecture
-The following diagram illustrates basic entities and data flows in scope of the notification management:
-Notifications are generated based on the notification schema created by the developer for the application 
-The user or admin sends a notification using either Admin UI or REST API
 
 The following diagram illustrates basic entities and data flows in scope of the notification management:
 
 * Notifications are generated based on the [notification schema]() created by the developer for the application 
-* The user or admin sends a notification using either [Admin UI]() or [REST API]( {{root_url}}Programming-guide/Server-REST-APIs/#TODO )
+* The user or admin sends a notification using either [Admin UI]() or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO)
 
 ![](images/basic_architecture_notification.png)
 
@@ -57,12 +54,12 @@ Notifications in Kaa are organized into topics. Each topic may be associated wit
 
 Topics can be mandatory or optional. Mandatory topic notifications are delivered in an enforced manner. Optional topics require subscription. It is responsibility of the client code to add notification listeners and subscribe to optional topics.
 
-You can manage notification topics via [Admin UI]() or [REST API]( {{root_url}}Programming-guide/Server-REST-APIs/#TODO ).
+You can manage notification topics via [Admin UI]() or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 
 > Once created, a notification topic does not impact any endpoints. To deliver notifications to some endpoint, at first you need to assign the topic to an endpoint group containing this endpoint via [Admin UI]() or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 
 
-Assuming that you have created custom endpoint groups from the [Using endpoint groups guide](), it would be logical to create and assign the following topics:
+Assuming that you have created custom endpoint groups from the [Using endpoint groups guide]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/#custom-endpoint-groups), it would be logical to create and assign the following topics:
 
 <table>
     <tr>
@@ -105,7 +102,7 @@ Assuming that you have created custom endpoint groups from the [Using endpoint g
 #### Sending notifications
 To send a notification, you can issue the [REST API]( {{root_url}}Programming-guide/Server-REST-APIs/#TODO ) request or use [Admin UI]().
 
-### Coding
+### Using Notifications SDK API
 This section provides code samples which illustrate practical usage of notifications in Kaa.
 
 #### Get available topics
@@ -203,6 +200,145 @@ on_topic_list_uploaded(NULL, topics_list);
     for (Topic *topic in topics) {
         NSLog(@"%lld %@ %u", topic.id, topic.name, topic.subscriptionType);
     }
+```
+
+</div></div>
+
+#### Subscribe to optional topics
+To receive notifications on some optional topic, at first subscribe to that topic as shown in the following code block:
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#Java-14">Java</a></li>
+  <li><a data-toggle="tab" href="#C_plus_plus-14">C++</a></li>
+  <li><a data-toggle="tab" href="#C-14">C</a></li>
+  <li><a data-toggle="tab" href="#Objective-C-14">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="Java-14" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.client.KaaClient;
+...
+// Add notification listener(s) (optional)
+...
+// Subscribe
+kaaClient.subscribeToTopic("Android notifications", true);
+...
+// Unsubscribe. All added listeners will be removed automatically
+kaaClient.unsubscribeFromTopic("Android notifications", true);
+```
+
+</div><div id="C_plus_plus-14" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/Kaa.hpp>
+ 
+using namespace kaa;
+ 
+...
+ 
+// Add notification listener(s) (optional)
+ 
+// Subscribe
+kaaClient->subscribeToTopic("Android notifications");
+ 
+// Unsubscribe
+kaaClient->unsubscribeFromTopic("Android notifications");
+```
+
+</div><div id="C-14" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/kaa_notification_manager.h>
+#include <kaa/platform/ext_notification_receiver.h>
+// Assume we have some optional topic
+uint64_t topic_id = 12345;
+ 
+// Subcribe
+kaa_error_t error_code = kaa_subscribe_to_topic(kaa_client_get_context(kaa_client)->notification_manager, &topic_id, true);
+ 
+// Unsubscribe. All added listeners will be removed automatically
+error_code = kaa_unsubscribe_from_topic(kaa_client_get_context(kaa_client)->notification_manager, &topic_id, true);
+```
+
+</div><div id="Objective-C-14" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import <Kaa/Kaa.h>
+...
+// Add notification listener(s) (optional)
+ 
+// Subscribe
+[kaaClient subscribeToTopicWithId:@"iOS notifications" forceSync:YES];
+...
+// Unsubscribe. All added listeners will be removed automatically
+[kaaClient unsubscribeFromTopicWithId:@"iOS notifications" forceSync:YES];
+```
+
+</div></div>
+
+You can work with a list of optional topics in a similar way as with a list of available topics.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#Java-15">Java</a></li>
+  <li><a data-toggle="tab" href="#C_plus_plus-15">C++</a></li>
+  <li><a data-toggle="tab" href="#C-15">C</a></li>
+  <li><a data-toggle="tab" href="#Objective-C-15">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="Java-15" class="tab-pane fade in active" markdown="1" >
+
+```java
+// Add notification listener(s) (optional)
+...
+// Subscribe
+kaaClient.subscribeToTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), true);
+...
+// Unsubscribe
+kaaClient.unsubscribeFromTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), true);
+```
+
+</div><div id="C_plus_plus-15" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/Kaa.hpp>
+...
+// Add notification listener(s) (optional)
+ 
+// Subscribe
+kaaClient->subscribeToTopics({"iOS 8 notifications", "another_optional_topic_id"});
+ 
+// Unsubscribe
+kaaClient->unsubscribeFromTopics({"iOS 8 notifications", "another_optional_topic_id"});
+```
+
+</div><div id="C-15" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/kaa_notification_manager.h>
+#include <kaa/platform/ext_notification_receiver.h>
+ 
+// Assume we have some optional topics
+uint64_t topic_ids[] = { 12345, 6789 };
+ 
+// Subscribe
+kaa_error_t error_code = kaa_subscribe_to_topics(kaa_client_get_context(kaa_client)->notification_manager, topic_ids, sizeof(topic_ids) / sizeof(uint64_t), true);
+ 
+// Unsubscribe
+error_code = kaa_unsubscribe_from_topics(kaa_client_get_context(kaa_client)->notification_manager, topic_ids, topics_count, true);
+```
+
+</div><div id="Objective-C-15" class="tab-pane fade" markdown="1" >
+
+```objective-c
+// Add notification listener(s) (optional)
+...
+// Subscribe
+[kaaClient subscribeToTopicsWithIDs:@[@"iOS 8 notifications", @"another_optional_topic_id"] forceSync:YES];
+...
+// Unsubscribe
+[kaaClient unsubscribeFromTopicsWithIDs:@[@"iOS 8 notifications", @"another_optional_topic_id"] forceSync:YES];
 ```
 
 </div></div>
@@ -584,146 +720,6 @@ error_code = kaa_remove_optional_notification_listener(kaa_client_get_context(ka
 ...
 // Remove listener
 [kaaClient removeNotificationDelegate:self forTopicId:@"All devices notifications"];
-```
-
-</div></div>
-
-
-#### Subscribe to optional topics
-To receive notifications on some optional topic, at first subscribe to that topic as shown in the following code block:
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Java-14">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus-14">C++</a></li>
-  <li><a data-toggle="tab" href="#C-14">C</a></li>
-  <li><a data-toggle="tab" href="#Objective-C-14">Objective-C</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="Java-14" class="tab-pane fade in active" markdown="1" >
-
-```java
-import org.kaaproject.kaa.client.KaaClient;
-...
-// Add notification listener(s) (optional)
-...
-// Subscribe
-kaaClient.subscribeToTopic("Android notifications", true);
-...
-// Unsubscribe. All added listeners will be removed automatically
-kaaClient.unsubscribeFromTopic("Android notifications", true);
-```
-
-</div><div id="C_plus_plus-14" class="tab-pane fade" markdown="1" >
-
-```c++
-#include <kaa/Kaa.hpp>
- 
-using namespace kaa;
- 
-...
- 
-// Add notification listener(s) (optional)
- 
-// Subscribe
-kaaClient->subscribeToTopic("Android notifications");
- 
-// Unsubscribe
-kaaClient->unsubscribeFromTopic("Android notifications");
-```
-
-</div><div id="C-14" class="tab-pane fade" markdown="1" >
-
-```c
-#include <kaa/kaa_notification_manager.h>
-#include <kaa/platform/ext_notification_receiver.h>
-// Assume we have some optional topic
-uint64_t topic_id = 12345;
- 
-// Subcribe
-kaa_error_t error_code = kaa_subscribe_to_topic(kaa_client_get_context(kaa_client)->notification_manager, &topic_id, true);
- 
-// Unsubscribe. All added listeners will be removed automatically
-error_code = kaa_unsubscribe_from_topic(kaa_client_get_context(kaa_client)->notification_manager, &topic_id, true);
-```
-
-</div><div id="Objective-C-14" class="tab-pane fade" markdown="1" >
-
-```objective-c
-#import <Kaa/Kaa.h>
-...
-// Add notification listener(s) (optional)
- 
-// Subscribe
-[kaaClient subscribeToTopicWithId:@"iOS notifications" forceSync:YES];
-...
-// Unsubscribe. All added listeners will be removed automatically
-[kaaClient unsubscribeFromTopicWithId:@"iOS notifications" forceSync:YES];
-```
-
-</div></div>
-
-You can work with a list of optional topics in a similar way as with a list of available topics.
-
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Java-15">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus-15">C++</a></li>
-  <li><a data-toggle="tab" href="#C-15">C</a></li>
-  <li><a data-toggle="tab" href="#Objective-C-15">Objective-C</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="Java-15" class="tab-pane fade in active" markdown="1" >
-
-```java
-// Add notification listener(s) (optional)
-...
-// Subscribe
-kaaClient.subscribeToTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), true);
-...
-// Unsubscribe
-kaaClient.unsubscribeFromTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), true);
-```
-
-</div><div id="C_plus_plus-15" class="tab-pane fade" markdown="1" >
-
-```c++
-#include <kaa/Kaa.hpp>
-...
-// Add notification listener(s) (optional)
- 
-// Subscribe
-kaaClient->subscribeToTopics({"iOS 8 notifications", "another_optional_topic_id"});
- 
-// Unsubscribe
-kaaClient->unsubscribeFromTopics({"iOS 8 notifications", "another_optional_topic_id"});
-```
-
-</div><div id="C-15" class="tab-pane fade" markdown="1" >
-
-```c
-#include <kaa/kaa_notification_manager.h>
-#include <kaa/platform/ext_notification_receiver.h>
- 
-// Assume we have some optional topics
-uint64_t topic_ids[] = { 12345, 6789 };
- 
-// Subscribe
-kaa_error_t error_code = kaa_subscribe_to_topics(kaa_client_get_context(kaa_client)->notification_manager, topic_ids, sizeof(topic_ids) / sizeof(uint64_t), true);
- 
-// Unsubscribe
-error_code = kaa_unsubscribe_from_topics(kaa_client_get_context(kaa_client)->notification_manager, topic_ids, topics_count, true);
-```
-
-</div><div id="Objective-C-15" class="tab-pane fade" markdown="1" >
-
-```objective-c
-// Add notification listener(s) (optional)
-...
-// Subscribe
-[kaaClient subscribeToTopicsWithIDs:@[@"iOS 8 notifications", @"another_optional_topic_id"] forceSync:YES];
-...
-// Unsubscribe
-[kaaClient unsubscribeFromTopicsWithIDs:@[@"iOS 8 notifications", @"another_optional_topic_id"] forceSync:YES];
 ```
 
 </div></div>
