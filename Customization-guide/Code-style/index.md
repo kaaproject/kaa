@@ -2,8 +2,7 @@
 layout: page
 title: Code style
 permalink: /:path/
-nav: /:path/Customization-guide/Code-style
-sort_idx: 50
+sort_idx: 40
 ---
 
 This guide provides some important conventions on writing clear, readable code and API documentation. It is highly recommended that you refer to the guides mentioned at the bottom of the page to learn more about code style conventions used in Kaa.
