@@ -54,16 +54,16 @@ The current version of Kaa Sandbox supports Oracle VirtualBox 4.2+, which is ava
 
 3. Import the Sandbox image using [this guide](https://www.virtualbox.org/manual/ch01.html#ovf).
 
-4. Once the image has loaded, open the machine settings, select the `System` tab, and adjust the amount of RAM and processors available to the VM.
+4. Once the image has loaded, open the machine settings, select the **System** tab, and adjust the amount of RAM and processors available to the VM.
 For optimal performance we recommend at least 4 GB of RAM, and at least 2 CPUs.
 
 5. *\[Optional\]* The default VM networking configuration is NAT.
 In this configuration you will only be able to connect to the Kaa server from your host machine.
 That includes the Kaa client applications, which will only be able to reach your Sandbox server from the host machine.
 
-   Should you wish to deploy client applications to any hardware other than your host machine, or access Kaa web interfaces from your networked devices, the networking mode should be changed to `Bridged Adapter`.
-To configure the networking mode, switch to the `Network` tab in the VM settings.
-Make sure you change the `Promiscuous Mode` to `Allow All` under the `Advanced` spoiler.
+   Should you wish to deploy client applications to any hardware other than your host machine, or access Kaa web interfaces from your networked devices, the networking mode should be changed to **Bridged Adapter**.
+To configure the networking mode, switch to the **Network** tab in the VM settings.
+Make sure you change the **Promiscuous Mode** to **Allow All** under the **Advanced** spoiler.
 
    ![VM Networking settings](attach/vm_networking_settings.png)
 
@@ -79,7 +79,7 @@ Make sure you change the `Promiscuous Mode` to `Allow All` under the `Advanced` 
 <br>
 
 > **NOTE:** By running your Kaa Sandbox instance on AWS EC2 you may incur the associated charges.
-> Make sure you have reviewed and understood the current EC2 charging plans before proceeding with the installation.
+> Make sure you have reviewed and understood the current EC2 charging plans before proceeding with the deployment.
 
 To launch the Kaa Sandbox on AWS EC2, do the following:
 
@@ -87,20 +87,20 @@ To launch the Kaa Sandbox on AWS EC2, do the following:
 Factors for choosing a region may include latency, cost, or regulatory requirements.
 To launch Kaa Sandbox in your preferred region, please use the [Kaa download page](http://www.kaaproject.org/download-kaa/).
 
-2. At the `Choose an Instance Type` step, choose the appropriate instance type.
+2. At the **Choose an Instance Type** step, choose the appropriate instance type.
 For optimal performance we recommended that you use at least _m3.large_, or more powerful.
 
-3. At the `Configure Instance Details` step, change values in the fields as appropriate or leave default values.
+3. At the **Configure Instance Details** step, change values in the fields as appropriate or leave default values.
 
-4. At the `Add Storage` step, add additional volumes as appropriate.
+4. At the **Add Storage** step, add additional volumes as appropriate.
 The number of instance store devices available on the machine depends on the instance type.
 EBS volumes are not recommended for the database storage.
 
-5. At the `Tag Instance` step, give a name to your instance, for example, `kaa-sandbox-0.10.0`.
+5. At the **Tag Instance** step, give a name to your instance, for example, **kaa-sandbox-0.10.0**.
 
-6. At the `Configure Security Group` step, select one of the following options:
+6. At the **Configure Security Group** step, select one of the following options:
 
-   - Create a new security group with the inbound open ports:
+   - Create a new security group with the following ports open for inbound connections:
 
       | Protocol | Port | RangeSource|
       |----------|------|------------|
@@ -116,18 +116,18 @@ EBS volumes are not recommended for the database storage.
 
    - Select the previously created security group, configured as explained above.
 
-7. At the `Review Instance Launch` step, make any changes as appropriate.
+7. At the **Review Instance Launch** step, make any changes as appropriate.
 
-8. Click `Launch` and then in the `Select an existing key pair` or `Create a new key pair` dialog, do one of the following:
+8. Click **Launch** and then in the **Select an existing key pair** or **Create a new key pair** dialog, do one of the following:
 
-   - Select an existing key pair from the the `Select a key pair` drop list.
-   - If you need to create a new key pair, click `Create a new key pair`.
+   - Select an existing key pair from the the **Select a key pair** drop list.
+   - If you need to create a new key pair, click **Create a new key pair**.
    Then create the new key pair as described in [Creating a key pair](http://docs.aws.amazon.com/gettingstarted/latest/wah/getting-started-prereq.html).
 
-9. Click `Launch Instances`.
-The `Launch Status` page will be displayed.
+9. Click **Launch Instances**.
+The **Launch Status** page will be displayed.
 
-10. Click `View Instances`.
+10. Click **View Instances**.
 
 11. After launching Kaa Sandbox instance, go to **<your\_instance\_public\_domain\_name\>:9080/sandbox** or **<your\_instance\_public\_ip\>:9080/sandbox** URL.
 Public DNS or IP of your instance are available from your instance description.
@@ -150,7 +150,7 @@ As you request source or executable files, the Sandbox will generate and embed i
 
 ![Demo projects view](attach/sandbox_demo_projects.png)
 
-To download and run your first Kaa sample application, we suggest that you navigate to the `Data collection demos` application bundle and select the sample app programming language of your preference.
+To download and run your first Kaa sample application, we suggest that you navigate to the **Data collection demos** application bundle and select the sample app programming language of your preference.
 If you want to avoid setting up the toolchain and rather want to see Kaa platform in action with minimum further setup, it is recommended that you choose Java language, for which the Sandbox will be able to provide you with a ready to launch executable .jar file.
 Follow the instructions in the Sandbox to download, run, and test the sample application.
 
@@ -172,7 +172,7 @@ Make sure to review the [Troubleshooting guide]({{root_url}}Administration-guide
 
 ## Administrative UI
 
-You can access Kaa Administrative UI by clicking the `Administrative console` at the top of the page.
+You can access Kaa Administrative UI by clicking the **Administrative console** at the top of the page.
 
 > **NOTE:** Kaa Sandbox comes with several pre-configured user accounts as listed below:
 >
@@ -211,8 +211,8 @@ The same address will be configured into Kaa Endpoint SDK libraries generated by
 
 <br>
 
-Navigate to the `Management` page by clicking a link in the upper right corner of the Sandbox web UI.
-Input the desired address in the `Kaa host/IP` section and click the `Update` button.
+Navigate to the **Management** page by clicking a link in the upper right corner of the Sandbox web UI.
+Input the desired address in the **Kaa host/IP** section and click the **Update** button.
 
 <br>
 
