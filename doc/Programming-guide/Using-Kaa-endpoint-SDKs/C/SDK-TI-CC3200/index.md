@@ -11,13 +11,11 @@ sort_idx: 30
 * TOC
 {:toc}
 
-This guide explains how to build applications for Texas Instruments CC3200 LaunchPad
-(further, CC3200) based on the Kaa C SDK.
+This guide explains how to build applications for Texas Instruments CC3200 LaunchPad (further, CC3200) based on the Kaa C SDK.
 
 # Installing necessary components for Linux (Ubuntu)
 
-Before building the C SDK for the CC3200 platform on Linux, you need to perform
-the following installation.
+Before building the C SDK for the CC3200 platform on Linux, you need to perform the following installation.
 
 1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded)
 
@@ -74,8 +72,7 @@ the following installation.
 
 # Installing necessary components for Windows
 
-Before building the C SDK for the CC3200 platform on Windows, you need to perform
-the following installation.
+Before building the C SDK for the CC3200 platform on Windows, you need to perform the following installation.
 
 1. Install [Cygwin](https://www.cygwin.com/) with the additional following packages:
     * `Archive/unzip`
@@ -93,27 +90,23 @@ the following installation.
 
 
     Refer to [SO question page](http://superuser.com/questions/304541/how-to-install-new-packages-on-cygwin) for details how to install packages on Cygwin.
-1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded)
-to the `opt\kaa` directory under the Cygwin root directory (default is `C:\cygwin`)
-1. Install [CC3200SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa`
-(if the directory doesn't exist, create it) directory under the Cygwin root directory.
+1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded) to the `opt\kaa` directory under the Cygwin root folder (default is `C:\cygwin`).
+1. Install [CC3200SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa` (if the directory doesn't exist, create it) directory under the Cygwin root folder.
 1. Install [cmake](http://www.cmake.org/) and add it bin directory to the system environment.
 
-To enable debugging for your CC3200 applications, you will also need to build OpenOCD as
-described in [the official CC3200-Getting_Started_Guide][cc3200-getting-started-guide] (item 3.3.3)
+To enable debugging for your CC3200 applications, you will also need to build OpenOCD as described in [the official CC3200-Getting_Started_Guide][cc3200-getting-started-guide] (item 3.3.3).
 
 For more information, please refer to the official [CC3200-Getting_Started_Guide][cc3200-getting-started-guide]
 
 [cc3200-getting-started-guide]: http://www.ti.com/lit/ug/swru376d/swru376d.pdf
 
-
 # Creating applications based on C SDK
+
+Before creating applications based on the C SDK, you should obtain the C SDK and build a static library from it. To do so, generate the [C SDK in Admin UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk), then extract the archive.
 
 ## Building C SDK for Linux
 
-Before creating applications based on the C SDK, you should obtain the C SDK and build a static
-library from it. To do so, generate the [C SDK in Admin UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk),
-then extract the archive, cd to it and execute the following for Linux:
+Change directory to where SDK was unpacked and execute the following for:
 
 ```
 mkdir -p build
@@ -131,7 +124,7 @@ Open the Cygwin terminal and execute the following:
 ```
 mkdir -p build
 cd build
-cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DKAA_TOOLCHAIN_PATH=c:/cygwin/opt/kaa -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
+cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DCC32XX_TOOLCHAIN_PATH=c:/cygwin/opt/kaa -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
 make
 ```
 

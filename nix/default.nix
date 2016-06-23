@@ -49,6 +49,8 @@ let
     kaa-client-c = callPackage ./kaa-client-c { };
 
     kaa-client-cpp = callPackage ./kaa-client-cpp { };
+
+    kaa-docs = callPackage ./kaa-docs { };
   };
 
 in self
