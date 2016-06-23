@@ -537,10 +537,10 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         channel.sync(task.getTypes());
                     }
                 } catch (InterruptedException e) {
-                    if(stop){
+                    if (stop) {
                         LOG.debug("[{}] Worker is interrupted.", channel.getId());
-                    }else{
-                        LOG.warn("[{}] Worker is interrupted. Stack trace: ", channel.getId(), e);
+                    } else {
+                        LOG.warn("[{}] Worker is interrupted.", channel.getId(), e);
                     }
                 }
             }

@@ -228,10 +228,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 } catch (IOException | KaaTcpProtocolException | RuntimeException e) {
                     if (Thread.currentThread().isInterrupted()) {
                         if (channelState != State.SHUTDOWN) {
-                            LOG.warn("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
                             LOG.warn("Socket connection for channel [{}] was interrupted: ", getId(), e);
                         } else {
-                            LOG.debug("Failed to read from the socket for channel [{}].", getId());
                             LOG.debug("Socket connection for channel [{}] was interrupted.", getId());
                         }
                     }
