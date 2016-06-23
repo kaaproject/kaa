@@ -34,7 +34,8 @@ When Tenant Admin create application he can specify credential service for this 
 
 ## Creating custom credentials service
 
-1. First of all you should create class which implements all method of CredentialsService interface
+1. First of all you should create class which implements all method of 
+[CredentialsService interface](https://github.com/kaaproject/kaa/blob/1d429a30bb4b5206376b740bb21483929a881ace/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java)
 
 ```java
 
