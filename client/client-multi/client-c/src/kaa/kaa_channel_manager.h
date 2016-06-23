@@ -101,6 +101,50 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
 kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self
                                                        , uint32_t channel_id);
 
+
+
+/**
+ * @brief Specifies authorization failure reason.
+ *
+ */
+typedef enum {
+    KAA_AUTH_STATUS_UNKNOWN, /**< Authorization failed for unknown reason. */
+    KAA_AUTH_STATUS_BAD_CREDENTIALS, /**< Authorization failed because credentials are invalid. */
+    KAA_AUTH_STATUS_VERIFICATION_FAILED /**< Authorization failed because of verification failure. */
+} kaa_auth_failure_reason_t;
+
+
+
+/**
+ * @brief Processes authorization failure.
+ *
+ * @param[in]  reason           Authorization failure reason.
+ * @param[in]  context          Handler context.
+ */
+typedef void (*kaa_auth_failure_fn)(kaa_auth_failure_reason_t reason, void *context);
+
+
+
+/**
+ * @brief Specify authorization failure handler
+ *
+ * @param[in]   self            Channel manager.
+ * @param[in]   handler         Authorization failure handler.
+ * @param[in]   context         Handler context.
+ */
+void kaa_channel_manager_set_auth_failure_handler(kaa_channel_manager_t *self
+                                                , kaa_auth_failure_fn handler, void *context);
+
+
+/**
+ * @brief Processes authorization failure if valid handler exists.
+ *
+ * @param[in]   self            Channel manager.
+ * @param[in]   reason          Authorization failure reason.
+ */
+void kaa_channel_manager_process_auth_failure(kaa_channel_manager_t *self
+                                            , kaa_auth_failure_reason_t reason);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
