@@ -194,7 +194,7 @@ public class DeltaServiceIT extends AbstractTest {
         confSchema = new ConfigurationSchemaDto();
         confSchema.setApplicationId(application.getId());
         confSchema.setVersion(CONF_SCHEMA_VERSION);
-        confSchema.setSchema(dataSchema);
+//        confSchema.setSchema(dataSchema); //TODO
         try {
             confSchema = configurationService.saveConfSchema(confSchema);
         } catch (IncorrectParameterException e) {

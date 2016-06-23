@@ -658,9 +658,9 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             configurationSchema.setApplicationId(applicationId);
         }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        ConfigurationSchemaDto savedConfigurationSchema = client
-                .createConfigurationSchema(configurationSchema, TEST_CONFIG_SCHEMA);
-        return savedConfigurationSchema;
+//        ConfigurationSchemaDto savedConfigurationSchema = client.createConfigurationSchema(configurationSchema, TEST_CONFIG_SCHEMA); //TODO refactor
+//        return savedConfigurationSchema;
+        return null;
     }
 
     /**

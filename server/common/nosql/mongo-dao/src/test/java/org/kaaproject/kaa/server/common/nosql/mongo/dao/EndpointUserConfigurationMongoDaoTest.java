@@ -71,7 +71,7 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void findByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        ConfigurationSchemaDto schema = generateConfSchemaDto(appDto.getId(),1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, appDto.getId(), 1).get(0);
         EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
@@ -83,7 +83,7 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void removeByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        ConfigurationSchemaDto configurationSchemaDto = generateConfSchemaDto(appDto.getId(),1).get(0);
+        ConfigurationSchemaDto configurationSchemaDto = generateConfSchemaDto(null, appDto.getId(), 1).get(0);
         generateEndpointUserConfigurationDto(userDto, appDto, configurationSchemaDto, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));

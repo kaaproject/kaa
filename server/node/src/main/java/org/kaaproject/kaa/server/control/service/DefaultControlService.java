@@ -1951,6 +1951,7 @@ public class DefaultControlService implements ControlService {
             data = generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
         } else {
             AbstractSchemaDto schemaDto = null;
+            ConfigurationSchemaDto confSchemaDto = null;
             String fileName = null;
             String schema = null;
             switch (key.getRecordFiles()) {
@@ -1958,28 +1959,24 @@ public class DefaultControlService implements ControlService {
                 schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
                 checkSchema(schemaDto, RecordFiles.LOG_SCHEMA);
                 schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() }).getMessage();
-                break;
-            case CONFIGURATION_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_SCHEMA);
-                schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration", key.getSchemaVersion() })
+                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() })
                         .getMessage();
                 break;
+            case CONFIGURATION_SCHEMA:
+                throw new RuntimeException("Not implemented!");
             case CONFIGURATION_BASE_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
-                schema = ((ConfigurationSchemaDto) schemaDto).getBaseSchema();
+                confSchemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
+                schema = confSchemaDto.getBaseSchema();
                 fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-base", key.getSchemaVersion() })
                         .getMessage();
                 break;
             case CONFIGURATION_OVERRIDE_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
-                schema = ((ConfigurationSchemaDto) schemaDto).getOverrideSchema();
-                fileName = MessageFormatter
-                        .arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
+                confSchemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
+                schema = confSchemaDto.getOverrideSchema();
+                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() })
+                        .getMessage();
                 break;
             case NOTIFICATION_SCHEMA:
                 schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(),
@@ -1996,6 +1993,7 @@ public class DefaultControlService implements ControlService {
             default:
                 break;
             }
+
             byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
             data.setFileName(fileName);
             data.setFileData(schemaData);
@@ -2051,14 +2049,11 @@ public class DefaultControlService implements ControlService {
     /**
      * Check schema.
      *
-     * @param schemaDto
-     *            the schema dto
-     * @param file
-     *            the file
-     * @throws NotFoundException
-     *             the control service exception
+     * @param schemaDto the schema dto
+     * @param file      the file
+     * @throws NotFoundException the control service exception
      */
-    private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
+    private void checkSchema(VersionDto schemaDto, RecordFiles file) throws NotFoundException {
         if (schemaDto == null) {
             throw new NotFoundException("Schema " + file + " not found!");
         }
