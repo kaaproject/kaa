@@ -19,6 +19,11 @@ Registration of public keys occurs only once. In such an approach, all message w
 The message cannot be decrypted by anyone who does not possess the matching private key, who is thus presumed to be the owner of that key and the endpoint associated with the public key. 
 Also you can disable the access to server for endpoint by terminate all active sessions with this endpoint. All subsequent requests will be forbidden.
 For this use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+In case where you need to bind specified endpoint profile to the credentials, use appropriate method in [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
+
+## Endpoint Credentials
+
+
 
 ## Credentials service
 
@@ -118,20 +123,21 @@ Value of key which was added you will see in Admin UI.
 
 To provision your credentials service, do the following:
 
-Build your application using next command: 
+1. Build your application using next command: 
 
-```bash
+   ```
+      $ mvn clean install
+   ```
 
-$ mvn clean install
+2. Place ```*.jar``` of your application from ```/target``` folder into the ```/usr/lib/kaa-node/lib``` folder.
+3. If you using different package than ```org.kaaproject.kaa.*```, you need to specify it to scan in ```kaa-node.properties``` file in ```/usr/lib/kaa-node/conf``` folder.
 
-```
+    For example provided in this article:
+    
+   ```additional_plugins_scan_package=org.myproject```.
 
-Place your application *.jar from /target folder into the /usr/lib/kaa-node/lib folder.
-Specify additional package to scan kaa plugins configuration in parameter additional_plugins_scan_package.
-Restart kaa-node service: 
+4. Restart kaa-node service: 
 
-```bash
-
-$ sudo service kaa-node restart
-
-```
+   ```bash
+      $ sudo service kaa-node restart
+   ```
