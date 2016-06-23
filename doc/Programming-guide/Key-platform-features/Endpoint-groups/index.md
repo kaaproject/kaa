@@ -196,7 +196,7 @@ Also group has:
 * [Configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#configuration-schema)
 * [Notification topics]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#notification-topics)
 
-The associated profile filter is automatically set equal to "true" for each profile 
+The associated profile filter is automatically set equal to 'true' for each profile 
 schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
 [Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 
