@@ -8,6 +8,9 @@ sort_idx: 40
 * TOC
 {:toc}
 
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+
 To implement a custom user verifier, you need to complete the following steps.
 
 1. Design and compile a configuration schema.
@@ -193,9 +196,13 @@ The following code example illustrates the implementation of a user verifier des
 
 To provision your user verifier, do the following:
 
-1. Create maven or gradle project.
+1. Create maven project. You can use this [pom](https://github.com/kaaproject/kaa/blob/master/server/verifiers/trustful-verifier/pom.xml) as an example. 
 2. Create similar classes as defined above and put them in appropriate packages.
-3. Add your verification logic to methods of `CustomUserVerifier` and compile project to jar file.
+3. Add your verification logic to methods of `CustomUserVerifier` and build your project using next command: 
+
+ ```bash
+ mvn clean install
+ ```
 4. Place created jar file into _/usr/lib/kaa-node/lib_.
 5. If you using different package than _org.kaaproject.kaa.server.verifiers.*_  you need to edit kaa-node.properties file in /usr/lib/kaa-node/conf folder. Specify additional package to scan kaa plugins configuration in parameter additional_plugins_scan_package, 
    in our case -- _org.kaaproject.kaa.sample_.
@@ -204,6 +211,6 @@ To provision your user verifier, do the following:
    ```bash
    sudo service kaa-node restart
    ```
-7. Use [Admin UI]() or [REST API]() to create/update/delete your user verifier instances.
+7. Use [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#adding-user-verifiers) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) to create/update/delete your user verifier instances.
 
 ---
