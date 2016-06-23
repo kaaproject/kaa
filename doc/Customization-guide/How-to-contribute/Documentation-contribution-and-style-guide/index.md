@@ -214,14 +214,14 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 
 Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/kaa) - it can be found in the `doc/` folder.
 A full description of contributing to Kaa project can be found at [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
-Key differences between contributing source code and documentation are :
+Key differences between contributing source code and documentation are:
 
-* Select `Component : Documentation` in the [Jira](http://jira.kaaproject.org/) ticket.
+* Select `Component: Documentation` in the [Jira](http://jira.kaaproject.org/) ticket.
 * Generate and check documentation locally.
 
 ## Documentation preview
 
-1. Install required software :
+1. Install required software:
   * [Git](https://git-scm.com/)
   * [Ruby](https://www.ruby-lang.org)
   * [Jekyll](https://jekyllrb.com/)
