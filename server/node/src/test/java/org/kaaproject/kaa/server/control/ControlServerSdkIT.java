@@ -71,7 +71,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
 
         LogSchemaDto logSchema = createLogSchema(application.getId());
-        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
+        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getApplicationToken(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
         FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
@@ -97,7 +97,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
+        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getApplicationToken(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
         FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
@@ -145,7 +145,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
+        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getApplicationToken(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
         FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
@@ -196,7 +196,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
+        ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getApplicationToken(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
         FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),

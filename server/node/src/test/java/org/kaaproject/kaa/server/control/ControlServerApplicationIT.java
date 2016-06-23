@@ -58,21 +58,6 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
     public void testGetApplication() throws Exception {
         ApplicationDto application = createApplication();
 
-        ApplicationDto storedApplication = client.getApplication(application.getId());
-
-        Assert.assertNotNull(storedApplication);
-        assertApplicationsEquals(application, storedApplication);
-    }
-
-    /**
-     * Test get application by app token.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetApplicationByAppToken() throws Exception {
-        ApplicationDto application = createApplication();
-
         ApplicationDto storedApplication = client.getApplicationByApplicationToken(application.getApplicationToken());
 
         Assert.assertNotNull(storedApplication);
@@ -136,7 +121,7 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
         checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.getApplication(application.getId());
+                client.getApplicationByApplicationToken(application.getApplicationToken());
             }
         });
    }

@@ -1957,14 +1957,7 @@ public class DefaultControlService implements ControlService {
             case LOG_SCHEMA:
                 schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
                 checkSchema(schemaDto, RecordFiles.LOG_SCHEMA);
-                Schema recordWrapperSchema = null;
-                try {
-                    recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schemaDto.getSchema());
-                } catch (IOException e) {
-                    LOG.error("Unable to get Record Structure Schema", e);
-                    throw new ControlServiceException(e);
-                }
-                schema = recordWrapperSchema.toString(true);
+                schema = schemaDto.getSchema();
                 fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() }).getMessage();
                 break;
             case CONFIGURATION_SCHEMA:
