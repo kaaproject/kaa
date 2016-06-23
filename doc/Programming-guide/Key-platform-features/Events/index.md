@@ -5,15 +5,12 @@ permalink: /:path/
 sort_idx: 80
 ---
 
-* [Event generation and handling overview](#event-generation-and-handling-overview)
-* [Event class and event class schema](#event-class-and-event-class-schema)
-* [Event class families](#event-class-families)
-* [Event family mapping](#event-family-mapping)
-* [Event routing](#event-routing)
-* [Event sequence number](#event-sequence-number)
-* [SDK generation](#sdk-generation)
 
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
+* TOC
+{:toc}
 
 The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same user (potentially, across different applications). The Kaa event structure is determined by a configurable event class schema.
 
@@ -24,13 +21,13 @@ The Kaa Event subsystem provides the following features.
 * Efficient targeting of event recipients
 * Efficient and compact serialization
 
-It is the developer's responsibility to design event class schemas and make the client application interpret event data supplied by the endpoint library. The Kaa administrator, in turn, can provision those schemas into the Kaa server and generate the endpoint SDK.
-
-
 ## Event generation and handling overview
+
+Process of event generation and handling described on the following diagram:
 
 ![](images/EventGeneration2.png)
 
+It is the developer's responsibility to design event class schemas and make the client application interpret event data supplied by the endpoint library. The Kaa administrator, in turn, can provision those schemas into the Kaa server and generate the endpoint SDK.
 
 ## Event class and event class schema
 
@@ -197,6 +194,11 @@ In case of a multicast event, the Kaa server relays the event to all endpoints r
 In case of a unicast event, the Kaa server delivers the event to the target endpoint only if the endpoint was registered as the corresponding EC sink during the ECF mapping. The EP SDK supplies API to query the list of endpoints currently registered as the EC sinks under the given user.
 
 
+## Event exchange scope
+
+To use events between several endpoints, it is required that those endpoints were attached to the same user (in other words, registered with the same user). Kaa provides necessary APIs to attach/detach endpoints to/from users. To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
+
+
 ## Event sequence number
 
 Sequence numbers are used to avoid duplication of events sent by endpoints. Each endpoint has its own sequence number, which is incremented by one with every event sent by this endpoint.
@@ -207,3 +209,712 @@ With the first sync request, the endpoint attempts to synchronize its event sequ
 ## SDK generation
 
 During the SDK generation, the Control server generates the event object model and extends the APIs to support methods for sending events and registering event listeners. The generated SDK can support multiple ECFs, although it cannot simultaneously support multiple versions of the same ECF.
+
+## Kaa Events SDK API
+
+#### Attach endpoint to user
+
+To enable sending/receiving events to/from endpoints, at first the client should attach the endpoint to the user as shown in the following screenshot.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp">C++</a></li>
+  <li><a data-toggle="tab" href="#c">C</a></li>
+  <li><a data-toggle="tab" href="#objc">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.KaaDesktop;
+import org.kaaproject.kaa.client.event.registration.UserAuthResultListener;
+ 
+kaaClient.attachUser("userExternalId", "userAccessToken", new UserAttachCallback()
+{
+    @Override
+    public void onAttachResult(UserAttachResponse response) {
+        System.out.println("Attach response" + response.getResult());
+    }
+});
+```
+
+</div><div id="cpp" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <memory>
+#include <iostream>
+ 
+#include <kaa/Kaa.hpp>
+#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+ 
+using namespace kaa;
+ 
+class SimpleUserAttachCallback : public IUserAttachCallback {
+public:
+    virtual void onAttachSuccess()
+    {
+        std::cout << "Endpoint is attached to a user" << std::endl;
+    }
+ 
+    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    {
+        std::cout << "Failed to attach endpoint to a user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
+    }
+};
+ 
+...
+  
+// Create an endpoint instance
+auto kaaClient = Kaa::newClient();
+ 
+// Start an endpoint
+kaaClient->start();
+ 
+// Try to attach an endpoint to a user
+kaaClient->attachUser("userExternalId", "userAccessToken", std::make_shared<SimpleUserAttachCallback>());
+```
+
+</div><div id="c" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/kaa_user.h>
+#include <kaa/platform/ext_user_callback.h>
+ 
+kaa_client_t *kaa_client = /* ... */;
+ 
+kaa_error_t on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
+{
+    return KAA_ERR_NONE;
+}
+kaa_error_t on_detached(void *context, const char *endpoint_access_token)
+{
+    return KAA_ERR_NONE;
+}
+kaa_error_t on_attach_success(void *context)
+{
+    return KAA_ERR_NONE;
+}
+kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t error_code, const char *reason)
+{
+    return KAA_ERR_NONE;
+}
+kaa_attachment_status_listeners_t attachement_listeners = 
+{
+        NULL,
+        &on_attached,
+        &on_detached,
+        &on_attach_success,
+        &on_attach_failed
+};
+/* Assume Kaa SDK is already initialized */
+kaa_error_t error_code = kaa_user_manager_set_attachment_listeners(kaa_client_get_context(kaa_client)->user_manager
+                                                                 , &attachement_listeners);
+/* Check error code */
+error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_client)->user_manager
+                                                   , "userExternalId"
+                                                   , "userAccessToken");
+/* Check error code */
+```
+
+</div><div id="objc" class="tab-pane fade" markdown="1" >
+
+```objective-c
+import <Kaa/Kaa.h>
+ 
+@interface ViewController () <UserAttachDelegate>
+ 
+...
+ 
+- (void)prepareUserForMessaging {
+    [self.kaaClient attachUserWithId:@"userExternalId" accessToken:@"userAccessToken" delegate:self];
+}
+- (void)onAttachResult:(UserAttachResponse *)response {
+    NSLog(@"Attach response: %i", response.result);
+}
+```
+
+</div>
+</div>
+
+#### Get ECF factory and create ECF object
+
+To access the Kaa event functionality, the client should implement the two following blocks of code.
+
+**Get ECF factory from Kaa:**
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java1">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp1">C++</a></li>
+  <li><a data-toggle="tab" href="#objc1">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java1" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.client.event.EventFamilyFactory;
+ 
+EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+```
+
+</div><div id="cpp1" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/event/gen/EventFamilyFactory.hpp>
+ 
+...
+EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
+```
+
+</div><div id="objc1" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import <Kaa/Kaa.h>
+ 
+...
+ 
+EventFamilyFactory *eventFamilyFactory = [kaaClient getEventFamilyFactory];
+```
+
+</div>
+</div>
+
+**Get specific ECF object from ECF factory:**
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java2">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp2">C++</a></li>
+  <li><a data-toggle="tab" href="#objc2">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java2" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.demo.smarthouse.thermo.ThermoEventClassFamily;
+ 
+ThermoEventClassFamily tecf = eventFamilyFactory.getThermoEventClassFamily();
+```
+
+</div><div id="cpp2" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/event/gen/ThermoEventClassFamily.hpp>
+ 
+...
+ThermoEventClassFamily& tecf = eventFamilyFactory.getThermoEventClassFamily();
+```
+
+</div><div id="objc2" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import<Kaa/Kaa.h>
+ 
+...
+ 
+ThermostatEventClassFamily *tecf = [self.eventFamilyFactory getThermostatEventClassFamily];
+```
+
+</div>
+</div>
+
+#### Send events
+
+To send one or more events, the client should proceed as described in this section.
+
+**Get endpoint addresses**
+
+Execute the asynchronous findEventListeners method to request a list of the endpoints supporting all specified EC FQNs (FQN stands for fully qualified name).
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java3">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp3">C++</a></li>
+  <li><a data-toggle="tab" href="#c3">C</a></li>
+  <li><a data-toggle="tab" href="#objc3">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java3" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
+ 
+List<String> FQNs = new LinkedList<>();
+FQNs.add(ThermostatInfoRequest.class.getName());
+FQNs.add(ChangeTemperatureCommand.class.getName());
+ 
+kaaClient.findEventListeners(FQNs, new FindEventListenersCallback() {
+    @Override
+    public void onEventListenersReceived(List<String> eventListeners) {
+        // Some code
+    }   
+    @Override
+    public void onRequestFailed() {
+        // Some code
+    }
+});
+```
+
+</div><div id="cpp3" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <list>
+#include <memory>
+#include <string>
+#include <vector>
+ 
+#include <kaa/event/IFetchEventListeners.hpp>
+ 
+class SimpleFetchEventListeners : public IFetchEventListeners {
+public:
+    virtual void onEventListenersReceived(const std::vector<std::string>& eventListeners)
+    {
+        // Some code
+    }
+ 
+    virtual void onRequestFailed()
+    {
+        // Some code
+    }
+};
+ 
+...
+std::list<std::string> FQNs = {"org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest"
+                              ,"org.kaaproject.kaa.schema.sample.thermo.ChangeTemperatureCommand"};
+ 
+kaaClient->findEventListeners(FQNs, std::make_shared<SimpleFetchEventListeners>());
+```
+
+</div><div id="c3" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/event.h>
+#include <kaa/platform/ext_event_listeners_callback.h>
+ 
+const char *fqns[] = { "org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest"
+                     , "org.kaaproject.kaa.schema.sample.thermo.ChangeTemperatureCommand" };
+ 
+kaa_error_t event_listeners_callback(void *context, const kaa_endpoint_id listeners[], size_t listeners_count)
+{
+    /* Process response */
+    return KAA_ERR_NONE;
+}
+ 
+kaa_error_t event_listeners_request_failed(void *context)
+{
+    /* Process failure */
+    return KAA_ERR_NONE;
+}
+ 
+kaa_event_listeners_callback_t callback = { NULL
+                                          , &event_listeners_callback
+                                          , &event_listeners_request_failed };
+ 
+kaa_error_t error_code = kaa_event_manager_find_event_listeners(kaa_client_get_context(kaa_client)->event_manager
+                                                              , fqns
+                                                              , 2
+                                                              , &callback);
+ 
+/* Check error code */
+```
+
+</div><div id="objc3" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import <Kaa/Kaa.h>
+ 
+@interface ViewController () <FindEventListenersDelegate>
+ 
+...
+ 
+    NSArray *listenerFQNs = @[[ThermostatInfoRequest FQN], [ChangeDegreeRequest FQN]];
+    [self.kaaClient findListenersForEventFQNs:listenerFQNs delegate:self];
+ 
+- (void)onEventListenersReceived:(NSArray *)eventListeners {
+    // Some code
+}
+ 
+- (void)onRequestFailed {
+    // Some code
+}
+```
+
+</div>
+</div>
+
+**Send one event to all endpoints**
+
+To send an event to all endpoints which were previously located by the findEventListeners method, execute the sendEventToAll method upon the specific ECF object.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java4">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp4">C++</a></li>
+  <li><a data-toggle="tab" href="#c4">C</a></li>
+  <li><a data-toggle="tab" href="#objc4">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java4" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest;
+ 
+tecf.sendEventToAll(new ThermostatInfoRequest());
+```
+
+</div><div id="cpp4" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+ 
+...
+nsThermoEventClassFamily::ThermostatInfoRequest thermoRequest;
+tecf.sendEventToAll(thermoRequest);
+```
+
+</div><div id="c4" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/gen/kaa_thermo_event_class_family.h>
+ 
+/* Create and send an event */
+kaa_thermo_event_class_family_thermostat_info_request_t* thermo_request = kaa_thermo_event_class_family_thermostat_info_request_create();
+ 
+kaa_error_t error_code = kaa_event_manager_send_kaa_thermo_event_class_family_thermostat_info_request(kaa_client_get_context(kaa_client)->event_manager
+                                                                                                    , thermo_request
+                                                                                                    , NULL);
+ 
+/* Check error code */
+ 
+thermo_request->destroy(thermo_request);
+```
+
+</div><div id="objc4" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import <Kaa/Kaa.h>
+ 
+...
+ 
+ThermostatInfoRequest *request = [[ThermostatInfoRequest alloc] init];
+[self.tecf sendThermostatInfoRequestToAll:request];
+```
+
+</div>
+</div>
+
+**Send one event to one endpoint**
+
+To send an event to a single endpoint which was previously located by the findEventListeners method, execute the sendEvent method upon the specific ECF object and this endpoint.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java5">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp5">C++</a></li>
+  <li><a data-toggle="tab" href="#c5">C</a></li>
+  <li><a data-toggle="tab" href="#objc5">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java5" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.schema.sample.thermo.ChangeTemperatureCommand;
+ 
+ChangeTemperatureCommand ctc = new ChangeTemperatureCommand(-30);
+// Assume the target variable is one of the received in the findEventListeners method
+tecf.sendEvent(ctc, target);
+```
+
+</div><div id="cpp5" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+ 
+...
+nsThermoEventClassFamily::ChangeTemperatureCommand ctc;
+ctc.temperature = -30;
+ 
+// Assume the target variable is one of the received in the findEventListeners method
+tecf.sendEvent(ctc, target);
+```
+
+</div><div id="c5" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/geb/kaa_thermo_event_class_family.h>
+ 
+/* Create and send an event */
+kaa_endpoint_id target_endpoint;
+kaa_thermo_event_class_family_change_temperature_command_t* change_command = kaa_thermo_event_class_family_change_temperature_command_create();
+change_command->temperature = -30;
+ 
+kaa_error_t error_code = kaa_event_manager_send_kaa_thermo_event_class_family_change_temperature_command(kaa_client_get_context(kaa_client)->event_manager
+                                                                                                       , change_command
+                                                                                                       , target_endpoint);
+/* Check error code */
+ 
+change_command->destroy(change_command);
+```
+
+</div><div id="objc5" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import<Kaa/Kaa.h>
+ 
+...
+ 
+KAAUnion *degree = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(-30)];
+ChangeDegreeRequest *changeDegree = [[ChangeDegreeRequest alloc] initWithDegree:degree];
+ 
+// Assume the target variable is one of the received in the findEventListeners method
+[tecf sendChangeDegreeRequest:changeDegree to:target];
+```
+
+</div>
+</div>
+
+**Send batch of events to endpoint(s)**
+
+To send a batch of events at once to a single or all endpoints, execute the following code.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java6">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp6">C++</a></li>
+  <li><a data-toggle="tab" href="#c6">C</a></li>
+  <li><a data-toggle="tab" href="#objc6">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java6" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.client.event.EventFamilyFactory;
+import org.kaaproject.kaa.demo.smarthouse.thermo.ThermoEventClassFamily;
+import org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest;
+import org.kaaproject.kaa.schema.sample.thermo.ChangeTemperatureCommand;
+ 
+// Get instance of EventFamilyFactory
+EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+ThermoEventClassFamily tecf = eventFamilyFactory.getThermoEventClassFamily();
+ 
+// Register a new event block and get a unique block id
+TransactionId trxId = eventFamilyFactory.startEventsBlock();
+ 
+// Add events to the block
+// Adding a broadcasted event to the block
+tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
+// Adding a targeted event to the block
+tecf.addEventToBlock(trxId, new ChangeTemperatureCommand(-30), "home_thermostat");
+ 
+ 
+// Send an event batch
+eventFamilyFactory.submitEventsBlock(trxId);
+// Or cancel an event batch
+eventFamilyFactory.removeEventsBlock(trxId);
+```
+
+</div><div id="cpp6" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/event/gen/EventFamilyFactory.hpp>
+#include <kaa/event/gen/ThermoEventClassFamily.hpp>
+#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+ 
+using namespace kaa;
+ 
+// Get an instance of EventFamilyFactory
+EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
+ThermoEventClassFamily& tecf = eventFamilyFactory.getThermoEventClassFamily();
+ 
+// Register a new event block and get a unique block id
+TransactionIdPtr trxId = eventFamilyFactory.startEventsBlock();
+ 
+// Add events to the block
+// Adding a broadcasted event to the block
+nsThermoEventClassFamily::ThermostatInfoRequest thermoRequest;
+tecf.addEventToBlock(trxId, thermoRequest);
+// Adding a targeted event to the block
+nsThermoEventClassFamily::ChangeTemperatureCommand ctc;
+ctc.temperature = -30;
+tecf.addEventToBlock(trxId, ctc, "home_thermostat");
+ 
+ 
+// Send an event batch
+eventFamilyFactory.submitEventsBlock(trxId);
+ 
+// Or cancel an event batch
+eventFamilyFactory.removeEventsBlock(trxId); 
+```
+
+</div><div id="c6" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/kaa_event.h>
+#include <kaa/gen/kaa_thermo_event_class_family.h>
+ 
+kaa_event_block_id transaction_id;
+ 
+kaa_error_t error_code = kaa_event_create_transaction(kaa_context->event_manager, &transaction_id);
+/* Check error code */
+ 
+kaa_thermo_event_class_family_thermostat_info_request_t* thermo_request = kaa_thermo_event_class_family_thermostat_info_request_create();
+kaa_thermo_event_class_family_change_temperature_command_t* change_command = kaa_thermo_event_class_family_change_temperature_command_create();
+change_command->temperature = 5;
+ 
+error_code = kaa_event_manager_add_kaa_thermo_event_class_family_thermostat_info_request_event_to_block(kaa_client_get_context(kaa_client)->event_manager
+                                                                                                      , thermo_request
+                                                                                                      , NULL
+                                                                                                      , transaction_id);
+/* Check error code */
+ 
+kaa_endpoint_id target_endpoint;
+error_code = kaa_event_manager_add_kaa_thermo_event_class_family_change_temperature_command_event_to_block(kaa_client_get_context(kaa_client)->event_manager
+                                                                                                         , change_command
+                                                                                                         , target_endpoint
+                                                                                                         , transaction_id);
+/* Check error code */
+ 
+error_code = kaa_event_finish_transaction(kaa_client_get_context(kaa_client)->event_manager, transaction_id);
+/* Check error code */
+ 
+thermo_request->destroy(thermo_request);
+change_command->destroy(change_command);
+```
+
+</div><div id="objc6" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import <Kaa/Kaa.h>
+ 
+...
+// Get instance of EventFamilyFactory
+EventFamilyFactory *eventFamilyFactory = [kaaClient getEventFamilyFactory];
+ThermostatEventClassFamily *tecf = [eventFamilyFactory getThermostatEventClassFamily];
+ 
+// Register a new event block and get a unique block id
+TransactionId *trxId = [eventFamilyFactory startEventsBlock];
+ 
+// Add events to the block
+// Adding a broadcasted event to the block
+[tecf addThermostatInfoRequestToBlock:[[ThermostatInfoRequest alloc] init] withTransactionId:trxId];
+// Adding a targeted event to the block
+ChangeDegreeRequest *request = [[ChangeDegreeRequest alloc] init];
+request.degree = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(-30)];
+[tecf addChangeDegreeRequestToBlock:request withTransactionId:trxId target:@"home_thermostat"];
+ 
+ 
+// Send an event batch
+[eventFamilyFactory submitEventsBlockWithTransactionId:trxId];
+// Or cancel an event batch
+[eventFamilyFactory removeEventsBlock:trxId];
+```
+
+</div>
+</div>
+
+#### Receive events
+
+To start listening to incoming events, execute the addListener method upon the specific ECF object.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#java7">Java</a></li>
+  <li><a data-toggle="tab" href="#cpp7">C++</a></li>
+  <li><a data-toggle="tab" href="#c7">C</a></li>
+  <li><a data-toggle="tab" href="#objc7">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="java7" class="tab-pane fade in active" markdown="1" >
+
+```java
+import org.kaaproject.kaa.demo.smarthouse.thermo.ThermoEventClassFamily;
+ 
+tecf.addListener(new ThermoEventClassFamily.Listener() {
+    @Override
+    public void onEvent(ChangeTemperatureCommand event, String source) {
+        // Some code
+    }
+    @Override
+    public void onEvent(ThermostatInfoResponse event, String source) {
+        // Some code
+    }
+    @Override
+    public void onEvent(ThermostatInfoRequest event, String source) {
+        // Some code
+    }
+});
+```
+
+</div><div id="cpp7" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+ 
+class SimpleThermoEventClassFamilyListener: public ThermoEventClassFamily::ThermoEventClassFamilyListener {
+public:
+    virtual void onEvent(const nsThermoEventClassFamily :: ThermostatInfoRequest& event, const std::string& source) 
+    {
+        // Some code
+    }
+    virtual void onEvent(const nsThermoEventClassFamily :: ThermostatInfoResponse& event, const std::string& source) 
+    {
+        // Some code
+    }
+    virtual void onEvent(const nsThermoEventClassFamily :: ChangeTemperatureCommand& event, const std::string& source) 
+    {
+        // Some code
+    }
+};
+...
+SimpleThermoEventClassFamilyListener eventsListener;
+tecf.addEventFamilyListener(eventsListener);
+```
+
+</div><div id="c7" class="tab-pane fade" markdown="1" >
+
+```c
+#include <kaa/kaa_event.h>
+#include <kaa/gen/kaa_thermo_event_class_family.h>
+ 
+void on_thermo_event_class_family_change_temperature_command(void *context, kaa_thermo_event_class_family_change_temperature_command_t *event, kaa_endpoint_id_p source)
+{
+    /* Process event */
+    event->destroy(event);
+}
+kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_change_temperature_command_listener(kaa_client_get_context(kaa_client)->event_manager
+                                                                                                               , &on_thermo_event_class_family_change_temperature_command
+                                                                                                               , NULL);
+/* Check error code */
+```
+
+</div><div id="objc7" class="tab-pane fade" markdown="1" >
+
+```objective-c
+#import <Kaa/Kaa.h>
+ 
+@interface ViewController () <ThermostatEventClassFamilyDelegate>
+ 
+...
+ 
+[self.tecf addDelegate:self];
+- (void)onThermostatInfoRequest:(ThermostatInfoRequest *)event fromSource:(NSString *)source {
+    // Some code
+}
+ 
+- (void)onThermostatInfoResponse:(ThermostatInfoResponse *)event fromSource:(NSString *)source {
+    // Some code
+}
+ 
+- (void)onChangeDegreeRequest:(ChangeDegreeRequest *)event fromSource:(NSString *)source {
+    // Some code
+}
+```
+
+</div>
+</div>
+
+## REST API for Events
+
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
