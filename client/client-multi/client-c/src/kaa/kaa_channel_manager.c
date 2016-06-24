@@ -43,15 +43,15 @@ typedef struct {
 
 typedef struct {
     kaa_auth_failure_fn callback;
-    void                *context;
-} kaa_auth_failure_handler_t;
+    void *context;
+} kaa_auth_failure_handler;
 
 struct kaa_channel_manager_t {
     kaa_list_t                  *transport_channels;
     kaa_context_t               *kaa_context;
     kaa_logger_t                *logger;
     kaa_sync_info_t             sync_info;
-    kaa_auth_failure_handler_t  auth_failure_handler;
+    kaa_auth_failure_handler    auth_failure_handler;
 };
 
 
@@ -88,25 +88,32 @@ static bool find_channel_by_protocol_id(/* current channel */void *data, /* chan
     return kaa_transport_protocol_id_equals((kaa_transport_protocol_id_t *)context, &channel_info);
 }
 
-kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                     , kaa_context_t *context)
+kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p,
+        kaa_context_t *context)
 {
-    KAA_RETURN_IF_NIL2(channel_manager_p, context, KAA_ERR_BADPARAM);
+    if (!channel_manager_p || !context) {
+        return KAA_ERR_BADPARAM;
+    }
 
-    *channel_manager_p = (kaa_channel_manager_t *) KAA_MALLOC(sizeof(kaa_channel_manager_t));
-    if (!(*channel_manager_p))
+    kaa_channel_manager_t *channel_manager = KAA_MALLOC(sizeof(kaa_channel_manager_t));
+    if (!channel_manager) {
         return KAA_ERR_NOMEM;
+    }
 
-    (*channel_manager_p)->transport_channels      = kaa_list_create();
-    KAA_RETURN_IF_NIL((*channel_manager_p)->transport_channels, KAA_ERR_NOMEM);
+    channel_manager->transport_channels = kaa_list_create();
+    if (!channel_manager->transport_channels) {
+        KAA_FREE(channel_manager);
+        return KAA_ERR_NOMEM;
+    }
 
-    (*channel_manager_p)->kaa_context                   = context;
-    (*channel_manager_p)->sync_info.request_id          = 0;
-    (*channel_manager_p)->sync_info.is_up_to_date       = false;
-    (*channel_manager_p)->logger                        = context->logger;
-    (*channel_manager_p)->auth_failure_handler.callback = NULL;
-    (*channel_manager_p)->auth_failure_handler.context  = context;
+    channel_manager->kaa_context                   = context;
+    channel_manager->sync_info.request_id          = 0;
+    channel_manager->sync_info.is_up_to_date       = false;
+    channel_manager->logger                        = context->logger;
+    channel_manager->auth_failure_handler.callback = NULL;
+    channel_manager->auth_failure_handler.context  = NULL;
 
+    *channel_manager_p = channel_manager;
     return KAA_ERR_NONE;
 }
 
@@ -468,18 +475,23 @@ kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
     return KAA_ERR_NONE;
 }
 
-void kaa_channel_manager_set_auth_failure_handler(kaa_channel_manager_t *self
-                                                , kaa_auth_failure_fn handler, void *context)
+void kaa_channel_manager_set_auth_failure_handler(kaa_channel_manager_t *self,
+        kaa_auth_failure_fn handler, void *context)
 {
-    KAA_RETURN_IF_NIL(self, );
+    if (!self) {
+        return;
+    }
+
     self->auth_failure_handler.callback = handler;
     self->auth_failure_handler.context  = context;
 }
 
-void kaa_channel_manager_process_auth_failure(kaa_channel_manager_t *self
-                                            , kaa_auth_failure_reason_t reason)
+void kaa_channel_manager_process_auth_failure(kaa_channel_manager_t *self,
+        kaa_auth_failure_reason reason)
 {
-    KAA_RETURN_IF_NIL2(self, self->auth_failure_handler.callback, );
+    if (!self || !self->auth_failure_handler.callback) {
+        return;
+    }
 
     self->auth_failure_handler.callback(reason, self->auth_failure_handler.context);
 }
