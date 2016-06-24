@@ -27,7 +27,7 @@ The following diagram illustrates basic entities and data flows in scope of the 
 created by the developer for the application
 * Log appenders submit the logs received by the server to a particular storage or analytics system
 
-<img src="attach/basic_data_collection_management.png">
+![Basic data collection management](attach/basic-data-collection-management.png) <br/>
 
 The Kaa Data collection subsystem provides the following features:
 
@@ -140,19 +140,21 @@ In Admin UI as a tenant developer, you can create new log schemas for the applic
 
 1. In the Log schemas window for the application, click Add schema.
 2. In the Add log schema window, create a log schema either by using the [schema form]({{root_url}}LINK_TO_AVRO_UI_FORMS_AVRO_UI_SCHEMA_FORM) or
-by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
-<img src="attach/add_log_schema.png">
+by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.<br/>
+
+![Add log schema](attach/add-log-schema.png) <br/>
+
 3. Click Add to save the schema.
 
 If you want to review the added Avro schema, open the Log schema details window by clicking the schema in the Log schemas window.
 
-<img src="attach/log_schema_details.png">
+![Log schema details](attach/log_schema_details.png)
 
 # Log appenders
 
 A log appender is a service utility which resides on the Operations service. This utility is responsible for writing logs (received by the Operations service
-from endpoints) to a single specific storage, as defined by the log appender's type. A Kaa developer is able to add, update and delete log appenders 
-using Admin UI or REST API. Kaa provides several default implementations of log appenders but it is also possible to create custom log appenders.
+from endpoints) to a single specific storage, as defined by the log appender's type. Kaa provides several default implementations of log appenders but
+it is also possible to create custom log appenders.
 
 ## Confirm delivery option
 
@@ -184,53 +186,66 @@ an endpoint reset. To avoid this, use a persistent log storage to store all the 
 
 ## Existing log appender implementations
 
-There are several default log appender implementations that are available out of the box for each Kaa installation. 
-For more information about architecture, configuration and administration refer to the corresponding log appender:
+There are several default log appender implementations that are available out of the box for each Kaa installation. A Kaa developer is able to add, update
+and delete log appenders using Admin UI or Admin REST API. After adding log appender please [configure your application](#data-collection-sdk-api) or use
+[data collection demo](#data-collection-demo) application for log delivery. For more information about architecture, configuration and administration refer
+to the corresponding log appender:
 
 * ### [Cassandra log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender)
 
-The Cassandra log appender is responsible for transferring logs from the Operations service to the Cassandra database.
-
-* ### [CDAP log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/CDAP-log-appender)
-
-The CDAP log appender is responsible for the logs transfer to the CDAP platform. Logs are stored in a stream that is specified by the stream configuration
-parameter.
+The Cassandra log appender is responsible for transferring logs from the Operations service to the [Cassandra](http://cassandra.apache.org/) database.
+You can flexibly configure Cassandra storage (Cassandra nodes, authentication credentials, keyspace name, table name, column mapping, clustering, see
+[configuration]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/#configuration) section).
 
 * ### [Couchbase log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender)
 
-The Couchbase log appender is responsible for transferring logs from the Operations service to the Couchbase storage. Logs are stored in document storage.
+The Couchbase log appender is responsible for transferring logs from the Operations service to the [Couchbase](http://www.couchbase.com/) storage. Logs are
+stored in document storage. You can configure Couchbase servers list, bucket name and password.
 
 * ### [File system log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender)
 
 The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
-or in pair with tools like Flume and others.
+or in pair with tools like Flume and others. You can configure logs root path, rolling file name pattern, rolling max history, trigger max file size and
+[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/#configuration) parameters for this log appender.
 
 * ### [Flume log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender)
 
-The Flume log appender encapsulates received logs into Flume events and sends these events to external Flume sources via Avro RPC.
+The Flume log appender encapsulates received logs into Flume events and sends these events to external Flume sources via Avro RPC. You can configure
+flume event format, hosts balancing type, include client-side and/or server-side profile data and
+[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender/#configuration) parameters for this log appender.
 
 * ### [Kafka log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender)
 
-The Kafka log appender is responsible for transferring logs from the Operations service to the Apache Kafka service. The logs are stored in the specified topic.
+The Kafka log appender is responsible for transferring logs from the Operations service to the [Apache Kafka](http://kafka.apache.org/) service. The logs are
+stored in the specified topic. You can configure Kafka bootstrap servers list, topic name, compression type and
+[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/#configuration) parameters for this log appender.
 
 * ### [MongoDB log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender)
 
-The MongoDB log appender is responsible for transferring logs from the Operations service to the MongoDB database.
+The MongoDB log appender is responsible for transferring logs from the Operations service to the [MongoDB](https://www.mongodb.com/) database. You can
+configure MongoDB nodes list, authentication credentials, MongoDB database name and
+[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/#configuration) parameters for this log appender.
+The logs are stored in the table named __logs_$[applicationToken]({{root_url}}Glossary)_, where _$[applicationToken]({{root_url}}Glossary)_ matches the token
+of the current application.
 
 * ### [Oracle NoSQL log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender)
 
-The Oracle NoSQL log appender is responsible for transferring logs from the Operations service to the Oracle NoSQL key/value storage.
+The Oracle NoSQL log appender is responsible for transferring logs from the Operations service to the
+[Oracle NoSQL](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/overview/index.html) key/value storage. You can configure KVStore name,
+KVStore nodes and [other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender/#configuration) parameters for this
+log appender.
 
 * ### [Rest log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender)
 
-The REST log appender is responsible for transferring logs from Operation service to your custom service.
+The REST log appender is responsible for transferring logs from Operation service to your custom service. You can configure host, port, relative URI path,
+method type and [other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configuration) parameters for this log appender.
 
 ## Custom appender implementations
 
 Refer to the [Custom log appender]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders) page to learn how to implement custom log
 appenders.
 
-## Managind log appenders
+## Managing log appenders
 
 Kaa provides default implementations of log appenders that store logs in Hadoop, Cassandra, MongoDB or a local file system (FS). It is possible to develop and 
 integrate [custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
@@ -532,7 +547,7 @@ int maxRecordCount = 256;
 
 A log upload strategy determines under what conditions Kaa endpoints must send log data to the server. Kaa provides several built-in strategies, namely:
 
-* <b>Periodic strategy</b> to upload logs after at least the given amount of time passes since the last upload:
+* **Periodic strategy** to upload logs after at least the given amount of time passes since the last upload:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java3">Java</a></li>
@@ -619,7 +634,7 @@ PeriodicLogUploadStrategy *uploadStrategy = [[PeriodicLogUploadStrategy alloc] i
 > The decision of whether to upload the logs collected is taken each time a new log record is added. That being said, the next log record added after 
 the time specified passes will trigger a log upload.
 
-* <b>Log count strategy</b> to upload logs after the threshold of log records generated is reached:
+* **Log count strategy** to upload logs after the threshold of log records generated is reached:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java4">Java</a></li>
@@ -703,7 +718,7 @@ RecordCountLogUploadStrategy *uploadStrategy = [[RecordCountLogUploadStrategy al
 </div>
 </div>
 
-* <b>Storage size strategy</b> to upload logs after the threshold of local log storage space occupied is reached:
+* **Storage size strategy** to upload logs after the threshold of local log storage space occupied is reached:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java5">Java</a></li>
@@ -786,7 +801,7 @@ StorageSizeLogUploadStrategy *uploadStrategy = [[StorageSizeLogUploadStrategy al
 </div>
 </div>
 
-* Combined <b>periodic and log count strategy</b>:
+* Combined **periodic and log count strategy**:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java6">Java</a></li>
@@ -874,7 +889,7 @@ RecordCountWithTimeLimitLogUploadStrategy *uploadStrategy = [[RecordCountWithTim
 </div>
 </div>
 
-* Combined <b>periodic and storage size strategy</b>:
+* Combined **periodic and storage size strategy**:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java7">Java</a></li>
@@ -963,7 +978,7 @@ StorageSizeWithTimeLimitLogUploadStrategy *uploadStrategy = [[StorageSizeWithTim
 </div>
 </div>
 
-* Combined <b>log count and storage size strategy</b>:
+* Combined **log count and storage size strategy**:
 
 
 
@@ -1067,7 +1082,7 @@ uploadStrategy.countThreshold = 10;
 >**NOTE:**  
 > This is the default behavior with log record count threshold of 64 and local storage threshold of 8 KB.
 
-* <b>Max parallel upload strategy<b> to limit the number of log batches sent without receiving a response from the server:
+* **Max parallel upload strategy** to limit the number of log batches sent without receiving a response from the server:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java9">Java</a></li>

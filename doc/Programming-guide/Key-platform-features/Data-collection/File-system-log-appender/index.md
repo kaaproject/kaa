@@ -14,7 +14,7 @@ sort_idx: 40
 
 The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
 or in pair with tools like Flume and others. Logs are stored in files under the ```/$logsRootPath/tenant_$tenantId/application_$applicationId``` folder, 
-where <i>logsRootPath</i> is a configuration parameter, <i>tenantId</i> and <i>applicationId</i> are ids of the current tenant and 
+where _logsRootPath_ is a configuration parameter, _tenantId_ and _applicationId_ are ids of the current tenant and
 the application respectively. Access to the logs is controlled via Linux file system permissions.
 
 You can log in to the Operations service host and browse logs using the ```kaa_log_user_$applicationToken``` user name and the pubic key which is created as
@@ -25,13 +25,13 @@ a part of the configuration.
 The easiest way to create a file system log appender for your application is by using Admin UI.
 To create a log appender of the file system storage type, do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to <i>File.</i>
+3. Set the log appender type to _File_.
 4. Fill in other fields as required.
-5. Click <b>Add</b>.
+5. Click **Add**.
 
-<img src="attach/file-system-log-appender.png">
+![File system log appender](attach/file-system-log-appender.png)
 
 # Creating file system log appender with Admin REST API
 
@@ -178,13 +178,13 @@ Example result:
 
 Go to Data collection demos in Sandbox. And download binary.
 
-<img src="attach/data-collection-demo-in-sandbox.png">
+![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
 
-Next, in the Admin UI follow to <b>Data collection demo</b> application.
+Next, in the Admin UI follow to **Data collection demo** application.
 
-Go to application's <b>Log appenders</b> configuration and add a new one.
+Go to application's **Log appenders** configuration and add a new one.
 
-<img src="attach/data-collection-demo-application.png">
+![Add log appender](attach/data-collection-demo-application.png)
 
 Enter name of the new appender (we use “Sample FileSystem log appender”)
 
@@ -196,7 +196,7 @@ Please, see [Creating file system log appender in Admin UI](#creating-file-syste
 
 Verify that newly created appender has appeared in list.
 
-<img src="attach/verify-created-appender.png">
+![Verify newly created log appender](attach/verify-created-appender.png)
 
 Now run Data collection demo application:
 

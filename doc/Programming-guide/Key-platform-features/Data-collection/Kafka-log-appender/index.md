@@ -20,13 +20,13 @@ The easiest way to create a Kafka log appender for your application is by using 
 
 To create a log appender of the Kafka storage type, do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender<b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
-3. Set the log appender type to <i>Kafka</i>.
+3. Set the log appender type to _Kafka_.
 4. Fill in the Kafka log appender configuration form.
-5. Click <b>Add</b>.
+5. Click **Add**.
 
-<img src="attach/add-log-appender-in-admin-ui.png">
+![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
 
 # Creating Kafka log appender with Admin REST API
@@ -220,37 +220,37 @@ The following JSON example matches the previous schema.
 
 Go to the Data collection demos in Sandbox.
 
-<img src="attach/data-collection-demo-in-sandbox.png">
+![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
 
-Follow <b>Installation</b> instructions.
+Follow **Installation** instructions.
 
-Next, in the Admin UI follow to <b>Data collection demo</b> application
+Next, in the Admin UI follow to **Data collection demo** application
 
-<img src="attach/data-collection-demo-in-sandbox2.png">
+![Data collection demo UI](attach/data-collection-demo-in-sandbox2.png)
 
-Go to application's <b>Log appenders</b> configuration and add a new one.
+Go to application's **Log appenders** configuration and add a new one.
 
-<img src="attach/data-collection-demo-in-sandbox3.png">
+![Add log appender](attach/data-collection-demo-in-sandbox3.png)
 
 Enter name of the new appender (in this example it is "Kafka")
 
-Select <b>Kafka</b> appender type.
+Select **Kafka** appender type.
 
-<img src="attach/appender-type.png">
+![Appender Type](attach/appender-type.png)
 
-Set up appender <b>Configuration</b> similar to screenshot
+Set up appender **Configuration** similar to screenshot
 
-<img src="attach/appender-configuration.png">
+![Appender configuration](attach/appender-configuration.png)
 
 In this example, Kafka server installed in the Sandbox VM.
 
 Now click **Add** button on the top of the screen to create and deploy appender.
 
-<img src="attach/add-button.png">
+![Add button](attach/add-button.png)
 
 Verify that newly created appender has appeared in list.
 
-<img src="attach/verify-log-appender.png">
+![Verify newly created log appender](attach/verify-log-appender.png)
 
 From Kafka installation directory run next command:
 

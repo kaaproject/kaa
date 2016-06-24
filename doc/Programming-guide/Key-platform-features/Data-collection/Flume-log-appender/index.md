@@ -20,20 +20,20 @@ The easiest way to create a Flume log appender for your application is by using 
 
 To create a log appender which will be integrated with Hadoop or Spark, do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to <i>Flume</i>.
+3. Set the log appender type to _Flume_.
 4. Fill in the Flume log appender configuration form. <br/>
 NOTE:
 Flume log appenders can have either prioritized or round robin host balancing.
 5. For the prioritized host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address, 
 port and priority. The highest priority is 1. When choosing a server to which to save logs, an endpoint will send requests to the servers starting from 
 the server with the highest priority. <br/>
-<img src="attach/creating-flume-log-appender.png">
+![Creating flume log appender](attach/creating-flume-log-appender.png)
 6. For round robin host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address and port. 
 When choosing a server to which to save logs, an endpoint will send requests to the servers according to the round robin algorithm. <br/>
-<img src="attach/creating-flume-log-appender2.png">
-7. Click <b>Add</b>.
+![Creating flume log appender step 2](attach/creating-flume-log-appender2.png)
+7. Click **Add**.
 
 # Creating Flume log appender with Admin REST API
 
@@ -42,7 +42,7 @@ The following example illustrates how to provision the Flume log appender via Ad
 
 ## Formats
 
-The Flume log appender can be configured to produce flume events using either <i>Records container</i> or <i>Generic</i> format.
+The Flume log appender can be configured to produce flume events using either _Records container_ or _Generic_ format.
 
 ### Records container
 
@@ -55,12 +55,12 @@ The RecordData schema has the following four fields.
 * applicationToken
 * eventRecords
 
-The <b>recordHeader</b> field stores a set of log metadata fields.
+The *recordHeader** field stores a set of log metadata fields.
 
-The <b>eventRecords</b> field stores an array of raw records. Each element of the array is a log record in the Avro binary format serialized by the log schema.
+The **eventRecords** field stores an array of raw records. Each element of the array is a log record in the Avro binary format serialized by the log schema.
 
-The <b>schemaVersion</b> and <b>applicationToken</b> fields should be used as parameters of a
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO) call to Kaa in order to obtain the logs Avro schema for <b>eventRecords</b> and enable
+The **schemaVersion** and **applicationToken** fields should be used as parameters of a
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO) call to Kaa in order to obtain the logs Avro schema for **eventRecords** and enable
 parsing of the binary data.
 
 ```json
@@ -189,7 +189,7 @@ parsing of the binary data.
 ### Generic
 
 In case of the Generic format, every log record is represented as a separate Flume event. The Flume event body contains a log record serialized by 
-the log schema in the Avro binary format. The Flume event header contains the log schema definition mapped by the <b>flume.avro.schema.literal</b> key.
+the log schema in the Avro binary format. The Flume event header contains the log schema definition mapped by the **flume.avro.schema.literal** key.
 
 In addition, Kaa provides the following two extended Flume agents which can be used together with the Flume log appender.
 
@@ -260,7 +260,7 @@ of the log records data schema and stores log data into HDFS as Avro Sequence fi
         {
             "name":"recordData",
             "type":[
-                $                {
+                ${
                     record_data_schema
                 },
                 "null"
@@ -393,23 +393,23 @@ If you want to use Flume agents together with the Flume log appender, create nec
 
 # Setting up Flume log appender
 
-1. As a tenant admin, go to your application >> Log appenders, then click <b>Add log appender</b>.  
-<img src="attach/add-log-appender.jpg">
-2. In the <b>Add log appender</b> window that opens, fill in the required fields  
-In our example, we use <i>Flume</i> as Name.  
-In the <b>Type</b> drop-down list, select Flume.
-Then, specify the fields <b>Flume event format</b> (we selected <i>Records container</i>), and <b>Hosts balancing</b> (we selected <i>prioritized<i>).
+1. As a tenant admin, go to your application >> Log appenders, then click **Add log appender**.
+![Add log appender](attach/add-log-appender.jpg)
+2. In the **Add log appender** window that opens, fill in the required fields
+In our example, we use _Flume_ as Name.  
+In the **Type** drop-down list, select Flume.
+Then, specify the fields **Flume event format** (we selected _Records container_), and **Hosts balancing** (we selected _prioritized_).
 Finally, specify the cluster parameters: host, port and priority. We use localhost:7070. (in our case localhost = 10.2.3.93)  
-<img src="attach/add-log-appender2.png">  
-<img src="attach/add-log-appender3.png">
-3. To finish, click <b>Add</b> at the top of the window.  
+![Add log appender step 2](attach/add-log-appender2.png)
+![Add log appender step 3](attach/add-log-appender3.png)
+3. To finish, click **Add** at the top of the window.  
 In case of success, you will see your new log appender in the log appenders list.
 
-<img src="attach/add-log-appender4.png">
+![Add log appender step 4](attach/add-log-appender4.png)
 
 After that you can go to Data collection demos in Sandbox.
 
-<img src="attach/add-log-appender5.png">
+![Add log appender step 5](attach/add-log-appender5.png)
 
 Run the application using the following command in the console:
 
@@ -419,6 +419,6 @@ $ java -jar DataCollectionDemo.jar
 
 After this command you will see
 
-<img src="attach/add-log-appender6.png">
+![Add log appender step 6](attach/add-log-appender6.png)
 
 This logs you can find in HDFS path which you indicate when set up kaa-flume sink

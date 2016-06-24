@@ -13,7 +13,7 @@ sort_idx: 70
 {:toc}
 
 The MongoDB log appender is responsible for transferring logs from the Operations service to the MongoDB database. The logs are stored in the table named
-<i>logs_$applicationToken</i>, where <i>$applicationToken<i> matches the token of the current application.
+__logs_$[applicationToken]({{root_url}}Glossary)_, where _$[applicationToken]({{root_url}}Glossary)_ matches the token of the current application.
 
 # Creating MongoDB log appender in Admin UI
 
@@ -23,11 +23,11 @@ To create a log appender of the MongoDB storage type, do the following:
 
 1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to <i>Mongo</i>.
+3. Set the log appender type to _Mongo_.
 4. Fill in the Mongo log appender configuration form.
 5. Click <b>Add</b>.
 
-<img src="attach/add-log-appender-in-admin-ui.png">
+![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
 # Creating MongoDB log appender with Admin REST API
 
@@ -223,15 +223,15 @@ The following JSON example matches the previous schema.
 
 Go to Data collection demos in Sandbox.
 
-<img src="attach/mongodb-log-appender1.png">
+![Data collection demo in Sandbox](attach/mongodb-log-appender1.png)
 
 Next, in the Admin UI follow to <b>Data collection demo</b> application
 
-<img src="attach/mongodb-log-appender2.png">
+![Data collection Demo Admin UI](attach/mongodb-log-appender2.png)
 
 <br/>
 
-<img src="attach/mongodb-log-appender3.png">
+![Add log appender](attach/mongodb-log-appender3.png)
 
 There can be was same one. You can add new with your parameters
 
@@ -239,27 +239,27 @@ Enter name of the new appender
 
 Select <b>MongoDB</b> appender type.
 
-<img src="attach/mongodb-log-appender4.png">
+![Log appender configuration](attach/mongodb-log-appender4.png)
 
 Add new node in the <b>Configuration</b> section (localhost:27017)
 
-<img src="attach/mongodb-log-appender5.png">
+![Add new node](attach/mongodb-log-appender5.png)
 
 Also you can add some <b>Authentication credentials<b>
 
-<img src="attach/mongodb-log-appender6.png">
+![Authentication credentials](attach/mongodb-log-appender6.png)
 
 And other important parameters of configuration. You can change them or use default.
 
-<img src="attach/mongodb-log-appender7.png">
+![Other configuration parameters](attach/mongodb-log-appender7.png)
 
 Now click <b>Add</b> button on the top of the screen to create and deploy appender.
 
-<img src="attach/mongodb-log-appender8.png">
+![Add button](attach/mongodb-log-appender8.png)
 
 Verify that newly created appender has appeared in list.
 
-<img src="attach/mongodb-log-appender9.png" width="75%" height="75%" />
+![Verify newly created log appender](attach/mongodb-log-appender9.png)
 
 Now run Data collection demo application. Verify that logs have been successfully sent to Kaa:
 

@@ -20,16 +20,16 @@ The easiest way to create a Cassandra log appender for your application is by us
 
 To create a log appender do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
-3. Set the log appender type to <i>Cassandra</i>. <br/>
-<img src="attach/create-cassandra-log-appender-admin-ui.png">
+3. Set the log appender type to _Cassandra_. <br/>
+![Create cassandra log appender](attach/create-cassandra-log-appender-admin-ui.png)
 4. Fill in the Cassandra log appender [Configuration](#configuration) form. <br/>
-![](attach/cassandra-log-appender-config1.png) <br/>
+![Cassandra log appender configuration](attach/cassandra-log-appender-config1.png) <br/>
 ![](attach/cassandra-log-appender-config2.png) <br/>
 ![](attach/cassandra-log-appender-config3.png) <br/>
 
-5. Click <b>Add</b>.
+5. Click **Add**.
 
 
 # Creating Cassandra log appender with Admin REST API
@@ -45,7 +45,7 @@ The Cassandra log appender configuration should match to
 * **Cassandra nodes** - list of Cassandra hosts.
 * **Authentication credentials** - credentials used to authenticate on Cassandra cluster
 * **Keyspace name** – Cassandra keyspace used to prefix the data table
-* **Table name pattern** – pattern used to create table name (ex.: <b>logs_$app_token</b> adds the application token at the end of the table name).
+* **Table name pattern** – pattern used to create table name (ex.: **logs_$app_token** adds the application token at the end of the table name).
 * **Column Mapping** - section that handles data mapping configuration. It can map specific log data to appropriate columns.
 * **Clustering** - section that handles clustering key configuration.
 
@@ -259,27 +259,27 @@ The following JSON example matches the previous schema.
 
 Go to Data collection demos in Sandbox.
 
-<img src="attach/data-collection-demo-in-sandbox.png">
+![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
 
-Follow <b>Installation</b> instructions.
+Follow **Installation** instructions.
 
-Next, in the Admin UI follow to <b>Data collection demo</b> application.
+Next, in the Admin UI follow to **Data collection demo** application.
 
-Go to application's <b>Log appenders</b> configuration and add a new one.
+Go to application's **Log appenders** configuration and add a new one.
 
-<img src="attach/data-collection-demo-application.png">
+![Add log appender](attach/data-collection-demo-application.png)
 
 Enter name of the new appender (we'll use "Cassandra")
 
 Add application token and Timestamp as Log metadata.
 
-Select <b>Cassandra</b> appender type.
+Select **Cassandra** appender type.
 
-<img src="attach/cassandra-appender-type.png">
+![Select Cassandra appender type](attach/cassandra-appender-type.png)
 
-Add new node in the <b>Configuration</b> section (localhost:9042)
+Add new node in the **Configuration** section (localhost:9042)
 
-<img src="attach/configuration-section.png">
+![Add new node](attach/configuration-section.png)
 
 Add auth details if needed (for Sandbox it's empty)
 
@@ -287,23 +287,23 @@ Fill keyspace name. "kaa" is used in this example, because it's already created 
 
 "logs_example" is used as the **Table name pattern**.
 
-<img src="attach/configuration-section-keysapace.png">
+![Keyspace configuration](attach/configuration-section-keyspace.png)
 
 The important part of configuration is **Column Mapping**:
 
-<img src="attach/column-mapping.png" width="75%" height="75%" />
+![Column mapping](attach/column-mapping.png)
 
 Other configuration:
 
-<img src="attach/other-configuration.png">
+![Other configuration](attach/other-configuration.png)
 
-Now click <b>Add</b> button on the top of the screen to create and deploy appender.
+Now click **Add** button on the top of the screen to create and deploy appender.
 
-<img src="attach/add-button.png">
+![Add button](attach/add-button.png)
 
 Verify that newly created appender has appeared in list.
 
-<img src="attach/verify-created-appender.png">
+![Verify newly created appender](attach/verify-created-appender.png)
 
 Now run Data collection demo application:
 
