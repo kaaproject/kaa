@@ -33,13 +33,19 @@ class GlobalMenu
     @root = sortSubitems(@root)
     File.open("_data/menu.yml", 'w') { |f| YAML.dump(@root, f) }
     @keys_kaa.each do |key|
-      key = "/#{key}/"
-      @versions[key] ||= {}
-      ["text","url"].each do |tag|
-        @versions[key][tag] = @root[key][tag]
+      begin
+        key = "/#{key}/"
+        @versions[key] ||= {}
+        ["text","url"].each do |tag|
+          @versions[key][tag] = @root[key][tag]
+        end
+        # According to new structure
+        @versions[key]["text"] = (@versions[key]["url"].split("/"))[2]
+        @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
+        @versions[key]["version"] = @versions[key]["text"].gsub(/K[Aa]{2} (.*)/,'\1')
+      rescue => e
+        puts "caught exception #{e}! for key : #{key}."
       end
-      @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
-      @versions[key]["version"] = @versions[key]["text"].gsub(/K[Aa]{2} (.*)/,'\1')
     end
     File.open("_data/versions.yml", 'w') { |f| YAML.dump(@versions, f) }    
 #     puts @root.to_yaml
@@ -76,7 +82,7 @@ class GlobalMenu
   ##  
   # Load all markdown files and parce yaml headers to extract nav information
   ##   
-  def loadDoc(key)   
+  def loadDoc(key)
     Dir.glob("#{key}/**/index.md") do |md_file|
       dirname = File.dirname(md_file)
       header = YAML.load(loadHeader(md_file))

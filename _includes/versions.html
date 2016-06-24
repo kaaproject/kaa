@@ -7,6 +7,9 @@
         {% if navurl contains val.url %}
             {% assign selected_url = val.url %}
             {% assign selected_item = val.text %}
+            {% if selected_item == site.data.latest_version.version %}
+                {% capture selected_item %}{{selected_item}} (latest){% endcapture %}
+            {% endif %}
         {% endif %}
     {% endfor %}
     {% assign page.ver = selected_url %}
@@ -23,7 +26,7 @@
         {%else%}
           <li>
             <a href="{{ val.url }}">
-              {{ val.text }}</a>
+              {{ val.text }}{% if val.text == site.data.latest_version.version %} (latest) {% endif %}</a>
           </li>
          {% endif %}
     {% endfor %}
