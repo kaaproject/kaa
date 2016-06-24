@@ -22,12 +22,12 @@ sort_idx: 20
         export RPI_ROOT=$(pwd)
         git clone --depth 1 https://github.com/raspberrypi/tools.git
 
-    If x86-32 operating system in use, execute:
+    If x86_32 operating system in use, execute:
 
         export INSTALLDIR=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr
         export PATH=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin:$PATH
 
-    If x86-64 operating system in use, execute:
+    If x86_64 operating system in use, execute:
 
         export INSTALLDIR=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/arm-linux-gnueabihf/libc/usr
         export PATH=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
