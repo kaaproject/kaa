@@ -10,17 +10,17 @@ sort_idx: 70
 * TOC
 {:toc}
 
-The Kaa notification subsystem enables delivery of messages from the Kaa server to endpoints. The structure of the data that is carried by notifications is defined by the notification schema, which is configured on the Kaa server and built into Kaa endpoints. Please review the Kaa [notifications design reference](#TODO) for more details.
+The Kaa notification subsystem enables delivery of messages from the Kaa server to endpoints. The structure of the data that is carried by notifications is defined by the notification schema, which is configured on the Kaa server and built into Kaa endpoints.
 
 This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox](http://www.kaaproject.org/download-kaa/) or a [full-blown Kaa cluster]({{root_url}}Administration-guide/System-installation/Single-node-installation) and that you have created at least one [tenant]({{root_url}}Administration-guide/Tenants-and-applications-management/#TODO) and one [application]({{root_url}}Administration-guide/Tenants-and-applications-management/#managing-applications) in Kaa. 
-We also recommend that you review [collecting endpoint profiles guide]({{root_url}}Programming-guide/Key-platform-features/Data-collection/) and [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) before you proceed with this guide.
+We also recommend that you review [collecting endpoint profiles guide]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) before you proceed with this guide.
 
 ### Basic architecture
 
 The following diagram illustrates basic entities and data flows in scope of the notification management:
 
 * Notifications are generated based on the [notification schema]() created by the developer for the application 
-* The user or admin sends a notification using either [Admin UI]() or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO)
+* The user or admin sends a notification via REST API call or using Administration UI (see [Sending notifications](#sending-notifications)). 
 
 ![](images/basic_architecture_notification.png)
 
@@ -100,7 +100,40 @@ Assuming that you have created custom endpoint groups from the [Using endpoint g
 </table>
 
 #### Sending notifications
-To send a notification, you can issue the [REST API]( {{root_url}}Programming-guide/Server-REST-APIs/#TODO ) request or use [Admin UI]().
+To send a notification, you can issue the [REST API]( {{root_url}}Programming-guide/Server-REST-APIs/#TODO ) request or Admininistraton UI as described below.
+
+Do the following steps to send a notification:
+
+1. In the **Notification topics**, click the mail icon next to the appropriate notification topic.
+2. In the **Send notification** window, create a notification either by using the **Notification body** [record form](#record-form) or by uploading the data in the JSON format from a file.
+
+> **NOTE:** The contents of the file should match the corresponding notification schema. And if **Endpoint KeyHash** field is empty will be sent a broadcast notification.
+
+![Send Notification](images/send_notification.png)
+3. Click **Send** to send the notification.
+
+For example, the default sandbox notification schema structure is the following:
+
+```json
+{
+    "type": "record",
+    "name": "Notification",
+    "namespace": "org.kaa.config",
+    "fields": [
+        {
+            "name": "message",
+            "type": "string"
+        }
+    ]
+}
+```
+
+The file with the following contents will match the default sandbox notification schema.
+
+```
+{"message": "Hello from Kaa!"}
+```
+
 
 ### Using Notifications SDK API
 This section provides code samples which illustrate practical usage of notifications in Kaa.
