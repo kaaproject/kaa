@@ -347,8 +347,8 @@ Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you ma
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14</a></li>
-  <li><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16</a></li>
+  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14.04</a></li>
+  <li><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16.04</a></li>
 </ul>
 
 <div class="tab-content">
@@ -938,8 +938,8 @@ $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 If you wish to switch from PostgreSQL to MariaDB you should copy content of MariaDB config files to Kaa DB config files:
 
 ```bash
-$ sudo cat /etc/kaa-node/conf/maria-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties
-$ sudo cat /etc/kaa-node/conf/mariadb-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties
+$ sudo bash -c "cat /etc/kaa-node/conf/maria-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
+$ sudo bash -c "cat /etc/kaa-node/conf/mariadb-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties"
 ```
 
 </div><div id="postgre_conf" class="tab-pane fade" markdown="1" >
@@ -964,8 +964,8 @@ $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 If you wish to switch from MariaDB to PostgreSQL you should copy content of PostgreSQL config files to Kaa DB config files:
 
 ```bash
-$ sudo cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties
-$ sudo cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties
+$ sudo bash -c "cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
+$ sudo bash -c "cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties"
 ```
 
 </div>
@@ -978,7 +978,7 @@ $ sudo cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node
 Check that a NoSQL database name matches your choice.
 
 ```
-$ cat /etc/kaa-node/conf/dao.properties | grep nosql_db_provider_name
+$ cat /etc/kaa-node/conf/nosql-dao.properties | grep nosql_db_provider_name
 nosql_db_provider_name=mongodb
 ```
 
@@ -986,7 +986,7 @@ In case you are going to use Cassandra, execute the following commands.
 
 ```bash
 $ sudo cqlsh -f /etc/kaa-node/conf/cassandra.cql
-$ sudo nano /etc/kaa-node/conf/dao.properties
+$ sudo nano /etc/kaa-node/conf/nosql-dao.properties
 nosql_db_provider_name=cassandra
 ```
 
