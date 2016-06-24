@@ -155,7 +155,7 @@ public interface KaaAdminService extends RemoteService {
 
     RecordField createCommonEmptySchemaForm() throws KaaAdminServiceException;
 
-    RecordField createConfigurationEmptySchemaForm() throws KaaAdminServiceException;
+    ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
     RecordField createEcfEmptySchemaForm() throws KaaAdminServiceException;
 

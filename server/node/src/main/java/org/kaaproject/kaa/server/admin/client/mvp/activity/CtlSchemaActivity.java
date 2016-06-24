@@ -28,16 +28,15 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.*;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
@@ -256,6 +255,8 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         } else if (place.getSchemaType() != null) {
                             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
                                 goTo(new ProfileSchemasPlace(place.getApplicationId()));
+                            } if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                                goTo(new ConfigurationSchemasPlace(place.getApplicationId()));
                             } else {
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
                             }
@@ -379,6 +380,18 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
+            } if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                KaaAdmin.getDataSource().createConfigurationSchemaFormCtlSchema(entity,
+                        new BusyAsyncCallback<ConfigurationSchemaViewDto>() {
+                            @Override
+                            public void onFailureImpl(Throwable caught) {
+                                callback.onFailure(caught);
+                            }
+                            @Override
+                            public void onSuccessImpl(ConfigurationSchemaViewDto result) {
+                                callback.onSuccess(null);
+                            }
+                        });
             } else {
                 KaaAdmin.getDataSource().createServerProfileSchemaFormCtlSchema(entity, 
                         new BusyAsyncCallback<ServerProfileSchemaViewDto>() {

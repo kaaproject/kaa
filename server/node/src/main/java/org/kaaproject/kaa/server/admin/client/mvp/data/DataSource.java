@@ -378,10 +378,11 @@ public class DataSource {
                 });
     }
 
-    public void createConfigurationEmptySchemaForm(final AsyncCallback<RecordField> callback) {
-        rpcService.createConfigurationEmptySchemaForm(new DataCallback<RecordField>(callback) {
+    public void createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm, final AsyncCallback<ConfigurationSchemaViewDto> callback) {
+        rpcService.createConfigurationSchemaFormCtlSchema(ctlSchemaForm, new DataCallback<ConfigurationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(RecordField result) {
+                    protected void onResult(ConfigurationSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(ConfigurationSchemaViewDto.class));
                     }
                 });
     }

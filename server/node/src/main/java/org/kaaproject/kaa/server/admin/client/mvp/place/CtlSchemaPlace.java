@@ -203,7 +203,6 @@ public class CtlSchemaPlace extends TreePlace {
         CONFIGURATION,
         ENDPOINT_PROFILE,
         SERVER_PROFILE
-        
     }
 
 }
