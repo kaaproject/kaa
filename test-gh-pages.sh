@@ -48,7 +48,7 @@ if [ -d doc ]; then
   fi
   cd $jekyll_root
   ruby scripts/create_global_toc.rb
-  jekyll serve
+  jekyll serve $@
 else
   echo "Nothing to do"
 fi
