@@ -327,7 +327,7 @@ add_executable(kaa_demo ${CMAKE_BINARY_DIR}/blank.c)
 Finally, we link our application with our demo library.
 
 ```CMake
-target_link_libraries(kaa_demo kaa_demo_s);
+target_link_libraries(kaa_demo kaa_demo_s)
 ```
 
 ## Building
