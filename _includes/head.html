@@ -30,8 +30,8 @@
   <script>
   $(document).ready(function(){
 	  $('.content img').click(function(){
-		$content = $(this).attr('src');
-		$.featherlight($content, configuration);
+		var content = $(this).attr('src');
+		$.featherlight(content);
 	  });
 	  $('.car-field').click(function(event){
 		event.preventDefault();
