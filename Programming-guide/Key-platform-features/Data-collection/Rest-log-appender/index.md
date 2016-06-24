@@ -22,13 +22,13 @@ The easiest way to create a Cassandra log appender for your application is by us
 
 To create a log appender for access via REST, do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to <i>REST</i>.
+3. Set the log appender type to _REST_.
 4. Fill in other fields as required.
-5. Click <b>Add</b>.
+5. Click **Add**.
 
-<img src="attach/add-log-appender-in-admin-ui.png">
+![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
 
 It's also possible to create REST appender using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
@@ -85,17 +85,17 @@ Based on this configuration, you'd be able to perform "POST" request to 10.2.2.6
 Log in Admin UI like admin and create an application.
 To create a new application, do the following: <br/>
 Open the Applications window by clicking the corresponding link on the navigation panel. <br/>
-<img src="attach/add-application1.png"> <br/>
+![Add application](attach/add-application1.png) <br/>
 Click **Add application** at the top of the window.
 Enter the title of your application, select Trustful credentials service type and then click **Add**. <br/>
-<img src="attach/add-application2.png"> <br/>
+![Enter application title](attach/add-application2.png) <br/>
 
 > **NOTE:**
 > If you open the Application details window of the newly created application (by clicking this application on either the Applications menu on the
 navigation panel or the Applications window), you will notice that the [Application Token]({{root_url}}Glossary) field has been filled in automatically.
 
 Log in as a tenant developer and create log schema in your previously created application: yourApp->Schemas->Log->Add schema <br/>
-<img src="attach/rest-log-appender1.png"> <br/>
+![Add log schema](attach/rest-log-appender1.png) <br/>
 Upload the following configuration schema:
 
 ```json
@@ -148,13 +148,13 @@ Upload the following configuration schema:
 }
 ```
 
-Go to **Log appenders** menu and add <b>REST log appender</b> to your app using your custom configuration:
+Go to **Log appenders** menu and add **REST log appender** to your app using your custom configuration:
 your app-> Log appenders -> Add log appender
-<img src="attach/rest-log-appender2.png">
+![Add log appender](attach/rest-log-appender2.png)
 
 Write appropriate configuration for your appender and save results.
 
-Then <b>generate SDK<b> appropriate to your platform. Add downloaded sdk to your project directory.
+Then **generate SDK** appropriate to your platform. Add downloaded sdk to your project directory.
 
 The following code snippet illustrates handling POST request from Kaa server:
 

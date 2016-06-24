@@ -39,13 +39,13 @@ The easiest way to create an instance of the Oracle NoSQL log appender for the a
 
 To create a log appender of the Oracle NoSQL key/value storage type, do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
-3. Set the log appender type to <i>Oracle NoSQL</i>.
+3. Set the log appender type to _Oracle NoSQL_.
 4. Fill in the Oracle NoSQL log appender configuration form.
-5. Click <b>Add</b>.
+5. Click **Add**.
 
-<img src="attach/add-log-appender-in-admin-ui.png">
+![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
 # Creating Oracle NoSQL log appender with Admin REST API
 
@@ -150,9 +150,9 @@ and install it to your Kaa server.
 2. Use [following](https://blogs.oracle.com/charlesLamb/entry/oracle_nosql_database_in_5) tutorial for more information about this database.
 3. Create an application using Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
 4. Add custom log schema that will be using for saving logs in database.<br/>
-<img src="attach/nosql-log-appender1.png">
+![Add log schema](attach/nosql-log-appender1.png)
 5. Add Oracle Nosql log appender and define configuration for it.<br/>
-<img src="attach/nosql-log-appender2.png">
+![Add log appender](attach/nosql-log-appender2.png)
 6. Generate SDK appropriate to your platform and write code to send logs to database.
 
 Your client code might look like this:
