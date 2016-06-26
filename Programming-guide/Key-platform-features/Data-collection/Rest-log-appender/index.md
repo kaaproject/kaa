@@ -26,7 +26,7 @@ To create a log appender for access via REST, do the following:
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
 3. Set the log appender type to _REST_.
 4. Fill in other fields as required.
-5. Click **Add**.
+5. Click **Add** button. Log appender is ready and operational at this point.
 
 ![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
@@ -35,7 +35,7 @@ It's also possible to create REST appender using [Admin REST API]({{root_url}}Pr
 
 # Configuration
 
-The Admin REST log appender configuration should match to
+The Admin REST log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
 
 Parameters for defining REST log appender
@@ -191,3 +191,5 @@ you will see something like that:
 ```
 INFO 19797 --- [nio-9000-exec-1] o.k.k.e.controller.SampleController   : {"timestamp":{"long":1456165449702},"data":{"bytes":"hello world!\n"},"endpointKeyHash":{"string":"7xVRbtqcs6EySlgzqVr34SujpeY=\n"},"hashFunction":{"string":"SHA1"}}
 ```
+
+If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

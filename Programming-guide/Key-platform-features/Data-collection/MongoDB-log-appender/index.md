@@ -21,11 +21,11 @@ The easiest way to create a MongoDB log appender for your application is by usin
 
 To create a log appender of the MongoDB storage type, do the following:
 
-1. In the <b>Log appenders</b> window, click <b>Add log appender</b>.
+1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
 3. Set the log appender type to _Mongo_.
 4. Fill in the Mongo log appender configuration form.
-5. Click <b>Add</b>.
+5. Click **Add** button. Log appender is ready and operational at this point.
 
 ![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
@@ -36,7 +36,7 @@ The following example illustrates how to provision the MongoDB log appender for 
 
 ## Configuration
 
-The MongoDB log appender configuration should match to
+The MongoDB log appender configuration must match to
  [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc) Avro schema.
 
 Fields of avro schema:
@@ -225,7 +225,7 @@ Go to Data collection demos in Sandbox.
 
 ![Data collection demo in Sandbox](attach/mongodb-log-appender1.png)
 
-Next, in the Admin UI follow to <b>Data collection demo</b> application
+Next, in the Admin UI follow to **Data collection demo** application
 
 ![Data collection Demo Admin UI](attach/mongodb-log-appender2.png)
 
@@ -237,15 +237,15 @@ There can be was same one. You can add new with your parameters
 
 Enter name of the new appender
 
-Select <b>MongoDB</b> appender type.
+Select **MongoDB** appender type.
 
 ![Log appender configuration](attach/mongodb-log-appender4.png)
 
-Add new node in the <b>Configuration</b> section (localhost:27017)
+Add new node in the **Configuration** section (localhost:27017)
 
 ![Add new node](attach/mongodb-log-appender5.png)
 
-Also you can add some <b>Authentication credentials<b>
+Also you can add some **Authentication credentials**
 
 ![Authentication credentials](attach/mongodb-log-appender6.png)
 
@@ -253,7 +253,7 @@ And other important parameters of configuration. You can change them or use defa
 
 ![Other configuration parameters](attach/mongodb-log-appender7.png)
 
-Now click <b>Add</b> button on the top of the screen to create and deploy appender.
+Now click **Add** button on the top of the screen to create and deploy appender.
 
 ![Add button](attach/mongodb-log-appender8.png)
 
@@ -298,3 +298,5 @@ You should observe similar output:
 { "_id" : ObjectId("57690b05d55fb20804a7f411"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_3", "timeStamp" : NumberLong("1466501893337") } }
 { "_id" : ObjectId("57690b05d55fb20804a7f412"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_4", "timeStamp" : NumberLong("1466501893337") } }
 ```
+
+If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

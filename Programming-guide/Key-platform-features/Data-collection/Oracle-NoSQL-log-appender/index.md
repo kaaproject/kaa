@@ -43,7 +43,7 @@ To create a log appender of the Oracle NoSQL key/value storage type, do the foll
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
 3. Set the log appender type to _Oracle NoSQL_.
 4. Fill in the Oracle NoSQL log appender configuration form.
-5. Click **Add**.
+5. Click **Add** button. Log appender is ready and operational at this point.
 
 ![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
@@ -55,7 +55,7 @@ Admin REST API.
 
 ## Configuration
 
-The Oracle NoSQL log appender configuration should match to
+The Oracle NoSQL log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/oracle-nosql-appender/src/main/avro/oracle-nosql-appender-config.avsc) Avro schema.
 
 The following configuration example matches the previous schema.
@@ -210,3 +210,5 @@ Than in your database you will see something like that:
     }
 }
 ```
+
+If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

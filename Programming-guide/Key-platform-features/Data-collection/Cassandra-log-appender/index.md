@@ -12,7 +12,7 @@ sort_idx: 10
 * TOC
 {:toc}
 
-The Cassandra log appender is responsible for transferring logs from the Operations server to the Cassandra database.
+The Cassandra log appender is responsible for transferring logs from the Operations service to the Cassandra database.
 
 # Creating Cassandra log appender with Admin UI
 
@@ -28,8 +28,7 @@ To create a log appender do the following:
 ![Cassandra log appender configuration](attach/cassandra-log-appender-config1.png) <br/>
 ![](attach/cassandra-log-appender-config2.png) <br/>
 ![](attach/cassandra-log-appender-config3.png) <br/>
-
-5. Click **Add**.
+5. Click **Add** button. Log appender is ready and operational at this point.
 
 
 # Creating Cassandra log appender with Admin REST API
@@ -39,19 +38,19 @@ The following example illustrates how to provision the Cassandra log appender vi
 
 ## Configuration
 
-The Cassandra log appender configuration should match to
+The Cassandra log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/cassandra-appender/src/main/avro/cassandra-appender-config.avsc) Avro schema.
 
 * **Cassandra nodes** - list of Cassandra hosts.
-* **Authentication credentials** - credentials used to authenticate on Cassandra cluster
-* **Keyspace name** – Cassandra keyspace used to prefix the data table
-* **Table name pattern** – pattern used to create table name (ex.: **logs_$app_token** adds the application token at the end of the table name).
+* **Authentication credentials** - credentials used to authenticate on Cassandra cluster.
+* **Keyspace name** – Cassandra keyspace used to prefix the data table.
+* **Table name pattern** – pattern used to create table name (for example: **logs_$app_token** adds the application token at the end of the table name).
 * **Column Mapping** - section that handles data mapping configuration. It can map specific log data to appropriate columns.
 * **Clustering** - section that handles clustering key configuration.
 
 |Type           |Example value                                                                  |Example column type|Description                                                                                                            |
 |---------------|-------------------------------------------------------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------|
-|HEADER_FIELD   |endpointKeyHash, applicationToken, headerVersion,timestamp, logSchemaVersion   |TEXT               |Maps a header variable to specified the column                                                                         |
+|HEADER_FIELD   |endpointKeyHash, applicationToken, headerVersion,timestamp, logSchemaVersion   |TEXT               |Maps a header variable to the specified column                                                                         |
 |EVENT_FIELD    |telemetry                                                                      |DOUBLE             |Maps a log schema field to the specified column                                                                        |
 |CLIENT_FIELD   |clientField                                                                    |TEXT               |Maps a client-side endpoint profile field to the specified column                                                      |
 |SERVER_FIELD   |serverField                                                                    |TEXT               |Maps a server-side endpoint profile field to the specified column                                                      |
