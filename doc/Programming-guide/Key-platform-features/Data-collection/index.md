@@ -199,8 +199,8 @@ You can flexibly configure Cassandra storage (Cassandra nodes, authentication cr
 
 * ### [Couchbase log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender)
 
-The Couchbase log appender is responsible for transferring logs from the Operations service to the [Couchbase](http://www.couchbase.com/) storage. Logs are
-stored in document storage. You can configure Couchbase servers list, bucket name and password.
+The Couchbase log appender is responsible for transferring logs from the Operations service to the [Couchbase](http://www.couchbase.com/) database. You can
+configure Couchbase servers list, bucket name and password.
 
 * ### [File system log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender)
 

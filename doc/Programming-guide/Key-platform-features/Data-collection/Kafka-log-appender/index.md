@@ -24,7 +24,7 @@ To create a log appender of the Kafka storage type, do the following:
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
 3. Set the log appender type to _Kafka_.
 4. Fill in the Kafka log appender configuration form.
-5. Click **Add**.
+5. Click **Add** button. Log appender is ready and operational at this point.
 
 ![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
@@ -36,7 +36,7 @@ The following example illustrates how to provision the Kafka log appender for th
 
 ## Configuration
 
-The Kafka log appender configuration should match to
+The Kafka log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc) Avro schema.
 
 ## Fields description
@@ -162,8 +162,8 @@ Download [Kaa Sandbox](http://www.kaaproject.org/download-kaa/) then set up it a
 >**NOTE:**
 > Kafka must be installed, running and reachable from Kaa to complete this example. For details about Kafka installation refer to
 [official Apache documentation](https://kafka.apache.org/07/quickstart.html).
-> Kaa use Zookeeper service started on port 2181. And Before starting Kafka you need to change zookeeper port from 2181 to for example 2183.
-> In the Kafka installation directory edit next property files: <br/>
+> Kaa uses Zookeeper service listening on port 2181. Before starting Kafka you need to change Zookeeper to use some other port (e.g. 2183).
+> For this, you will need to edit properties files (they are located within the Kafka installation directory) like below: <br/>
 > ```config/zookeeper.properties``` : set ```clientPort=2183 ```; <br/>
 ```config/server.properties``` : set ```zookeeper.connect=localhost:2183```; <br/>
 ```config/consumer.properties``` : set ```zookeeper.connect=127.0.0.1:2183```
@@ -207,7 +207,7 @@ We have next log schema:
 }
 ```
 
-The following JSON example matches the previous schema.
+The following JSON example matches the schema above.
 
 ```json
 {
@@ -252,7 +252,7 @@ Verify that newly created appender has appeared in list.
 
 ![Verify newly created log appender](attach/verify-log-appender.png)
 
-From Kafka installation directory run next command:
+From Kafka installation directory run the next command:
 
 ```bash
 bin/kafka-console-consumer.sh --zookeeper localhost:2183 --topic kaa
@@ -290,3 +290,5 @@ bin/kafka-console-consumer.sh --zookeeper localhost:2183 --topic kaa
 {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466501893337}}
 {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466501893337}}
 ```
+
+If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

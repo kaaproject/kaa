@@ -18,22 +18,25 @@ The Flume log appender encapsulates received logs into Flume events and sends th
 
 The easiest way to create a Flume log appender for your application is by using Admin UI.
 
-To create a log appender which will be integrated with Hadoop or Spark, do the following:
+To create a log appender do the following:
 
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to _Flume_.
-4. Fill in the Flume log appender configuration form. <br/>
-NOTE:
-Flume log appenders can have either prioritized or round robin host balancing.
-5. For the prioritized host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address, 
+1.In the **Log appenders** window, click **Add log appender**. <br/>
+2.Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields. <br/>
+3.Set the log appender type to _Flume_. <br/>
+4.Fill in the Flume log appender configuration form. <br/>
+
+>**NOTE:**
+>Flume log appenders can have either prioritized or round robin host balancing.
+
+5.Configure host balancing. <br/>
+5.a) For the prioritized host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address,
 port and priority. The highest priority is 1. When choosing a server to which to save logs, an endpoint will send requests to the servers starting from 
 the server with the highest priority. <br/>
 ![Creating flume log appender](attach/creating-flume-log-appender.png)
-6. For round robin host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address and port. 
+5.b) For round robin host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address and port.
 When choosing a server to which to save logs, an endpoint will send requests to the servers according to the round robin algorithm. <br/>
 ![Creating flume log appender step 2](attach/creating-flume-log-appender2.png)
-7. Click **Add**.
+7.Click **Add** button. Log appender is ready and operational at this point.
 
 # Creating Flume log appender with Admin REST API
 
@@ -275,7 +278,7 @@ This Avro schema is obtained via a [Admin REST API]({{root_url}}Programming-guid
 
 ## Configuration
 
-The Flume log appender configuration should match to
+The Flume log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/flume-appender/src/main/avro/flume-appender-config.avsc) Avro schema.
 
 |name|description|
@@ -323,9 +326,11 @@ The Flume log appender configuration should match to
 The following configuration example matches the previous schema.
 
 >**NOTE:**  
-> Flume log appenders can have either prioritized or round robin host balancing.
-* For the prioritized host balancing, every flume node record should have a host address, port and priority. The highest priority is 1. When choosing a server to which to save logs, an endpoint will send requests to the servers starting from the server with the highest priority.
-* For the round robin host balancing, every flume node record should have a host address and port. When choosing a server to which to save logs, an endpoint will send requests to the servers according to the round robin algorithm.
+> Flume log appenders can have either prioritized or round robin host balancing. <br/>
+* For the prioritized host balancing, every flume node record should have a host address, port and priority. The highest priority is 1. When choosing a server
+to which to save logs, an endpoint will send requests to the servers starting from the server with the highest priority. <br/>
+* For the round robin host balancing, every flume node record should have a host address and port. When choosing a server to which to save logs, an endpoint
+will send requests to the servers according to the round robin algorithm. <br/>
 * You can include client/server profile into persisted data via corresponding check-boxes.
 
 ## Administration
@@ -411,14 +416,26 @@ After that you can go to Data collection demos in Sandbox.
 
 ![Add log appender step 5](attach/add-log-appender5.png)
 
-Run the application using the following command in the console:
+Use instruction from sandbox to run demo application.
+
+After this you should see something like below:
 
 ```bash
-$ java -jar DataCollectionDemo.jar
+java -jar DataCollectionDemo.jar
+2016-06-16 14:09:28,483 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
+2016-06-16 14:09:29,795 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
+2016-06-16 14:09:29,798 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466075369795} sent
+2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466075369795} sent
+2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466075369795} sent
+2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466075369795} sent
+2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466075369795} sent
+2016-06-16 14:09:29,999 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [204 ms].
+2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [205 ms].
+2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [205 ms].
+2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [205 ms].
+2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [204 ms].
+2016-06-16 14:09:30,001 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
+2016-06-16 14:09:30,006 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
 ```
 
-After this command you will see
-
-![Add log appender step 6](attach/add-log-appender6.png)
-
-This logs you can find in HDFS path which you indicate when set up kaa-flume sink
+The logs are stored within the HDFS path defined during Kaa Flume sink setup.

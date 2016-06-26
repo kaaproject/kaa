@@ -13,7 +13,7 @@ sort_idx: 40
 {:toc}
 
 The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
-or in pair with tools like Flume and others. Logs are stored in files under the ```/$logsRootPath/tenant_$tenantId/application_$applicationId``` folder, 
+or in pair with tools like Flume etc. Logs are stored in files under the ```/$logsRootPath/tenant_$tenantId/application_$applicationId``` folder,
 where _logsRootPath_ is a configuration parameter, _tenantId_ and _applicationId_ are ids of the current tenant and
 the application respectively. Access to the logs is controlled via Linux file system permissions.
 
@@ -29,7 +29,7 @@ To create a log appender of the file system storage type, do the following:
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
 3. Set the log appender type to _File_.
 4. Fill in other fields as required.
-5. Click **Add**.
+5. Click **Add** button. Log appender is ready and operational at this point.
 
 ![File system log appender](attach/file-system-log-appender.png)
 
@@ -40,7 +40,7 @@ The following example illustrates how to provision the file system log appender 
 
 ## Configuration
 
-The file system log appender configuration should match to
+The file system log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
 
 ```json
@@ -101,7 +101,7 @@ The file system log appender configuration should match to
 
 <br/>
 
-The following configuration example matches the previous schema.
+The following configuration example matches the schema above.
 
 ```json
 {
@@ -192,7 +192,7 @@ Add Log metadata fields.
 
 Select _File_ appender type.
 
-Please, see [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
+See [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
 
 Verify that newly created appender has appeared in list.
 
@@ -232,3 +232,4 @@ Your ```application.log``` should contain similar content:
 261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466153965458}}
 ```
 
+If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
