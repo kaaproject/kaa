@@ -294,52 +294,12 @@ Handlebars.registerHelper('renderTextParam', function(param) {
     return new Handlebars.SafeString(result);
 });
 
-this["Handlebars"]["templates"]["main"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <span style=\"float:right\"><a href=\""
-    + escapeExpression(((helper = (helper = helpers.validatorUrl || (depth0 != null ? depth0.validatorUrl : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"validatorUrl","hash":{},"data":data}) : helper)))
-    + "/debug?url="
-    + escapeExpression(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"url","hash":{},"data":data}) : helper)))
-    + "\"><img id=\"validator\" src=\""
-    + escapeExpression(((helper = (helper = helpers.validatorUrl || (depth0 != null ? depth0.validatorUrl : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"validatorUrl","hash":{},"data":data}) : helper)))
-    + "?url="
-    + escapeExpression(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"url","hash":{},"data":data}) : helper)))
-    + "\"></a>\n    </span>\n";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class='info' id='api_info'>\n  \n</div>\n<div class='container' id='resources_container'>\n  <ul id='resources'></ul>\n\n  <div class=\"footer\">\n    <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: "
-    + escapeExpression(((helper = (helper = helpers.basePath || (depth0 != null ? depth0.basePath : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"basePath","hash":{},"data":data}) : helper)))
-    + "\n    \n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.validatorUrl : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer + "    </h4>\n    </div>\n</div>\n";
-},"useData":true});
-this["Handlebars"]["templates"]["main"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "  , <span style=\"font-variant: small-caps\" data-sw-translate>api version</span>: "
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.info : depth0)) != null ? stack1.version : stack1), depth0))
-    + "\n    ";
-},"3":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <span style=\"float:right\"><a href=\""
-    + escapeExpression(((helper = (helper = helpers.validatorUrl || (depth0 != null ? depth0.validatorUrl : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"validatorUrl","hash":{},"data":data}) : helper)))
-    + "/debug?url="
-    + escapeExpression(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"url","hash":{},"data":data}) : helper)))
-    + "\"><img id=\"validator\" src=\""
-    + escapeExpression(((helper = (helper = helpers.validatorUrl || (depth0 != null ? depth0.validatorUrl : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"validatorUrl","hash":{},"data":data}) : helper)))
-    + "?url="
-    + escapeExpression(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"url","hash":{},"data":data}) : helper)))
-    + "\"></a>\n    </span>\n";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class='info' id='api_info'>\n  \n</div>\n<div class='container' id='resources_container'>\n  <ul id='resources'></ul>\n\n  <div class=\"footer\">\n    <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: "
-    + escapeExpression(((helper = (helper = helpers.basePath || (depth0 != null ? depth0.basePath : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"basePath","hash":{},"data":data}) : helper)))
-    + "\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.info : depth0)) != null ? stack1.version : stack1), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  buffer += "]\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.validatorUrl : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer + "    </h4>\n    </div>\n</div>\n";
-},"useData":true});
+this["Handlebars"]["templates"]["main"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class='info' id='api_info'>\n  \n</div>\n<div class='container' id='resources_container'>\n  <ul id='resources'></ul>\n</div>\n";
+  },"useData":true});
+this["Handlebars"]["templates"]["main"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class='info' id='api_info'>\n  \n</div>\n<div class='container' id='resources_container'>\n  <ul id='resources'></ul>\n</div>\n";
+  },"useData":true});
 this["Handlebars"]["templates"]["operation"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return "deprecated";
   },"3":function(depth0,helpers,partials,data) {
@@ -402,7 +362,7 @@ this["Handlebars"]["templates"]["operation"] = Handlebars.template({"1":function
   },"26":function(depth0,helpers,partials,data) {
   return "";
 },"28":function(depth0,helpers,partials,data) {
-  return "          <div class='sandbox_header'>\n            <input class='submit' type='submit' value='show curl' data-sw-translate/>\n            <a href='#' class='response_hider' style='display:none' data-sw-translate>Hide Response</a>\n            <span class='response_throbber' style='display:none'></span>\n          </div>\n";
+  return "          <div class='sandbox_header'>\n            <input class='submit' type='submit' value='show sample' data-sw-translate/>\n            <a href='#' class='response_hider' style='display:none' data-sw-translate>Hide Response</a>\n            <span class='response_throbber' style='display:none'></span>\n          </div>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helper, options, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing, buffer = "\n  <ul class='operations' >\n    <li class='"
     + escapeExpression(((helper = (helper = helpers.method || (depth0 != null ? depth0.method : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"method","hash":{},"data":data}) : helper)))
@@ -589,14 +549,14 @@ this["Handlebars"]["templates"]["operation"] = Handlebars.template({"1":function
   buffer += "\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.headers : depth0), {"name":"if","hash":{},"fn":this.program(19, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  buffer += "\n        <form accept-charset='UTF-8' class='sandbox'>\n          <div style='margin:0;padding:0;display:inline'></div>\n";
+  buffer += "\n        <div class='sandbox'>\n          <div style='margin:0;padding:0;display:inline'></div>\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.parameters : depth0), {"name":"if","hash":{},"fn":this.program(22, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.responseMessages : depth0), {"name":"if","hash":{},"fn":this.program(24, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.isReadOnly : depth0), {"name":"if","hash":{},"fn":this.program(26, data),"inverse":this.program(28, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "        </form>\n        <div class='response' style='display:none'>\n          <h4 class='curl'>Curl</h4>\n          <div class='block curl'></div>\n          <h4 data-sw-translate>Request URL</h4>\n          <div class='block request_url'></div>\n          \n        </div>\n      </div>\n    </li>\n  </ul>\n";
+  return buffer + "        </div>\n        <div class='response' style='display:none'>\n          <h4 class='curl'>Curl</h4>\n          <div class='block curl'></div>\n          <h4 data-sw-translate>Request URL</h4>\n          <div class='block request_url'></div>\n          \n        </div>\n      </div>\n    </li>\n  </ul>\n";
 },"useData":true});
 this["Handlebars"]["templates"]["param_list"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return " required";
@@ -25735,7 +25695,7 @@ SwaggerUi.Views.OperationView = Backbone.View.extend({
 
       opts.responseContentType = $('div select[name=responseContentType]', $(this.el)).val();
       opts.requestContentType = $('div select[name=parameterContentType]', $(this.el)).val();
-      $('.response_throbber', $(this.el)).show();
+      //$('.response_throbber', $(this.el)).show();
       if (isFileUpload) {
         $('.request_url', $(this.el)).html('<pre></pre>');
         $('.request_url pre', $(this.el)).text(this.invocationUrl);
