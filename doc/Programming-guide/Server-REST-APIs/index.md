@@ -26,11 +26,6 @@ sort_idx: 60
   <script src='lib/marked.js' type='text/javascript'></script>
   <script src='lib/swagger-oauth.js' type='text/javascript'></script>
 
-  <!-- Some basic translations -->
-  <!-- <script src='lang/translator.js' type='text/javascript'></script> -->
-  <!-- <script src='lang/ru.js' type='text/javascript'></script> -->
-  <!-- <script src='lang/en.js' type='text/javascript'></script> -->
-
   <script type="text/javascript">
     $(function () {
       window.swaggerUi = new SwaggerUi({
@@ -39,7 +34,9 @@ sort_idx: 60
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
         },
-
+        onComplete: function(swaggerApi, swaggerUi){
+          var restApiViewBlock =
+        }
       });
 
       window.swaggerUi.load();
@@ -49,6 +46,7 @@ sort_idx: 60
           console.log.apply(console, arguments);
         }
       }
+
   });
   </script>
 
