@@ -422,7 +422,7 @@ body:before {
 /* footer */
 
 /* content */
-p, li{
+#sidebar li, p, li{
 	font-size: 16px;
 	line-height: 1.5;
 	text-align: justify;
@@ -436,7 +436,7 @@ h1{
 	color: #5b5b5b;
 }
 
-h2{
+#sidebar h2, h2, .info_title{
 	margin-top: 30px;
 	margin-bottom: 20px;
 	font-size: 32px;
@@ -469,6 +469,11 @@ img {
 	max-width: 100%;
     margin: 20px auto;
     display: block;
+	max-height: 600px; /*for really big images*/
+}
+
+.featherlight img{
+	max-height: initial;
 }
 
 .content img{
@@ -550,6 +555,7 @@ pre, .nav-tabs>li>a {
     background-position-x: 5px;
     font-size: 16px;
     border: none;
+	font-family: 'Open Sans';
 }
 #sidebar{
 	height: calc(100% - 60px);
@@ -672,3 +678,20 @@ li.menu-opened + ul{
 }
 /* sidebar drop-down */
 /* sidebar*/
+/*Custom scroll for webkit*/
+/* ::-webkit-scrollbar
+{
+  width: 10px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(0, 0, 0, 0.5);
+} */
+/*Custom scroll for webkit*/
