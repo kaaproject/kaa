@@ -23,19 +23,20 @@ To create a log appender do the following:
 1.In the **Log appenders** window, click **Add log appender**. <br/>
 2.Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields. <br/>
 3.Set the log appender type to _Flume_. <br/>
-4.Fill in the Flume log appender configuration form. <br/>
+4.Fill in the Flume log appender [configuration](#configuration) form. <br/>
+![Flume log appender configuration](attach/flume-log-appender-configuration.png)
+5.Configure host balancing. <br/>
 
 >**NOTE:**
 >Flume log appenders can have either prioritized or round robin host balancing.
 
-5.Configure host balancing. <br/>
 5.a) For the prioritized host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address,
 port and priority. The highest priority is 1. When choosing a server to which to save logs, an endpoint will send requests to the servers starting from 
 the server with the highest priority. <br/>
-![Creating flume log appender](attach/creating-flume-log-appender.png)
+![Configure prioritized host balancing](attach/configure-prioritized-host-balancing.png)
 5.b) For round robin host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address and port.
 When choosing a server to which to save logs, an endpoint will send requests to the servers according to the round robin algorithm. <br/>
-![Creating flume log appender step 2](attach/creating-flume-log-appender2.png)
+![Configure round robin host balancing](attach/configure-round-robin-host-balancing.png)
 7.Click **Add** button. Log appender is ready and operational at this point.
 
 # Creating Flume log appender with Admin REST API
@@ -281,16 +282,16 @@ This Avro schema is obtained via a [Admin REST API]({{root_url}}Programming-guid
 The Flume log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/flume-appender/src/main/avro/flume-appender-config.avsc) Avro schema.
 
-|name|description|
-|---|---|
-|executorThreadPoolSize|Executor thread pool size|
-|callbackThreadPoolSize|Callback thread pool size|
-|clientsThreadPoolSize|RPC client max thread pool| 
-|includeClientProfile|Client profile data(boolean value)|
-|includeServerProfile|Server profile data(boolean value)|
-|flumeEventFormat|Records container or Generic|
-|hostsBalancing|Prioritized or Round Robin|
-|FlumeNodes|Flume nodes|
+|name                   |description                                        |
+|-----------------------|---------------------------------------------------|
+|executorThreadPoolSize |Executor thread pool size                          |
+|callbackThreadPoolSize |Callback thread pool size                          |
+|clientsThreadPoolSize  |RPC client max thread pool                         |
+|includeClientProfile   |Client-side endpoint profile data (boolean value)  |
+|includeServerProfile   |Server-side endpoint profile data (boolean value)  |
+|flumeEventFormat       |Records container or Generic                       |
+|hostsBalancing         |Prioritized or Round Robin                         |
+|FlumeNodes             |Flume nodes                                        |
 
 <br/>
 
@@ -331,7 +332,7 @@ The following configuration example matches the previous schema.
 to which to save logs, an endpoint will send requests to the servers starting from the server with the highest priority. <br/>
 * For the round robin host balancing, every flume node record should have a host address and port. When choosing a server to which to save logs, an endpoint
 will send requests to the servers according to the round robin algorithm. <br/>
-* You can include client/server profile into persisted data via corresponding check-boxes.
+* You can include client-side and/or server-side endpoint profile data into persisted data via corresponding check-boxes.
 
 ## Administration
 
