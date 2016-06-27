@@ -78,9 +78,10 @@
                     "name":"DataMappingElement",
                     "fields":[
                         {
-                            "name":"recordClassName",
-                            "displayName":"Record class name",
-                            "type":"string"
+                            "name":"filter",
+                            "displayName":"Activation condition",
+                            "type":"string",
+                            "by_default":"true"
                         },
                         {
                             "name":"tableNamePattern",
