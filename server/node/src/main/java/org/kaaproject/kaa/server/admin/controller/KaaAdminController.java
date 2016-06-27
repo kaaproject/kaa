@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.util.StringUtils.isEmpty;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -436,11 +436,10 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "tenant", method = RequestMethod.POST)
     @ResponseBody
-    public TenantUserDto editTenant(@RequestBody TenantUserDto tenantUser) throws KaaAdminServiceException {
-        try {
-            if (isEmpty(tenantUser.getAuthority())) {
-                tenantUser.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-            } else if (!KaaAuthorityDto.TENANT_ADMIN.equals(tenantUser.getAuthority())) {
+    public TenantUserDto editTenant( @Valid @RequestBody TenantUserDto tenantUser) throws KaaAdminServiceException {
+        try
+        {
+            if (!KaaAuthorityDto.TENANT_ADMIN.equals(tenantUser.getAuthority())) {
                 throw new KaaAdminServiceException("Incorrect authority for tenant. Authority must be TENANT_ADMIN.", ServiceErrorCode.INVALID_ARGUMENTS);
             }
             CreateUserResult result = userFacade.saveUserDto(tenantUser, passwordEncoder);
