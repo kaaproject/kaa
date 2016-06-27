@@ -2,7 +2,6 @@
 layout: page
 title: Endpoint profiles
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Endpoint-profiles/
 sort_idx: 20
 ---
 

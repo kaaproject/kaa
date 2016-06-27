@@ -2,7 +2,6 @@
 layout: page
 title: Endpoint groups
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Endpoint-groups
 sort_idx: 30
 ---
 

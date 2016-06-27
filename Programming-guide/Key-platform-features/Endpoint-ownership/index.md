@@ -2,7 +2,6 @@
 layout: page
 title: Endpoint ownership
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Endpoint-ownership
 sort_idx: 40
 ---
 

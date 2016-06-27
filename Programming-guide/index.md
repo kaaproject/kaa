@@ -2,7 +2,6 @@
 layout: page
 title: Programming guide
 permalink: /:path/
-nav: /:path/Programming-guide/
 sort_idx: 20
 ---
 

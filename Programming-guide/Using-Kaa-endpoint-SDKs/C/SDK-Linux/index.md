@@ -2,7 +2,6 @@
 layout: page
 title: Linux
 permalink: /:path/
-nav: /:path/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux
 sort_idx: 10
 ---
 {% assign root_url = page.url | split: '/'%}

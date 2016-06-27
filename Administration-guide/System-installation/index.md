@@ -2,7 +2,6 @@
 layout: page
 title: System installation
 permalink: /:path/
-nav: /:path/Administration-guide/System-installation/
 sort_idx: 20
 ---
 * [Introduction](#introduction)
