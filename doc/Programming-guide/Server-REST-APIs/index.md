@@ -30,7 +30,7 @@ sort_idx: 60
   <script type="text/javascript">
     $(function () {
       window.swaggerUi = new SwaggerUi({
-        url: "http://localhost:4000/kaa/latest/Programming-guide/Server-REST-APIs/swagger.json",
+        url: "swagger.json",
         dom_id: "swagger-ui-container",      
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
