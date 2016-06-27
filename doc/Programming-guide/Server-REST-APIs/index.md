@@ -21,7 +21,7 @@ sort_idx: 60
   <script src='lib/handlebars-2.0.0.js' type='text/javascript'></script>
   <script src='lib/underscore-min.js' type='text/javascript'></script>
   <script src='lib/backbone-min.js' type='text/javascript'></script>
-  <script src='swagger-ui.js' type='text/javascript'></script>
+  <script src='swagger-ui.min.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
   <script src='lib/jsoneditor.min.js' type='text/javascript'></script>
   <script src='lib/marked.js' type='text/javascript'></script>
@@ -36,9 +36,7 @@ sort_idx: 60
           log("Unable to Load SwaggerUI");
         }
       });
-
       window.swaggerUi.load();
-
       function log() {
         if ('console' in window) {
           console.log.apply(console, arguments);
