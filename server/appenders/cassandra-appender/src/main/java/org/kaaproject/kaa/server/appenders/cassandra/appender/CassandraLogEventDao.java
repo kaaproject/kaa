@@ -65,7 +65,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class CassandraLogEventDao implements LogEventDao {
-    public static final String DATA_FIELD = "data";
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLogEventDao.class);
     private static final String $CONFIG_HASH = "$config_hash";
     private static final String $APP_TOKEN = "$app_token";
@@ -90,7 +89,7 @@ public class CassandraLogEventDao implements LogEventDao {
     private ConsistencyLevel writeConsistencyLevel;
     private String keyspaceName;
     private CassandraConfig configuration;
-    private Map<String, DataMappingElement> mappingConfiguration = new HashMap<>();
+    private Map<String, List<DataMappingElement>> mappingConfiguration = new HashMap<>();
 
     public CassandraLogEventDao(CassandraConfig configuration) throws UnknownHostException {
         if (configuration == null) {
@@ -158,8 +157,12 @@ public class CassandraLogEventDao implements LogEventDao {
         batchType = configuration.getCassandraBatchType();
         maxBatchSize = configuration.getCassandraMaxBatchSize() * KILOBYTE;
         cluster = builder.build();
-        for (DataMappingElement mappingElement: configuration.getColumnMappingList()) {
-            mappingConfiguration.put(mappingElement.getRecordClassName(), mappingElement);
+        for (DataMappingElement mappingElement : configuration.getColumnMappingList()) {
+            if (!mappingConfiguration.containsKey(mappingElement.getFilter())) {
+                mappingConfiguration.put(mappingElement.getFilter(), new ArrayList<>());
+            }
+            List<DataMappingElement> mappingElementList = mappingConfiguration.get(mappingElement.getFilter());
+            mappingElementList.add(mappingElement);
         }
     }
 
@@ -369,106 +372,120 @@ public class CassandraLogEventDao implements LogEventDao {
 
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
-            GenericRecord dataRecord = (GenericRecord) dto.getEvent().get(DATA_FIELD);
-            if (dataRecord != null) {
-                String className = dataRecord.getSchema().getFullName();
-                LOG.trace("Get mapping configuration for the type {}", className);
-                DataMappingElement mappingElement = mappingConfiguration.get(className);
-                if (mappingElement != null) {
-                    Insert insert = QueryBuilder.insertInto(keyspaceName, mappingElement.getTableNamePattern());
-                    for (ColumnMappingElement element : mappingElement.getColumnMapping()) {
-                        switch (element.getType()) {
-                            case HEADER_FIELD:
-                                insert.value(element.getColumnName(),
-                                        formatField(element.getColumnType(), element.getValue(), dto.getHeader()));
-                                break;
-                            case EVENT_FIELD:
-                                insert.value(element.getColumnName(),
-                                        formatField(element.getColumnType(), element.getValue(), dto.getEvent()));
-                                break;
-                            case CLIENT_FIELD:
-                                if (clientProfile != null) {
-                                    insert.value(element.getColumnName(), formatField(element.getColumnType(), clientProfile.get(element.getValue())));
-                                } else {
-                                    throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
-                                }
-                                break;
-                            case SERVER_FIELD:
-                                if (serverProfile != null) {
-                                    insert.value(element.getColumnName(), formatField(element.getColumnType(), serverProfile.get(element.getValue())));
-                                } else {
-                                    throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
-                                }
-                                break;
-                            case HEADER_JSON:
-                                insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
-                                break;
-                            case HEADER_BINARY:
-                                insert.value(element.getColumnName(), ByteBuffer.wrap(headerConverter.encode(dto.getHeader())));
-                                break;
-                            case EVENT_JSON:
-                                if (StringUtils.isEmpty(element.getValue())) {
-                                    insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
-                                } else {
-                                    GenericRecord gr = dto.getEvent();
-                                    GenericRecord currentRecord = (GenericRecord) gr.get(element.getValue());
-                                    if (currentRecord != null) {
-                                        insert.value(element.getColumnName(), eventConverter.encodeToJson(currentRecord));
+            GenericRecord logRecord = dto.getEvent();
+            if (logRecord != null) {
+                List<DataMappingElement> mappingElements = findMappings(logRecord);
+                LOG.debug("Found {} mapping element(s)", mappingElements.size());
+                if (mappingElements.size() > 0) {
+                    for (DataMappingElement mappingElement : mappingElements) {
+                        LOG.debug("Processing mapping for table: {}", mappingElement.getTableNamePattern());
+                        Insert insert = QueryBuilder.insertInto(keyspaceName, mappingElement.getTableNamePattern());
+                        for (ColumnMappingElement element : mappingElement.getColumnMapping()) {
+                            switch (element.getType()) {
+                                case HEADER_FIELD:
+                                    insert.value(element.getColumnName(),
+                                            formatField(element.getColumnType(), element.getValue(), dto.getHeader()));
+                                    break;
+                                case EVENT_FIELD:
+                                    insert.value(element.getColumnName(),
+                                            formatField(element.getColumnType(), element.getValue(), dto.getEvent()));
+                                    break;
+                                case CLIENT_FIELD:
+                                    if (clientProfile != null) {
+                                        insert.value(element.getColumnName(), formatField(element.getColumnType(), clientProfile.get(element.getValue())));
                                     } else {
-                                        insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
+                                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
                                     }
-                                }
-                                break;
-                            case EVENT_BINARY:
-                                insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
-                                break;
-                            case CLIENT_JSON:
-                                if (clientProfileJson != null) {
-                                    insert.value(element.getColumnName(), clientProfileJson);
-                                } else {
-                                    throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
-                                }
-                                break;
-                            case CLIENT_BINARY:
-                                if (clientProfileBinary != null) {
-                                    insert.value(element.getColumnName(), clientProfileBinary);
-                                } else {
-                                    throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
-                                }
-                                break;
-                            case SERVER_JSON:
-                                if (serverProfileJson != null) {
-                                    insert.value(element.getColumnName(), serverProfileJson);
-                                } else {
-                                    throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
-                                }
-                            case SERVER_BINARY:
-                                if (serverProfileBinary != null) {
-                                    insert.value(element.getColumnName(), clientProfileBinary);
-                                } else {
-                                    throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
-                                }
-                                break;
-                            case UUID:
-                                insert.value(element.getColumnName(), UUID.randomUUID());
-                                break;
-                            case TS:
-                                reuseTsValue = formatTs(reuseTsValue, element);
-                                insert.value(element.getColumnName(), reuseTsValue);
-                                break;
+                                    break;
+                                case SERVER_FIELD:
+                                    if (serverProfile != null) {
+                                        insert.value(element.getColumnName(), formatField(element.getColumnType(), serverProfile.get(element.getValue())));
+                                    } else {
+                                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                                    }
+                                    break;
+                                case HEADER_JSON:
+                                    insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
+                                    break;
+                                case HEADER_BINARY:
+                                    insert.value(element.getColumnName(), ByteBuffer.wrap(headerConverter.encode(dto.getHeader())));
+                                    break;
+                                case EVENT_JSON:
+                                    if (StringUtils.isEmpty(element.getValue())) {
+                                        insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
+                                    } else {
+                                        GenericRecord gr = dto.getEvent();
+                                        GenericRecord currentRecord = (GenericRecord) gr.get(element.getValue());
+                                        if (currentRecord != null) {
+                                            insert.value(element.getColumnName(), eventConverter.encodeToJson(currentRecord));
+                                        } else {
+                                            insert.value(element.getColumnName(), eventConverter.encodeToJson(dto.getEvent()));
+                                        }
+                                    }
+                                    break;
+                                case EVENT_BINARY:
+                                    insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
+                                    break;
+                                case CLIENT_JSON:
+                                    if (clientProfileJson != null) {
+                                        insert.value(element.getColumnName(), clientProfileJson);
+                                    } else {
+                                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                                    }
+                                    break;
+                                case CLIENT_BINARY:
+                                    if (clientProfileBinary != null) {
+                                        insert.value(element.getColumnName(), clientProfileBinary);
+                                    } else {
+                                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                                    }
+                                    break;
+                                case SERVER_JSON:
+                                    if (serverProfileJson != null) {
+                                        insert.value(element.getColumnName(), serverProfileJson);
+                                    } else {
+                                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                                    }
+                                case SERVER_BINARY:
+                                    if (serverProfileBinary != null) {
+                                        insert.value(element.getColumnName(), clientProfileBinary);
+                                    } else {
+                                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                                    }
+                                    break;
+                                case UUID:
+                                    insert.value(element.getColumnName(), UUID.randomUUID());
+                                    break;
+                                case TS:
+                                    reuseTsValue = formatTs(reuseTsValue, element);
+                                    insert.value(element.getColumnName(), reuseTsValue);
+                                    break;
+                            }
                         }
+                        // Here we get ttl parameter from config and add it to insert query
+                        insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
+                        insertArray.add(insert);
                     }
-                    // Here we get ttl parameter from config and add it to insert query
-                    insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
-                    insertArray.add(insert);
                 } else {
-                    LOG.warn("Not found mapping configuration for the type {}", className);
+                    LOG.warn("Not found mapping configuration. LogRecord: [{}]", logRecord);
                 }
             } else {
                 throw new InvalidParameterException("Data field inside log event is empty.");
             }
         }
         return insertArray.toArray(new Insert[insertArray.size()]);
+    }
+
+    private List<DataMappingElement> findMappings(GenericRecord logRecord) {
+        AppenderFilterEvaluator filterEvaluator = new AppenderFilterEvaluator(logRecord);
+        List<DataMappingElement> results = new ArrayList<>();
+        for (String filter : mappingConfiguration.keySet()) {
+            if (filterEvaluator.matches(filter)) {
+                LOG.debug("Matched filter: {}", filter);
+                results.addAll(mappingConfiguration.get(filter));
+            }
+        }
+        return results;
     }
 
     private String formatTs(String tsValue, ColumnMappingElement element) {
