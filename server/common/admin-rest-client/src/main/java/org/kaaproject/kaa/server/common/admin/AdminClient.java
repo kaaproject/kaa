@@ -226,7 +226,7 @@ public class AdminClient {
         restTemplate.postForLocation(restTemplate.getUrl() + "delApplication", params);
     }
 
-    public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
+    public ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
     }
 

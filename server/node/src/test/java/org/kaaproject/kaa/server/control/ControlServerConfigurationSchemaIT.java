@@ -16,10 +16,12 @@
 
 package org.kaaproject.kaa.server.control;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -27,6 +29,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 /**
  * The Class ControlServerConfigurationSchemaIT.
@@ -43,27 +46,6 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
         ConfigurationSchemaDto configurationSchema = createConfigurationSchema();
         Assert.assertFalse(strIsEmpty(configurationSchema.getId()));
         Assert.assertFalse(configurationSchema.getProtocolSchema().isEmpty());
-    }
-
-    /**
-     * Test create invalid configuration schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testCreateInvalidConfigurationSchema() throws Exception {
-        final ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
-        configurationSchema.setStatus(UpdateStatus.ACTIVE);
-        ApplicationDto application = createApplication(tenantAdminDto);
-        configurationSchema.setApplicationId(application.getId());
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        checkBadRequest(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-//                client.createConfigurationSchema(configurationSchema, TEST_INVALID_CONFIG_SCHEMA);//TODO refactor
-                
-            }
-        });
     }
 
     /**
@@ -98,7 +80,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
         configurationSchemas.addAll(defaultConfigurationSchemas);
 
         for (int i=0;i<10;i++) {
-            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
+            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId(), null);
             configurationSchemas.add(configurationSchema);
         }
 
@@ -135,7 +117,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
         configurationSchemas.addAll(defaultConfigurationSchemas);
 
         for (int i=0;i<10;i++) {
-            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId());
+            ConfigurationSchemaDto configurationSchema = createConfigurationSchema(application.getId(), null);
             configurationSchemas.add(configurationSchema);
         }
 
@@ -168,7 +150,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
         configurationSchema.setDescription(generateString("Test Desc 2"));
 
         ConfigurationSchemaDto updatedConfigurationSchema = client
-                .editConfigurationSchema(configurationSchema);
+                .saveConfigurationSchema(configurationSchema);
 
         Assert.assertTrue(updatedConfigurationSchema.equals(configurationSchema));
     }

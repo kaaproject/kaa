@@ -81,7 +81,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -635,17 +634,18 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected ConfigurationSchemaDto createConfigurationSchema() throws Exception {
-        return createConfigurationSchema(null);
+        return createConfigurationSchema(null, null);
     }
 
     /**
      * Creates the configuration schema.
      *
      * @param applicationId the application id
+     * @param ctlSchemaId
      * @return the configuration schema dto
      * @throws Exception the exception
      */
-    protected ConfigurationSchemaDto createConfigurationSchema(String applicationId) throws Exception {
+    protected ConfigurationSchemaDto createConfigurationSchema(String applicationId, String ctlSchemaId) throws Exception {
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setStatus(UpdateStatus.ACTIVE);
         configurationSchema.setName(generateString("Test Schema"));
@@ -657,10 +657,17 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             configurationSchema.setApplicationId(applicationId);
         }
+
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+            configurationSchema.setCtlSchemaId(ctlSchema.getId());
+        } else {
+            configurationSchema.setCtlSchemaId(ctlSchemaId);
+        }
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-//        ConfigurationSchemaDto savedConfigurationSchema = client.createConfigurationSchema(configurationSchema, TEST_CONFIG_SCHEMA); //TODO refactor
-//        return savedConfigurationSchema;
-        return null;
+        ConfigurationSchemaDto savedConfigurationSchema = client.saveConfigurationSchema(configurationSchema);
+        return savedConfigurationSchema;
     }
 
     /**
@@ -888,7 +895,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         ConfigurationSchemaDto configSchema = null;
         if (strIsEmpty(configurationSchemaId)) {
-            configSchema = createConfigurationSchema(applicationId);
+            configSchema = createConfigurationSchema(applicationId, null);
             configuration.setSchemaId(configSchema.getId());
         } else {
             loginTenantDeveloper(tenantDeveloperDto.getUsername());

@@ -534,7 +534,7 @@ public class DefaultControlService implements ControlService {
      * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * editConfigurationSchema
+     * saveConfigurationSchema
      * (org.kaaproject.kaa.common.dto.ConfigurationSchemaDto)
      */
     @Override
