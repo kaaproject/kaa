@@ -34,9 +34,6 @@ sort_idx: 60
         dom_id: "swagger-ui-container",      
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
-        },
-        onComplete: function(swaggerApi, swaggerUi){
-          var restApiViewBlock =
         }
       });
 
