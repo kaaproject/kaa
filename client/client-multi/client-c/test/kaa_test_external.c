@@ -39,16 +39,14 @@ void ext_status_store(const char *buffer, size_t buffer_size)
     (void)buffer_size;
 }
 
-void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
 {
-    *buffer = (char *) KAA_MALLOC(20 * sizeof(char));
+    *buffer = (uint8_t *) KAA_MALLOC(20 * sizeof(uint8_t));
     if (*buffer != NULL) {
         memcpy(*buffer, test_ep_key, 20);
         *buffer_size = 20;
-        *needs_deallocation = true;
     } else {
         *buffer_size = 0;
-        *needs_deallocation = false;
     }
 }
 

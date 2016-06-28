@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-#include "sha1.h"
 #include <stdint.h>
 #include <stddef.h>
+#include <mbedtls/sha1.h>
 #include <string.h>
+
 #include "kaa_common.h"
 #include "platform/ext_sha.h"
-#include <platform/sock.h>
-
 
 kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
 {
     KAA_RETURN_IF_NIL(digest, KAA_ERR_BADPARAM);
+    if ((data && !data_size) || (!data && data_size))
+        return KAA_ERR_BADPARAM;
 
-    SHA1Context sha;
-    SHA1Reset(&sha);
-    SHA1Input(&sha, (const unsigned char *) data, data_size);
-    SHA1Result(&sha);
-
-    int i;
-    for (i = 0; i < 5; ++i) {
-        *(int32_t *)(digest + i * 4) = KAA_HTONL(sha.Message_Digest[i]);
-    }
+    mbedtls_sha1_context sha1_ctx;
+    mbedtls_sha1_init(&sha1_ctx);
+    mbedtls_sha1_starts(&sha1_ctx);
+    mbedtls_sha1_update(&sha1_ctx, (unsigned char*)data, (int)data_size);
+    mbedtls_sha1_finish(&sha1_ctx, (unsigned char *)digest);
+    mbedtls_sha1_free(&sha1_ctx);
 
     return KAA_ERR_NONE;
 }

@@ -19,6 +19,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <memory.h>
 #include "platform/stdio.h"
 #include "platform/ext_sha.h"
 #include "kaa_status.h"
@@ -133,35 +134,16 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     }
 
     // Initialize endpoint identity
-    char *pub_key_buffer = NULL;
-    size_t pub_key_buffer_size = 0;
-    bool need_deallocation = false;
+    uint8_t *sha1 = NULL;
+    size_t sha1_size = 0;
 
-    ext_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
-
-    kaa_digest pub_key_hash;
-    error = ext_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, pub_key_hash);
-
-    if (need_deallocation && pub_key_buffer_size > 0) {
-        KAA_FREE(pub_key_buffer);
-    }
-
+    error = kaa_init_keys();
     if (error) {
-        KAA_LOG_FATAL(logger, error, "Failed to calculate EP ID");
-        kaa_context_destroy(*kaa_context_p);
-        *kaa_context_p = NULL;
-        kaa_log_destroy(logger);
-        return error;
+        KAA_LOG_ERROR(logger, error, "Failed to initialize keys");
     }
 
-    error = ext_copy_sha_hash((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, pub_key_hash);
-    if (error) {
-        KAA_LOG_FATAL(logger, error, "Failed to set Endpoint public key");
-        kaa_context_destroy(*kaa_context_p);
-        *kaa_context_p = NULL;
-        kaa_log_destroy(logger);
-        return error;
-    }
+    ext_get_sha1_public(&sha1,& sha1_size);
+    memcpy((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, sha1, sha1_size);
 
     return kaa_status_set_updated((*kaa_context_p)->status->status_instance, true);
 }
@@ -204,6 +186,7 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
     if (error)
         KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
     kaa_log_destroy(logger);
+    kaa_deinit_keys();
     return error;
 }
 

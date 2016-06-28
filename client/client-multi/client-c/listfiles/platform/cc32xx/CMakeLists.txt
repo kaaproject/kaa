@@ -19,7 +19,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/posix/kaa_client.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
         ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
-        ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/file_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/key_utils.c
@@ -27,6 +26,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/configuration_persistence.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/time.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/reboot.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/kaa_encryption/common_key_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
         )
