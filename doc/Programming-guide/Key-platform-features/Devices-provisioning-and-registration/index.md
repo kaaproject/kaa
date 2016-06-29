@@ -11,35 +11,54 @@ sort_idx: 10
 
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
-
+ 
 Kaa establishes a mechanism to uniquely identify each endpoint and the associated tokens and credentials issued to that endpoint.
-Before first connection to Kaa you should generate a key pair (private and public key) and send request for registration of public key in Kaa. 
-For this use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
-Registration of public keys occurs only once. In such an approach, all message will be encrypted with a recipient's public key. 
-The message cannot be decrypted by anyone who does not possess the matching private key, who is thus presumed to be the owner of that key and the endpoint associated with the public key. 
-Also you can disable the access to server for endpoint by terminate all active sessions with this endpoint. All subsequent requests will be forbidden.
-For this use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
-In case where you need to bind specified endpoint profile to the credentials, use appropriate method in [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
 
 ## Endpoint Credentials
 
+Credential is an object that is verified when presented to the verifier in an authentication transaction. 
+It establish the identity of endpoint. 
 
+In Kaa used asymmetric cryptography. It's a cryptographic system that uses pairs of keys: public and private keys. 
+During a first connection, Kaa [exchanges with endpoint public keys](#credentials-service).
+In such an approach, all messages that will be send from Kaa or endpoint will be encrypted with a appropriate public key. 
+For example, message from endpoint will be encrypted and decrypted with a own public and private key respectively.
+
+The message cannot be decrypted by anyone who does not possess the matching private key, who is thus presumed to be the owner of that key and the endpoint associated with the public key. 
+
+By default [SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) generate a key pair(private and public key) and send request for registration of public key in Kaa. 
+Also you can generate your own key pair and set them to the root folder of your project.
+Registration of public keys occurs only once.
 
 ## Credentials service
 
-Credential is an object that is verified when presented to the verifier in an authentication transaction. 
-It establish the identity of endpoint. 
+Exist four methods for working with credentials service. Only users with the **TENANT_ADMIN** role are allowed to submit this request.
+
+1. [Provision security credentials]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) of endpoints to allowing them interact with the specified application. 
+2. [Binds server-side endpoint profile to the specified credential]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+3. [Revoke security credentials from the corresponding credentials storage]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).  
+    Api for revoking the given credentials and setting their to appropriate status. All subsequent requests will be forbidden.
+    
+    Exist three credential status:
+    
+    * AVAILABLE
+    * IN_USE
+    * REVOKED
+
+4. [Notify the Kaa cluster about security credentials revocation]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).  
+    API for launching an asynchronous process to terminate all active sessions of the corresponding registered endpoint with the specified credentials.
+    All subsequent requests will be forbidden.
 
 Kaa provides two credentials service
 
 1. Trustful credentials service -  allows any endpoint to register and connect to Kaa cluster. (like the previous version of Kaa)
 2. Internal credentials service -  allows connecting with Kaa for specified list of endpoints whose credentials was previously provisioned with Kaa REST API.
 
-When Tenant Admin create application he can specify credential service for this application. By default used "Trustful".
+When Tenant Admin create application he can specify credential service for this application. By default **"Trustful"** is used.
 
 ## Creating custom credentials service
 
-1. First of all you should create class which implements all method of 
+1. Create class which implements all method of 
 [CredentialsService interface](https://github.com/kaaproject/kaa/blob/1d429a30bb4b5206376b740bb21483929a881ace/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java)
 
 ```java
@@ -84,12 +103,6 @@ public class CustomCredentialsService implements CredentialsService {
 
 ```
 
-Exist three credential status
-
-* AVAILABLE
-* IN_USE
-* REVOKED
-
 2. In in /usr/lib/kaa-node/conf/kaaNodeContext.xml register CredentialsServiceLocator for your new credential service 
 
 ```xml
@@ -115,7 +128,6 @@ Value of key which was added you will see in Admin UI.
 ```xml
 
 <bean id="customCredentialsService" class="org.myproject.CustomCredentialsService"/>
-<alias name="customCredentialsService" alias="NEW Credentials Service"/>
 
 ```
 
