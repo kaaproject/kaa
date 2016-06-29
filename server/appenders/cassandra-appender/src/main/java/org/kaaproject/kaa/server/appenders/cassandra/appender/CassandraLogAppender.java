@@ -64,6 +64,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     private LongAdder inputLogCount = new LongAdder();
 
     private volatile String appenderName;
+    private volatile String appToken;
     private LogEventDao logEventDao;
     private boolean closed = false;
 
@@ -109,7 +110,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                     inputLogCount.add(logCount);
                     try {
                         List<CassandraLogEventDto> logs = generateCassandraLogEvent(logEventPack, header, eventConverter);
-                        ListenableFuture<List<ResultSet>> result = logEventDao.save(logs, eventConverter, headerConverter, clientProfileData.getConverter(), serverProfileData.getConverter(), clientProfileData.getJson(), serverProfileData.getJson());
+                        ListenableFuture<List<ResultSet>> result = logEventDao.save(logs, eventConverter, headerConverter, clientProfileData.getConverter(), serverProfileData.getConverter(), clientProfileData.getJson(), serverProfileData.getJson(), appToken);
                         Futures.addCallback(result, new Callback(listener, cassandraSuccessLogCount, cassandraFailureLogCount, logCount), callbackExecutor);
                         LOG.debug("[{}] appended {} logs to cassandra collection", getName(), logCount);
                     } catch (IOException e) {
@@ -142,6 +143,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
         LOG.info("Initializing new appender instance with configuration: {}", configuration);
         try {
             trimConfigurationFields(configuration);
+            appToken = appender.getApplicationToken();
             logEventDao = new CassandraLogEventDao(configuration);
             for (DataMappingElement mappingElement : configuration.getColumnMappingList()) {
                 createTable(appender.getApplicationToken(), mappingElement);
