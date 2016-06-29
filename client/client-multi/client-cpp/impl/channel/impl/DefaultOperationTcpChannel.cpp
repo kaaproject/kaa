@@ -369,12 +369,12 @@ boost::system::error_code DefaultOperationTcpChannel::sendPingRequest()
 
 void DefaultOperationTcpChannel::readFromSocket()
 {
-    boost::asio::async_read(*sock_
-                          , *responseBuffer_
-                          , boost::asio::transfer_at_least(1)
-                          , boost::bind(&DefaultOperationTcpChannel::onReadEvent
-                                      , this
-                                      , boost::asio::placeholders::error));
+    boost::asio::async_read(*sock_,
+                            *responseBuffer_,
+                            boost::asio::transfer_at_least(1),
+                            boost::bind(&DefaultOperationTcpChannel::onReadEvent,
+                                        this,
+                                        boost::asio::placeholders::error));
 }
 
 void DefaultOperationTcpChannel::setTimer()
