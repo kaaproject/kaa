@@ -248,10 +248,11 @@ public class CassandraLogEventDao implements LogEventDao {
     @Override
     public ListenableFuture<List<ResultSet>> save(List<CassandraLogEventDto> logEventDtoList, GenericAvroConverter<GenericRecord> eventConverter,
                                                   GenericAvroConverter<GenericRecord> headerConverter, GenericAvroConverter<GenericRecord> clientProfileConverter,
-                                                  GenericAvroConverter<GenericRecord> serverProfileConverter, String clientProfileJson, String serverProfileJson)
+                                                  GenericAvroConverter<GenericRecord> serverProfileConverter, String clientProfileJson, String serverProfileJson,
+                                                  String appToken)
             throws IOException {
         return executeQuery(prepareQuery(logEventDtoList, eventConverter, headerConverter,
-                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
+                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson, appToken));
     }
 
     @Override
@@ -350,7 +351,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, GenericAvroConverter<GenericRecord> eventConverter,
                                   GenericAvroConverter<GenericRecord> headerConverter, GenericAvroConverter<GenericRecord> clientProfileConverter,
-                                  GenericAvroConverter<GenericRecord> serverProfileConverter, String clientProfileJson, String serverProfileJson) throws IOException {
+                                  GenericAvroConverter<GenericRecord> serverProfileConverter, String clientProfileJson, String serverProfileJson,
+                                  String appToken) throws IOException {
         String reuseTsValue = null;
         List<Insert> insertArray = new ArrayList<>(logEventDtoList.size());
 
@@ -378,8 +380,9 @@ public class CassandraLogEventDao implements LogEventDao {
                 LOG.debug("Found {} mapping element(s)", mappingElements.size());
                 if (mappingElements.size() > 0) {
                     for (DataMappingElement mappingElement : mappingElements) {
-                        LOG.debug("Processing mapping for table: {}", mappingElement.getTableNamePattern());
-                        Insert insert = QueryBuilder.insertInto(keyspaceName, mappingElement.getTableNamePattern());
+                        String tableName = toFullTableName(appToken, mappingElement.getTableNamePattern());
+                        LOG.debug("Processing mapping for table: {}", tableName);
+                        Insert insert = QueryBuilder.insertInto(keyspaceName, tableName);
                         for (ColumnMappingElement element : mappingElement.getColumnMapping()) {
                             switch (element.getType()) {
                                 case HEADER_FIELD:

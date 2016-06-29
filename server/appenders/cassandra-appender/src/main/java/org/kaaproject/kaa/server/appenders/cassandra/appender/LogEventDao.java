@@ -32,7 +32,7 @@ public interface LogEventDao {
     ListenableFuture<List<ResultSet>> save(List<CassandraLogEventDto> logEventDtoList,
                                            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
                                            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
-                                           String clientProfileJson, String serverProfileJson) throws IOException;
+                                           String clientProfileJson, String serverProfileJson, String appToken) throws IOException;
 
     void removeAll(String collectionName);
 
