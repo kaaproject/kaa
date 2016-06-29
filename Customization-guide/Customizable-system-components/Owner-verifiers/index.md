@@ -11,18 +11,18 @@ sort_idx: 40
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-To implement a custom user verifier, you need to complete the following steps.
+To implement a custom owner verifier, you need to complete the following steps.
 
 1. Design and compile a configuration schema.
-2. Implement the user verifier based on AbstractKaaUserVerifier.
-3. Develop the user verifier descriptor.
-4. Provision the user verifier.
+2. Implement the owner verifier based on AbstractKaaUserVerifier.
+3. Develop the owner verifier descriptor.
+4. Provision the owner verifier.
 
-We recommend that you use one of the [existing user verifier implementations](https://github.com/kaaproject/kaa/tree/master/server/verifiers) as a reference.
+We recommend that you use one of the [existing owner verifier implementations](https://github.com/kaaproject/kaa/tree/master/server/verifiers) as a reference.
 
 ## Configuration schema
 
-A user verifier configuration schema is an Avro compatible schema that defines configuration parameters of the user verifier. The following parameters in the schema affect Kaa Admin UI layout.
+A owner verifier configuration schema is an Avro compatible schema that defines configuration parameters of the owner verifier. The following parameters in the schema affect Kaa Admin UI layout.
 
 * displayName - displays the name of the field on UI
 * by_default - displays the default value of the field on UI  
@@ -59,9 +59,9 @@ java -jar /path/to/avro-tools-1.7.7.jar compile schema <schema file> <destinatio
 
 Please refer to [Compiling the schema](http://avro.apache.org/docs/current/gettingstartedjava.html#Compiling+the+schema) for more information. It is also possible to integrate the schema compilation with [avro-maven-plugin](http://avro.apache.org/docs/current/gettingstartedjava.html).
 
-## User verifier implementation
+## Owner verifier implementation
 
-All Kaa user verifiers extend generic abstract class org.kaaproject.kaa.server.common.verifier.AbstractUserVerifier<T>. The following code example illustrates the implementation of a custom user verifier.
+All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.common.verifier.AbstractUserVerifier<T>. The following code example illustrates the implementation of a custom owner verifier.
 
 ```java
     package org.kaaproject.kaa.sample.verifier;
@@ -73,7 +73,7 @@ All Kaa user verifiers extend generic abstract class org.kaaproject.kaa.server.c
     
     /**
      * 
-     * Sample user verifier implementation that uses {@link CustomUserVerifierConfiguration} as configuration.
+     * Sample owner verifier implementation that uses {@link CustomUserVerifierConfiguration} as configuration.
      *
      */
     public class CustomUserVerifier extends AbstractKaaUserVerifier<CustomUserVerifierConfiguration> {
@@ -137,15 +137,15 @@ All Kaa user verifiers extend generic abstract class org.kaaproject.kaa.server.c
     }
 ```
 
-## User verifier descriptor
+## Owner verifier descriptor
 
-A user verifier descriptor provides Kaa with the information on how to locate and configure your custom user verifier. To implement a user verifier descriptor, you need to implement the PluginConfig interface at first.
+A owner verifier descriptor provides Kaa with the information on how to locate and configure your custom owner verifier. To implement a owner verifier descriptor, you need to implement the PluginConfig interface at first.
 
-It is also important to provide your class with the @KaaPluginConfig annotation. This annotation helps Kaa Admin UI to find all available user verifiers in the class path.
+It is also important to provide your class with the @KaaPluginConfig annotation. This annotation helps Kaa Admin UI to find all available owner verifiers in the class path.
 
->**NOTE:** A user verifier descriptor is optional if you are going to configure your user verifiers using only REST API.
+>**NOTE:** A owner verifier descriptor is optional if you are going to configure your owner verifiers using only REST API.
 
-The following code example illustrates the implementation of a user verifier descriptor. 
+The following code example illustrates the implementation of a owner verifier descriptor. 
 
 ```java
     package org.kaaproject.kaa.sample.verifier.config;
@@ -192,9 +192,9 @@ The following code example illustrates the implementation of a user verifier des
     }
 ```
 
-## User verifier provisioning
+## Owner verifier provisioning
 
-To provision your user verifier, do the following:
+To provision your owner verifier, do the following:
 
 1. Create maven project. You can use this [pom](https://github.com/kaaproject/kaa/blob/master/server/verifiers/trustful-verifier/pom.xml) as an example. 
 2. Create similar classes as defined above and put them in appropriate packages.
@@ -207,6 +207,6 @@ To provision your user verifier, do the following:
 6. Restart kaa-node service:
 <br/>
 ``` $ sudo service kaa-node restart```
-7. Use [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#adding-user-verifiers) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) to create/update/delete your user verifier instances.
+7. Use [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#adding-user-verifiers) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) to create/update/delete your owner verifier instances.
 
 ---
