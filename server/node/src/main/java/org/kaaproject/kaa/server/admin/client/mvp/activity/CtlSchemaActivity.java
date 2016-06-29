@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton.ActionMenuItemListener;
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
@@ -36,10 +37,7 @@ import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.*;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -157,8 +155,16 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
     @Override
     protected void onEntityRetrieved() {
         if (create) {
+            ConverterType converterType;
+
+            if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                converterType = ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
+            } else {
+                converterType = ConverterType.FORM_AVRO_CONVERTER;
+            }
+
             KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getMetaInfoId(), 
-                    place.getVersion(), place.getApplicationId(), 
+                    place.getVersion(), place.getApplicationId(), converterType,
                     new BusyAsyncCallback<CtlSchemaFormDto>() {
                         @Override
                         public void onSuccessImpl(CtlSchemaFormDto result) {

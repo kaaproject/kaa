@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.services;
 
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
+import static org.kaaproject.kaa.server.admin.shared.schema.ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
@@ -37,7 +38,6 @@ import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.StaleObjectStateException;
@@ -1089,7 +1089,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             EndpointProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(profileSchema.getCtlSchemaId());
-            return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto));
+            return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1240,7 +1240,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             ServerProfileSchemaDto serverProfileSchema = getServerProfileSchema(serverProfileSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
-            return new ServerProfileSchemaViewDto(serverProfileSchema, toCtlSchemaForm(ctlSchemaDto));
+            return new ServerProfileSchemaViewDto(serverProfileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1433,7 +1433,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             ConfigurationSchemaDto confSchema = getConfigurationSchema(configurationSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(confSchema.getCtlSchemaId());
-            return new ConfigurationSchemaViewDto(confSchema, toCtlSchemaForm(ctlSchemaDto));
+            return new ConfigurationSchemaViewDto(confSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -3473,10 +3473,10 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private CtlSchemaFormDto toCtlSchemaForm(CTLSchemaDto ctlSchema) throws KaaAdminServiceException {
+    private CtlSchemaFormDto toCtlSchemaForm(CTLSchemaDto ctlSchema, ConverterType converterType) throws KaaAdminServiceException {
         try {
             CtlSchemaFormDto ctlSchemaForm = new CtlSchemaFormDto(ctlSchema);
-            SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(ctlSchemaForm.getMetaInfo().getTenantId(), ctlSchemaForm.getMetaInfo().getApplicationId());
+            SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(ctlSchemaForm.getMetaInfo().getTenantId(), ctlSchemaForm.getMetaInfo().getApplicationId(), converterType);
             RecordField form = converter.createSchemaFormFromSchema(ctlSchema.getBody());
             ctlSchemaForm.setSchema(form);
             List<Integer> availableVersions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(
@@ -3498,7 +3498,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             CTLSchemaDto ctlSchema = controlService.getLatestCTLSchemaByMetaInfoId(metaInfoId);
             Utils.checkNotNull(ctlSchema);
             checkCTLSchemaReadScope(ctlSchema.getMetaInfo().getTenantId(), ctlSchema.getMetaInfo().getApplicationId());
-            return toCtlSchemaForm(ctlSchema);
+            return toCtlSchemaForm(ctlSchema, ConverterType.FORM_AVRO_CONVERTER);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
@@ -3513,18 +3513,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             CTLSchemaDto schemaFound = controlService.getCTLSchemaByMetaInfoIdAndVer(metaInfoId, version);
             Utils.checkNotNull(schemaFound);
             checkCTLSchemaReadScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
-            return toCtlSchemaForm(schemaFound);
+            return toCtlSchemaForm(schemaFound, ConverterType.FORM_AVRO_CONVERTER);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
 
     @Override
-    public CtlSchemaFormDto createNewCTLSchemaFormInstance(String metaInfoId,
-                                                           Integer sourceVersion, String applicationId) throws KaaAdminServiceException {
+    public CtlSchemaFormDto createNewCTLSchemaFormInstance(String metaInfoId, Integer sourceVersion, String applicationId, ConverterType converterType) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.values());
         try {
-            SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId);
+            SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId, converterType);
             CtlSchemaFormDto sourceCtlSchema = null;
             if (!isEmpty(metaInfoId) && sourceVersion != null) {
                 sourceCtlSchema = getCTLSchemaFormByMetaInfoIdAndVer(metaInfoId, sourceVersion);
@@ -3563,7 +3562,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] data = getFileContent(fileItemName);
             String avroSchema = new String(data);
             validateRecordSchema(avroSchema, true);
-            SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId);
+            SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(getCurrentUser().getTenantId(), applicationId, ConverterType.FORM_AVRO_CONVERTER);
             RecordField form = converter.createSchemaFormFromSchema(avroSchema);
             if (form.getVersion() == null) {
                 form.updateVersion(1);
@@ -3616,7 +3615,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 }
                 ctlSchema.setDependencySet(dependencies);
                 SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(ctlSchema.getMetaInfo().getTenantId(),
-                        ctlSchema.getMetaInfo().getApplicationId());
+                        ctlSchema.getMetaInfo().getApplicationId(), ConverterType.FORM_AVRO_CONVERTER);
                 Schema avroSchema = converter.createSchemaFromSchemaForm(schemaForm);
                 String schemaBody = SchemaFormAvroConverter.createSchemaString(avroSchema, true);
                 ctlSchema.setBody(schemaBody);
@@ -3624,7 +3623,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             CTLSchemaDto savedCtlSchema = saveCTLSchema(ctlSchema);
             if (savedCtlSchema != null) {
-                return toCtlSchemaForm(savedCtlSchema);
+                return toCtlSchemaForm(savedCtlSchema, ConverterType.FORM_AVRO_CONVERTER);
             }
         } catch (Exception cause) {
             throw Utils.handleException(cause);
@@ -3649,45 +3648,45 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         return false;
     }
 
-    private SchemaFormAvroConverter getCtlSchemaConverterForScope(String tenantId, String applicationId) throws KaaAdminServiceException {
+    private SchemaFormAvroConverter getCtlSchemaConverterForScope(String tenantId, String applicationId, ConverterType converterType) throws KaaAdminServiceException {
         try {
             if (isEmpty(tenantId)) {
-                return getCtlSchemaConverterForSystem();
+                return getCtlSchemaConverterForSystem(converterType);
             }
             if (isEmpty(applicationId)) {
-                return getCtlSchemaConverterForTenant(tenantId);
+                return getCtlSchemaConverterForTenant(tenantId, converterType);
             }
-            return getCtlSchemaConverterForApplication(tenantId, applicationId);
+            return getCtlSchemaConverterForApplication(tenantId, applicationId, converterType);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
 
-    private SchemaFormAvroConverter getCtlSchemaConverterForSystem() throws KaaAdminServiceException {
+    private SchemaFormAvroConverter getCtlSchemaConverterForSystem(ConverterType converterType) throws KaaAdminServiceException {
         try {
-            return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForSystem());
+            return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForSystem(), converterType);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
 
-    private SchemaFormAvroConverter getCtlSchemaConverterForTenant(String tenantId) throws KaaAdminServiceException {
+    private SchemaFormAvroConverter getCtlSchemaConverterForTenant(String tenantId, ConverterType converterType) throws KaaAdminServiceException {
         try {
-            return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForTenant(tenantId));
+            return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForTenant(tenantId), converterType);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
 
-    private SchemaFormAvroConverter getCtlSchemaConverterForApplication(String tenantId, String applicationId) throws KaaAdminServiceException {
+    private SchemaFormAvroConverter getCtlSchemaConverterForApplication(String tenantId, String applicationId, ConverterType converterType) throws KaaAdminServiceException {
         try {
-            return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForApplication(tenantId, applicationId));
+            return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForApplication(tenantId, applicationId), converterType);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
 
-    private SchemaFormAvroConverter createSchemaConverterFromCtlTypes(final Map<Fqn, List<Integer>> ctlTypes) throws KaaAdminServiceException {
+    private SchemaFormAvroConverter createSchemaConverterFromCtlTypes(final Map<Fqn, List<Integer>> ctlTypes, ConverterType converterType) throws KaaAdminServiceException {
         try {
             CtlSource ctlSource = new CtlSource() {
                 @Override
@@ -3695,7 +3694,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     return ctlTypes;
                 }
             };
-            return new SchemaFormAvroConverter(ctlSource);
+            if (converterType == CONFIGURATION_FORM_AVRO_CONVERTER) {
+                return new ConfigurationSchemaFormAvroConverter(ctlSource);
+            } else {
+                return new SchemaFormAvroConverter(ctlSource);
+            }
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
