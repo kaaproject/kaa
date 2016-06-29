@@ -11,14 +11,17 @@ sort_idx: 10
 * TOC
 {:toc}
 
-The Kaa IoT platform consists of the Kaa server, Kaa extensions, and endpoint SDKs (see [Architecture overview]({{root_url}}Architecture-overview/) for more details).
+The Kaa IoT platform consists of the Kaa server, Kaa extensions, and endpoint SDKs (see [Architecture overview]({{root_url}}Architecture-overview/) for more details). 
+This guide will provide the overview of key system components from the administration point of view.
 
 ## Kaa node
 
 Each Kaa node in cluster runs combination of Control, Operations, and Bootstrap services. 
 A system administrator can enable or disable any of the services on a particular node, thus flexibly configuring the cluster deployment (see [general configuration]({{root_url}}Administration-guide/System-Configuration/General-configuration/) for more details).
 
-Kaa Control service is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering corresponding notifications to Operations services.
+Kaa Control service is responsible for managing overall system data, processing API calls from the Administration UI and external integrated systems, and delivering corresponding notifications to Operations services. 
+Kaa Control service also embeds Administration UI web server.
+
 Kaa Operations service is a “worker” service, the primary role of which is concurrent communication with multiple endpoints. Operations services process endpoint requests and serve them with data.
 Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints. Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc. 
 
@@ -46,9 +49,14 @@ Kaa officially supports [Apache Cassandra](http://cassandra.apache.org/) and [Mo
 
 ## High availability (HA)
 
-High availability of a Kaa cluster is achieved by deploying both SQL and NoSQL databases in HA mode. 
+In order to provide HA of Kaa services, one should deploy topology with at least two Kaa nodes. Each node should act as Control, Operations and Boostrap service simultaniously. 
+Apache Zookeeper should be deployed in cluster mode, since it is used for Kaa node coordination.
+
+>**NOTE:**
+> Two Kaa nodes is the minimum HA configuration. At least three geo-distributed Kaa nodes is recommended for production usage.
+
+High availability of a Kaa cluster also depends on deploying both SQL and NoSQL databases in HA mode. 
 Database nodes can be co-located with Kaa nodes on the same physical or virtual machines.
-In order to provide HA of Kaa services, one should deploy topology with at least two Kaa nodes. Each node should act as Control, Operations and Boostrap service simultaniously.
 
 ## Scalability
 
@@ -57,7 +65,7 @@ Multiple nodes with Control service enabled provide horizontal scalability of ad
 
 ## Load Balancing (LB)
 
-LB task can be decoupled into two subtasks based on originator of requests to Kaa cluster.
+LB task can be decoupled into two subtasks based on originator of requests to Kaa cluster: Kaa Endpoint SDK and REST API requests.
 
 #### Kaa Endpoint SDK requests
 
@@ -69,7 +77,8 @@ The algorithm takes servers load information (connected endpoints count, load av
 Further, the overloaded nodes are instructed to redirect some of the connecting endpoints to a different node.
 
 A similar approach can be used for offloading all of the load from a node subject to a scheduled service, or to gradually migrate the cluster across the physical or virtual machines.
-Doing so requires setting of a custom LB strategy.
+Doing so requires setting of a custom LB strategy by implementing [Rebalancer](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/Rebalancer.java) interface. 
+See default [implementation](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/EndpointCountRebalancer.java) for more details.
 
 #### Kaa REST API requests
 
