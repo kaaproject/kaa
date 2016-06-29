@@ -69,7 +69,7 @@ All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.
     import org.kaaproject.kaa.server.common.verifier.AbstractKaaUserVerifier;
     import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
     import org.kaaproject.kaa.server.common.verifier.UserVerifierContext;
-    import org.kaaproject.kaa.schema.sample.CustomUserVerifierConfiguration;
+    import org.kaaproject.kaa.sample.verifier.config.gen.CustomUserVerifierConfiguration;
     
     /**
      * 
@@ -154,7 +154,7 @@ The following code example illustrates the implementation of a owner verifier de
     import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
     import org.kaaproject.kaa.server.common.plugin.PluginConfig;
     import org.kaaproject.kaa.server.common.plugin.PluginType;
-    import org.kaaproject.kaa.schema.sample.CustomUserVerifierConfiguration;
+    import org.kaaproject.kaa.sample.verifier.config.gen.CustomUserVerifierConfiguration;
     
     @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
     public class CustomUserVerifierConfig implements PluginConfig {
