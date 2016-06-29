@@ -11,10 +11,10 @@ sort_idx: 70
 {:toc}
 
 
-The Kaa Notification subsystem enables delivery of messages from the Kaa cluster to endpoints (EP). Unlike configuration data that represents the desired EP state, notifications can be thought of as calls for a dynamic EP response. 
-For example, a notification may cause a client application to display a message on the UI (a user notification), or initiate immediate or delayed EP configuration synchronization with the Operations server (a system notification).
+The Kaa Notification subsystem enables delivery of messages from the Kaa cluster to endpoints (EP). Unlike configuration data that represents the desired EP state, notifications can be thought of as calls for a dynamic EP action. 
+For example, a notification may cause a client application to display a message on the UI (a user notification).
 
-This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox](http://www.kaaproject.org/download-kaa) or a [full-blown Kaa cluster]({{root_url}}Administration-guide/System-installation/Single-node-installation) and that you have created at least one [tenant]({{root_url}}Administration-guide/Tenants-and-applications-management/#TODO) and one [application]({{root_url}}Administration-guide/Tenants-and-applications-management/#managing-applications) in Kaa. 
+This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox](http://www.kaaproject.org/download-kaa) or a [full-blown Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/) and that you have created at least one [tenant]({{root_url}}Administration-guide/Tenants-and-applications-management/#TODO) and one [application]({{root_url}}Administration-guide/Tenants-and-applications-management/#managing-applications) in Kaa. 
 We also recommend that you review [collecting endpoint profiles guide]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) before you proceed with this guide.
 
 ### Basic architecture
@@ -176,10 +176,12 @@ The file with the following contents will match the default sandbox notification
 Notification pipelines manage individual notifications within a topic. A notification remains queued in the pipeline until its time-to-live (TTL) expires, after which the notification is dropped. The notification pipeline type specifies the scope of notifications delivery. 
 It can be either multicast (targeted to an unbounded number of endpoints) or unicast (targeted to a single specific endpoint).
     
-**Multicast pipelines**</br>
+**Multicast pipelines** 
+<br/>
 Whenever a notification is sent to a topic, it gets added to the corresponding pipeline with a unique sequential index per pipeline. Endpoints independently maintain their position in every pipeline by remembering the last sequential index per pipeline that they received.
     
-**Unicast pipelines**</br>
+**Unicast pipelines** 
+<br/>
 Whenever a notification is sent to a topic, it gets added to the corresponding pipeline with a unique ID. Endpoints independently maintain their pipeline by reporting all received notification IDs. The server removes the notification from the pipeline once it receives a receipt confirmation from the endpoint. 
 Sending a unicast notification requires specifying the endpoint and topic IDs. The endpoint must be subscribed to the specified topic, otherwise an error will be returned.
 
