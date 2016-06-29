@@ -11,6 +11,10 @@ sort_idx: 40
 {% assign root_url = page.url | split: '/'%}
 {% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
+This guide contains information about how to create custom owner verifiers and add them to existed. Please refer to [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership) for information about default owner verifiers
+and access token flow.
+
+
 To implement a custom owner verifier, you need to complete the following steps.
 
 1. Design and compile a configuration schema.
@@ -29,9 +33,9 @@ A owner verifier configuration schema is an Avro compatible schema that defines 
   
 ```json
     {
-     "namespace": "org.kaaproject.kaa.sample.verifier.config.gen",
+     "namespace": "org.kaaproject.kaa.sample.verifier.config.gen", 
      "type": "record",
-     "name": "CustomUserVerifierConfiguration",
+     "name": "CustomOwnerVerifierConfiguration",
      "fields": [
        {
             "name": "app_id",
@@ -69,14 +73,14 @@ All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.
     import org.kaaproject.kaa.server.common.verifier.AbstractKaaUserVerifier;
     import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
     import org.kaaproject.kaa.server.common.verifier.UserVerifierContext;
-    import org.kaaproject.kaa.sample.verifier.config.gen.CustomUserVerifierConfiguration;
+    import org.kaaproject.kaa.sample.verifier.config.gen.CustomOwnerVerifierConfiguration;
     
     /**
      * 
-     * Sample owner verifier implementation that uses {@link CustomUserVerifierConfiguration} as configuration.
+     * Sample owner verifier implementation that uses {@link CustomOwnerVerifierConfiguration} as configuration.
      *
      */
-    public class CustomUserVerifier extends AbstractKaaUserVerifier<CustomUserVerifierConfiguration> {
+    public class CustomOwnerVerifier extends AbstractKaaUserVerifier<CustomOwnerVerifierConfiguration> {
         /**
         * Initialize a user verifier instance with a particular configuration and
         * common transport properties. The configuration is a serialized Avro
@@ -98,7 +102,6 @@ All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.
         * @param userAccessToken the access token
         * @param callback User verification callback, which helps to identify verification status and
         * possible reason failure
-        * @return true, if verified
         */
         @Override
         public void checkAccessToken(String userExternalId, String userAccessToken, UserVerifierCallback callback) {
@@ -131,8 +134,8 @@ All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.
         * @return the configuration class
         */
         @Override
-        public Class<CustomUserVerifierConfiguration> getConfigurationClass() {
-            return CustomUserVerifierConfiguration.class;
+        public Class<CustomOwnerVerifierConfiguration> getConfigurationClass() {
+            return CustomOwnerVerifierConfiguration.class;
         }
     }
 ```
@@ -154,10 +157,10 @@ The following code example illustrates the implementation of a owner verifier de
     import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
     import org.kaaproject.kaa.server.common.plugin.PluginConfig;
     import org.kaaproject.kaa.server.common.plugin.PluginType;
-    import org.kaaproject.kaa.sample.verifier.config.gen.CustomUserVerifierConfiguration;
+    import org.kaaproject.kaa.sample.verifier.config.gen.CustomOwnerVerifierConfiguration;
     
     @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
-    public class CustomUserVerifierConfig implements PluginConfig {
+    public class CustomOwnerVerifierConfig implements PluginConfig {
         
         /**
         * Returns the plugin display name. There is no strict rule for this
@@ -177,7 +180,7 @@ The following code example illustrates the implementation of a owner verifier de
         */
         @Override
         public String getPluginClassName() {
-            return "org.kaaproject.kaa.schema.sample.verifier.CustomUserVerifier";
+            return "org.kaaproject.kaa.schema.sample.verifier.CustomOwnerVerifier";
         }
         
         /**
@@ -187,7 +190,7 @@ The following code example illustrates the implementation of a owner verifier de
         */
         @Override
         public Schema getPluginConfigSchema() {
-            return CustomUserVerifierConfiguration.SCHEMA$;
+            return CustomOwnerVerifierConfiguration.SCHEMA$;
         }
     }
 ```
@@ -198,7 +201,7 @@ To provision your owner verifier, do the following:
 
 1. Create maven project. You can use this [pom](https://github.com/kaaproject/kaa/blob/master/server/verifiers/trustful-verifier/pom.xml) as an example. 
 2. Create similar classes as defined above and put them in appropriate packages.
-3. Add your verification logic to methods of `CustomUserVerifier` and build your project using next command: 
+3. Add your verification logic to methods of `CustomOwnerVerifier` and build your project using next command: 
 <br/>
 ```$ mvn clean install```
 4. Place created jar file into _/usr/lib/kaa-node/lib_.
