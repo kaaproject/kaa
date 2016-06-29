@@ -80,14 +80,14 @@ DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *chann
     , multiplexer_(nullptr)
     , demultiplexer_(nullptr)
     , channelManager_(channelManager)
-    , responsePorcessor(context)
+    , responseProcessor(context)
     , context_(context)
     , client_(client)
 {
-    responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
-    responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
-    responsePorcessor.registerPingResponseReceiver(std::bind(&DefaultOperationTcpChannel::onPingResponse, this));
-    responsePorcessor.registerDisconnectReceiver(std::bind(&DefaultOperationTcpChannel::onDisconnect, this, std::placeholders::_1));
+    responseProcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
+    responseProcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
+    responseProcessor.registerPingResponseReceiver(std::bind(&DefaultOperationTcpChannel::onPingResponse, this));
+    responseProcessor.registerDisconnectReceiver(std::bind(&DefaultOperationTcpChannel::onDisconnect, this, std::placeholders::_1));
 }
 
 DefaultOperationTcpChannel::~DefaultOperationTcpChannel()
@@ -275,7 +275,7 @@ void DefaultOperationTcpChannel::closeConnection()
         boost::system::error_code errorCode;
         sock_->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorCode);
         sock_->close(errorCode);
-        responsePorcessor.flush();
+        responseProcessor.flush();
     }
 }
 
@@ -369,10 +369,12 @@ boost::system::error_code DefaultOperationTcpChannel::sendPingRequest()
 
 void DefaultOperationTcpChannel::readFromSocket()
 {
-    boost::asio::async_read(*sock_, *responseBuffer_,
-              boost::asio::transfer_at_least(1),
-              boost::bind(&DefaultOperationTcpChannel::onReadEvent, this,
-                      boost::asio::placeholders::error));
+    boost::asio::async_read(*sock_
+                          , *responseBuffer_
+                          , boost::asio::transfer_at_least(1)
+                          , boost::bind(&DefaultOperationTcpChannel::onReadEvent
+                                      , this
+                                      , boost::asio::placeholders::error));
 }
 
 void DefaultOperationTcpChannel::setTimer()
@@ -399,9 +401,6 @@ void DefaultOperationTcpChannel::createThreads()
 
 void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& err)
 {
-    if (err) {
-        KAA_LOG_TRACE(boost::format("Channel \"%1%\". onReadEvent err %2%") % getId() % err);
-    }
     if (!err) {
         std::ostringstream responseStream;
         responseStream << responseBuffer_.get();
@@ -412,7 +411,7 @@ void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& er
                  std::this_thread::sleep_for(std::chrono::milliseconds(50));
                  //onServerFailed();
             } else {
-                responsePorcessor.processResponseBuffer(responseStr.data(), responseStr.size());
+                responseProcessor.processResponseBuffer(responseStr.data(), responseStr.size());
             }
         } catch (const TransportRedirectException& exception) {
             KAA_LOG_INFO(boost::format("Channel \"%1%\". Redirect response received.") % getId());
@@ -421,16 +420,18 @@ void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& er
             KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to process response buffer, reason: %2%") % getId() % exception.what());
             onServerFailed();
         }
-    } else if (err != boost::asio::error::eof) {
+    } else {
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
+
+        KAA_LOG_WARN(boost::format("Channel \"%1%\". Socket read error: %2%") % getId() % err.message());
+
         if (err != boost::asio::error::operation_aborted && isConnected_) {
             KAA_MUTEX_UNLOCKING("channelGuard_");
             KAA_UNLOCK(channelLock);
             KAA_MUTEX_UNLOCKED("channelGuard_")
 
-            KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to read from the socket: %2%") % getId() % err.message());
             onServerFailed();
             return;
         } else {
@@ -438,9 +439,11 @@ void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& er
             return;
         }
     }
+
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
+
     if (isConnected_) {
         readFromSocket();
     }
