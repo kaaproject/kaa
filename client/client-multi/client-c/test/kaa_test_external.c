@@ -20,6 +20,7 @@
 #include <stdbool.h>
 
 #include "platform/ext_status.h"
+#include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"
 #include "utilities/kaa_mem.h"
 #include "kaa_common.h"
@@ -41,10 +42,10 @@ void ext_status_store(const char *buffer, size_t buffer_size)
 
 void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
 {
-    *buffer = (uint8_t *) KAA_MALLOC(20 * sizeof(uint8_t));
+    *buffer = KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
     if (*buffer != NULL) {
-        memcpy(*buffer, test_ep_key, 20);
-        *buffer_size = 20;
+        memcpy(*buffer, test_ep_key, SHA_1_DIGEST_LENGTH);
+        *buffer_size = SHA_1_DIGEST_LENGTH;
     } else {
         *buffer_size = 0;
     }

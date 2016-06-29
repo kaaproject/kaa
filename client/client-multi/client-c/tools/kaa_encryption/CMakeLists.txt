@@ -17,7 +17,7 @@
 cmake_minimum_required(VERSION 3.2.2)
 project(kaa_rsa_keygen C)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic -D_GNU_SOURCE")
 
 set(MBEDTLS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../../thirdparty/mbedtls")
 

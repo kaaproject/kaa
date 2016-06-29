@@ -153,11 +153,11 @@ exit:
 #define KEY_STARTS                      "{ "
 #define KEY_SEPARATOR                   ", "
 #define KEY_ENDS                        " };\n\n"
-#define KAA_RSA_PUBLIC_KEY              "uint8_t kaa_rsa_public_key[] = "
-#define KAA_RSA_PRIVATE_KEY             "uint8_t kaa_rsa_private_key[] = "
-#define KAA_SHA1_PUB                    "uint8_t kaa_sha1_pub[] = "
-#define KAA_SHA1_PUB_BASE64             "uint8_t kaa_sha1_pub_base64[] = "
-#define GUARD_ENDIF                     "#endif /* KAA_RSA_KEYS_H */"
+#define KAA_RSA_PUBLIC_KEY              "uint8_t KAA_RSA_PUBLIC_KEY[] = "
+#define KAA_RSA_PRIVATE_KEY             "uint8_t KAA_RSA_PRIVATE_KEY[] = "
+#define KAA_SHA1_PUB                    "uint8_t KAA_SHA1_PUB[] = "
+#define KAA_SHA1_PUB_BASE64             "uint8_t KAA_SHA1_PUB_BASE64[] = "
+#define GUARD_ENDIF                     "#endif /* KAA_RSA_KEYS_H */\n"
 
 char buffer[500];
 char key[KAA_RSA_PRIVATE_KEY_LENGTH_MAX];
