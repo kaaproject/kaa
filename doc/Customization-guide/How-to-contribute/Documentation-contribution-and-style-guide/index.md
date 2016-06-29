@@ -276,14 +276,8 @@ nix-shell doc/shell.nix --run ./test-gh-pages.sh
 </ul>
 
 {: start="2"}
-2. Create local git branch gh-pages-stub with same content as `origin/gh-pages-stub`.
-
-   ```bash
-   git fetch origin gh-pages-stub:gh-pages-stub
-   ```
-
-3. Delete `test-gh-pages-current/` if it exists.
-4. Run `test-gh-pages.sh` script to generate documentation and start development server at [http://localhost:4000/](http://localhost:4000/).
+2. Delete `test-gh-pages-*/` if it exists.
+3. Run `test-gh-pages.sh` script to generate documentation and start development server at [http://localhost:4000/](http://localhost:4000/).
 
    ```bash
    user@host:/kaa$ ./test-gh-pages.sh
