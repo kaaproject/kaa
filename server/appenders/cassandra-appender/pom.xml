@@ -134,12 +134,12 @@ Copyright 2014-2016 CyberVision, Inc.
         <dependency>
             <groupId>org.kaaproject.kaa.server</groupId>
             <artifactId>kaa-node</artifactId>
-            <version>0.9.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server</groupId>
             <artifactId>kaa-node</artifactId>
-            <version>0.9.0</version>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>
