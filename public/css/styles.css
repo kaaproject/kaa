@@ -466,6 +466,7 @@ li img {
 img {
     vertical-align: middle;
     height: auto;
+    width: auto;
 	max-width: 100%;
     margin: 20px auto;
     display: block;
