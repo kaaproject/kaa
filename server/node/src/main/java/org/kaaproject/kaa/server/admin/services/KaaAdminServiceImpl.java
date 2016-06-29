@@ -3624,17 +3624,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             CTLSchemaDto savedCtlSchema = saveCTLSchema(ctlSchema);
             if (savedCtlSchema != null) {
-                CtlSchemaFormDto result = new CtlSchemaFormDto(savedCtlSchema);
-                SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(savedCtlSchema.getMetaInfo().getTenantId(),
-                        savedCtlSchema.getMetaInfo().getApplicationId());
-                RecordField form = converter.createSchemaFormFromSchema(savedCtlSchema.getBody());
-                result.setSchema(form);
-                List<Integer> availableVersions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(
-                        savedCtlSchema.getMetaInfo().getFqn(), savedCtlSchema.getMetaInfo().getTenantId(), savedCtlSchema.getMetaInfo().getApplicationId());
-                availableVersions = availableVersions == null ? Collections.<Integer>emptyList() : availableVersions;
-                Collections.sort(availableVersions);
-                result.getMetaInfo().setVersions(availableVersions);
-                return result;
+                return toCtlSchemaForm(savedCtlSchema);
             }
         } catch (Exception cause) {
             throw Utils.handleException(cause);
