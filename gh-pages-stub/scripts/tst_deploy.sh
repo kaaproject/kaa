@@ -56,8 +56,8 @@ elif [ x"$gh_pages" = x"$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
   versions=$(git tag)
   jekyll_root=$PWD
   latest=$(git tag | sort -V -r | head -1)
-  gh_pages_stub_br=develop-origin
-  echo "Merging gh-pages-stub"
+  gh_pages_stub_br=$latest
+  echo "Merging gh-pages-stub from $gh_pages_stub_br"
   git checkout $gh_pages_stub_br
   GH_PAGES_STUB=$(git subtree split --prefix=gh-pages-stub/)
   git checkout -
