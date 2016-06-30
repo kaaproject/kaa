@@ -36,61 +36,16 @@ To create a log appender of the file system storage type, do the following:
 # Creating file system log appender with Admin REST API
 
 It is also possible to create a file system log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
-The following example illustrates how to provision the file system log appender via Admin REST API.
+The following example illustrates how to create the file system log appender via Admin REST API.
 
 ## Configuration
 
 The file system log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
 
-```json
-{ 
-    "namespace":"org.kaaproject.kaa.server.appenders.file.config.gen",
-    "type":"record",
-    "name":"FileConfig",
-    "fields":[ 
-        { 
-            "name":"publicKey",
-            "displayName":"Public Key",
-            "maxLength":1000,
-            "default":"",
-            "type":"string"
-        },
-        { 
-            "name":"logsRootPath",
-            "displayName":"Logs root path",
-            "default":"/kaa_log_uploads",
-            "type":"string"
-        },
-        { 
-            "name":"rollingFileNamePatern",
-            "displayName":"Rolling file name pattern",
-            "default":"logFile.%d{yyyy-MM-dd}.log",
-            "type":"string"
-        },
-        { 
-            "name":"rollingMaxHistory",
-            "displayName":"Rolling max history",
-            "default":30,
-            "type":"int"
-        },
-        { 
-            "name":"triggerMaxFileSize",
-            "displayName":"Trigger max file size",
-            "default":"1GB",
-            "type":"string"
-        },
-        { 
-            "name":"encoderPattern",
-            "displayName":"Encoder pattern",
-            "default":"%-4relative [%thread] %-5level %logger{35} - %msg%n",
-            "type":"string"
-        }
-    ]
-}
-```
+Parameters for defining file system log appender:
 
-|Name                   |Description|
+|Name                   |Description                    |
 |-----------------------|-------------------------------|
 |publicKey              |Name of public key             |
 |logsRootPath           |Root path for logs             |
@@ -99,9 +54,7 @@ The file system log appender configuration must match to
 |triggerMaxFileSize     |Max size of file               |
 |encoderPattern         |Pattern for encoder            |
 
-<br/>
-
-The following configuration example matches the schema above.
+An example configuration that matches to previously introduced Avro schema is as below:
 
 ```json
 {
@@ -176,60 +129,51 @@ Example result:
 
 # Playing with File system log appender
 
-Go to Data collection demos in Sandbox. And download binary.
-
+1. Go to Data collection demos in Sandbox. And download binary.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
-
-Next, in the Admin UI follow to **Data collection demo** application.
-
-Go to application's **Log appenders** configuration and add a new one.
-
+2. In the Admin UI follow to **Data collection demo** application.
+3. Go to application's **Log appenders** configuration and add a new one.
 ![Add log appender](attach/data-collection-demo-application.png)
+4. Enter name of the new appender (we use “Sample FileSystem log appender”).
+5. Add Log metadata fields.
+6.  Select _File_ appender type.
 
-Enter name of the new appender (we use “Sample FileSystem log appender”)
+    See [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
 
-Add Log metadata fields.
-
-Select _File_ appender type.
-
-See [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
-
-Verify that newly created appender has appeared in list.
-
+7. Verify that newly created appender has appeared in list.
 ![Verify newly created log appender](attach/verify-created-appender.png)
+8. Use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
+9.  After this you should see something like below:
 
-Now run Data collection demo application:
+    ```bash
+    2016-06-17 11:59:24,004 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
+    2016-06-17 11:59:25,457 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
+    2016-06-17 11:59:25,459 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466153965458} sent
+    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466153965458} sent
+    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466153965458} sent
+    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466153965458} sent
+    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466153965458} sent
+    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
+    2016-06-17 11:59:27,103 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
+    2016-06-17 11:59:27,104 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
+    ```
 
-```bash
-java -jar DataCollectionDemo.jar
-2016-06-17 11:59:24,004 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
-2016-06-17 11:59:25,457 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
-2016-06-17 11:59:25,459 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466153965458} sent
-2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466153965458} sent
-2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466153965458} sent
-2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466153965458} sent
-2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466153965458} sent
-2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-2016-06-17 11:59:27,103 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
-2016-06-17 11:59:27,104 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
-```
+10. Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
+    ```/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log```.
+    In this example path to file ```application.log``` is ```kaa_log_uploads/tenant_1/application_82635305199158071549/```.
 
-Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
-```/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log```.
-In this example path to file ```application.log``` is ```kaa_log_uploads/tenant_1/application_82635305199158071549/```.
+    Your ```application.log``` should contain similar content:
 
-Your ```application.log``` should contain similar content:
-
-```
-261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466153965458}}
-261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466153965458}}
-261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466153965458}}
-261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466153965458}}
-261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466153965458}}
-```
+    ```
+    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466153965458}}
+    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466153965458}}
+    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466153965458}}
+    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466153965458}}
+    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466153965458}}
+    ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

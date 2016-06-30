@@ -32,7 +32,7 @@ To create a log appender of the Kafka storage type, do the following:
 # Creating Kafka log appender with Admin REST API
 
 It is also possible to create a Kafka log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
-The following example illustrates how to provision the Kafka log appender for the Cell Monitor demo application available in Kaa Sandbox.
+The following example illustrates how to create the Kafka log appender for the Cell Monitor demo application available in Kaa Sandbox.
 
 ## Configuration
 
@@ -41,22 +41,20 @@ The Kafka log appender configuration must match to
 
 ## Fields description
 
-|Name|Description|
-|---|---|
-|bufferMemorySize|message buffer size in bytes|
-|executorThreadPoolSize|number of threads that can simultaneously perform operation with your Kafka|
-|kafkaAcknowledgement|the number of acknowledgments the producer requires the leader to have received before considering a request complete|
-|kafkaCompression|type of built-in message compression types|
-|kafkaKeyType|type of generated message key|
-|kafkaServers|list of kafka bootstrap servers (hostname and port pairs)|
-|partitionCount|amount of event partitions|
-|retries|failover property. Amount of connection retries on failed message delivery|
-|topic|logs destination topic|
-|useDefaultPartitioner|if false, appender will calculate partition independently|
+|Name                   |Description                                                                                                            |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------|
+|bufferMemorySize       |message buffer size in bytes                                                                                           |
+|executorThreadPoolSize |number of threads that can simultaneously perform operation with your Kafka                                            |
+|kafkaAcknowledgement   |the number of acknowledgments the producer requires the leader to have received before considering a request complete  |
+|kafkaCompression       |type of built-in message compression types                                                                             |
+|kafkaKeyType           |type of generated message key                                                                                          |
+|kafkaServers           |list of kafka bootstrap servers (hostname and port pairs)                                                              |
+|partitionCount         |amount of event partitions                                                                                             |
+|retries                |failover property. Amount of connection retries on failed message delivery                                             |
+|topic                  |logs destination topic                                                                                                 |
+|useDefaultPartitioner  |if false, appender will calculate partition independently                                                              |
 
-<br/>
-
-The following configuration taken from the Cell Monitor demo matches the previous schema.
+An example configuration that matches to previously introduced Avro schema is as below:
 
 ```json
 {
@@ -218,77 +216,64 @@ The following JSON example matches the schema above.
 }
 ```
 
-Go to the Data collection demos in Sandbox.
-
+1. Go to the Data collection demos in Sandbox.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
-
-Follow **Installation** instructions.
-
-Next, in the Admin UI follow to **Data collection demo** application
-
+2. Follow **Installation** instructions.
+3. In the Admin UI follow to **Data collection demo** application.
 ![Data collection demo UI](attach/data-collection-demo-in-sandbox2.png)
-
-Go to application's **Log appenders** configuration and add a new one.
-
+4. Go to application's **Log appenders** configuration and add a new one.
 ![Add log appender](attach/data-collection-demo-in-sandbox3.png)
-
-Enter name of the new appender (in this example it is "Kafka")
-
-Select **Kafka** appender type.
-
+5. Enter name of the new appender (in this example it is "Kafka").
+6. Select **Kafka** appender type.
 ![Appender Type](attach/appender-type.png)
-
-Set up appender **Configuration** similar to screenshot
-
+7. Set up appender **Configuration** similar to screenshot.
 ![Appender configuration](attach/appender-configuration.png)
-
 In this example, Kafka server installed in the Sandbox VM.
-
-Now click **Add** button on the top of the screen to create and deploy appender.
-
+8. Click **Add** button on the top of the screen to create and deploy appender.
 ![Add button](attach/add-button.png)
-
-Verify that newly created appender has appeared in list.
-
+9. Verify that newly created appender has appeared in list.
 ![Verify newly created log appender](attach/verify-log-appender.png)
+10. From Kafka installation directory run the next command:
 
-From Kafka installation directory run the next command:
+    ```bash
+    bin/kafka-console-consumer.sh --zookeeper localhost:2183 --topic kaa
+    ```
 
-```bash
-bin/kafka-console-consumer.sh --zookeeper localhost:2183 --topic kaa
-```
+    This will bring up Kafka consumer, so we can see logs transferred from Kaa.
+11. Use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
+12. After this you should see something like below:
 
-This will bring up Kafka consumer, so we can see logs transferred from Kaa.
+    ```
+    2016-06-21 12:38:12,260 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
+    2016-06-21 12:38:13,337 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
+    2016-06-21 12:38:13,339 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466501893337} sent
+    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466501893337} sent
+    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466501893337} sent
+    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466501893337} sent
+    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466501893337} sent
+    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
+    2016-06-21 12:38:13,628 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
+    2016-06-21 12:38:13,629 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
+    ```
 
-Now run Data collection demo application. Verify that logs have been successfully sent to Kaa:
+13. Let's verify that Kafka consumer receive logs. From Kafka installation directory run the next command:
 
-```
-java -jar DataCollectionDemo.jar
-2016-06-21 12:38:12,260 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
-2016-06-21 12:38:13,337 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
-2016-06-21 12:38:13,339 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466501893337} sent
-2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466501893337} sent
-2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466501893337} sent
-2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466501893337} sent
-2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466501893337} sent
-2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-2016-06-21 12:38:13,628 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
-2016-06-21 12:38:13,629 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
-```
+    ```bash
+    bin/kafka-console-consumer.sh --zookeeper localhost:2183 --topic kaa
+    ```
 
-Make sure, that Kafka consumer receive logs:
+14. You should observe similar output:
 
-```
-bin/kafka-console-consumer.sh --zookeeper localhost:2183 --topic kaa
-{"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466501893337}}
-{"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466501893337}}
-{"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466501893337}}
-{"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466501893337}}
-{"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466501893337}}
-```
+    ```
+    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466501893337}}
+    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466501893337}}
+    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466501893337}}
+    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466501893337}}
+    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466501893337}}
+    ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

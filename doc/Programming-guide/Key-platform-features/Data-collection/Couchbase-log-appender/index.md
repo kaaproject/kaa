@@ -40,14 +40,14 @@ To create a log appender of the Couchbase storage type, do the following:
 # Creating Couchbase log appender with Admin REST API
 
 It is also possible to create a Couchbase log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
-The following example illustrates how to provision the Couchbase log appender via Admin REST API.
+The following example illustrates how to create the Couchbase log appender via Admin REST API.
 
 ## Configuration
 
 The Couchbase log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/couchbase-appender/src/main/avro/couchbase-appender-config.avsc) Avro schema.
 
-The following configuration example matches the previous schema.
+An example configuration that matches to previously introduced Avro schema is as below:
 
 ```json
 {
@@ -122,32 +122,32 @@ Example result:
 
 # Playing with Couchbase log appender
 
-1. Download and install Couchbase by following [link](http://developer.couchbase.com/documentation/server/current/getting-started/installing.html#installing)
+1. Download and install Couchbase by following [link](http://developer.couchbase.com/documentation/server/current/getting-started/installing.html#installing).
 2. After successful installation open http://%your_host_name%:8091/. <br/>
-You should see something like that: <br/>
-![Couchbase start](attach/couchbase-start.png) <br/>
-3. Click **Setup** <br/>
-![Couchbase start step 1](attach/couchbase-start-next.png) <br/>
-4. Click **Next** <br/>
-![Couchbase start step 2](attach/couchbase-start-next2.png) <br/>
-5. Click **Next** <br/>
-![Couchbase start step 3](attach/couchbase-start-next3.png) <br/>
-6. Click **Next** <br/>
-![Couchbase start step 4](attach/couchbase-start-next4.png) <br/>
-7. Read and agree to the terms and conditions associated with this product. Click **Next** <br/>
-![Couchbase start step 5](attach/couchbase-start-next5.png) <br/>
-8. Create an administrator account for this Server. Click **Next**. <br/>
-You should see something like that: <br/>
-![Couchbase interface](attach/couchbase-8091.png) <br/>
-9. Go to Admin UI and add a Couchbase log appender to Data Collection demo application. <br/>
-![Add Couchbase log appender](attach/add-couchbase-log-appender.png) <br/>
-10. Define a URL and bucket which will be used for receiving logs. <br/>
-![Define URL](attach/define-url.png) <br/>
-11. Go to sandbox and download binary for testing the appender: <br/>
-![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png) <br/>
-Use instruction from sandbox to run demo application. <br/>
-12. Open http://%your_host_name%:8091 and choose : Data Buckets -> kaa -> Documents: <br/>
-![Data buckets default documents](attach/data-buckets-default-documents.png) <br/>
+You should see something like that:
+![Couchbase start](attach/couchbase-start.png)
+3. Click **Setup**.
+![Couchbase start step 1](attach/couchbase-start-next.png)
+4. Click **Next**.
+![Couchbase start step 2](attach/couchbase-start-next2.png)
+5. Click **Next**.
+![Couchbase start step 3](attach/couchbase-start-next3.png)
+6. Click **Next**.
+![Couchbase start step 4](attach/couchbase-start-next4.png)
+7. Read and agree to the terms and conditions associated with this product. Click **Next**.
+![Couchbase start step 5](attach/couchbase-start-next5.png)
+8. Create an administrator account for this Server. Click **Next**.
+You should see something like that:
+![Couchbase interface](attach/couchbase-8091.png)
+9. Go to Admin UI and add a Couchbase log appender to Data Collection demo application.
+![Add Couchbase log appender](attach/add-couchbase-log-appender.png)
+10. Define a URL and bucket which will be used for receiving logs.
+![Define URL](attach/define-url.png)
+11. Go to sandbox and download binary for testing the appender:
+![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
+Use instruction from sandbox to run demo application.
+12. Open http://%your_host_name%:8091 and choose : Data Buckets -> kaa -> Documents:
+![Data buckets default documents](attach/data-buckets-default-documents.png)
 13. If you launched Data collection demo application before it, you should observe similar output:
 ![Logs from kaa server](attach/logs-from-kaa-server1.png)
 ![Logs from kaa server detailed](attach/logs-from-kaa-server2.png)
