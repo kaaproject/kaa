@@ -269,7 +269,7 @@ on_topic_list_uploaded(NULL, topics_list);
 
 </div><div id="Objective-C-9" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
 ...
     id<KaaClient> kaaClient = [Kaa client]
@@ -346,7 +346,7 @@ error_code = kaa_unsubscribe_from_topic(kaa_client_get_context(kaa_client)->noti
 
 </div><div id="Objective-C-14" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
 ...
 // Add notification listener(s) (optional)
@@ -414,7 +414,7 @@ error_code = kaa_unsubscribe_from_topics(kaa_client_get_context(kaa_client)->not
 
 </div><div id="Objective-C-15" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 // Add notification listener(s) (optional)
 ...
 // Subscribe
@@ -509,7 +509,7 @@ error_code = kaa_remove_topic_list_listener(kaa_client_get_context(kaa_client)->
 
 </div><div id="Objective-C-10" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
  
 @interface ViewController() <NotificationTopicListDelegate>
@@ -596,7 +596,7 @@ error_code = kaa_sync_topic_subscriptions(kaa_client_get_context(kaa_client)->no
 
 </div><div id="Objective-C-11" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
  
 ...
@@ -704,7 +704,7 @@ error_code = kaa_remove_notification_listener(kaa_context_->notification_manager
 
 </div><div id="Objective-C-12" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
  
 @interface ViewController () <NotificationDelegate>
@@ -794,7 +794,7 @@ error_code = kaa_remove_optional_notification_listener(kaa_client_get_context(ka
 
 </div><div id="Objective-C-13" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
 ...
  
