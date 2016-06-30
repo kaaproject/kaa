@@ -25,7 +25,7 @@ The Kaa Event subsystem provides the following features.
 
 Process of event generation and handling described on the following diagram:
 
-![](images/EventGeneration2.png)
+![](images/general/EventGeneration2.png)
 
 It is the developer's responsibility to design event class schemas and make the client application interpret event data supplied by the endpoint library. The Kaa administrator, in turn, can provision those schemas into the Kaa server and generate the endpoint SDK.
 
@@ -214,129 +214,7 @@ During the SDK generation, the Control server generates the event object model a
 
 #### Attach endpoint to user
 
-To enable sending/receiving events to/from endpoints, at first the client should attach the endpoint to the user as shown in the following screenshot.
-
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#java">Java</a></li>
-  <li><a data-toggle="tab" href="#cpp">C++</a></li>
-  <li><a data-toggle="tab" href="#c">C</a></li>
-  <li><a data-toggle="tab" href="#objc">Objective-C</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="java" class="tab-pane fade in active" markdown="1" >
-
-```java
-import org.kaaproject.kaa.client.KaaClient;
-import org.kaaproject.kaa.client.KaaDesktop;
-import org.kaaproject.kaa.client.event.registration.UserAuthResultListener;
- 
-kaaClient.attachUser("userExternalId", "userAccessToken", new UserAttachCallback()
-{
-    @Override
-    public void onAttachResult(UserAttachResponse response) {
-        System.out.println("Attach response" + response.getResult());
-    }
-});
-```
-
-</div><div id="cpp" class="tab-pane fade" markdown="1" >
-
-```c++
-#include <memory>
-#include <iostream>
- 
-#include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
- 
-using namespace kaa;
- 
-class SimpleUserAttachCallback : public IUserAttachCallback {
-public:
-    virtual void onAttachSuccess()
-    {
-        std::cout << "Endpoint is attached to a user" << std::endl;
-    }
- 
-    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
-    {
-        std::cout << "Failed to attach endpoint to a user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
-    }
-};
- 
-...
-  
-// Create an endpoint instance
-auto kaaClient = Kaa::newClient();
- 
-// Start an endpoint
-kaaClient->start();
- 
-// Try to attach an endpoint to a user
-kaaClient->attachUser("userExternalId", "userAccessToken", std::make_shared<SimpleUserAttachCallback>());
-```
-
-</div><div id="c" class="tab-pane fade" markdown="1" >
-
-```c
-#include <kaa/kaa_user.h>
-#include <kaa/platform/ext_user_callback.h>
- 
-kaa_client_t *kaa_client = /* ... */;
- 
-kaa_error_t on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
-{
-    return KAA_ERR_NONE;
-}
-kaa_error_t on_detached(void *context, const char *endpoint_access_token)
-{
-    return KAA_ERR_NONE;
-}
-kaa_error_t on_attach_success(void *context)
-{
-    return KAA_ERR_NONE;
-}
-kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t error_code, const char *reason)
-{
-    return KAA_ERR_NONE;
-}
-kaa_attachment_status_listeners_t attachement_listeners = 
-{
-        NULL,
-        &on_attached,
-        &on_detached,
-        &on_attach_success,
-        &on_attach_failed
-};
-/* Assume Kaa SDK is already initialized */
-kaa_error_t error_code = kaa_user_manager_set_attachment_listeners(kaa_client_get_context(kaa_client)->user_manager
-                                                                 , &attachement_listeners);
-/* Check error code */
-error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_client)->user_manager
-                                                   , "userExternalId"
-                                                   , "userAccessToken");
-/* Check error code */
-```
-
-</div><div id="objc" class="tab-pane fade" markdown="1" >
-
-```objective-c
-import <Kaa/Kaa.h>
- 
-@interface ViewController () <UserAttachDelegate>
- 
-...
- 
-- (void)prepareUserForMessaging {
-    [self.kaaClient attachUserWithId:@"userExternalId" accessToken:@"userAccessToken" delegate:self];
-}
-- (void)onAttachResult:(UserAttachResponse *)response {
-    NSLog(@"Attach response: %i", response.result);
-}
-```
-
-</div>
-</div>
+To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
 
 #### Get ECF factory and create ECF object
 
@@ -915,6 +793,48 @@ kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_cha
 </div>
 </div>
 
-## REST API for Events
+## Kaa Events REST API 
 
 Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
+
+## Kaa Events Admin UI
+
+#### Managing event class families
+
+> **NOTE:** this functionality available for Tenant admin
+
+To use the Kaa events feature for one or more applications, the tenant admin should create an event class family (ECF). Each ECF should be described using the Avro format. 
+
+To create a new ECF, do the following:
+
+1. Open the **Event class families** window by clicking the corresponding link on the navigation panel.
+2. In the **Event class families** window, click **Add ECF**. 
+![](images/admin_ui/event_class_family/ecf1.png)
+3. In the **Add ECF** window, fill in all the required fields and then click **Add**.  
+**NOTE:** _the namespace and class name values should be unique._
+![](images/admin_ui/event_class_family/ecf2.png)
+4. In the **Event class family** window, add (optionally) an ECF schema by clicking **Add schema** under the **Schemas** table. 
+![](images/admin_ui/event_class_family/ecf3.png)
+5. In the **Add event class family schema** window, create an ECF schema either by using the **Event class family schema** schema form or by uploading the schema from a file, then click **Add**.
+**NOTE:** _More than one schema can be added to an ECF._
+**NOTE:** _If uploaded from a file, a schema(s) should be written in the Avro format and describe how event classes should be grouped depending on subject areas._
+![](images/admin_ui/event_class_family/ecf4.png)
+A unique version number is assigned to a schema after its creation and then the schema appears as a clickable line in the **Schemas** table. To review the ECF schema details, click the appropriate schema line in the **Schemas** table. Each schema automatically splits into event classes. A full qualifier name, schema and type are shown for each event class in the table with the same name.
+![](images/admin_ui/event_class_family/ecf5.png)
+
+#### Adding event family mappings
+
+> **NOTE:** this functionality available for Tenant developer
+
+Event family mappings are used by tenant developers to set event class families for the application and determine the actions for each class family - whether an application should be a source, a sink, or both.
+
+To view the list of ECFs which are mapped to the application, open the **Event family mappings** window by clicking **Event family mappings** under the application on the navigation panel. 
+
+![](images/admin_ui/event_family_mapping/efm1.png)
+
+To add a new mapping, do the following:
+
+1. In the **Event family mappings window**, click **Add family event mapping**.
+2. Select an appropriate ECF from the drop-down list and then set appropriate actions for each class of the family.
+
+![](images/admin_ui/event_family_mapping/efm2.png)
