@@ -2,7 +2,6 @@
 layout: page
 title: Customization guide
 permalink: /:path/
-nav: /:path/Customization-guide/
 sort_idx: 40
 ---
 
