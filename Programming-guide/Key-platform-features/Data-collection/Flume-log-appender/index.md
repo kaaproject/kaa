@@ -20,29 +20,30 @@ The easiest way to create a Flume log appender for your application is by using 
 
 To create a log appender do the following:
 
-1.In the **Log appenders** window, click **Add log appender**. <br/>
-2.Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields. <br/>
-3.Set the log appender type to _Flume_. <br/>
-4.Fill in the Flume log appender [configuration](#configuration) form. <br/>
+1. In the **Log appenders** window, click **Add log appender**. <br/>
+2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields. <br/>
+3. Set the log appender type to _Flume_. <br/>
+4. Fill in the Flume log appender [configuration](#configuration) form. <br/>
 ![Flume log appender configuration](attach/flume-log-appender-configuration.png)
-5.Configure host balancing. <br/>
+5.  Configure host balancing. <br/>
 
->**NOTE:**
->Flume log appenders can have either prioritized or round robin host balancing.
+    >**NOTE:**
+    >Flume log appenders can have either prioritized or round robin host balancing.
 
-5.a) For the prioritized host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address,
-port and priority. The highest priority is 1. When choosing a server to which to save logs, an endpoint will send requests to the servers starting from 
-the server with the highest priority. <br/>
-![Configure prioritized host balancing](attach/configure-prioritized-host-balancing.png)
-5.b) For round robin host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address and port.
-When choosing a server to which to save logs, an endpoint will send requests to the servers according to the round robin algorithm. <br/>
-![Configure round robin host balancing](attach/configure-round-robin-host-balancing.png)
-7.Click **Add** button. Log appender is ready and operational at this point.
+    *   For the prioritized host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address,
+        port and priority. The highest priority is 1. When choosing a server to which to save logs, an endpoint will send requests to the servers starting from
+        the server with the highest priority. <br/>
+        ![Configure prioritized host balancing](attach/configure-prioritized-host-balancing.png)
+    *   For round robin host balancing, add the number of hosts which is equal to the number of Flume nodes. For every host, enter the host address and port.
+        When choosing a server to which to save logs, an endpoint will send requests to the servers according to the round robin algorithm. <br/>
+        ![Configure round robin host balancing](attach/configure-round-robin-host-balancing.png)
+
+6.  Click **Add** button. Log appender is ready and operational at this point.
 
 # Creating Flume log appender with Admin REST API
 
 It is also possible to create a Flume log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
-The following example illustrates how to provision the Flume log appender via Admin REST API.
+The following example illustrates how to create the Flume log appender via Admin REST API.
 
 ## Formats
 
@@ -59,7 +60,7 @@ The RecordData schema has the following four fields.
 * applicationToken
 * eventRecords
 
-The *recordHeader** field stores a set of log metadata fields.
+The **recordHeader** field stores a set of log metadata fields.
 
 The **eventRecords** field stores an array of raw records. Each element of the array is a log record in the Avro binary format serialized by the log schema.
 
@@ -275,7 +276,7 @@ of the log records data schema and stores log data into HDFS as Avro Sequence fi
 ```
 
 ```${record_data_schema}``` - is a variable which is substituted at run time by Kaa HDFS Sink with the Avro schema of the actual logs. 
-This Avro schema is obtained via a [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO) call to Kaa.
+This Avro schema is obtained via [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO) call to Kaa.
 
 ## Configuration
 
@@ -293,7 +294,7 @@ The Flume log appender configuration must match to
 |hostsBalancing         |Prioritized or Round Robin                         |
 |FlumeNodes             |Flume nodes                                        |
 
-<br/>
+An example configuration that matches to previously introduced Avro schema is as below:
 
 ```json
 {
@@ -323,8 +324,6 @@ The Flume log appender configuration must match to
     }
 }
 ```
-
-The following configuration example matches the previous schema.
 
 >**NOTE:**  
 > Flume log appenders can have either prioritized or round robin host balancing. <br/>
@@ -405,24 +404,18 @@ If you want to use Flume agents together with the Flume log appender, create nec
 In our example, we use _Flume_ as Name.  
 In the **Type** drop-down list, select Flume.
 Then, specify the fields **Flume event format** (we selected _Records container_), and **Hosts balancing** (we selected _prioritized_).
-Finally, specify the cluster parameters: host, port and priority. We use localhost:7070. (in our case localhost = 10.2.3.93)  
+Finally, specify the cluster parameters: host, port and priority. We use localhost:7070 (in our case localhost = 10.2.3.93).
 ![Add log appender step 2](attach/add-log-appender2.png)
 ![Add log appender step 3](attach/add-log-appender3.png)
 3. To finish, click **Add** at the top of the window.  
-In case of success, you will see your new log appender in the log appenders list.
-
+4. In case of success, you will see your new log appender in the log appenders list.
 ![Add log appender step 4](attach/add-log-appender4.png)
-
-After that you can go to Data collection demos in Sandbox.
-
+5. Go to the Data collection demos in Sandbox.
 ![Add log appender step 5](attach/add-log-appender5.png)
-
-Use instruction from sandbox to run demo application.
-
-After this you should see something like below:
+6. Use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
+7. After this you should see something like below:
 
 ```bash
-java -jar DataCollectionDemo.jar
 2016-06-16 14:09:28,483 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
 2016-06-16 14:09:29,795 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
 2016-06-16 14:09:29,798 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466075369795} sent

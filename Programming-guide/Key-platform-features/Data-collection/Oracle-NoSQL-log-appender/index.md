@@ -21,15 +21,13 @@ ${applicationToken}/${logSchemaVersion}/${endpointKeyHash}/${uploadTimestamp}/${
 
 The path variables used are:
 
-|Path Variable|Description|
-|---|---|
-|applicationToken|The token of the application|
-|logSchemaVersion|The version of the log schema|
-|endpointKeyHash|The ID of the endpoint the log data belongs to|
-|uploadTimestamp|The timestamp of log upload to the storage (in milliseconds)|
-|count|The log record ID|
-
-<br/>
+|Path Variable      |Description                                                    |
+|-------------------|---------------------------------------------------------------|
+|applicationToken   |The token of the application                                   |
+|logSchemaVersion   |The version of the log schema                                  |
+|endpointKeyHash    |The ID of the endpoint the log data belongs to                 |
+|uploadTimestamp    |The timestamp of log upload to the storage (in milliseconds)   |
+|count              |The log record ID                                              |
 
 Values are stored as serialized generic records using record wrapper Avro schema.
 
@@ -50,7 +48,7 @@ To create a log appender of the Oracle NoSQL key/value storage type, do the foll
 # Creating Oracle NoSQL log appender with Admin REST API
 
 It is also possible to create an instance of the Oracle NoSQL log appender for the application by using the
-[REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO). The following example illustrates how to provision the Oracle NoSQL log appender via the
+[REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO). The following example illustrates how to create the Oracle NoSQL log appender via the
 Admin REST API.
 
 ## Configuration
@@ -58,7 +56,7 @@ Admin REST API.
 The Oracle NoSQL log appender configuration must match to
 [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/oracle-nosql-appender/src/main/avro/oracle-nosql-appender-config.avsc) Avro schema.
 
-The following configuration example matches the previous schema.
+An example configuration that matches to previously introduced Avro schema is as below:
 
 ```json
 {
@@ -149,66 +147,70 @@ Example result:
 and install it to your Kaa server.
 2. Use [following](https://blogs.oracle.com/charlesLamb/entry/oracle_nosql_database_in_5) tutorial for more information about this database.
 3. Create an application using Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
-4. Add custom log schema that will be using for saving logs in database.<br/>
+4. Add custom log schema that will be using for saving logs in database.
 ![Add log schema](attach/nosql-log-appender1.png)
-5. Add Oracle Nosql log appender and define configuration for it.<br/>
+5. Add Oracle Nosql log appender and define configuration for it.
 ![Add log appender](attach/nosql-log-appender2.png)
-6. Generate SDK appropriate to your platform and write code to send logs to database.
+6. Generate SDK for your platform and write code to send logs to database.
+7. Your client code might look like this:
 
-Your client code might look like this:
+    ```bash
+    ...
+    KaaClient client = ...
+    ...
+    Data data = new Data("your log data");
+    //send logs to oracle database
+    client.addLogRecord(data);
+    ...
+    ```
 
-```bash
-...
-KaaClient client = ...
-...
-Data data = new Data("your log data");
-//send logs to oracle database
-client.addLogRecord(data);
-...
-```
+8.  To verify that our logs have been persisted in Oracle NoSQL storage do following:
 
-To verify that our logs have been persisted in Oracle NoSQL storage do following:
+    * Open admin console and run following command:
 
-Open admin console and run following command:
+    ```bash
+    java -jar path_to_oracle_db/lib/kvstore.jar runadmin -host $your_host$ -port $your_port$
+    ```
 
-```bash
-java -jar path_to_oracle_db/lib/kvstore.jar runadmin -port $your_port$ -host $your_host$
-```
+    Where $your_host$ and $your_port$ is your host and port addresses respectively.
 
-Connect to your storage:
 
-```bash
-connect store -name kvstore  -host $oracle_db_host$  -port $oracle_db_port$;
-```
+    * Connect to your storage:
 
-Run:
+    ```bash
+    connect store -name kvstore  -host $oracle_db_host$  -port $oracle_db_port$;
+    ```
 
-```bash
-get kv -start /${applicationToken} -all
-```
+    Where $oracle_db_host$ and $oracle_db_port$ is KVStore node host and port addresses respectively.
 
-Than in your database you will see something like that:
+    * Run:
 
-```json
-/97657068517919541825/2/519xnHqR4xVpq2MSoLSUKgmSTa4=/1456227512249/-/0
-{
-    "recordHeader":{
-        "org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader":{
-            "endpointKeyHash":null,
-            "applicationToken":null,
-            "headerVersion":null,
-            "timestamp":null,
-            "logSchemaVersion":null
-        }
-    },
-    "recordData":{
-        "org.kaaproject.kaa.example.nosql.Data":{
-            "logInfo":{
-                "string":"your log data"
+    ```bash
+    get kv -start /${applicationToken} -all
+    ```
+
+    * Than in your database you will see something like the below:
+
+    ```json
+    /97657068517919541825/2/519xnHqR4xVpq2MSoLSUKgmSTa4=/1456227512249/-/0
+    {
+        "recordHeader":{
+            "org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader":{
+                "endpointKeyHash":null,
+                "applicationToken":null,
+                "headerVersion":null,
+                "timestamp":null,
+                "logSchemaVersion":null
+            }
+        },
+        "recordData":{
+            "org.kaaproject.kaa.example.nosql.Data":{
+                "logInfo":{
+                    "string":"your log data"
+                }
             }
         }
     }
-}
-```
+    ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

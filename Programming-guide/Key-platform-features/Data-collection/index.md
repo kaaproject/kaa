@@ -13,9 +13,10 @@ sort_idx: 50
 {:toc}
 
 The Kaa data collection subsystem is designed to collect records (logs) of pre-configured structure on the endpoints, periodically transferring these records
-from endpoints to Operation services, and, finally, either persisting them on the server for further processing or submitting them to immediate stream
-analysis. The log structure in Kaa is determined for each application by a configurable log schema. On the Operation service side, there are log appenders
-which are responsible for writing logs received by the Operations service into the specific storage.
+from endpoints to Operations service, and, finally, either persisting them on the server for further processing or submitting them to immediate stream
+analysis. The log structure in Kaa is determined for each application by a configurable log schema. On the Operations service side, there are log appenders
+which are responsible for writing logs received by the Operations service into the specific storage. It is possible to add several log appenders to work
+simultaneously.
 
 From this guide you will learn how to use the Kaa data collection subsystem.
 
@@ -99,6 +100,7 @@ The following examples illustrate basic log schemas.
 The default log schema installed for Kaa applications is empty. You can configure your own log schema using the Admin UI or
 [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/ #TODO).
 For the purpose of this guide, we will use schema that is very close to the common log structure:
+
 * log level
 * tag
 * message
@@ -138,23 +140,22 @@ For the purpose of this guide, we will use schema that is very close to the comm
 
 In Admin UI as a tenant developer, you can create new log schemas for the application as follows:
 
-1. In the Log schemas window for the application, click Add schema.
-2. In the Add log schema window, create a log schema either by using the [schema form]({{root_url}}LINK_TO_AVRO_UI_FORMS_AVRO_UI_SCHEMA_FORM) or
-by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.<br/>
+1. In the Log schemas window for the application, click **Add schema**.
+2. In the Add log schema window, create a log schema either by using the [schema form]({{root_url}}LINK_TO_AVRO_UI_FORMS_AVRO_UI_SCHEMA_FORM#TODO) or
+by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+![Add log schema](attach/add-log-schema.png)
+3. Click **Add** to save the schema.
 
-![Add log schema](attach/add-log-schema.png) <br/>
-
-3. Click Add to save the schema.
-
-If you want to review the added Avro schema, open the Log schema details window by clicking the schema in the Log schemas window.
+If you want to review the added Avro schema, open the **Log schema details** window by clicking the schema in the **Log schemas** window.
 
 ![Log schema details](attach/log_schema_details.png)
 
 # Log appenders
 
-A log appender is a service utility which resides on the Operations service. This utility is responsible for writing logs (received by the Operations service
-from endpoints) to a single specific storage, as defined by the log appender's type. Kaa provides several default implementations of log appenders but
-it is also possible to create custom log appenders.
+A log appender is a service utility which reside on the Operations service side. This utility is responsible for writing logs (received by the Operations
+service from endpoints) to a single specific storage, as defined by the log appender's type. It is possible to have several log appenders which can work
+simultaneously. Kaa provides several default implementations of log appenders but it is also possible to develop and integrate
+[custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
 
 ## Confirm delivery option
 
@@ -187,9 +188,9 @@ an endpoint reset. To avoid this, use a persistent log storage to store all the 
 ## Existing log appender implementations
 
 There are several default log appender implementations that are available out of the box for each Kaa installation. A Kaa developer is able to add, update
-and delete log appenders using Admin UI or Admin REST API. After adding log appender please [configure your application](#data-collection-sdk-api) or use
-[data collection demo](#data-collection-demo) application for log delivery. For more information about architecture, configuration and administration refer
-to the corresponding log appender:
+and delete log appenders using Admin UI or Admin REST API. After adding log appender ensure the data collection feature is
+[configured appropriately](#data-collection-sdk-api). For sample purposes [data collection demo](#data-collection-demo) application can be used as well.
+For more information about architecture, configuration and administration refer to the corresponding log appender:
 
 * ### [Cassandra log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender)
 
@@ -237,18 +238,13 @@ log appender.
 
 * ### [Rest log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender)
 
-The REST log appender is responsible for transferring logs from Operation service to your custom service. You can configure host, port, relative URI path,
+The REST log appender is responsible for transferring logs from Operations service to your custom service. You can configure host, port, relative URI path,
 method type and [other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configuration) parameters for this log appender.
 
-## Custom appender implementations
+## Custom log appender implementations
 
-Refer to the [Custom log appender]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders) page to learn how to implement custom log
-appenders.
-
-## Managing log appenders
-
-Kaa provides default implementations of log appenders that store logs in Hadoop, Cassandra, MongoDB or a local file system (FS). It is possible to develop and 
-integrate [custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+Refer to the [Custom log appender]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders) page to learn how to develop and integrate
+custom log appender.
 
 # Data Collection SDK API
 
@@ -256,7 +252,7 @@ integrate [custom log appenders]({{root_url}}Customization-guide/Customizable-sy
 
 The logging subsystem API varies depending on the target SDK platform. However, the general approach is the same.
 
-To transfer logs to the Kaa Operation service, the Kaa client application should use the following code.
+To transfer logs to the Kaa Operations service, the Kaa client application should use the following code.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
@@ -1175,5 +1171,5 @@ uploadStrategy.maxParallelUploads = 1;
 
 ## Data collection demo
 
-[An example application](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) for collecting log data from endpoints can be found 
+An [example application](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) for collecting log data from endpoints can be found
 in the official Kaa repository.
