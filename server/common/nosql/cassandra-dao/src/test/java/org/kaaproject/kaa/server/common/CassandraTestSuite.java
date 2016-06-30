@@ -28,6 +28,6 @@ import org.junit.runner.RunWith;
 public class CassandraTestSuite {
 
     @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false), "cassandra-test.yaml", 2 * 60000L);
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false), "cassandra-test.yaml", 4 * 60000L);
 
 }
