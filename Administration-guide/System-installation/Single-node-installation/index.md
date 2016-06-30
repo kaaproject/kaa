@@ -44,11 +44,11 @@ Kaa requires the following third party components to be installed and configured
 * [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Kaa has been tested on JDK 8.
 * [PostgreSQL 9.4](http://www.postgresql.org/download/)
 * [MariaDB 5.5](https://mariadb.com/)
-* [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.5/). Kaa requires ZooKeeper for coordination of server components.
+* [Zookeeper 3.4.5 or later](http://zookeeper.apache.org/doc/r3.4.5/). Kaa requires ZooKeeper for coordination of server components.
 
 Kaa has been tested on the latest production release of MariaDB and PostgreSQL.
 
-Kaa also requires [MongoDB 2.6.9](http://www.mongodb.org/downloads) or [Cassandra 3.5](http://cassandra.apache.org/download/) as a NoSQL database. The installation steps for third-party components are provided in the following section.
+Kaa also requires [MongoDB 2.6.9](http://www.mongodb.org/downloads) or [Cassandra 3.5](http://cassandra.apache.org/download/) (note: for RPM based OS (Centos) 3.0.7 is the latest available version in DataStax repo) as a NoSQL database. The installation steps for third-party components are provided in the following section.
 
 
 ## Installation steps
@@ -222,7 +222,7 @@ CREATE DATABASE kaa;
 </ul>
 
 
-4. Install [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.6/).
+4. Install [Zookeeper 3.4.8](http://zookeeper.apache.org/doc/r3.4.8/).
 
    ```bash
    $ sudo apt-get install zookeeperd
@@ -781,7 +781,7 @@ $ sudo chkconfig mongod on
 
 </div><div id="cassandra_centos" class="tab-pane fade" markdown="1" >
 
-Install [Cassandra 2.2.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB 2.6](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
+Install [Cassandra 3.0.7](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB 2.6](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
 
 Add the DataStax Community yum repository.
 
@@ -803,7 +803,7 @@ $ sudo yum install jna
 Install Cassandra.
 
 ```bash
-$ sudo yum install dsc22
+$ sudo yum install dsc30
 ```
 
 Export java variables.
@@ -830,7 +830,7 @@ Check cassandra cql shell.
 ```bash
 $ cqlsh
 Connected to Test Cluster at 127.0.0.1:9042.
-[cqlsh 5.0.1 | Cassandra 2.2.5 | CQL spec 3.2.0 | Native protocol v3]
+[cqlsh 5.0.1 | Cassandra 3.0.7 | CQL spec 3.2.0 | Native protocol v3]
 Use HELP for help.
 cqlsh>
 ```
