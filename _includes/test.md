@@ -6,11 +6,11 @@
   {% assign new_url = page.url | replace_first: version, site.data.latest_version.version %}
   {% if urls contains new_url %}
 
-  > WARNING: New version is avaliable [here]({{new_url}}).
+  > WARNING: New version is avaliable [here]({{ site.baseurl }}{{new_url}}).
 
   {% else %}
 
-  > WARNING: This documentation is outdated. Try to look for new version [here](/kaa/{{site.data.latest_version.version}}).
+  > WARNING: This documentation is outdated. Try to look for new version [here]({{ site.baseurl }}/kaa/{{site.data.latest_version.version}}).
 
   {% endif %}
 {% endif %}
