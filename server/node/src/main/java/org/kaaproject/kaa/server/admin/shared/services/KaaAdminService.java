@@ -427,7 +427,7 @@ public interface KaaAdminService extends RemoteService {
 
     RecordField generateCtlSchemaForm(String fileItemName, String applicationId) throws KaaAdminServiceException;
 
-    CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+    CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm, ConverterType converterType) throws KaaAdminServiceException;
 
     boolean checkFqnExists(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 

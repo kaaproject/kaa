@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -834,8 +833,8 @@ public class DataSource {
     }
     
     public void editCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm,
-            final AsyncCallback<CtlSchemaFormDto> callback) {
-        rpcService.saveCTLSchemaForm(ctlSchemaForm, 
+                                  ConverterType converterType, final AsyncCallback<CtlSchemaFormDto> callback) {
+        rpcService.saveCTLSchemaForm(ctlSchemaForm, converterType,
                 new DataCallback<CtlSchemaFormDto>(callback) {
                     @Override
                     protected void onResult(CtlSchemaFormDto result) {

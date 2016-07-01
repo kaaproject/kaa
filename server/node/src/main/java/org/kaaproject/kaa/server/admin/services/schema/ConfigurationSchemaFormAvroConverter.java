@@ -168,8 +168,7 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
         if (fieldType.getSchema().getName().equals(ARRAY_FIELD_TYPE)) {
             GenericData.EnumSymbol overrideStrategy = 
                     (GenericData.EnumSymbol)fieldType.get(OVERRIDE_STRATEGY);
-            if (overrideStrategy != null && 
-                                !overrideStrategy.toString().equalsIgnoreCase(OverrideStrategy.REPLACE.name())) {
+            if (overrideStrategy != null && !overrideStrategy.toString().equalsIgnoreCase(OverrideStrategy.REPLACE.name())) {
                 avroField.addProp(OVERRIDE_STRATEGY, overrideStrategy.toString().toLowerCase());
             }
         }

@@ -965,7 +965,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             confSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             confSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             confSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
             confSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
             ConfigurationSchemaDto savedConfSchema = saveConfigurationSchema(confSchema);
             return getConfigurationSchemaView(savedConfSchema.getId());
@@ -1112,7 +1112,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                             metaInfo.getMetaInfo().getApplicationId());
                     profileSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(profileSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(profileSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
                     profileSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
@@ -1133,7 +1133,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             profileSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             profileSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             profileSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             profileSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
             EndpointProfileSchemaDto savedProfileSchema = saveProfileSchema(profileSchema);
             return getProfileSchemaView(savedProfileSchema.getId());
@@ -1263,7 +1263,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                             metaInfo.getMetaInfo().getApplicationId());
                     serverProfileSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(serverProfileSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(serverProfileSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
                     serverProfileSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
@@ -1284,7 +1284,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             serverProfileSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             serverProfileSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             serverProfileSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             serverProfileSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
             ServerProfileSchemaDto savedServerProfileSchema = saveServerProfileSchema(serverProfileSchema);
             return getServerProfileSchemaView(savedServerProfileSchema.getId());
@@ -1459,7 +1459,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                             metaInfo.getMetaInfo().getApplicationId());
                     confSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(confSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(confSchemaView.getCtlSchemaForm(), ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
                     confSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
@@ -3574,7 +3574,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+    public CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm, ConverterType converterType) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.values());
         try {
             AuthUserDto currentUser = getCurrentUser();
@@ -3615,7 +3615,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 }
                 ctlSchema.setDependencySet(dependencies);
                 SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(ctlSchema.getMetaInfo().getTenantId(),
-                        ctlSchema.getMetaInfo().getApplicationId(), ConverterType.FORM_AVRO_CONVERTER);
+                        ctlSchema.getMetaInfo().getApplicationId(), converterType);
                 Schema avroSchema = converter.createSchemaFromSchemaForm(schemaForm);
                 String schemaBody = SchemaFormAvroConverter.createSchemaString(avroSchema, true);
                 ctlSchema.setBody(schemaBody);
@@ -3623,7 +3623,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             CTLSchemaDto savedCtlSchema = saveCTLSchema(ctlSchema);
             if (savedCtlSchema != null) {
-                return toCtlSchemaForm(savedCtlSchema, ConverterType.FORM_AVRO_CONVERTER);
+                return toCtlSchemaForm(savedCtlSchema, converterType);
             }
         } catch (Exception cause) {
             throw Utils.handleException(cause);

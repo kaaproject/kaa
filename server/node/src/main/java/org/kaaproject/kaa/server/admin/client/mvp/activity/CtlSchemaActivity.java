@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton.ActionMenuItemListener;
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
@@ -412,7 +411,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                     });
             }
         } else {
-            KaaAdmin.getDataSource().editCTLSchemaForm(entity, callback);
+            KaaAdmin.getDataSource().editCTLSchemaForm(entity, ConverterType.FORM_AVRO_CONVERTER, callback);
         }
     }
 
