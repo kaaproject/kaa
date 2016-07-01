@@ -62,6 +62,11 @@ elif [ x"$gh_pages" = x"$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
   GH_PAGES_STUB=$(git subtree split --prefix=gh-pages-stub/)
   git checkout -
   git merge "$GH_PAGES_STUB" -m "merged jekyll files"
+  if [ -f .nojekyll ]; then
+     echo "Removing .nojekyll"
+     rm .nojekyll
+     git commit .nojekyll -m "Removed .nojekyll file"
+  fi
   mkdir -p "$jekyll_root/_data"
   for version in $versions; do
     if [ x"" != x"$(echo "$version" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+$")" ]; then
