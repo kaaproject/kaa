@@ -1,9 +1,8 @@
-{% assign url_array = page.url | split: '/' %}
-{% capture version %}{{url_array[2]}}{% endcapture %}
-{% if version != site.data.latest_version.version %}
+{% include variables.md %}
+{% if version != latest_version %}
 
   {% assign urls = site.pages | map: 'url' %}
-  {% assign new_url = page.url | replace_first: version, site.data.latest_version.version %}
+  {% assign new_url = page.url | replace_first: version, latest_version %}
   {% if urls contains new_url %}
 
   > WARNING: New version is avaliable [here]({{ site.baseurl }}{{new_url}}).
