@@ -86,7 +86,7 @@ elif [ x"$gh_pages" = x"$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
   printf "%s\nversion: %s" "---" "$latest" > _data/latest_version.yml
   echo "Generating menu data"
   ruby scripts/create_global_toc.rb
-  git add _data/menu.yml _data/latest_version.yml
+  git add _data/menu.yml _data/latest_version.yml _data/versions.yml
   git commit -m "Updated global toc and version"
   echo "Finished deploy into gh-pages"
 else
