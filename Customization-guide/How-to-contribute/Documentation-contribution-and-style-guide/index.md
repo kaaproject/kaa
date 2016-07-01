@@ -4,8 +4,7 @@ title: Documentation contribution and style guide
 permalink: /:path/
 sort_idx: 30
 ---
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -302,12 +301,11 @@ permalink: /:path/
 ---
 ```
 
-* Capture `root_url` to refer to another page.
+* Include `variables.md` files to capture `root_url`. This will allow you to refer to other pages.
 
 {% raw %}
   ```
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 ```
 {% endraw %}
 
@@ -467,6 +465,6 @@ nix-shell doc/shell.nix --run ./test-gh-pages.sh
    ```bash
    user@host:/kaa$ ./test-gh-pages.sh
    ...
-   Server address: http://127.0.0.1:4000//
+   Server address: http://127.0.0.1:4000/kaa/
    Server running... press ctrl-c to stop.
    ```
