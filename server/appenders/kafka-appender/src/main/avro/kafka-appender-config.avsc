@@ -81,7 +81,7 @@
             "displayName":"Buffer memory size",
             "by_default":33554432,
             "type":"long"
-        },  
+        },
         {
             "namespace":"org.kaaproject.kaa.server.appenders.kafka.config.gen",
             "name":"kafkaCompression",
@@ -101,7 +101,7 @@
                 "null"
             ]
         },
-		{
+        {
             "namespace":"org.kaaproject.kaa.server.appenders.kafka.config.gen",
             "name":"kafkaAcknowledgement",
             "by_default":"ONE",
@@ -112,10 +112,10 @@
                     "name":"KafkaAcknowledgement",
                     "type":"enum",
                     "symbols":[
-						"ALL",
+                        "ALL",
                         "ZERO",
-						"ONE",
-						"TWO"
+                        "ONE",
+                        "TWO"
                     ]
                 },
                 "null"
@@ -126,6 +126,6 @@
             "displayName":"Retries",
             "by_default":0,
             "type":"int"
-        }                   
+        }
     ]
 }

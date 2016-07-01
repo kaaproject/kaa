@@ -1,13 +1,44 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.file.config.gen",
-    "type": "record",
-    "name": "FileConfig",
-    "fields": [
-            {"name": "publicKey", "displayName": "Public Key", "maxLength": 1000, "by_default": "", "type": "string"},
-            {"name": "logsRootPath", "displayName": "Logs root path", "by_default": "/kaa_log_uploads", "type": "string"},
-            {"name": "rollingFileNamePatern", "displayName": "Rolling file name pattern", "by_default": "logFile.%d{yyyy-MM-dd}.log", "type": "string"},
-            {"name": "rollingMaxHistory", "displayName": "Rolling max history", "by_default": 30, "type": "int"},
-            {"name": "triggerMaxFileSize", "displayName": "Trigger max file size", "by_default": "1GB", "type": "string"},
-            {"name": "encoderPattern", "displayName": "Encoder pattern", "by_default": "%-4relative [%thread] %-5level %logger{35} - %msg%n", "type": "string"}
+    "namespace":"org.kaaproject.kaa.server.appenders.file.config.gen",
+    "type":"record",
+    "name":"FileConfig",
+    "fields":[
+        {
+            "name":"publicKey",
+            "displayName":"Public Key",
+            "maxLength":1000,
+            "by_default":"",
+            "type":"string"
+        },
+        {
+            "name":"logsRootPath",
+            "displayName":"Logs root path",
+            "by_default":"/kaa_log_uploads",
+            "type":"string"
+        },
+        {
+            "name":"rollingFileNamePatern",
+            "displayName":"Rolling file name pattern",
+            "by_default":"logFile.%d{yyyy-MM-dd}.log",
+            "type":"string"
+        },
+        {
+            "name":"rollingMaxHistory",
+            "displayName":"Rolling max history",
+            "by_default":30,
+            "type":"int"
+        },
+        {
+            "name":"triggerMaxFileSize",
+            "displayName":"Trigger max file size",
+            "by_default":"1GB",
+            "type":"string"
+        },
+        {
+            "name":"encoderPattern",
+            "displayName":"Encoder pattern",
+            "by_default":"%-4relative [%thread] %-5level %logger{35} - %msg%n",
+            "type":"string"
+        }
     ]
 }
