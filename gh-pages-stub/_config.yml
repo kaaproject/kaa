@@ -11,7 +11,7 @@ title:            Kaa
 tagline:          'A Jekyll theme'
 description:      ''
 url:              
-baseurl:          /
+baseurl:          /kaa
 
 author:
   name:           
