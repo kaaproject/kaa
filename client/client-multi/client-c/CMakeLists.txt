@@ -69,7 +69,7 @@
 #
 #	Note: requires [cmocka](https://cmocka.org/) test framework to be installed.
 
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(Kaa-c C)
 
