@@ -17,11 +17,11 @@
           {% assign postfix = ""  %}
         {% endif %}
           {% if val.url == navurl %}
-            <li class="menu-selected menu-opened"><a href="{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
+            <li class="menu-selected menu-opened"><a href="{{ site.baseurl }}{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
 		  {% elsif navurl contains val.url %}
-			<li class="menu-opened"><a href="{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
+			<li class="menu-opened"><a href="{{ site.baseurl }}{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
           {% else %}
-            <li><a href="{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
+            <li><a href="{{ site.baseurl }}{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
           {% endif %}	
 
 		{% if ?val.subitems.size > 0 %}
