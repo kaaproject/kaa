@@ -12,7 +12,7 @@ sort_idx: 40
 * TOC
 {:toc}
 
-To exchange events between several endpoints, it is required that those endpoints were attached to the same owner (in other words, registered with the same user). 
+To exchange events between several endpoints, it is required that those endpoints were attached to the same owner. 
 Kaa provides necessary APIs to attach/detach endpoints to/from owners through one of the following two flows:
 
 * [Owner access token flow](#owner-access-token-flow)
@@ -47,11 +47,11 @@ The following image example illustrates how to create a trustful user verifier f
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
 
-### Facebook user verifier ### 
+#### Facebook user verifier #### 
 This user verifier implementation is created for verification of Facebook accounts. It is especially useful for applications that are already integrated with Facebook.
 
 
-### Configuration ###
+##### Configuration #####
 The configuration should match the following Avro schema. Note that you need to create a [facebook application](https://developers.facebook.com/products/login/) 
 and specify its application id and [secret](https://developers.facebook.com/docs/graph-api/securing-requests) in the configuration.
 
@@ -91,16 +91,16 @@ The following configuration example matches the previous schema.
 ```
 
 
-### Administration ###
+##### Administration #####
 To create a Facebook user verifier, use either Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 The following image example illustrates how to create a Facebook user verifier from Admin UI.
 
 ![facebook verifier](Admin-ui/verifier-facebook.png "facebook verifier")
 
-### Google+ user verifier ### 
+#### Google+ user verifier ####
 This user verifier implementation is created for verification of Google+ accounts. It is especially useful for applications that are already integrated with Google+.
 
-### Configuration ###
+##### Configuration #####
 The configuration should match the following Avro schema.
 
 ```json
@@ -128,16 +128,16 @@ The configuration should match the following Avro schema.
 }
 ```
 
-### Administration ###
+##### Administration #####
 To create a Google+ user verifier, use either Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 The following image example illustrates how to create a Google+ user verifier from Admin UI.
 
 ![google verifier](Admin-ui/verifier-google.png "google verifier")
 
-### Twitter user verifier ###
+#### Twitter user verifier ####
 This user verifier implementation is created for verification of Twitter accounts. It is especially useful for applications that are already integrated with Twitter.
 
-### Configuration ##
+##### Configuration #####
 The configuration should match the following Avro schema.
 
 ```json 
@@ -165,13 +165,13 @@ The configuration should match the following Avro schema.
 }
 ```
 
-### Administration ###
+##### Administration #####
 To create a Twitter user verifier, use either Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 The following image example illustrates how to create a Twitter user verifier from Admin UI.
                                    
 ![twitter verifier](Admin-ui/verifier-twitter.png "twitter verifier")
 
-### Custom user verifier ###
+#### Custom user verifier ####
 It is possible to implement and plug-in custom user verifiers. You can find corresponding instructions on the 
 [Creating custom user verifier]({{root_url}}Customization-guide/Kaa-Server/Development-environment-setup/#creating-custom-user-verifier) page.
 
@@ -318,7 +318,7 @@ error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_
 </div>
 <div id="Objective-C" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
  
 @interface ViewController () <UserAttachDelegate>
@@ -443,7 +443,7 @@ error_code = kaa_user_manager_attach_endpoint(kaa_client_get_context(kaa_client)
 </div>
 <div id="Objective-C-1" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
  
 @interface ViewController () <OnAttachEndpointOperationDelegate>
@@ -564,7 +564,7 @@ error_code = kaa_user_manager_detach_endpoint(kaa_client_get_context(kaa_client)
 </div>
 <div id="Objective-C-2" class="tab-pane fade" markdown="1" >
 
-```objective-c
+```objc
 #import <Kaa/Kaa.h>
  
 @interface ViewController () <DetachEndpointFromUserDelegate>
