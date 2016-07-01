@@ -16,21 +16,20 @@
 
 package org.kaaproject.kaa.client;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
 import org.kaaproject.kaa.client.exceptions.KaaUnsupportedPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 /**
  * Creates new Kaa client based on {@link KaaClientPlatformContext platform
  * context} and optional {@link KaaClientStateListener state listener}.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public class Kaa {
     private static final Logger LOG = LoggerFactory.getLogger(Kaa.class);
@@ -43,14 +42,19 @@ public class Kaa {
     }
 
     public static KaaClient newClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws KaaRuntimeException {
+        return newClient(context, listener, false);
+    }
+
+    public static KaaClient newClient(KaaClientPlatformContext context, KaaClientStateListener listener, boolean isUserKeyStrategy)
+            throws KaaRuntimeException {
         try {
-            return new BaseKaaClient(context, listener);
+            return new BaseKaaClient(context, listener, isUserKeyStrategy);
         } catch (GeneralSecurityException e) {
             LOG.error("Failed to create Kaa client", e);
             throw new KaaUnsupportedPlatformException(e);
         } catch (IOException e) {
             LOG.error("Failed to create Kaa client", e);
-            throw new KaaInvalidConfigurationException(e); 
+            throw new KaaInvalidConfigurationException(e);
         }
     }
 }

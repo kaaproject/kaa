@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
@@ -31,6 +32,11 @@ public interface KaaClientState {
     boolean isRegistered();
     void setRegistered(boolean registered);
 
+    /**
+     * User can choose to create key pair or not. In default case there is no key generation
+     *
+     * @return keys
+     */
     PrivateKey getPrivateKey();
     PublicKey getPublicKey();
 
@@ -50,7 +56,7 @@ public interface KaaClientState {
     void addTopicSubscription(Long topicId);
     void removeTopicSubscription(Long topicId);
     boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
-    
+
     void setTopicListHash(Integer topicListHash);
     Integer getTopicListHash();
 
