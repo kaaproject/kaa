@@ -90,7 +90,7 @@ static kaa_error_t test_get_protocol_info(void *context, kaa_transport_protocol_
 }
 
 static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_extension_id **supported_services
+                                             , const kaa_extension_id **supported_services
                                              , size_t *service_count)
 {
     KAA_RETURN_IF_NIL3(context, supported_services, service_count, KAA_ERR_BADPARAM);
@@ -139,6 +139,12 @@ static void compare_channels(kaa_transport_channel_interface_t *actual_channel
     ASSERT_NOT_EQUAL(0, kaa_transport_protocol_id_equals(&actual_info, &expected_info));
 }
 
+static void test_auth_failure_handler(kaa_auth_failure_reason reason, void *context)
+{
+    assert_ptr_not_equal(context, NULL);
+
+    *(kaa_auth_failure_reason *)context = reason;
+}
 
 
 /**
@@ -394,16 +400,16 @@ void test_get_bootstrap_client_sync_serialize(void **state)
     error_code = kaa_channel_manager_bootstrap_request_get_size(channel_manager, &sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    char manual_buffer[sync_size];
-    char auto_buffer[sync_size];
+    uint8_t manual_buffer[sync_size];
+    uint8_t auto_buffer[sync_size];
 
     kaa_platform_message_writer_t *manual_writer;
     kaa_platform_message_writer_t *auto_writer;
 
-    error_code = kaa_platform_message_writer_create(&manual_writer, (char *)manual_buffer, sync_size);
+    error_code = kaa_platform_message_writer_create(&manual_writer, manual_buffer, sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_message_writer_create(&auto_writer, (char *)auto_buffer, sync_size);
+    error_code = kaa_platform_message_writer_create(&auto_writer, auto_buffer, sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_message_write_extension_header(manual_writer
@@ -458,7 +464,24 @@ void test_get_bootstrap_client_sync_serialize(void **state)
     kaa_channel_manager_destroy(channel_manager);
 }
 
+void test_process_auth_failure(void **state)
+{
+    (void)state;
 
+    kaa_error_t error_code;
+    kaa_channel_manager_t *channel_manager = NULL;
+    kaa_auth_failure_reason reason;
+
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
+    assert_int_equal(error_code, KAA_ERR_NONE);
+    kaa_channel_manager_set_auth_failure_handler(channel_manager, test_auth_failure_handler, &reason);
+
+    kaa_channel_manager_process_auth_failure(channel_manager, KAA_AUTH_STATUS_BAD_CREDENTIALS);
+    assert_int_equal(reason, KAA_AUTH_STATUS_BAD_CREDENTIALS);
+
+    kaa_channel_manager_process_auth_failure(channel_manager, KAA_AUTH_STATUS_VERIFICATION_FAILED);
+    assert_int_equal(reason, KAA_AUTH_STATUS_VERIFICATION_FAILED);
+}
 
 int test_init(void)
 {
@@ -486,8 +509,12 @@ int test_deinit(void)
 KAA_SUITE_MAIN(Log, test_init, test_deinit
        ,
        KAA_TEST_CASE(create_channel_manager, test_create_channel_manager)
+       /* KAA-988 */
+       /*
        KAA_TEST_CASE(add_channel, test_add_channel)
        KAA_TEST_CASE(get_service_specific_channel, test_get_service_specific_channel)
        KAA_TEST_CASE(get_bootstrap_client_sync_size, test_get_bootstrap_client_sync_size)
        KAA_TEST_CASE(get_bootstrap_client_sync_serialize, test_get_bootstrap_client_sync_serialize)
+       */
+       KAA_TEST_CASE(process_auth_faliure, test_process_auth_failure)
        )
