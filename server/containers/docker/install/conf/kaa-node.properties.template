@@ -1,0 +1,116 @@
+# Enabled Servers configuration
+
+# Specifies if Control Server is enabled.
+control_server_enabled={{CONTROL_SERVER_ENABLED}}
+
+# Specifies if Bootstrap Server is enabled.
+bootstrap_server_enabled={{BOOTSTRAP_SERVER_ENABLED}}
+
+# Specifies if Operations Server is enabled.
+operations_server_enabled={{OPERATIONS_SERVER_ENABLED}}
+
+# Thrift configurations (more information about thrift look at http://thrift.apache.org/)
+# The Control Server notifies every Operations/Bootstrap Server on most data updates via a Thrift-based protocol.
+
+# Thrift server host
+thrift_host={{THRIFT_HOST}}
+
+# Thrift server port
+thrift_port={{THRIFT_PORT}}
+
+# Kaa Admin Web server port
+admin_port={{ADMIN_PORT}}
+
+# Zookeeper service configuration
+# Each Kaa cluster node (Kaa server) reports its state to Apache Zookeeper.
+# Every node in the deployment can always obtain location of the active Control Server
+# and the list of active Bootstrap and Operations Servers.
+
+# Specifies if need to use zookeeper service. This is property have to be always "true".
+# It is possible to change it for development or debug process.
+zk_enabled=true
+
+# Zookeeper service url list.
+zk_host_port_list={{ZOOKEEPER_NODE_LIST}}
+
+# The max retry time in milliseconds.
+zk_max_retry_time=3000
+
+# Time to sleep in milliseconds between searches for work.
+zk_sleep_time=1000
+
+# Specifies if need to throw runtime exception during registration control zookeeper node.
+zk_ignore_errors=true
+
+# Minimum difference between amount of endpoints that need to be present in
+# order to trigger rebalancing
+loadmgmt_min_diff=10000
+
+# Maximum redirect probability for new sessions
+loadmgmt_max_init_redirect_probability=0.75
+
+# Maximum redirect probability for existing sessions
+loadmgmt_max_session_redirect_probability=0.0
+
+# Recalculate period in seconds for Operations server load process.
+recalculation_period=10
+
+# Specify hash partitions count for each server node
+user_hash_partitions=10
+
+# Specify the max number of neighbor connections
+max_number_neighbor_connections=3
+
+# Default TTL in seconds for historical information about Operations server load.
+ops_server_history_ttl=3600
+
+
+# Handler thread pool executor size
+worker_thread_pool=8
+
+# Bootstrap server keys configurations.
+# Each client have to know bootstrap public key to make successful connection to bootstrap server.
+
+# Path to Bootstrap server private key
+bootstrap_keys_private_key_location=keys/bootstrap/private.key
+
+# Path to Bootstrap server public key
+bootstrap_keys_public_key_location=keys/bootstrap/public.key
+
+# Operations server keys configurations.
+
+# Path to Operations server private key
+operations_keys_private_key_location=keys/operations/private.key
+
+# Path to Operations server public key
+operations_keys_public_key_location=keys/operations/public.key
+
+# Specify if support unencrypted connection
+support_unencrypted_connection={{SUPPORT_UNENCRYPTED_CONNECTION}}
+
+# Interface that will be used by all transports
+transport_bind_interface={{TRANSPORT_BIND_INTERFACE}}
+
+# Interface that will be reported by all transports
+transport_public_interface={{TRANSPORT_PUBLIC_INTERFACE}}
+
+# Metrics collect enabled
+metrics_enabled={{METRICS_ENABLED}}
+
+# Path to logs root directory
+logs_root_dir=/kaa_log_uploads
+
+# Date pattern for file log appender
+date_pattern='.'yyyy-MM-dd-HH-mm
+
+# Layout pattern for file log appender
+layout_pattern=%m%n
+
+# Path to tmp keys directory
+tmp_keys=/home/kaa/tmp_keys
+
+# Frequency of load status check
+load_stats_update_frequency=10000
+
+# specify additional package to scan kaa plugins configuration
+additional_plugins_scan_package=
