@@ -13,9 +13,10 @@ Kaa IoT requires the following dependencies to run:
 
 <b>Docker build</b>
 
-1. Download Kaa's debian package at: http://www.kaaproject.org/download-kaa/ and place it inside 'install/deb/'
+1. Download Kaa's debian package at: http://www.kaaproject.org/download-kaa/ and place it inside 'install/'
 
-2. Build this image (build.sh for your convenience)
+2. Build, specifying the debian package location: 
+$ docker build --build-arg setupfile=<KAA_DEB_PACKAGE> -t cburr25/kaa:0.9.0 .
 
 ## Quick run
 
@@ -62,6 +63,18 @@ Two example runs using docker-compose are provided. Simply run <b>launch-kaa.sh<
 | MONGODB_WRITE_CONCERN 		| acknowledged 				| 
 | 								| 							| 
 | NOSQL_PROVIDER_NAME			| mongodb 					| mongodb , cassandra
+|								|							|
+| CONTROL_SERVER_ENABLED		| true						| true/false
+| BOOTSTRAP_SERVER_ENABLED		| true						| true/false
+| OPERATIONS_SERVER_ENABLED		| true						| true/false
+| THRIFT_HOST					| localhost					| 
+| THRIFT_PORT					| 9090						| 
+| ADMIN_PORT					| 8080						| 
+| SUPPORT_UNENCRYPTED_CONNECTION | true						| true/false
+| TRANSPORT_BIND_INTERFACE		| 0.0.0.0					| 
+| TRANSPORT_PUBLIC_INTERFACE	| localhost					| 
+| METRICS_ENABLED				| true 						| true/false
+
 
 <b>(3)</b> Run this image, link the containers however you want. <i>See 'docker-run-kaa-1.0.0.sh' for an example.</i>
 
