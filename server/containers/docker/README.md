@@ -16,7 +16,7 @@ Kaa IoT requires the following dependencies to run:
 1. Download Kaa's debian package at: http://www.kaaproject.org/download-kaa/ and place it inside 'install/'
 
 2. Build, specifying the debian package location: 
-$ docker build --build-arg setupfile=<KAA_DEB_PACKAGE> -t cburr25/kaa:0.9.0 .
+$ docker build --build-arg setupfile=&lt;KAA_DEB_PACKAGE&gt; -t cburr25/kaa:0.9.0 .
 
 ## Quick run
 
@@ -82,7 +82,7 @@ Two example runs using docker-compose are provided. Simply run <b>launch-kaa.sh<
 
 If you run your Docker container as a daemon, you won't see its output. That's okay, just run:
 
-$ docker exec <container-name> tail -f /var/log/kaa/kaa-node.log
+$ docker exec &lt;container-name&gt; tail -f /var/log/kaa/kaa-node.log
 
 Or simply run the shortcut script 'view-kaa-node-logs.sh' in the examples !
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t kaaproject/kaa:0.9.0 .
+docker build --build-arg setupfile=install/kaa-node.deb -t kaaproject/kaa:0.9.0 .
