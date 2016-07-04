@@ -40,6 +40,10 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -2555,6 +2559,42 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    @Override
+    public RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            byte[] body = getFileContent(fileItemName);
+
+            JsonNode json = new ObjectMapper().readTree(body);
+            json = injectUuids(json);
+            body = json.toString().getBytes();
+
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+            GenericRecord record = converter.decodeJson(body);
+            RecordField recordData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+            return recordData;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    private JsonNode injectUuids(JsonNode json) {
+        boolean containerWithoutId = json.isContainerNode() && !json.has("__uuid");
+        boolean notArray = !(json instanceof ArrayNode);
+        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
+
+        if (containerWithoutId && notArray && childIsNotArray) {
+            ((ObjectNode)json).put("__uuid", (Integer)null);
+        }
+
+        for (JsonNode node : json) {
+            if (node.isContainerNode())
+                injectUuids(node);
+        }
+
+        return json;
     }
 
     private void checkExpiredDate(NotificationDto notification) throws KaaAdminServiceException {

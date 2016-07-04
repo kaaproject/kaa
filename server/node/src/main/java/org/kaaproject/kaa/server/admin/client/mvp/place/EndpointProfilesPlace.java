@@ -24,24 +24,13 @@ import com.google.gwt.place.shared.Prefix;
 public class EndpointProfilesPlace extends TreePlace {
 
     protected String applicationId;
-    private boolean gridLoaded;
 
     public EndpointProfilesPlace(String applicationId) {
         this.applicationId = applicationId;
-        this.gridLoaded = false;
-    }
-
-    public EndpointProfilesPlace(String applicationId, boolean gridLoaded) {
-        this.applicationId = applicationId;
-        this.gridLoaded = gridLoaded;
     }
 
     public String getApplicationId() {
         return applicationId;
-    }
-
-    public boolean isGridLoaded() {
-        return gridLoaded;
     }
 
     @Override

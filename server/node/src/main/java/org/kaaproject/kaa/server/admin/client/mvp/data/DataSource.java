@@ -1285,6 +1285,16 @@ public class DataSource {
                 });
     }
 
+    public void getConfigurationRecordDataFromFile(String schema, String fileItemName,
+                                final AsyncCallback<RecordField> callback) {
+        rpcService.getConfigurationRecordDataFromFile(schema, fileItemName,
+                new DataCallback<RecordField>(callback) {
+                    @Override
+                    protected void onResult(RecordField result) {
+                    }
+                });
+    }
+
     public void sendNotification(
             NotificationDto notification, RecordField notificationData,
             final AsyncCallback<Void> callback) {
