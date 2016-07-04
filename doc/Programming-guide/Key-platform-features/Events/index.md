@@ -797,6 +797,23 @@ kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_cha
 
 Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
 
+Admin REST API provides the following actions:
+
+* [Get event class families]({{root_url}}Programming-guide/Server-REST-APIs/#get-event-class-families/#TODO)
+* [Get event class family]({{root_url}}Programming-guide/Server-REST-APIs/#get-event-class-family/#TODO)
+* [Create/Edit event class family]({{root_url}}Programming-guide/Server-REST-APIs/#createedit-event-class-family/#TODO)
+* [Add event class family schema]({{root_url}}Programming-guide/Server-REST-APIs/#add-event-class-family-schema/#TODO)
+* [Get event classes]({{root_url}}Programming-guide/Server-REST-APIs/#get-event-classes/#TODO)
+* [Get application event family maps]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-family-maps/#TODO)
+* [Get application event family maps by application token]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-family-maps-by-application-token/#TODO)
+* [Get application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-family-map/#TODO)
+* [Create/Edit application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#createedit-application-event-family-map/#TODO)
+* [Get vacant event class families]({{root_url}}Programming-guide/Server-REST-APIs/#get-vacant-event-class-families/#TODO)
+* [Get vacant event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#get-vacant-event-class-families-by-application-token/#TODO)
+* [Get application event class families]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-class-families/#TODO)
+* [Get application event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-class-families-by-application-token/#TODO)
+
+
 ## Kaa Events Admin UI
 
 #### Managing event class families
