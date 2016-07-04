@@ -20,7 +20,7 @@
 #include <sndc_sdk_api.h>
 #include <sndc_file_api.h>
 #include "econais_ec19d_file_utils.h"
-#include "../../../kaa_common.h"
+#include "kaa_common.h"
 
 int econais_ec19d_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {

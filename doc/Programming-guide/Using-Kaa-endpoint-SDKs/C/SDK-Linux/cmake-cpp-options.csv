@@ -1,0 +1,55 @@
+Parameter,Description,Values,Usage example
+`CMAKE_INSTALL_PREFIX`,Directory for Kaa to be installed in,"**Accepted:**
+'/path/to/some/directory'
+
+**Default:**
+'/usr/local'","```
+cmake -DCMAKE_INSTALL_PREFIX='/home/username/kaa'
+```"
+`KAA_DEBUG_ENABLED`,Build type,"**Accepted:**
+* 0 - the release type
+* 1 - the debug type
+
+**Default:** 0","```
+cmake -DKAA_DEBUG_ENABLED=1
+```"
+`KAA_MAX_LOG_LEVEL`,Maximum log level used by the SDK,"**Accepted:**
+* 0 - NONE (no logs)
+* 1 - FATAL
+* 2 - ERROR
+* 3 - WARN
+* 4 - INFO
+* 5 - DEBUG
+* 6 - TRACE
+
+**Default:**<br />
+4 - `if KAA_DEBUG_ENABLED=0`<br />
+6 - if `KAA_DEBUG_ENABLED=1`<br />","```
+cmake -DKAA_MAX_LOG_LEVEL=4
+```"
+`KAA_WITHOUT_${MODULE}`,Kaa module to be omitted during the build,"**Accepted:**
+* `EVENTS`
+* `LOGGING`
+* `CONFIGURATION`
+* `NOTIFICATIONS`
+* `OPERATION_TCP_CHANNEL`
+* `OPERATION_LONG_POLL_CHANNEL`
+* `OPERATION_HTTP_CHANNEL`
+* `BOOTSTRAP_HTTP_CHANNEL`
+* `CONNECTIVITY_CHECKER`
+
+**Default:** All modules are present in the build","```
+cmake -DKAA_WITHOUT_EVENTS=1
+```"
+`KAA_WITH_SQLITE_LOG_STORAGE`,"Point the Kaa LOGGING module to use
+the SQLite persistent log storage.
+
+**NOTE:**
+Works only if
+`KAA_WITHOUT_LOGGING=0`","**Accepted:**
+* 0 - disable SQLite log storage
+* 1 - enable SQLite log storage
+
+**Default:** 0","```
+cmake -DKAA_WITH_SQLITE_LOG_STORAGE=1
+```"

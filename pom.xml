@@ -20,7 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -583,7 +583,13 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>**/source/esp8266/include/driver/uart*.h</exclude>
                         <exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                         <exclude>**/security.policy</exclude>
+                        <exclude>doc/</exclude>
+
                         <exclude>nix/astyle/max_indent.patch</exclude>
+                        <exclude>gh-pages-stub/</exclude>
+                        <!-- Auto-generated -->
+                        <exclude>nix/kaa-docs/Gemfile.lock</exclude>
+                        <exclude>nix/kaa-docs/gemset.nix</exclude>
                     </excludes>
                 </configuration>
             </plugin>

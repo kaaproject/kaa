@@ -1177,7 +1177,11 @@ public class KaaAdminController {
     @ResponseBody
     public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
+//<<<<<<< HEAD
         return kaaAdminService.editNotificationSchema(notificationSchema);
+//=======
+//        return kaaAdminService.editNotificationSchema(notificationSchema, null);
+//>>>>>>> db5604e1a022524c38d502233e9b1757129a0412
     }
 
     /**

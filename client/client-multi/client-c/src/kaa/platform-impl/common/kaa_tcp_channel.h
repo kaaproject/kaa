@@ -18,10 +18,10 @@
 #ifndef KAA_TCP_CHANNEL_H_
 #define KAA_TCP_CHANNEL_H_
 
-#include "../../kaa_error.h"
-#include "../../platform/ext_transport_channel.h"
-#include "../../platform/defaults.h"
-#include "../../platform/ext_tcp_utils.h"
+#include "kaa_error.h"
+#include "platform/ext_transport_channel.h"
+#include <platform/defaults.h>
+#include "platform/ext_tcp_utils.h"
 
 #ifdef __cplusplus
 extern "C" {

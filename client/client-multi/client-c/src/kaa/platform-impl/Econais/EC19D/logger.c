@@ -17,7 +17,7 @@
 #include <sndc_sdk_api.h>
 
 #include "econais_ec19d_time.h"
-#include "../../../platform/ext_system_logger.h"
+#include "platform/ext_system_logger.h"
 
 
 

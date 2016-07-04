@@ -1,0 +1,74 @@
+"Parameter","Description","Values","Usage example"
+"`CMAKE_INSTALL_PREFIX`","Directory for Kaa to be installed in","**Accepted:**
+'/path/to/some/directory'
+
+**Default:**
+'/usr/local'","```
+cmake \
+ -DCMAKE_INSTALL_PREFIX= '/home/username/kaa'
+```"
+"`KAA_DEBUG_ENABLED`","Build type","**Accepted:**
+* 0 - the release type
+* 1 - the debug type
+
+**Default:** 0","```
+cmake \
+  -DKAA_DEBUG_ENABLED=1
+```"
+"`KAA_MAX_LOG_LEVEL`","Maximum log level used by the SDK","**Accepted:**
+* 0 - `NONE` (no logs)
+* 1 - `FATAL`
+* 2 - `ERROR`
+* 3 - `WARN`
+* 4 - `INFO`
+* 5 - `DEBUG`
+* 6 - `TRACE`
+
+**Default:**<br />
+* 4 - if `KAA_DEBUG_ENABLED=0`
+* 6 - if `KAA_DEBUG_ENABLED=1`","```
+cmake \
+  -DKAA_MAX_LOG_LEVEL=4
+```"
+"`KAA_WITHOUT_${MODULE}`","Kaa module to be omitted during the build","**Accepted:**
+* `EVENTS`
+* `LOGGING`
+* `CONFIGURATION`
+* `NOTIFICATION`
+
+**Default:** All modules are present in the build","```
+cmake \
+  -DKAA_WITHOUT_EVENTS=1
+```"
+"`KAA_PLATFORM`","SDK target platform (*)
+
+","**Accepted:**
+* x86-64
+* [iOS](../SDK-iOS)
+* [esp8266](../SDK-ESP8266)
+* [cc32xx](../SDK-TI-CC3200)
+
+**Default:**
+* x86-64","```
+cmake -DKAA_PLATFORM=x86-64
+```
+
+In the CMakeLists.txt file:
+
+```
+set(KAA_INCLUDE_PATHS
+${KAA_INCLUDE_PATHS}
+path_to_folder_1_with_header_files
+path_to_folder_2_with_header_files
+)
+set(KAA_SOURCE_FILES
+${KAA_SOURCE_FILES}
+path_to_source_file_1
+path_to_source_file_2
+)
+set(KAA_THIRDPARTY_LIBRARIES
+${KAA_THIRDPARTY_LIBRARIES}
+some_library_1
+some_library_2
+)
+```"

@@ -173,7 +173,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
      */
     private static final int MAX_LIMIT = 500;
 
-    /** The application service. */
+    /**
+     * The application service.
+     */
     @Autowired
     private ControlService controlService;
 
@@ -1505,20 +1507,23 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-//    @Override
-//    public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException {
-//        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-//        try {
-//            NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(notificationSchemaId);
-//            Utils.checkNotNull(notificationSchema);
-//            checkApplicationId(notificationSchema.getApplicationId());
-//            return notificationSchema;
-//        } catch (Exception e) {
-//            throw Utils.handleException(e);
-//        }
-//    }
-
-
+//<<<<<<< HEAD
+////    @Override
+////    public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException {
+////        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+////        try {
+////            NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(notificationSchemaId);
+////            Utils.checkNotNull(notificationSchema);
+////            checkApplicationId(notificationSchema.getApplicationId());
+////            return notificationSchema;
+////        } catch (Exception e) {
+////            throw Utils.handleException(e);
+////        }
+////    }
+//
+//
+//=======
+//>>>>>>> db5604e1a022524c38d502233e9b1757129a0412
     @Override
     public NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);

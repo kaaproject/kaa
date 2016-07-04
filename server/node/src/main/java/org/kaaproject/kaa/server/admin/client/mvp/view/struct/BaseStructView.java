@@ -212,13 +212,6 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         buttonsPanel.add(deactivateButton);
 
         description.setFocus(true);
-
-        saveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                updateSaveButton(false, false);
-            }
-        });
     }
 
     protected void prependButton(Button button) {

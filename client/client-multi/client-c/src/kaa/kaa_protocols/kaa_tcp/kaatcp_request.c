@@ -21,8 +21,8 @@
 
 #include "kaatcp_request.h"
 
-#include "../../kaa_common.h"
-#include "../../platform/sock.h"
+#include "kaa_common.h"
+#include <platform/sock.h>
 
 
 
@@ -45,6 +45,8 @@ static uint8_t create_basic_header(uint8_t message_type, size_t length, char *me
     return 0;
 }
 
+// TODO(KAA-1089): Remove weak linkage
+__attribute__((weak))
 kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_protocol_id
                                          , char *sync_request, size_t sync_request_size
                                          , char *session_key, size_t session_key_size
@@ -109,6 +111,8 @@ kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, kaatcp_m
 
 }
 
+// TODO: Remove weak linkage
+__attribute__((weak))
 kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
                                         , char *buf
                                         , size_t *buf_size)

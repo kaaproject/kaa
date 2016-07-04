@@ -18,7 +18,7 @@
 #include <stddef.h>
 #include "kaa_buffer.h"
 #include "kaa_mem.h"
-#include "../kaa_common.h"
+#include "kaa_common.h"
 
 
 struct kaa_buffer_t {

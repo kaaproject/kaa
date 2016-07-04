@@ -85,13 +85,13 @@ let
         __propagate:;
       ''
       + target posixSupport "posix"
-              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''}"
+              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DKAA_UNITTESTS_COMPILE=on -DKAA_COLLECT_COVERAGE=1''}"
       + target posixSupport "nologs"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DKAA_MAX_LOG_LEVEL=0"
       + target clangSupport "clang"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
       + target cc3200Support "cc3200"
-              "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake"
+              "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake -DCC32XX_SDK='${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk' -DCC32XX_TOOLCHAIN_PATH='${gcc-arm-embedded}'"
       + target esp8266Support "esp8266"
               "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake"
       + target raspberrypiSupport "rpi"
@@ -130,9 +130,6 @@ in stdenv.mkDerivation {
   ];
 
   shellHook =
-    lib.optionalString cc3200Support ''
-      export CC32XX_SDK=${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk
-    '' +
     lib.optionalString esp8266Support ''
       export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}"
       export ESP8266_SDK_BASE=${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk
@@ -142,14 +139,5 @@ in stdenv.mkDerivation {
 
       cp ${kaa-generic-makefile}/Makefile .
       chmod 644 Makefile
-
-      cat <<EOF > ./.zshrc
-      source \$HOME/.zshrc
-      PROMPT="%B%F{red}[kaa]%f%b \$PROMPT"
-      EOF
-
-      export ZDOTDIR=.;
-
-      # zsh -i; exit
     '';
 }

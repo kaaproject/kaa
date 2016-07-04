@@ -22,13 +22,13 @@ set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 set(ESP8266_NAME "esp8266")
 
 set(ESP8266_SRC
-    ${ESP8266_SRC_FOLDER}/esp8266_logger.c
-    ${ESP8266_SRC_FOLDER}/esp8266_kaa_client.c
-    ${ESP8266_SRC_FOLDER}/esp8266_configuration_persistence.c
-    ${ESP8266_SRC_FOLDER}/esp8266_status.c
-    ${ESP8266_SRC_FOLDER}/esp8266_key_utils.c
-    ${ESP8266_SRC_FOLDER}/esp8266_tcp_utils.c
-    ${ESP8266_SRC_FOLDER}/esp8266_time.c
+    ${ESP8266_SRC_FOLDER}/logger.c
+    ${ESP8266_SRC_FOLDER}/kaa_client.c
+    ${ESP8266_SRC_FOLDER}/configuration_persistence.c
+    ${ESP8266_SRC_FOLDER}/status.c
+    ${ESP8266_SRC_FOLDER}/key_utils.c
+    ${ESP8266_SRC_FOLDER}/tcp_utils.c
+    ${ESP8266_SRC_FOLDER}/time.c
     ${ESP8266_SRC_FOLDER}/exit.c
     ${ESP8266_SRC_FOLDER}/snprintf.c
     ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
@@ -43,7 +43,7 @@ set(ESP8266_SRC
 
 set(KAA_SOURCE_FILES ${KAA_SOURCE_FILES} ${ESP8266_SRC})
 
-set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS})
+set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS} ${ESP8266_SRC_FOLDER})
 
 set(KAA_BUILD_STATIC_ONLY 1)
 

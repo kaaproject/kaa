@@ -23,17 +23,19 @@
 #include <time.h>
 #include <stdarg.h>
 
-#include "../../platform/stdio.h"
+#include <platform/stdio.h>
 
-#include "../../kaa_common.h"
-#include "../../utilities/kaa_mem.h"
-#include "../../utilities/kaa_buffer.h"
-#include "../../utilities/kaa_log.h"
-#include "../../kaa_protocols/kaa_tcp/kaatcp.h"
-#include "../../platform/ext_system_logger.h"
-#include "../../platform/time.h"
-#include "../../kaa_platform_common.h"
+#include "kaa_common.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_buffer.h"
+#include "utilities/kaa_log.h"
+#include "kaa_protocols/kaa_tcp/kaatcp.h"
+#include "platform/ext_system_logger.h"
+#include <platform/time.h>
+#include "kaa_platform_common.h"
 #include "kaa_tcp_channel.h"
+#include "kaa_context.h"
+#include "kaa_channel_manager.h"
 
 
 
@@ -956,16 +958,21 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                          "Kaa TCP channel [0x%08X] received KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS",
                          channel->access_point.id);
             channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
-            kaa_tcp_channel_authorize(channel);
+            kaa_channel_manager_process_auth_failure(channel->transport_context.kaa_context->channel_manager,
+                    KAA_AUTH_STATUS_BAD_CREDENTIALS);
         } else if (message.return_code == KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED) {
             KAA_LOG_WARN(channel->logger, KAA_ERR_NONE,
                          "Kaa TCP channel receiver KAATCP_CONNACK_REFUSE_VERIFICATION_FAILED",
                          channel->access_point.id);
+            kaa_channel_manager_process_auth_failure(channel->transport_context.kaa_context->channel_manager,
+                    KAA_AUTH_STATUS_VERIFICATION_FAILED);
             kaa_tcp_channel_socket_io_error(channel, KAA_ENDPOINT_NOT_REGISTERED);
         } else {
             KAA_LOG_ERROR(channel->logger, KAA_ERR_BAD_STATE,
                          "Kaa TCP channel [0x%08X] authorization failed, code %d",
                          channel->access_point.id, message.return_code);
+            kaa_channel_manager_process_auth_failure(channel->transport_context.kaa_context->channel_manager,
+                    KAA_AUTH_STATUS_UNKNOWN);
             kaa_tcp_channel_socket_io_error(channel, KAA_CHANNEL_NA);
         }
     } else {
