@@ -40,7 +40,6 @@ Below is the list of the targets for which C SDK already has an implementation o
     - [Linux]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
     - [UDOO]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-UDOO/)
     - [Windows (cygwin)]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Windows)
-    - [Snappy Ubuntu Core]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Ubuntu-Snappy/)
     - [Raspberry PI]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-RPi/)
     - [Beaglebone]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/)
     - [QNX Neutrino]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino/)

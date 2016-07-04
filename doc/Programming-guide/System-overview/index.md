@@ -2,7 +2,6 @@
 layout: page
 title: System overview
 permalink: /:path/
-nav: /:path/Programming-guide/System-overview/
 sort_idx: 20
 ---
 

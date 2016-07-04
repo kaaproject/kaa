@@ -1,50 +1,134 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config.gen",
-    "type": "record",
-    "name": "MongoDbConfig",
-    "fields": 
-    [
+    "namespace":"org.kaaproject.kaa.server.appenders.mongo.config.gen",
+    "type":"record",
+    "name":"MongoDbConfig",
+    "fields":[
         {
-            "name": "mongoServers", 
-            "displayName": "MongoDB nodes",
-            "minRowCount": 1,
-            "type": {
-                "type": "array",
-                "items": {
-                    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config.gen",
-                    "type": "record",
-                    "name": "MongoDbServer",
-                    "fields": [
-                        {"name": "host", "displayName": "Host", "weight": 0.75, "by_default": "localhost", "type": "string"},
-                        {"name": "port", "displayName": "Port", "weight": 0.25, "by_default": 27017, "type": "int"}
+            "name":"mongoServers",
+            "displayName":"MongoDB nodes",
+            "minRowCount":1,
+            "type":{
+                "type":"array",
+                "items":{
+                    "namespace":"org.kaaproject.kaa.server.appenders.mongo.config.gen",
+                    "type":"record",
+                    "name":"MongoDbServer",
+                    "fields":[
+                        {
+                            "name":"host",
+                            "displayName":"Host",
+                            "weight":0.75,
+                            "by_default":"localhost",
+                            "type":"string"
+                        },
+                        {
+                            "name":"port",
+                            "displayName":"Port",
+                            "weight":0.25,
+                            "by_default":27017,
+                            "type":"int"
+                        }
                     ]
                 }
             }
         },
         {
-            "name": "mongoCredentials", 
-            "displayName": "Authentication credentials",
-            "minRowCount": 0,
-            "type": {
-                "type": "array",
-                "items": {
-                    "namespace": "org.kaaproject.kaa.server.appenders.mongo.config.gen",
-                    "type": "record",
-                    "name": "MongoDBCredential",
-                    "fields": [
-                        {"name": "user", "displayName": "User", "weight": 0.5, "by_default": "user", "type": "string"},
-                        {"name": "password", "displayName": "Password", "weight": 0.5, "by_default": "password", "type": "string"}
+            "name":"mongoCredentials",
+            "displayName":"Authentication credentials",
+            "minRowCount":0,
+            "type":{
+                "type":"array",
+                "items":{
+                    "namespace":"org.kaaproject.kaa.server.appenders.mongo.config.gen",
+                    "type":"record",
+                    "name":"MongoDBCredential",
+                    "fields":[
+                        {
+                            "name":"user",
+                            "displayName":"User",
+                            "weight":0.5,
+                            "by_default":"user",
+                            "type":"string"
+                        },
+                        {
+                            "name":"password",
+                            "displayName":"Password",
+                            "weight":0.5,
+                            "by_default":"password",
+                            "type":"string"
+                        }
                     ]
                 }
             }
         },
-        {"name": "dbName", "displayName": "MongoDB database name", "by_default": "kaa", "type": "string"},
-        {"name": "connectionsPerHost", "displayName": "Max connections per host", "by_default": 30, "type": ["int", "null"]},
-        {"name": "maxWaitTime", "displayName": "Max wait time (ms)", "by_default": 120000, "type": ["int", "null"]},
-        {"name": "connectionTimeout", "displayName": "Connection timeout (ms)", "by_default": 5000, "type": ["int", "null"]},
-        {"name": "socketTimeout", "displayName": "Socket timeout (ms)", "by_default": 0, "type": ["int", "null"]},
-        {"name": "socketKeepalive", "displayName": "Turn on socket keepalive", "by_default": false, "type": ["boolean", "null"]},
-        {"name": "includeClientProfile", "displayName": "Include client profile data", "by_default": false, "type": ["boolean", "null"]},
-        {"name": "includeServerProfile", "displayName": "Include server profile data", "by_default": false, "type": ["boolean", "null"]}
+        {
+            "name":"dbName",
+            "displayName":"MongoDB database name",
+            "by_default":"kaa",
+            "type":"string"
+        },
+        {
+            "name":"connectionsPerHost",
+            "displayName":"Max connections per host",
+            "by_default":30,
+            "type":[
+                "int",
+                "null"
+            ]
+        },
+        {
+            "name":"maxWaitTime",
+            "displayName":"Max wait time (ms)",
+            "by_default":120000,
+            "type":[
+                "int",
+                "null"
+            ]
+        },
+        {
+            "name":"connectionTimeout",
+            "displayName":"Connection timeout (ms)",
+            "by_default":5000,
+            "type":[
+                "int",
+                "null"
+            ]
+        },
+        {
+            "name":"socketTimeout",
+            "displayName":"Socket timeout (ms)",
+            "by_default":0,
+            "type":[
+                "int",
+                "null"
+            ]
+        },
+        {
+            "name":"socketKeepalive",
+            "displayName":"Turn on socket keepalive",
+            "by_default":false,
+            "type":[
+                "boolean",
+                "null"
+            ]
+        },
+        {
+            "name":"includeClientProfile",
+            "displayName":"Include client profile data",
+            "by_default":false,
+            "type":[
+                "boolean",
+                "null"
+            ]
+        },
+        {
+            "name":"includeServerProfile",
+            "displayName":"Include server profile data",
+            "by_default":false,
+            "type":[
+                "boolean",
+                "null"
+            ]
+        }
     ]
 }

@@ -2,7 +2,6 @@
 layout: page
 title: Troubleshooting
 permalink: /:path/
-nav: /:path/Administration-guide/Troubleshooting
 sort_idx: 888888880
 ---
 {% assign root_url = page.url | split: '/'%}
