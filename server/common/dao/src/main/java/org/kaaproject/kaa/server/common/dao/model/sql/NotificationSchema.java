@@ -30,7 +30,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.NOTIFICATION_SCH
 @Entity
 @Table(name = NOTIFICATION_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class NotificationSchema extends Schema<NotificationSchemaDto> implements Serializable {
+public class NotificationSchema extends BaseSchema<NotificationSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = 6585856417466958172L;
 

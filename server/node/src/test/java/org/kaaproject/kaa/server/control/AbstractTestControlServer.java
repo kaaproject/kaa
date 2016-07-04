@@ -942,19 +942,22 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      */
     protected NotificationSchemaDto createNotificationSchema(String appId, NotificationTypeDto type) throws Exception {
         NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
-        notificationSchema.setType(type);
         notificationSchema.setName(generateString("Test Schema"));
         notificationSchema.setDescription(generateString("Test Desc"));
+        notificationSchema.setType(type);
         if (strIsEmpty(appId)) {
             ApplicationDto applicationDto = createApplication(tenantAdminDto);
             notificationSchema.setApplicationId(applicationDto.getId());
         } else {
             notificationSchema.setApplicationId(appId);
         }
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        notificationSchema.setCtlSchemaId(ctlSchema.getId());
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .createNotificationSchema(notificationSchema,
-                        AdminClient.getStringResource("BasicSystemNotification", BasicSystemNotification.SCHEMA$.toString()));
+                .createNotificationSchema(notificationSchema/*,
+                        AdminClient.getStringResource("BasicSystemNotification", BasicSystemNotification.SCHEMA$.toString())*/);
         return savedSchema;
     }
 
@@ -974,9 +977,11 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         } else {
             notificationSchema.setApplicationId(appId);
         }
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        notificationSchema.setCtlSchemaId(ctlSchema.getId());
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .createNotificationSchema(notificationSchema, TEST_USER_NOTIFICATION_SCHEMA);
+                .createNotificationSchema(notificationSchema);
         return savedSchema;
     }
 
@@ -1185,23 +1190,23 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     /**
      * Creates the application event family map.
      *
-     * @param applicationId the application id
+     * @param applicationToken the application token
      * @param ecfId the ecf id
      * @param version the version
      * @return the application event family map dto
      * @throws Exception the exception
      */
-    protected ApplicationEventFamilyMapDto createApplicationEventFamilyMap(String applicationId, String ecfId, int version) throws Exception {
+    protected ApplicationEventFamilyMapDto createApplicationEventFamilyMap(String applicationToken, String ecfId, int version) throws Exception {
         ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();
         String tenantId = null;
-        if (strIsEmpty(applicationId)) {
+        if (strIsEmpty(applicationToken)) {
             ApplicationDto application = createApplication(tenantAdminDto);
             tenantId = application.getTenantId();
             applicationEventFamilyMap.setApplicationId(application.getId());
         }
         else {
-            applicationEventFamilyMap.setApplicationId(applicationId);
-            ApplicationDto application = client.getApplication(applicationId);
+            ApplicationDto application = client.getApplicationByApplicationToken(applicationToken);
+            applicationEventFamilyMap.setApplicationId(application.getId());
             tenantId = application.getTenantId();
         }
         EventClassFamilyDto eventClassFamily = null;
@@ -1252,7 +1257,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     }
 
     protected CTLSchemaDto createCTLSchema(String name, String namespace, int version, 
-            String tenantId, String applicationId, Set<FqnVersion> dependencies,
+            String tenantId, String applicationToken, Set<FqnVersion> dependencies,
             Map<String, String> fields) throws Exception {
 
         LOG.debug("Generating CTL schema...");
@@ -1289,7 +1294,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         LOG.debug("CTL schema generated: " + body);
 
-        return client.saveCTLSchema(body.toString(), tenantId, applicationId);
+        return client.saveCTLSchemaWithAppToken(body.toString(), tenantId, applicationToken);
     }
 
     /**

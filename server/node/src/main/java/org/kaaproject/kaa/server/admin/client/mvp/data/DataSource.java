@@ -63,15 +63,12 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.*;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 
 public class DataSource {
 
@@ -699,22 +696,53 @@ public class DataSource {
 
     }
 
-    public void editNotificationSchemaForm(
-            NotificationSchemaDto notificationSchema,
-            final AsyncCallback<NotificationSchemaDto> callback) {
-        rpcService.editNotificationSchemaForm(notificationSchema,
-                new DataCallback<NotificationSchemaDto>(callback) {
+    public void saveNotificationSchemaView(
+            NotificationSchemaViewDto notificationSchema,
+            final AsyncCallback<NotificationSchemaViewDto> callback) {
+        rpcService.saveNotificationSchemaView(notificationSchema,
+                new DataCallback<NotificationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(NotificationSchemaDto result) {
+                    protected void onResult(NotificationSchemaViewDto result) {
                         eventBus.fireEvent(new DataEvent(
-                                NotificationSchemaDto.class));
+                                NotificationSchemaViewDto.class));
+                    }
+                });
+    }
+//
+//    public void getNotificationSchemaView(String notificationSchemaId,
+//            final AsyncCallback<NotificationSchemaViewDto> callback) {
+//        rpcService.getNotificationSchemaView(notificationSchemaId,
+//                new DataCallback<NotificationSchemaViewDto>(callback) {
+//                    @Override
+//                    protected void onResult(NotificationSchemaViewDto result) {
+//                    }
+//                });
+//    }
+
+    public void createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
+            final AsyncCallback<NotificationSchemaViewDto> callback) {
+        rpcService.createNotificationSchemaFormCtlSchema(ctlSchemaForm,
+                new DataCallback<NotificationSchemaViewDto>(callback) {
+                    @Override
+                    protected void onResult(NotificationSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(NotificationSchemaViewDto.class));
                     }
                 });
     }
 
-    public void getNotificationSchemaForm(String notificationSchemaId,
-            final AsyncCallback<NotificationSchemaDto> callback) {
-        rpcService.getNotificationSchemaForm(notificationSchemaId,
+    public void getNotificationSchemaView(String profileSchemaId,
+            final AsyncCallback<NotificationSchemaViewDto> callback) {
+        rpcService.getNotificationSchemaView(profileSchemaId,
+                new DataCallback<NotificationSchemaViewDto>(callback) {
+                        @Override
+                        protected void onResult(NotificationSchemaViewDto result) {
+                        }
+                    });
+    }
+
+    public void getNotificationSchema(String profileSchemaId,
+                                          final AsyncCallback<NotificationSchemaDto> callback) {
+        rpcService.getNotificationSchema(profileSchemaId,
                 new DataCallback<NotificationSchemaDto>(callback) {
                     @Override
                     protected void onResult(NotificationSchemaDto result) {
@@ -856,9 +884,9 @@ public class DataSource {
         });
     }
     
-    public void updateCtlSchemaScope(CTLSchemaMetaInfoDto metaInfo,
-            final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
-        rpcService.updateCTLSchemaMetaInfoScope(metaInfo, 
+    public void promoteScopeToTenant(String applicationId, String fqn,
+                                     final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
+        rpcService.promoteScopeToTenant(applicationId, fqn,
                 new DataCallback<CTLSchemaMetaInfoDto>(callback) {
                     @Override
                     protected void onResult(CTLSchemaMetaInfoDto result) {
@@ -1281,6 +1309,16 @@ public class DataSource {
     public void getRecordDataFromFile(String schema, String fileItemName,
                     final AsyncCallback<RecordField> callback) {
         rpcService.getRecordDataFromFile(schema, fileItemName,
+                new DataCallback<RecordField>(callback) {
+                    @Override
+                    protected void onResult(RecordField result) {
+                    }
+                });
+    }
+
+    public void getConfigurationRecordDataFromFile(String schema, String fileItemName,
+                                final AsyncCallback<RecordField> callback) {
+        rpcService.getConfigurationRecordDataFromFile(schema, fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {

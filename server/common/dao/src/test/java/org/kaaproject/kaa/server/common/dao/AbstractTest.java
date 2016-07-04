@@ -83,6 +83,7 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
+import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -151,9 +152,7 @@ public class AbstractTest {
     protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
     public static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
-    public static final String TEST_PROFILE_BODY = "{ \"Profile\" : { \"org.kaaproject.kaa.schema.sample.profile\" : { \"country.$\" : \"1.0.$.\" , " +
-            "\"country$IsoCode\" : \"2.0.$.\" , \"city\" : \"3.0.$.\" , \"Obj\" : { \"org.kaaproject.kaa.schema.sample.profile.Obj\" : { \"name\" : { " +
-            "\"string\" : \"Obj.name$\"}}}}} , \"OS\" : { \"org.kaaproject.kaa.schema.sample.profile.OS\" : \"Android\"}}";
+    public static final String TEST_PROFILE_BODY_PATH = "dao/schema/testProfileBody.json";
 
     @Autowired
     protected DataSource dataSource;
@@ -569,20 +568,24 @@ public class AbstractTest {
 
     protected NotificationSchemaDto generateNotificationSchemaDto(String appId, NotificationTypeDto type) {
         NotificationSchemaDto schema = new NotificationSchemaDto();
+        ApplicationDto app = null;
         if (isBlank(appId)) {
-            appId = generateApplicationDto().getId();
+            app = generateApplicationDto();
+            appId = app.getId();
+        } else {
+            app = applicationService.findAppById(appId);
         }
         schema.setApplicationId(appId);
         schema.setName(NOTIFICATION_SCHEMA_NAME);
-        String schemaBody = null;
-        try {
-            schemaBody = readSchemaFileAsString("dao/schema/testBaseSchema.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
-        schema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schemaBody).getRawSchema());
         schema.setType(type != null ? type : NotificationTypeDto.USER);
+        CTLSchemaDto ctlSchema = null;
+        try {
+            ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+        } catch (DatabaseProcessingException e){
+            ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
+
+        }
+        schema.setCtlSchemaId(ctlSchema.getId());
         return notificationService.saveNotificationSchema(schema);
     }
 
@@ -729,7 +732,11 @@ public class AbstractTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
-        profileDto.setClientProfileBody(TEST_PROFILE_BODY);
+        try {
+            profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
+        } catch (IOException e) {
+            LOG.error("Can't set client-side EP body {}", e);
+        }
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
@@ -739,7 +746,11 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setServerProfileVersion(schemaVersion);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setClientProfileBody(TEST_PROFILE_BODY);
+        try {
+            profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
+        } catch (IOException e) {
+            LOG.error("Can't set client-side EP body {}", e);
+        }
         profileDto.setSdkToken(UUID.randomUUID().toString());
         profileDto.setServerProfileBody(srvProfileBody);
         return endpointService.saveEndpointProfile(profileDto);
@@ -753,7 +764,11 @@ public class AbstractTest {
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setGroupState(groupState);
-        profileDto.setClientProfileBody(TEST_PROFILE_BODY);
+        try {
+            profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
+        } catch (IOException e) {
+            LOG.error("Can't set client-side EP body {}", e);
+        }
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
