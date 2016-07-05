@@ -251,8 +251,7 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveServerProfileSchema", serverProfileSchema, ServerProfileSchemaDto.class);
     }
 
-    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema/*, ByteArrayResource schemaResource*/)
-            throws Exception {
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notificationSchema", notificationSchema);
         return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", params, NotificationSchemaDto.class);
