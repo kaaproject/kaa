@@ -166,12 +166,11 @@ static void store_key(FILE *fd, const char *prefix, size_t prefix_size,
                       uint8_t *key, size_t length)
 {
     size_t i;
-    size_t written;
     fwrite(prefix, prefix_size, 1, fd);
     fwrite(KEY_STARTS, sizeof(KEY_STARTS) - 1, 1, fd);
 
     for (i = 0; i < length; i++) {
-        written = sprintf(buffer, "0x%02X, ", (int) key[i]);
+        size_t written = sprintf(buffer, "0x%02X, ", (int) key[i]);
         fwrite(buffer, written, 1, fd);
     }
 
