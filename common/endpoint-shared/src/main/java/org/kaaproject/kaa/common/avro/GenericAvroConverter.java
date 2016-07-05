@@ -132,7 +132,8 @@ public class GenericAvroConverter<T extends GenericContainer> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public T decodeJson(String data, T reuse) throws IOException{
-        jsonDecoder = DecoderFactory.get().jsonDecoder(this.schema, data);
+        boolean base64 = true;
+        jsonDecoder = DecoderFactory.get().jsonDecoder(this.schema, data, base64);
         return datumReader.read(null, jsonDecoder);
     }
 
@@ -156,7 +157,8 @@ public class GenericAvroConverter<T extends GenericContainer> {
      */
     public byte[] encodeToJsonBytes(T record) throws IOException{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos);
+        boolean base64 = true;
+        jsonEncoder = EncoderFactory.get().jsonEncoder(base64, this.schema, baos);
         datumWriter.write(record, jsonEncoder);
         jsonEncoder.flush();
         baos.flush();
