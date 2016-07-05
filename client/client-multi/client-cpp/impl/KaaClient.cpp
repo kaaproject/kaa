@@ -301,7 +301,8 @@ void KaaClient::initClientKeys()
         clientKeys_.reset(new KeyPair(utils.generateKeyPair(2048)));
         utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
 #else
-        throw KaaException("Failed to initialize Client Keys.");
+        KAA_LOG_ERROR("KAA_RUNTIME_KEY_GENERATION is disabled. Generate keys and put them to the working directory.");
+        throw KaaException("Keus are missing.");
 #endif
     }
 
