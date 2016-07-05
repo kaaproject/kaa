@@ -69,7 +69,7 @@
 #
 #	Note: requires [cmocka](https://cmocka.org/) test framework to be installed.
 
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(Kaa-c C)
 
@@ -202,7 +202,7 @@ if(WITH_EXTENSION_PROFILE)
     message("PROFILE ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/profile/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_profile)
+    target_link_libraries(kaac PUBLIC extension_profile)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_PROFILE)
 endif()
@@ -211,7 +211,7 @@ if(WITH_EXTENSION_USER)
     message("USER EXTENSION ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/user/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_user)
+    target_link_libraries(kaac PUBLIC extension_user)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_USER)
 endif()
@@ -220,7 +220,7 @@ if(WITH_EXTENSION_CONFIGURATION)
     message("CONFIGURATION ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/configuration/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_configuration)
+    target_link_libraries(kaac PUBLIC extension_configuration)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_CONFIGURATION)
 endif()
@@ -229,7 +229,7 @@ if(WITH_EXTENSION_EVENT)
     message("EVENTS ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/event/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_event)
+    target_link_libraries(kaac PUBLIC extension_event)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_EVENTS)
 endif()
@@ -238,7 +238,7 @@ if(WITH_EXTENSION_LOGGING)
     message("LOGGING ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/logging/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_logging)
+    target_link_libraries(kaac PUBLIC extension_logging)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_LOGGING)
 endif()
@@ -247,7 +247,7 @@ if(WITH_EXTENSION_NOTIFICATION)
     message("NOTIFICATION ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/notification/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_notification)
+    target_link_libraries(kaac PUBLIC extension_notification)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_NOTIFICATION)
 endif()
