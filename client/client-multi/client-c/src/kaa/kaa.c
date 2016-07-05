@@ -19,7 +19,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <memory.h>
 #include "platform/stdio.h"
 #include "platform/ext_sha.h"
 #include "kaa_status.h"
@@ -119,8 +118,9 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     // Initialize logger
     kaa_logger_t *logger = NULL;
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL); // TODO: make log destination configurable
-    if (error)
+    if (error) {
         return error;
+    }
 
     KAA_LOG_INFO(logger, KAA_ERR_NONE, "Kaa SDK version %s, commit hash %s", KAA_BUILD_VERSION, KAA_BUILD_COMMIT_HASH);
 
@@ -140,10 +140,13 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     error = kaa_init_keys();
     if (error) {
         KAA_LOG_ERROR(logger, error, "Failed to initialize keys");
+        kaa_context_destroy(*kaa_context_p);
+        kaa_log_destroy(logger);
+        return error;
     }
 
-    ext_get_sha1_public(&sha1,& sha1_size);
-    memcpy((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, sha1, sha1_size);
+    ext_get_sha1_public(&sha1, &sha1_size);
+    ext_copy_sha_hash((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, sha1);
 
     return kaa_status_set_updated((*kaa_context_p)->status->status_instance, true);
 }
@@ -183,8 +186,9 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
 
     kaa_logger_t *logger = kaa_context->logger;
     kaa_error_t error = kaa_context_destroy(kaa_context);
-    if (error)
+    if (error) {
         KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
+    }
     kaa_log_destroy(logger);
     kaa_deinit_keys();
     return error;

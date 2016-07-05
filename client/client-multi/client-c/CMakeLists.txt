@@ -81,6 +81,7 @@ option(WITH_EXTENSION_EVENT "Enable event extension" ON)
 option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
 option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
 option(WITH_EXTENSION_USER "Enable user extension" ON)
+option(WITH_ENCRYPTION "Enable encryption" ON)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -96,7 +97,7 @@ set(CMAKE_MODULE_PATH
 #
 # NOTE: Platform specific compilation flags should be set
 # in the corresponding platform CMake script(s).
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic -D_GNU_SOURCE")
 
 set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Os")
 
@@ -275,7 +276,7 @@ else()
     add_definitions(-DKAA_DISABLE_FEATURE_NOTIFICATION)
 endif()
 
-if(KAA_ENCRYPTION)
+if(WITH_ENCRYPTION)
     message("ENCRYPTION ENABLED")
 
     add_definitions(-DKAA_ENCRYPTION)
