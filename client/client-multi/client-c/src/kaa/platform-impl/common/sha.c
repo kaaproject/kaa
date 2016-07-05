@@ -24,9 +24,9 @@
 
 kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
 {
-    KAA_RETURN_IF_NIL(digest, KAA_ERR_BADPARAM);
-    if ((data && !data_size) || (!data && data_size))
+    if (!digest || !data || !data_size) {
         return KAA_ERR_BADPARAM;
+    }
 
     mbedtls_sha1_context sha1_ctx;
     mbedtls_sha1_init(&sha1_ctx);
@@ -40,7 +40,10 @@ kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_diges
 
 kaa_error_t ext_copy_sha_hash(kaa_digest_p dst, const kaa_digest_p src)
 {
-    KAA_RETURN_IF_NIL2(dst, src, KAA_ERR_BADPARAM);
+    if (!dst || !src) {
+        return KAA_ERR_BADPARAM;
+    }
+
     memcpy(dst, src, SHA_1_DIGEST_LENGTH);
     return KAA_ERR_NONE;
 }

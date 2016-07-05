@@ -37,13 +37,10 @@
 #define KAA_SIGNATURE_LENGTH           256
 #define AES_ECB_ENCRYPTION_CHUNCK_SIZE 16
 
-/*
- * Structure which contains Endpoint keys.
+/**
+ * Contains Endpoint keys.
  *
- * public_key is a pointer to RSA public key.
- * private_key is a pointer to RSA private key.
- *
- * note: the main purpose of the structure is
+ * The main purpose of the structure is
  * caching calculated keys.
  */
 typedef struct {
