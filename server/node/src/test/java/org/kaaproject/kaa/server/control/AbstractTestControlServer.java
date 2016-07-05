@@ -956,8 +956,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .createNotificationSchema(notificationSchema/*,
-                        AdminClient.getStringResource("BasicSystemNotification", BasicSystemNotification.SCHEMA$.toString())*/);
+                .createNotificationSchema(notificationSchema);
         return savedSchema;
     }
 

@@ -1159,8 +1159,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema/*, @RequestPart("file") MultipartFile file*/) throws KaaAdminServiceException {
-        //byte[] data = getFileContent(file);
+    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
         return kaaAdminService.editNotificationSchema(notificationSchema);
     }
 
@@ -1177,11 +1176,7 @@ public class KaaAdminController {
     @ResponseBody
     public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-//<<<<<<< HEAD
         return kaaAdminService.editNotificationSchema(notificationSchema);
-//=======
-//        return kaaAdminService.editNotificationSchema(notificationSchema, null);
-//>>>>>>> db5604e1a022524c38d502233e9b1757129a0412
     }
 
     /**

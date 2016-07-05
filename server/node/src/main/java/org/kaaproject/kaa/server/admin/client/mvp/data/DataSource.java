@@ -708,16 +708,6 @@ public class DataSource {
                     }
                 });
     }
-//
-//    public void getNotificationSchemaView(String notificationSchemaId,
-//            final AsyncCallback<NotificationSchemaViewDto> callback) {
-//        rpcService.getNotificationSchemaView(notificationSchemaId,
-//                new DataCallback<NotificationSchemaViewDto>(callback) {
-//                    @Override
-//                    protected void onResult(NotificationSchemaViewDto result) {
-//                    }
-//                });
-//    }
 
     public void createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
             final AsyncCallback<NotificationSchemaViewDto> callback) {

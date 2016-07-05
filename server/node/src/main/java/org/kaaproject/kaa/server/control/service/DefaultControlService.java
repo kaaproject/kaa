@@ -84,6 +84,7 @@ import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceExceptio
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1956,12 +1957,15 @@ public class DefaultControlService implements ControlService {
                         .arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
                 break;
             case NOTIFICATION_SCHEMA:
-//                schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(),
-//                        NotificationTypeDto.USER, key.getSchemaVersion());
-//                checkSchema(schemaDto, RecordFiles.NOTIFICATION_SCHEMA);
-//                schema = schemaDto.getCtlSchemaId();
-//                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "notification", key.getSchemaVersion() })
-//                        .getMessage();
+                NotificationSchemaDto notificationSchemaDto =
+                        notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(), NotificationTypeDto.USER, key.getSchemaVersion());
+                if (notificationSchemaDto == null) {
+                    throw new NotFoundException("Schema " + RecordFiles.NOTIFICATION_SCHEMA + " not found!");
+                }
+                CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(notificationSchemaDto.getCtlSchemaId());
+                schema = ctlSchemaDto.getBody();
+                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "notification", key.getSchemaVersion() })
+                        .getMessage();
                 break;
             case PROFILE_SCHEMA:
                 throw new RuntimeException("Not implemented!");
