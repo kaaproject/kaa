@@ -297,8 +297,12 @@ void KaaClient::initClientKeys()
     }
 
     if (regenerate) {
+#ifdef KAA_RUNTIME_KEY_GENERATION
         clientKeys_.reset(new KeyPair(utils.generateKeyPair(2048)));
         utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
+#else
+        throw KaaException("Failed to initialize Client Keys.");
+#endif
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().data(), clientKeys_->getPublicKey().size());
