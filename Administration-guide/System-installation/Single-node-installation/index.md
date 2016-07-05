@@ -264,7 +264,29 @@ $ sudo apt-get remove mongodb* --purge
 </ul>
 
 <div class="tab-content">
-<div id="mongo_ubuntu16" class="tab-pane fade in active" markdown="1" >
+<div id="mongo_ubuntu14" class="tab-pane fade in active" markdown="1" >
+
+Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
+
+```bash
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+$ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+```
+
+Install MongoDB.
+
+```bash  
+$ sudo apt-get update
+$ sudo apt-get install -y mongodb-org=2.6.9 mongodb-org-server=2.6.9 mongodb-org-shell=2.6.9 mongodb-org-mongos=2.6.9 mongodb-org-tools=2.6.9
+```
+
+Start the MongoDB.
+
+```bash
+$ sudo service mongod start
+```
+
+</div><div id="mongo_ubuntu16" class="tab-pane fade" markdown="1" >
 
 Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
 
@@ -304,28 +326,6 @@ Start the MongoDB.
 $ sudo systemctl start mongodb
 ```
 
-</div><div id="mongo_ubuntu14" class="tab-pane fade" markdown="1" >
-
-Add the MongoDB repository to the /etc/apt/sources.list.d/mongodb.list.
-
-```bash
-$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
-$ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
-```
-
-Install MongoDB.
-
-```bash  
-$ sudo apt-get update
-$ sudo apt-get install -y mongodb-org=2.6.9 mongodb-org-server=2.6.9 mongodb-org-shell=2.6.9 mongodb-org-mongos=2.6.9 mongodb-org-tools=2.6.9
-```
-
-Start the MongoDB.
-
-```bash
-$ sudo service mongod start
-```
-
 </div>
 </div>
 </li>
@@ -351,7 +351,23 @@ Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you ma
 </ul>
 
 <div class="tab-content">
-<div id="cassandra_ubuntu16" class="tab-pane fade in active" markdown="1" >
+<div id="cassandra_ubuntu14" class="tab-pane fade in active" markdown="1" >
+
+Add the DataStax Community repository to the /etc/apt/sources.list.d/cassandra.sources.list.
+
+```bash
+$ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+$ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+```
+
+Install Cassandra 3.5.
+
+```bash 
+$ sudo apt-get update
+$ sudo apt-get install cassandra=3.5
+```
+
+</div><div id="cassandra_ubuntu16" class="tab-pane fade" markdown="1" >
 
 Since Cassandra requires python-support and this package was removed in Ubuntu 16.04 , manually install python-support.
 Download deb package and unpack it:
@@ -374,22 +390,6 @@ Install Cassandra 3.5.
 $ sudo apt-get update
 $ sudo apt-get install -y --allow-unauthenticated cassandra=3.5
 ```
-</div><div id="cassandra_ubuntu14" class="tab-pane fade" markdown="1" >
-
-Add the DataStax Community repository to the /etc/apt/sources.list.d/cassandra.sources.list.
-
-```bash
-$ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-$ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
-```
-
-Install Cassandra 3.5.
-
-```bash 
-$ sudo apt-get update
-$ sudo apt-get install cassandra=3.5
-```
-
 </div>
 </div>
 </li>
@@ -453,7 +453,7 @@ cqlsh>
    -----------------------------------------------
     1      /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/java
     2      /usr/lib/jvm/jre-1.6.0-openjdk.x86_64/bin/java
-   + 3      /usr/java/jdk1.8.0_60/bin/java
+    3      /usr/java/jdk1.8.0_60/bin/java
    ```
 
    Check Java version.
@@ -655,7 +655,7 @@ cqlsh>
    </li>
    </ul>
 
-4. Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.5/).
+4. Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.7/).
 
    Download and extract Zookeeper packages.
 
