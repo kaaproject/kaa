@@ -72,9 +72,9 @@ typedef enum {
 typedef struct {
     access_point_state_t    state;
     uint32_t                id;
-    uint8_t                *public_key;
+    uint8_t                 *public_key;
     uint32_t                public_key_length;
-    char                   *hostname;
+    char                    *hostname;
     uint32_t                hostname_length;
     uint16_t                port;
     kaa_sockaddr_storage_t  sockaddr;
@@ -450,13 +450,21 @@ kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transpo
  */
 kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *access_point)
 {
-    KAA_RETURN_IF_NIL2(context, access_point, KAA_ERR_BADPARAM);
+    if (!context || !access_point) {
+        return KAA_ERR_BADPARAM;
+    }
+
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
+
+    kaa_error_t error = KAA_ERR_NONE;
 
     KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel setting access point...");
     if (channel->access_point.state != AP_NOT_SET) {
         KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel removing previous access point [0x%08X] ", channel->access_point.id);
-        KAA_RETURN_IF_ERR(kaa_tcp_channel_release_access_point(channel));
+        error = kaa_tcp_channel_release_access_point(channel);
+        if (error) {
+            return error;
+        }
     }
 
     channel->access_point.state = AP_SET;
@@ -474,8 +482,6 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
 
     /* Size of remote public key */
     size_t remaining_to_read = sizeof(uint32_t);
-
-    kaa_error_t error = KAA_ERR_NONE;
 
     /* Read remote key length */
     if ((position + remaining_to_read) > connection_data_len) {
