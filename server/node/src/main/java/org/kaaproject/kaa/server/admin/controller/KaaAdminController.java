@@ -76,7 +76,6 @@ import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.servlet.ServletUtils;
-import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
@@ -1153,14 +1152,18 @@ public class KaaAdminController {
      *
      * @param notificationSchema
      *            the notification schema
+     * @param file
+     *            the file
      * @return the notification schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
     @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
+        byte[] data = getFileContent(file);
+        return kaaAdminService.editNotificationSchema(notificationSchema, data);
     }
 
     /**
@@ -1176,7 +1179,7 @@ public class KaaAdminController {
     @ResponseBody
     public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+        return kaaAdminService.editNotificationSchema(notificationSchema, null);
     }
 
     /**

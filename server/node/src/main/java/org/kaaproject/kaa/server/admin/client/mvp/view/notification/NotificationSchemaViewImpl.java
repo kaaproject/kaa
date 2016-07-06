@@ -16,11 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.notification;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class NotificationSchemaViewImpl extends BaseCtlSchemaViewImpl {
+public class NotificationSchemaViewImpl extends BaseSchemaViewImpl {
 
     public NotificationSchemaViewImpl(boolean create) {
         super(create);

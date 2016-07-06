@@ -35,7 +35,7 @@ import com.google.gwt.place.shared.Place;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class NotificationSchemasActivity extends AbstractBaseCtlSchemasActivity<NotificationSchemaDto, NotificationSchemasPlace> {
+public class NotificationSchemasActivity extends AbstractListActivity<NotificationSchemaDto, NotificationSchemasPlace> {
 
     private String applicationId;
 
@@ -70,4 +70,20 @@ public class NotificationSchemasActivity extends AbstractBaseCtlSchemasActivity<
         callback.onSuccess((Void)null);
     }
 
+    @Override
+    protected void onCustomRowAction(RowActionEvent<String> event) {
+        Integer schemaVersion = Integer.valueOf(event.getClickedId());
+        if (event.getAction() == KaaRowAction.DOWNLOAD_SCHEMA) {
+            KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.NOTIFICATION_SCHEMA, new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    Utils.handleException(caught, listView);
+                }
+                @Override
+                public void onSuccess(String key) {
+                    ServletHelper.downloadRecordLibrary(key);
+                }
+            });
+        }
+    }
 }
