@@ -32,6 +32,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
@@ -41,8 +42,10 @@ import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorit
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideException;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
@@ -71,19 +74,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultDeltaService implements DeltaService {
 
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDeltaService.class);
 
-    /** The cache service. */
     @Autowired
     private CacheService cacheService;
-    /** The configuration service. */
+
     @Autowired
     private ConfigurationService configurationService;
-    /** The user configuration service. */
+
     @Autowired
     private UserConfigurationService userConfigurationService;
-    /** The profile service. */
+
     @Autowired
     private EndpointService endpointService;
 
@@ -91,7 +92,7 @@ public class DefaultDeltaService implements DeltaService {
     @Autowired
     private OverrideAlgorithmFactory configurationOverrideFactory;
 
-    /** The Constant ENDPOINT_GROUP_COMPARATOR. */
+
     private static final Comparator<EndpointGroupDto> ENDPOINT_GROUP_COMPARATOR = new Comparator<EndpointGroupDto>() {
 
         @Override
@@ -211,9 +212,13 @@ public class DefaultDeltaService implements DeltaService {
                             BaseData mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey,
                                     latestConfigurationSchema);
 
+                            // converting merged base schema to raw schema
+                            String ctlSchema = cacheService.getFlatCtlSchemaById(latestConfigurationSchema.getCtlSchemaId());
+                            RawData rawData = new RawData(new RawSchema(ctlSchema), mergedConfiguration.getRawData());
+
                             LOG.trace("[{}] Merged configuration {}", endpointId, mergedConfiguration.getRawData());
 
-                            deltaCache = buildBaseResyncDelta(endpointId, mergedConfiguration, userConfigurationHash);
+                            deltaCache = buildBaseResyncDelta(endpointId, rawData, userConfigurationHash);
                             
                             if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
                                 EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
@@ -351,10 +356,11 @@ public class DefaultDeltaService implements DeltaService {
         return mergedConfiguration;
     }
 
-    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, BaseData mergedConfiguration, EndpointObjectHash userConfigurationHash) {
+    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, RawData mergedConfiguration, EndpointObjectHash userConfigurationHash) {
         byte[] configuration = GenericAvroConverter.toRawData(mergedConfiguration.getRawData(), mergedConfiguration.getSchema()
                 .getRawSchema());
         return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
                 userConfigurationHash);
     }
+
 }

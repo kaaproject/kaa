@@ -1059,20 +1059,25 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public FileData generateSdk(SdkProfileDto sdkProfile, SdkPlatform platform) throws ControlServiceException {
+
         EndpointProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
                 sdkProfile.getProfileSchemaVersion());
         if (profileSchema == null) {
             throw new NotFoundException("Profile schema not found!");
         }
+
         ConfigurationSchemaDto configurationSchema = configurationService.findConfSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
                 sdkProfile.getConfigurationSchemaVersion());
         if (configurationSchema == null) {
             throw new NotFoundException("Configuration schema not found!");
         }
+
         ConfigurationDto defaultConfiguration = configurationService.findDefaultConfigurationBySchemaId(configurationSchema.getId());
         if (defaultConfiguration == null) {
             throw new NotFoundException("Default configuration not found!");
         }
+
+
         NotificationSchemaDto notificationSchema = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(
                 sdkProfile.getApplicationId(), NotificationTypeDto.USER, sdkProfile.getNotificationSchemaVersion());
         if (notificationSchema == null) {
@@ -1085,18 +1090,30 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
 
+
         CTLSchemaDto profileCtlSchema = ctlService.findCTLSchemaById(profileSchema.getCtlSchemaId());
         if (profileCtlSchema == null) {
             throw new NotFoundException("Profile CTL schema not found!");
         }
+
+        CTLSchemaDto confCtlSchema = ctlService.findCTLSchemaById(configurationSchema.getCtlSchemaId());
+        if (confCtlSchema == null) {
+            throw new NotFoundException("Configuration CTL schema not found!");
+        }
+
+
         String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
+        String confSchemaBodyString = ctlService.flatExportAsString(confCtlSchema);
 
         DataSchema profileDataSchema = new DataSchema(profileSchemaBodyString);
+        DataSchema confDataSchema = new DataSchema(confSchemaBodyString);
         DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
         ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
         DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
         String profileSchemaBody = profileDataSchema.getRawSchema();
+        String confSchemaBody = confDataSchema.getRawSchema();
+
 
         byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
                 configurationSchema.getBaseSchema());
@@ -1131,7 +1148,7 @@ public class DefaultControlService implements ControlService {
         try {
             sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkProfile,
                     profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
-                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
+                    confSchemaBody, defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new ControlServiceException(e);
