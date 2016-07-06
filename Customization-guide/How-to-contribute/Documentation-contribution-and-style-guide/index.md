@@ -12,11 +12,9 @@ sort_idx: 30
 
 This guide introduces documentation conventions applicable to the Kaa project.
 
-The guide contains instructions on how to write and contribute documentation content.
+The guide contains instructions on how to contribute to Kaa documentation while preserving consistency in terms of format, style, content, and structure of the documentation.
 
-The target audience of this guide is Kaa development team.
-
-The purpose of this document is to achieve as much consistency as possible in terms of format, style, content, and structure of the Kaa project documentation.
+The target audience of this guide is Kaa development team and anyone contributing to Kaa documentation.
 
 # Documentation style guide
 
