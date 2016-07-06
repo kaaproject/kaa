@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 
-
-RUN_DIR=`pwd`
-
 help() {
     echo "Choose one of the following: {build|install|clean}"
     exit 1
@@ -28,10 +25,9 @@ then
     help
 fi
 
-mkdir -p build; cd build; cmake ..; cd ..
+mkdir -p build; (cd build && cmake ..)
 
-for cmd in $@
-do
+for cmd in "$@"; do
 
 case "$cmd" in
     build)
@@ -43,9 +39,9 @@ case "$cmd" in
     ;;
 
     clean)
-    cd build && make clean && cd .. 
+    cd build && make clean && cd ..
     ;;
-    
+
     *)
     help
     ;;

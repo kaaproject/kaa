@@ -1,18 +1,89 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.rest.config.gen",
-    "type": "record",
-    "name": "RestConfig",
-    "fields": [
-            {"name": "host", "displayName": "Host", "by_default": "localhost", "type": "string"},
-            {"name": "port", "displayName": "Port", "by_default": 10000, "type": "int"},
-            {"name": "ssl", "displayName": "Use SSL", "by_default": "false", "type": "boolean"},
-            {"name": "verifySslCert", "displayName": "Validate SSL Certificate", "by_default": "false", "type": "boolean"},
-            {"name": "username", "displayName": "Username", "type": ["string", "null"]},
-            {"name": "password", "displayName": "Password", "inputType": "password", "type": ["string", "null"]},
-            {"name": "connectionPoolSize", "displayName": "Thread/connection pool size", "by_default": 1, "type": "int"},
-            {"name": "header", "displayName": "Include Kaa header", "by_default": "false", "type": "boolean"},
-            {"name": "path", "displayName": "Relative URI path", "type": "string"},
-            {"name": "method", "displayName": "Method", "type": { "name": "MethodType", "type": "enum", "symbols": ["PUT", "POST"]}},
-            {"name": "mimeType", "displayName": "Request mime type", "type": { "name": "RequestType", "type": "enum", "symbols": ["TEXT", "JSON"]}}
+    "namespace":"org.kaaproject.kaa.server.appenders.rest.config.gen",
+    "type":"record",
+    "name":"RestConfig",
+    "fields":[
+        {
+            "name":"host",
+            "displayName":"Host",
+            "by_default":"localhost",
+            "type":"string"
+        },
+        {
+            "name":"port",
+            "displayName":"Port",
+            "by_default":10000,
+            "type":"int"
+        },
+        {
+            "name":"ssl",
+            "displayName":"Use SSL",
+            "by_default":"false",
+            "type":"boolean"
+        },
+        {
+            "name":"verifySslCert",
+            "displayName":"Validate SSL Certificate",
+            "by_default":"false",
+            "type":"boolean"
+        },
+        {
+            "name":"username",
+            "displayName":"Username",
+            "type":[
+                "string",
+                "null"
+            ]
+        },
+        {
+            "name":"password",
+            "displayName":"Password",
+            "inputType":"password",
+            "type":[
+                "string",
+                "null"
+            ]
+        },
+        {
+            "name":"connectionPoolSize",
+            "displayName":"Thread/connection pool size",
+            "by_default":1,
+            "type":"int"
+        },
+        {
+            "name":"header",
+            "displayName":"Include Kaa header",
+            "by_default":"false",
+            "type":"boolean"
+        },
+        {
+            "name":"path",
+            "displayName":"Relative URI path",
+            "type":"string"
+        },
+        {
+            "name":"method",
+            "displayName":"Method",
+            "type":{
+                "name":"MethodType",
+                "type":"enum",
+                "symbols":[
+                    "PUT",
+                    "POST"
+                ]
+            }
+        },
+        {
+            "name":"mimeType",
+            "displayName":"Request mime type",
+            "type":{
+                "name":"RequestType",
+                "type":"enum",
+                "symbols":[
+                    "TEXT",
+                    "JSON"
+                ]
+            }
+        }
     ]
 }

@@ -650,6 +650,8 @@
                                         <include>common-dao-sql-context.xml</include>
                                         <include>sql-dao.properties</include>
                                         <include>nosql-dao.properties</include>
+                                        <include>maria-dao.properties.template</include>
+                                        <include>postgre-dao.properties.template</include>
                                     </includes>
                                 </resource>
                                 <resource>

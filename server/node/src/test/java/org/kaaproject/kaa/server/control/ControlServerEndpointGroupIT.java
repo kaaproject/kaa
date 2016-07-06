@@ -55,41 +55,6 @@ public class ControlServerEndpointGroupIT extends AbstractTestControlServer {
         Assert.assertNotNull(storedEndpointGroup);
         assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
     }
-    
-    /**
-     * Test get endpoint groups by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEndpointGroupsByApplicationId() throws Exception {
-        
-        List<EndpointGroupDto> endpointGroups  = new ArrayList<>(11);
-
-        ApplicationDto application = createApplication(tenantAdminDto);
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
-
-        List<EndpointGroupDto> defaultEndpointGroups = client.getEndpointGroups(application.getId());
-        endpointGroups.addAll(defaultEndpointGroups);
-
-        for (int i = 0; i < 10; i++) {
-            EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
-            endpointGroups.add(endpointGroup);
-        }
-        
-        Collections.sort(endpointGroups, new IdComparator());
-        
-        List<EndpointGroupDto> storedEndpointGroups = client.getEndpointGroups(application.getId());
-
-        Collections.sort(storedEndpointGroups, new IdComparator());
-        
-        Assert.assertEquals(endpointGroups.size(), storedEndpointGroups.size());
-        for (int i=0;i<endpointGroups.size();i++) {
-            EndpointGroupDto endpointGroup = endpointGroups.get(i);
-            EndpointGroupDto storedEndpointGroup = storedEndpointGroups.get(i);
-            assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
-        }
-    }
 
     /**
      * Test get endpoint groups by application token.

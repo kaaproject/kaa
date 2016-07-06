@@ -14,6 +14,61 @@
 # limitations under the License.
 #
 
+# List of avaliable configuration parameters:
+#
+#	-  `KAA_MAX_LOG_LEVEL` - Maximum log level used by C SDK. The higher value, the more detailed logs.
+#
+#	Values:
+#
+#	- `0` - NONE (no logs)
+#	- `1` - FATAL
+#	- `2` - ERROR
+#	- `3` - WARN
+#	- `4` - INFO
+#	- `5` - DEBUG
+#	- `6` - TRACE
+#
+#	Default: If build type is `Release`, `KAA_MAX_LOG_LEVEL=4`. If `Debug`, `KAA_MAX_LOG_LEVEL=6`.
+#
+#	- `WITH_EXTENSION_[EXTENSION_NAME]` - specifies which extensions should be included to build.
+#
+#	Extensions' names:
+#
+#	- PROFILE
+#	- CONFIGURATION
+#	- EVENT
+#	- LOGGING
+#	- NOTIFICATION
+#	- USER
+#
+#	Values:
+#
+#	- `ON` - enable extension
+#	- `OFF` - disable extension
+#
+#	Default: `ON` - all extensions are included in the build.
+#
+#	- `KAA_PLATFORM` - build SDK for a particular target.
+#
+#	Values:
+#
+#	- `cc32xx`
+#	- `esp8266`
+#	- `x86-64`
+#
+#	Default: `x86-64`
+#
+#	- `KAA_UNITETESTS_COMPILE` - compile unit tests.
+#
+#	Values:
+#
+#	- `ON`
+#	- `OFF`
+#
+#	Default: `OFF`
+#
+#	Note: requires [cmocka](https://cmocka.org/) test framework to be installed.
+
 cmake_minimum_required(VERSION 2.8.8)
 
 project(Kaa-c C)
