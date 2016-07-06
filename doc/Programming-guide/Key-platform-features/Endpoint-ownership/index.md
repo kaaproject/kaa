@@ -194,8 +194,8 @@ The following steps illustrate this flow with the endpoint A, which is already a
 
 To enable sending/receiving events to/from endpoints, at first the client should attach the endpoint to the owner as shown in the following screenshot.
 
-> Please refer to [Glossary]({{root_url}}Glossary/kaa-admin) for more detail about **userExternalId**, **userAccessToken**, **userVerifierToken** 
->and other parameters which used by methods of KaaClient.
+> Please refer to [Glossary]({{root_url}}Glossary/kaa-admin) for more details about **userExternalId**, **userAccessToken**, **userVerifierToken** 
+>and other parameters are used by KaaClient methods.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
