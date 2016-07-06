@@ -37,6 +37,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_RUNTIME_KEY_GENERATION=ON")
 
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
@@ -126,6 +127,7 @@ set ( KAA_TEST_SOURCES
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
         impl/ClientStatusTest.cpp
+        impl/KaaClientTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
         impl/security/KeyUtilsTest.cpp
         impl/event/EventTransportTest.cpp
