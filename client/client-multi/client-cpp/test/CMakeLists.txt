@@ -124,6 +124,7 @@ set ( KAA_TEST_SOURCES
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
         impl/ClientStatusTest.cpp
+        impl/KaaClientTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
         impl/security/KeyUtilsTest.cpp
         impl/event/EventTransportTest.cpp
