@@ -2,7 +2,6 @@
 layout: page
 title: Glossary
 permalink: /:path/
-nav: /:path/Glossary/
 sort_idx: 50
 ---
 

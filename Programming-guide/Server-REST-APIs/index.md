@@ -2,7 +2,6 @@
 layout: page
 title: Server REST APIs
 permalink: /:path/
-nav: /:path/Programming-guide/Server-REST-APIs
 sort_idx: 60
 ---
 

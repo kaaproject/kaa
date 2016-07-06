@@ -4,302 +4,188 @@ title: Linux
 permalink: /:path/
 sort_idx: 10
 ---
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
 
-Use the following instructions to build endpoint SDKs in Java, C, and C++ for Linux.
+* TOC
+{:toc}
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+The application code based on Kaa C SDK is similar for most of the platform used.
+However, build system is not.
 
-
-- [Java endpoint SDK](#java-endpoint-sdk)
-- [C endpoint SDK](#c-endpoint-sdk)
-    - [Install build utils and dependencies](#install-build-utils-and-dependencies)
-    - [Compile C endpoint SDK](#compile-c-endpoint-sdk)
-    - [Configure C endpoint SDK](#configure-c-endpoint-sdk)
-- [C++ endpoint SDK](#c-endpoint-sdk-1)
-    - [Install build utils and dependencies](#install-build-utils-and-dependencies)
-    - [Compile C++ endpoint SDK](#compile-c-endpoint-sdk-1)
-    - [Configure C++ endpoint SDK](#configure-c-endpoint-sdk-1)
-- [Quick way to build C/C++ endpoint SDK](#quick-way-to-build-c-c-endpoint-sdk)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+Throughout the guide, we focus on details of the CMake-based build system that is used to tie application code together with the C SDK.
 
 **Verified against:**
 
 **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
 
-# Java endpoint SDK
+## C SDK build
 
-<!-- TODO: Fix this link when Administration-UI-guide#AdministrationUIguide-GeneratingSDK are updated -->
-To build the Java endpoint SDK, [generate](Administration-UI-guide#AdministrationUIguide-GeneratingSDK) the Java endpoint SDK in Admin UI and download the generated .jar file.
+This section describes how to build C SDK on linux for the host.
 
-# C endpoint SDK
+### Dependencies
 
-## Install build utils and dependencies
+To build C SDK make sure that the following components are installed:
 
-Before building the C endpoint SDK, install the following components on your machine:
+ - CMake (minimum required version is 2.8.12)
+ - C99 compatible compiler (e.g. GCC)
+ - OpenSSL
 
-1. Install compilers:
-    1. For automatic installation, execute the following commands:
+To install dependencies on Ubuntu execute the following command:
 
-       ~~~ shel
-       $ sudo apt-get install gcc
-       ~~~
+```
+sudo apt-get install cmake libssl-dev gcc
+```
 
-    2. For manual installation of version 4.8, refer to the following example:
+### Build procedure
 
-       ~~~ shell
-       $ sudo apt-get install python-software-properties
-       $ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-       $ sudo apt-get update
-       $ sudo apt-get install gcc-4.8
-       $ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
-       ~~~
+After you generated archive with C SDK, proceed as follows:
 
-2. Install CMake utility:
-    1. For automatic installation, execute the following commands (tested on Ubuntu 14.04):
+1. Unpack SDK:
 
-       ~~~ shell
-       $ sudo apt-get install cmake
-       ~~~
+        tar -xvf c-sdk-archive-name.tar.gz
 
-    2. For manual installation, refer to the following example:
+2. Create the directory where SDK will be built:
 
-       ~~~ shell
-       $ wget http://www.cmake.org/files/v3.3/cmake-3.3.0-rc2.tar.gz
-       $ tar -zxf cmake-3.3.0-rc2.tar.gz
-       $ cd cmake-3.3.0-rc2/
-       $ ./configure
-       $ sudo make install
-       ~~~
 
-3. Install OpenSSL:
+        mkdir build
+        cd build
 
-   ~~~
-   $ sudo apt-get install libssl-dev
-   ~~~
+3. Configure the build via CMake:
 
-4. Install CUnit:
+        cmake ..
 
-   ~~~
-   $ sudo apt-get install libcunit1-dev
-   ~~~
+4. Perform build:
 
-## Compile C endpoint SDK
+        make
 
-To build the C endpoint SDK, do the following:
+## Building Kaa application
 
-<!-- TODO: Fix this link when Administration-UI-guide#AdministrationUIguide-GeneratingSDK are updated -->
-1. [Generate ](Administration-UI-guide#AdministrationUIguide-GeneratingSDK)the C endpoint SDK in Admin UI.
-2. Download and untar the Kaa C SDK archive.
+This section is about how to build your Kaa application using C SDK.
 
-   ~~~ bash
-   $ tar xfv kaa-c-ep-sdk.tar.gz
-   ~~~
+If you want to master writing application code go to the [Programming guide]({{root_url}}/Programming-guide) page.
+Before continuing, make sure that all [dependencies](#dependencies) are installed.
 
-3. Run the following commands.
+1. The directories determine the build structure.
+    To keep it clean and transparent, let's create the following directories:
 
-   ~~~ bash
-   $ mkdir build
-   $ cd build
-   $ cmake ..
-   $ make
-   $ make install
-   ~~~
+    - `my-kaa-application` -- a root directory, which contains all files;
+    - `my-kaa-application/kaa` -- for the C SDK source files;
+    - `my-kaa-application/src` -- for the application code.
 
-## Configure C endpoint SDK
 
-To configure the C endpoint SDK build, you can optionally specify the following parameters for the **cmake** command.
+            mkdir my-kaa-application
+            mkdir my-kaa-application/kaa
+            mkdir my-kaa-application/src
+            cd my-kaa-application
 
+2. Generate C SDK and unpack it to `my-kaa-application/kaa` directory:
 
-{% include csv-table.html csv_path='cmake-c-options.csv' table_id='table-c-cmake-options' width='100%' %}
+        tar -xvf c-sdk-archive.tar.gz -C my-kaa-application/kaa
 
+3. Create the application code. Create `kaa-application.c` file in `my-kaa-application/src` directory:
 
-**\* NOTE:**
+        touch src/kaa-application.c
 
-Before running the **cmake** command with the KAA\_PLATFORM parameter for a platform other than supported, do the following:
+    Open `kaa-application.c` and write the application code. The code is simple: application just prints the string *"Hello, I am a Kaa Application!\n"*.
 
-1. Create a folder in $KAA\_HOME/listfiles/platform/ and name it using \[a-zA-z\_-\] symbols. You will be able to use the folder name as a value for the KAA\_PLATFORM parameter.
-2. Put the CMakeLists.txt file into the created folder. This file may contain specific compilation/linking flags, platform-dependent source files, third-party library dependencies, that is all information necessary for building the C endpoint SDK for this platform.
-3. Optionally, specify the following parameters in the CMakeLists.txt file.
-  * KAA\_INCLUDE\_PATHS - full path(s) to folder(s) containing additional header files
-  * KAA\_SOURCE\_FILES - full path(s) to additional source files
-  * KAA\_THIRDPARTY\_LIBRARIES - third-party libraries (the name of the library, for example, ssl, crypto)
+        #include <stdio.h>
+        #include <stdlib.h>
+        #include <kaa/kaa.h>
+        #include <kaa/platform/kaa_client.h>
+        #include <kaa/kaa_error.h>
 
-The following example illustrates the build procedure for the debug build with the INFO log level and disabled EVENTS feature.
 
-~~~
-mkdir build
-cd build
-cmake -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
-make
-make install
-~~~
-
-# C++ endpoint SDK
-
-## Install build utils and dependencies
-
-Before building the C++ endpoint SDK, install the following components on your machine:
-
-1. Install compilers:
-    1. For automatic installation, execute the following commands:
-
-       ~~~ shell
-       $ sudo apt-get install g++
-       ~~~
+        static void dummy_function(void *context)
+        {
+            printf("Hello, I am a Kaa Application!\n");
+            kaa_client_stop(context);
+        }
 
-    2. For manual installation of version 4.8, refer to the following example:
-
-       ~~~ shell
-       $ sudo apt-get install python-software-properties
-       $ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-       $ sudo apt-get update
-       $ sudo apt-get install g++-4.8
-       $ sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
-       ~~~
-
-2. Install CMake utility:
-    1. For automatic installation, execute the following commands (tested on Ubuntu 14.04):
-
-       ~~~ shell
-       $ sudo apt-get install cmake
-       ~~~
+        int main(void)
+        {
+            kaa_client_t *kaa_client = NULL;
+            kaa_error_t error = kaa_client_create(&kaa_client, NULL);
+            if (error) {
+                return EXIT_FAILURE;
+            }
 
-    2. For manual installation, refer to the following example:
+            error = kaa_client_start(kaa_client, dummy_function, (void *)kaa_client, 0);
 
-       ~~~ shell
-       $ wget http://www.cmake.org/files/v3.3/cmake-3.3.0-rc2.tar.gz
-       $ tar -zxf cmake-3.3.0-rc2.tar.gz
-       $ cd cmake-3.3.0-rc2/
-       $ ./configure
-       $ sudo make install
-       ~~~
+            kaa_client_destroy(kaa_client);
 
-3. Install the [**Boost** ](http://www.boost.org/users/download/)libraries:
-    1. For automatic installation, execute the following commands:
+            if (error) {
+                return EXIT_FAILURE;
+            }
 
-       ~~~ shell
-       $ sudo apt-get install libboost1.55-all-dev
-       ~~~
+            return EXIT_SUCCESS;
+        }
 
-    2. For manual installation, refer to the following example:
+4. Create `CMakeLists.txt` file in the `my-kaa-application` directory.
+    It is a top-level cmake file which is responsible for the application build.
 
-       ~~~
-       $ sudo apt-get install libbz2-dev libbz2-1.0 zlib1g zlib1g-dev
-       $ wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
-       $ tar -zxf boost_1_58_0.tar.gz
-       $ cd boost_1_58_0/
-       $ ./bootstrap.sh
-       $ sudo ./b2 install
-       ~~~
+        touch CMakeLists.txt
 
-4. Install the [**AvroC++**](http://avro.apache.org/docs/1.7.6/api/cpp/html/index.html) library manually:
+    Add the following code to top-level `CMakeLists.txt`.
+    The first line sets the minimum cmake version required to build kaa-application project. The second line sets project name and the language of the project:
 
-   ~~~
-   $ wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
-   $ tar -zxf avro-cpp-1.7.7.tar.gz
-   $ cd avro-cpp-1.7.5/
-   $ cmake -G "Unix Makefiles"
-   $ sudo make install
-   ~~~
+        cmake_minimum_required(VERSION 3.5.2)
+        project(kaa-application C)
 
-5. Install the [**Botan**](http://botan.randombit.net/) library by executing the following command:
+    OpenSSL is required to build the application, so make sure that [it is installed](#dependencies).
 
-   ~~~
-   $ wget https://github.com/randombit/botan/archive/1.11.28.tar.gz
-   $ tar -zxf 1.11.28.tar.gz
-   $ cd botan-1.11.28/
-   $ ./configure.py
-   $ sudo make install
-   $ sudo ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
-   ~~~
+        find_package(OpenSSL REQUIRED)
 
-6. Install the **[SQLite](https://www.sqlite.org/index.html)** library by executing the following command:
-    1. For automatic installation, execute the following commands (tested on Ubuntu 14.04):
+    Some compilers flags are set, and C SDK project is included as a subproject to the kaa-application project.
+    That is a clue. The parameter contains a path to the C SDK's `CMakeLists.txt`.
 
-       ~~~
-       $ sudo apt-get install libsqlite3-0 libsqlite3-dev
-       ~~~
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
 
-    2. For manual installation, refer to the following example:
+        add_subdirectory(kaa)
 
-       ~~~
-       $ wget https://www.sqlite.org/2015/sqlite-autoconf-3081002.tar.gz
-       $ tar -zxf sqlite-autoconf-3081002.tar.gz
-       $ cd sqlite-autoconf-3081002/
-       $ ./configure
-       $ sudo make install
-       ~~~
+    Compile executable named `kaa-app` using `src/kaa-application.c`, and link it with `kaac` and `crypto`.
 
-**NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#Linux-Quickway).  (only applicable for x86\_64 platform build)
+        add_executable(kaa-app src/kaa-application.c)
+        target_link_libraries(kaa-app kaac crypto)
 
-## Compile C++ endpoint SDK
+    Full `CMakeLists.txt` code:
 
-To build the C++ endpoint SDK, do the following:
+        cmake_minimum_required(VERSION 3.5.2)
+        project(kaa-application C)
 
-<!-- TODO: Fix this link when Administration-UI-guide#AdministrationUIguide-GeneratingSDK are updated -->
-1. [Generate](Administration-UI-guide#AdministrationUIguide-GeneratingSDK) the C++ endpoint SDK in Admin UI.
-2. Download and untar the Kaa C++ SDK archive.
+        find_package(OpenSSL REQUIRED)
 
-   ~~~ bash
-   $ tar xfv kaa-cpp-ep-sdk.tar.gz
-   ~~~
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
 
-3. Run the following commands.
+        add_subdirectory(kaa)
 
-   ~~~
-   mkdir build
-   cd build
-   cmake ..
-   make
-   make install
-   ~~~
+        add_executable(kaa-app src/kaa-application.c)
+        target_link_libraries(kaa-app kaac crypto)
 
-## Configure C++ endpoint SDK
+5. Now your directory structure should look like this:
 
-To configure the C++ endpoint SDK build, you can optionally specify the following parameters for the **cmake** command.
+         - my-kaa-application
+         - CMakeLists.txt
+           - kaa
+             - Unpacked C SDK
+           - src
+             - kaa-application.c
 
-{% include csv-table.html csv_path='cmake-cpp-options.csv' table_id='table-cpp-cmake-options' width='100%' %}
+8. Finally, we can build the application.
+    The procedure should have already become familiar to you.
+    Firstly create the directory where the build is performed:
 
-The following example illustrates the build procedure for the debug build, with the INFO log level and disabled EVENTS feature and specified path to the folder Kaa will be installed in:
+        mkdir build
+        cd build
 
-~~~
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX='/home/username/kaa' -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
-make
-make install
-~~~
+6. Configure the build via CMake and run make.
 
-# Quick way to build C/C++ endpoint SDK
+        cmake -DKAA_MAX_LOG_LEVEL=3 ..
+        make
 
-If you want to quickly build the endpoint SDK or build and run Kaa C/C++ demo applications, you can use a [docker](https://www.docker.com/) container with all necessary environment preinstalled.
-**NOTE:** docker natively supports only amd64 architecture.
+    `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
+    Now run your application. Output should be the following one:
 
-1. Follow [docker installation guide](http://docs.docker.com/index.html) depends on your OS.
-2. Download the docker container.
+        Hello, I am a Kaa Application!
 
-   ~~~
-   docker pull kaaproject/demo_c_cpp_environment
-   ~~~
-
-3. Get inside container and compile what you need: SDK, demo applications, etc.
-
-   ~~~
-   docker run -it kaaproject/demo_c_cpp_environment bash
-   ~~~
-
-    **NOTE:**
-    To mount a host directory to the container's filesystem, add the following flag to the previous command: -v FOLDER\_WITH\_DEMO:FOLDER\_INSIDE\_CONTAINER
-    For example, the following command will build a demo project and direct you to the container's shell, where you can test immediately:
-
-   ~~~
-   docker run -v FOLDER_WITH_DEMO:/opt/demo
-     -it kaaproject/demo_c_cpp_environment bash -c 'cd /opt/demo/ &&
-     chmod +x build.sh && ./build.sh clean build && bash'
-   ~~~
-
-4. After the compilation, launch the demo binary located at /opt/demo/build/ in the container's filesystem.
-**NOTE:**
-If you would like to run a compiled binary on some other host, you should have all third-party libraries like boost, etc. preinstalled.
+The full source codes could be found [here](https://github.com/kaaproject/kaa/pull/772/commits/9fae5d8a522b307bbe9f783f69604f2701ca60cc).

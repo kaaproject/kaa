@@ -5,63 +5,82 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-Guide for the platform administrators.
+{% assign root_url = page.url | split: '/'%}
+{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+
+* TOC
+{:toc}
+
+The Kaa IoT platform consists of the Kaa server, Kaa extensions, and endpoint SDKs (see [Architecture overview]({{root_url}}Architecture-overview/) for more details). 
+This guide will provide the overview of key system components from the administration point of view.
+
+## Kaa node
+
+Each Kaa node in cluster runs combination of Control, Operations, and Bootstrap services. 
+A system administrator can enable or disable any of the services on a particular node, thus flexibly configuring the cluster deployment (see [general configuration]({{root_url}}Administration-guide/System-Configuration/General-configuration/) for more details).
+
+Kaa Control service is responsible for managing overall system data, processing API calls from the Administration UI and external integrated systems, and delivering corresponding notifications to Operations services. 
+Kaa Control service also embeds Administration UI web server.
+
+Kaa Operations service is a “worker” service, the primary role of which is concurrent communication with multiple endpoints. Operations services process endpoint requests and serve them with data.
+Kaa Bootstrap service is responsible for distributing Operations services connection parameters to endpoints. Depending on the configured protocol stack, connection parameters may include IP address, TCP port, security credentials, etc. 
+
+Kaa node is distributed as *debian* or *rpm* packages that may be installed on various supported operating systems (see [system installation]({{root_url}}Administration-guide/System-installation/) for more details).
 
 
-* [High-level architecture](#high-level-architecture)
-  * [Kaa cluster node](#kaa-cluster-node)
-    * [Control service](#control-service)
-    * [Operations service](#operations-service)
-    * [Bootstrap service](#bootstrap-service)
-  * [Endpoint](#endpoint)
-  * [Third-party](#third-party)
-    * [Zookeeper](#zookeeper)
-    * [SQL database](#sql-database)
-    * [NoSQL database](#nosql-database)
-* [Further reading](#further-reading)
+### Third-party components
 
+#### Zookeeper
 
-The *Kaa IoT platform* consists of the *Kaa server* and *endpoint SDKs*. The Kaa server implements the back-end part of the platform, exposes integration interfaces, and offers administrative capabilities. An endpoint SDK is a library which provides communication, data marshalling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. Java-based, C++-based, C-based, Objective-C-based). This SDK can be used to create Kaa clients, which are any pieces of software that utilize Kaa functionality and are installed on some connected devices. It is the responsibility of the Kaa client to process structured data provided by the Kaa server (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.).
-A *Kaa instance* (interchangeable with *Kaa deployment*) is a particular implementation of the *Kaa platform* and it consists of a Kaa cluster and *endpoints*. A Kaa cluster represents a number of interconnected Kaa server *nodes*. An *endpoint* is an abstraction which represents a separate managed entity within a Kaa deployment. Practically speaking, an endpoint is a specific Kaa client registered (or waiting to be registered) within a Kaa deployment. For example, a news application installed on your mobile phone, the same news application installed on your tablet, and the same news application on your WiFi-enabled fridge would be considered three different endpoints in Kaa.
-An *application* in Kaa represents a family of available implementations of a specific software application used by endpoints. For example, two versions of a sound frequency measuring application which differ by their implementation for, respectively, Arduino and STM32 platforms would be considered the same application in Kaa.
-A tenant in Kaa is a separate business entity which contains its own endpoints, applications and users.
-A single Kaa deployment is able to support multiple tenants, with multiple applications per each tenant. As illustrated in the following diagram, applications belong to tenants, while endpoints register within applications. In addition to tenants, applications and endpoints, there are also users and endpoint groups, which will be described in detail further in this reference.
+[Apache ZooKeeper](https://zookeeper.apache.org/) enables highly reliable distributed coordination of Kaa cluster nodes.
+Each Kaa node continuously pushes information on connection parameters, enabled services and the corresponding services load.
+Other Kaa nodes use this information in order to get list of their siblings and communicate with them.
+Active Control service uses information about available Bootstrap services and their connection parameters during the SDK generation.
 
-![Kaa instance (cluster)](1-04.png "Kaa instance (cluster)")
+#### SQL database
 
-## High-level architecture ##
-Kaa cluster consists of Kaa nodes that use Apache ZooKeeper for services coordination. Kaa cluster also requires SQL and NoSQL database instances.
+SQL database instance is used to store tenants, applications, endpoint groups and other metadata that does not grow with the increase in the amount of endpoints.
+Kaa officially supports [MariaDB](https://mariadb.org/) and [PostgreSQL](https://www.postgresql.org/) as embedded SQL databases at the moment.
 
-![Kaa instance (cluster)](1_Artboard 2 copy.png "Kaa instance (cluster)")
+#### NoSQL database
 
-## Kaa cluster node ##
+NoSQL database instance is used to store endpoint-related data that grows linearly with the amount of managed endpoints.
+Kaa officially supports [Apache Cassandra](http://cassandra.apache.org/) and [MongoDB](https://www.mongodb.com/) as embedded NoSQL database at the moment.
 
-The Kaa cluster node is comprised of the Control, Operations, and Bootstrap services. Kaa administrator can enable or disable each of this services individually.
+## High availability (HA)
 
-### Control service ###
-A Kaa Control service is responsible for managing overall system data, processing API calls from the web UI and external integrated systems, and delivering notifications to Operations servers. A Control service manages data stored in a database (independently for each tenant) and notifies every Operations server on most data updates via a Thrift-based protocol. A Control server maintains an up-to-date list of available Operations servers by continuously obtaining this information from ZooKeeper. In addition, Control service provides web UI, which is a standalone component that integrates with the Control server and allows users to create applications, register and configure endpoints, create endpoint groups, etc.
-To support high availability, a Kaa cluster must include at least two nodes with control service enabled, with one of them being active and the other(s) being in a standby mode. In case of the active Control service failure, ZooKeeper notifies one of the standby Control service and promotes it to the active Control service.
+In order to provide HA of Kaa services, one should deploy topology with at least two Kaa nodes. Each node should act as Control, Operations and Boostrap service simultaniously. 
+Apache Zookeeper should be deployed in cluster mode, since it is used for Kaa node coordination.
 
-### Operations service ###
-A Kaa Operations service is a “worker” service that is responsible for concurrently handling multiple requests from multiple clients. Most common Operations service tasks include endpoint registration, processing endpoint profile updates, configuration updates distribution, and notifications delivery.
-Multiple nodes with Operations service enabled may be set up in a Kaa cluster for the purpose of horizontal scaling. In this case, all the Operations service will function concurrently. In case an Operations service outage happens, the corresponding endpoints switch to the other available Operations services automatically. A Kaa cluster provides instruments for the workload re-balancing at run time, thus effectively routing endpoints to the less loaded nodes in the cluster.
+>**NOTE:**
+> Two Kaa nodes is the minimum HA configuration. At least three geo-distributed Kaa nodes is recommended for production usage.
 
-### Bootstrap service ###
-A Kaa Bootstrap service is responsible for directing endpoints to Operations services. On their part, Kaa endpoints have a built-in list of Bootstrap services set up in the given Kaa deployment. The endpoints use this list to query the Bootstrap services and retrieve a list of currently available Operations services from them, as well as security credentials. Bootstrap services maintain their lists of available Operations service nodes by coordinating with the ZooKeeper servers.
+High availability of a Kaa cluster also depends on deploying both SQL and NoSQL databases in HA mode. 
+Database nodes can be co-located with Kaa nodes on the same physical or virtual machines.
 
-## Endpoint ##
-A Kaa endpoint is a particular application which uses the Kaa client SDK and resides on a particular connected device. The Kaa endpoint SDK provides functionality for communicating with the Kaa server, managing data locally in the client application, as well as provides integration APIs. The client SDK abstracts the communication protocol, data persistence, and other implementation details that may be specific for any concrete solution based on Kaa.
+## Scalability
 
-## Third-party ##
+Multiple nodes with Operations service enabled may be set up in a Kaa cluster for the purpose of horizontal scaling of endpoints requests processing. 
+Multiple nodes with Control service enabled provide horizontal scalability of administration REST API calls processing.
 
-### Zookeeper ###
-Apache ZooKeeper enables highly reliable distributed coordination of Kaa cluster nodes. Each Kaa node push information about connection parameters, enabled services and corresponding services load. Other Kaa nodes use this information in order to get list of their neighbors and communicate with them. Control service uses information about existing Bootstrap services and their connection parameters during SDK generation.
+## Load Balancing (LB)
 
-### SQL database ###
-SQL database instance is used to store metadata about tenants, applications, endpoint groups, etc. This information is shared between endpoints, thus it's volume does not scale and it can be efficiently stored in modern SQL databases. To support high availability of Kaa cluster, SQL database should be also deployed in cluster mode.
+LB task can be decoupled into two subtasks based on originator of requests to Kaa cluster: Kaa Endpoint SDK and REST API requests.
 
-### NoSQL database ###
-NoSQL database instance is used to store information about endpoint profiles, notifications, configurations, etc. The volume of this information scales linearly with amount of endpoints that are managed using particular Kaa cluster instance. NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines. Kaa support Apache Cassandra and MongoDB as a NoSQL database at the moment.
+#### Kaa Endpoint SDK requests
 
-## Further reading ##
-After you familiarize yourself with all the sections in Design reference, use the following guides and references to advance further into Kaa. We also assume that you're already through with Kaa installation as described in either Sandbox or Installation guide. Make sure you did not skip the Getting started page as it allows you to quickly create your first Kaa application.
+Kaa SDK choose Bootstrap and Operations service instances pseudo-randomly during session initiation.
+However, under the conditions when the cluster is heavily loaded, random endpoints distribution may not be good enough.
+Further, as a node joins the cluster, there is a need to re-balance the load across the new cluster set up.
+Kaa server uses the active LB approach to instruct some of the endpoints to reconnect to a different Operations service, thus equalizing the load across the nodes.
+The algorithm takes servers load information (connected endpoints count, load average, etc.) published by Kaa nodes as an input, and periodically recalculates weights of each node.
+Further, the overloaded nodes are instructed to redirect some of the connecting endpoints to a different node.
+
+A similar approach can be used for offloading all of the load from a node subject to a scheduled service, or to gradually migrate the cluster across the physical or virtual machines.
+Doing so requires setting of a custom LB strategy by implementing [Rebalancer](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/Rebalancer.java) interface. 
+See default [implementation](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/EndpointCountRebalancer.java) for more details.
+
+#### Kaa REST API requests
+
+Existing HTTP(s) LB solutions ([Nginx](https://www.nginx.com/), [AWS Elastic Load balancing](https://aws.amazon.com/elasticloadbalancing/), [Google Cloud LB](https://cloud.google.com/compute/docs/load-balancing-and-autoscaling)),  with sticky session support may be used to provide LB of Administration REST API. 
+
