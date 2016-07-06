@@ -400,16 +400,12 @@ kaa_error_t kaa_tcp_channel_destroy_context(void *context)
     kaa_buffer_destroy(channel->in_buffer);
     kaa_buffer_destroy(channel->out_buffer);
 
-    if (channel->pending_request_services) {
-        KAA_FREE(channel->pending_request_services);
-        channel->pending_request_services = NULL;
-    }
+    KAA_FREE(channel->pending_request_services);
+    channel->pending_request_services = NULL;
 
-    if (channel->supported_services) {
-        KAA_FREE(channel->supported_services);
-        channel->supported_services = NULL;
-        channel->supported_service_count = 0;
-    }
+    KAA_FREE(channel->supported_services);
+    channel->supported_services = NULL;
+    channel->supported_service_count = 0;
 
     if (channel->encryption.aes_session_key) {
         channel->encryption.aes_session_key = NULL;
@@ -1197,9 +1193,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     }
 
     if (error_code || delete_error_code) {
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
 
         return error_code ? error_code : delete_error_code;
     }
@@ -1215,9 +1209,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     if (kaatcp_error_code) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_TCPCHANNEL_PARSER_ERROR, "Kaa TCP channel [0x%08X] failed to fill CONNECT message",
                 self->access_point.id);
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
         return KAA_ERR_TCPCHANNEL_PARSER_ERROR;
     }
 
@@ -1233,9 +1225,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     }
 
     if (error_code) {
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
         return KAA_ERR_NOMEM;
     }
 
@@ -1244,9 +1234,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     if (kaatcp_error_code) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_TCPCHANNEL_PARSER_ERROR, "Kaa TCP channel [0x%08X] failed to get serialize CONNECT message",
                 self->access_point.id);
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
 
         return KAA_ERR_TCPCHANNEL_PARSER_ERROR;
     }
@@ -1256,9 +1244,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 
     error_code = kaa_buffer_lock_space(self->out_buffer, buffer_size);
 
-    if (sync_buffer) {
-        KAA_FREE(sync_buffer);
-    }
+    KAA_FREE(sync_buffer);
 
     if (error_code) {
         return error_code;
@@ -1539,17 +1525,13 @@ kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *self)
     self->access_point.state = AP_NOT_SET;
     self->access_point.id = 0;
 
-    if (self->access_point.hostname) {
-        KAA_FREE(self->access_point.hostname);
-        self->access_point.hostname = NULL;
-        self->access_point.hostname_length = 0;
-    }
+    KAA_FREE(self->access_point.hostname);
+    self->access_point.hostname = NULL;
+    self->access_point.hostname_length = 0;
 
-    if (self->access_point.public_key) {
-        KAA_FREE(self->access_point.public_key);
-        self->access_point.public_key = NULL;
-        self->access_point.public_key_length = 0;
-    }
+    KAA_FREE(self->access_point.public_key);
+    self->access_point.public_key = NULL;
+    self->access_point.public_key_length = 0;
 
     return error_code;
 }
@@ -1622,9 +1604,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self,
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] failed to serialize client sync",
                 self->access_point.id);
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
         return error_code;
     }
 
@@ -1634,9 +1614,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self,
     if (parser_error_code) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_TCPCHANNEL_PARSER_ERROR, "Kaa TCP channel [0x%08X] failed to fill KAASYNC message",
                 self->access_point.id);
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
         return KAA_ERR_TCPCHANNEL_PARSER_ERROR;
     }
 
@@ -1644,9 +1622,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self,
     if (parser_error_code) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_TCPCHANNEL_PARSER_ERROR, "Kaa TCP channel [0x%08X] failed to serialize KAASYNC message",
                 self->access_point.id);
-        if (sync_buffer) {
-            KAA_FREE(sync_buffer);
-        }
+        KAA_FREE(sync_buffer);
         return KAA_ERR_TCPCHANNEL_PARSER_ERROR;
     }
 
@@ -1655,9 +1631,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self,
 
     error_code = kaa_buffer_lock_space(self->out_buffer, buffer_size);
 
-    if (sync_buffer) {
-        KAA_FREE(sync_buffer);
-    }
+    KAA_FREE(sync_buffer);
     KAA_RETURN_IF_ERR(error_code);
 
     error_code = kaa_tcp_write_buffer(self);
