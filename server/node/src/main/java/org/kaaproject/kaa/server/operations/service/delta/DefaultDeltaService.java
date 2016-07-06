@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -36,6 +38,7 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.BaseBinaryDelta;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorithmFactory;
@@ -230,7 +233,7 @@ public class DefaultDeltaService implements DeltaService {
                             LOG.debug("[{}] Configuration hash for {} is {}", endpointId, deltaKey,
                                     MessageEncoderDecoder.bytesToHex(deltaCache.getHash().getData()));
                             return deltaCache;
-                        } catch (GetDeltaException e) {
+                        } catch (GetDeltaException | IOException e) {
                             throw new RuntimeException(e); // NOSONAR
                         }
                     }
@@ -356,9 +359,10 @@ public class DefaultDeltaService implements DeltaService {
         return mergedConfiguration;
     }
 
-    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, RawData mergedConfiguration, EndpointObjectHash userConfigurationHash) {
-        byte[] configuration = GenericAvroConverter.toRawData(mergedConfiguration.getRawData(), mergedConfiguration.getSchema()
-                .getRawSchema());
+    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, RawData rawMergedConf, EndpointObjectHash userConfigurationHash) throws IOException {
+        JsonNode json = new ObjectMapper().readTree(rawMergedConf.getRawData());
+        json = AvroUtils.removeUuids(json);
+        byte[] configuration = GenericAvroConverter.toRawData(json.toString(), rawMergedConf.getSchema().getRawSchema());
         return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
                 userConfigurationHash);
     }

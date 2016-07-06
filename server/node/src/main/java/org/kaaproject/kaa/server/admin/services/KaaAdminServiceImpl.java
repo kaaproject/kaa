@@ -129,6 +129,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.*;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
@@ -2568,7 +2569,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] body = getFileContent(fileItemName);
 
             JsonNode json = new ObjectMapper().readTree(body);
-            json = injectUuids(json);
+            json = AvroUtils.injectUuids(json);
             body = json.toString().getBytes();
 
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
@@ -2580,22 +2581,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private JsonNode injectUuids(JsonNode json) {
-        boolean containerWithoutId = json.isContainerNode() && !json.has("__uuid");
-        boolean notArray = !(json instanceof ArrayNode);
-        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
 
-        if (containerWithoutId && notArray && childIsNotArray) {
-            ((ObjectNode)json).put("__uuid", (Integer)null);
-        }
-
-        for (JsonNode node : json) {
-            if (node.isContainerNode())
-                injectUuids(node);
-        }
-
-        return json;
-    }
 
     private void checkExpiredDate(NotificationDto notification) throws KaaAdminServiceException {
         if (null != notification.getExpiredAt() && notification.getExpiredAt().before(new Date())) {
