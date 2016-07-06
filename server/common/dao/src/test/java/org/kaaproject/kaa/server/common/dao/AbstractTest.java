@@ -83,7 +83,6 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
-import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -568,24 +567,20 @@ public class AbstractTest {
 
     protected NotificationSchemaDto generateNotificationSchemaDto(String appId, NotificationTypeDto type) {
         NotificationSchemaDto schema = new NotificationSchemaDto();
-        ApplicationDto app = null;
         if (isBlank(appId)) {
-            app = generateApplicationDto();
-            appId = app.getId();
-        } else {
-            app = applicationService.findAppById(appId);
+            appId = generateApplicationDto().getId();
         }
         schema.setApplicationId(appId);
         schema.setName(NOTIFICATION_SCHEMA_NAME);
-        schema.setType(type != null ? type : NotificationTypeDto.USER);
-        CTLSchemaDto ctlSchema = null;
+        String schemaBody = null;
         try {
-            ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
-        } catch (DatabaseProcessingException e){
-            ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
-
+            schemaBody = readSchemaFileAsString("dao/schema/testBaseSchema.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
         }
-        schema.setCtlSchemaId(ctlSchema.getId());
+        schema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schemaBody).getRawSchema());
+        schema.setType(type != null ? type : NotificationTypeDto.USER);
         return notificationService.saveNotificationSchema(schema);
     }
 

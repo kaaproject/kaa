@@ -251,9 +251,15 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveServerProfileSchema", serverProfileSchema, ServerProfileSchemaDto.class);
     }
 
-    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, String schemaResource) throws Exception {
+        return createNotificationSchema(notificationSchema, getFileResource(schemaResource));
+    }
+
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, ByteArrayResource schemaResource)
+            throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notificationSchema", notificationSchema);
+        params.add("file", schemaResource);
         return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", params, NotificationSchemaDto.class);
     }
 
