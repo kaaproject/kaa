@@ -31,15 +31,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.slf4j.Logger;
@@ -74,17 +67,22 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     @Ignore
     @Test
     public void findNotificationsByIdWithExpiredTimeTest() {
-        String appId = generateApplicationDto().getId();
+        ApplicationDto app = generateApplicationDto();
 
-        NotificationSchemaDto schema = new NotificationSchemaDto();
-        schema.setApplicationId(appId);
-        String schemaBody = "{\"type\":\"record\",\"name\":\"BasicSystemNotification\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"notificationBody\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"systemNotificationParam1\",\"type\":\"int\"},{\"name\":\"systemNotificationParam2\",\"type\":\"int\"}]}";
-        schema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schemaBody).getRawSchema());
-        schema.setType(NotificationTypeDto.USER);
-        NotificationSchemaDto savedSchema = notificationService.saveNotificationSchema(schema);
+        NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
+        notificationSchemaDto.setApplicationId(app.getId());
+        CTLSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+        notificationSchemaDto.setCtlSchemaId(ctlSchema.getId());
+        if (notificationSchemaDto == null) {
+            throw new RuntimeException("Can't save default profile schema "); //NOSONAR
+        }
+
+        notificationSchemaDto.setCtlSchemaId(ctlSchema.getId());
+        notificationSchemaDto.setType(NotificationTypeDto.USER);
+        NotificationSchemaDto savedSchema = notificationService.saveNotificationSchema(notificationSchemaDto);
 
         TopicDto topicDto = new TopicDto();
-        topicDto.setApplicationId(appId);
+        topicDto.setApplicationId(app.getId());
         topicDto.setName("New Topic");
         topicDto.setType(TopicTypeDto.MANDATORY);
 
