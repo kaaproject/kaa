@@ -18,3 +18,4 @@
 {% else %}
 	{% assign version = "" %}
 {% endif %}
+{% assign base_docs_path = "kaa" %}
