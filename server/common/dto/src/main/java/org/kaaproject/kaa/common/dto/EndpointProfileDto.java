@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
 import java.io.Serializable;
@@ -24,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@ApiModel(value = "Endpoint Profile", description = "Simple endpoint profile")
 public class EndpointProfileDto implements HasId, HasVersion, Serializable {
 
 
@@ -31,6 +35,7 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
 
     private static final long serialVersionUID = -7122736699758720540L;
 
+    @ApiModelProperty(name = "ID", value = "id for endpoint profile", example = "999")
     private String id;
     private String applicationId;
     private byte[] endpointKey;

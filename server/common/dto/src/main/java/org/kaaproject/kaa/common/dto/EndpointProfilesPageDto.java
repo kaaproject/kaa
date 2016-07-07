@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.List;
 
+@ApiModel(value = "Endpoint Profile Page", description = "Page for endpoint profiles")
 public class EndpointProfilesPageDto extends AbstractEndpointProfilesDto {
 
     private static final long serialVersionUID = 6368165337840879484L;

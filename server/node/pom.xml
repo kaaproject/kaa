@@ -461,6 +461,45 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.3</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <!--info tag is required in plugin bun unused in doc view -->
+                            <info>
+                                <title>Kaa Node REST API</title>
+                                <version>1.0.0</version>
+                                <description>This REST API provides function for manage Kaa cluster</description>
+                                <termsOfService>
+                                    http://www.kaaproject.org/
+                                </termsOfService>
+                                <license>
+                                    <url>http://www.license.com</url>
+                                    <name>License name</name>
+                                </license>
+                            </info>
+                            <springmvc>true</springmvc>
+                            <locations>org.kaaproject.kaa.server.admin.controller.KaaAdminController</locations>
+                            <schemes>http,https</schemes>
+                            <host>sample.com</host>
+                            <basePath>/api</basePath>
+                            <swaggerApiReader>com.github.kongchen.swagger.docgen.reader.SpringMvcApiReader</swaggerApiReader>
+                            <swaggerDirectory>doc/Programming-guide/Server-REST-APIs</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
                 <version>${avro.version}</version>

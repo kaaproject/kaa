@@ -1,0 +1,248 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This REST API provides function for manage Kaa cluster",
+    "version" : "1.0.0",
+    "title" : "Kaa Node REST API",
+    "termsOfService" : "http://www.kaaproject.org/",
+    "contact" : {
+      "name" : "Name Surname",
+      "url" : "http",
+      "email" : "your@email.com"
+    },
+    "license" : {
+      "name" : "License name",
+      "url" : "http://www.license.com"
+    }
+  },
+  "host" : "10.2.1.96:8080",
+  "basePath" : "/kaaAdmin/rest",
+  "tags" : [ {
+    "name" : "admin api",
+    "description" : "This api provides function for manage Kaa cluster"
+  } ],
+  "schemes" : [ "http", "https" ],
+  "paths" : {
+    "/api/endpointProfileByGroupId" : {
+      "get" : {
+        "tags" : [ "admin api" ],
+        "summary" : "Returns endpoint profile by endpoint group ID",
+        "description" : "Some notes",
+        "operationId" : "getEndpointProfileByEndpointGroupId",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Endpoint Group ID",
+          "in" : "query",
+          "description" : "the id of the endpoint group.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "maximum number of shown profiles. (optional parameter)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "offset from beginning of profiles list. (optional parameter)",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Endpoint Profile Page"
+            }
+          },
+          "400" : {
+            "description" : "Invalid ID supplied",
+            "headers" : {
+              "X-Rack-Cache" : {
+                "type" : "boolean",
+                "description" : "Explains whether or not a cache was used"
+              }
+            }
+          },
+          "404" : {
+            "description" : "Pet not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Endpoint Profile" : {
+      "type" : "object",
+      "properties" : {
+        "ID" : {
+          "type" : "string",
+          "example" : "999",
+          "description" : "id for endpoint profile"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "endpointKey" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "endpointKeyHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "endpointUserId" : {
+          "type" : "string"
+        },
+        "accessToken" : {
+          "type" : "string"
+        },
+        "sequenceNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "groupState" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EndpointGroupStateDto"
+          }
+        },
+        "subscriptions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "simpleTopicHash" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "topicHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "clientProfileBody" : {
+          "type" : "string"
+        },
+        "serverProfileBody" : {
+          "type" : "string"
+        },
+        "profileHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "configurationHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "userConfigurationHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "clientProfileVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "serverProfileVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "configurationVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "notificationVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "systemNfVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "userNfVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "logSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "ecfVersionStates" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EventClassFamilyVersionStateDto"
+          }
+        },
+        "serverHash" : {
+          "type" : "string"
+        },
+        "sdkToken" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "description" : "Simple endpoint profile"
+    },
+    "Endpoint Profile Page" : {
+      "type" : "object",
+      "properties" : {
+        "Endpoint profiles" : {
+          "type" : "array",
+          "description" : "List of endpoint profiles",
+          "items" : {
+            "$ref" : "#/definitions/Endpoint Profile"
+          }
+        }
+      },
+      "description" : "Page for endpoint profiles"
+    },
+    "EndpointGroupStateDto" : {
+      "type" : "object",
+      "properties" : {
+        "endpointGroupId" : {
+          "type" : "string"
+        },
+        "profileFilterId" : {
+          "type" : "string"
+        },
+        "configurationId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "EventClassFamilyVersionStateDto" : {
+      "type" : "object",
+      "properties" : {
+        "ecfId" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    }
+  }
+}
