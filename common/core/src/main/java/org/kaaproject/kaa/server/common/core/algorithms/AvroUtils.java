@@ -95,7 +95,7 @@ public class AvroUtils {
 
     public static JsonNode injectUuids(JsonNode json) {
         boolean containerWithoutId = json.isContainerNode() && !json.has(UUID_FIELD);
-        boolean notArray = !(json instanceof ArrayNode);
+        boolean notArray = !json.isArray();
         boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
 
         if (containerWithoutId && notArray && childIsNotArray) {
@@ -121,7 +121,7 @@ public class AvroUtils {
 
         for (JsonNode node : json) {
             if (node.isContainerNode())
-                injectUuids(node);
+                removeUuids(node);
         }
 
         return json;
