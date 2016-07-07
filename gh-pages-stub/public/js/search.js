@@ -61,7 +61,9 @@
     searchVersion = e.options[e.selectedIndex].value;
   }
   if (searchTerm) {
-
+    
+    ga('send', 'event', 'User Search', 'Search', searchTerm);
+    
     document.getElementById('search-box').setAttribute("value", searchTerm);
     
     var url = searchBaseUrl + "/" + searchVersion + "/" + "search_dictionary.json";
