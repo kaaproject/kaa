@@ -91,7 +91,7 @@ public class AvroJsonConverter<T extends SpecificRecordBase> {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public T decodeJson(String data, T reuse) throws IOException{
-        jsonDecoder = DecoderFactory.get().jsonDecoder(this.schema, data, true);
+        jsonDecoder = DecoderFactory.get().jsonDecoder(this.schema, data);
         return avroReader.read(null, jsonDecoder);
     }
     
@@ -115,7 +115,7 @@ public class AvroJsonConverter<T extends SpecificRecordBase> {
      */
     public byte[] encodeToJsonBytes(T record) throws IOException{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos, false, true);
+        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos);
         avroWriter.write(record, jsonEncoder);
         jsonEncoder.flush();
         baos.flush();
