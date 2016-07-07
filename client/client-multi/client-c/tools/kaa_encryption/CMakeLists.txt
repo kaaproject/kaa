@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.2.2)
+cmake_minimum_required(VERSION 2.8.12)
 project(kaa_rsa_keygen C)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic -D_GNU_SOURCE")
