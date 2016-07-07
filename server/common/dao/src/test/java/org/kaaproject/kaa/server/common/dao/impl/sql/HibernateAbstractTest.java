@@ -40,30 +40,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.model.sql.Application;
-import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
-import org.kaaproject.kaa.server.common.dao.model.sql.Change;
-import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
-import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
-import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
-import org.kaaproject.kaa.server.common.dao.model.sql.History;
-import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
-import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
-import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
-import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
-import org.kaaproject.kaa.server.common.dao.model.sql.User;
-import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
+import org.kaaproject.kaa.server.common.dao.model.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -391,12 +368,11 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             eventClassFamily.setDescription("Test Description");
             eventClassFamily.setName("Test Name" + RANDOM.nextInt());
             eventClassFamily.setNamespace("Test Namespace");
-            List<EventSchemaVersion> eventSchemaVersions = new ArrayList<>(eventSchemaVersionsCount);
+            List<EventClassFamilyVersion> eventSchemaVersions = new ArrayList<>(eventSchemaVersionsCount);
             for (int j = 0; j < eventSchemaVersionsCount; j++) {
-                EventSchemaVersion eventSchemaVersion = new EventSchemaVersion();
+                EventClassFamilyVersion eventSchemaVersion = new EventClassFamilyVersion();
                 eventSchemaVersion.setCreatedTime(new Date().getTime());
                 eventSchemaVersion.setCreatedUsername("Test Username");
-                eventSchemaVersion.setSchema("Test Schema" + RANDOM.nextInt());
                 eventSchemaVersion.setVersion(1);
                 eventSchemaVersions.add(eventSchemaVersion);
             }
@@ -417,15 +393,22 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         }
 
         EventClass eventClass;
+        EventClassFamilyVersion eventClassFamilyVersion = eventClassFamily.getSchemas().get(0);
         List<EventClass> eventClasses = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             eventClass = new EventClass();
             eventClass.setTenant(tenant);
-            eventClass.setEcf(eventClassFamily);
+            eventClass.setCtlSchema(generateCTLSchema(DEFAULT_FQN, i, tenant, CTLSchemaScopeDto.TENANT));
+            eventClass.setEcf(eventClassFamilyVersion);
             eventClass.setFqn("Test FQN" + RANDOM.nextInt());
-            eventClass.setSchema("Test Schema" + RANDOM.nextInt());
             eventClass.setType(EventClassType.EVENT);
             eventClass.setVersion(1);
+            eventClass.setName("test schema name" + RANDOM.nextInt());
+            eventClass.setDescription("test schema description" + RANDOM.nextInt());
+            eventClass.setCreatedUsername("test createdUsername" + RANDOM.nextInt());
+            eventClass.setCreatedTime(new Date().getTime());
+            eventClass.setApplication(generateApplication(tenant));
+
             eventClass = eventClassDao.save(eventClass);
             Assert.assertNotNull(eventClass);
             eventClasses.add(eventClass);

@@ -22,6 +22,6 @@ import org.junit.Test;
 public class EventSchemaVersionTest {
     @Test
     public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(EventSchemaVersion.class).usingGetClass().verify();
+        EqualsVerifier.forClass(EventClassFamilyVersion.class).usingGetClass().verify();
     }
 }

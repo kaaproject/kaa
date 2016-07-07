@@ -27,11 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.*;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
@@ -140,11 +136,11 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
                 if (eventClassFamilies != null) {
                     for (EventClassFamilyDto eventClassFamily : eventClassFamilies) {
                         if (eventClassFamily.getSchemas() != null) {
-                            for (EventSchemaVersionDto eventSchemaVersion : eventClassFamily.getSchemas()) {
+                            for (EventClassFamilyVersionDto eventClassFamilyVersion : eventClassFamily.getSchemas()) {
                                 EcfInfoDto ecf = new EcfInfoDto();
                                 ecf.setEcfId(eventClassFamily.getId());
                                 ecf.setEcfName(eventClassFamily.getName());
-                                ecf.setVersion(eventSchemaVersion.getVersion());
+                                ecf.setVersion(eventClassFamilyVersion.getVersion());
                                 if (occupiedEcfs != null && !occupiedEcfs.contains(ecf)) {
                                     vacantEcfs.add(ecf);
                                 }

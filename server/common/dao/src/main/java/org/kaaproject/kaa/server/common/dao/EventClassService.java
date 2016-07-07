@@ -52,15 +52,6 @@ public interface EventClassService {
     EventClassFamilyDto saveEventClassFamily(EventClassFamilyDto eventClassFamilyDto);
 
     /**
-     * Add event class family schema.
-     *
-     * @param eventClassFamilyId the event class family id
-     * @param eventClassFamilySchema the event class family schema
-     * @param createdUsername the created username
-     */
-    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername);
-
-    /**
      * Find event classes by event class family Id and version.
      *
      * @param ecfId the string id of event class family

@@ -202,6 +202,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
         dto.setFqn(fqn);
         dto.setType(type);
         dto.setCtlSchemaId(getCtlSchema().getStringId());
+        dto.setApplicationId(getApplicationId());
         return dto;
     }
 
