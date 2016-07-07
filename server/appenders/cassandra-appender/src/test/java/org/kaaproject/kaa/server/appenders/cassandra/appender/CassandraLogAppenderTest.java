@@ -65,7 +65,6 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
 
 public class CassandraLogAppenderTest {
 
