@@ -27,79 +27,119 @@ If your page contains only one heading, TOC is not required.
 
 ## Content structure
 * Keep your titles and headings short and precise, 1-5 words will do.
-* Keep sentence structure simple.
-Try to limit sentences to one clause.
-Individuals who have language difficulties, non-native English speakers, and some people who are deaf or hard of hearing may have difficulty understanding longer, complicated sentences.
+* Use simple one-clause sentence structure whenever you can.
 * If you have sentences longer than 25 words, try to break them up or condense them.
 If you can’t, make sure they are in plain English.
-* Keep paragraphs short or create small sections or text groupings.
-* Put key information near the beginning of the content.
-* Provide descriptions that do not require pictures, or provide both pictures and written descriptions.
-To test whether the writing is effective, try removing, one at a time, first the words and then the pictures.
-With only one method, can you still figure out what to do?
-* Use numbered lists for step-by-step procedures and bulleted list for an unordered set of items.
-* Use a bulleted list or headings to emphasize important points.
-* Minimize the number of steps in a procedure.
-Individuals who have cognitive impairments may have difficulty following procedures that have many steps.
-Keep the steps simple, and keep the user oriented.
+* Avoid using long paragraphs.
+Instead, try to break them into groups of 1-10 lines of text.
+* Place the key information at the beginning of each content element.
+* Supplement your text with pictures only to illustrate complex ideas.
+Avoid redundant imagery.
+Do not use pictures without descriptions.
+* Use numbered lists for step-by-step procedures and bulleted lists for unordered sets of items.
+* Emphasize important points with a bulleted list or use headings.
+* Keep the minimum number of steps for procedure descriptions.
 * Provide links to related content within the documentation to help readers get more information.
+* Provide links to auto-generated documentation (API, etc.).
 
 ## Style and tone
-* Use _please_ and _thank you_ judiciously.
-Avoid using _please_ in instructions unless some step in the procedure causes inconvenience for the user or represents a workaround for some system limitation.
-* Use _sorry_ only in error messages that result in serious problems for the user.
-Don’t use _sorry_ if the problem occurred during the normal functioning of the program, such as when the user needs to wait for a network connection to be found.
-* Don’t try to be funny.
-Jokes, slang, and sarcasm are context-specific and hard to translate and localize.
-What’s funny to you might offend or alienate some portion of your audience, so it’s best to avoid these rhetorical ­approaches.
-* Avoid overusing subjective terms such as _easy_, _fast_, _fun_, and so on.
-Instead, demonstrate that something is easy or fun by providing relevant information.
-* Use everyday words when you can, and avoid formal language that you wouldn’t use when speaking to someone in person.
-* Avoid inventing new words or assigning words an unusual meaning.
-* Use short, plain words as much as possible.
-* Don’t make generalizations about people, countries, regions, and cultures, especially if the generalizations could be considered derogatory.
-* Avoid using culturally sensitive terms.
+* Avoid using _please_ in instructions unless some step in the procedure causes inconvenience for the user or represents a workaround for some system limitation.
+* Use _sorry_ only to inform about serious software or hardware problems for the user.
+Don’t use _sorry_ if the problem appeared during normal software operation.
+* Do not invoke humor in your content.
+Humor is a culture-specific and subjective matter that doesn't belong in technical content.
+* Do not use subjective words like _simple_, _great_, _superb_, and such.
+Instead, demonstrate that something is simple or superb by providing relevant information.
+* Use short, plain words when possible, avoid formal or elevated style of writing.
+* Don't make up new words or modify their usual meaning.
+* Don't use a more complicated term when there is a simpler one having the exact same meaning.
+* Don’t express opinions about cultures, countries, people, etc.
+* Try to use words that are culturally neutral.
 * Omit needless words.
-Don’t use two or three words when one will do.
-* Use questions sparingly. While questions may support a friendlier tone, overuse of questions doesn’t support a trustworthy voice.
-Questions can work well when users actually do have them, not when we invent them on their behalf.
-* Use exclamation points sparingly.
-The overuse of exclamation points can make content seem effusive or ingratiating.
-Save exclamation points for when they count.
-* Be mindful of globalization and cultural considerations before you use colloquialisms or idioms.
-* Do not use non-English words or phrases, such as _de facto_ or _ad hoc_, in English content, even if you think these terms are generally known and understood.
+Use the minimum number of words required to get the message across.
+* Do not overuse questions.
+If you must use a question, make sure it's relevant to the user and the context.
+Do not make up questions for the sake of creating an imaginary dialog with the user.
+* Do not overuse exclamation points.
+This can make your writing seem emotional to and rather subjective to the user.
+Use exclamation points when they are required to emphasize something really critical and important.
+* Do not use colloquialisms, idioms, sayings, proverbs, etc.
+Keep globalization and cultural considerations in mind.
+* Avoid using non-English words or phrases, such as _ergo_ or _bona fide_, even if you think they are widely used.
+However, there are two exceptions to this rule: _etc._ and _e.g._
 
 ## Use of terminology
-* Whenever possible, you should get your point across by using common English words.
-It is all right to use technical terms when they are necessary for precise communication, even with a general audience, but do not write as if everybody understands these terms or will immediately grasp their meaning.
-* Define terms in the text as you introduce them.
-* Spell out an acronym on its first mention on the page, for example, _Common Type Library (CTL)_.
-* Provide links from the main text to the glossary.
-* Do not create a new term if a term describing a concept already exists in the glossary.
-* If you need to create a new term, verify that the term that you select is not already in use to mean something else.
+* Whenever possible, use common English instead of using terminology.
+Use terminology when you need to be particular and precise about something.
+* Provide term definition on its first mention.
+* When using defined terms, make sure you use them exactly as defined.
+Shortcutting only works when it's defined.
+E.g.: "Administrative UI" is not equal to "Admin UI" unless defined so, "tenant administrator" is not the same as "tenant", etc.
+* Spell out an acronym on its first mention, for example, _Common Type Library (CTL)_.
+* Supplement your text with links to the glossary when you use glossary terms.
+* Do not make a new term if the glossary contains another term describing the same idea.
+* When creating a new term, make sure it does not already mean something else in the glossary.
 
 
 ## Grammar
 * Give preference to present tense over past and future tenses.
 * Give preference to simple verb forms over perfect and continuous forms.
-* Put the action of the sentence in the verb, not in the nouns.
-* Choose single-word verbs over multiple-word verbs.
-* Don’t convert verbs to nouns and nouns to verbs.
-* Do not use a transitive verb without a direct object.
-Either supply a direct object or use an intransitive verb instead.
-* Avoid using weak, vague verbs such as _be_, _have_, _make_, and _do_.
-Such verbs are sometimes necessary, but use a more descriptive verb whenever you can.
+* Use call-to-action approach instead of simple statements to help user find the information.
+  
+  **_Good example_**  
+    Click the **Src** tab below to see the source code used to generate the table.
+  
+  **_Bad example_**  
+    Below is the **Src** tab that contains the source code used to generate the table.
+* Avoid using multiple-word verbs, use one-word verbs when you can.
+* Always provide a direct object after a transitive verb, otherwise use an intransitive verb.
+  
+  **_Good example_**  
+    Your application cannot connect to the server.  
+    Installation process will stop.
+  
+  **_Bad example_**  
+    Your application cannot connect.  
+    Installation process will stop running.
+* Avoid using neutral verbs such as _do_, _make_, _have_, etc. when you can use a preciser verb to denote the action.
+  
+  **_Good example_**  
+    Connect to the cloud service.  
+    Update the application regularly.
+  
+  **_Bad example_**  
+    Make a connection to the cloud service.  
+    Do regular application updates.
 * Use imperative mood for procedures, formulate your instructions as giving commands to the user.
-* Use indicative mood for conveying information such as facts, questions, assertions, or explanations.
-* Omit unnecessary adverbs.
-* Use context to reduce ambiguity.
-Some words can be read as both verbs and nouns, such as _file_, _post_, _input_, etc.
-When using these terms, ensure that the context and sentence structure reduce ambiguity.
-* In general, use second person (pronoun _you_) also known as _direct address_.
-Second person supports a friendly tone because it connects you with the user.
-* Use first person sparingly.
-First person is appropriate when writing from the point of view of the user.
+  
+  **_Example_**  
+    Click the **Management** button, enter a new IP in the **Kaa host/IP** block and click **Update**.
+* Use indicative mood to provide facts, questions, assertions, or explanations.
+  
+  **_Example_**  
+    Kaa endpoint connects to your Kaa Sandbox by using the address built into the SDK.
+* Do not use adverbs that do not contribute to the meaning of a sentence.
+  
+  **_Good example_**  
+    The server sends a request.
+  
+  **_Bad example_**  
+    The server quickly sends a request.
+* Reduce ambiguity be providing the right context.
+Some verbs and nouns look the same in writing, for example _access_, _click_, _process_, etc., which can be ambiguous to the user.
+Make sure such words appear in the context that gives them specific meaning.
+* Use second person (pronoun _you_) to support a friendly tone and relation to the user.
+* Use first person in special cases only.
+For example, when you write from the user's point of view.
 * Avoid using more than 3 nouns in a noun string as it may be confusing or ambiguous even for native English speakers.
+  
+  **_Good example_**  
+    This application demonstrates Kaa Configuration extension functionality.  
+    Configuration service for client application.
+  
+  **_Bad example_**  
+    This application demonstrates functionality of the Kaa Configuration extension.  
+    Client application configuration service.
 
 ## Text formatting
 * Use **bold** for:
@@ -112,55 +152,89 @@ First person is appropriate when writing from the point of view of the user.
   * Placeholders and parameter names.
 * Use links for names of pages and sections.
 * Capitalize only the first word in titles and headings.
-* Do not use capitalization for no apparent reason. Use lowercase unless uppercase is justified.
+* Do not capitalize every word in a sentence for the sake of emphasis.
+Use lowercase unless uppercase is justified (e. g. names of UI elements).
 * Use regular text (capitalized where applicable) for all other purposes, such as:
-  * Names of user-defined classes, folders, files and file extensions.
+  * Names of folders, files and file extensions.
   * Key names and combinations.
   * Strings (enclose in quotation marks) and values.
   * Environment variables and error message names.
   * Names of programs and utilities.
 
 ## Tables
-* Introduce a table with a sentence that ends with a period, not a fragment that ends with a colon.
-* If a table is titled, an introductory sentence does not have to immediately precede the table.
-* Put the table title above the table.
-* Table dimensions must be visible on a minimum screen resolution, typically 800 pixels by 600 pixels.
-* Put footnote explanations at the end of the table, not at the bottom of the page.
-* Tables can be used to simulate frames.
-In this case, tables are better because older browsers cannot always process frames correctly.
+* Start every table with at least one introductory sentence or a table title.
+End the introductory sentence with a period, not a colon.
+* Stick to around 800x600 pixels resolution for tables to make them visible on most screens.
+* Include table explanations right after the table.
 
 ## Lists
-* Introduce a list with a heading or with a sentence or fragment ending with a colon.
-* Begin each entry in a bulleted or numbered list with a capital letter.
-* End each entry with a period if all entries are complete sentences, if they are a mixture of fragments and complete sentences, or if they all complete the introductory sentence or fragment.
-* Do not use ending punctuation for entries that are short phrases (three words or fewer) or single words.
-* If all entries are fragments that together with the introductory phrase do not form a complete sentence, do not end them with periods.
-* If you introduce a list with a fragment, do not treat the list and its introduction as one continuous sentence.
-That is, do not use semicolons or commas to end list items, and do not insert _and_ before the last list element.
+* Start every list either with a heading or with a sentence followed by a colon.
+* Capitalize the first word of each list entry.
+* End each list entry with a period.
+* Do not use ending punctuation for lists where all entries are three words or fewer.
+* Do not end list entries with semicolons or commas.
+* Do not put _and_ before the last list entry.
 
 ## Notes, tips, and cautions
-* Use notes sparingly so that they remain effective in drawing the user’s attention.
-* In general, try to use only one note in a Help topic.
-For example, if you must have two notes of the same type, such as a tip and a caution, combine them into one note with two paragraphs, or integrate one or both of the notes in the main text.
-* Never include two or more paragraphs formatted as notes without intervening text.
-If you need to put two notes together, format them as an unordered list within the note heading.
-* You can include lists within notes.
-* Use _note_ with the heading “Note” to indicate neutral or positive information that emphasizes or supplements important points of the main text.
-A note supplies information that may apply only in special cases.
-* Use _tip_ with the heading “Tip” to help users apply the techniques and procedures described in the text to their specific needs.
-A tip suggests alternative methods that may not be obvious and helps users understand the benefits and capabilities of the product.
-A tip is not essential to the basic understanding of the text.
-* Use _important note_ with the heading “Important” to provide information that is essential to the completion of a task.
-Users can disregard information in a note and still complete a task, but they should not disregard an important note.
-* Use _caution_ with the heading “Caution” to advise users that failure to take or avoid a specific action could result in loss of data, damage of hardware, and other issues of similar importance.
+* Do not use notes too often as this distracts the user's attention.
+* Try using not more than one note per subheading.
+* If you have two notes of different types put together, always separate them with some text.
+* Notes can be formatted as lists.
+* Start every note with a heading in bold.
+* You can use four types of notes:
+  * Notes
+  * Tips
+  * Important note
+  * Caution
+* A _note_ displays information that is supplementary to the main text or reminds the user of some related information explained before.
+* A _tip_ explains how the readers can use the information in the main text for their specific needs, or how they can be more effective and get the best out of your product.
+* An _important note_ displays information that is critical the completion of a procedure (unlike the note, which is not critical and is for information only).
+* A _caution_ alerts users of potential risk or damage in case they do not take some action or consider some information.
 
 ## Code examples
-* Format all JSON files with this [online tool](https://jsonformatter.curiousconcept.com/) using the "4 space tab" profile.
+
 * Code example should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
 See [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example whenever available.
+Click the **Src** tab to see the source code used to highlight the code example.
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs"> 
+  <li class="active"><a data-toggle="tab" href="#Preview">Preview</a></li> 
+  <li><a data-toggle="tab" href="#Src">Src</a></li> 
+</ul>
+
+<div class="tab-content">
+<div id="Preview" class="tab-pane fade in active" markdown="1" >
+
+```javascript
+function fancyAlert(arg) {
+  if(arg) {
+    $.facebox({div:'#foo'})
+  }
+}
+```
+
+</div><div id="Src" class="tab-pane fade " markdown="1" >
+
+<pre>
+```javascript
+function fancyAlert(arg) {
+  if(arg) {
+    $.facebox({div:'#foo'})
+  }
+}
+```
+</pre>
+
+</div></div>
+</li>
+</ul>
+
 * Use _org.kaaproject.kaa.schema.sample_ prefix to start a schema namespace used for examples and documentation purposes.
+* Format all JSON files with this [online tool](https://jsonformatter.curiousconcept.com/) using the "4 space tab" profile.
 * Use inline code formatting in the documentation for:
   * Short code examples.
   * Reference to code related entities (function names, variables, parameters, arguments, etc.).
@@ -320,7 +394,7 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 # Documentation contribution
 
 Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/kaa) and is located in the doc/ folder.
-For full description of the contributing process, see [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
+For full description of the contribution process, see [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
 Key differences between contributing source code and documentation are:
 
 * Select `Component: Documentation` in the [Jira](http://jira.kaaproject.org/) ticket.
@@ -337,7 +411,8 @@ Key differences between contributing source code and documentation are:
   * [Jekyll-paginate](https://github.com/jekyll/jekyll-paginate)
   * [Rouge](https://github.com/jneen/rouge)
 
-   See the detailed installation instructions in the table below. Click the appropriate tab to select your platform:
+   See the detailed installation instructions in the table below.
+   Click the tab to select a platform:
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
