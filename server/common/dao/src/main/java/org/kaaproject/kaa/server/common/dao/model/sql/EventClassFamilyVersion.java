@@ -24,14 +24,14 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_VERSION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = EVENT_SCHEMA_VERSION_TABLE_NAME)
+@Table(name = EVENT_CLASS_FAMILY_VERSION_TABLE_NAME)
 public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersionDto> {
 
     private static final long serialVersionUID = -7490111487256831990L;
@@ -39,13 +39,13 @@ public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersio
     @OneToMany
     private List<EventClass> records;
 
-    @Column(name = EVENT_SCHEMA_VERSION_VERSION)
+    @Column(name = EVENT_CLASS_FAMILY_VERSION_VERSION)
     private int version;
 
-    @Column(name = EVENT_SCHEMA_VERSION_CREATED_USERNAME)
+    @Column(name = EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME)
     protected String createdUsername;
 
-    @Column(name = EVENT_SCHEMA_VERSION_CREATED_TIME)
+    @Column(name = EVENT_CLASS_FAMILY_VERSION_CREATED_TIME)
     protected long createdTime;
 
     public EventClassFamilyVersion() {

@@ -261,12 +261,11 @@ public class DaoConstants {
     /**
      * Event schems version constants.
      */
-    public static final String EVENT_SCHEMA_VERSION_TABLE_NAME = "event_schems_versions";
-    public static final String EVENT_SCHEMA_VERSION_SCHEMA = "schems";
-    public static final String EVENT_SCHEMA_VERSION_VERSION = VERSION;
-    public static final String EVENT_SCHEMA_VERSION_CREATED_USERNAME = CREATED_USERNAME;
-    public static final String EVENT_SCHEMA_VERSION_CREATED_TIME = CREATED_TIME;
-    public static final String EVENT_SCHEMA_VERSION_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
+    public static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME = "event_schems_versions";
+    public static final String EVENT_CLASS_FAMILY_VERSION_VERSION = VERSION;
+    public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_TIME = CREATED_TIME;
+    public static final String EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
 
     /**
      * Event class family constants.
