@@ -16,18 +16,10 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,12 +34,12 @@ import org.kaaproject.kaa.server.appenders.cassandra.appender.gen.Level;
 import org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
-import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.DataMappingElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType;
 import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -60,10 +52,17 @@ import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseSchemaInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CassandraLogAppenderTest {
 
@@ -71,12 +70,9 @@ public class CassandraLogAppenderTest {
 
     private static final String SERVER_PROFILE_SCHEMA_FILE = "server_profile_schema.avsc";
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
-
+    private static final Random RANDOM = new Random();
     @ClassRule
     public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 20000l);
-
-    private static final Random RANDOM = new Random();
-
     private LogAppender logAppender;
     private LogAppenderDto appenderDto;
     private CassandraConfig configuration;
@@ -141,7 +137,7 @@ public class CassandraLogAppenderTest {
             events.add(event);
         }
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
-        
+
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
@@ -156,35 +152,6 @@ public class CassandraLogAppenderTest {
 
         logEventPack.setLogSchema(new LogSchema(logSchemaDto));
         return logEventPack;
-    }
-
-    class DeliveryCallback implements LogDeliveryCallback {
-
-        private AtomicInteger successCount = new AtomicInteger();
-
-        @Override
-        public void onSuccess() {
-            successCount.incrementAndGet();
-        }
-
-        @Override
-        public void onInternalError() {
-
-        }
-
-        @Override
-        public void onConnectionError() {
-
-        }
-
-        @Override
-        public void onRemoteError() {
-
-        }
-
-        public int getSuccessCount() {
-            return successCount.get();
-        }
     }
 
     private void initLogAppender(boolean addServerField) throws IOException {
@@ -208,30 +175,34 @@ public class CassandraLogAppenderTest {
 
         CassandraServer server = new CassandraServer("127.0.0.1", 9142);
         configuration = new CassandraConfig();
-        configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
-        configuration.setKeySpace(KEY_SPACE_NAME);
-        configuration.setTableNamePattern("logs_$app_token_$config_hash");
-        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
-        configuration.setCassandraServers(Arrays.asList(server));
-        configuration.setCallbackThreadPoolSize(3);
-        configuration.setExecutorThreadPoolSize(3);
 
+        List<DataMappingElement> columnMappingList = new ArrayList<>();
+
+        DataMappingElement mappingElement = new DataMappingElement();
+        mappingElement.setTableNamePattern("logs_$app_token_$config_hash");
         List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash",
-                ColumnType.TEXT, true, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash", ColumnType.TEXT, true, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
-        
         if (addServerField) {
             // Do NOT change the column name of the following element!
             columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.SERVER_FIELD, "", "server_field", ColumnType.TEXT, false, false));
         }
-
-        configuration.setColumnMapping(columnMapping);
-
+        mappingElement.setColumnMapping(columnMapping);
         List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
         clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
-        configuration.setClusteringMapping(clusteringMapping);
+        mappingElement.setClusteringMapping(clusteringMapping);
+        mappingElement.setFilter("true");
+
+        columnMappingList.add(mappingElement);
+        configuration.setColumnMappingList(columnMappingList);
+
+        configuration.setCassandraMaxBatchSize(50);
+        configuration.setCallbackThreadPoolSize(3);
+        configuration.setExecutorThreadPoolSize(3);
+        configuration.setKeySpace(KEY_SPACE_NAME);
+        configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
+        configuration.setCassandraServers(Arrays.asList(server));
 
         AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
         byte[] rawConfiguration = converter.toByteArray(configuration);
@@ -261,5 +232,34 @@ public class CassandraLogAppenderTest {
             br.close();
         }
         return result;
+    }
+
+    class DeliveryCallback implements LogDeliveryCallback {
+
+        private AtomicInteger successCount = new AtomicInteger();
+
+        @Override
+        public void onSuccess() {
+            successCount.incrementAndGet();
+        }
+
+        @Override
+        public void onInternalError() {
+
+        }
+
+        @Override
+        public void onConnectionError() {
+
+        }
+
+        @Override
+        public void onRemoteError() {
+
+        }
+
+        public int getSuccessCount() {
+            return successCount.get();
+        }
     }
 }

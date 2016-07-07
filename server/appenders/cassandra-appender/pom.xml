@@ -126,6 +126,22 @@ Copyright 2014-2016 CyberVision, Inc.
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server</groupId>
+            <artifactId>kaa-node</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server</groupId>
+            <artifactId>kaa-node</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
