@@ -302,7 +302,7 @@ void KaaClient::initClientKeys()
         utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
 #else
         KAA_LOG_ERROR("KAA_RUNTIME_KEY_GENERATION is disabled. Generate keys and put them to the working directory.");
-        throw KaaException("Keus are missing.");
+        throw KaaException("Keys are missing.");
 #endif
     }
 
