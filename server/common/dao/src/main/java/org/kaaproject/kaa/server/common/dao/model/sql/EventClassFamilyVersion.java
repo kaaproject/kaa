@@ -32,7 +32,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = EVENT_SCHEMA_VERSION_TABLE_NAME)
-public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
+public class EventClassFamilyVersion extends GenericModel<EventSchemaVersionDto> {
 
     private static final long serialVersionUID = -7490111487256831990L;
 
@@ -49,10 +49,10 @@ public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
     @Column(name = EVENT_SCHEMA_VERSION_CREATED_TIME)
     protected long createdTime;
 
-    public EventSchemaVersion() {
+    public EventClassFamilyVersion() {
     }
 
-    public EventSchemaVersion(EventSchemaVersionDto dto) {
+    public EventClassFamilyVersion(EventSchemaVersionDto dto) {
         this.id = getLongId(dto.getId());
         this.schema = dto.getSchema();
         this.version = dto.getVersion();
@@ -60,7 +60,7 @@ public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
         this.createdTime = dto.getCreatedTime();
     }
 
-    public EventSchemaVersion(Long id) {
+    public EventClassFamilyVersion(Long id) {
         this.id = id;
     }
 
@@ -120,7 +120,7 @@ public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        EventSchemaVersion other = (EventSchemaVersion) obj;
+        EventClassFamilyVersion other = (EventClassFamilyVersion) obj;
         if (createdTime != other.createdTime) {
             return false;
         }
@@ -155,7 +155,7 @@ public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
 
     @Override
     protected GenericModel<EventSchemaVersionDto> newInstance(Long id) {
-        return new EventSchemaVersion(id);
+        return new EventClassFamilyVersion(id);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
 
     @Override
     public String toString() {
-        return "EventSchemaVersion [schema=" + schema + ", version=" + version + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
+        return "EventClassFamilyVersion [schema=" + schema + ", version=" + version + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
                 + ", id=" + id + "]";
     }
 }

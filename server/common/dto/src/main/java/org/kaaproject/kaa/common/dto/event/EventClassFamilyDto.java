@@ -33,7 +33,7 @@ public class EventClassFamilyDto implements HasId, Serializable {
     private String description;
     private String createdUsername;
     private long createdTime;
-    private List<EventSchemaVersionDto> schemas;
+    private List<EventClassFamilyVersionDto> schemas;
     
     @Override
     public String getId() {
@@ -61,11 +61,11 @@ public class EventClassFamilyDto implements HasId, Serializable {
         this.name = name;
     }
 
-    public List<EventSchemaVersionDto> getSchemas() {
+    public List<EventClassFamilyVersionDto> getSchemas() {
         return schemas;
     }
 
-    public void setSchemas(List<EventSchemaVersionDto> schemas) {
+    public void setSchemas(List<EventClassFamilyVersionDto> schemas) {
         this.schemas = schemas;
     }
 
