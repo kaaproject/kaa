@@ -26,13 +26,12 @@ set(ESP8266_SRC
     ${ESP8266_SRC_FOLDER}/kaa_client.c
     ${ESP8266_SRC_FOLDER}/configuration_persistence.c
     ${ESP8266_SRC_FOLDER}/status.c
-    ${ESP8266_SRC_FOLDER}/key_utils.c
     ${ESP8266_SRC_FOLDER}/tcp_utils.c
     ${ESP8266_SRC_FOLDER}/time.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/common_key_utils.c
     ${ESP8266_SRC_FOLDER}/exit.c
     ${ESP8266_SRC_FOLDER}/snprintf.c
     ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
-    ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
     ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
     ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
     ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
@@ -46,7 +45,3 @@ set(KAA_SOURCE_FILES ${KAA_SOURCE_FILES} ${ESP8266_SRC})
 set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS} ${ESP8266_SRC_FOLDER})
 
 set(KAA_BUILD_STATIC_ONLY 1)
-
-execute_process(COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/tools/pub_key_generator.jar
-                ${CMAKE_CURRENT_BINARY_DIR}/rsa.h)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})

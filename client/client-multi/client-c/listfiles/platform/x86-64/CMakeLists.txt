@@ -14,24 +14,22 @@
 # limitations under the License.
 #
 
-find_package(OpenSSL REQUIRED)
-
-set(KAA_SOURCE_FILES 
+set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/platform-impl/posix/kaa_client.c
-        ${KAA_SRC_FOLDER}/platform-impl/posix/sha.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/file_utils.c
-        ${KAA_SRC_FOLDER}/platform-impl/posix/key_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/status.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/configuration_persistence.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/common_key_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
     )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)
-    set(KAA_SOURCE_FILES 
+    set(KAA_SOURCE_FILES
             ${KAA_SOURCE_FILES}
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
@@ -40,11 +38,4 @@ if(NOT KAA_WITHOUT_TCP_CHANNEL)
         )
 endif()
 
-set(KAA_THIRDPARTY_INCLUDE_DIR ${OPENSSL_INCLUDE_DIR})
-
 set(KAA_INCLUDE_PATHS ${KAA_SRC_FOLDER}/platform-impl/posix)
-
-set(KAA_THIRDPARTY_LIBRARIES
-        ${KAA_THIRDPARTY_LIBRARIES} 
-        ${OPENSSL_LIBRARIES}
-    )
