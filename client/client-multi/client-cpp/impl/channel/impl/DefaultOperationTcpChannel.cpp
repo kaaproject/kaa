@@ -221,8 +221,8 @@ void DefaultOperationTcpChannel::openConnection()
     boost::system::error_code errorCode;
 
     boost::asio::ip::tcp::endpoint ep = HttpUtils::resolveEndpoint(currentServer_->getHost(),
-                                                               currentServer_->getPort(),
-                                                               errorCode);
+                                                                   currentServer_->getPort(),
+                                                                   errorCode);
     if (errorCode) {
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connection to endpoint failed: %2%") % getId() % errorCode.message());
         onServerFailed();

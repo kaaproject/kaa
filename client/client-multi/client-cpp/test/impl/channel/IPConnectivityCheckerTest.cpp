@@ -30,10 +30,10 @@ namespace kaa {
 class PingServerStorage : public IPingServerStorage {
 public:
     PingServerStorage(const std::string& host, const std::uint16_t& port) {
-        server_ = KaaTestUtils::createTransportConnectionInfo(ServerType::BOOTSTRAP
-                                                            , 0x111
-                                                            , TransportProtocolIdConstants::HTTP_TRANSPORT_ID
-                                                            , KaaTestUtils::serializeConnectionInfo(host,
+        server_ = KaaTestUtils::createTransportConnectionInfo(ServerType::BOOTSTRAP,
+                                                              0x111,
+                                                              TransportProtocolIdConstants::HTTP_TRANSPORT_ID,
+                                                              KaaTestUtils::serializeConnectionInfo(host,
                                                                                                     port,
                                                                                                     KaaTestUtils::generateKeyPair().getPublicKey()));
     }
