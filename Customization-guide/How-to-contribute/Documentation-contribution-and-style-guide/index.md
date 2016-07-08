@@ -18,6 +18,52 @@ The target audience of this guide is Kaa development team and anyone contributin
 
 # Documentation style guide
 
+## Markdown formatting
+* Use [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/) for all documentation.
+* Use pure Markdown without HTML tags when possible.
+* Start every sentence with a new line to make future merging easier.
+* Do not use Emoji.
+* Use Heading 4 (i.e. `####`) as the last level heading. All other levels are not displayed in table of contents.
+* Use the following template to auto-generate the TOC:
+
+{% raw %}
+  ```
+  * TOC
+  {:toc}
+```
+{% endraw %}
+
+* There is an easy way to generate tables in Markdown.
+Click the **Src** tab in the table below to see the source code used to generate the table.
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs"> 
+  <li class="active"><a data-toggle="tab" href="#Preview">Preview</a></li> 
+  <li><a data-toggle="tab" href="#Src">Src</a></li> 
+</ul>
+
+<div class="tab-content">
+<div id="Preview" class="tab-pane fade in active" markdown="1" >
+
+|Page    | link | url |
+|------- | ---- | --- |
+| Programming guide |[Programming guide]({{root_url}}Programming-guide/) | {{root_url}}Programming-guide/ |
+| Android SDK |[Android SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/|
+
+</div><div id="Src" class="tab-pane fade " markdown="1" >
+
+```
+|Page    | link | url |
+|------- | ---- | --- |
+| Programming guide |[Programming guide]({{root_url}}Programming-guide/) | {{root_url}}Programming-guide/ |
+| Android SDK |[Android SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/|
+```
+</div></div>
+</li>
+</ul>
+* Refer to the [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for information and examples on how to create tables and other content elements.
+
 ## Page layout
 * Start every page with a section title followed by a _table of contents (TOC)_.
 * TOC represents a list of the page headings and subheadings.
@@ -80,7 +126,6 @@ E.g.: "Administrative UI" is not equal to "Admin UI" unless defined so, "tenant 
 * Do not make a new term if the glossary contains another term describing the same idea.
 * When creating a new term, make sure it does not already mean something else in the glossary.
 
-
 ## Grammar
 * Give preference to present tense over past and future tenses.
 * Give preference to simple verb forms over perfect and continuous forms.
@@ -134,23 +179,26 @@ For example, when you write from the user's point of view.
 * Avoid using more than 3 nouns in a noun string as it may be confusing or ambiguous even for native English speakers.
   
   **_Good example_**  
-    This application demonstrates Kaa Configuration extension functionality.  
+    This application demonstrates functionality of the Kaa Configuration extension.  
     Configuration service for client application.
   
   **_Bad example_**  
-    This application demonstrates functionality of the Kaa Configuration extension.  
+    This application demonstrates Kaa Configuration extension functionality.  
     Client application configuration service.
 
 ## Text formatting
 * Use **bold** for:
+  * Technical terms that are not in the Glossary, on their first mention.
   * Titles of windows and dialog boxes.
-  * Names of commands, attributes, constants, methods, fields, predefined classes, databases, events, UI elements.
+  * Names of UI elements, commands, attributes, constants, methods, fields, predefined classes, databases, events.
   * User input.
 * Use _italic_ for:
-  * Technical terms on first mention.
   * Emphasis.
   * Placeholders and parameter names.
-* Use links for names of pages and sections.
+* Use link formatting for:
+  * Technical terms that are in the Glossary, on their first mention.
+  * Reference to Kaa documentation pages.
+  * External web pages.
 * Capitalize only the first word in titles and headings.
 * Do not capitalize every word in a sentence for the sake of emphasis.
 Use lowercase unless uppercase is justified (e. g. names of UI elements).
@@ -202,12 +250,12 @@ Click the **Src** tab to see the source code used to highlight the code example.
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs"> 
-  <li class="active"><a data-toggle="tab" href="#Preview">Preview</a></li> 
-  <li><a data-toggle="tab" href="#Src">Src</a></li> 
+  <li class="active"><a data-toggle="tab" href="#Preview1">Preview</a></li> 
+  <li><a data-toggle="tab" href="#Src1">Src</a></li> 
 </ul>
 
 <div class="tab-content">
-<div id="Preview" class="tab-pane fade in active" markdown="1" >
+<div id="Preview1" class="tab-pane fade in active" markdown="1" >
 
 ```javascript
 function fancyAlert(arg) {
@@ -217,7 +265,7 @@ function fancyAlert(arg) {
 }
 ```
 
-</div><div id="Src" class="tab-pane fade " markdown="1" >
+</div><div id="Src1" class="tab-pane fade " markdown="1" >
 
 <pre>
 ```javascript
@@ -240,52 +288,6 @@ function fancyAlert(arg) {
   * Reference to code related entities (function names, variables, parameters, arguments, etc.).
   * Source file names.
   * Numbers when they are used as code.
-
-## Markdown formatting
-* Use [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/) for all documentation.
-* Use pure Markdown without HTML tags when possible.
-* Start every sentence with a new line to make future merging easier.
-* Do not use Emoji.
-* Use Heading 4 (i.e. `####`) as the last level heading. All other levels are not displayed in table of contents.
-* Use the following template to auto-generate the TOC:
-
-{% raw %}
-  ```
-  * TOC
-  {:toc}
-```
-{% endraw %}
-
-* There is an easy way to generate tables in Markdown.
-Click the **Src** tab in the table below to see the source code used to generate the table.
-
-<ul>
-<li style="list-style-type: none;">
-<ul class="nav nav-tabs"> 
-  <li class="active"><a data-toggle="tab" href="#Preview">Preview</a></li> 
-  <li><a data-toggle="tab" href="#Src">Src</a></li> 
-</ul>
-
-<div class="tab-content">
-<div id="Preview" class="tab-pane fade in active" markdown="1" >
-
-|Page    | link | url |
-|------- | ---- | --- |
-| Programming guide |[Programming guide]({{root_url}}Programming-guide/) | {{root_url}}Programming-guide/ |
-| Android SDK |[Android SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/|
-
-</div><div id="Src" class="tab-pane fade " markdown="1" >
-
-```
-|Page    | link | url |
-|------- | ---- | --- |
-| Programming guide |[Programming guide]({{root_url}}Programming-guide/) | {{root_url}}Programming-guide/ |
-| Android SDK |[Android SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/|
-```
-</div></div>
-</li>
-</ul>
-* Refer to the [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for information and examples on how to create tables and other content elements.
 
 ## Jekyll formatting
 * Kaa project uses [Jekyll](https://jekyllrb.com/) to publish the documentation on the web.
