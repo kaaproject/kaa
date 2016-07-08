@@ -2,7 +2,6 @@
 layout: page
 title: Endpoint profiles
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Endpoint-profiles/
 sort_idx: 20
 ---
 
@@ -92,7 +91,41 @@ The following client-side profile is based on the rules that sets schema.
 The schema structure from our example allows filtering the endpoints by the operation systems of device (for example, to show only Android devices), os_version (for example, to push some 
 notifications only for the specified os version). It is allowed to create complex filtering conditions by combining as many filtering conditions as needed.
 
-### Endpoint profile SDK API ###
+### Setting client-side endpoint profile schema from Admin UI
+
+The list of client-side endpoint profile schemas created by a tenant developer for the application is shown in the **Client-side EP profile** schemas window, which can 
+be opened from the application menu on the navigation panel as illustrated by the following screenshot.
+
+<img src="admin-ui/Client-side endpoint profile schema.png">
+
+To export the client-side EP profile schema, click **Export** in the last column of desired schema row and select export method from drop-down. 
+See [CT schema export support]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export-support) for available export methods details.
+As a tenant developer, you can create new client-side EP schemas for the application as follows:
+
+1. In the **Client-side EP profile schemas** window for the application, click **Add schema**.
+2. In the **Add profile schema** window enter the name of the schema.
+3. Then create a schema using one of the two options:
+    * Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
+    
+    <img src="admin-ui/Create client-side endpoint profile schema 1.png">
+    
+    * Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using 
+    the schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+    
+    <img src="admin-ui/Create client-side endpoint profile schema 2.png">
+    
+4. Click **Add** at the top of the window to save the schema.
+
+If you want to review the added Avro schema, open the corresponding **Client-side EP profile schema** window by clicking the schema in the **Client-side EP profile schemas** window.
+
+<img src="admin-ui/View client-side endpoint profile schema.png">
+
+### REST API for Client-side endpoint profile
+
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
+
+
+### Client side endpoint profile SDK API ###
 
 Endpoint profile information changes as the result of the client operation or user's actions, it is the client implementation responsibility to update the 
 profile via the endpoint SDK API calls. The endpoint SDK detects profile changes by comparing the new profile hash against the previously persisted one. Should there be a change, 
@@ -255,39 +288,6 @@ profile->destroy(profile);
 </div>
 </div>
 
-### Setting client-side endpoint profile schema from Admin UI
-
-The list of client-side endpoint profile schemas created by a tenant developer for the application is shown in the **Client-side EP profile** schemas window, which can 
-be opened from the application menu on the navigation panel as illustrated by the following screenshot.
-
-<img src="admin-ui/Client-side endpoint profile schema.png">
-
-To export the client-side EP profile schema, click **Export** in the last column of desired schema row and select export method from drop-down. 
-See [CT schema export support]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export-support) for available export methods details.
-As a tenant developer, you can create new client-side EP schemas for the application as follows:
-
-1. In the **Client-side EP profile schemas** window for the application, click **Add schema**.
-2. In the **Add profile schema** window enter the name of the schema.
-3. Then create a schema using one of the two options:
-    * Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
-    
-    <img src="admin-ui/Create client-side endpoint profile schema 1.png">
-    
-    * Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using 
-    the schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
-    
-    <img src="admin-ui/Create client-side endpoint profile schema 2.png">
-    
-4. Click **Add** at the top of the window to save the schema.
-
-If you want to review the added Avro schema, open the corresponding **Client-side EP profile schema** window by clicking the schema in the **Client-side EP profile schemas** window.
-
-<img src="admin-ui/View client-side endpoint profile schema.png">
-
-### REST API for Client-side endpoint profile
-
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
-
 ## Server-side endpoint profile ##
 
 The server-side endpoint profile is initially generated at the stage of a new endpoint registration. By default, server side profile record is auto-generated based on 
@@ -369,7 +369,7 @@ opened from the application menu on the navigation panel as illustrated by the f
 <img src="admin-ui/Server-side endpoint profile schema.png">
 
 To export the server-side EP profile schema, click Export in the last column of desired schema row and select export method from drop-down. See
-[CT schema export supportt]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export-support) for available export methods details.
+[CT schema export support]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export-support) for available export methods details.
 As a tenant developer, you can create new server-side EP schemas for the application as follows:
 
 1. In the **Server-side EP profile schemas** window for the application, click **Add schema**.
@@ -406,3 +406,11 @@ The system part of the endpoint profile is used by Kaa internally for its functi
 |Endpoint Public Key      | The public key used for security purposes to validate endpoint requests           |
 |Endpoint group state     | The list of endpoint groups that contain current endpoint.                        |
 |Client-side Profile Hash | The client-side profile hash used to validate integrity of endpoint profile state |
+
+## Further reading
+
+* [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups)
+* [Configuration]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/)
+* [Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/)
+* [Data-collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection)
+* [Common Type Library (CTL)]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library)

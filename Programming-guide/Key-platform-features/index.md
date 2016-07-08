@@ -2,7 +2,6 @@
 layout: page
 title: Key platform features
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/
 sort_idx: 30
 ---
 

@@ -18,7 +18,7 @@ This page describes Kaa C++ SDK build process on Linux system.
 
 ## Installing prerequisites
 
-**NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#quick-way-to-build).
+**NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#quick-way-to-build-sdk).
 (Only applicable for x86\_64 platform.)
 
 Before building the C++ endpoint SDK, install the following components on your machine:
@@ -68,6 +68,7 @@ To build the C++ endpoint SDK, do the following:
    ``` bash
    $ tar xfv kaa-cpp-ep-sdk.tar.gz
    ```
+**Note: the archive name may be different in your case**
 
 3. Run the following commands.
 
@@ -114,7 +115,7 @@ If you want to build the endpoint SDK quickly or build and run Kaa C/C++ demo ap
 If you would like to run a compiled binary on some other host, you should have all third-party libraries like boost, etc. preinstalled.
 
 ### Build in nix shell
-[Nix](https://hnixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes. You can use it to build Kaa C++ SDK quickly.
+[Nix](https://nixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes. You can use it to build Kaa C++ SDK quickly.
 Just install Nix on your system and execute the following command from the [root directory](https://github.com/kaaproject/kaa/tree/master/client/client-multi/client-cpp) of Kaa C++ SDK:
 
 ```
@@ -138,8 +139,8 @@ src/
 kaa/
 ```
 
-* `CMakeLists.txt` describes your application to CMake build system (see below)
-* `src/KaaDemo.cpp` is the actual application source code
+* `CMakeLists.txt` describes your application to CMake build system (see below).
+* `src/KaaDemo.cpp` is the actual application source code.
 * `kaa/` is a directory where the Kaa SDK should be placed.
 <!-- TODO: KAA-700 -->
 Download generated SDK archive from [AdministrationUI](TODO) and unpack it to `kaa/` directory.
@@ -166,6 +167,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 ```
 
 Here we add kaa-demo executable and specify the source file, `src/KaaDemo.cpp`:
+
 ```CMake
 add_executable(kaa-demo src/KaaDemo.cpp)
 ```
@@ -219,7 +221,7 @@ int main()
 }
 ```
 
-### Buliding
+### Building
 
 To build the example, proceed as follows:
 
