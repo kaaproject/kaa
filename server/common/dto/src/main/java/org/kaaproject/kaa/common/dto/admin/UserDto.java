@@ -18,12 +18,25 @@ package org.kaaproject.kaa.common.dto.admin;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class UserDto extends org.kaaproject.kaa.common.dto.UserDto {
 
     private static final long serialVersionUID = 8016875668519720555L;
 
+    @Size(min = 2 , max = 35)
     private String firstName;
+    @Size(min = 2 , max = 35)
     private String lastName;
+    @Size(min = 2 , max = 225)
+    @NotNull(message="email can't be null")
+    @Pattern(regexp = "^(?:[a-zA-Z0-9_'^&/+-])+(?:\\.(?:[a-zA-Z0-9_'^&/+-])+)" +
+            "*@(?:(?:\\[?(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\.)" +
+            "{3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\]?)|(?:[a-zA-Z0-9-]+\\.)" +
+            "+(?:[a-zA-Z]){2,}\\.?)$",
+            message = "email doesn't match regular expression pattern")
     private String mail;
     private String tempPassword;
 

@@ -19,6 +19,7 @@ package org.kaaproject.kaa.common.dto.admin;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 
 
+
 public class TenantUserDto extends UserDto {
 
     private static final long serialVersionUID = 1685963821728067967L;
@@ -79,6 +80,5 @@ public class TenantUserDto extends UserDto {
         }
         return true;
     }
-
 
 }
