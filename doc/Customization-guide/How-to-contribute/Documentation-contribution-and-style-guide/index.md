@@ -69,7 +69,7 @@ Click the **Src** tab in the table below to see the source code used to generate
 * TOC represents a list of the page headings and subheadings.
 If your page contains only one heading, TOC is not required.
 * Right below the TOC, include a short introduction explaining the purpose of the page and what the reader can learn from it.
-* The introduction should be 1-10 sentences long, but not more than 5 lines of text.
+* As a rule of thumb, the introduction should be 1-10 sentences long, but not more than 5 lines of text.
 
 ## Content structure
 * Keep your titles and headings short and precise, 1-5 words will do.
@@ -118,6 +118,8 @@ However, there are two exceptions to this rule: _etc._ and _e.g._
 * Whenever possible, use common English instead of using terminology.
 Use terminology when you need to be particular and precise about something.
 * Provide term definition on its first mention.
+* Link to the Glossary for terms that are in the Glossary.
+For others, use **bold** formatting on the first mention.
 * When using defined terms, make sure you use them exactly as defined.
 Shortcutting only works when it's defined.
 E.g.: "Administrative UI" is not equal to "Admin UI" unless defined so, "tenant administrator" is not the same as "tenant", etc.
@@ -219,7 +221,7 @@ End the introductory sentence with a period, not a colon.
 * Start every list either with a heading or with a sentence followed by a colon.
 * Capitalize the first word of each list entry.
 * End each list entry with a period.
-* Do not use ending punctuation for lists where all entries are three words or fewer.
+However, do not use ending punctuation for lists where all entries are three words or fewer.
 * Do not end list entries with semicolons or commas.
 * Do not put _and_ before the last list entry.
 
