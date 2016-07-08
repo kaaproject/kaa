@@ -23,20 +23,19 @@ This guide covers instructions for ESP8266-01 and NodeMCU modules.
 
 ### ESP8266-01
 
-To connect the ESP8266-01 to PC, a 3.3V USB-to-TTL connector is required.
 A 3.3V USB-to-TTL connector is required to connect the ESP8266-01 to PC.
 There are two boot modes for ESP8266: flash mode and run mode.
 The table below summarizes wiring scheme for both boot modes.
 
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#Flash">Fash Mode</a></li>
+    <li class="active"><a data-toggle="tab" href="#Flash">Flash Mode</a></li>
     <li><a data-toggle="tab" href="#Run">Run mode</a></li>
 </ul>
 
 <div class="tab-content">
 <div id="Flash" class="tab-pane fade in active" markdown="1" >
 
-#### Flash mode
+Flash mode
 
 | ESP8266-01 | USB-to-TTL |
 |:----------:|:----------:|
@@ -50,7 +49,7 @@ The table below summarizes wiring scheme for both boot modes.
 
 </div><div id="Run" class="tab-pane fade" markdown="1" >
 
-#### Run mode
+Run mode
 
 | ESP8266-01 | USB-to-TTL |
 |:----------:|:----------:|
@@ -143,7 +142,7 @@ src/
 
 Some notes:
 
-* `CMakeLists.txt` is a CMake script (see below)
+* `CMakeLists.txt` is a CMake script (see below).
 * `driver/uart.c` and `driver/uart.h` files implement driver for ESP8266 UART interface.
 * The `ld/` directory contains two linker scripts required for ESP8266 applications.
 * You should put generated Kaa C SDK tarball into `kaa/` directory and unpack it:
@@ -156,7 +155,7 @@ and performs ESP8266-specific initizalizations (e.g. initialize UART).
 ### Minimal code
 
 Each ESP8266 application starts its execution form `user_init()` function.
-Here we initialize UART and set it's baudrate to 115200 baud:
+Here we initialize UART and set its baudrate to 115200 baud:
 
 ```c
 #include <freertos/FreeRTOS.h>
@@ -239,6 +238,7 @@ That will make possible to tightly integrate your application's build system wit
 #### CMakeLists.txt
 
 First, let's tell CMake minimum version required and project name.
+
 ```CMake
 cmake_minimum_required(VERSION 3.0.2)
 
@@ -327,7 +327,7 @@ add_executable(kaa_demo ${CMAKE_BINARY_DIR}/blank.c)
 Finally, we link our application with our demo library.
 
 ```CMake
-target_link_libraries(kaa_demo kaa_demo_s);
+target_link_libraries(kaa_demo kaa_demo_s)
 ```
 
 ## Building
@@ -348,18 +348,18 @@ To invoke CMake, proceed as follows:
             -DKAA_MAX_LOG_LEVEL=3
         make
 
-For detailed description of available options refer to [Kaa C SDK page]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C) page.
+For detailed description of available options refer to [Kaa C SDK page]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C).
 
 ## Flashing
-Once the application has been built, you'll get a `kaa_demo` ELF executable in `build` directory.
+Once the application has been built, you'll get a `kaa_demo` ELF executable in the `build` directory.
 However, to flash the application to ESP8266, you should first make firmware images.
 This is done with a help of `esptool.py` tool, and produces two binaries -- `kaa_demo-0x00000.bin` and `kaa_demo-0x40000.bin`
 which will be flashed to 0x00000 and 0x40000 flash addresses respectively.
 
         esptool.py elf2image build/kaa_demo
 
-Now these binaries can be written to Flash memory. But first, ensure that you have enabled flash mode on ESP8266 chip (see [here](#connecting-esp8266))
-If everything done correctly, invoke this command:
+Now these binaries can be written to Flash memory. But first, ensure that you have enabled flash mode on ESP8266 chip (see [here](#connecting-esp8266)).
+If everything is done correctly, invoke this command:
 
         sudo esptool.py write_flash 0x00000 build/kaa_demo-0x00000.bin 0x40000 build/kaa_demo-0x40000.bin
 

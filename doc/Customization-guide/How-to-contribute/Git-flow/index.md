@@ -2,7 +2,6 @@
 layout: page
 title: Git flow
 permalink: /:path/
-nav: /:path/Customization-guide/How-to-contribute/Git-flow
 sort_idx: 10
 ---
 

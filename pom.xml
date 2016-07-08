@@ -586,6 +586,7 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>doc/</exclude>
 
                         <exclude>nix/astyle/max_indent.patch</exclude>
+                        <exclude>gh-pages-stub/</exclude>
                         <!-- Auto-generated -->
                         <exclude>nix/kaa-docs/Gemfile.lock</exclude>
                         <exclude>nix/kaa-docs/gemset.nix</exclude>

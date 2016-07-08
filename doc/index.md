@@ -1,8 +1,7 @@
 ---
-layout: page
-title: Kaa 1.0.0
+layout: redirected
+title: Redirect
+sitemap: false
 permalink: /:path/
-nav: /:path/
+redirect_to: Welcome-Home/
 ---
-
-Kaa is an open source middleware platform for building, managing, and integrating connected products with the Internet of Everything.

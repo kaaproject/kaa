@@ -30,7 +30,6 @@ Kaa cluster also requires NoSQL and SQL database instances to store endpoint dat
 # Kaa cluster
 
 Kaa nodes in a cluster run a combination of Control, Operations, and Bootstrap services.
-A system administrator can enable or disable any of the services on a particular node, thus flexibly configuring the cluster deployment (see [general configuration]({{root_url}}Administration-guide/System-Configuration/General-configuration/) for more details).
 
 ## Control service
 
@@ -98,15 +97,7 @@ High availability of Kaa Cluster also depends on HA of SQL and NoSQL databases.
 
 ## Active load balancing
 
-Kaa SDK choose Bootstrap and Operations service instances pseudo-randomly during session initiation.
-However, under the conditions when the cluster is heavily loaded, random endpoints distribution may not be good enough.
-Further, as a node joins the cluster, there is a need to re-balance the load across the new cluster set up.
-Kaa server uses the active load balancing approach to instruct some of the endpoints to reconnect to a different Operations service, thus equalizing the load across the nodes.
-The algorithm takes servers load information (connected endpoints count, load average, etc.) published by Kaa nodes as an input, and periodically recalculates weights of each node.
-Further, the overloaded nodes are instructed to redirect some of the connecting endpoints to a different node.
-
-A similar approach can be used for offloading all of the load from a node subject to a scheduled service, or to gradually migrate the cluster across the physical or virtual machines.
-Doing so requires setting of a custom load balancing strategy.
+Kaa SDK choose Bootstrap and Operations service instances pseudo-randomly during session initiation (see [Administration guide]({{root_url}}Administration-guide/System-components-overview/) for more details). 
 
 # Endpoint SDK
 

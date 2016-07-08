@@ -2,7 +2,6 @@
 layout: page
 title: Single node installation guide
 permalink: /:path/
-nav: /:path/Administration-guide/System-installation/Single-node-installation
 sort_idx: 20
 ---
 
@@ -44,7 +43,7 @@ Kaa requires the following third party components to be installed and configured
 * [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Kaa has been tested on JDK 8.
 * [PostgreSQL 9.4](http://www.postgresql.org/download/)
 * [MariaDB 5.5](https://mariadb.com/)
-* [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.5/). Kaa requires ZooKeeper for coordination of server components.
+* [Zookeeper 3.4.5 or later](http://zookeeper.apache.org/doc/r3.4.5/). Kaa requires ZooKeeper for coordination of server components.
 
 Kaa has been tested on the latest production release of MariaDB and PostgreSQL.
 
@@ -102,127 +101,126 @@ Kaa requires the following third party components to be installed and configured
 
 3. Install SQL DB:
 
-> **Note:** Kaa requires one of possible options: MariaDB or PostgresSQL. MariaDB is the default choice.
+   > **Note:** Kaa requires one of possible options: MariaDB or PostgresSQL. MariaDB is the default choice.
 
-<ul>
-<li style="list-style-type: none;">
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#maria">MariaDB</a></li>
-  <li><a data-toggle="tab" href="#postgre">PostgreSQL</a></li>
-</ul>
+   <ul>
+   <li style="list-style-type: none;">
+   <ul class="nav nav-tabs">
+   <li class="active"><a data-toggle="tab" href="#maria">MariaDB</a></li>
+   <li><a data-toggle="tab" href="#postgre">PostgreSQL</a></li>
+   </ul>
 
-<div class="tab-content">
-<div id="maria" class="tab-pane fade in active" markdown="1" >
+   <div class="tab-content">
+   <div id="maria" class="tab-pane fade in active" markdown="1" >
 
-Install [MariaDB 5.5](https://mariadb.com/).
+   Install [MariaDB 5.5](https://mariadb.com/).
 
-Install the python-software-properties package.
+   Install the python-software-properties package.
 
-```bash
-$ sudo apt-get install python-software-properties
-```
+   ```bash
+   $ sudo apt-get install python-software-properties
+   ```
 
-Now, we can add the key files for the MariaDB repository. 
+   Now, we can add the key files for the MariaDB repository. 
 
-```bash
-$ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-```
+   ```bash
+   $ sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
+   ```
 
-After that we add repository:
+   After that we add repository:
 
-```bash
-$ sudo add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu trusty main'
-```
+   ```bash
+   $ sudo add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu trusty main'
+   ```
 
-Install MariaDB with Galera Patches:
+   Install MariaDB with Galera Patches:
 
-```bash
-$ sudo apt-get update
-$ sudo apt-get install mariadb-galera-server-5.5 mariadb-client-5.5
-```
+   ```bash
+   $ sudo apt-get update
+   $ sudo apt-get install mariadb-galera-server-5.5 mariadb-client-5.5
+   ```
 
-If, for some reason, you do not already have rsync installed on your machines, you should install it now by typing:
+   If, for some reason, you do not already have rsync installed on your machines, you should install it now by typing:
 
-```bash   
-$ sudo apt-get install rsync
-```
+   ```bash   
+   $ sudo apt-get install rsync
+   ```
 
-You can check if the MariaDB service is running by executing the following command:
+   You can check if the MariaDB service is running by executing the following command:
 
-```bash   
-$ sudo netstat -ntlp | grep 3306
-```
+   ```bash   
+   $ sudo netstat -ntlp | grep 3306
+   ```
 
-Connect to the mysql-server by executing the following command:
+   Connect to the mysql-server by executing the following command:
 
-```bash   
-$ mysql -u root -p
-```
+   ```bash   
+   $ mysql -u root -p
+   ```
 
-Specify the login and password for user (the default login and password in Kaa configuration files is "sqladmin" and "admin"):
-
-
-```sql
-CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
-```
-
-Create the Kaa database by executing the following command:
-
-```sql   
-CREATE DATABASE kaa;
-```
-
-</div><div id="postgre" class="tab-pane fade" markdown="1" >
-
-Install [PostgreSQL 9.4](http://www.postgresql.org/download/).
-
-Add official PostgreSQL repository.
-
-```bash
-$ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-$ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-```
-
-Install PostgreSQL 9.4.
-
-```bash
-$ sudo apt-get update
-$ sudo apt-get install postgresql-9.4
-```
-
-You can check if the Postgresql service is running by executing the following command.
-
-```bash
-$ sudo netstat -ntlp | grep 5432
-```
-
-For more details, please refer to the [official page](https://wiki.postgresql.org/wiki/Apt).
-
-Connect to the postgresql-server via the psql utility by executing the following command.
-
-```bash
-$ sudo -u postgres psql
-```
-
-Specify the password for the postgres user (the default password in Kaa configuration files is "admin").
-
-```bash
-postgres=# \password Enter new password: admin Enter it again: admin
-```
-
-Create the Kaa database by executing the following command.
-
-```sql
-CREATE DATABASE kaa;
-```
-
-</div>
-</div>
-</li>
-</ul>
+   Specify the login and password for user (the default login and password in Kaa configuration files is "sqladmin" and "admin"):
 
 
-4. Install [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.6/).
+   ```sql
+   CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
+   ```
+
+   Create the Kaa database by executing the following command:
+
+   ```sql   
+   CREATE DATABASE kaa;
+   ```
+
+   </div><div id="postgre" class="tab-pane fade" markdown="1" >
+
+   Install [PostgreSQL 9.4](http://www.postgresql.org/download/).
+
+   Add official PostgreSQL repository.
+
+   ```bash
+   $ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+   $ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+   ```
+
+   Install PostgreSQL 9.4.
+
+   ```bash
+   $ sudo apt-get update
+   $ sudo apt-get install postgresql-9.4
+   ```
+
+   You can check if the Postgresql service is running by executing the following command.
+
+   ```bash
+   $ sudo netstat -ntlp | grep 5432
+   ```
+
+   For more details, please refer to the [official page](https://wiki.postgresql.org/wiki/Apt).
+
+   Connect to the postgresql-server via the psql utility by executing the following command.
+
+   ```bash
+   $ sudo -u postgres psql
+   ```
+
+   Specify the password for the postgres user (the default password in Kaa configuration files is "admin").
+
+   ```bash
+   postgres=# \password Enter new password: admin Enter it again: admin
+   ```
+
+   Create the Kaa database by executing the following command.
+
+   ```sql
+   CREATE DATABASE kaa;
+   ```
+
+   </div>
+   </div>
+   </li>
+   </ul>
+
+4. Install [Zookeeper 3.4.8](http://zookeeper.apache.org/doc/r3.4.8/).
 
    ```bash
    $ sudo apt-get install zookeeperd
@@ -347,8 +345,8 @@ Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you ma
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14</a></li>
-  <li><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16</a></li>
+  <li class="active"><a data-toggle="tab" href="#cassandra_ubuntu14">Ubuntu 14.04</a></li>
+  <li><a data-toggle="tab" href="#cassandra_ubuntu16">Ubuntu 16.04</a></li>
 </ul>
 
 <div class="tab-content">
@@ -450,11 +448,11 @@ cqlsh>
    $ alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_60/bin/java 2
    $ alternatives --config java
    There are 3 programs which provide 'java'.
-     Selection   Command
+   Selection   Command
    -----------------------------------------------
-      1         /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/java
-      2         /usr/lib/jvm/jre-1.6.0-openjdk.x86_64/bin/java
-    + 3         /usr/java/jdk1.8.0_60/bin/java
+    1      /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/java
+    2      /usr/lib/jvm/jre-1.6.0-openjdk.x86_64/bin/java
+   + 3      /usr/java/jdk1.8.0_60/bin/java
    ```
 
    Check Java version.
@@ -469,184 +467,192 @@ cqlsh>
 
 3. Install SQL DB:
 
-> **Note:** Kaa requires one of possible options: MariaDB or PostgresSQL. MariaDB is the default choice.
+   > **Note:** Kaa requires one of possible options: MariaDB or PostgresSQL. MariaDB is the default choice.
 
-<ul>
-<li style="list-style-type: none;">
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#maria_centos">MariaDB</a></li>
-  <li><a data-toggle="tab" href="#postgre_centos">PostgreSQL</a></li>
-</ul>
+   <ul>
+   <li style="list-style-type: none;">
+   <ul class="nav nav-tabs">
+     <li class="active"><a data-toggle="tab" href="#maria_centos">MariaDB</a></li>
+     <li><a data-toggle="tab" href="#postgre_centos">PostgreSQL</a></li>
+   </ul>
 
-<div class="tab-content">
-<div id="maria_centos" class="tab-pane fade in active" markdown="1" >
+   <div class="tab-content">
+   <div id="maria_centos" class="tab-pane fade in active" markdown="1" >
 
-Install [MariaDB 5.5](https://mariadb.org/download/) (Optional, you may install [PostgreSQL 9.4](http://www.postgresql.org/download/) instead).
+   Install [MariaDB 5.5](https://mariadb.org/download/) (Optional, you may install [PostgreSQL 9.4](http://www.postgresql.org/download/) instead).
 
-Install MariaDB 5.5 for CentOS 6.7 64-bit.
-Add MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (name it MariaDB.repo or something similar).
+   Install MariaDB 5.5 for CentOS 6.7 64-bit.
+   Add MariaDB YUM repository entry for CentOS. Copy and paste it into a file under /etc/yum.repos.d/ (name it MariaDB.repo or something similar).
 
-```bash
-# MariaDB 5.5 CentOS repository list - created 2016-04-01 10:22 UTC
-# http://mariadb.org/mariadb/repositories/
-[mariadb]
-name = MariaDB
-baseurl = http://yum.mariadb.org/5.5/centos6-amd64
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck=1
-```
-Then execute folowing commands
 
-```bash
-$ sudo yum -y update
-$ sudo service mysqld stop
-$ sudo yum -y remove mysql-server mysql
-```
+   ```bash
 
-With the repo file in place you can now install MariaDB like so:
+   # MariaDB 5.5 CentOS repository list - created 2016-04-01 10:22 UTC
+   # http://mariadb.org/mariadb/repositories/
+   [mariadb]
+   name = MariaDB
+   baseurl = http://yum.mariadb.org/5.5/centos6-amd64
+   gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+   gpgcheck=1
+   ```
 
-```bash
-$ sudo yum install MariaDB-server MariaDB-client
-$ sudo service mysql start
-```
+   Then execute folowing commands
 
-You can check if the MariaDB server is running by executing the following command.
+   ```bash
 
-```bash
-$ sudo netstat -ntlp | grep 3306
+   $ sudo yum -y update
+   $ sudo service mysqld stop
+   $ sudo yum -y remove mysql-server mysql
 
-tcp      0     0 127.0.0.1:3306        0.0.0.0:*            LISTEN     7386/mysqld
-```
+   ```
 
-For more details, please refer to the [official page](https://mariadb.org/).
+   With the repo file in place you can now install MariaDB like so:
 
-Connect to the mariadb-server by executing the following command.
+   ```bash
+   $ sudo yum install MariaDB-server MariaDB-client
+   $ sudo service mysql start
+   ```
 
-```bash
-$ mysql
-```
+   You can check if the MariaDB server is running by executing the following command.
 
-Create new user for database by executing the following command.
+   ```bash
+   $ sudo netstat -ntlp | grep 3306
 
-```bash
-MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
-```
+   tcp    0   0 127.0.0.1:3306     0.0.0.0:*       LISTEN   7386/mysqld
+   ```
 
-Create the Kaa database by executing the following command.
+   For more details, please refer to the [official page](https://mariadb.org/).
 
-```bash
-MariaDB [(none)]> CREATE DATABASE kaa;
-```
+   Connect to the mariadb-server by executing the following command.
 
-</div><div id="postgre_centos" class="tab-pane fade" markdown="1" >
+   ```bash
+   $ mysql
+   ```
 
-Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ) (Optional, you may install [MariaDB 5.5](https://mariadb.org/download/) instead).
+   Create new user for database by executing the following command.
 
-Exclude old PostgreSQL from the default repository, append a line ```exclude=postgresql*``` to the sections **[base]** and **[updates]**.
+   ```bash
+   MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
+   ```
 
-```bash
-$ sudo nano /etc/yum.repos.d/CentOS-Base.repo
+   Create the Kaa database by executing the following command.
 
-...
+   ```bash
+   MariaDB [(none)]> CREATE DATABASE kaa;
+   ```
 
-[base]
-name=CentOS-$releasever - Base
-mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
-#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-exclude=postgresql*
+   </div><div id="postgre_centos" class="tab-pane fade" markdown="1" >
 
-...
+   Install [PostgreSQL 9.4](http://www.postgresql.org/download/) ( [source](https://wiki.postgresql.org/wiki/YUM_Installation) ) (Optional, you may install [MariaDB 5.5](https://mariadb.org/download/) instead).
 
-[updates]
-name=CentOS-$releasever - Updates
-mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
-#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-exclude=postgresql*
+   Exclude old PostgreSQL from the default repository, append a line ```exclude=postgresql*``` to the sections **[base]** and **[updates]**.
 
-...
-```
+   ```bash
+   $ sudo nano /etc/yum.repos.d/CentOS-Base.repo
 
-Install PostgreSQL 9.4 PGDG file for CentOS 6 64-bit.
+   ...
 
-```bash
-$ sudo yum localinstall http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
-```
+   [base]
+   name=CentOS-$releasever - Base
+   mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+   #baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+   gpgcheck=1
+   gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+   exclude=postgresql*
 
-List available PostgreSQL installations and install the PostgreSQL server.
+   ...
 
-```bash
-$ sudo yum list postgres*
-$ sudo yum install postgresql94-server
-```
+   [updates]
+   name=CentOS-$releasever - Updates
+   mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
+   #baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+   gpgcheck=1
+   gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+   exclude=postgresql*
 
-Initialize the PostgreSQL database.
+   ...
+   ```
 
-```bash
-$ sudo service postgresql-9.4 initdb
-Initializing database:                            [  OK  ]
-```
+   Install PostgreSQL 9.4 PGDG file for CentOS 6 64-bit.
 
-Configure the database to start automatically when OS starts.
+   ```bash
+   $ sudo yum localinstall http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
+   ```
 
-```bash
-$ sudo chkconfig postgresql-9.4 on
-```
+   List available PostgreSQL installations and install the PostgreSQL server.
 
-Start the database.
+   ```bash
+   $ sudo yum list postgres*
+   $ sudo yum install postgresql94-server
+   ```
 
-```bash
-$ sudo service postgresql-9.4 start
-Starting postgresql-9.4 service:                     [  OK  ]
-```
+   Initialize the PostgreSQL database.
 
-Connect to the postgresql-server via the psql utility by executing the following command.
+   ```bash
+   $ sudo service postgresql-9.4 initdb
+   Initializing database:                [  OK  ]
+   ```
 
-```bash
-$ sudo -u postgres psql
-```
+   Configure the database to start automatically when OS starts.
 
-Specify the password for the postgres user (default password in kaa configuration files is "admin").
+   ```bash
+   $ sudo chkconfig postgresql-9.4 on
+   ```
 
-```bash
-postgres=# \password
-Enter new password: admin
-Enter it again: admin
-```
+   Start the database.
 
-Create the Kaa database by executing the following command.
+   ```bash
+   $ sudo service postgresql-9.4 start
+   Starting postgresql-9.4 service:            [  OK  ]
+   ```
 
-```bash
-CREATE DATABASE kaa;
-```
+   Connect to the postgresql-server via the psql utility by executing the following command.
 
-Update pg\_hba.conf file to allow local connections.
+   ```bash
+   $ sudo -u postgres psql
+   ```
 
-```bash
-sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
-remove lines:
-local   all          all                            ident
-host   all          all          127.0.0.1/32         ident
-add lines:
-local   all          all                            trust
-host   all          all          127.0.0.1/32         trust
-```
+   Specify the password for the postgres user (default password in kaa configuration files is "admin").
 
-Restart the database.
+   ```bash
+   postgres=# \password
+   Enter new password: admin
+   Enter it again: admin
+   ```
 
-```bash
-sudo service postgresql-9.4 restart
-Stopping postgresql-9.4 service:                     [  OK  ]
-Starting postgresql-9.4 service:                     [  OK  ]
-```
+   Create the Kaa database by executing the following command.
 
-</div>
-</div>
-</li>
-</ul>
+   ```bash
+   CREATE DATABASE kaa;
+   ```
+
+   Update pg\_hba.conf file to allow local connections.
+
+   ```bash
+   $ sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
+
+   remove lines:
+   local   all      all                ident
+   host   all      all      127.0.0.1/32      ident
+
+   add lines:
+   local   all      all                trust
+   host   all      all      127.0.0.1/32      trust
+   ```
+
+   Restart the database.
+
+   ```bash
+   $ sudo service postgresql-9.4 restart
+   
+   Stopping postgresql-9.4 service:            [  OK  ]
+   Starting postgresql-9.4 service:            [  OK  ]
+   ```
+
+   </div>
+   </div>
+   </li>
+   </ul>
 
 4. Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.5/).
 
@@ -709,7 +715,7 @@ Starting postgresql-9.4 service:                     [  OK  ]
 
    ```bash
    $ sudo service supervisord start
-   Starting supervisord:                             [  OK  ]
+   Starting supervisord:                 [  OK  ]
    ```
 
    Check Zookeeper status.
@@ -723,7 +729,7 @@ Starting postgresql-9.4 service:                     [  OK  ]
 
    ```bash
    $ netstat -ntlp | grep 2181
-   tcp      0     0 :::2181                :::*                  LISTEN     2132/java
+   tcp    0   0 :::2181         :::*           LISTEN   2132/java
    ```
 
 
@@ -741,7 +747,7 @@ Starting postgresql-9.4 service:                     [  OK  ]
 <div class="tab-content">
 <div id="mongo_centos" class="tab-pane fade in active" markdown="1" >
 
-Install [MongoDB 2.6](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 2.2.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
+Install [MongoDB 2.6](http://www.mongodb.org/downloads) (Optional, you may install [Cassandra 3.5](http://cassandra.apache.org/download/) instead) ([source](http://docs.mongodb.org/v2.6/tutorial/install-mongodb-on-red-hat/)).
 
 Add the MongoDB yum repository.
 
@@ -781,15 +787,15 @@ $ sudo chkconfig mongod on
 
 </div><div id="cassandra_centos" class="tab-pane fade" markdown="1" >
 
-Install [Cassandra 2.2.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB 2.6](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
+Install [Cassandra 3.5](http://cassandra.apache.org/download/) (Optional, you may install [MongoDB 2.6](http://www.mongodb.org/downloads) instead) ([source](http://www.liquidweb.com/kb/how-to-install-cassandra-on-centos-6/)).
 
 Add the DataStax Community yum repository.
 
 ```bash
 $ sudo nano /etc/yum.repos.d/datastax.repo
-[datastax]
+[datastax-ddc]
 name = DataStax Repo for Apache Cassandra
-baseurl = http://rpm.datastax.com/community
+baseurl = http://rpm.datastax.com/datastax-ddc/3.5
 enabled = 1
 gpgcheck = 0
 ```
@@ -803,7 +809,7 @@ $ sudo yum install jna
 Install Cassandra.
 
 ```bash
-$ sudo yum install dsc22
+$ sudo yum install datastax-ddc
 ```
 
 Export java variables.
@@ -830,7 +836,7 @@ Check cassandra cql shell.
 ```bash
 $ cqlsh
 Connected to Test Cluster at 127.0.0.1:9042.
-[cqlsh 5.0.1 | Cassandra 2.2.5 | CQL spec 3.2.0 | Native protocol v3]
+[cqlsh 5.0.1 | Cassandra 3.5 | CQL spec 3.4.0 | Native protocol v4]
 Use HELP for help.
 cqlsh>
 ```
@@ -900,7 +906,7 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
 ### SQL database configuration
 
 You can choose which SQL database to use: MariaDB (used by default) or PostgreSQL.
-You can find SQL database configuration property file templates in "/etc/kaa-node/conf/" folder: maria-dao.properties.template, mariadb-dao.properties.template files for MariaDB database and postgre-dao.properties.template, postgresql-dao.properties.template files for PostgreSQL.
+You can find SQL database configuration property file templates in ```/etc/kaa-node/conf/``` folder: ```maria-dao.properties.template```, ```mariadb-dao.properties.template``` files for MariaDB database and ```postgre-dao.properties.template```, ```postgresql-dao.properties.template``` files for PostgreSQL.
 
 <ul>
 <li style="list-style-type: none;">
@@ -938,8 +944,8 @@ $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 If you wish to switch from PostgreSQL to MariaDB you should copy content of MariaDB config files to Kaa DB config files:
 
 ```bash
-$ sudo cat /etc/kaa-node/conf/maria-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties
-$ sudo cat /etc/kaa-node/conf/mariadb-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties
+$ sudo bash -c "cat /etc/kaa-node/conf/maria-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
+$ sudo bash -c "cat /etc/kaa-node/conf/mariadb-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties"
 ```
 
 </div><div id="postgre_conf" class="tab-pane fade" markdown="1" >
@@ -964,8 +970,8 @@ $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 If you wish to switch from MariaDB to PostgreSQL you should copy content of PostgreSQL config files to Kaa DB config files:
 
 ```bash
-$ sudo cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties
-$ sudo cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties
+$ sudo bash -c "cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
+$ sudo bash -c "cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties"
 ```
 
 </div>
@@ -978,7 +984,7 @@ $ sudo cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node
 Check that a NoSQL database name matches your choice.
 
 ```
-$ cat /etc/kaa-node/conf/dao.properties | grep nosql_db_provider_name
+$ cat /etc/kaa-node/conf/nosql-dao.properties | grep nosql_db_provider_name
 nosql_db_provider_name=mongodb
 ```
 
@@ -986,7 +992,7 @@ In case you are going to use Cassandra, execute the following commands.
 
 ```bash
 $ sudo cqlsh -f /etc/kaa-node/conf/cassandra.cql
-$ sudo nano /etc/kaa-node/conf/dao.properties
+$ sudo nano /etc/kaa-node/conf/nosql-dao.properties
 nosql_db_provider_name=cassandra
 ```
 
