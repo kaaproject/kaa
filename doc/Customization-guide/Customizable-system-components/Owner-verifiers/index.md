@@ -91,7 +91,7 @@ All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.
         * @param configuration the configuration object that you have specified during verifier provisioning.
         */
         @Override
-        public void init(UserVerifierContext context, CustomUserVerifierConfiguration configuration) {
+        public void init(UserVerifierContext context, CustomOwnerVerifierConfiguration configuration) {
     
         }
         
