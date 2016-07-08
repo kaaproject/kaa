@@ -65,6 +65,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
+
 public class CassandraLogAppenderTest {
 
     public static final String KEY_SPACE_NAME = "kaa_test";
@@ -73,7 +74,7 @@ public class CassandraLogAppenderTest {
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
 
     @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 20000l);
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 4 * 60000L);
 
     private static final Random RANDOM = new Random();
 
