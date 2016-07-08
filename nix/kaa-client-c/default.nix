@@ -129,11 +129,10 @@ in stdenv.mkDerivation {
     raspberrypi-openssl
   ];
 
-  shellHook =
-    lib.optionalString esp8266Support ''
-      export CTEST_OUTPUT_ON_FAILURE=1
+  shellHook = ''
+    export CTEST_OUTPUT_ON_FAILURE=1
 
-      cp ${kaa-generic-makefile}/Makefile .
-      chmod 644 Makefile
-    '';
+    cp ${kaa-generic-makefile}/Makefile .
+    chmod 644 Makefile
+  '';
 }
