@@ -217,14 +217,18 @@ void DefaultOperationTcpChannel::openConnection()
         KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Connection is already opened. Ignoring.") % getId());
         return;
     }
-    boost::asio::ip::tcp::endpoint ep;
-    try {
-        ep = HttpUtils::getEndpoint(currentServer_->getHost(), currentServer_->getPort());
-    } catch (std::exception& e) {
-        KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connection to endpoint failed: %2%") % getId() % e.what());
-        onServerFailed();
-    }
+
     boost::system::error_code errorCode;
+
+    boost::asio::ip::tcp::endpoint ep = HttpUtils::resolveEndpoint(currentServer_->getHost(),
+                                                                   currentServer_->getPort(),
+                                                                   errorCode);
+    if (errorCode) {
+        KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connection to endpoint failed: %2%") % getId() % errorCode.message());
+        onServerFailed();
+        return;
+    }
+
     responseBuffer_.reset(new boost::asio::streambuf());
     sock_.reset(new boost::asio::ip::tcp::socket(socketIo_));
     sock_->open(ep.protocol(), errorCode);

@@ -19,68 +19,23 @@
 #include <string>
 #include <cstdint>
 
-#include <boost/asio/detail/socket_ops.hpp>
+#include "headers/KaaTestUtils.hpp"
 
-#include "kaa/channel/ServerType.hpp"
 #include "kaa/channel/connectivity/IPConnectivityChecker.hpp"
 #include "kaa/channel/connectivity/IPingServerStorage.hpp"
-#include "kaa/channel/GenericTransportInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
 
 namespace kaa {
 
-std::vector<uint8_t> serializeConnectionInfo(const std::string& publicKey
-                                           , const std::string& host
-                                           , const std::int32_t& port)
-{
-    std::vector<uint8_t> serializedData(3 * sizeof(std::int32_t) + publicKey.length() + host.length());
-
-    auto *data = serializedData.data();
-
-    std::int32_t networkOrder32 = boost::asio::detail::socket_ops::host_to_network_long(publicKey.length());
-    memcpy(data, &networkOrder32, sizeof(std::int32_t));
-    data += sizeof(std::int32_t);
-
-    memcpy(data, publicKey.data(), publicKey.length());
-    data += publicKey.length();
-
-    networkOrder32 = boost::asio::detail::socket_ops::host_to_network_long(host.length());
-    memcpy(data, &networkOrder32, sizeof(std::int32_t));
-    data += sizeof(std::int32_t);
-
-    memcpy(data, host.data(), host.length());
-    data += host.length();
-
-    networkOrder32 = boost::asio::detail::socket_ops::host_to_network_long(port);
-    memcpy(data, &networkOrder32, sizeof(std::int32_t));
-
-    return serializedData;
-}
-
-ITransportConnectionInfoPtr createTransportConnectionInfo(ServerType type
-                                                        , const std::int32_t& accessPointId
-                                                        , TransportProtocolId protocolId
-                                                        , const std::vector<uint8_t>& connectionData)
-{
-    ProtocolMetaData metaData;
-    metaData.accessPointId = accessPointId;
-    metaData.protocolVersionInfo.id = protocolId.getId();
-    metaData.protocolVersionInfo.version = protocolId.getVersion();
-    metaData.connectionInfo = connectionData;
-
-    ITransportConnectionInfoPtr info(new GenericTransportInfo(type, metaData));
-    return info;
-}
-
 class PingServerStorage : public IPingServerStorage {
 public:
     PingServerStorage(const std::string& host, const std::uint16_t& port) {
-        server_ = createTransportConnectionInfo(ServerType::BOOTSTRAP
-                                          , 0x111
-                                          , TransportProtocolIdConstants::HTTP_TRANSPORT_ID
-                                          , serializeConnectionInfo("key"
-                                                                  , host
-                                                                  , port));
+        server_ = KaaTestUtils::createTransportConnectionInfo(ServerType::BOOTSTRAP,
+                                                              0x111,
+                                                              TransportProtocolIdConstants::HTTP_TRANSPORT_ID,
+                                                              KaaTestUtils::serializeConnectionInfo(host,
+                                                                                                    port,
+                                                                                                    KaaTestUtils::generateKeyPair().getPublicKey()));
     }
 
     virtual ITransportConnectionInfoPtr getPingServer() {

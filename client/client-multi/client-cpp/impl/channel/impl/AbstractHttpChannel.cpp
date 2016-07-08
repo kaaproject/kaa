@@ -77,11 +77,32 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
             reason = KaaFailoverReason::CREDENTIALS_REVOKED;
             break;
         default:
+            // FIXME: How do we know what the channel communicates
+            // with a Bootstrap server?
+            //
+            // Need to fix/improve in scope of KAA-577.
             reason = KaaFailoverReason::BOOTSTRAP_SERVERS_NA;
             break;
         }
 
         onServerFailed(reason);
+    } catch (TransportException& e) {
+        KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: %3%")
+                                                     % currentServer_->getHost()
+                                                     % currentServer_->getPort()
+                                                     % e.getErrorCode().message());
+
+        // NOTE:
+        // NO_CONNECTIVITY is used only because DefaultOperationTcpChannel
+        // does the same in case of unknown transport issues.
+        // By design NO_CONNECTIVITY means an absent of a network connection but
+        // this case must be processed separately by IConnectivityChecker.
+        // Thus CURRENT_OPERATIONS_SERVER_NA or CURRENT_BOOTSTRAP_SERVER_NA
+        // would be more suitable but the former is absent and
+        // the latter is processed by DefaultFailoverStrategy as NOOP.
+        //
+        // Need to improve in scope of KAA-577.
+        onServerFailed(KaaFailoverReason::NO_CONNECTIVITY);
     }
 }
 

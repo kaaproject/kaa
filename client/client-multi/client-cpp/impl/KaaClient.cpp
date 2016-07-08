@@ -117,6 +117,7 @@ void KaaClient::start()
                 bootstrapManager_->receiveOperationsServerList();
                 stateListener_->onStarted();
             } catch (std::exception& e) {
+                KAA_LOG_ERROR(boost::format("Caught exception on start: %s") % e.what());
                 stateListener_->onStartFailure(KaaException(e));
             }
         });
@@ -141,6 +142,7 @@ void KaaClient::stop()
                 status_->save();
                 stateListener_->onStopped();
             } catch (std::exception& e) {
+                KAA_LOG_ERROR(boost::format("Caught exception on stop: %s") % e.what());
                 stateListener_->onStopFailure(KaaException(e));
             }
         });
@@ -160,6 +162,7 @@ void KaaClient::pause()
                 channelManager_->pause();
                 stateListener_->onPaused();
             } catch (std::exception& e) {
+                KAA_LOG_ERROR(boost::format("Caught exception on pause: %s") % e.what());
                 stateListener_->onPauseFailure(KaaException(e));
             }
         });
@@ -177,6 +180,7 @@ void KaaClient::resume()
                 channelManager_->resume();
                 stateListener_->onResumed();
             } catch (std::exception& e) {
+                KAA_LOG_ERROR(boost::format("Caught exception on resume: %s") % e.what());
                 stateListener_->onResumeFailure(KaaException(e));
             }
         });
