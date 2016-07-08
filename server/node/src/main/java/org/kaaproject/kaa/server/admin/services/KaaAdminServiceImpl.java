@@ -100,7 +100,6 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -2692,11 +2691,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             EventClassFamilyDto eventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(eventClassFamily);
             checkTenantId(eventClassFamily.getTenantId());
-            for (EventSchemaVersionDto eventSchemaVersion : eventClassFamily.getSchemas()) {
-                Schema schema = new Schema.Parser().parse(eventSchemaVersion.getSchema());
-                RecordField schemaForm = ecfSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-                eventSchemaVersion.setSchemaForm(schemaForm);
-            }
             return eventClassFamily;
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -2734,7 +2728,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkTenantId(storedEventClassFamily.getTenantId());
 
             String username = getCurrentUser().getUsername();
-            controlService.addEventClassFamilySchema(eventClassFamilyId, schemaString, username);
+            //todo: load list of ctls
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2759,7 +2753,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkTenantId(storedEventClassFamily.getTenantId());
 
             String username = getCurrentUser().getUsername();
-            controlService.addEventClassFamilySchema(eventClassFamilyId, schema, username);
+            //todo: load list of ctls
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
