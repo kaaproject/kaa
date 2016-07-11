@@ -25,27 +25,18 @@ public final class ConfigurationClientSync {
     public ConfigurationClientSync() {
     }
 
-    /**
-     * All-args constructor.
-     */
+
     public ConfigurationClientSync(ByteBuffer configurationHash, boolean resyncOnly) {
         this.configurationHash = configurationHash;
         this.resyncOnly = resyncOnly;
     }
 
-    /**
-     * Gets the value of the 'configurationHash' field.
-     */
+
     public ByteBuffer getConfigurationHash() {
         return configurationHash;
     }
 
-    /**
-     * Sets the value of the 'configurationHash' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
+
     public void setConfigurationHash(ByteBuffer value) {
         this.configurationHash = value;
     }

@@ -28,84 +28,48 @@ import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 
 public class GetDeltaResponse {
 
-    /**
-     * The Enum GetDeltaResponseType.
-     */
+
     public static enum GetDeltaResponseType {
-        /** The delta. */
         DELTA,
-        /** The no delta. */
         NO_DELTA,
-        /** The conf resync. */
         CONF_RESYNC
     }
 
-    /** The response type. */
     private final GetDeltaResponseType responseType;
 
-    /** The delta. */
+
     private final RawBinaryDelta delta;
 
-    /** The conf schema. */
+
     private String confSchema;
 
-    /**
-     * Instantiates a new delta response.
-     *
-     * @param responseType
-     *            the response type
-     */
+
     public GetDeltaResponse(GetDeltaResponseType responseType) {
         this(responseType, null);
     }
 
-    /**
-     * Instantiates a new delta response.
-     *
-     * @param responseType
-     *            the response type
-     * @param delta
-     *            the delta
-     */
+
     public GetDeltaResponse(GetDeltaResponseType responseType, RawBinaryDelta delta) {
         super();
         this.responseType = responseType;
         this.delta = delta;
     }
 
-    /**
-     * Gets the response type.
-     *
-     * @return the response type
-     */
     public GetDeltaResponseType getResponseType() {
         return responseType;
     }
 
-    /**
-     * Gets the delta.
-     *
-     * @return the delta
-     */
+
     public RawBinaryDelta getDelta() {
         return delta;
     }
 
-    /**
-     * Sets the conf schema.
-     *
-     * @param confSchema
-     *            the new conf schema
-     */
+
     public void setConfSchema(String confSchema) {
         this.confSchema = confSchema;
     }
 
-    /**
-     * Gets the conf schema.
-     *
-     * @return the conf schema
-     */
+
     public String getConfSchema() {
         return confSchema;
     }
@@ -119,7 +83,6 @@ public class GetDeltaResponse {
         builder.append(delta);
         builder.append(", confSchema=");
         builder.append(confSchema);
-        ;
         builder.append("]");
         return builder.toString();
     }

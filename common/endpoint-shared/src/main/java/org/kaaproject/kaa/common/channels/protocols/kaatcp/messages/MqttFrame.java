@@ -56,31 +56,23 @@ abstract public class MqttFrame {
     protected int multiplier = 1;
     protected FrameParsingState currentState = FrameParsingState.NONE;
 
-    /**
-     * @return the messageType
-     */
+
     public MessageType getMessageType() {
         return messageType;
     }
 
-    /**
-     * @param messageType the messageType to set
-     */
+
     protected void setMessageType(MessageType messageType) {
         this.messageType = messageType;
     }
 
-    /**
-     *
-     */
+
     protected MqttFrame() {
 
     }
 
 
-    /**
-     * @param old te old
-     */
+
     protected MqttFrame(MqttFrame old) {
         this.messageType = old.getMessageType();
         this.buffer = old.getBuffer();
@@ -90,10 +82,7 @@ abstract public class MqttFrame {
         this.currentState = old.currentState;
     }
 
-    /**
-     * Return mqtt Frame.
-     * @return ByteBuffer mqtt frame
-     */
+
     public ByteBuffer getFrame() {
         if (buffer == null) {
             int remainingLegth = getRemainingLegth();
@@ -109,9 +98,7 @@ abstract public class MqttFrame {
         return buffer;
     }
 
-    /**
-     * Pack message into mqtt frame
-     */
+
     abstract protected void pack();
 
     /**
@@ -239,10 +226,7 @@ abstract public class MqttFrame {
         return this;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

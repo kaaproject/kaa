@@ -34,7 +34,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  *
  */
 public class PlatformLookup {
-    /** The Constant LOG. */
+
     private static final Logger LOG = LoggerFactory.getLogger(PlatformLookup.class);
     
     public static final String DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME = "org.kaaproject.kaa.server";
