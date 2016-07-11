@@ -94,12 +94,7 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         this.description = dto.getDescription();
         this.createdUsername = dto.getCreatedUsername();
         this.createdTime = dto.getCreatedTime();
-        if (dto.getSchemas() != null) {
-            this.schemas = new ArrayList<>(dto.getSchemas().size());
-            for (EventClassFamilyVersionDto schema : dto.getSchemas()) {
-                this.schemas.add(new EventClassFamilyVersion(schema));
-            }
-        }
+
     }
 
     public Tenant getTenant() {
@@ -283,13 +278,6 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         dto.setDescription(description);
         dto.setCreatedUsername(createdUsername);
         dto.setCreatedTime(createdTime);
-        if (schemas != null) {
-            List<EventClassFamilyVersionDto> schemasDto = new ArrayList<>(schemas.size());
-            for (EventClassFamilyVersion schema : schemas) {
-                schemasDto.add(schema.toDto());
-            }
-            dto.setSchemas(schemasDto);
-        }
         return dto;
     }
 
