@@ -292,10 +292,16 @@ add_subdirectory(Modules/doxygen)
 
 add_subdirectory(Modules/cppcheck)
 
-externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
-                    INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 
-externalproject_add_step(kaa_rsa_keygen "Copying generated files"
-                         COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
-                         "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
+option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
+if(${KAA_RUNTIME_KEY_GENERATION})
+    add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+else()
+    externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
+                        INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
+                        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
+
+    externalproject_add_step(kaa_rsa_keygen "Copying generated files"
+                             COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
+                             "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
+endif()
