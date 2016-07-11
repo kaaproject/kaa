@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,7 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
             ApplicationDto application = getDto(applicationDao.findById(applicationId));
             if (application != null) {
                 String tenantId = application.getTenantId();
-                List<EventClassFamilyDto> eventClassFamilies = convertDtoList(eventClassFamilyDao.findByTenantId(tenantId));
+                List<EventClassFamily> eventClassFamilies = eventClassFamilyDao.findByTenantId(tenantId);
                 List<AefMapInfoDto> aefMaps = findEventClassFamiliesByApplicationId(applicationId);
                 List<EcfInfoDto> occupiedEcfs = new ArrayList<>();
                 for (AefMapInfoDto aefMap : aefMaps) {
@@ -134,11 +135,12 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
                     occupiedEcfs.add(ecf);
                 }
                 if (eventClassFamilies != null) {
-                    for (EventClassFamilyDto eventClassFamily : eventClassFamilies) {
+                    for (EventClassFamily eventClassFamily : eventClassFamilies) {
+
                         if (eventClassFamily.getSchemas() != null) {
-                            for (EventClassFamilyVersionDto eventClassFamilyVersion : eventClassFamily.getSchemas()) {
+                            for (EventClassFamilyVersion eventClassFamilyVersion : eventClassFamily.getSchemas()) {
                                 EcfInfoDto ecf = new EcfInfoDto();
-                                ecf.setEcfId(eventClassFamily.getId());
+                                ecf.setEcfId(String.valueOf(eventClassFamily.getId()));
                                 ecf.setEcfName(eventClassFamily.getName());
                                 ecf.setVersion(eventClassFamilyVersion.getVersion());
                                 if (occupiedEcfs != null && !occupiedEcfs.contains(ecf)) {
