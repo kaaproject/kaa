@@ -27,8 +27,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.kaaproject.avro.ui.shared.NamesValidator;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
@@ -102,37 +100,17 @@ public class EventClassServiceImpl implements EventClassService {
 
     @Override
     public EventClassFamilyDto saveEventClassFamily(
-            EventClassFamilyDto eventClassFamilyDto) {
+            EventClassFamilyVersionDto eventClassFamilyVersionDto) {
         EventClassFamilyDto savedEventClassFamilyDto = null;
-        if (isValidSqlObject(eventClassFamilyDto)) {
-            if (eventClassFamilyDao.validateName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getName())) {
-                if (StringUtils.isBlank(eventClassFamilyDto.getId())) {
-                    if (NamesValidator.validateNamespace(eventClassFamilyDto.getNamespace())) {
-                        if (NamesValidator.validateClassName(eventClassFamilyDto.getClassName())) {
-                            if (eventClassFamilyDao.validateClassName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getClassName())) {
-                                eventClassFamilyDto.setCreatedTime(System.currentTimeMillis());
-                            } else {
-                                LOG.debug("Can't save event class family. Class name should be unique within the tenant.");
-                                throw new IncorrectParameterException("Incorrect event class family. Class name should be unique within the tenant.");
-                            }
-                        } else {
-                            LOG.debug("Can't save event class family. Class name [{}] is not valid.", eventClassFamilyDto.getClassName());
-                            throw new IncorrectParameterException("Incorrect event class family. Class name is not valid. '" + eventClassFamilyDto.getClassName() + "' is not a valid identifier.");
-                        }
-                    } else {
-                        LOG.debug("Can't save event class family. Namespace [{}] is not valid.", eventClassFamilyDto.getNamespace());
-                        throw new IncorrectParameterException("Incorrect event class family. Namespace is not valid. '" + eventClassFamilyDto.getNamespace() + "' is not a valid identifier.");
-                    }
-                }
-                EventClassFamily ecf = new EventClassFamily(eventClassFamilyDto);
-                List<EventClassFamilyVersion> schemas = new ArrayList<>();
-                findEventClassFamilyVersionsById(eventClassFamilyDto.getId()).forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
-                ecf.setSchemas(schemas);
-                savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(ecf));
-            } else {
-                LOG.debug("Can't save event class family. Name should be unique within the tenant.");
-                throw new IncorrectParameterException("Incorrect event class family. Name should be unique within the tenant.");
-            }
+        if (isValidSqlObject(eventClassFamilyVersionDto)) {
+            savedEventClassFamilyDto = getDto(eventClassFamilyDao.findById(eventClassFamilyVersionDto.getId()));
+            savedEventClassFamilyDto.setCreatedTime(System.currentTimeMillis());
+            EventClassFamily ecf = new EventClassFamily(savedEventClassFamilyDto);
+            List<EventClassFamilyVersion> schemas = new ArrayList<>();
+            findEventClassFamilyVersionsById(eventClassFamilyVersionDto.getId()).forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
+            schemas.add(new EventClassFamilyVersion(eventClassFamilyVersionDto));
+            ecf.setSchemas(schemas);
+            savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(ecf));
         }
         return savedEventClassFamilyDto;
     }

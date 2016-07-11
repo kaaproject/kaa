@@ -55,6 +55,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -309,7 +310,7 @@ public interface KaaAdminService extends RemoteService {
 
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws KaaAdminServiceException;
 
-    EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException;
+    EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException;
 
     void addEventClassFamilySchemaForm(String eventClassFamilyId, RecordField schemaForm) throws KaaAdminServiceException;
 

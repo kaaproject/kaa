@@ -59,6 +59,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -1007,7 +1008,7 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException;
+    EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws ControlServiceException;
 
     /**
      * Gets the event class families by tenant id.

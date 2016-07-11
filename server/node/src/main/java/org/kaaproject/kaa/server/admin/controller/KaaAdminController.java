@@ -66,6 +66,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -76,7 +77,6 @@ import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.servlet.ServletUtils;
-import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
@@ -1930,16 +1930,16 @@ public class KaaAdminController {
     /**
      * Edits event class family to the list of all event class families.
      *
-     * @param eventClassFamily
-     *            the event class family
+     * @param eventClassFamilyVersion
+     *            the version of event class family
      * @return the event class family dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
     @RequestMapping(value = "eventClassFamily", method = RequestMethod.POST)
     @ResponseBody
-    public EventClassFamilyDto editEventClassFamily(@RequestBody EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
-        return kaaAdminService.editEventClassFamily(eventClassFamily);
+    public EventClassFamilyDto editEventClassFamily(@RequestBody EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
+        return kaaAdminService.editEventClassFamily(eventClassFamilyVersion);
     }
 
     /**

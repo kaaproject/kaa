@@ -1482,11 +1482,11 @@ public class DefaultControlService implements ControlService {
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editEventClassFamily
-     * (org.kaaproject.kaa.common.dto.event.EventClassFamilyDto)
+     * (org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto)
      */
     @Override
-    public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException {
-        return eventClassService.saveEventClassFamily(eventClassFamily);
+    public EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws ControlServiceException {
+        return eventClassService.saveEventClassFamily(eventClassFamilyVersion);
     }
 
     /*

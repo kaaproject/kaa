@@ -55,10 +55,10 @@ public interface EventClassService {
     /**
      * Save event class family.
      *
-     * @param eventClassFamilyDto the event class family dto
+     * @param eventClassFamilyVersionDto the event class family version dto
      * @return the event class family dto
      */
-    EventClassFamilyDto saveEventClassFamily(EventClassFamilyDto eventClassFamilyDto);
+    EventClassFamilyDto saveEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersionDto);
 
     /**
      * Add event class family schema.

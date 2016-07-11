@@ -99,6 +99,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -128,10 +129,8 @@ import org.kaaproject.kaa.server.admin.shared.schema.*;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
-import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -2698,19 +2697,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
+    public EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
-            if (!isEmpty(eventClassFamily.getId())) {
-                EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamily.getId());
+            EventClassFamilyDto storedEventClassFamily = null;
+            if (!isEmpty(eventClassFamilyVersion.getId())) {
+                storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyVersion.getId());
                 Utils.checkNotNull(storedEventClassFamily);
                 checkTenantId(storedEventClassFamily.getTenantId());
             } else {
                 String username = getCurrentUser().getUsername();
-                eventClassFamily.setCreatedUsername(username);
+                eventClassFamilyVersion.setCreatedUsername(username);
             }
-            eventClassFamily.setTenantId(getTenantId());
-            return controlService.editEventClassFamily(eventClassFamily);
+            return controlService.editEventClassFamily(eventClassFamilyVersion);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
