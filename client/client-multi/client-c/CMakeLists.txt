@@ -278,7 +278,7 @@ endif()
 
 if(WITH_ENCRYPTION)
     message("ENCRYPTION ENABLED")
-
+    target_link_libraries(kaac PUBLIC rsa_keygen)
     add_definitions(-DKAA_ENCRYPTION)
 endif()
 
@@ -292,13 +292,17 @@ add_subdirectory(Modules/doxygen)
 
 add_subdirectory(Modules/cppcheck)
 
-
 option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
-if(${KAA_RUNTIME_KEY_GENERATION})
-    add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+if(${KAA_PLATFORM} STREQUAL "x86-64")
+    if(${KAA_RUNTIME_KEY_GENERATION})
+        add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+    endif()
+    add_subdirectory(tools/kaa_encryption/rsa_key_gen)
+    target_link_libraries(kaac PUBLIC rsa_keygen)
 else()
     externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
                         INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
+                        CMAKE_ARGS -DKAA_SDK_DIR=${KAA_SDK_DIR}
                         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 
     externalproject_add_step(kaa_rsa_keygen "Copying generated files"
