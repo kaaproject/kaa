@@ -45,6 +45,15 @@ public class Kaa {
         return newClient(context, listener, false);
     }
 
+    /**
+     * Creating new Kaa client
+     *
+     * @param context           - Kaa platform specific context for client init
+     * @param listener          - notifier for changing client state
+     * @param isUserKeyStrategy - user strategy about creating public/private keys. In default case use previously created
+     * @return new Kaa client
+     * @throws KaaRuntimeException - if there are now key pair
+     */
     public static KaaClient newClient(KaaClientPlatformContext context, KaaClientStateListener listener, boolean isUserKeyStrategy)
             throws KaaRuntimeException {
         try {

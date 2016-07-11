@@ -32,11 +32,6 @@ public interface KaaClientState {
     boolean isRegistered();
     void setRegistered(boolean registered);
 
-    /**
-     * User can choose to create key pair or not. In default case there is no key generation
-     *
-     * @return keys
-     */
     PrivateKey getPrivateKey();
     PublicKey getPublicKey();
 

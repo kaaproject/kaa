@@ -109,6 +109,15 @@ public class KaaClientPropertiesState implements KaaClientState {
         this(storage, base64, properties, false);
     }
 
+    /**
+     * All needed properties for creating Kaa client
+     *
+     * @param storage           - in what storage platform will work
+     * @param base64            - interface for Base64 type
+     * @param properties        - saved properties for client
+     * @param isUserKeyStrategy - if not key pair keyPair and true, then create keys. In default it false and used
+     *                          already created keys.
+     */
     public KaaClientPropertiesState(PersistentStorage storage, Base64 base64, KaaClientProperties properties,
                                     boolean isUserKeyStrategy) {
 

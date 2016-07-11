@@ -106,6 +106,8 @@ public interface KaaChannelManager {
 
     /**
      * Updates the manager by adding the channel.
+     *
+     * @param channel sending/receiving data for endpoint server
      */
     void addChannel(KaaDataChannel channel);
 
