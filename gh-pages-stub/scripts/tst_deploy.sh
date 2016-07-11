@@ -56,12 +56,17 @@ elif [ x"$gh_pages" = x"$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
   versions=$(git tag)
   jekyll_root=$PWD
   latest=$(git tag | sort -V -r | head -1)
-  gh_pages_stub_br=develop-origin
-  echo "Merging gh-pages-stub"
+  gh_pages_stub_br=$latest
+  echo "Merging gh-pages-stub from $gh_pages_stub_br"
   git checkout $gh_pages_stub_br
   GH_PAGES_STUB=$(git subtree split --prefix=gh-pages-stub/)
   git checkout -
   git merge "$GH_PAGES_STUB" -m "merged jekyll files"
+  if [ -f .nojekyll ]; then
+     echo "Removing .nojekyll"
+     rm .nojekyll
+     git commit .nojekyll -m "Removed .nojekyll file"
+  fi
   mkdir -p "$jekyll_root/_data"
   for version in $versions; do
     if [ x"" != x"$(echo "$version" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+$")" ]; then
@@ -81,7 +86,7 @@ elif [ x"$gh_pages" = x"$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
   printf "%s\nversion: %s" "---" "$latest" > _data/latest_version.yml
   echo "Generating menu data"
   ruby scripts/create_global_toc.rb
-  git add _data/menu.yml _data/latest_version.yml
+  git add _data/menu.yml _data/latest_version.yml _data/versions.yml
   git commit -m "Updated global toc and version"
   echo "Finished deploy into gh-pages"
 else

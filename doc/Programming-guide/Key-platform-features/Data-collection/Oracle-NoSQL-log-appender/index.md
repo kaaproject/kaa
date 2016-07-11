@@ -6,8 +6,7 @@ nav: /:path/Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL
 sort_idx: 80
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
