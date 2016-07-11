@@ -31,6 +31,7 @@ public class EventSchemaProcessorImpl implements EventSchemaProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(EventSchemaProcessorImpl.class);
     
     private static final String CLASS_TYPE = "classType";
+    private static final String CTL_SCHEMA_ID = "ctlSchemaId";
     
     @Override
     public List<EventSchemaMetadata> processSchema(String schema)
@@ -58,8 +59,9 @@ public class EventSchemaProcessorImpl implements EventSchemaProcessor {
                     LOG.error("Can't process provided event class family schema. Invalid classType [{}]. Exception catched: {}", strClassType, e);
                     throw new EventSchemaException("Can't process provided event class family schema. Invalid classType: " + strClassType);
                 }
+                String ctlSchemaId = parsedEventClassSchema.getProp(CTL_SCHEMA_ID);
+                eventClassSchema.setCtlSchemaId(ctlSchemaId);
                 eventClassSchema.setType(classType);
-                eventClassSchema.setSchema(parsedEventClassSchema.toString());
                 eventClassSchemas.add(eventClassSchema);
             }
         } catch (Exception e) {

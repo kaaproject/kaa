@@ -22,7 +22,15 @@ public class EventSchemaMetadata {
 
     private String fqn;
     private EventClassType type;
-    private String schema;
+    private String ctlSchemaId;
+
+    public String getCtlSchemaId() {
+        return ctlSchemaId;
+    }
+
+    public void setCtlSchemaId(String ctlSchemaId) {
+        this.ctlSchemaId = ctlSchemaId;
+    }
 
     public String getFqn() {
         return fqn;
@@ -40,21 +48,13 @@ public class EventSchemaMetadata {
         this.type = type;
     }
 
-    public String getSchema() {
-        return schema;
-    }
-
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((ctlSchemaId == null) ? 0 : ctlSchemaId.hashCode());
         return result;
     }
 
@@ -77,14 +77,14 @@ public class EventSchemaMetadata {
         } else if (!fqn.equals(other.fqn)) {
             return false;
         }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
+        if (type != other.type) {
             return false;
         }
-        if (type != other.type) {
+        if (ctlSchemaId == null) {
+            if (other.ctlSchemaId != null) {
+                return false;
+            }
+        } else if (!ctlSchemaId.equals(other.ctlSchemaId)) {
             return false;
         }
         return true;
