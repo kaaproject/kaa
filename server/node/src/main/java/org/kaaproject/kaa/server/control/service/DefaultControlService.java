@@ -1515,6 +1515,19 @@ public class DefaultControlService implements ControlService {
      * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * addEventClassFamilySchema(java.lang.String, java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+            throws ControlServiceException {
+        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getEventClassesByFamilyIdVersionAndType(java.lang.String, int,
      * org.kaaproject.kaa.common.dto.event.EventClassType)
      */

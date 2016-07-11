@@ -100,7 +100,7 @@ public class EventClassServiceImpl implements EventClassService {
         List<EventClassFamilyVersion> schemas = ecf.getSchemas();
         List<EventClassFamilyVersionDto> schemasDto = new ArrayList<>();
         schemas.forEach(s -> schemasDto.add(s.toDto()));
-        return schemasDto; //todo
+        return schemasDto;
     }
 
     @Override
@@ -138,7 +138,7 @@ public class EventClassServiceImpl implements EventClassService {
 
     @Override
     public void addEventClassFamilySchema(String eventClassFamilyId,
-                                          String eventClassFamilySchema, String createdUsername) {
+            String eventClassFamilySchema, String createdUsername) {
         EventClassFamilyDto eventClassFamily = findEventClassFamilyById(eventClassFamilyId);
         if (eventClassFamily != null) {
             List<EventSchemaMetadata> eventSchemas;

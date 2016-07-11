@@ -1032,6 +1032,21 @@ public interface ControlService {
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException;
 
     /**
+     * Adds the event class family schema.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @param eventClassFamilySchema
+     *            the event class family schema
+     * @param createdUsername
+     *            the created username
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+            throws ControlServiceException;
+
+     /**
      * Gets the event classes by family id version and type.
      *
      * @param ecfId

@@ -69,7 +69,8 @@ public interface EventClassService {
      */
     void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername);
 
-    /**    * Find event classes by event class family Id and version.
+    /**
+     * Find event classes by event class family Id and version.
      *
      * @param ecfId the string id of event class family
      * @param version the version
