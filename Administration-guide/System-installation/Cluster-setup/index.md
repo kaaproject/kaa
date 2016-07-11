@@ -8,7 +8,11 @@ sort_idx: 30
 * TOC
 {:toc}
 
-This page describes how to setup and configure Kaa cluster.
+This guide describes configuration of Kaa cluster on a few Linux nodes.
+
+The guide contains instructions on how to configure kaa-node service and required third party components like Apache Zookeeper service, SQL and NoSQL databases.
+
+## Introduction
 
 In general cluster setup is similar to [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/), except few details. 
 We need at least 3 nodes to create a reliable cluster. 
