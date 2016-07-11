@@ -47,13 +47,7 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.*;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -84,7 +78,6 @@ import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceExceptio
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
-import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1088,10 +1081,12 @@ public class DefaultControlService implements ControlService {
                 efm.setEcfName(ecf.getName());
                 efm.setEcfNamespace(ecf.getNamespace());
                 efm.setEcfClassName(ecf.getClassName());
-                List<EventSchemaVersionDto> ecfSchemas = ecf.getSchemas();
-                for (EventSchemaVersionDto ecfSchema : ecfSchemas) {
+                List<EventClassFamilyVersionDto> ecfSchemas = eventClassService.findEventClassFamilyVersionsById(aefMap.getEcfId());
+                for (EventClassFamilyVersionDto ecfSchema : ecfSchemas) {
                     if (ecfSchema.getVersion() == efm.getVersion()) {
-                        efm.setEcfSchema(ecfSchema.getSchema());
+                        List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecfSchema.getId(), ecfSchema.getVersion(), EventClassType.EVENT);
+                        records.addAll(eventClassService.findEventClassesByFamilyIdVersionAndType(ecfSchema.getId(), ecfSchema.getVersion(), EventClassType.OBJECT));
+                        efm.setRecords(records);
                         break;
                     }
                 }
@@ -1514,19 +1509,6 @@ public class DefaultControlService implements ControlService {
     @Override
     public EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException {
         return eventClassService.findEventClassFamilyById(eventClassFamilyId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * addEventClassFamilySchema(java.lang.String, java.lang.String,
-     * java.lang.String)
-     */
-    @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
-            throws ControlServiceException {
-        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
     }
 
     /*
