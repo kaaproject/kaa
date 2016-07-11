@@ -94,7 +94,6 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         this.description = dto.getDescription();
         this.createdUsername = dto.getCreatedUsername();
         this.createdTime = dto.getCreatedTime();
-
     }
 
     public Tenant getTenant() {

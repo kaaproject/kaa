@@ -1046,7 +1046,7 @@ public interface ControlService {
     void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
             throws ControlServiceException;
 
-     /**
+    /**
      * Gets the event classes by family id version and type.
      *
      * @param ecfId

@@ -97,10 +97,7 @@ public class EventClassServiceImpl implements EventClassService {
     public List<EventClassFamilyVersionDto> findEventClassFamilyVersionsById(String id) {
         validateSqlId(id, "Event class family id is incorrect. Can't find event class family by id " + id);
         EventClassFamily ecf = eventClassFamilyDao.findById(id);
-        List<EventClassFamilyVersion> schemas = ecf.getSchemas();
-        List<EventClassFamilyVersionDto> schemasDto = new ArrayList<>();
-        schemas.forEach(s -> schemasDto.add(s.toDto()));
-        return schemasDto;
+        return convertDtoList(ecf.getSchemas());
     }
 
     @Override
@@ -127,7 +124,11 @@ public class EventClassServiceImpl implements EventClassService {
                         throw new IncorrectParameterException("Incorrect event class family. Namespace is not valid. '" + eventClassFamilyDto.getNamespace() + "' is not a valid identifier.");
                     }
                 }
-                savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(new EventClassFamily(eventClassFamilyDto)));
+                EventClassFamily ecf = new EventClassFamily(eventClassFamilyDto);
+                List<EventClassFamilyVersion> schemas = new ArrayList<>();
+                findEventClassFamilyVersionsById(eventClassFamilyDto.getId()).forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
+                ecf.setSchemas(schemas);
+                savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(ecf));
             } else {
                 LOG.debug("Can't save event class family. Name should be unique within the tenant.");
                 throw new IncorrectParameterException("Incorrect event class family. Name should be unique within the tenant.");
