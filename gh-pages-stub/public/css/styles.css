@@ -652,9 +652,10 @@ li.menu-opened + ul{
 }
 
 .nav li a{
-	padding: 10px 5px;
-    text-align: initial;
+    padding: 10px 15px;
+    text-align: center;
     display: block;
+    min-width: 60px;
 }
 
 #sidebar .nav > li a{
