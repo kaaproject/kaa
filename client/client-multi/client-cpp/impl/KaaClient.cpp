@@ -301,8 +301,13 @@ void KaaClient::initClientKeys()
     }
 
     if (regenerate) {
+#ifdef KAA_RUNTIME_KEY_GENERATION
         clientKeys_.reset(new KeyPair(utils.generateKeyPair(2048)));
         utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
+#else
+        KAA_LOG_ERROR("KAA_RUNTIME_KEY_GENERATION is disabled. Generate keys and put them to the working directory.");
+        throw KaaException("Keys are missing.");
+#endif
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().data(), clientKeys_->getPublicKey().size());
