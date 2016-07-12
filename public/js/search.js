@@ -1,93 +1,156 @@
 (function() {
 
-  function isBlank(str) {
-    return (!str || /^\s*$/.test(str));
-  } 
+	var QUERY_SELECTOR   = 'query';
+	var VERSION_SELECTOR = 'version';
+	var BASEURL_SELECTOR = 'baseUrl';
+	var NORESULTS       = '<li>No results found</li>';
+	var VERSIONSELECT_ID = 'version-select';
+	var SEARCHBOX_ID     = 'search-box';
+	var SEARCHRESULTS_ID = 'search-results'
+	var DEFAULT_TITLE    = 'No title';
+	var DEFAULT_URL      = '404.html';
+	var DEFAULT_TEXT     = '...';
+	var SEARCH_DICTIONARY_FILE = 'search_dictionary.json';
+	var SHOW_OFFSET = 75;
 
-  function displaySearchResults(results, store, searchTerm) {
-    var searchResults = document.getElementById('search-results');
+	var Analytic = (function () {
 
-    if (results.length) {
-      var appendString = '';
+		var instance = null;
 
-      for (var i = 0; i < results.length; i++) {
-        var item = store[results[i].ref];
-        if (isBlank(item.title)) {
-            item.title = "No title";
-        }
-        appendString += '<li><a href="' + item.url + '"><h3>' + item.title + '</h3></a>';
-	      var indx = item.content.indexOf(searchTerm);
-	      var start_pos = Math.max(0, indx - 75);
-	      var stop_pos = Math.min(item.content.length, indx + 75);
-	      var str_to_add = item.content.substring(start_pos, stop_pos);
-	      str_to_add = str_to_add.replace(searchTerm, "<b><u>" + searchTerm + "</u></b>" );
-        appendString += '<p>';
-        if (start_pos > 0 ) {
-            appendString += '... ';
-	      }
-        appendString += str_to_add;
-        if (stop_pos < item.content.length) {
-           appendString += ' ...'  
-        }
-	      appendString += '</p></li>';
-      }
-      searchResults.innerHTML = appendString;
-    } else {
-      searchResults.innerHTML = '<li>No results found</li>';
-    }
-  }
+		function init() {
+			function sendSearchEvent(searchTerm) {
+				ga('send', 'event', 'User Search', 'Search', searchTerm);
+			}
 
-  function getQueryVariable(variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split('&');
+			return {
+				sendSearchEvent : sendSearchEvent,
+			};
+		}
 
-    for (var i = 0; i < vars.length; i++) {
-      var pair = vars[i].split('=');
+		function getInstance() {
+			if( ! instance ) {
+				instance = new init();
+			}
+	 		return instance;
+		}
 
-      if (pair[0] === variable) {
-        return decodeURIComponent(pair[1].replace(/\+/g, '%20'));
-      }
-    }
-  }
+		return {
+			getInstance : getInstance
+		};
+	}());
 
-  var searchTerm = getQueryVariable('query');
-  var searchVersion = getQueryVariable('version');
-  var searchBaseUrl = getQueryVariable('baseUrl');
-  if (searchVersion) {
-    document.getElementById("version-select").value = searchVersion;
-  }
-  if (!searchVersion || searchVersion == "") {
-    var e = document.getElementById("version-select");
-    searchVersion = e.options[e.selectedIndex].value;
-  }
-  if (searchTerm) {
-    
-    ga('send', 'event', 'User Search', 'Search', searchTerm);
-    
-    document.getElementById('search-box').setAttribute("value", searchTerm);
-    
-    var url = searchBaseUrl + "/" + searchVersion + "/" + "search_dictionary.json";
-    $.get( url, function( data ) {
-      
-      var idx = lunr(function () {
-        this.field('id');
-        this.field('title', { boost: 10 });
-        this.field('content');
-      });
+	var DOM = (function () {
 
-      for (var key in data) { // Add the data to lunr
-        idx.add({
-          'id': key,
-          'title': data[key]["title"],
-          'content': data[key]["content"]
-        });
-      }
-      var results = idx.search(searchTerm);
-      displaySearchResults(results, data, searchTerm);
+		var instance = null;
 
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-    alert( textStatus );
-  });
-  }
+		function init() {
+			function getSearchVersion() {
+				var dropDownVersionSelect = document.getElementById(VERSIONSELECT_ID);
+				return dropDownVersionSelect.options[dropDownVersionSelect.selectedIndex].value;
+			}
+
+			function setSearchVersion(searchVersion) {
+				document.getElementById(VERSIONSELECT_ID).value = searchVersion;
+			}
+
+			function setSearchQuerry(searchTerm) {
+				document.getElementById(SEARCHBOX_ID).setAttribute("value", searchTerm);
+			}
+
+			function showError(errorStr) {
+				document.getElementById(SEARCHRESULTS_ID).innerHTML = '<p>' + errorStr + '</p>';
+			}
+
+			function updateSearchResults(data, lunarSearchResultsArray, searchTerm, textProcessCallback) {
+				if (lunarSearchResultsArray.length < 1) {
+					document.getElementById(SEARCHRESULTS_ID).innerHTML = NORESULTS;
+					return;
+				}
+				document.getElementById(SEARCHRESULTS_ID).innerHTML = lunarSearchResultsArray.reduce(function (previousValue, currentValue, index, array) {
+					var item = data[currentValue.ref];
+					var url = UTILS.replaceIfBlank(item.url, DEFAULT_URL);
+					var title = UTILS.replaceIfBlank(item.title, DEFAULT_TITLE);
+					var text = UTILS.replaceIfBlank( textProcessCallback(item.content, searchTerm), DEFAULT_TEXT);
+					return previousValue + '<li><a href="' + url + '"><h3>' + title + '</h3></a>' + '<p>' + text + '</p></li>';
+				}, '');
+			}
+
+			return {
+				getSearchVersion : getSearchVersion,
+				setSearchVersion : setSearchVersion,
+				setSearchQuerry : setSearchQuerry,
+				showError : showError,
+				updateSearchResults : updateSearchResults,
+			};
+		}
+
+		function getInstance() {
+			if( ! instance ) {
+				instance = new init();
+			}
+			return instance;
+		}
+
+		return {
+			getInstance : getInstance
+		};
+
+	}());
+
+	function urlBuilder (baseUrl) {
+		this.baseUrl = baseUrl;
+		this.buildSearchDictionaryUrl = function buildSearchDictionaryUrl(searchVersion) {
+			return this.baseUrl + "/" + searchVersion + "/" + SEARCH_DICTIONARY_FILE;
+		}
+	}
+
+	function processText(text, searchTerm) {
+		if ( UTILS.isBlank(text) || UTILS.isBlank(searchTerm)) {
+			return '';
+		}
+		var indx = text.indexOf(searchTerm);
+		var startPos = Math.max(0, indx - SHOW_OFFSET);
+		var stopPos = Math.min(text.length, indx + SHOW_OFFSET);
+		var prependStr = (startPos > 0 )? '... ' : '';
+		var appendStr = (stopPos < text.length)? ' ...' : '';
+		// Substring will return copy
+		var textStr = text.substring(startPos, stopPos).replace(searchTerm, "<b><u>" + searchTerm + "</u></b>" );
+		return prependStr + textStr + appendStr;
+	}
+
+	var searchTerm    = UTILS.getQueryVariable(QUERY_SELECTOR);
+	// If there is no version - get selected version from page drop down menu(latest)
+	var searchVersion = UTILS.replaceIfBlank( UTILS.getQueryVariable(VERSION_SELECTOR), DOM.getInstance().getSearchVersion());
+	var searchBaseUrl = UTILS.getQueryVariable(BASEURL_SELECTOR);
+	DOM.getInstance().setSearchVersion(searchVersion);
+
+	if ( !UTILS.isBlank(searchTerm) ) {
+
+		Analytic.getInstance().sendSearchEvent(searchTerm);
+
+		DOM.getInstance().setSearchQuerry(searchTerm);
+
+		$.get(new urlBuilder(searchBaseUrl).buildSearchDictionaryUrl(searchVersion), function( data ) {
+			// Prepare lunr lib
+			var idx = lunr(function () {
+				this.field('id');
+				this.field('title', { boost: 10 });
+				this.field('content');
+			});
+
+			// Init data for lunr lib
+			for (var key in data) {
+				idx.add({
+					'id': key,
+					'title': data[key].title,
+					'content': data[key].content,
+				});
+			}
+			var results = idx.search(searchTerm);
+			DOM.getInstance().updateSearchResults(data, results, searchTerm, processText);
+		})
+		.fail(function(jqXHR, textStatus, errorThrown) {
+			DOM.getInstance().showError(textStatus);
+		});
+	}
 })();
