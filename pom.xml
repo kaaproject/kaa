@@ -54,7 +54,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <flume.version>1.5.0.1</flume.version>
 
         <netty.version>4.0.34.Final</netty.version>
-        <avro.version>1.7.5</avro.version>
+        <avro.version>1.8.1-KAA</avro.version>
         <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.6</zookeeper.version>
         <curator.version>2.9.0</curator.version>
