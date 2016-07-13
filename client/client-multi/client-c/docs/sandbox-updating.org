@@ -1,0 +1,45 @@
+#+TITLE: Sandbox Updating
+#+AUTHOR: Maxim Olender
+#+OPTIONS: toc:nil
+
+Sometimes there is a need to update already running sandbox with new Kaa server or upload new SDK code. This article describes how to do that with minimum hassle using C SDK as an example. You need Maven, JDK-8 (Java Development Kit), ssh and C compiler.
+
+* Step-by-step guide
+
+  {info}
+  Kaa requires JDK-8 to use maven with Kaa. Double check =$JAVA_HOME= environment variable and make sure that it points to JDK-8 home directory.
+  {info}
+
+  When your sandbox up and running, perform following steps to update it:
+
+  1. Navigate to the root of the Kaa repository and launch Maven:
+     #+begin_src sh
+       mvn clean -P compile-client-c,compile-gwt,mongo-dao,mariadb-dao clean install verify -DskipTests
+     #+end_src
+
+  2. After build succeeds it is time to copy node package to the sandbox. =$SANDBOX_HOST= is a host or IP of your sandbox:
+     #+begin_src sh
+       scp server/node/target/kaa-node.deb kaa@${SANDBOX_HOST}:
+     #+end_src
+
+  3. Copy C SDK archive. =$SDK_VERSION= is a version of the SDK. At the time of this writing, SDK version is 0.9.0. Again, =$SANDBOX_HOST= is a host or IP of your sandbox:
+     #+begin_src sh
+       scp client/client-multi/client-c/target/client-c-${SDK_VERSION}-SNAPSHOT-c-sdk.tar.gz kaa@${SANDBOX_HOST}:
+       ssh kaa@${SANDBOX_HOST} sudo mv -v /home/kaa/client-c-${SDK_VERSION}-SNAPSHOT-c-sdk.tar.gz /usr/lib/kaa-node/sdk/c/kaa-c-ep-sdk-${SDK_VERSION}-SNAPSHOT.tar.gz
+     #+end_src
+
+  4. After all files are copied to the proper destinations in sandbox, it is time to install Kaa server node:
+     #+begin_src sh
+       ssh kaa@${SANDBOX_HOST} sudo dpkg -i kaa-node.deb
+     #+end_src
+
+  5. Now, Kaa restart is required:
+     #+begin_src sh
+       ssh kaa@${SANDBOX_HOST} kaa-node stop
+       ssh kaa@${SANDBOX_HOST} kaa-node start
+     #+end_src
+
+  6. If errors occur during restarting of Kaa sandbox, I recommend you to reboot sandbox virtual machine:
+     #+begin_src sh
+       ssh kaa@${SANDBOX_HOST} sudo reboot
+     #+end_src

@@ -24,25 +24,25 @@
 #include <stdbool.h>
 typedef long long int64_t;
 
-#include "../../../kaa_error.h"
-#include "../../../kaa_common.h"
-#include "../../../kaa.h"
-#include "../../../utilities/kaa_log.h"
-#include "../../../platform/ext_sha.h"
-#include "../../../platform/ext_transport_channel.h"
-#include "../../../platform/ext_system_logger.h"
-#include "../../../platform/time.h"
-#include "../../../platform-impl/common/kaa_tcp_channel.h"
-#include "../../../platform-impl/common/ext_log_upload_strategies.h"
-#include "../../../kaa_bootstrap_manager.h"
-#include "../../../kaa_channel_manager.h"
-#include "../../../kaa_configuration_manager.h"
-#include "../../../kaa_logging.h"
-#include "../../../platform/ext_log_storage.h"
-#include "../../../platform/ext_log_upload_strategy.h"
+#include "kaa_error.h"
+#include "kaa_common.h"
+#include "kaa.h"
+#include "utilities/kaa_log.h"
+#include "platform/ext_sha.h"
+#include "platform/ext_transport_channel.h"
+#include "platform/ext_system_logger.h"
+#include "platform/time.h"
+#include "platform-impl/common/kaa_tcp_channel.h"
+#include "platform-impl/common/ext_log_upload_strategies.h"
+#include "kaa_bootstrap_manager.h"
+#include "kaa_channel_manager.h"
+#include "kaa_configuration_manager.h"
+#include "kaa_logging.h"
+#include "platform/ext_log_storage.h"
+#include "platform/ext_log_upload_strategy.h"
 #include "econais_ec19d_file_utils.h"
 
-#include "../../../kaa_context.h"
+#include "kaa_context.h"
 
 #define KAA_CLIENT_T
 
@@ -74,7 +74,7 @@ struct kaa_client_t {
 
 #define KAA_DEMO_LOG_GENERATION_FREQUENCY    3 /* seconds */
 
-#include "../../../platform/kaa_client.h"
+#include "platform/kaa_client.h"
 
 //Forward declaration of internal functions
 kaa_error_t kaa_init_security_stuff(void);
@@ -693,7 +693,7 @@ kaa_error_t kaa_init_security_stuff(void)
 /*
  * Initializes Kaa log collector.
  */
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
+static kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 

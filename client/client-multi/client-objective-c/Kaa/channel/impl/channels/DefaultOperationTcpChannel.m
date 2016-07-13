@@ -35,14 +35,6 @@ typedef enum {
 #define MAX_THREADS_COUNT   2
 #define CHANNEL_ID          @"default_operation_tcp_channel"
 
-@interface PingTask : NSOperation
-
-@property (nonatomic, weak) DefaultOperationTcpChannel *channel;
-
-- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel;
-
-@end
-
 @interface OpenConnectionTask : NSOperation
 
 @property (nonatomic, weak) DefaultOperationTcpChannel *channel;
@@ -64,8 +56,8 @@ typedef enum {
 @property (nonatomic, strong) id<FailoverManager> failoverManager;
 @property (nonatomic, strong) volatile ConnectivityChecker *checker;
 @property (nonatomic, strong) KAAMessageFactory *messageFactory;
-@property (nonatomic, strong) NSOperation *pingTaskFuture;//volatile
 @property (nonatomic) volatile BOOL isOpenConnectionScheduled;
+@property (nonatomic) volatile BOOL isPingTaskCancelled;
 @property (nonatomic, strong) NSOperationQueue *executor;
 @property (nonatomic, strong) KAASocket *socket;//volatile
 @property (nonatomic, weak) id<FailureDelegate> failureDelegate;
@@ -93,13 +85,13 @@ typedef enum {
     self = [super init];
     if (self) {
         self.supportedTypes = @{
-            @(TRANSPORT_TYPE_PROFILE)       : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
-            @(TRANSPORT_TYPE_CONFIGURATION) : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
-            @(TRANSPORT_TYPE_NOTIFICATION)  : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
-            @(TRANSPORT_TYPE_USER)          : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
-            @(TRANSPORT_TYPE_EVENT)         : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
-            @(TRANSPORT_TYPE_LOGGING)       : @(CHANNEL_DIRECTION_BIDIRECTIONAL)
-        };
+                                @(TRANSPORT_TYPE_PROFILE)       : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                @(TRANSPORT_TYPE_CONFIGURATION) : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                @(TRANSPORT_TYPE_NOTIFICATION)  : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                @(TRANSPORT_TYPE_USER)          : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                @(TRANSPORT_TYPE_EVENT)         : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                @(TRANSPORT_TYPE_LOGGING)       : @(CHANNEL_DIRECTION_BIDIRECTIONAL)
+                                };
         self.channelState = CHANNEL_STATE_CLOSED;
         self.messageFactory = [[KAAMessageFactory alloc] init];
         self.state = state;
@@ -215,18 +207,17 @@ typedef enum {
     NSData *sessionKey = [self.encoderDecoder getEncodedSessionKey];
     NSData *signature = [self.encoderDecoder signatureForMessage:sessionKey];
     [self sendFrame:[[KAATcpConnect alloc] initWithAlivePeriod:CHANNEL_TIMEOUT
-                                                 nextProtocolId:KAA_PLATFORM_PROTOCOL_AVRO_ID
-                                                  aesSessionKey:sessionKey
-                                                    syncRequest:requestBodyEncoded
-                                                      signature:signature]];
+                                                nextProtocolId:KAA_PLATFORM_PROTOCOL_AVRO_ID
+                                                 aesSessionKey:sessionKey
+                                                   syncRequest:requestBodyEncoded
+                                                     signature:signature]];
 }
 
 - (void)closeConnection {
     @synchronized(self) {
-        if (self.pingTaskFuture && !self.pingTaskFuture.isCancelled) {
-            [self.pingTaskFuture cancel];
+        if (!self.isPingTaskCancelled) {
+            self.isPingTaskCancelled = YES;
         }
-        
         if (!self.socket) {
             return;
         }
@@ -262,7 +253,7 @@ typedef enum {
             DDLogInfo(@"%@ Can't open connection, as channel is in the %i state", TAG, self.channelState);
             return;
         }
-
+        
         DDLogInfo(@"%@ Channel [%@]: opening connection to server %@", TAG, [self getId], self.currentServer);
         self.isOpenConnectionScheduled = NO;
         self.socket = [self createSocket];
@@ -278,14 +269,15 @@ typedef enum {
     switch (eventCode) {
         case NSStreamEventOpenCompleted:
         {
+            self.isPingTaskCancelled = NO;
+            
             __weak typeof(self) weakSelf = self;
             [self.executor addOperationWithBlock:^{
                 [weakSelf sendConnect];
                 [weakSelf schedulePingTask];
             }];
-            
         }
-           break;
+            break;
         case NSStreamEventErrorOccurred:
             [self onServerFailed];
             break;
@@ -321,7 +313,6 @@ typedef enum {
             break;
     }
 }
-
 
 - (KAASocket *)createSocket {
     return [KAASocket socketWithHost:[self.currentServer getHost] port:[self.currentServer getPort]];
@@ -379,9 +370,26 @@ typedef enum {
 }
 
 - (void)schedulePingTask {
+    self.isPingTaskCancelled = NO;
     if (self.executor) {
-        self.pingTaskFuture = [[PingTask alloc] initWithChannel:self];
-        [self.executor addOperation:self.pingTaskFuture];
+        [self.executor addOperationWithBlock:^{
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)PING_TIMEOUT_SEC * NSEC_PER_SEC);
+            dispatch_after(time, dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+                @try {
+                    DDLogInfo(@"%@ Executing ping task for channel [%@]", TAG, [self getId]);
+                    if (self.isPingTaskCancelled)   {
+                        DDLogInfo(@"%@ Can't schedule new ping task for channel [%@]. Task was cancelled.", TAG, [self getId]);
+                    } else {
+                        [self sendPingRequest];
+                        [self schedulePingTask];
+                    }
+                }
+                @catch (NSException *ex) {
+                    DDLogError(@"%@ Failed to send ping request for channel [%@]: %@. Reason: %@", TAG, [self getId], ex.name, ex.reason);
+                    [self onServerFailed];
+                }
+            });
+        }];
         DDLogDebug(@"%@ Submitting a ping task for channel [%@]", TAG, [self getId]);
     } else {
         DDLogWarn(@"%@ Executor is nil, can't schedule ping connection task", TAG);
@@ -637,43 +645,6 @@ typedef enum {
 }
 
 @end
-
-
-@implementation PingTask
-
-- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel {
-    self = [super init];
-    if (self) {
-        _channel = channel;
-    }
-    return self;
-}
-
-- (void)main {
-    [NSThread sleepForTimeInterval:PING_TIMEOUT_SEC];
-    
-    if (self.isCancelled || self.isFinished) {
-        DDLogInfo(@"%@ Can't execute ping task for channel [%@]. Task was cancelled.", TAG, [self.channel getId]);
-        return;
-    }
-    
-    @try {
-        DDLogInfo(@"%@ Executing ping task for channel [%@]", TAG, [self.channel getId]);
-        [self.channel sendPingRequest];
-        if (self.isCancelled) {
-            DDLogInfo(@"%@ Can't schedule new ping task for channel [%@]. Task was cancelled.", TAG, [self.channel getId]);
-        } else {
-            [self.channel schedulePingTask];
-        }
-    }
-    @catch (NSException *ex) {
-        DDLogError(@"%@ Failed to send ping request for channel [%@]: %@. Reason: %@", TAG, [self.channel getId], ex.name, ex.reason);
-        [self.channel onServerFailed];
-    }
-}
-
-@end
-
 
 @implementation OpenConnectionTask
 

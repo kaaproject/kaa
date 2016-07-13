@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.transaction.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
@@ -44,7 +46,7 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
     @Test
     public void testFindNotificationSchemasByAppId() throws Exception {
         Application application = generateApplication(null);
-        List<NotificationSchema> schemas = generateNotificationSchema(application, 1, null);
+        List<NotificationSchema> schemas = generateNotificationSchema(application, 1, 1, null);
         List<NotificationSchema> found = notificationSchemaDao.findNotificationSchemasByAppId(application.getStringId());
         Assert.assertEquals(schemas, found);
     }
@@ -52,7 +54,7 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
     @Test
     public void testRemoveNotificationSchemasByAppId() throws Exception {
         Application application = generateApplication(null);
-        generateNotificationSchema(application, 1, null);
+        generateNotificationSchema(application, 1, 1, null);
         notificationSchemaDao.removeNotificationSchemasByAppId(application.getStringId());
         List<NotificationSchema> found = notificationSchemaDao.findNotificationSchemasByAppId(application.getStringId());
         Assert.assertTrue(found.isEmpty());
@@ -61,8 +63,8 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
     @Test
     public void testFindNotificationSchemasByAppIdAndType() throws Exception {
         Application application = generateApplication(null);
-        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 2, NotificationTypeDto.USER);
-        generateNotificationSchema(application, 3, NotificationTypeDto.SYSTEM);
+        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 1, 2, NotificationTypeDto.USER);
+        generateNotificationSchema(application, 2, 3, NotificationTypeDto.SYSTEM);
         List<NotificationSchema> found = notificationSchemaDao.findNotificationSchemasByAppIdAndType(application.getStringId(), NotificationTypeDto.USER);
         Assert.assertEquals(userSchemas, found);
     }
@@ -70,8 +72,8 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
     @Test
     public void testFindNotificationSchemasByAppIdAndTypeAndVersion() throws Exception {
         Application application = generateApplication(null);
-        generateNotificationSchema(application, 1, NotificationTypeDto.SYSTEM);
-        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 3, NotificationTypeDto.USER);
+        generateNotificationSchema(application, 1, 1, NotificationTypeDto.SYSTEM);
+        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 2, 3, NotificationTypeDto.USER);
         NotificationSchema expected = userSchemas.get(2);
         NotificationSchema found = notificationSchemaDao.findNotificationSchemasByAppIdAndTypeAndVersion(application.getStringId(), NotificationTypeDto.USER, expected.getVersion());
         Assert.assertEquals(expected, found);
@@ -80,8 +82,8 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
     @Test
     public void testFindLatestNotificationSchemaByAppId() throws Exception {
         Application application = generateApplication(null);
-        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 3, NotificationTypeDto.USER);
-        List<NotificationSchema> systemSchemas = generateNotificationSchema(application, 3, NotificationTypeDto.SYSTEM);
+        List<NotificationSchema> userSchemas = generateNotificationSchema(application, 1, 3, NotificationTypeDto.USER);
+        List<NotificationSchema> systemSchemas = generateNotificationSchema(application, 2, 3, NotificationTypeDto.SYSTEM);
         NotificationSchema found = notificationSchemaDao.findLatestNotificationSchemaByAppId(application.getStringId(), NotificationTypeDto.USER);
         Assert.assertEquals(userSchemas.get(2), found);
     }

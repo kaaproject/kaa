@@ -23,7 +23,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include "../../../platform/ext_configuration_persistence.h"
+#include "platform/ext_configuration_persistence.h"
 #include "econais_ec19d_file_utils.h"
 
 #define KAA_CONFIGURATION_STORAGE    "kaa_configuration.bin"

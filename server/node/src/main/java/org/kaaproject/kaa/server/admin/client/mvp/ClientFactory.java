@@ -105,8 +105,8 @@ public interface ClientFactory {
     BaseSchemaView getCreateConfigurationSchemaView();
 
     BaseListView<NotificationSchemaDto> getNotificationSchemasView();
-    BaseSchemaView getNotificationSchemaView();
-    BaseSchemaView getCreateNotificationSchemaView();
+    BaseCtlSchemaView getNotificationSchemaView();
+    BaseCtlSchemaView getCreateNotificationSchemaView();
 
     BaseListView<LogSchemaDto> getLogSchemasView();
     BaseSchemaView getLogSchemaView();

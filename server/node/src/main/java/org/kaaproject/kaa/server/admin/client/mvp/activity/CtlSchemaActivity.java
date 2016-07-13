@@ -30,6 +30,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
+import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
@@ -39,6 +40,7 @@ import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 
@@ -98,8 +100,8 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 @Override
                 public void onClick(ClickEvent event) {
                     CTLSchemaMetaInfoDto metaInfo = entity.getMetaInfo();
-                    metaInfo.setApplicationId(null);
-                    KaaAdmin.getDataSource().updateCtlSchemaScope(metaInfo, new BusyAsyncCallback<CTLSchemaMetaInfoDto>() {
+
+                    KaaAdmin.getDataSource().promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn(), new BusyAsyncCallback<CTLSchemaMetaInfoDto>() {
                         @Override
                         public void onFailureImpl(Throwable caught) {
                             Utils.handleException(caught, detailsView);
@@ -256,8 +258,10 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         } else if (place.getSchemaType() != null) {
                             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
                                 goTo(new ProfileSchemasPlace(place.getApplicationId()));
-                            } else {
+                            } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE){
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
+                            } else {
+                                goTo(new NotificationSchemasPlace(place.getApplicationId()));
                             }
                         } else if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
@@ -379,7 +383,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
-            } else {
+            } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE){
                 KaaAdmin.getDataSource().createServerProfileSchemaFormCtlSchema(entity, 
                         new BusyAsyncCallback<ServerProfileSchemaViewDto>() {
                             @Override
@@ -391,6 +395,18 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
+            } else {
+                KaaAdmin.getDataSource().createNotificationSchemaFormCtlSchema(entity, new BusyAsyncCallback<NotificationSchemaViewDto>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(NotificationSchemaViewDto notificationSchemaViewDto) {
+                        callback.onSuccess(null);
+                    }
+                });
             }
         } else {
             KaaAdmin.getDataSource().editCTLSchemaForm(entity, callback);

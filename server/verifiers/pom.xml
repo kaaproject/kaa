@@ -35,8 +35,40 @@
     </properties>
     <modules>
         <module>trustful-verifier</module>
-        <module>gplus-verifier</module>
-        <module>facebook-verifier</module>
-        <module>twitter-verifier</module>
     </modules>
+    <profiles>
+        <profile>
+            <id>gplus</id>
+            <activation>
+                <property>
+                    <name>verifiers</name>
+                </property>
+            </activation>
+            <modules>
+                <module>gplus-verifier</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>facebook</id>
+            <activation>
+                <property>
+                    <name>verifiers</name>
+                </property>
+            </activation>
+            <modules>
+                <module>facebook-verifier</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>twitter</id>
+            <activation>
+                <property>
+                    <name>verifiers</name>
+                </property>
+            </activation>
+            <modules>
+                <module>twitter-verifier</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

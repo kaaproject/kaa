@@ -27,7 +27,7 @@
 #include <netdb.h>
 #include <string.h>
 
-#include "../kaa_test.h"
+#include "kaa_test.h"
 
 #include "kaa_common.h"
 #include "kaa_error.h"
@@ -37,6 +37,9 @@
 #include "platform/ext_tcp_utils.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
+#include "platform/ext_key_utils.h"
+
+#include <kaa_bootstrap_manager.h>
 
 #define ACCESS_POINT_SOCKET_FD 5
 
@@ -656,6 +659,16 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
     if (next_protocol_id != 0x3553c66f) {
         return KAATCP_ERR_BAD_PARAM;
     }
+
+#ifdef KAA_ENCRYPTION
+    /* If enctyption is enabled, wee ougth to decrypt
+     * payload first and supply the rigth payload size
+     * for parsing.
+     */
+    kaa_error_t err = ext_decrypt_data((uint8_t *)sync_request, sync_request_size,
+                                       (uint8_t *)sync_request, &sync_request_size);
+    ASSERT_EQUAL(err, KAA_ERR_NONE);
+#endif
     if (sync_request && sync_request_size == sizeof(CONNECT_PACK)) {
         if (!memcmp(CONNECT_PACK, sync_request, sync_request_size)) {
             memset(message, 0, sizeof(kaatcp_connect_t));

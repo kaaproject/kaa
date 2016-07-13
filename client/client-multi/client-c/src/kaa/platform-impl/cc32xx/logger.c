@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
+#include <platform/stdio.h>
 #include <stdarg.h>
-#include "cc32xx_time.h"
-#include "../../platform/ext_system_logger.h"
+#include <platform/time.h>
+#include <platform/ext_system_logger.h>
 
 #include "common.h"
 #include "uart_if.h"

@@ -90,6 +90,10 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo-dao</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -73,13 +73,12 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
     private Button saveButton;
     private Button activateButton;
     private Button deactivateButton;
-    private Button downloadConfigurationButton;
 
     private boolean active;
 
     private Label bodyLabel;
 
-    private HorizontalPanel buttonsPanel;
+    protected HorizontalPanel buttonsPanel;
 
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
@@ -88,7 +87,7 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         init();
     }
 
-    private void init() {
+    protected void init() {
 
         getColumnFormatter().setWidth(0, "400px");
         getColumnFormatter().setWidth(1, "400px");
@@ -208,30 +207,11 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         saveButton = new Button(Utils.constants.save());
         activateButton = new Button(Utils.constants.activate());
         deactivateButton = new Button(Utils.constants.deactivate());
-        downloadConfigurationButton = new Button(Utils.constants.downloadConfiguration());
         buttonsPanel.add(saveButton);
         buttonsPanel.add(activateButton);
         buttonsPanel.add(deactivateButton);
-        buttonsPanel.add(downloadConfigurationButton);
 
         description.setFocus(true);
-
-        saveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                updateSaveButton(false, false);
-            }
-        });
-
-        downloadConfigurationButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                String url = Window.Location.getHref();
-                Window.open("/kaaAdmin/servlet/kaaConfigurationDownloadServlet?schemaId=" + Utils.getSchemaIdFromUrl(url) +
-                                "&endGroupId=" + Utils.getEndpointGroupIdFromUrl(url),
-                        "_blank", "status=0,toolbar=0,menubar=0,location=0");
-            }
-        });
     }
 
     protected void prependButton(Button button) {

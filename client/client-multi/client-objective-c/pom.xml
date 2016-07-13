@@ -66,7 +66,7 @@
                         <exclude>**/*.template</exclude>
                         <exclude>**/Kaa.xcodeproj/**</exclude>
                         <exclude>**/Kaa.xcworkspace/**</exclude>
-                        <exclude>**/Pods/**</exclude>>
+                        <exclude>**/Pods/**</exclude>
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/.*</exclude>

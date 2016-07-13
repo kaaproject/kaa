@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -75,6 +76,7 @@ import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.servlet.ServletUtils;
+import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
@@ -151,32 +153,34 @@ public class KaaAdminController {
         try {
             ServiceErrorCode errorCode = ex.getErrorCode();
             switch (errorCode) {
-            case NOT_AUTHORIZED:
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-                break;
-            case PERMISSION_DENIED:
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
-                break;
-            case INVALID_ARGUMENTS:
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
-                break;
-            case INVALID_SCHEMA:
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
-                break;
-            case FILE_NOT_FOUND:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
-                break;
-            case ITEM_NOT_FOUND:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
-                break;
-            case BAD_REQUEST_PARAMS:
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
-                break;
-            case GENERAL_ERROR:
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
-                break;
-            default:
-                break;
+                case NOT_AUTHORIZED:
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+                    break;
+                case PERMISSION_DENIED:
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
+                    break;
+                case INVALID_ARGUMENTS:
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+                    break;
+                case INVALID_SCHEMA:
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+                    break;
+                case FILE_NOT_FOUND:
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
+                    break;
+                case ITEM_NOT_FOUND:
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
+                    break;
+                case BAD_REQUEST_PARAMS:
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+                    break;
+                case GENERAL_ERROR:
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+                    break;
+                case CONFLICT:
+                    response.sendError(HttpServletResponse.SC_CONFLICT, ex.getMessage());
+                default:
+                    break;
             }
         } catch (IOException e) {
             LOG.error("Can't handle exception", e);
@@ -286,6 +290,20 @@ public class KaaAdminController {
     @ResponseBody
     public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
         return kaaAdminService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
+    }
+
+    /**
+     * Remove the endpoint with specific profile key.
+     *
+     * @param endpointProfileKeyHash
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "removeEndpointProfileByKeyHash", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void removeEndpointProfileByKeyHash(@RequestParam(value = "endpointProfileKeyHash") String endpointProfileKeyHash) throws KaaAdminServiceException {
+        kaaAdminService.removeEndpointProfileByKeyHash(endpointProfileKeyHash);
     }
 
     /**
@@ -421,6 +439,11 @@ public class KaaAdminController {
     @ResponseBody
     public TenantUserDto editTenant(@RequestBody TenantUserDto tenantUser) throws KaaAdminServiceException {
         try {
+            if (isEmpty(tenantUser.getAuthority())) {
+                tenantUser.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
+            } else if (!KaaAuthorityDto.TENANT_ADMIN.equals(tenantUser.getAuthority())) {
+                throw new KaaAdminServiceException("Incorrect authority for tenant. Authority must be TENANT_ADMIN.", ServiceErrorCode.INVALID_ARGUMENTS);
+            }
             CreateUserResult result = userFacade.saveUserDto(tenantUser, passwordEncoder);
             tenantUser.setExternalUid(result.getUserId().toString());
             TenantUserDto tenant = kaaAdminService.editTenant(tenantUser);
@@ -431,20 +454,6 @@ public class KaaAdminController {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
-    }
-
-    /**
-     * Delete tenant by user id.
-     *
-     * @param userId
-     *            the user id
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "delTenant", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteTenant(@RequestParam(value = "userId") String userId) throws KaaAdminServiceException {
-        kaaAdminService.deleteTenant(userId);
     }
 
     /**
@@ -837,26 +846,24 @@ public class KaaAdminController {
     }
 
     /**
-     * Update existing CTL schema meta info scope by the given CTL schema meta info object.
+     * Promote existing CTL schema meta info from application to tenant scope
      *
-     * @param ctlSchemaMetaInfo
-     *            the CTL schema meta info object.
-     *            
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     *             
-     * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
-     */    
-    @RequestMapping(value = "CTL/updateScope", method = RequestMethod.POST)
+     * @param applicationId the id of application where schema was created
+     * @param fqn the fqn of promoting CTL schema
+     * @throws KaaAdminServiceException the kaa admin service exception
+     *
+     * @return CTLSchemaMetaInfoDto the promoted CTL schema meta info object.
+     */
+    @RequestMapping(value = "CTL/promoteScopeToTenant", method = RequestMethod.POST)
     @ResponseBody
-    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(@RequestBody CTLSchemaMetaInfoDto ctlSchemaMetaInfo)
+    public CTLSchemaMetaInfoDto promoteScopeToTenant(@RequestParam String applicationId, @RequestParam String fqn)
             throws KaaAdminServiceException {
-        return kaaAdminService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
+        return kaaAdminService.promoteScopeToTenant(applicationId, fqn);
     }
 
     /**
      * Retrieves a list of available system CTL schemas.
-     * 
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
@@ -866,10 +873,10 @@ public class KaaAdminController {
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
         return kaaAdminService.getSystemLevelCTLSchemas();
     }
-    
+
     /**
      * Retrieves a list of available CTL schemas for tenant.
-     * 
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
@@ -1001,7 +1008,7 @@ public class KaaAdminController {
 
     /**
      * Gets the profile schema by its id.
-     * 
+     *
      * @param profileSchemaId
      *            the profile schema id
      * @return the endpoint profile schema dto
@@ -1146,18 +1153,14 @@ public class KaaAdminController {
      *
      * @param notificationSchema
      *            the notification schema
-     * @param file
-     *            the file
      * @return the notification schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
     @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema,
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return kaaAdminService.editNotificationSchema(notificationSchema, data);
+    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
+        return kaaAdminService.editNotificationSchema(notificationSchema);
     }
 
     /**
@@ -1173,7 +1176,7 @@ public class KaaAdminController {
     @ResponseBody
     public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema, null);
+        return kaaAdminService.editNotificationSchema(notificationSchema);
     }
 
     /**
@@ -1326,7 +1329,7 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "userVerifiersByAppToken/{applicationToken}", method = RequestMethod.GET)
+    @RequestMapping(value = "userVerifiers/{applicationToken}", method = RequestMethod.GET)
     @ResponseBody
     public List<UserVerifierDto> getUserVerifiersByApplicationToken(@PathVariable String applicationToken) throws KaaAdminServiceException {
         return kaaAdminService.getRestUserVerifiersByApplicationToken(applicationToken);

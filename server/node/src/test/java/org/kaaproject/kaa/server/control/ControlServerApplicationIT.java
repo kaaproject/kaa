@@ -50,12 +50,12 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test get application by app token.
+     * Test get application.
      *
      * @throws Exception the exception
      */
     @Test
-    public void testGetApplicationByAppToken() throws Exception {
+    public void testGetApplication() throws Exception {
         ApplicationDto application = createApplication();
 
         ApplicationDto storedApplication = client.getApplicationByApplicationToken(application.getApplicationToken());

@@ -16,7 +16,8 @@
 
 #include "kaa_private.h"
 
-#include "platform/platform.h"
+#include <stdint.h>
+#include <string.h>
 #include "platform/sock.h"
 #include <stdbool.h>
 #include "kaa_platform_utils.h"

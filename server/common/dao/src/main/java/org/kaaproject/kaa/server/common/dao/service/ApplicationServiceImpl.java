@@ -75,6 +75,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.avsc";
     private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.avsc";
     private static final String DEFAULT_SCHEMA_NAME = "Generated";
+    private static final String DEFAULT_CREDENTIALS_SERVICE_NAME = "Trustful";
     
 
     @Autowired
@@ -165,6 +166,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             Application checkApplication = applicationDao.findByNameAndTenantId(applicationDto.getName(), applicationDto.getTenantId());
             if (checkApplication != null && !Objects.equals(checkApplication.getStringId(), applicationDto.getId())) {
                 throw new IncorrectParameterException("Can't save application with same name within one tenant");
+            }
+            if(isBlank(applicationDto.getCredentialsServiceName())){
+                applicationDto.setCredentialsServiceName(DEFAULT_CREDENTIALS_SERVICE_NAME);
             }
             if (isNotBlank(applicationDto.getId())) {
                 LOG.debug("Update application with id [{}]", applicationDto.getId());
@@ -266,19 +270,18 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private NotificationSchemaDto createDefaultNotificationSchema(String appId, String createdUsername) {
-        NotificationSchemaDto schema = new NotificationSchemaDto();
-        schema.setApplicationId(appId);
-        DataSchema defSchema =  new KaaSchemaFactoryImpl().createDataSchema(getStringFromFile(DEFAULT_NOTIFICATION_SCHEMA_FILE, ApplicationServiceImpl.class));
-        if (!defSchema.isEmpty()) {
-            schema.setSchema(defSchema.getRawSchema());
-        } else {
-            throw new RuntimeException("Can't read default notification schema."); //NOSONAR
+        NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
+        notificationSchemaDto.setApplicationId(appId);
+        CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+        notificationSchemaDto.setCtlSchemaId(ctlSchema.getId());
+        notificationSchemaDto.setName(DEFAULT_SCHEMA_NAME);
+        notificationSchemaDto.setCreatedUsername(createdUsername);
+        notificationSchemaDto.setType(NotificationTypeDto.USER);
+        notificationSchemaDto = notificationService.saveNotificationSchema(notificationSchemaDto);
+        if (notificationSchemaDto == null) {
+            throw new RuntimeException("Can't save default profile schema "); //NOSONAR
         }
-        schema.setType(NotificationTypeDto.USER);
-        schema.setName(DEFAULT_SCHEMA_NAME);
-        schema.setCreatedUsername(createdUsername);
-
-        return notificationService.saveNotificationSchema(schema);
+        return notificationSchemaDto;
     }
 
     private LogSchemaDto createDefaultLogSchema(String appId, String createdUsername) {

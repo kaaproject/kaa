@@ -17,12 +17,12 @@
 # include <stdint.h>
 # include "kaa_${event_family_name}.h"
 
-# include "../avro_src/avro/io.h"
+# include "avro_src/avro/io.h"
 
-# include "../kaa_common.h"
-# include "../kaa_event.h"
-# include "../kaa_error.h"
-# include "../utilities/kaa_mem.h"
+# include "kaa_common.h"
+# include "kaa_event.h"
+# include "kaa_error.h"
+# include "utilities/kaa_mem.h"
 
 # include "kaa_private.h"
 

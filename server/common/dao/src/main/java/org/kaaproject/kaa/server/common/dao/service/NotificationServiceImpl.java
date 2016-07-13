@@ -170,7 +170,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private byte[] serializeNotificationBody(NotificationDto nf, NotificationSchema nfSchema) throws IOException {
-        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(nfSchema.getSchema());
+        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(nfSchema.getCtlSchema().getBody());
         String notificationJson = new String(nf.getBody(), Charset.forName("UTF8"));
         GenericRecord notificationAvro = converter.decodeJson(notificationJson);
         return converter.encode(notificationAvro);
