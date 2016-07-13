@@ -107,7 +107,7 @@ Use the minimum number of words required to get the message across.
 If you must use a question, make sure it's relevant to the user and the context.
 Do not make up questions for the sake of creating an imaginary dialog with the user.
 * Do not overuse exclamation points.
-This can make your writing seem emotional to and rather subjective to the user.
+This can make your writing seem emotional and rather subjective to the user.
 Use exclamation points when they are required to emphasize something really critical and important.
 * Do not use colloquialisms, idioms, sayings, proverbs, etc.
 Keep globalization and cultural considerations in mind.
@@ -124,9 +124,8 @@ For others, use **bold** formatting on the first mention.
 Shortcutting only works when it's defined.
 E.g.: "Administrative UI" is not equal to "Admin UI" unless defined so, "tenant administrator" is not the same as "tenant", etc.
 * Spell out an acronym on its first mention, for example, _Common Type Library (CTL)_.
-* Supplement your text with links to the glossary when you use glossary terms.
-* Do not make a new term if the glossary contains another term describing the same idea.
-* When creating a new term, make sure it does not already mean something else in the glossary.
+* Do not make a new term if the Glossary contains another term describing the same idea.
+* When creating a new term, make sure it does not already mean something else in the Glossary.
 
 ## Grammar
 * Give preference to present tense over past and future tenses.
