@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     server_hash text,
     sdk_token text,
     srv_pf text,
+    use_raw_schema boolean,
     opt_lock bigint
 );
 

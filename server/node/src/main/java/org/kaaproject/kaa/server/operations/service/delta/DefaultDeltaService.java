@@ -43,6 +43,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.delta.BaseBinaryDelta;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorithmFactory;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideException;
+import org.kaaproject.kaa.server.common.core.configuration.AbstractKaaData;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
 import org.kaaproject.kaa.server.common.core.configuration.RawData;
@@ -124,7 +125,7 @@ public class DefaultDeltaService implements DeltaService {
         DeltaCacheKey deltaKey = new DeltaCacheKey(appConfigVersionKey, profile.getGroupState(), EndpointObjectHash.fromBytes(profile
                 .getUserConfigurationHash()), null, true);
         LOG.debug("[{}][{}] Built resync delta key {}", appToken, endpointId, deltaKey);
-        return getDelta(endpointId, profile.getEndpointUserId(), deltaKey);
+        return getDelta(endpointId, profile.getEndpointUserId(), deltaKey, profile.isUseConfigurationRawSchema());
     }
 
     /*
@@ -185,7 +186,7 @@ public class DefaultDeltaService implements DeltaService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private ConfigurationCacheEntry getDelta(final String endpointId, final String userId, DeltaCacheKey deltaKey) throws GetDeltaException {
+    private ConfigurationCacheEntry getDelta(final String endpointId, final String userId, DeltaCacheKey deltaKey, boolean useConfigurationRawSchema) throws GetDeltaException {
         EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(userId, deltaKey);
 
         final DeltaCacheKey newKey;
@@ -202,8 +203,8 @@ public class DefaultDeltaService implements DeltaService {
                         try {
                             LOG.debug("[{}] Calculating delta for {}", endpointId, deltaKey);
                             ConfigurationCacheEntry deltaCache;
-                            ConfigurationSchemaDto latestConfigurationSchema = cacheService.getConfSchemaByAppAndVersion(deltaKey
-                                    .getAppConfigVersionKey());
+                            AbstractKaaData<?> kaaData;
+                            ConfigurationSchemaDto latestConfigurationSchema = cacheService.getConfSchemaByAppAndVersion(deltaKey.getAppConfigVersionKey());
 
                             EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(userId, deltaKey);
 
@@ -212,16 +213,19 @@ public class DefaultDeltaService implements DeltaService {
                                 userConfigurationHash = EndpointObjectHash.fromString(userConfiguration.getBody());
                             }
 
-                            BaseData mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey,
-                                    latestConfigurationSchema);
+                            BaseData mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey, latestConfigurationSchema);
 
-                            // converting merged base schema to raw schema
-                            String ctlSchema = cacheService.getFlatCtlSchemaById(latestConfigurationSchema.getCtlSchemaId());
-                            RawData rawData = new RawData(new RawSchema(ctlSchema), mergedConfiguration.getRawData());
+                            if(useConfigurationRawSchema) {
+                                kaaData = mergedConfiguration;
+                            } else {
+                                // converting merged base schema to raw schema
+                                String ctlSchema = cacheService.getFlatCtlSchemaById(latestConfigurationSchema.getCtlSchemaId());
+                                kaaData = new RawData(new RawSchema(ctlSchema), mergedConfiguration.getRawData());
+                            }
 
-                            LOG.trace("[{}] Merged configuration {}", endpointId, mergedConfiguration.getRawData());
+                            LOG.trace("[{}] Merged configuration {}", endpointId, kaaData.getRawData());
 
-                            deltaCache = buildBaseResyncDelta(endpointId, rawData, userConfigurationHash);
+                            deltaCache = buildBaseResyncDelta(endpointId, kaaData, userConfigurationHash);
                             
                             if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
                                 EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
@@ -359,10 +363,10 @@ public class DefaultDeltaService implements DeltaService {
         return mergedConfiguration;
     }
 
-    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, RawData rawMergedConf, EndpointObjectHash userConfigurationHash) throws IOException {
-        JsonNode json = new ObjectMapper().readTree(rawMergedConf.getRawData());
+    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, AbstractKaaData<?> mergedConf, EndpointObjectHash userConfigurationHash) throws IOException {
+        JsonNode json = new ObjectMapper().readTree(mergedConf.getRawData());
         json = AvroUtils.removeUuids(json);
-        byte[] configuration = GenericAvroConverter.toRawData(json.toString(), rawMergedConf.getSchema().getRawSchema());
+        byte[] configuration = GenericAvroConverter.toRawData(json.toString(), mergedConf.getSchema().getRawSchema());
         return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
                 userConfigurationHash);
     }
