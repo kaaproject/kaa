@@ -8,14 +8,56 @@ sort_idx: 30
 * TOC
 {:toc}
 
-This guide describes configuration of Kaa cluster on a few Linux nodes.
+This guide describes configuration of Kaa cluster on Linux nodes.
 
 The guide contains instructions on how to configure kaa-node service and required third party components like Apache Zookeeper service, SQL and NoSQL databases.
 
-## Introduction
+## Requirements
 
-In general cluster setup is similar to [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/), except few details. 
-We need at least 3 nodes to create a reliable cluster. 
+In order to set up Kaa cluster you need to have at least 3 Linux nodes with ```kaa-node``` service installed on each of them to create a reliable cluster, refer to [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/) guide for installation details. 
+
+Also ```kaa-node``` service require some third party dependencies like SQL and NoSQL databases and Apache Zookeeper service, more details you can find in [Architecture overview]({{root_url}}Architecture-overview/). 
+You can find detailed instructions on how to install and configure Zookeeper service and one of supported SQL and NoSQL databases in [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/#installation-steps) guide. 
+A set of databases (for example MongoDB + PostgreSQL) depends on your particular use case and some useful recommendations you can find in [Planning your deployment](http://10.2.2.133:4000/kaa/current/Administration-guide/System-installation/Planning-your-deployment/) guide.
+
+In this guide we assume that you had already set up your SQL and NoSQL database clusters, so this tutorial doesn't cover such themes like setting up ones for Cassandra, MongoDB or PostgreSQL. 
+Refer to official [Cassandra](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation in order to setup corresponding database cluster.
+
+MariaDB come with out of the box master-master replication support thus we recommend to use this database in your Kaa cluster. 
+You can find detailed instructions in [MariaDB cluster setup guide]({{root_url}}Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/).
+
+> Note: In a cluster you need to connect to databases from external hosts so you need to allow such external connections in corresponding database security configurations and configure firewall rules for database host machine. 
+> Refer to official documentation for corresponding database for security configuration details.
+
+In addition to added on ```kaa-node``` service installation step firewall rules on every endpoint Kaa Administrator need to add some more rules for databases (depending on a set databases in the cluster) and Zookeeper ports.
+
+```bash
+# MongoDB port
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 27017 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 27017 -j ACCEPT
+
+# Cassandra port
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9042 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 9042 -j ACCEPT
+
+# MariaDB port 
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 3306 -j ACCEPT
+
+# PostgreSQL port
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 5432 -j ACCEPT
+
+# Zookeeper port
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 2181 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 2181 -j ACCEPT
+
+$ sudo apt-get install iptables-persistent
+$ sudo service netfilter-persistent start
+$ sudo netfilter-persistent save
+```
+
+## Introduction
 
 The following is the hosts list that we had setup for this guide.
 
@@ -25,14 +67,16 @@ node2 172.2.2.2
 node3 172.3.3.3
 ```
 
-On each of nodes were installed NoSQl database (MongoDB or Cassandra), Zookeeper service and Kaa node service and everything that left it is to configure kaa-node services. 
-In this guide we chose default ports for databases and Zookeeper service: for MongoDB it is 27017, Cassandra - 9042, MariaDB - 3306, PostgreSQL - 5432 and Zookeeper - 2181.
+On each of nodes were installed NoSQl database (MongoDB or Cassandra), Zookeeper service and Kaa node service and everything that left it is to configure ```kaa-node``` services. 
+In this guide we chose default ports for databases and Zookeeper service: 
 
-In this guide we assume that you had already set up your SQL and NoSQL database's clusters, so this tutorial doesn't cover such themes like setting up ones for Cassandra, MongoDB or PostgreSQL. 
-Refer to official [Cassandra](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation in order to setup corresponding database cluster.
-
-MariaDB come with out of the box master-master replication support thus we recommend to use this database in your Kaa cluster setup. 
-You can find detailed instructions in [MariaDB cluster setup guide]({{root_url}}/Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/).
+| Service    | Port  |
+| ---------- | ----- |
+| MongoDB    | 27017 |
+| Cassandra  | 9042  |
+| MariaDB    | 3306  |
+| PostgreSQL | 5432  |
+| Zookeeper  | 2181  |
 
 ## List of configuration properties
 
@@ -59,7 +103,7 @@ List of properties that you need to edit in order to set up cluster:
 
 ### Stop Kaa node service
 
-Stop kaa-node service before starting configuration by executing next command:
+Ensure the existing ```kaa-node``` service is stopped before starting configuration by executing next command:
 
 ```bash
  $ sudo service kaa-node stop
@@ -67,7 +111,7 @@ Stop kaa-node service before starting configuration by executing next command:
 
 ### Kaa node configuration
 
-Kaa services (bootstrap, control or operations) can be enabled or disabled on Kaa node by editing corresponding properties in ```/etc/kaa-node/conf/kaa-node.properties``` file.
+Kaa services (Bootstrap, Control or Operations) can be enabled or disabled on Kaa node by editing corresponding properties in ```/etc/kaa-node/conf/kaa-node.properties``` file.
 
 ```bash
 # Specifies if Control Server is enabled.
@@ -296,31 +340,6 @@ Assuming that we peek standard Cassandra port, for all three nodes property woul
 
 </div></div>
 
-### Firewall rules configuration
-
-On every endpoint Kaa Administrator need to configure [firewall rules]({{root_url}}Administration-guide/System-installation/Single-node-installation#firewall-rules-configuration) same as in Single node installation. Additionally Kaa administrator need to configure firewall rules for databases (depending on databases setup) and Zookeeper ports.
-
-```bash
-# MongoDB port
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 27017 -j ACCEPT
-
-# Cassandra port
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 9042 -j ACCEPT
-
-# MariaDB port 
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
-
-# PostgreSQL port
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT
-
-# Zookeeper port
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 2181 -j ACCEPT
-
-$ sudo apt-get install iptables-persistent
-$ sudo service netfilter-persistent start
-$ sudo netfilter-persistent save
-```
-
 ### Start up Kaa node service
 
 After all configuration properties set up
@@ -339,10 +358,9 @@ If everithing is configured properly Kaa Administrator will see next output on c
 Check logs for exceptions after the startup.
 
 ```bash
- $ cd /var/log/kaa
- $ cat * | grep ERROR
+ $ grep ERROR /var/log/kaa/*
 ```
 
-If configuration was sucessfull you wouldn't see any errors in logs.
+If configuration was successful you wouldn't see any errors in logs.
 
 ---
