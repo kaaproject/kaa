@@ -15,24 +15,27 @@ The Kaa Configuration subsystem is responsible for configuring endpoints by supp
 via the Kaa server. The fact that Kaa operates with the uniformly structured data deserves a special emphasis. By knowing the data structure of the
 application, Kaa provides a number of very useful features, such as:
 
-* Incremental data updates for endpoints
-* Endpoint-specific data view that is based on the endpoint membership in endpoint groups
 * Automatic generation of the data object model in the endpoint SDK
 * Automatic generation of the default configuration
-* Enforcement of the data integrity and validity on the server's northbound integration interface
+* Enforcement of the data integrity
+* Endpoint-specific data view that is based on the endpoint membership in endpoint groups
 
-The structure of the configuration data is determined by the customizable configuration schema, which is created under the application using Admin UI or
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO). It is the responsibility of the Kaa developer to construct the configuration schema
-for the application and make the Kaa client interpret the data supplied by the endpoint SDK. The Kaa administrator, in turn, can provision
-the configuration schema into the Kaa server and set the configuration data accordingly.
-
-Once a new configuration schema is loaded into the Kaa application, the Control service automatically assigns a version number to the schema,
+Control service automatically assigns a version number to the schema, once a new configuration schema is loaded into the Kaa application 
 generates three corresponding derivative schemas (a [base schema](#base-schema), [override schema](##override-schema), and [protocol schema](#protocol-schema)),
 and populates configuration data in the "all" group with the default values.
 
 # Configuration management overview
 
+The structure of the configuration data is determined by the customizable configuration schema, which is created under the application using Administration UI or
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO). It is the responsibility of the Kaa developer to construct the configuration schema
+for the application and make the Kaa client interpret the data supplied by the endpoint SDK. The Kaa administrator, in turn, can provision
+the configuration schema into the Kaa server and set the configuration data accordingly.
+
 ![Configuration management overview](attach/configuration.png)
+
+The following image example illustrates how to add configuration schema from Administration UI.
+
+![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
 
 # Configuration schema
 
@@ -117,7 +120,7 @@ In case of the _optional_ union field, Kaa automatically puts ```null``` at the 
 ```
 
 * The **by_default** field attribute (the value is interpreted according to the field type; it has no default value) determines the default value for the field
-and is used for generation of the default record. The **by_default** attribute must be present for all mandatory primitive record fields, except for ```null.```
+and is used for generation of the default record.
 
 ```json
 {
@@ -151,10 +154,11 @@ The following table specifies the **by_default** attribute format for every supp
 | ```long```     | numeric value from (-2^63+1) to (2^63-1) | "by_default": 2147483648         |
 | ```string```   | simple string format                     | "by_default": "abcdef"           |
 
-* The **addressable** record type field attribute (```boolean```, ```true``` by default) determines whether or not the record supports partial updates
-([deltas](#delta-calculation-algorithm)). If this attribute is ```true```, Kaa automatically adds a UUID field (```__uuid```) to the record when producing
+* The [addressable](#addressing) record type field attribute (```boolean```, ```true``` by default) determines whether or not the 
+record supports partial updates (override) from different endpoint groups.
+If this attribute is ```true```, Kaa automatically adds a UUID field (```__uuid```) to the record when producing
 derivative schemas, which is done for the addressing purposes. For this reason, ```__uuid``` is a reserved field name in Kaa.  Note that the root record
-in the configuration schema is always addressable and thus ignores the statement ```_"addressable": false_```.
+ in the configuration schema is always addressable and thus ignores the statement ```_"addressable": false_```.
 
 ```json
 {
@@ -642,7 +646,7 @@ To define and apply the resulting configuration update for the endpoint, the Ope
 1. Evaluates the endpoint group membership according to the endpoint profile.
 2. Merges all configuration data sets assigned to the groups the endpoint belongs to, starting with the one that has the lowest weight
 (which is always group "all" with the 0 weight). <br/>
-In case of the conflicting field values, the field is set with the value from the group with the highest weight.
+In case of the conflicting field alues, the field is set with the value from the group with the highest weight.
 
 >**NOTE:**
 > In case of the arrays, the ```overrideStrategy``` field in the configuration schema defines the way in which the arrays are merged. <br/>
@@ -651,7 +655,8 @@ Both profile schema and configuration schema versions the endpoint supports are 
 
 # User-specific configuration management
 
-The user-specific configuration management allows updating configuration data for the specific user under the application. The user-specific
+The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) allows 
+updating configuration data for the specific user under the application. The user-specific
 configuration management implements the same approach as in [Group-specific configuration](#group-specific-configuration-management) management,
 based on the override schema and override algorithm.
 
@@ -662,510 +667,17 @@ The override algorithm applies user-specific overrides only after all group-spec
 
 # Endpoint data synchronization
 
-After calculating the up-to-date configuration for the endpoint, the Operations service constructs a delta update based on the knowledge of the
-prior configuration of that endpoint. In certain cases, the delta update can contain a complete endpoint configuration.
+After calculating the up-to-date configuration for the endpoint, the Operations service constructs a update complete endpoint configuration. 
 
-Having received the delta update, the endpoint merges it with the existing configuration data, notifies the client application about the update, and
+Having received the update, the endpoint merges it with the existing configuration data, notifies the client application about the update, and
 persists the resulting configuration. The data storage location is set as an abstraction in the endpoint, therefore the concrete location for
 persisting the data is defined in the client implementation.
 
-By delivering configuration deltas instead of full configuration sets each time the endpoint needs to be reconfigured, the Kaa server significantly
-reduces a traffic load in the available data channels.
-
 Data consistency is ensured by the hash comparison between the endpoint and the server.
-
-## Protocol schema
-
-A _protocol schema_ determines the structure of the data updates that Kaa server sends to the endpoints and possible update actions
-(change, add, reset, and leave unchanged). The protocol schema is automatically generated by the Control service for each configuration schema
-(when the configuration schema is loaded by the user).
-
-The updates may carry either a full set of data (full sync) or a partial update (configuration delta). Full sync is used in exceptional situations
-(e.g., a hash mismatch), with the corresponding protocol schema being very similar to the [base schema](#base-schema).
-
-The schema generator performs the following transformations to convert the configuration schema to the protocol schema.
-
-* The ```__uuid``` field of the ```org.kaaproject.configuration.uuidT``` type is added to every addressable record. Having a UUID ensures that the
-record becomes addressable and the Kaa server can send partial updates on such records.
-
-* Optional fields are transformed into unions with either the original field type, ```null``` type or ```org.kaaproject.configuration.unchangedT```
-type.
-The ```org.kaaproject.configuration.unchangedT``` type is used for a simple enum that indicates that there is no change for the field in the current
-update. It has the following structure.
-
-```json
-{
-    "name":"unchangedT",
-    "namespace":"org.kaaproject.configuration",
-    "type":"enum",
-    "symbols":[
-        "unchanged"
-    ]
-}
-```
-
-* Mandatory fields are transformed into unions with either the original field type or ```the org.kaaproject.configuration.unchangedT``` type.
-
-* Array fields are transformed into unions, as follows:
-   * an array of:
-       * the original array item type to add new items to the array
-       * the ```org.kaaproject.configuration.uuidT``` type if the original item type is a UUID-addressable record
-   * the ```org.kaaproject.configuration.unchangedT``` type to indicate no changes to the array contents
-   * the ```org.kaaproject.configuration.resetT``` type to purge the array contents. <br/>
-   Similarly to ```org.kaaproject.configuration.unchangedT```, ```org.kaaproject.configuration.resetT``` is a simple ```enum```, as follows:
-
-```json
-{
-    "name":"resetT",
-    "namespace":"org.kaaproject.configuration",
-    "type":"enum",
-    "symbols":[
-        "reset"
-    ]
-}
-```
-
-* The root record schema is wrapped into an array of ```org.kaaproject.configuration.deltaT``` records. The ```org.kaaproject.configuration.deltaT```
-record contains the only one field, which is called delta. The delta field is a union of the transformed data root record schema and every UUID-addressable
-record type encountered in the root record schema. Such a structure allows encoding delta updates to every UUID-addressable record in the schema, including
-the root record.
-
-```json
-{
-    "type":"array",
-    "items":{
-        "name":"deltaT",
-        "namespace":"org.kaaproject.configuration",
-        "type":"record",
-        "fields":[
-            {
-                "name":"delta",
-                "type":[
-                    <root record schema>,
-                    <list of addressable record types>
-                ]
-            }
-        ]
-    }
-}
-```
-
-As an example, consider transformation of the following record.
-
-Configuration schema:
-
-```json
-{
-    "name":"rootT",
-    "namespace":"org.kaaproject.kaa.schema.sample",
-    "type":"record",
-    "fields":[
-        {
-            "name":"arrayOfRecords",
-            "type":{
-                "type":"array",
-                "items":{
-                    "name":"addressableRecordT",
-                    "namespace":"org.kaaproject.kaa.schema.sample",
-                    "type":"record",
-                    "fields":[
-                        {
-                            "name":"booleanField",
-                            "type":"boolean",
-                            "by_default":false
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name":"arrayOfPrimitives",
-            "type":{
-                "type":"array",
-                "items":{
-                    "name":"primitiveRecordT",
-                    "namespace":"org.kaaproject.kaa.schema.sample",
-                    "type":"record",
-                    "addressable":false,
-                    "fields":[
-                        {
-                            "name":"intField",
-                            "type":"int",
-                            "optional":true
-                        }
-                    ]
-                }
-            }
-        }
-    ]
-}
-```
-
-Protocol schema (transformed):
-
-```json
-{
-    "type":"array",
-    "items":{
-        "name":"deltaT",
-        "namespace":"org.kaaproject.configuration",
-        "type":"record",
-        "fields":[
-            {
-                "name":"delta",
-                "type":[
-                    {
-                        "name":"rootT",
-                        "namespace":"org.kaaproject.kaa.schema.sample",
-                        "type":"record",
-                        "fields":[
-                            {
-                                "name":"arrayOfRecords",
-                                "type":[
-                                    {
-                                        "type":"array",
-                                        "items":[
-                                            {
-                                                "name":"addressableRecordT",
-                                                "namespace":"org.kaaproject.kaa.schema.sample",
-                                                "type":"record",
-                                                "fields":[
-                                                    {
-                                                        "name":"booleanField",
-                                                        "type":[
-                                                            "boolean",
-                                                            {
-                                                                "name":"unchangedT",
-                                                                "namespace":"org.kaaproject.configuration",
-                                                                "type":"enum",
-                                                                "symbols":[
-                                                                    "unchanged"
-                                                                ]
-                                                            }
-                                                        ],
-                                                        "by_default":"false"
-                                                    },
-                                                    {
-                                                        "name":"__uuid",
-                                                        "type":{
-                                                            "name":"uuidT",
-                                                            "namespace":"org.kaaproject.configuration",
-                                                            "type":"fixed",
-                                                            "size":16
-                                                        }
-                                                    }
-                                                ]
-                                            },
-                                            "org.kaaproject.configuration.uuidT"
-                                        ]
-                                    },
-                                    {
-                                        "name":"resetT",
-                                        "namespace":"org.kaaproject.configuration",
-                                        "type":"enum",
-                                        "symbols":[
-                                            "reset"
-                                        ]
-                                    },
-                                    "org.kaaproject.configuration.unchangedT"
-                                ]
-                            },
-                            {
-                                "name":"arrayOfPrimitives",
-                                "type":[
-                                    {
-                                        "type":"array",
-                                        "items":{
-                                            "name":"primitiveRecordT",
-                                            "namespace":"org.kaaproject.kaa.schema.sample",
-                                            "type":"record",
-                                            "addressable":false,
-                                            "fields":[
-                                                {
-                                                    "name":"intField",
-                                                    "type":[
-                                                        "null",
-                                                        "int",
-                                                        "org.kaaproject.configuration.unchangedT"
-                                                    ],
-                                                    "optional":true
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "org.kaaproject.configuration.resetT",
-                                    "org.kaaproject.configuration.unchangedT"
-                                ]
-                            },
-                            {
-                                "name":"__uuid",
-                                "type":"org.kaaproject.configuration.uuidT"
-                            }
-                        ]
-                    },
-                    "org.kaaproject.sample.addressableRecordT"
-                ]
-            }
-        ]
-    }
-}
-```
-
->**Note:**
-> The ```__uuid``` field was added to ```org.kaaproject.sample.addressableRecordT```, but not to ```org.kaaproject.sample.primitiveRecordT```. <br/>
-> There is a reference to ```org.kaaproject.sample.addressableRecordT``` in the union definition for the delta field of the
-```org.kaaproject.configuration.deltaT``` type. <br/>
-> ```org.kaaproject.configuration.uuidT``` is used in a union to indicate the removal of UUID-addressable records in /arrayOfRecords, but not in
-/arrayOfPrimitives.
-
-## Delta calculation algorithm
-
-The delta calculation algorithm is executed by the Operations service to discover and represent via the [protocol schema](#protocol-schema) the difference
-between the newly required configuration and the current one in regard to the specific endpoint. This difference is represented according to the corresponding
-[protocol schema](#protocol-schema) and then supplied to the endpoint as the _delta configuration data_ (other accepted terms for which are delta,
-delta update, delta record). Note that both configurations should conform to the same configuration schema version.
-
-To keep track of the current endpoint configuration, the Kaa server maintains a hash look-up table that contains the configuration SHA-1 hash, as well as the
-configuration data itself. Whenever the Operations service calculates a configuration with the unique hash, it adds that configuration to the table which is
-persisted in the database and shared across the Operations services. The endpoint submits the hash of the last known configuration to Operations service for
-the table lookup.
-
-Having found the current endpoint configuration via the hash look-up, the Operations service starts comparing the current configuration set with the new one
-to detect any discrepancies between the two. Once all the differences are found, the Operations service looks up the nearest UUID-addressable record in the
-[addressing hierarchy](#addressing) and creates a delta record for it. After that, the algorithm proceeds to comparing the corresponding records in the two
-data sets and filling in the delta record. In case some field has the same value in both configuration sets, this field is assigned the unchanged type value
-(```unchangedT```) in the delta record to indicate so. Otherwise, the value from the new configuration set is copied into the delta record.
-
-The described traversal method works for all [addressable fields](#addressing) in the configuration. However, items in the arrays are not addressable,
-therefore Kaa employs special handling logic for calculating deltas for the array fields, as follows:
-
-* If the array items are UUID-addressable, the algorithm looks for the items with matching UUIDs in the two configuration sets and creates a separate delta for these items.
-* If the new configuration set misses some of the items, the algorithm proceeds as follows according to the item type:
-    * for primitive items, the "reset" value is used  in the first delta update to erase all the array items, whereupon the second delta update delivers all
-    the items which should be kept and adds them to the previously emptied array.
-    * for records, the UUIDs of the missing records are added to the "remove" list for this field in the protocol schema. If all of the old records are absent
-    in the new configuration, then, instead of listing all UUIDs in the "remove" list, the algorithm uses the "reset" value as for primitive types.
-* If the new configuration set includes some of the items that the current configuration set does not contain, the items that does not exist in the current
-configuration are added to the delta update for appending to the array on the client side (this is valid for both primitive types and records).
-* If array items are not UUID-addressable and the algorithm detects any difference between the old and new array contents, the old contents gets reset,
-and the new contents are sent together with the configuration delta.
-* If array items have different types in the old and new configurations, the server resets the array first and then populates another delta message with the
-most recent items.
-
-As an example, consider the following configuration schema:
-
-```json
-{
-    "name":"testT",
-    "type":"record",
-    "addressable":true,
-    "fields":[
-        {
-            "optional":true,
-            "name":"testField1",
-            "type":"string"
-        },
-        {
-            "name":"testField2",
-            "type":{
-                "addressable":false,
-                "type":"record",
-                "name":"testRecordT",
-                "namespace":"org.kaa.config",
-                "fields":[
-                    {
-                        "name":"testField3",
-                        "type":{
-                            "type":"array",
-                            "items":{
-                                "type":"record",
-                                "name":"testRecordItemT",
-                                "namespace":"org.kaa.config",
-                                "fields":[
-                                    {
-                                        "name":"testField4",
-                                        "type":"int"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "optional":true,
-            "name":"testField5",
-            "type":"int"
-        }
-    ],
-    "namespace":"org.kaa.config"
-}
-```
-
-In the scope of the example, let's assume that the Operations service needs to calculate the delta between the following two configuration sets.
-
-**Current configuration (on the endpoint)**:
-
-```json
-{
-    "testField1":{
-        "string":"abc"
-    },
-    "testField2":{
-        "testField3":[
-            {
-                "testField4":1,
-                "__uuid":{
-                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001"
-                }
-            },
-            {
-                "testField4":2,
-                "__uuid":{
-                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0002"
-                }
-            },
-            {
-                "testField4":3,
-                "__uuid":{
-                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0003"
-                }
-            }
-        ]
-    },
-    "testField5":{
-        "int":123
-    },
-    "__uuid":{
-        "org.kaaproject.configuration.uuidT":"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010"
-    }
-}
-```
-
-**New configuration (on the server)**
-
-```json
-{
-    "testField1":{
-        "string":"abc"
-    },
-    "testField2":{
-        "testField3":[
-            {
-                "testField4":2,
-                "__uuid":{
-                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0002"
-                }
-            },
-            {
-                "testField4":36,
-                "__uuid":{
-                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0003"
-                }
-            },
-            {
-                "testField4":4,
-                "__uuid":{
-                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0004"
-                }
-            }
-        ]
-    },
-    "testField5":null,
-    "__uuid":{
-        "org.kaaproject.configuration.uuidT":"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010"
-    }
-}
-```
-
-Compared to the current endpoint configuration, the new configuration on the server has the following differences.
-
-* The ```testField5``` field is set to the default value.
-* The element with UUID [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3] has a new value for the ```testField4``` field.
-* The element with UUID [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] was removed.
-* A new element with UUID [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4] was added.
-
-The calculated delta update will be an array with three entries, as follows:
-
-```json
-[
-    {
-        "delta":{
-            "org.kaa.config.testRecordItemT":{
-                "testField4":{
-                    "int":36
-                },
-                "__uuid":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0003"
-            }
-        }
-    },
-    {
-        "delta":{
-            "org.kaa.config.testT":{
-                "testField1":{
-                    "org.kaaproject.configuration.unchangedT":"unchanged"
-                },
-                "testField2":{
-                    "org.kaa.config.testRecordT":{
-                        "testField3":{
-                            "array":[
-                                {
-                                    "org.kaaproject.configuration.uuidT":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001"
-                                }
-                            ]
-                        }
-                    }
-                },
-                "testField5":{
-                    "org.kaaproject.configuration.unchangedT":"unchanged"
-                },
-                "__uuid":"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010"
-            }
-        }
-    },
-    {
-        "delta":{
-            "org.kaa.config.testT":{
-                "testField1":{
-                    "org.kaaproject.configuration.unchangedT":"unchanged"
-                },
-                "testField2":{
-                    "org.kaa.config.testRecordT":{
-                        "testField3":{
-                            "array":[
-                                {
-                                    "org.kaa.config.testRecordItemT":{
-                                        "testField4":{
-                                            "int":4
-                                        },
-                                        "__uuid":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0004"
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                "testField5":null,
-                "__uuid":"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010"
-            }
-        }
-    }
-]
-```
-
-The first delta item is a partial update for the object with UUID [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3], where the ```testField4``` field value
-was changed from 3 to 36. The second delta item is an update for the ```testField3``` field to remove the item with UUID
-[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1].
-
->**NOTE:**
-> The ```testField1``` and ```testField5``` fields were set to "unchanged".
-
-The last delta item sets the ```testField5``` field to ```null``` and adds a new array item with UUID [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4].
 
 # Schema versioning
 
-In the current Kaa version, any configuration schema updates require updates of the client application.
+In the current Kaa version, any configuration schema updates require updates of the [client application]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#configuration-kaa-sdk).
 
 Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers are capable of maintaining more than one
 configuration schema version. For this purpose, a new, sequentially incremented version number is automatically assigned to every new configuration schema
