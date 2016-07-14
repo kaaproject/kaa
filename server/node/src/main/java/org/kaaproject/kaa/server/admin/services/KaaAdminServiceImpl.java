@@ -161,6 +161,8 @@ import com.google.common.base.Charsets;
 
 import net.iharder.Base64;
 
+import javax.persistence.Convert;
+
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
@@ -1538,7 +1540,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Utils.checkNotNull(notificationSchema);
             checkApplicationId(notificationSchema.getApplicationId());
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
-            NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto));
+            NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
             return notificationSchemaViewDto;
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1594,7 +1596,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                             metaInfo.getMetaInfo().getApplicationId());
                     notificationSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(notificationSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(notificationSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
                     notificationSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
@@ -1615,7 +1617,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             notificationSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             notificationSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             notificationSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
             NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
             return getNotificationSchemaView(savedNotificationSchema.getId());

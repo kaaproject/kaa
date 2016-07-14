@@ -1054,7 +1054,6 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
 
-
         CTLSchemaDto profileCtlSchema = ctlService.findCTLSchemaById(profileSchema.getCtlSchemaId());
         if (profileCtlSchema == null) {
             throw new NotFoundException("Profile CTL schema not found!");
@@ -1073,12 +1072,6 @@ public class DefaultControlService implements ControlService {
         String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
         String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
         String confSchemaBodyString = ctlService.flatExportAsString(confCtlSchema);
-
-        CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
-        if (notificationCtlSchema == null) {
-            throw new NotFoundException("Profile CTL schema not found!");
-        }
-        String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
 
         DataSchema profileDataSchema = new DataSchema(profileSchemaBodyString);
         DataSchema confDataSchema = new DataSchema(confSchemaBodyString);
