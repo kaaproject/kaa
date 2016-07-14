@@ -54,8 +54,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <flume.version>1.5.0.1</flume.version>
 
         <netty.version>4.0.34.Final</netty.version>
-        <avro-kaa.version>1.8.1-KAA</avro-kaa.version>
-        <avro.version>1.8.1</avro.version>
+        <avro-kaa.version>1.7.5-KAA</avro-kaa.version>
+        <avro.version>1.7.5</avro.version>
         <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.6</zookeeper.version>
         <curator.version>2.9.0</curator.version>
@@ -458,7 +458,7 @@ Copyright 2014-2016 CyberVision, Inc.
                                             avro-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [1.7.5,)
+                                            [1.7.5-KAA,)
                                         </versionRange>
                                         <goals>
                                             <goal>schema</goal>
@@ -951,7 +951,7 @@ Copyright 2014-2016 CyberVision, Inc.
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-compiler</artifactId>
-                <version>${avro.version}</version>
+                <version>${avro-kaa.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
@@ -961,7 +961,7 @@ Copyright 2014-2016 CyberVision, Inc.
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-mapred</artifactId>
-                <version>${avro.version}</version>
+                <version>${avro-kaa.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>

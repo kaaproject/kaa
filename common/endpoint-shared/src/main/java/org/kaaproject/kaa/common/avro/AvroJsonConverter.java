@@ -115,7 +115,7 @@ public class AvroJsonConverter<T extends SpecificRecordBase> {
      */
     public byte[] encodeToJsonBytes(T record) throws IOException{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos, false, true);
+        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos, true);
         avroWriter.write(record, jsonEncoder);
         jsonEncoder.flush();
         baos.flush();
