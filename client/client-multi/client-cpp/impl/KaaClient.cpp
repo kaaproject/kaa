@@ -291,10 +291,6 @@ void KaaClient::initKaaTransport()
     channelManager_->addChannel(opsTcpChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
-//    ConnectivityCheckerPtr connectivityChecker(new IPConnectivityChecker(
-//            *static_cast<KaaChannelManager*>(channelManager_.get())));
-//    channelManager_->setConnectivityChecker(connectivityChecker);
-
     channelManager_->setConnectivityChecker(std::make_shared<PingConnectivityChecker>());
 #endif
 }

@@ -138,7 +138,7 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
     try {
         decodedResponse = encDec_->decodeData(encodedResponse.data(), encodedResponse.size());
     } catch (const std::exception& e) {
-        KAA_LOG_ERROR(boost::format("Channel [%1%] unable to decode data: %s")
+        KAA_LOG_ERROR(boost::format("Channel [%1%] unable to decode data: %2%")
                                                                         % getId()
                                                                         % e.what());
 
@@ -179,9 +179,9 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
 
         syncAll();
     } else if (!ackTypes_.empty()) {
-        KAA_LOG_INFO(boost::format("Channel [%1%] has %2% ACK requests. Starting SYNC...")
-                                                                            % getId()
-                                                                            % ackTypes_.size());
+        KAA_LOG_INFO(boost::format("Channel [%1%] has %2% pending ACK requests. Starting SYNC...")
+                                                                                    % getId()
+                                                                                    % ackTypes_.size());
 
         auto ackTypesCopy = ackTypes_;
         ackTypes_.clear();

@@ -567,7 +567,7 @@ void KaaChannelManager::checkAuthenticationFailover(KaaFailoverReason failover)
         context_.getStatus().setRegistered(false);
         context_.getStatus().save();
 
-        KAA_LOG_INFO(boost::format("Register flag reseted on '%s' failover")
+        KAA_LOG_INFO(boost::format("Endpoint 'register' flag reseted because of '%s' failover")
                                             % LoggingUtils::toString(failover));
     }
 }

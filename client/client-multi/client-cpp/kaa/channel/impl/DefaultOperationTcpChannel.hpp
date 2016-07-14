@@ -105,14 +105,6 @@ public:
     void onServerFailed(KaaFailoverReason failoverReason = KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
 
 private:
-    enum class State {
-        DISCONNECTED = 0,
-        CONNECTING,
-        CONNECTED,
-        IN_FAILOVER
-    };
-
-private:
     boost::system::error_code sendKaaSync(const std::map<TransportType, ChannelDirection>& transportTypes);
     boost::system::error_code sendConnect();
     boost::system::error_code sendDisconnect();

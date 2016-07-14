@@ -75,9 +75,17 @@ void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& proto
         case FailoverStrategyAction::RETRY_CURRENT_SERVER:
         {
             std::size_t period = decision.getRetryPeriod();
-            KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% seconds") % period);
+
+            KAA_LOG_WARN(boost::format("Attempt to reconnect to current Operations server will be made in %1% seconds") % period);
+
+            auto currentOperationsServer = *(lastServerIt->second);
+
             retryTimer_.stop();
-            retryTimer_.start(period, [this] { receiveOperationsServerList(); });
+            retryTimer_.start(period,
+                             [this, currentOperationsServer]
+                                  {
+                                       channelManager_->onTransportConnectionInfoUpdated(currentOperationsServer);
+                                  });
             break;
         }
         case FailoverStrategyAction::USE_NEXT_OPERATIONS_SERVER:
@@ -151,8 +159,7 @@ void BootstrapManager::onCurrentBootstrapServerFailed(KaaFailoverReason reason)
 
     auto channel = channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP);
     if (channel) {
-        auto server = channel->getServer();
-        channelManager_->onServerFailed(server, reason);
+        channelManager_->onServerFailed(channel->getServer(), reason);
     }
 }
 
