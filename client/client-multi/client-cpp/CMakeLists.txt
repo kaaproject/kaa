@@ -450,6 +450,7 @@ set(KAA_SOURCE_FILES
         impl/KaaClient.cpp
         impl/logging/Log.cpp
         impl/logging/DefaultLogger.cpp
+        impl/logging/LoggingUtils.cpp
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp
