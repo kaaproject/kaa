@@ -5,8 +5,7 @@ permalink: /:path/
 sort_idx: 20
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 The intention of this guide is to introduce Kaa platform programming basics to you.
 You will have to roll up your sleeves with Kaa (at least so we hope), so come prepared.

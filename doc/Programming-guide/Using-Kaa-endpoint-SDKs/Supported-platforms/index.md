@@ -4,8 +4,7 @@ title: Supported platforms
 permalink: /:path/
 sort_idx: 60
 ---
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url %}/{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md%}
 
 {% capture sdk_c %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C{% endcapture %}
 {% capture LC %}{{sdk_c}}/SDK-Linux/{% endcapture %}
