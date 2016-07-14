@@ -18,7 +18,7 @@ set -e
 
 curr_tag=$(git tag --contains)
 gh_pages=gh-pages
-DOCS_ROOT=kaa
+DOCS_ROOT=docs
 
 if [ x"$curr_tag" = x ]; then
   curr_tag="current"
