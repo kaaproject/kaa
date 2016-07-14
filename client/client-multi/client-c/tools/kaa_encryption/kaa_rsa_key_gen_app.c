@@ -18,7 +18,6 @@
 
 /* Endpoint's RSA Keys */
 
-
 endpoint_keys_t keys;
 mbedtls_pk_context pk_context_;
 

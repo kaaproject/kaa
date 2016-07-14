@@ -177,23 +177,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/aes.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/asn1parse.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/asn1write.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/bignum.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/ctr_drbg.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/entropy.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/entropy_poll.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/md.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/md_wrap.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/oid.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pk.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pkwrite.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pk_wrap.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/rsa.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/sha256.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pkparse.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/sha1.c
   )
 
 
@@ -292,8 +275,8 @@ add_subdirectory(Modules/doxygen)
 
 add_subdirectory(Modules/cppcheck)
 
-option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
-if(${KAA_PLATFORM} STREQUAL "x86-64")
+if(${KAA_PLATFORM} STREQUAL "posix")
+    option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
     if(${KAA_RUNTIME_KEY_GENERATION})
         add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
     endif()

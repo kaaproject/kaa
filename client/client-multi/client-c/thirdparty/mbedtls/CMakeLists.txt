@@ -14,6 +14,7 @@ set(KAA_MBEDTLS_SOURCE_FILES
         ${CMAKE_CURRENT_LIST_DIR}/oid.c
         ${CMAKE_CURRENT_LIST_DIR}/pk.c
         ${CMAKE_CURRENT_LIST_DIR}/pkwrite.c
+        ${CMAKE_CURRENT_LIST_DIR}/pem.c
         ${CMAKE_CURRENT_LIST_DIR}/pk_wrap.c
         ${CMAKE_CURRENT_LIST_DIR}/rsa.c
         ${CMAKE_CURRENT_LIST_DIR}/sha256.c
