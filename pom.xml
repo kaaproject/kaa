@@ -15,7 +15,7 @@ Copyright 2014-2016 CyberVision, Inc.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kaaproject</groupId>
@@ -30,9 +30,9 @@ Copyright 2014-2016 CyberVision, Inc.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
-        <avro-ui.version>0.3.0-SNAPSHOT</avro-ui.version>
+        <avro-ui.version>0.2.1</avro-ui.version>
 
-	<akka.version>2.4.1</akka.version>
+        <akka.version>2.4.1</akka.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <spring.data.version>Fowler-RELEASE</spring.data.version>
@@ -84,7 +84,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <jline.version>2.11</jline.version>
-        
+
 
         <slf4j.version>1.7.7</slf4j.version>
         <slf4j-android.version>1.7.7</slf4j-android.version>
@@ -112,7 +112,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**</sonar.exclusions>
+        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**
+        </sonar.exclusions>
         <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
@@ -275,8 +276,8 @@ Copyright 2014-2016 CyberVision, Inc.
             <id>repository</id>
             <distributionManagement>
                 <repository>
-                  <id>kaa.release</id>
-                  <url>http://repository.kaaproject.org/repository/internal/</url>
+                    <id>kaa.release</id>
+                    <url>http://repository.kaaproject.org/repository/internal/</url>
                 </repository>
                 <snapshotRepository>
                     <id>kaa.snapshots</id>
@@ -817,7 +818,7 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-annotations</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
@@ -898,7 +899,7 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>org.springframework.retry</groupId>
                 <artifactId>spring-retry</artifactId>
                 <version>${spring.retry.version}</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>com.couchbase.client</groupId>
                 <artifactId>java-client</artifactId>
@@ -1041,7 +1042,7 @@ Copyright 2014-2016 CyberVision, Inc.
                 <artifactId>kvstore</artifactId>
                 <version>${oracle-kvstore.version}</version>
                 <scope>test</scope>
-            </dependency>        
+            </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
@@ -1390,7 +1391,7 @@ Copyright 2014-2016 CyberVision, Inc.
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
-    	<repository>
+        <repository>
             <id>twitter-twttr</id>
             <url>http://maven.twttr.com/</url>
         </repository>
