@@ -125,17 +125,14 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.*;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -1499,8 +1496,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             List<SchemaInfoDto> schemaInfos = new ArrayList<>(notificationSchemas.size());
             for (NotificationSchemaDto notificationSchema : notificationSchemas) {
                 SchemaInfoDto schemaInfo = new SchemaInfoDto(notificationSchema);
-                Schema schema = new Schema.Parser().parse(notificationSchema.getSchema());
-                RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
+                RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(notificationSchema.getCtlSchemaId(), null);
                 schemaInfo.setSchemaForm(schemaForm);
                 schemaInfos.add(schemaInfo);
             }
@@ -1510,7 +1506,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    @Override
+    public NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(notificationSchemaId);
+            Utils.checkNotNull(notificationSchema);
+            checkApplicationId(notificationSchema.getApplicationId());
+            CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
+            NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto));
+            return notificationSchemaViewDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1524,19 +1533,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema, byte[] schema)
+    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(notificationSchema.getId())) {
                 notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(notificationSchema.getApplicationId());
-                setSchema(notificationSchema, schema);
             } else {
                 NotificationSchemaDto storedNotificationSchema = controlService.getNotificationSchema(notificationSchema.getId());
                 Utils.checkNotNull(storedNotificationSchema);
                 checkApplicationId(storedNotificationSchema.getApplicationId());
-                notificationSchema.setSchema(storedNotificationSchema.getSchema());
             }
             notificationSchema.setType(NotificationTypeDto.USER);
             return controlService.editNotificationSchema(notificationSchema);
@@ -1546,33 +1553,47 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public NotificationSchemaDto getNotificationSchemaForm(String notificationSchemaId) throws KaaAdminServiceException {
+    public NotificationSchemaViewDto saveNotificationSchemaView(NotificationSchemaViewDto notificationSchemaView) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
-            convertToSchemaForm(notificationSchema, commonSchemaFormAvroConverter);
-            return notificationSchema;
+            NotificationSchemaDto notificationSchema = notificationSchemaView.getSchema();
+            String applicationId = notificationSchema.getApplicationId();
+            checkApplicationId(applicationId);
+            String ctlSchemaId = notificationSchema.getCtlSchemaId();
+            if (isEmpty(ctlSchemaId)) {
+                if (notificationSchemaView.useExistingCtlSchema()) {
+                    CtlSchemaReferenceDto metaInfo = notificationSchemaView.getExistingMetaInfo();
+                    CTLSchemaDto schema = getCTLSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
+                            metaInfo.getVersion(),
+                            metaInfo.getMetaInfo().getTenantId(),
+                            metaInfo.getMetaInfo().getApplicationId());
+                    notificationSchema.setCtlSchemaId(schema.getId());
+                } else {
+                    CtlSchemaFormDto ctlSchemaForm = saveCTLSchemaForm(notificationSchemaView.getCtlSchemaForm());
+                    notificationSchema.setCtlSchemaId(ctlSchemaForm.getId());
+                }
+            }
+            NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
+            return getNotificationSchemaView(savedNotificationSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public NotificationSchemaDto editNotificationSchemaForm(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
+    public NotificationSchemaViewDto createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+        LOG.error("createNotificationSchemaFormCtlSchema [{}]", ctlSchemaForm.getSchema().getDisplayString());
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if (isEmpty(notificationSchema.getId())) {
-                notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
-                checkApplicationId(notificationSchema.getApplicationId());
-                convertToStringSchema(notificationSchema, commonSchemaFormAvroConverter);
-            } else {
-                NotificationSchemaDto storedNotificationSchema = controlService.getNotificationSchema(notificationSchema.getId());
-                Utils.checkNotNull(storedNotificationSchema);
-                checkApplicationId(storedNotificationSchema.getApplicationId());
-                notificationSchema.setSchema(storedNotificationSchema.getSchema());
-            }
-            notificationSchema.setType(NotificationTypeDto.USER);
-            return controlService.editNotificationSchema(notificationSchema);
+            checkApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
+            NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
+            notificationSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
+            notificationSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
+            notificationSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
+            CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm);
+            notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
+            NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
+            return getNotificationSchemaView(savedNotificationSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

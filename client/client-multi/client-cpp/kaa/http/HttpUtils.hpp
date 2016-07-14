@@ -17,33 +17,33 @@
 #ifndef HTTPUTILS_HPP_
 #define HTTPUTILS_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <cstdint>
-#include <boost/noncopyable.hpp>
+#include <string>
+
 #include <boost/asio.hpp>
 
 namespace kaa {
 
-class HttpUtils : public boost::noncopyable {
+class HttpUtils {
 public:
-    static boost::asio::ip::tcp::endpoint getEndpoint(std::string host, std::uint16_t port)
+    static boost::asio::ip::tcp::endpoint resolveEndpoint(std::string host,
+                                                          std::uint16_t port,
+                                                          boost::system::error_code& errorCode)
     {
-        char portStr[6];
-#ifdef _WIN32
-        _snprintf_s(portStr, 6, 6, "%u", port);
-#else
-        snprintf(portStr, 6, "%u", port);
-#endif
         boost::asio::io_service io_service;
         boost::asio::ip::tcp::resolver resolver(io_service);
-        boost::asio::ip::tcp::resolver::query query(host, portStr, boost::asio::ip::resolver_query_base::numeric_service);
-        return *resolver.resolve(query);
-    }
+        boost::asio::ip::tcp::resolver::query query(host,
+                                                    std::to_string(port),
+                                                    boost::asio::ip::resolver_query_base::numeric_service);
 
-private:
-    HttpUtils();
-    ~HttpUtils();
+        auto endpointIt = resolver.resolve(query, errorCode);
+
+        if (errorCode) {
+            return boost::asio::ip::tcp::endpoint();
+        }
+
+        return *endpointIt;
+    }
 };
 
 }

@@ -5,8 +5,7 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 We use a [GitHub flow](https://guides.github.com/introduction/flow/). That means, you should branch from the main repository and contribute back via pull requests. That's de facto standard workflow on GitHub with a couple of additional rules.
 

@@ -17,12 +17,11 @@
 package org.kaaproject.kaa.common.dto;
 
 
-public class NotificationSchemaDto extends AbstractSchemaDto {
+public class NotificationSchemaDto extends BaseSchemaDto {
 
     private static final long serialVersionUID = -2514664251184915862L;
     
     private NotificationTypeDto type;
-
 
     public NotificationTypeDto getType() {
         return type;
@@ -49,7 +48,7 @@ public class NotificationSchemaDto extends AbstractSchemaDto {
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
             return false;
         }
-        if (schema != null ? !schema.equals(that.schema) : that.schema != null) {
+        if (ctlSchemaId != null ? !ctlSchemaId.equals(that.ctlSchemaId) : that.ctlSchemaId != null) {
             return false;
         }
         if (type != that.type) {
@@ -64,7 +63,7 @@ public class NotificationSchemaDto extends AbstractSchemaDto {
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + version;
         result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (schema != null ? schema.hashCode() : 0);
+        result = 31 * result + (ctlSchemaId != null ? ctlSchemaId.hashCode() : 0);
         return result;
     }
 
@@ -75,7 +74,7 @@ public class NotificationSchemaDto extends AbstractSchemaDto {
                 ", applicationId='" + applicationId + '\'' +
                 ", majorVersion=" + version +
                 ", type=" + type +
-                ", schema='" + schema + '\'' +
+                ", ctlSchemaId='" + ctlSchemaId + '\'' +
                 '}';
     }
 

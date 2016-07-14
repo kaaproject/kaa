@@ -139,7 +139,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
 
         reset();
     }
-    
+
     private void findByEndpointGroup() {
         listView.getEndpointGroupButton().setValue(true);
         listView.getEndpointKeyHashButton().setValue(false);

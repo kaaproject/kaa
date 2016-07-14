@@ -160,7 +160,7 @@ private:
     IKaaDataDemultiplexer *demultiplexer_;
     IKaaChannelManager *channelManager_;
     std::shared_ptr<IPTransportInfo> currentServer_;
-    KaaTcpResponseProcessor responsePorcessor;
+    KaaTcpResponseProcessor responseProcessor;
     std::unique_ptr<RsaEncoderDecoder> encDec_;
 
     KAA_MUTEX_DECLARE(channelGuard_);

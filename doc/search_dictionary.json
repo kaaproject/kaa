@@ -1,0 +1,24 @@
+---
+sitemap: false
+---
+{% capture database %}
+{% include variables.md %}
+{
+    {% for post in site.pages %}
+      {% if post.url contains version and post.url != page.url %}
+          {% assign processed_content = '' %}
+          {% assign content =  post.content | strip_html | jsonify | replace: '\r', '\n' | split: '\n'%}
+          {% for content_chunk in content %}
+               {% capture processed_content %}{{ processed_content }}{{ content_chunk | strip }}{% unless forloop.last %}\n{% endunless %}{% endcapture %}           
+          {% endfor %}
+      ,    
+      "{{ post.url | slugify }}": {
+        "title": "{{ post.title | xml_escape }}",
+        "content": {{ processed_content }},
+        "url": "{{ site.baseurl}}{{ post.url | xml_escape }}"
+        }
+      {% endif %}
+    {% endfor %}
+  }
+  {% endcapture %}
+{{ database | replace_first: ',', '' | strip_newlines | replace: '\n\n\n\n', '\n' | replace: '\n\n\n', '\n' | replace: '\n\n', '\n' | split: ' ' | join: ' ' }}
