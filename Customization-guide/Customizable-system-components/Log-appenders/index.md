@@ -5,8 +5,7 @@ permalink: /:path/Customization-guide/Customizable-system-components/Log-appende
 sort_idx: 30
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
