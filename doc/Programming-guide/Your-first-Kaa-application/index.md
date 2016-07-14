@@ -5,70 +5,56 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
 
-By walking through this guide, you will learn essential skills of creating
-Kaa-based applications, as well as the understanding of the Kaa approach in general.
-We'll cover here basic yet realistic example of collecting data from the sensor devices. For
-more advanced Kaa features, refer to the [next steps section](#next-steps).
+By walking through this guide, you will learn essential skills of creating Kaa-based applications, as well as the understanding of the Kaa approach in general.
+We'll cover here basic yet realistic example of collecting data from the sensor devices.
+For more advanced Kaa features, refer to the [next steps section](#next-steps).
 
 # Prerequisites
 
-To register a new application within a fresh Kaa server installation,
-you need to create users with the [tenant administrator]({{root_url}}/Administration-guide/Tenants-and-applications-management/#tenant-admin) and [tenant developer]({{root_url}}/Administration-guide/Tenants-and-applications-management/#tenant-developer) roles.
+To register a new application within a fresh Kaa server installation, you need to create users with the [tenant administrator]({{root_url}}/Administration-guide/Tenants-and-applications-management/#tenant-admin) and [tenant developer]({{root_url}}/Administration-guide/Tenants-and-applications-management/#tenant-developer) roles.
 
-The tenant administrator is responsible for creating new applications in Kaa,
-and the tenant developer configures and generates SDKs for those applications.
-We suggest you to use Kaa Sandbox, which has a tenant administrator and tenant
-developer users already created.
+The tenant administrator is responsible for creating new applications in Kaa, and the tenant developer configures and generates SDKs for those applications.
+We suggest you to use Kaa Sandbox, which has a tenant administrator and tenant developer users already created.
 
 # Application description
 
-Application created trough this guide covers the basic case of collecting
-temperature data from a sensor. Usually, simple sensors stream data at a constant
-rate, no matter what. However, rising demand for mobility and power efficiency dictates own
-rules of the game. It is not viable to keep sensors streaming all the time, especially
-if data is not required at this moment. That's a point where we can save power by
-configuring sample period.
+Application created trough this guide covers the basic case of collecting temperature data from a sensor.
+Usually, simple sensors stream data at a constant rate, no matter what.
+However, rising demand for mobility and power efficiency dictates own rules of the game.
+It is not viable to keep sensors streaming all the time, especially if data is not required at this moment.
+That's a point where we can save power by configuring sample period.
 
 To satisfy application requirements, two main Kaa features are used:
 
-- **Data Collection** feature allows sending data from endpoints
-to the Kaa server. In this example, Data Collection is used to transmit
-temperature samples from the sensor to the Kaa reliably.
+- **Data Collection** feature allows sending data from endpoints to the Kaa server.
+In this example, Data Collection is used to transmit temperature samples from the sensor to the Kaa reliably.
 
-- **Configuration** feature allows broadcasting configuration parameters
-from the Kaa server to Kaa endpoints. In this guide, Configuration is used
-to pass a sample period of the temperature to the endpoint.
+- **Configuration** feature allows broadcasting configuration parameters from the Kaa server to Kaa endpoints.
+In this guide, Configuration is used to pass a sample period of the temperature to the endpoint.
 
 # Adding application
 
 To add an application, proceed as follows:
 
-1. Open the [Kaa admin UI in your browser](http://127.0.0.1:8080) and log in
-as a tenant administrator (by default the user/password is admin/admin123 in sandbox;
-use the correct credentials if you changed the default).
-1. Select **Applications** on the navigation panel on the left side and, in the
-Applications window that opens, click **Add application**.
+1. Open the [Kaa admin UI in your browser](http://127.0.0.1:9080) and log in as a tenant administrator (by default the user/password is `admin/admin123` in sandbox; use the correct credentials if you changed the default).
+1. Select **Applications** on the navigation panel on the left side and, in the Applications window that opens, click **Add application**.
 1. In the Add application window, enter the application name and then click **Add**.
-For this guide, we use **Trustful** credential service, and our application is
-named "My First Kaa Application."
+For this guide, we use **Trustful** credential service, and our application is named "My First Kaa Application."
 
     ![Admin Console](attach/new_app.png)
 
-After the application has been added, you may log out. We will not use
-the tenant administrator role in this guide anymore.
+After the application has been added, you may log out.
+We will not use the tenant administrator role in this guide anymore.
 
 # Creating schemas
 
-The application that was created in [the previous step](#adding-application)
-already includes the default versions of the profile, configuration, notification,
-and log schemes ready for use. However, in this sample application, we use a custom data
-collection and configuration schemes for demonstration purposes.
+The application that was created in [the previous step](#adding-application) already includes the default versions of the profile, configuration, notification, and log schemes ready for use.
+However, in this sample application, we use a custom data collection and configuration schemes for demonstration purposes.
 
 To create and upload the schemas, proceed as follows:
 
@@ -102,35 +88,26 @@ To create and upload the schemas, proceed as follows:
 
     `by_default` field defines the default value for the sampling period, which is in our example
     is set to 1 second.
-1. Open the admin UI in your browser and log in as a tenant developer
-(default user/password in the sandbox: `devuser`/`devuser123`; use the correct credentials if
-you changed the default).
-1. Open the relevant **Log schemas** window (**Applications =>
-My First Kaa Application => Schemas => Log**) and click **Add schema**.
-1. In the **Add log schema** window, enter the name and description of
-the new data collection schema.
+1. Open the [admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management) in your browser and log in as a tenant developer (default user/password in the sandbox: `devuser`/`devuser123`; use the correct credentials if you changed the default).
+1. Open the relevant **Log schemas** window (**Applications => My First Kaa Application => Schemas => Log**) and click **Add schema**.
+1. In the **Add log schema** window, enter the name and description of the new data collection schema.
 
     ![Data collection scheme](attach/new_data_schema.png)
-1. Scroll down and use the **Upload from file** function to find the previously
-    created JSON file with the schema. Alternatively, you can use the
-    [Schema Avro UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#avro-ui-forms)
-    form to create the schema.
+1. Scroll down and use the **Upload from file** function to find the previously created `data-schema.json` file with the schema.
+Alternatively, you can use the [Schema Avro UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#avro-ui-forms) form to create the schema.
 1. Click **Upload**.
 1. Click **Add** at the top of the window.
-1. Repeat uploading and adding for the configuration schema
-    (`configuration-schema.json`) scheme:
+1. Repeat uploading and adding for the configuration schema (`configuration-schema.json`) scheme:
 
     ![Data collection scheme](attach/new_config_schema.png)
 
-As a result of these operations, you will see configuration and data collection
-schemas in the list. Note that every time you add a new schema, Kaa assigns
-a new version number to it. So if you already added your schemas then versions you can
-observe could be different from that provided on the screenshots.
+As a result of these operations, you will see configuration and data collection schemas in the list.
+Note that every time you add a new schema, Kaa assigns a new version number to it.
+So if you already added your schemas then versions you can observe could be different from that provided on the screenshots.
 ![Data collection schema complete](attach/log_schema_list.png)
 ![Configuraion schema complete](attach/config_schema_list.png)
 
-In this screenshot, version 2 is log and configuration schema version that
-was just created. We use this version for the SDK generation later.
+In this screenshot, version 2 is log and configuration schema version that was just created. We use this version for the SDK generation later.
 
 # Log appenders setup
 
@@ -155,9 +132,8 @@ If you are using your additional schemas, version numbers may be different.
 After picking correct versions for schemas used in SDK click **Add**.
 
     ![Configure SDK](attach/configure_sdk.png)
-1. Now the SDK is configured and ready to be generated. Click **Generate SDK** for
-corresponding SDK profile. In the **Generate SDK** window select the target platform for
-your SDK and click Generate SDK.
+1. Now the SDK is configured and ready to be generated. Click **Generate SDK** for corresponding SDK profile.
+In the **Generate SDK** window select the target platform for your SDK and click Generate SDK.
 
     ![Generate SDK](attach/generate_configured_sdk.png)
 
@@ -167,16 +143,14 @@ After the SDK is generated, you will be presented with a window asking you to sa
 Specify the file name and location on your computer and then click **Save**.
 The SDK is now downloaded to your computer.
 
-Note that in this example we are generating the SDK based on the default profile and
-notification schemas. These schemas are automatically populated during the creation of
-the application.
+Note that in this example we are generating the SDK based on the default profile and notification schemas.
+These schemas are automatically populated during the creation of the application.
 If necessary, you can overwrite them using [Admin UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/).
 
 # Sample client application
 
-Once you have downloaded the SDK, you can use it in your sample project. The following
-code block illustrates a simple desktop application that sends virtual temperature
-data from the Kaa endpoint with required configuration.
+Once you have downloaded the SDK, you can use it in your sample project.
+The following code block illustrates a simple desktop application that sends virtual temperature data from the Kaa endpoint with required configuration.
 
 ## Preparation
 
@@ -193,8 +167,7 @@ data from the Kaa endpoint with required configuration.
 
 Before you start with C application code, some preparation is required.
 
-1. Install dependencies: CMake and OpenSSL. On Ubuntu, you can install it using following
-commands.
+1. Install dependencies: CMake and OpenSSL. On Ubuntu, you can install it using following commands.
 
         sudo apt-get install cmake
         sudo apt-get install libssl-dev
@@ -249,8 +222,7 @@ commands.
 
 ## Application code
 
-Now it is time to write application code that will send temperature data with the
-configured sampling period.
+Now it is time to write application code that will send temperature data with the configured sampling period.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#app-c">C SDK</a></li>
@@ -445,8 +417,7 @@ int main(void)
 
 To launch C application next steps should be performed.
 
-1. Rebuild application with decreased log level. That reduces a mess that can
-appear when debug logs are enabled.
+1. Rebuild application with decreased log level. That reduces a mess that can appear when debug logs are enabled.
 
         cd build
         cmake -DKAA_MAX_LOG_LEVEL=3 ..
@@ -454,7 +425,7 @@ appear when debug logs are enabled.
 
 2. Launch the executable file.
 
-        ./kaa_app
+        ./kaa-app
 
 </div>
 
@@ -486,14 +457,12 @@ Sampled temperature: 31
 Sampled temperature: 28
 Sampled temperature: 28
 ```
-Note that temperature value must be sampled once per second as stated in the
-configuration scheme.
+Note that temperature value must be sampled once per second as stated in the configuration scheme.
 Refer to the [Troubleshooting](#troubleshooting) section if something goes wrong.
 
 ## Retrieving collected data
 
-To obtain temperature data stored on the server, following steps should be
-performed.
+To obtain temperature data stored on the server, following steps should be performed.
 
 1. Grab application token. It is a token that you can copy from the main window
     of the application the Administration UI.
@@ -510,20 +479,18 @@ performed.
 
 ## Changing sample period
 
-Let's check how to tune sampling period on a server and see what happens on the
-endpoint.
+Let's check how to tune sampling period on a server and see what happens on the endpoint.
 
 1. Make sure your client application is running and sampling temperature
 1. Login to the **Admin UI** as a Tenant Developer and proceed to the **Endpoint Groups**
     section of your application.
 
     ![Endpoint groups](attach/endpoint_group.png)
-1. Click on the endpoint group **All** and select configuration schema from
-    **Configurations** section.
+1. Click on the endpoint group **All** and select configuration schema from **Configurations** section.
 
     ![Endpoint groups inside](attach/endpoint_group_inside.png)
-1. Click on the latest **Configuration schema** and activate **Draft** tab. Change
-    sample period to, say, 5 seconds and hit **Save** button.
+1. Click on the latest **Configuration schema** and activate **Draft** tab.
+Change sample period to, say, 5 seconds and hit **Save** button.
 
     ![Endpoint groups inside](attach/new_draft_sample_period.png)
 1. Now, activate a draft by clicking **Activate** button and see client output.
@@ -545,13 +512,10 @@ endpoint.
 
 # Further reading
 
-To create a real-world IoT solution, you need to add more
-features into your application.
+To create a real-world IoT solution, you need to add more features into your application.
 
 Kaa provides many ones you might need.
-Follow the links below to grasp the scope of Kaa capabilities
-as well as get familiar with the essential documentation, such as Programming guide and
-Administration UI guide.
+Follow the links below to grasp the scope of Kaa capabilities as well as get familiar with the essential documentation, such as Programming guide and Administration UI guide.
 
  - [Key Kaa features]({{root_url}}/Programming-guide/Key-platform-features/)
 

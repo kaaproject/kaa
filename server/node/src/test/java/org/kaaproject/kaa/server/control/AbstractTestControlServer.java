@@ -949,19 +949,21 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      */
     protected NotificationSchemaDto createNotificationSchema(String appId, NotificationTypeDto type) throws Exception {
         NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
-        notificationSchema.setType(type);
         notificationSchema.setName(generateString("Test Schema"));
         notificationSchema.setDescription(generateString("Test Desc"));
+        notificationSchema.setType(type);
         if (strIsEmpty(appId)) {
             ApplicationDto applicationDto = createApplication(tenantAdminDto);
             notificationSchema.setApplicationId(applicationDto.getId());
         } else {
             notificationSchema.setApplicationId(appId);
         }
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        notificationSchema.setCtlSchemaId(ctlSchema.getId());
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .createNotificationSchema(notificationSchema,
-                        AdminClient.getStringResource("BasicSystemNotification", BasicSystemNotification.SCHEMA$.toString()));
+                .createNotificationSchema(notificationSchema);
         return savedSchema;
     }
 
@@ -981,9 +983,11 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         } else {
             notificationSchema.setApplicationId(appId);
         }
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        notificationSchema.setCtlSchemaId(ctlSchema.getId());
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .createNotificationSchema(notificationSchema, TEST_USER_NOTIFICATION_SCHEMA);
+                .createNotificationSchema(notificationSchema);
         return savedSchema;
     }
 

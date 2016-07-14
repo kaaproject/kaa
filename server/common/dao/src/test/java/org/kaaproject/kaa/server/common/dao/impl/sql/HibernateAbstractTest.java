@@ -261,29 +261,30 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return ctlSchema;
     }
 
-    protected List<NotificationSchema> generateNotificationSchema(Application app, int count, NotificationTypeDto type) {
+    protected List<NotificationSchema> generateNotificationSchema(Application app, int ctlVersion, int count, NotificationTypeDto type) {
         List<NotificationSchema> schemas = Collections.emptyList();
         try {
             if (app == null) {
                 app = generateApplication(null);
             }
-            NotificationSchema notificationSchema;
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, app.getTenant(), null);
+            NotificationSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                notificationSchema = new NotificationSchema();
-                notificationSchema.setApplication(app);
-                notificationSchema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
-                notificationSchema.setCreatedUsername("Test User");
-                notificationSchema.setVersion(i + 1);
-                notificationSchema.setName("Test Name");
-                notificationSchema.setType(type == null ? NotificationTypeDto.SYSTEM : type);
-                notificationSchema = notificationSchemaDao.save(notificationSchema);
-                Assert.assertNotNull(notificationSchema);
-                schemas.add(notificationSchema);
+                schemaDto = new NotificationSchema();
+                schemaDto.setApplication(app);
+                schemaDto.setCreatedUsername("Test User");
+                schemaDto.setCtlSchema(ctlSchema);
+                schemaDto.setVersion(i + 1);
+                schemaDto.setName("Test Name");
+                schemaDto.setType(type);
+                schemaDto = notificationSchemaDao.save(schemaDto);
+                Assert.assertNotNull(schemaDto);
+                schemas.add(schemaDto);
             }
-        } catch (IOException e) {
-            LOG.error("Can't generate notification schema {}", e);
-            Assert.fail("Can't generate notification schema." + e.getMessage());
+        } catch (Exception e) {
+            LOG.error("Can't generate profile schema {}", e);
+            Assert.fail("Can't generate profile schema." + e.getMessage());
         }
         return schemas;
     }

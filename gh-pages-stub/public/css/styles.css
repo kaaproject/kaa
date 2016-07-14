@@ -1,3 +1,5 @@
+---
+---
 /* custom template */
 html, body {
    height: 100%;
@@ -543,7 +545,7 @@ pre, .nav-tabs>li>a {
     width: 84%;
     margin: 13px 8%;
     padding: 6px 6px 6px 40px;
-    background: url('/public/search.png') #434343;
+    background: url('{{ site.baseurl }}/public/search.png') #434343;
     background-repeat: no-repeat;
     background-size: 30px;
     background-position-y: center;

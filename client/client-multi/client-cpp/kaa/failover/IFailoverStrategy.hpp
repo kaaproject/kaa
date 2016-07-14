@@ -43,13 +43,13 @@ enum class FailoverStrategyAction {
 class FailoverStrategyDecision {
 
 public:
-	FailoverStrategyDecision(const FailoverStrategyAction& action, const std::int32_t& retryPeriod)
+    FailoverStrategyDecision(const FailoverStrategyAction& action, const std::int32_t& retryPeriod)
         : action_(action), retryPeriod_(retryPeriod) {}
 
-	FailoverStrategyDecision(const FailoverStrategyAction& action)
+    FailoverStrategyDecision(const FailoverStrategyAction& action)
         : action_(action), retryPeriod_(0) {}
 
-	FailoverStrategyAction getAction() const {
+    FailoverStrategyAction getAction() const {
             return action_;
         }
 
@@ -58,16 +58,16 @@ public:
         }
 
 private:
-	FailoverStrategyAction action_;
-	std::size_t retryPeriod_;
+    FailoverStrategyAction action_;
+    std::size_t retryPeriod_;
 };
 
 class IFailoverStrategy {
 public:
 
-	virtual FailoverStrategyDecision onFailover(KaaFailoverReason failover) = 0;
+    virtual FailoverStrategyDecision onFailover(KaaFailoverReason failover) = 0;
 
-	virtual ~IFailoverStrategy() {}
+    virtual ~IFailoverStrategy() {}
 
 };
 

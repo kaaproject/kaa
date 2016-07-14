@@ -214,9 +214,8 @@ kaa_add_unit_test(NAME test_kaa_extension_private
 #        INC_DIRS
 #        test)
 
-# KAA-988
-#kaa_add_unit_test(NAME test_kaa_channel_manager
-#        SOURCES
-#        test/test_kaa_channel_manager.c
-#        DEPENDS
-#        kaac ${OPENSSL_LIBRARIES})
+kaa_add_unit_test(NAME test_kaa_channel_manager
+        SOURCES
+        test/test_kaa_channel_manager.c
+        DEPENDS
+        kaac ${OPENSSL_LIBRARIES})

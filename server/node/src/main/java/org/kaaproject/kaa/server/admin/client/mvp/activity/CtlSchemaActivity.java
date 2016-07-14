@@ -162,7 +162,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 converterType = ConverterType.FORM_AVRO_CONVERTER;
             }
 
-            KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getMetaInfoId(), 
+            KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getMetaInfoId(),
                     place.getVersion(), place.getApplicationId(), converterType,
                     new BusyAsyncCallback<CtlSchemaFormDto>() {
                         @Override
@@ -260,10 +260,12 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         } else if (place.getSchemaType() != null) {
                             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
                                 goTo(new ProfileSchemasPlace(place.getApplicationId()));
-                            } if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                            } else if(place.getSchemaType() == SchemaType.CONFIGURATION) {
                                 goTo(new ConfigurationSchemasPlace(place.getApplicationId()));
-                            } else {
+                            } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
+                            } else {
+                                goTo(new NotificationSchemasPlace(place.getApplicationId()));
                             }
                         } else if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
@@ -385,7 +387,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
-            } if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+            } else if(place.getSchemaType() == SchemaType.CONFIGURATION) {
                 KaaAdmin.getDataSource().createConfigurationSchemaFormCtlSchema(entity,
                         new BusyAsyncCallback<ConfigurationSchemaViewDto>() {
                             @Override
@@ -397,7 +399,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                         });
-            } else {
+            } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                 KaaAdmin.getDataSource().createServerProfileSchemaFormCtlSchema(entity, 
                         new BusyAsyncCallback<ServerProfileSchemaViewDto>() {
                             @Override
@@ -409,6 +411,18 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
+            } else {
+                KaaAdmin.getDataSource().createNotificationSchemaFormCtlSchema(entity, new BusyAsyncCallback<NotificationSchemaViewDto>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(NotificationSchemaViewDto notificationSchemaViewDto) {
+                        callback.onSuccess(null);
+                    }
+                });
             }
         } else {
             KaaAdmin.getDataSource().editCTLSchemaForm(entity, ConverterType.FORM_AVRO_CONVERTER, callback);

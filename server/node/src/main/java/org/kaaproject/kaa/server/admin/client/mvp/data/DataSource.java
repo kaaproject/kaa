@@ -68,6 +68,7 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 
 public class DataSource {
 
@@ -696,22 +697,43 @@ public class DataSource {
 
     }
 
-    public void editNotificationSchemaForm(
-            NotificationSchemaDto notificationSchema,
-            final AsyncCallback<NotificationSchemaDto> callback) {
-        rpcService.editNotificationSchemaForm(notificationSchema,
-                new DataCallback<NotificationSchemaDto>(callback) {
+    public void saveNotificationSchemaView(
+            NotificationSchemaViewDto notificationSchema,
+            final AsyncCallback<NotificationSchemaViewDto> callback) {
+        rpcService.saveNotificationSchemaView(notificationSchema,
+                new DataCallback<NotificationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(NotificationSchemaDto result) {
+                    protected void onResult(NotificationSchemaViewDto result) {
                         eventBus.fireEvent(new DataEvent(
-                                NotificationSchemaDto.class));
+                                NotificationSchemaViewDto.class));
                     }
                 });
     }
 
-    public void getNotificationSchemaForm(String notificationSchemaId,
-            final AsyncCallback<NotificationSchemaDto> callback) {
-        rpcService.getNotificationSchemaForm(notificationSchemaId,
+    public void createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
+            final AsyncCallback<NotificationSchemaViewDto> callback) {
+        rpcService.createNotificationSchemaFormCtlSchema(ctlSchemaForm,
+                new DataCallback<NotificationSchemaViewDto>(callback) {
+                    @Override
+                    protected void onResult(NotificationSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(NotificationSchemaViewDto.class));
+                    }
+                });
+    }
+
+    public void getNotificationSchemaView(String profileSchemaId,
+            final AsyncCallback<NotificationSchemaViewDto> callback) {
+        rpcService.getNotificationSchemaView(profileSchemaId,
+                new DataCallback<NotificationSchemaViewDto>(callback) {
+                        @Override
+                        protected void onResult(NotificationSchemaViewDto result) {
+                        }
+                    });
+    }
+
+    public void getNotificationSchema(String profileSchemaId,
+                                          final AsyncCallback<NotificationSchemaDto> callback) {
+        rpcService.getNotificationSchema(profileSchemaId,
                 new DataCallback<NotificationSchemaDto>(callback) {
                     @Override
                     protected void onResult(NotificationSchemaDto result) {
