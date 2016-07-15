@@ -65,7 +65,7 @@ void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
     if (!buffer || !buffer_size) {
         return;
     }
-    int key_length;
+    static int key_length;
     static int initialization = false;
     static uint8_t buff[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
     if (!initialization)
@@ -373,7 +373,7 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
     if (!sha1 || !length) {
         return;
     }
-    uint8_t sha1_public[KAA_SHA1_PUB_LEN];
+    uint8_t *sha1_public = malloc(KAA_SHA1_PUB_LEN);
     unsigned char pub_key[294];
     int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
     if (key_length < 0) {
@@ -390,7 +390,7 @@ void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
         return;
     }
     size_t sha1_base64_len = 0;
-    unsigned char sha1_base64_buffer[1024];
+    uint8_t *sha1_base64_buffer = malloc(1024);
     uint8_t sha1_public[SHA1_LENGTH];
     unsigned char pub_key[294];
     int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
