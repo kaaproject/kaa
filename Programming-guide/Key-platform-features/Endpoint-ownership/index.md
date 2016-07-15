@@ -19,7 +19,7 @@ Kaa provides necessary APIs to attach/detach endpoints to/from owners through on
 * [Endpoint access token flow](#endpoint-access-token-flow)
 
 
-### Owner access token flow ###
+# Owner access token flow #
 In the *owner access token flow*, the owner authenticates himself in an external authentication system and obtains the *access token*. 
 The owner performs this authentication from the endpoint which is due to be registered with him in the Kaa instance. 
 Then, Kaa SDK transfers this token to the Kaa cluster over a secure channel. The Kaa cluster verifies the access token and attaches the endpoint to the owner.
@@ -28,7 +28,7 @@ Then, Kaa SDK transfers this token to the Kaa cluster over a secure channel. The
 ![Owner access token flow](owner_attach_2.png "Owner access token flow")
 
 
-#### Owner verifiers ####
+## Owner verifiers ##
 The owner verification is handled by specific server components called owner verifiers. 
 There are several default owner verifier implementations that are available out of the box for each Kaa installation. 
 This section contains general information about the architecture, configuration and administration of the default owner verifiers. 
@@ -38,7 +38,7 @@ The following image example illustrates how to add new verifier from Administrat
 
 ![new verifier](Admin-ui/adding-new-verifier.png "new verifier")
  
-#### Trustful owner verifier ####
+## Trustful owner verifier ##
 This owner verifier implementation is created for the test and debug purposes and always accepts provided owner id and access token. 
 It is recommended that you do not use this verifier in production because it may cause security issues. There is no specific configuration for this verifier, because its schema is empty.
 To create a trustful owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
@@ -46,11 +46,11 @@ The following image example illustrates how to create a trustful owner verifier 
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
 
-#### Facebook owner verifier #### 
+## Facebook owner verifier ## 
 This owner verifier implementation is created for verification of Facebook accounts. It is especially useful for applications that are already integrated with Facebook.
 
 
-##### Configuration #####
+### Configuration ###
 The configuration should match the following Avro schema. Note that you need to create a [facebook application](https://developers.facebook.com/products/login/) 
 and specify its application id and [secret](https://developers.facebook.com/docs/graph-api/securing-requests) in the configuration.
 
@@ -90,16 +90,16 @@ The following configuration example matches the previous schema.
 ```
 
 
-##### Administration #####
+### Administration ###
 To create a Facebook owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 The following image example illustrates how to create a Facebook owner verifier from Administration UI.
 
 ![facebook verifier](Admin-ui/verifier-facebook.png "facebook verifier")
 
-#### Google+ owner verifier ####
+## Google+ owner verifier ##
 This owner verifier implementation is created for verification of Google+ accounts. It is especially useful for applications that are already integrated with Google+.
 
-##### Configuration #####
+### Configuration ###
 The configuration should match the following Avro schema.
 
 ```json
@@ -127,16 +127,16 @@ The configuration should match the following Avro schema.
 }
 ```
 
-##### Administration #####
+### Administration ###
 To create a Google+ owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 The following image example illustrates how to create a Google+ owner verifier from Administration UI.
 
 ![google verifier](Admin-ui/verifier-google.png "google verifier")
 
-#### Twitter owner verifier ####
+## Twitter owner verifier ##
 This owner verifier implementation is created for verification of Twitter accounts. It is especially useful for applications that are already integrated with Twitter.
 
-##### Configuration #####
+### Configuration ###
 The configuration should match the following Avro schema.
 
 ```json 
@@ -164,18 +164,18 @@ The configuration should match the following Avro schema.
 }
 ```
 
-##### Administration #####
+### Administration ###
 To create a Twitter owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
 The following image example illustrates how to create a Twitter owner verifier from Administration UI.
                                    
 ![twitter verifier](Admin-ui/verifier-twitter.png "twitter verifier")
 
-#### Custom owner verifier ####
+## Custom owner verifier ##
 It is possible to implement and plug-in custom owner verifiers. You can find corresponding instructions on the 
 [Creating custom owner verifier]({{root_url}}Customization-guide/Kaa-Server/Development-environment-setup/#creating-custom-user-verifier) page.
 
 
-## Endpoint access token flow ##
+# Endpoint access token flow #
 In the *endpoint access token flow*, new endpoints are attached to the owner with the help of the endpoint which was attached to the owner beforehand.
 The following steps illustrate this flow with the endpoint A, which is already attached to the owner, and the endpoint B, which is due to be attached.
 
@@ -188,12 +188,12 @@ The following steps illustrate this flow with the endpoint A, which is already a
 ![Owner access token flow](endpoint_attach_2.png "Owner access token flow")
 
 
-### Attach endpoint to owner
+## Attach endpoint to owner ##
 
 To enable sending/receiving events to/from endpoints, at first the client should attach the endpoint to the owner as shown in the following screenshot.
 
 > Please refer to [Glossary]({{root_url}}Glossary/kaa-admin) for more details about **userExternalId**, **userAccessToken**, **userVerifierToken** 
->and other parameters are used by KaaClient methods.
+>and other parameters which are used by KaaClient methods.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
@@ -339,7 +339,7 @@ error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_
 </div>
 
 
-### Assisted attach
+## Assisted attach ##
 
 Specific endpoint may not be able to attach itself independently. E.g. in case if endpoint doesn't have an owner access token. 
 Another endpoint that already attached can assist in attachment process of the new endpoint. Below are examples of assisted attachment.
@@ -463,7 +463,7 @@ error_code = kaa_user_manager_attach_endpoint(kaa_client_get_context(kaa_client)
 </div>
 </div>
 
-### Detach endpoint from owner
+## Detach endpoint from owner ##
 
 Another endpoint that already attached can assist in detachment process for another endpoint which attached too. Below are examples of assisted detachment.
 
