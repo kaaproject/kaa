@@ -20,9 +20,9 @@
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <exception>
 
 #include "kaa/utils/ThreadPool.hpp"
-#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(ThreadPoolCreationtTest)
     BOOST_CHECK_NO_THROW({ ThreadPool pool; });
     BOOST_CHECK_NO_THROW({ ThreadPool pool(10); });
 
-    BOOST_CHECK_THROW({ ThreadPool pool(0); }, KaaException);
+    BOOST_CHECK_THROW({ ThreadPool pool(0); }, std::exception);
 }
 
 BOOST_AUTO_TEST_CASE(BadTaskTest)
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(BadTaskTest)
     ThreadPool pool;
     ThreadPoolTask task;
 
-    BOOST_CHECK_THROW(pool.add(task), KaaException);
+    BOOST_CHECK_THROW(pool.add(task), std::exception);
 }
 
 BOOST_AUTO_TEST_CASE(TaskWithExceptionTest)
@@ -197,8 +197,8 @@ BOOST_AUTO_TEST_CASE(PendingAllTaskShutdownTest)
 
 BOOST_AUTO_TEST_CASE(AwaitTerminationTest)
 {
-    std::mutex m;
-    std::condition_variable onStart;
+    std::mutex mutex;
+    std::condition_variable onStartCondition;
 
     ThreadPool threadPool;
 
@@ -208,40 +208,45 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTest)
     std::atomic_uint actualTaskCount(0);
     std::size_t timeToWaitAllTasks = 0;
 
-    ThreadPoolTask task = [&m, &onStart, &actualTaskCount, &isStart, &timeToWait] ()
+    ThreadPoolTask task = [&mutex, &onStartCondition, &actualTaskCount, &isStart, &timeToWait] ()
                               {
                                     {
-                                        std::unique_lock<std::mutex> lock(m);
-                                        onStart.wait(lock, [&isStart] () { return isStart; });
+                                        std::unique_lock<std::mutex> lock(mutex);
+                                        onStartCondition.wait(lock, [&isStart] () { return isStart; });
                                     }
                                     std::this_thread::sleep_for(std::chrono::seconds(timeToWait));
                                     actualTaskCount++;
                               };
 
+    // This task should be executed.
     threadPool.add(task);
     ++expectedTaskCount;
     timeToWaitAllTasks += timeToWait;
 
+    // This task should be executed.
     threadPool.add(task);
     ++expectedTaskCount;
     timeToWaitAllTasks += timeToWait;
 
+    // This task should be skipped.
     threadPool.add(task);
     timeToWaitAllTasks += timeToWait;
 
+    // This task should be skipped.
     threadPool.add(task);
     timeToWaitAllTasks += timeToWait;
 
     {
-        std::unique_lock<std::mutex> lock(m);
+        std::unique_lock<std::mutex> lock(mutex);
         isStart = true;
-        onStart.notify_all();
+        onStartCondition.notify_all();
     }
 
     std::size_t timeToWaitTwoTask = 2 * timeToWait - 1; // '-1' to wake up a bit more earlier than third task will start.
+
     threadPool.awaitTermination(timeToWaitTwoTask);
 
-    std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks));
+    std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks - timeToWaitTwoTask));
 
     BOOST_CHECK_EQUAL(actualTaskCount.load(), expectedTaskCount);
 }

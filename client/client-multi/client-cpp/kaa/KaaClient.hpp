@@ -142,9 +142,6 @@ private:
     std::unique_ptr<DefaultOperationLongPollChannel> opsLongPollChannel_;
 #endif
 
-    IKaaClientPlatformContextPtr                     platformContext_;
-    IKaaClientStateListenerPtr                       stateListener_;
-
     std::unique_ptr<IBootstrapManager>               bootstrapManager_;
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;
@@ -167,6 +164,9 @@ private:
 #ifdef KAA_USE_LOGGING
     std::unique_ptr<LogCollector>                    logCollector_;
 #endif
+
+    IKaaClientStateListenerPtr                       stateListener_;
+    IKaaClientPlatformContextPtr                     platformContext_;
 };
 
 }

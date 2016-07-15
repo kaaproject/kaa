@@ -16,89 +16,94 @@
 
 #include "kaa/utils/ThreadPool.hpp"
 
-#include "kaa/logging/Log.hpp"
-#include "kaa/common/exception/KaaException.hpp"
+#include <chrono>
+#include <stdexcept>
 
+#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
 class Worker {
 public:
-    Worker(ThreadPool& threadPool) : threadPool_(threadPool) {}
-    void operator() ();
+    Worker(ThreadPool& threadPool)
+        : threadPool_(threadPool)
+    { }
+
+    void operator() ()
+    {
+        while (true) {
+            ThreadPoolTask task;
+
+            {
+                KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPool_.threadPoolGuard_);
+
+                threadPool_.onNewTask_.wait(tasksLock,
+                        [this]{ return threadPool_.state_ == ThreadPool::State::STOPPED || !threadPool_.tasks_.empty(); });
+
+                if (threadPool_.state_ == ThreadPool::State::STOPPED && threadPool_.tasks_.empty()) {
+                    return;
+                }
+
+                task = std::move(threadPool_.tasks_.front());
+                threadPool_.tasks_.pop_front();
+            }
+
+            try {
+                task();
+            } catch (...) {}
+        }
+    }
 
 private:
     ThreadPool& threadPool_;
 };
 
-void Worker::operator ()()
-{
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPool_.threadPoolGuard_);
-
-    while (threadPool_.isRun_) {
-        while (threadPool_.isRun_ && threadPool_.tasks_.empty() && !threadPool_.isPendingShutdown_) {
-            KAA_CONDITION_WAIT(threadPool_.onNewTask_, tasksLock);
-        }
-
-        if (!threadPool_.isRun_ || (threadPool_.isPendingShutdown_ && threadPool_.tasks_.empty())) {
-            return;
-        }
-
-        auto task = threadPool_.tasks_.front();
-        threadPool_.tasks_.pop_front();
-
-        KAA_UNLOCK(tasksLock);
-
-        try {
-            task();
-        } catch (...) {}
-
-        KAA_LOCK(tasksLock);
-    }
-}
-
-ThreadPool::ThreadPool(std::size_t workerCount): workerCount_(workerCount)
+ThreadPool::ThreadPool(std::size_t workerCount)
+    : workerCount_(workerCount)
 {
     if (!workerCount_) {
-        throw KaaException(boost::format("Failed to create thread pool with %u workers ") % workerCount_);
+        throw std::invalid_argument((boost::format("Wrong thread pool worker count %u") % workerCount_).str());
     }
 }
 
 ThreadPool::~ThreadPool()
 {
-    stop(!shutdownTimer_);
+    stop(true);
+
+    for (auto &worker : workers_) {
+        if (worker.joinable()) {
+            worker.join();
+        }
+    }
 }
 
 void ThreadPool::add(const ThreadPoolTask& task)
 {
     if (!task) {
-        throw KaaException("Failed to add task to thread pool: empty callback");
-    }
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
-
-    if (isPendingShutdown_) {
-        throw KaaException("Failed to add task to thread pool: pending shutdown");
+        throw std::invalid_argument("Null thread pool task");
     }
 
-    if (workers_.empty()) {
-        start();
+    {
+        KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
+
+        if (state_ == State::CREATED) {
+            start();
+        }
+
+        if (state_ != State::RUNNING) {
+            throw std::runtime_error("Thread pool pending shutdown");
+        }
+
+        tasks_.push_back(task);
     }
-
-    tasks_.push_back(task);
-
-    KAA_UNLOCK(tasksLock);
 
     onNewTask_.notify_one();
 }
 
 void ThreadPool::awaitTermination(std::size_t seconds)
 {
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
-
-    if (isRun_) {
-        shutdownTimer_.reset(new KaaTimer<void()>("Thread pool shutdown timer"));
-        shutdownTimer_->start(seconds, [this] () { stop(true); } );
-    }
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+    stop(true);
 }
 
 void ThreadPool::shutdown()
@@ -114,32 +119,26 @@ void ThreadPool::shutdownNow()
 void ThreadPool::start()
 {
     for (std::size_t i = 0; i < workerCount_; ++i) {
-        workers_.push_back(std::thread(Worker(*this)));
+        workers_.emplace_back(Worker(*this));
     }
+
+    state_ = State::RUNNING;
 }
 
 void ThreadPool::stop(bool force)
 {
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
+    {
+        KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
 
-    if (!workers_.empty()) {
         if (force) {
             tasks_.clear();
-            isRun_ = false;
+            state_ = State::STOPPED;
         } else {
-            isPendingShutdown_ = true;
-        }
-
-        onNewTask_.notify_all();
-
-        KAA_UNLOCK(tasksLock);
-
-        for (auto &worker : workers_) {
-            if (worker.joinable()) {
-                worker.join();
-            }
+            state_ = State::PENDING_SHUTDOWN;
         }
     }
+
+    onNewTask_.notify_all();
 }
 
 } /* namespace kaa */
