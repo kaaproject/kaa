@@ -1735,6 +1735,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public String getFlatSchemaByCtlSchemaId(String schemaId) throws KaaAdminServiceException{
+        this.checkAuthority(KaaAuthorityDto.values());
         try {
             return controlService.getFlatSchemaByCtlSchemaId(schemaId);
         } catch (ControlServiceException e) {
