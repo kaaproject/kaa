@@ -374,14 +374,17 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
     if (!sha1 || !length) {
         return;
     }
-    uint8_t *sha1_public = KAA_MALLOC(KAA_SHA1_PUB_LEN);
-    unsigned char pub_key[294];
-    int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
-    if (key_length < 0) {
-        KAA_FREE(sha1_public);
-        return;
+    static uint8_t sha1_public[KAA_SHA1_PUB_LEN];
+    static int initialization = false;
+    if (!initialization) {
+        uint8_t pub_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
+        int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
+        if (key_length < 0) {
+            return;
+        }
+        sha1_from_public_key(pub_key, key_length, sha1_public);
+        initialization = true;
     }
-    sha1_from_public_key(pub_key, key_length, sha1_public);
     *length = KAA_SHA1_PUB_LEN;
     *sha1 = sha1_public;
 }
@@ -391,21 +394,24 @@ void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
     if (!sha1 || !length) {
         return;
     }
-    size_t sha1_base64_len = 0;
-    uint8_t *sha1_base64_buffer = KAA_MALLOC(1024);
-    uint8_t sha1_public[SHA1_LENGTH];
-    unsigned char pub_key[294];
-    int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
-    if (key_length < 0) {
-        KAA_FREE(sha1_base64_buffer);
-        return;
-    }
-    sha1_from_public_key(pub_key, key_length, sha1_public);
-    int error = sha1_to_base64(sha1_public, sizeof(sha1_public), sha1_base64_buffer, sizeof(sha1_base64_buffer), &sha1_base64_len);
-    if (error) {
-        return;
+    static size_t sha1_base64_len = 0;
+    static uint8_t sha1_base64_buffer[1024];
+    static int initialization = false;
+    if (!initialization) {
+        uint8_t pub_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
+        uint8_t sha1_public[SHA1_LENGTH];
+        int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
+        if (key_length < 0) {
+            return;
+        }
+        sha1_from_public_key(pub_key, key_length, sha1_public);
+        int error = sha1_to_base64(sha1_public, sizeof(sha1_public), sha1_base64_buffer, sizeof(sha1_base64_buffer), &sha1_base64_len);
+        if (error) {
+            return;
+        }
+        initialization = true;
     }
     *sha1 = (uint8_t *)sha1_base64_buffer;
-    *length = KAA_SHA1_PUB_BASE64_LEN;
+    *length = sha1_base64_len;
 
 }
