@@ -13,7 +13,7 @@ sort_idx: 50
 >For more information, refer to [Administration guide](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Administration-guide).  
 >See also [Web UI](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#web-ui).
 
-### Application  
+### Application (Kaa application)  
 >An application in Kaa represents a family of available implementations of a specific software application used by [endpoints](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-ep).
 >For example, you have two versions of a sound frequency measuring application: one for Arduino platform and one for STM32 platform.
 >Despite the difference in their implementation specifics, they are considered the same application in Kaa.  
@@ -46,20 +46,20 @@ sort_idx: 50
 ## C
 
 ### Client (Kaa client)  
->A particular [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application) or piece of software embedded into a device.
+>A particular [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application-kaa-application) or piece of software embedded into a device.
 >Kaa client uses Kaa [endpoint SDK](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-sdk-kaa-sdk) to process structured data provided by the [Kaa server](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#kaa-server) (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.).  
 >For more information, see [Design reference](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 ### Configuration data (configuration)  
 >A set of configuration values specified by the user based on the corresponding [configuration schema](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#configuration-schema).
->Once specified on the server and distributed to the [endpoints](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-ep) belonging to a certain [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application), these values support the corresponding configuration schema.  
+>Once specified on the server and distributed to the [endpoints](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-ep) belonging to a certain [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application-kaa-application), these values support the corresponding configuration schema.  
 >For more information, see [Configuration management](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Programming-guide/Key-platform-features/Configuration-management).
 
 ### Configuration extension  
 >Bla...
 
 ### Configuration schema  
->A user-defined specification of the [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application) data model that Kaa [Configuration extension](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#configuration-extension) uses to configure [endpoints](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-ep) registered under the application.
+>A user-defined specification of the [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application-kaa-application) data model that Kaa [Configuration extension](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#configuration-extension) uses to configure [endpoints](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-ep) registered under the application.
 >Configuration schema defines the format of the actual [configuration data](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#configuration-data-configuration) to be entered by the user/developer and then transferred to the endpoints.
 >There can be multiple schemas created for a single application.
 >The version of an endpoint schema is selected during the SDK generation.  
@@ -153,11 +153,11 @@ sort_idx: 50
 
 ## G
 
-### Group all  
->A default, non-editable group created for each Kaa application.
->The profile filter of this group is automatically set to "true" for every profile schema version in the system.
->The group _all_ includes every endpoint registered in the application.
->This group is used to define the default configuration, default access list for notification topics, and for some other special functions.
+### Group _all_  
+>A default, non-editable group created for each Kaa [application](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#application-kaa-application).
+>The [profile filter](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-group-profile-filter-profile-filter) of this group is automatically set to "true" for every [profile schema](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-profile-schema-profile-schema) version in the system.
+>The group _all_ includes every [endpoint](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#endpoint-ep) registered in the application.
+>This group is used to define the default [configuration](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#configuration-data-configuration), default access list for [notification topics](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Glossary/#notification-topic), and for some other special functions.
 >For more information, see [Endpoint groups](http://kaaproject.github.io/kaa/kaa-docs/v0.10.0/Programming-guide/Key-platform-features/Endpoint-groups).
 
 ## H
