@@ -85,7 +85,6 @@ Copyright 2014-2016 CyberVision, Inc.
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <jline.version>2.11</jline.version>
 
-
         <slf4j.version>1.7.7</slf4j.version>
         <slf4j-android.version>1.7.7</slf4j-android.version>
         <logback.version>1.1.2</logback.version>
@@ -112,8 +111,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**
-        </sonar.exclusions>
+        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**</sonar.exclusions>
         <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>

@@ -16,6 +16,24 @@
 
 package org.kaaproject.kaa.client.persistance;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,25 +48,6 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class KaaClientPropertiesStateTest {
 
