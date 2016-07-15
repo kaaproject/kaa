@@ -1,3 +1,5 @@
+---
+---
 /* custom template */
 html, body {
    height: 100%;
@@ -473,6 +475,20 @@ img {
 	max-height: 600px; /*for really big images*/
 }
 
+button.colapse_control{
+	border: none;
+	border-radius: 0;
+	outline: none;
+	background: #f7ad41;
+	color: #fff;
+	padding: 5px 10px;
+	font-family: 'Open Sans', Verdana;
+}
+
+button.colapse_control.more{
+	margin-top: 10px;
+}
+
 .featherlight img{
 	max-height: initial;
 }
@@ -497,7 +513,7 @@ blockquote:before{
     width: 40px;
     height: 36px;
     display: block;
-	background-image: url(/public/notes/note.png);
+	background-image: url('{{ site.baseurl }}/public/notes/note.png');
 }
 blockquote table{
 	outline: 2px solid #eaf7e8;
@@ -507,7 +523,7 @@ blockquote.tip{
     background: #ecedf7;
 }
 blockquote.tip:before{
-	background-image: url(/public/notes/tip.png);
+	background-image: url('{{ site.baseurl }}/public/notes/tip.png');
 }
 blockquote.tip table{
 	outline: 2px solid #ecedf7;
@@ -517,7 +533,7 @@ blockquote.important{
     background: #FFF2DF;
 }
 blockquote.important:before{
-	background-image: url(/public/notes/important.png);
+	background-image: url('{{ site.baseurl }}/public/notes/important.png');
 }
 blockquote.important table{
 	outline: 2px solid #FFF2DF;
@@ -527,7 +543,7 @@ blockquote.caution{
     background: #feeaea;
 }
 blockquote.caution:before{
-	background-image: url(/public/notes/caution.png);
+	background-image: url('{{ site.baseurl }}/public/notes/caution.png');
 }
 blockquote.caution table{
 	outline: 2px solid #feeaea;
@@ -559,6 +575,7 @@ td, th{
 
 .nav-tabs>li>a{
 	color: #666;
+	text-align: center;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover{
@@ -571,6 +588,7 @@ pre, .nav-tabs>li>a {
 	border: none !important;
 	border-radius: 0 !important;
 }
+
 /* tabs */
 /* content */
 
@@ -600,7 +618,7 @@ pre, .nav-tabs>li>a {
     width: 84%;
     margin: 13px 8%;
     padding: 6px 6px 6px 40px;
-    background: url('/public/search.png') #434343;
+    background: url('{{ site.baseurl }}/public/search.png') #434343;
     background-repeat: no-repeat;
     background-size: 30px;
     background-position-y: center;
@@ -653,7 +671,7 @@ li.menu-opened + ul{
 
 .nav li a{
     padding: 10px 15px;
-    text-align: center;
+    text-align: left;
     display: block;
     min-width: 60px;
 }
@@ -2052,7 +2070,7 @@ pre, .signature-nav>li>a {
   height: 18px;
   vertical-align: middle;
   display: inline-block;
-  background: url(../images/explorer_icons.png) no-repeat;
+  background: url('{{ site.baseurl }}/images/explorer_icons.png') no-repeat;
 }
 .swagger-section .api-ic .api_information_panel {
   position: relative;
