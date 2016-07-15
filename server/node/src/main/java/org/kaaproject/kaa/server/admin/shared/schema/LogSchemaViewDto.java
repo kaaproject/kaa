@@ -14,34 +14,26 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.common.dto.logs;
+package org.kaaproject.kaa.server.admin.shared.schema;
 
-import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 
-public class LogSchemaDto extends BaseSchemaDto {
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
-    private static final long serialVersionUID = -7023640650614573350L;
+public class LogSchemaViewDto extends BaseSchemaViewDto<LogSchemaDto>{
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof LogSchemaDto)) {
-            return false;
-        }
-        
-        return super.equals(o);
+    private static final long serialVersionUID = -5289268279407697144L;
+
+    public LogSchemaViewDto() {
+        super();
+    }
+
+    public LogSchemaViewDto(LogSchemaDto schema,
+                                     CtlSchemaFormDto ctlSchemaForm) {
+        super(schema, ctlSchemaForm);
     }
 
     @Override
-    public int hashCode() { //NOSONAR
-        return super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "LogSchemaDto{" + super.toString() +
-                '}';
+    protected LogSchemaDto createEmptySchema() {
+        return new LogSchemaDto();
     }
 }

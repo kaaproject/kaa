@@ -78,9 +78,8 @@ public class KafkaLogAppenderTest {
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setCreatedTime(System.currentTimeMillis());
-        logSchemaDto.setSchema(LogData.getClassSchema().toString());
 
-        logEventPack.setLogSchema(new LogSchema(logSchemaDto));
+        logEventPack.setLogSchema(new LogSchema(logSchemaDto, LogData.getClassSchema().toString()));
         return logEventPack;
     }
 

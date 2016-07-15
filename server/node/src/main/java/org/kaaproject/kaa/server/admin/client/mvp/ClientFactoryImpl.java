@@ -161,8 +161,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseCtlSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
 
     private final BaseListView<LogSchemaDto> logSchemasView = new LogSchemasViewImpl();
-    private final BaseSchemaView logSchemaView = new LogSchemaViewImpl(false);
-    private final BaseSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
+    private final BaseCtlSchemaView logSchemaView = new LogSchemaViewImpl(false);
+    private final BaseCtlSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
 
     private final BaseListView<EndpointGroupDto> endpointGroupsView = new EndpointGroupsViewImpl();
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
@@ -376,12 +376,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getLogSchemaView() {
+    public BaseCtlSchemaView getLogSchemaView() {
         return logSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateLogSchemaView() {
+    public BaseCtlSchemaView getCreateLogSchemaView() {
         return createLogSchemaView;
     }
 

@@ -34,7 +34,7 @@ public class LogEventPackMessageTest {
     private static final String ENDPOINT_KEY = "endpointKey";
     private static final long DATE_CREATED = System.currentTimeMillis();
     private static final int LOG_SCHEMA_VERSION = 3;
-    private static final LogSchema LOG_SCHEMA = new LogSchema(null);
+    private static final LogSchema LOG_SCHEMA = new LogSchema(null, "");
     private static final List<LogEvent> EVENTS = new ArrayList<>();
 
     @Test

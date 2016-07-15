@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.logs;
 
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -41,6 +43,9 @@ public class DefaultLogAppenderService implements LogAppenderService {
 
     @Autowired
     private LogAppenderBuilder logAppenderResolver;
+
+    @Autowired
+    private CTLService ctlService;
 
     @Autowired
     private LogAppendersService logAppendersService;
@@ -103,8 +108,10 @@ public class DefaultLogAppenderService implements LogAppenderService {
         LOG.debug("Fetching log schema for application {} and version {}", applicationId, logSchemaVersion);
         LogSchema logSchema = null;
         LogSchemaDto logSchemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(logSchemaDto.getCtlSchemaId());
+        String logFlatSchema = ctlService.flatExportAsString(ctlSchema);
         if (logSchemaDto != null) {
-            logSchema = new LogSchema(logSchemaDto);
+            logSchema = new LogSchema(logSchemaDto, logFlatSchema);
         }
         return logSchema;
     }

@@ -1157,10 +1157,10 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+    public NotificationSchemaDto createNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveNotificationSchema(notificationSchema);
     }
 
     /**
@@ -1172,11 +1172,11 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "editNotificationSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "saveNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
+    public NotificationSchemaDto saveNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+        return kaaAdminService.saveNotificationSchema(notificationSchema);
     }
 
     /**
@@ -1232,18 +1232,15 @@ public class KaaAdminController {
      *
      * @param logSchema
      *            the log schema
-     * @param file
-     *            the file
      * @return the log schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST)
     @ResponseBody
-    public LogSchemaDto createLogSchema(@RequestPart("logSchema") LogSchemaDto logSchema, @RequestPart("file") MultipartFile file)
+    public LogSchemaDto createLogSchema(@RequestBody LogSchemaDto logSchema)
             throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return kaaAdminService.editLogSchema(logSchema, data);
+        return kaaAdminService.saveLogSchema(logSchema);
     }
 
     /**
@@ -1255,10 +1252,25 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "editLogSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "saveLogSchema", method = RequestMethod.POST)
     @ResponseBody
-    public LogSchemaDto editLogSchema(@RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editLogSchema(logSchema, null);
+    public LogSchemaDto saveLogSchema(@RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveLogSchema(logSchema);
+    }
+
+    /**
+     * Get existing log schema.
+     *
+     * @param id
+     *            of log schema
+     * @return the log schema string
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "CTL/getFlatSchemaByCtlSchemaId", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public String getFlatSchemaByCtlSchemaId(@RequestParam String id) throws KaaAdminServiceException {
+        return kaaAdminService.getFlatSchemaByCtlSchemaId(id);
     }
 
     /**

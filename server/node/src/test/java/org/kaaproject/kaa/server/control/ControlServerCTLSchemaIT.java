@@ -308,6 +308,17 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         Assert.assertEquals(saved, loaded);
     }
 
+    @Test
+    public void getCTLFlatSchemaByIdTest() throws Exception {
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+        CTLSchemaDto loaded = client.getCTLSchemaById(saved.getId());
+        String savedSchema = client.getFlatSchemaByCtlSchemaId(saved.getId());
+        String loadedSchema = client.getFlatSchemaByCtlSchemaId(loaded.getId());
+        Assert.assertNotNull(loaded);
+        Assert.assertEquals(savedSchema, loadedSchema);
+    }
+
     /**
      * Retrieves a CTL schema by its id.
      *
