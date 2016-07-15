@@ -1002,7 +1002,7 @@ public interface ControlService {
     /**
      * Edits the event class family.
      *
-     * @param eventClassFamily
+     * @param eventClassFamilyVersion
      *            the event class family
      * @return the event class family dto
      * @throws ControlServiceException

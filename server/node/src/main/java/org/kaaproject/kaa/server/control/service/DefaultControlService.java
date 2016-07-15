@@ -1087,6 +1087,13 @@ public class DefaultControlService implements ControlService {
                         List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecfSchema.getId(), ecfSchema.getVersion(), EventClassType.EVENT);
                         records.addAll(eventClassService.findEventClassesByFamilyIdVersionAndType(ecfSchema.getId(), ecfSchema.getVersion(), EventClassType.OBJECT));
                         efm.setRecords(records);
+
+                        List <CTLSchemaDto> ctlDtos = new ArrayList<>();
+                        List <String> flatEventClassCtlSchemas = new ArrayList<>();
+                        records.forEach(rec -> ctlDtos.add(ctlService.findCTLSchemaById(rec.getCtlSchemaId())));
+                        ctlDtos.forEach(ctlDto -> flatEventClassCtlSchemas.add(new DataSchema(ctlService.flatExportAsString(ctlDto)).getRawSchema()));
+                        efm.setRawCtlsSchemas(flatEventClassCtlSchemas);
+
                         break;
                     }
                 }

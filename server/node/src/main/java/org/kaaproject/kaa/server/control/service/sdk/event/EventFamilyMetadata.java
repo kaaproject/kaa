@@ -28,7 +28,16 @@ public class EventFamilyMetadata {
     private String ecfClassName;
     private int version;
     private List<EventClassDto> records;
+    private List<String> rawCtlsSchemas;
     private List<ApplicationEventMapDto> eventMaps;
+
+    public List<String> getRawCtlsSchemas() {
+        return rawCtlsSchemas;
+    }
+
+    public void setRawCtlsSchemas(List<String> rawCtlsSchemas) {
+        this.rawCtlsSchemas = rawCtlsSchemas;
+    }
     
     public String getEcfName() {
         return ecfName;

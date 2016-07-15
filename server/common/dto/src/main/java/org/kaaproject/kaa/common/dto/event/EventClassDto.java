@@ -16,13 +16,10 @@
 
 package org.kaaproject.kaa.common.dto.event;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
-import org.kaaproject.kaa.common.dto.HasId;
 
 //TODO: Unique Key should be {tenantId, FQN, version}
-public class EventClassDto extends BaseSchemaDto implements HasId, Serializable {
+public class EventClassDto extends BaseSchemaDto {
 
     private static final long serialVersionUID = 2052580632293959408L;
 
