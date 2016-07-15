@@ -441,14 +441,7 @@ public:
      *
      * @return  The current access token.
      */
-    virtual std::string                       getEndpointAccessToken() const = 0;
-
-    /**
-     * Retrieve Endpoint Key Hash.
-     *
-     * @return Representation of Endpoint Key Hash in Base64 format.
-     */
-    virtual std::string                       getEndpointKeyHash() const = 0;
+    virtual std::string                       getEndpointAccessToken() = 0;
 
     /**
      * @brief Retrieves Kaa operations data multiplexer
