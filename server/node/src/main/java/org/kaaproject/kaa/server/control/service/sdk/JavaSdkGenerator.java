@@ -370,11 +370,13 @@ public class JavaSdkGenerator extends SdkGenerator {
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
 
-        List<Schema> eventFamilySchemas = new LinkedList<>();
-        if (eventFamilies != null && !eventFamilies.isEmpty()) {
-            for (EventFamilyMetadata eventFamily : eventFamilies) {
-                Schema eventFamilySchema = new Schema.Parser().parse(eventFamily.getEcfSchema());
-                eventFamilySchemas.add(eventFamilySchema);
+        List<String> flatEventClassCtlSchemas = new ArrayList<>();
+        eventFamilies.forEach(ecf -> flatEventClassCtlSchemas.addAll(ecf.getRawCtlsSchemas()));
+        List<Schema> eventClassCtlSchemas = new LinkedList<>();
+        if (flatEventClassCtlSchemas != null && !flatEventClassCtlSchemas.isEmpty()) {
+            for (String flatCtlSchema : flatEventClassCtlSchemas) {
+                Schema eventClassCtlSchema = new Schema.Parser().parse(flatCtlSchema);
+                eventClassCtlSchemas.add(eventClassCtlSchema);
             }
         }
 
@@ -383,7 +385,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         schemasToCheck.add(profileSchema);
         schemasToCheck.add(notificationSchema);
         schemasToCheck.add(logSchema);
-        schemasToCheck.addAll(eventFamilySchemas);
+        schemasToCheck.addAll(eventClassCtlSchemas);
 
         Map<String, Schema> uniqueSchemasMap = SchemaUtil.getUniqueSchemasMap(schemasToCheck);
 
@@ -516,8 +518,8 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(logCollectorSourceClassBean);
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
-            for (Schema eventFamilySchema : eventFamilySchemas) {
-                javaSources.addAll(generateSchemaSources(eventFamilySchema, uniqueSchemasMap));
+            for (Schema ctlSchema : eventClassCtlSchemas) {
+                javaSources.addAll(generateSchemaSources(ctlSchema, uniqueSchemasMap));
             }
             javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
         }
