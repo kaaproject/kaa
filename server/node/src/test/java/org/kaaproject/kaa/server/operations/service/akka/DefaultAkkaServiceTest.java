@@ -1326,7 +1326,7 @@ public class DefaultAkkaServiceTest {
 
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
         Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
-        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto()));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto(), ""));
         EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setId("1");
         profileSchemaDto.setCtlSchemaId("22");

@@ -39,6 +39,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.flume.ConfigurationConstants;
 
@@ -47,6 +48,7 @@ import com.google.common.base.Preconditions;
 public class AvroSchemaSource implements Configurable, ConfigurationConstants {
 
     private static final String KAA_ADMIN_REST_API_LOG_SCHEMA = "/kaaAdmin/rest/api/logSchema/";
+    private static final String KAA_ADMIN_REST_API_CTL_SCHEMA = "/kaaAdmin/rest/api/CTL/getFlatSchemaByCtlSchemaId?id=";
 
     public static final String SCHEMA_SOURCE = "flume.avro.schema.source";
     
@@ -106,6 +108,7 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
     public Schema loadByKey(KaaSinkKey key) throws Exception {
         Schema schema = null;
         String schemaString = null;
+        String logSchema = null;
         if (schemaSourceType.equals(SCHEMA_SOURCE_REST)) {
             HttpGet getRequest = new HttpGet(KAA_ADMIN_REST_API_LOG_SCHEMA+key.getApplicationToken()+"/"+key.getSchemaVersion());
             HttpResponse httpResponse = httpClient.execute(restHost, getRequest, httpContext);
@@ -114,7 +117,17 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
                 String content = EntityUtils.toString(entity);
                 ObjectMapper mapper = new ObjectMapper();
                 LogSchemaDto logSchemaDto = mapper.readValue(content, LogSchemaDto.class);
-                schemaString = logSchemaDto.getSchema();
+                HttpGet getCtlRequest = new HttpGet(KAA_ADMIN_REST_API_CTL_SCHEMA+logSchemaDto.getCtlSchemaId());
+                HttpResponse httpCtlResponse = httpClient.execute(restHost, getCtlRequest, httpContext);
+                HttpEntity ctlEntity = httpCtlResponse.getEntity();
+                if (httpCtlResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK && ctlEntity != null) {
+                    String ctlContent = EntityUtils.toString(entity);
+                    ObjectMapper ctlMapper = new ObjectMapper();
+                    logSchema = ctlMapper.readValue(ctlContent, String.class);
+                }
+                if(logSchemaDto != null){
+                    schemaString = logSchema;
+                }
                 EntityUtils.consume(entity);
             }
         } else {

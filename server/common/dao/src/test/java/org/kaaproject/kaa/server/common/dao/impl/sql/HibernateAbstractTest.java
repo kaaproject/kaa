@@ -474,25 +474,26 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return applicationEventFamilyMaps;
     }
 
-    protected List<LogSchema> generateLogSchema(Tenant tenant, Application application, int count) {
+    protected List<LogSchema> generateLogSchema(Tenant tenant, int ctlVersion, Application application, int count) {
         List<LogSchema> schemas = Collections.emptyList();
         try {
             if (application == null) {
                 application = generateApplication(tenant);
             }
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, application.getTenant(), null);
             LogSchema schema;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schema = new LogSchema();
                 schema.setApplication(application);
-                schema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json")).getRawSchema());
+                schema.setCtlSchema(ctlSchema);
                 schema.setCreatedUsername("Test User");
                 schema.setName("Test Name");
                 schema = logSchemaDao.save(schema);
                 Assert.assertNotNull(schema);
                 schemas.add(schema);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Can't generate log schemas {}", e);
             Assert.fail("Can't generate log schemas.");
         }
