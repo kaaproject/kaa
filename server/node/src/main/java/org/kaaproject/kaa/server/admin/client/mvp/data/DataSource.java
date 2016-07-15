@@ -20,30 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -78,7 +60,7 @@ public class DataSource {
     private final KaaAdminServiceAsync rpcService;
     private final EventBus eventBus;
 
-    private List<TenantUserDto> tenants;
+    private List<TenantDto> tenants;
 
     private List<ApplicationDto> applications;
 
@@ -155,20 +137,20 @@ public class DataSource {
                 });
     }
 
-    public void loadTenants(final AsyncCallback<List<TenantUserDto>> callback) {
+    public void loadTenants(final AsyncCallback<List<TenantDto>> callback) {
         loadTenants(callback, false);
     }
 
-    public void loadTenants(final AsyncCallback<List<TenantUserDto>> callback,
+    public void loadTenants(final AsyncCallback<List<TenantDto>> callback,
             boolean refresh) {
         if (tenants == null || refresh) {
-            tenants = new ArrayList<TenantUserDto>();
-            rpcService.getTenants(new DataCallback<List<TenantUserDto>>(
+            tenants = new ArrayList<>();
+            rpcService.getTenants(new DataCallback<List<TenantDto>>(
                     callback) {
                 @Override
-                protected void onResult(List<TenantUserDto> result) {
+                protected void onResult(List<TenantDto> result) {
                     tenants.addAll(result);
-                    eventBus.fireEvent(new DataEvent(TenantUserDto.class, true));
+                    eventBus.fireEvent(new DataEvent(TenantDto.class, true));
                 }
             });
         } else {
@@ -191,23 +173,23 @@ public class DataSource {
         });
     }
 
-    public void editTenant(TenantUserDto tenant,
-            final AsyncCallback<TenantUserDto> callback) {
+    public void editTenant(TenantDto tenant,
+            final AsyncCallback<TenantDto> callback) {
         rpcService.editTenant(tenant,
-                new DataCallback<TenantUserDto>(callback) {
+                new DataCallback<TenantDto>(callback) {
                     @Override
-                    protected void onResult(TenantUserDto result) {
+                    protected void onResult(TenantDto result) {
                         refreshTenants();
                     }
                 });
     }
 
     public void getTenant(String tenantId,
-            final AsyncCallback<TenantUserDto> callback) {
+            final AsyncCallback<TenantDto> callback) {
         rpcService.getTenant(tenantId,
-                new DataCallback<TenantUserDto>(callback) {
+                new DataCallback<TenantDto>(callback) {
                     @Override
-                    protected void onResult(TenantUserDto result) {
+                    protected void onResult(TenantDto result) {
                     }
                 });
     }

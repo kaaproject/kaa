@@ -19,32 +19,12 @@ package org.kaaproject.kaa.server.admin.shared.services;
 import java.util.List;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -95,13 +75,13 @@ public interface KaaAdminService extends RemoteService {
 
     void removeEndpointProfileByKeyHash(String endpointKeyHash) throws KaaAdminServiceException;;
 
-    List<TenantUserDto> getTenants() throws KaaAdminServiceException;
+    List<TenantDto> getTenants() throws KaaAdminServiceException;
 
-    TenantUserDto getTenant(String userId) throws KaaAdminServiceException;
+    TenantDto getTenant(String tenantId) throws KaaAdminServiceException;
 
-    TenantUserDto editTenant(TenantUserDto tenantUser) throws KaaAdminServiceException;
+    TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException;
 
-    void deleteTenant(String userId) throws KaaAdminServiceException;
+    void deleteTenant(String tenantId) throws KaaAdminServiceException;
 
     List<ApplicationDto> getApplications() throws KaaAdminServiceException;
 

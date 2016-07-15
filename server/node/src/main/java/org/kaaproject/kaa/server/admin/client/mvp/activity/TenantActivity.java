@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
@@ -26,10 +25,15 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TenantActivity extends
-        AbstractUserActivity<TenantUserDto, TenantView, TenantPlace> {
+        AbstractDetailsActivity<TenantDto, TenantView, TenantPlace> {
 
     public TenantActivity(TenantPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
+    }
+
+    @Override
+    protected String getEntityId(TenantPlace place) {
+        return place.getTenantId();
     }
 
     @Override
@@ -42,36 +46,32 @@ public class TenantActivity extends
     }
 
     @Override
-    protected TenantUserDto newEntity() {
-        return new TenantUserDto();
+    protected TenantDto newEntity() {
+        return new TenantDto();
     }
 
       @Override
       protected void onEntityRetrieved() {
-          super.onEntityRetrieved();
           if (!create) {
-              detailsView.setTitle(entity.getTenantName());
+              detailsView.setTitle(entity.getName());
           }
-          detailsView.getTenantName().setValue(entity.getTenantName());
+          detailsView.getTenantName().setValue(entity.getName());
       }
 
       @Override
       protected void onSave() {
-          super.onSave();
-          entity.setTenantName(detailsView.getTenantName().getValue());
-          if (create) {
-              entity.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-          }
+          entity.setName(detailsView.getTenantName().getValue());
+
       }
 
       @Override
-      protected void getEntity(String id, AsyncCallback<TenantUserDto> callback) {
+      protected void getEntity(String id, AsyncCallback<TenantDto> callback) {
           KaaAdmin.getDataSource().getTenant(id, callback);
       }
 
       @Override
-      protected void editEntity(TenantUserDto entity,
-              AsyncCallback<TenantUserDto> callback) {
+      protected void editEntity(TenantDto entity,
+              AsyncCallback<TenantDto> callback) {
           KaaAdmin.getDataSource().editTenant(entity, callback);
       }
 

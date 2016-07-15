@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.user.client.ui.HasValue;
 
-public interface TenantView extends UserView {
+public interface TenantView extends BaseDetailsView {
 
     HasValue<String> getTenantName();
 

@@ -34,34 +34,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -190,19 +169,19 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "auth/changePassword", params, ResultCode.class);
     }
 
-    public TenantUserDto editTenant(TenantUserDto tenant) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "tenant", tenant, TenantUserDto.class);
+    public TenantDto editTenant(TenantDto tenant) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "tenant", tenant, TenantDto.class);
     }
 
-    public List<TenantUserDto> getTenants() throws Exception {
-        ParameterizedTypeReference<List<TenantUserDto>> typeRef = new ParameterizedTypeReference<List<TenantUserDto>>() {
+    public List<TenantDto> getTenants() throws Exception {
+        ParameterizedTypeReference<List<TenantDto>> typeRef = new ParameterizedTypeReference<List<TenantDto>>() {
         };
-        ResponseEntity<List<TenantUserDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "tenants", HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<TenantDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "tenants", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
-    public TenantUserDto getTenant(String userId) throws Exception {
-        return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantUserDto.class);
+    public TenantDto getTenant(String userId) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantDto.class);
     }
 
     public ApplicationDto editApplication(ApplicationDto application) throws Exception {

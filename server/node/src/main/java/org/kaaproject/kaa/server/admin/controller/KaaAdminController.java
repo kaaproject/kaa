@@ -27,35 +27,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -406,23 +384,23 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "tenants", method = RequestMethod.GET)
     @ResponseBody
-    public List<TenantUserDto> getTenants() throws KaaAdminServiceException {
+    public List<TenantDto> getTenants() throws KaaAdminServiceException {
         return kaaAdminService.getTenants();
     }
 
     /**
-     * Gets the tenant by user id.
+     * Gets the tenant by it's id
      *
-     * @param userId
-     *            the user id
-     * @return the tenant user dto
+     * @param tenantId
+     *            the tenant id
+     * @return the tenant dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "tenant/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "tenant/{tenantId}", method = RequestMethod.GET)
     @ResponseBody
-    public TenantUserDto getTenant(@PathVariable("userId") String userId) throws KaaAdminServiceException {
-        return kaaAdminService.getTenant(userId);
+    public TenantDto getTenant(@PathVariable("tenantId") String tenantId) throws KaaAdminServiceException {
+        return kaaAdminService.getTenant(tenantId);
     }
 
     /**
@@ -436,18 +414,10 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "tenant", method = RequestMethod.POST)
     @ResponseBody
-    public TenantUserDto editTenant( @Valid @RequestBody TenantUserDto tenantUser) throws KaaAdminServiceException {
+    public TenantDto editTenant(@Valid @RequestBody TenantDto tenantUser) throws KaaAdminServiceException {
         try
         {
-            if (!KaaAuthorityDto.TENANT_ADMIN.equals(tenantUser.getAuthority())) {
-                throw new KaaAdminServiceException("Incorrect authority for tenant. Authority must be TENANT_ADMIN.", ServiceErrorCode.INVALID_ARGUMENTS);
-            }
-            CreateUserResult result = userFacade.saveUserDto(tenantUser, passwordEncoder);
-            tenantUser.setExternalUid(result.getUserId().toString());
-            TenantUserDto tenant = kaaAdminService.editTenant(tenantUser);
-            if (StringUtils.isNotBlank(result.getPassword())) {
-                tenant.setTempPassword(result.getPassword());
-            }
+            TenantDto tenant = kaaAdminService.editTenant(tenantUser);
             return tenant;
         } catch (Exception e) {
             throw Utils.handleException(e);

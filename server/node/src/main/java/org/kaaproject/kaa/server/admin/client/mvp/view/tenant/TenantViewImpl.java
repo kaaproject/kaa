@@ -34,8 +34,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private SizedTextBox tenantName;
-    private SizedTextBox userName;
-    private SizedTextBox email;
+
 
     public TenantViewImpl(boolean create) {
         super(create);
@@ -68,25 +67,25 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, tenantName);
 
-        userName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
-        userName.setWidth("100%");
-        userName.addInputHandler(this);
-
-        Label userLabel = new Label(Utils.constants.tenantAdminUsername());
-        if (create) {
-            userLabel.addStyleName(REQUIRED);
-        }
-        detailsTable.setWidget(1, 0, userLabel);
-        detailsTable.setWidget(1, 1, userName);
-
-        email = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
-        email.setWidth("100%");
-        email.addInputHandler(this);
-
-        Label emailLabel = new Label(Utils.constants.tenantAdminEmail());
-        emailLabel.addStyleName(REQUIRED);
-        detailsTable.setWidget(2, 0, emailLabel);
-        detailsTable.setWidget(2, 1, email);
+//        userName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
+//        userName.setWidth("100%");
+//        userName.addInputHandler(this);
+//
+//        Label userLabel = new Label(Utils.constants.tenantAdminUsername());
+//        if (create) {
+//            userLabel.addStyleName(REQUIRED);
+//        }
+//        detailsTable.setWidget(1, 0, userLabel);
+//        detailsTable.setWidget(1, 1, userName);
+//
+//        email = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
+//        email.setWidth("100%");
+//        email.addInputHandler(this);
+//
+//        Label emailLabel = new Label(Utils.constants.tenantAdminEmail());
+//        emailLabel.addStyleName(REQUIRED);
+//        detailsTable.setWidget(2, 0, emailLabel);
+//        detailsTable.setWidget(2, 1, email);
 
         tenantName.setFocus(true);
     }
@@ -94,15 +93,11 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
     @Override
     protected void resetImpl() {
         tenantName.setValue("");
-        userName.setValue("");
-        email.setValue("");
     }
 
     @Override
     protected boolean validate() {
-        boolean result = tenantName.getValue().length()>0;
-        result &= userName.getValue().length()>0;
-        result &= Utils.validateEmail(email.getValue());
+        boolean result = tenantName.getValue().length()>2 && tenantName.getValue().length()<255;
         return result;
     }
 
@@ -111,44 +106,5 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         return tenantName;
     }
 
-    @Override
-    public HasValue<String> getUserName() {
-        return userName;
-    }
-
-    @Override
-    public HasValue<String> getEmail() {
-        return email;
-    }
-
-    @Override
-    public HasValue<KaaAuthorityDto> getAuthority() {
-        return new HasValue<KaaAuthorityDto>() {
-
-            @Override
-            public HandlerRegistration addValueChangeHandler(
-                    ValueChangeHandler<KaaAuthorityDto> handler) {
-                return null;
-            }
-
-            @Override
-            public void fireEvent(GwtEvent<?> event) {
-            }
-
-            @Override
-            public KaaAuthorityDto getValue() {
-                return KaaAuthorityDto.TENANT_ADMIN;
-            }
-
-            @Override
-            public void setValue(KaaAuthorityDto value) {
-            }
-
-            @Override
-            public void setValue(KaaAuthorityDto value, boolean fireEvents) {
-            }
-
-        };
-    }
 
 }

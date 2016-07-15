@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -401,7 +400,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication(tenantAdminDto);;
         this.loginTenantAdmin(tenantAdminUser);
 
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getId(), null, null, null);
         final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
 
         Assert.assertNull(metaInfo3.getApplicationId());
