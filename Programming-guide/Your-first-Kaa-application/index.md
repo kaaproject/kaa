@@ -422,14 +422,147 @@ int main(void)
 </div>
 
 <div id="app-java" class="tab-pane fade" markdown="1" >
+```java
 
-</div>
+import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
+import org.kaaproject.kaa.client.Kaa;
+import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
+import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
+import org.kaaproject.kaa.client.logging.strategies.RecordCountLogUploadStrategy;
+import org.kaaproject.kaa.schema.sample.Configuration;
+import org.kaaproject.kaa.schema.sample.DataCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-<div id="app-obj-c" class="tab-pane fade" markdown="1" >
+import java.io.IOException;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
-</div>
+/**
+ * Class implement functionality for First Kaa application
+ *
+ * @author Maksym Liashenko
+ * @see <a href="http://docs.kaaproject.org/display/KAA/Your+first+Kaa+application"> Documentation</a>
+ */
+public class FirstDemo {
 
-</div>
+    private static final long DEFAULT_SAMPLE_TIME = 1000L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(FirstDemo.class);
+    private static Timer timer = new Timer();
+    private static KaaClient kaaClient;
+
+
+    public static void main(String[] args) {
+        LOG.info("Kaa First Demo app starting!");
+        startKaaClient();
+
+        LOG.info("--= Press any key to exit =--");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            LOG.error("IOException has occurred: " + e.getMessage());
+        }
+        LOG.info("Stopping...");
+
+        timer.cancel();
+        stopKaaClient();
+    }
+
+    private static void startKaaClient() {
+        /*
+         * Create the Kaa desktop context for the application.
+         */
+        DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
+
+        /*
+         * Create a Kaa client and add a listener which displays the Kaa client
+         * configuration as soon as the Kaa client is started.
+         */
+        kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
+            @Override
+            public void onStarted() {
+                super.onStarted();
+                LOG.info("Kaa client started");
+
+                Configuration configuration = kaaClient.getConfiguration();
+                LOG.info("Default sample period: " + configuration.getSamplePeriod());
+
+                onKaaStarted(configuration.getSamplePeriod() * 1000L);
+
+            }
+        }, true);
+
+        kaaClient.setLogUploadStrategy(new RecordCountLogUploadStrategy(1));
+
+        /*
+         * Persist configuration in a local storage to avoid downloading it each
+         * time the Kaa client is started.
+         */
+        kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
+
+        kaaClient.addConfigurationListener(new ConfigurationListener() {
+            @Override
+            public void onConfigurationUpdate(Configuration configuration) {
+                LOG.info("Received configuration data. New sample period: " + configuration.getSamplePeriod());
+
+                onChangedConfiguration(configuration.getSamplePeriod() * 1000L);
+            }
+        });
+
+        /*
+         * Start the Kaa client and connect it to the Kaa server.
+         */
+        kaaClient.start();
+    }
+
+    private static void addTemperatureRecord(DataCollection data) {
+        kaaClient.addLogRecord(data);
+    }
+
+    private static void stopKaaClient() {
+        kaaClient.stop();
+    }
+
+    /*
+    * Retrieves current temperature.
+    */
+    private static int getTemperatureRand() {
+        return new Random().nextInt(10) + 31;
+    }
+
+    private static void onKaaStarted(long time) {
+        if (time == 0) {
+            time = DEFAULT_SAMPLE_TIME;
+        }
+        timer.schedule(new TemperatureTimerTask(), DEFAULT_SAMPLE_TIME, time);
+    }
+
+    private static void onChangedConfiguration(long time) {
+        if (time == 0) {
+            time = DEFAULT_SAMPLE_TIME;
+        }
+        timer.cancel();
+
+        timer = new Timer();
+        timer.schedule(new TemperatureTimerTask(), DEFAULT_SAMPLE_TIME, time);
+    }
+
+    private static class TemperatureTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            int temperature = getTemperatureRand();
+            addTemperatureRecord(new DataCollection(temperature));
+
+            LOG.info("Sampled Temperature: " + temperature);
+        }
+    }
+}
+```
 
 ## Launching application
 
