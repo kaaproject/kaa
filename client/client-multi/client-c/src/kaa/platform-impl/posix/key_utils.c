@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <utilities/kaa_mem.h>
 #include <platform/ext_key_utils.h>
 #include <mbedtls/pk.h>
 #include <mbedtls/entropy.h>
@@ -373,10 +374,11 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
     if (!sha1 || !length) {
         return;
     }
-    uint8_t *sha1_public = malloc(KAA_SHA1_PUB_LEN);
+    uint8_t *sha1_public = KAA_MALLOC(KAA_SHA1_PUB_LEN);
     unsigned char pub_key[294];
     int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
     if (key_length < 0) {
+        KAA_FREE(sha1_public);
         return;
     }
     sha1_from_public_key(pub_key, key_length, sha1_public);
@@ -386,15 +388,16 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
 
 void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
 {
-    if (sha1 || !length) {
+    if (!sha1 || !length) {
         return;
     }
     size_t sha1_base64_len = 0;
-    uint8_t *sha1_base64_buffer = malloc(1024);
+    uint8_t *sha1_base64_buffer = KAA_MALLOC(1024);
     uint8_t sha1_public[SHA1_LENGTH];
     unsigned char pub_key[294];
     int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
     if (key_length < 0) {
+        KAA_FREE(sha1_base64_buffer);
         return;
     }
     sha1_from_public_key(pub_key, key_length, sha1_public);
