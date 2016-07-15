@@ -26,7 +26,7 @@ The following diagram illustrates basic entities and data flows in scope of the 
 created by the developer for the application
 * Log appenders submit the logs received by the server to a particular storage or analytics system
 
-![Basic data collection management](attach/basic-data-collection-management.png) <br/>
+![Basic data collection management](attach/basic-data-collection-management.png)
 
 The Kaa Data collection subsystem provides the following features:
 
@@ -147,6 +147,112 @@ by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.htm
 If you want to review the added Avro schema, open the **Log schema details** window by clicking the schema in the **Log schemas** window.
 
 ![Log schema details](attach/log_schema_details.png)
+
+# Log record schema
+
+The log record schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas).
+
+The log record schema defines structure of the log record in Kaa.
+
+Log record schema consists of:
+
+* Log record header
+* Log events
+* Client/server -side endpoint profile data available in the MongoDB and Flume log appenders
+
+The log record header schema described below:
+
+```json
+{
+    "name":"recordHeader",
+    "type":[
+        {
+            "type":"record",
+            "name":"RecordHeader",
+            "namespace":"org.kaaproject.kaa.server.common.log.shared.avro.gen",
+            "fields":[
+                {
+                    "name":"endpointKeyHash",
+                    "type":[
+                        {
+                            "type":"string",
+                            "avro.java.string":"String"
+                        },
+                        "null"
+                    ]
+                },
+                {
+                    "name":"applicationToken",
+                    "type":[
+                        {
+                            "type":"string",
+                            "avro.java.string":"String"
+                        },
+                        "null"
+                    ]
+                },
+                {
+                    "name":"headerVersion",
+                    "type":[
+                        "int",
+                        "null"
+                    ]
+                },
+                {
+                    "name":"timestamp",
+                    "type":[
+                        "long",
+                        "null"
+                    ]
+                },
+                {
+                    "name":"logSchemaVersion",
+                    "type":[
+                        "int",
+                        "null"
+                    ]
+                }
+            ]
+        },
+        "null"
+    ]
+}
+```
+
+The log record header schema and the log schema form a
+[record wrapper](https://github.com/kaaproject/kaa/blob/master/server/common/log-shared/src/main/resources/avro/record_wrapper_schema.avsc.template) schema
+that used for collecting log data from endpoints.
+
+According to the log record header schema the Kaa server adds corresponding data to the logs that the endpoints upload.
+
+## Adding log record header
+
+It is possible to configure the log record header data in the log appender:
+
+  * In the Admin UI by selecting necessary **Log metadata** fields.
+![Add log record header](attach/add-log-record-header.png)
+  * By the [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/ #TODO) call to create log appender. Here you need to add corresponding fields
+  to the **headerStructure** list.
+
+Available record header fields described below:
+
+|Name       |Description                                                            |
+|-----------|-----------------------------------------------------------------------|
+|KEYHASH    |A key hash identifying the endpoint which produced the log record      |
+|VERSION    |The header version                                                     |
+|TIMESTAMP  |The timestamp in milliseconds when logs were uploaded to the Kaa server|
+|TOKEN      |The [application token]({{root_url}}Glossary)                          |
+|LSVERSION  |The log schema version                                                 |
+
+## Adding client/server -side endpoint profile data
+
+It is possible to add client and/or server -side endpoint profile data to the log records in MongoDB and Flume log appenders:
+
+* In the AdminUI in the log appender configuration section by selecting necessary fields:
+![Include endpoint profile data](attach/include-endpoint-profile-data.png)
+* By the [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/ #TODO) call to create log appender. Here you need to set **includeClientProfile**
+and/or **includeServerProfile** fields in the log appender **jsonConfiguration**. Example for MongoDB log appender **jsonConfiguration**
+[here]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/#administration).
 
 # Log appenders
 
