@@ -476,17 +476,38 @@ img {
 }
 
 button.colapse_control{
-	border: none;
-	border-radius: 0;
-	outline: none;
-	background: #f7ad41;
-	color: #fff;
-	padding: 5px 10px;
-	font-family: 'Open Sans', Verdana;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    background: #f7ad41;
+    color: #fff;
+    padding: 5px 10px;
+    padding-right: 17px;
+    font-family: 'Open Sans', Verdana;
+    position: relative;
+	width: 120px;
 }
 
 button.colapse_control.more{
 	margin-top: 10px;
+}
+
+button.colapse_control:before {
+    content: "";
+    display: block;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+	border-bottom: 5px solid #fff;
+    width: 0;
+    height: 0;
+    position: absolute;
+    right: 5px;
+    top: 13px;
+}
+
+button.colapse_control.more:before {
+    border-top: 5px solid #fff;
+    border-bottom: 0px;
 }
 
 .featherlight img{
