@@ -596,7 +596,9 @@ td, th{
 
 .nav-tabs>li>a{
 	color: #666;
-	text-align: center !important;
+	text-align: center!important;
+    	padding: 10px 15px!important;
+	min-width: 60px;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover{
@@ -691,10 +693,9 @@ li.menu-opened + ul{
 }
 
 .nav li a{
-    padding: 10px 15px;
+    padding: 10px 5px;
     text-align: left;
     display: block;
-    min-width: 60px;
 }
 
 #sidebar .nav > li a{
