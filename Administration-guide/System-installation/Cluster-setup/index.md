@@ -5,6 +5,8 @@ permalink: /:path/
 sort_idx: 30
 ---
 
+{% include variables.md %}
+
 * TOC
 {:toc}
 
@@ -18,7 +20,7 @@ In order to set up Kaa cluster you need to have at least 3 Linux nodes with ```k
 
 Also ```kaa-node``` service require some third party dependencies like SQL and NoSQL databases and Apache Zookeeper service, more details you can find in [Architecture overview]({{root_url}}Architecture-overview/). 
 You can find detailed instructions on how to install and configure Zookeeper service and one of supported SQL and NoSQL databases in [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/#installation-steps) guide. 
-A set of databases (for example MongoDB + PostgreSQL) depends on your particular use case and some useful recommendations you can find in [Planning your deployment](http://10.2.2.133:4000/kaa/current/Administration-guide/System-installation/Planning-your-deployment/) guide.
+A set of databases (for example MongoDB + PostgreSQL) depends on your particular use case and some useful recommendations you can find in [Planning your deployment]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/) guide.
 
 In this guide we assume that you had already set up your SQL and NoSQL database clusters, so this tutorial doesn't cover such themes like setting up ones for Cassandra, MongoDB or PostgreSQL. 
 Refer to official [Cassandra](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation in order to setup corresponding database cluster.
@@ -241,7 +243,7 @@ In order to configure SQL database in a cluster follow next steps:
    
    </div></div>
 
-2. and ```/etc/kaa-node/conf/admin-dao.properties```
+2. Set SQL database URL property in ```/etc/kaa-node/conf/admin-dao.properties```
 
    <ul class="nav nav-tabs">
      <li class="active"><a data-toggle="tab" href="#MariaDB1">MariaDB</a></li>
@@ -278,7 +280,7 @@ In order to configure SQL database in a cluster follow next steps:
    
    </div></div>
 
-And also configure [username and password]({{root_url}}Administration-guide/System-installation/Single-node-installation#sql-database-configuration)
+And also configure [username and password]({{root_url}}Administration-guide/System-installation/Single-node-installation#sql-database-configuration).
 
 ### NoSQL database configuration
 
@@ -328,7 +330,7 @@ For all three nodes it would be like this
  nosql_db_provider_name=cassandra
 ```
 
-Setup Cassandra host ip in ```/etc/kaa-node/conf/common-dao-cassandra.properties``` file. 
+Setup Cassandra host IP in ```/etc/kaa-node/conf/common-dao-cassandra.properties``` file. 
 Assuming that we peek standard Cassandra port, for all three nodes property would look like this
 
 ```bash
@@ -348,7 +350,7 @@ After all configuration properties set up
  $ sudo service kaa-node start
 ```
 
-If everithing is configured properly Kaa Administrator will see next output on command:
+If everything is configured properly Kaa Administrator will see next output on command:
 
 ```bash
  $ sudo service kaa-node status
