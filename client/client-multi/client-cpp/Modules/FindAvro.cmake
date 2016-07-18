@@ -61,8 +61,8 @@ find_path(AVRO_INCLUDE_DIR
      ${CMAKE_INCLUDE_PATH}
 )
 
-if (AVRO_LINK_STATIC)
-    set (AVRO_LOOK_FOR_LIB_NAMES avrocpp_s avrocpp)
+if (Avro_USE_STATIC_LIBS)
+    set (AVRO_LOOK_FOR_LIB_NAMES avrocpp_s)
 else ()
     set (AVRO_LOOK_FOR_LIB_NAMES avrocpp)
 endif ()
