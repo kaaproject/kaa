@@ -12,7 +12,7 @@ sort_idx: 40
 
 To exchange events between several endpoints, it is required that those endpoints were attached to the same owner.
 Depending on the application, owners may be person, groups of people, or organizations. 
-As an example we can take joint-stock company. Company it's our endpoint and all members are equal owners.
+As an example we can take account of some company in social network. Endpoint in this example it's account and owner it's group of people which has access to it. 
 Kaa provides necessary APIs to attach/detach endpoints to/from owners through one of the following two flows:
 
 * [Owner access token flow](#owner-access-token-flow)
