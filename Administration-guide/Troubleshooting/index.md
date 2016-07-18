@@ -4,8 +4,7 @@ title: Troubleshooting
 permalink: /:path/
 sort_idx: 888888880
 ---
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 - [How to's](#how-tos)
   - [How to change the service logging level](#how-to-change-the-service-logging-level)
