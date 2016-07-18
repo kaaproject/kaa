@@ -620,8 +620,9 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
     KAA_RETURN_IF_NIL2(self, self->kaa_context->failover_strategy, false);
 
     kaa_failover_decision_t decision = kaa_failover_strategy_on_failover(self->kaa_context->failover_strategy, self->failover_meta_info.reason);
-    if(decision.action == KAA_NOOP)
+    if (decision.action == KAA_NOOP) {
        return false;
+    }
     kaa_error_t error_code = KAA_ERR_NONE;
     kaa_time_t current_time = KAA_TIME();
     if (!self->failover_meta_info.is_failover) {

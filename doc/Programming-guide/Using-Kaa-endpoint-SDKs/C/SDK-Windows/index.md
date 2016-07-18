@@ -6,8 +6,7 @@ sort_idx: 50
 ---
 <!-- Start: Cross links helper -->
 <!-- This header should be placed in all files that h
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 <!-- End:   Cross links helper -->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

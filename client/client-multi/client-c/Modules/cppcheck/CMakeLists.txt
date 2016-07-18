@@ -23,6 +23,7 @@ if(CPPCHECK_COMMAND)
      COMMAND ${CPPCHECK_COMMAND} --quiet --enable=all --std=c99 --suppress=unusedFunction
                                  --force --error-exitcode=1 --template=gcc -I src/kaa
                                  --inline-suppr src/ test/
+                                 -ithirdparty/
      WORKING_DERICTORY ${KAA_SDK_DIR}
      COMMENT "Running cppcheck"
      VERBATIM

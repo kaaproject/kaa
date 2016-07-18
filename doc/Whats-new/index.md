@@ -2,7 +2,6 @@
 layout: page
 title: What's new
 permalink: /:path/
-nav: /:path/Whats-new/
 sort_idx: 60
 ---
 

@@ -2,12 +2,10 @@
 layout: page
 title: Tenants and applications management
 permalink: /:path/
-nav: /:path/Administration-guide/Tenants-and-applications-management/
 sort_idx: 40
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 **Table of Contents**
 

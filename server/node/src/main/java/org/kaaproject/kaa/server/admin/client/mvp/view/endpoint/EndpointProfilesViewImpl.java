@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
@@ -34,7 +33,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
@@ -99,7 +97,7 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     }
 
     @Override
-    public ValueListBox<EndpointGroupDto> getEndpointGroupsInfo() {
+    public EndpointGroupsInfoListBox getEndpointGroupsInfo() {
         return listBox;
     }
 

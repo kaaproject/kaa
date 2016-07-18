@@ -2,12 +2,10 @@
 layout: page
 title: Users management
 permalink: /:path/
-nav: /:path/Administration-guide/Users-management
 sort_idx: 50
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 **Table of Contents**
 

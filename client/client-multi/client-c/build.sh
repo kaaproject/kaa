@@ -18,27 +18,23 @@
 # Exits immediately if error occurs
 set -e
 
-RUN_DIR=`pwd`
-
 help() {
     echo "Choose one of the following: {build|install|test|analyze|clean}"
     exit 1
 }
 
-if [ $# -eq 0 ]
-then
+if [ $# -eq 0 ]; then
     help
 fi
 
-if [ -z ${MAX_LOG_LEVEL+x} ]
-then
+if [ -z "${MAX_LOG_LEVEL+x}" ]; then
     MAX_LOG_LEVEL=6
 fi
 
 prepare_build() {
     mkdir -p build-posix
     cd build-posix
-    cmake -DCMAKE_BUILD_TYPE=Debug -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=1 .. -DCMAKE_C_FLAGS="-Werror"
+    cmake -DCMAKE_BUILD_TYPE=Debug -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=1 -DKAA_ENCRYPTION=1 .. -DCMAKE_C_FLAGS="-Werror"
     cd ..
 }
 
@@ -74,8 +70,7 @@ clean() {
     fi
 }
 
-for cmd in $@
-do
+for cmd in "$@"; do
 
 case "$cmd" in
     build)
