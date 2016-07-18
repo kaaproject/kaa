@@ -371,6 +371,11 @@ if(NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR 
 endif()
 message("==================================")
 
+option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
+if(${KAA_RUNTIME_KEY_GENERATION})
+    add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+endif()
+
 #
 # Find third-party dependencies
 #

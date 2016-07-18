@@ -1496,8 +1496,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             List<SchemaInfoDto> schemaInfos = new ArrayList<>(notificationSchemas.size());
             for (NotificationSchemaDto notificationSchema : notificationSchemas) {
                 SchemaInfoDto schemaInfo = new SchemaInfoDto(notificationSchema);
-                CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
-                RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(notificationSchema.getCtlSchemaId(), ctlSchemaDto.getBody());
+                RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(notificationSchema.getCtlSchemaId(), null);
                 schemaInfo.setSchemaForm(schemaForm);
                 schemaInfos.add(schemaInfo);
             }

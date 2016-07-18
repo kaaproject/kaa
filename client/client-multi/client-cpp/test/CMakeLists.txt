@@ -115,6 +115,8 @@ set ( KAA_TEST_SOURCES
         ../impl/context/AbstractExecutorContext.cpp
         ../impl/KaaClientProperties.cpp
         TestRunner.cpp
+        impl/KaaTestUtils.cpp
+        impl/channel/impl/DefaultBootstrapChannelTest.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
         impl/bootstrap/BootstrapFailoverTest.cpp
