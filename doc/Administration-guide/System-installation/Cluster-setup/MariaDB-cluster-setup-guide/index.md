@@ -5,6 +5,8 @@ permalink: /:path/
 sort_idx: 30
 ---
 
+{% include variables.md %}
+
 * TOC
 {:toc}
  
