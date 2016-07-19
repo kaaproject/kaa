@@ -42,14 +42,7 @@ public class TenantsGrid extends AbstractKaaGrid<TenantDto, String> {
                     }
                 }, 160);
 
-//        prefWidth += constructStringColumn(table,
-//                Utils.constants.tenantUser(),
-//                new StringValueProvider<TenantDto>() {
-//                    @Override
-//                    public String getValue(TenantDto item) {
-//                        return item.getName();
-//                    }
-//                }, 160);
+
 
         return prefWidth;
     }
