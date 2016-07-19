@@ -1002,13 +1002,13 @@ public interface ControlService {
     /**
      * Edits the event class family.
      *
-     * @param eventClassFamilyVersion
+     * @param eventClassFamily
      *            the event class family
      * @return the event class family dto
      * @throws ControlServiceException
      *             the control service exception
      */
-    EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws ControlServiceException;
+    EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException;
 
     /**
      * Gets the event class families by tenant id.
@@ -1033,18 +1033,29 @@ public interface ControlService {
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException;
 
     /**
-     * Adds the event class family schema.
+     * Gets the list of event class family versions.
      *
      * @param eventClassFamilyId
      *            the event class family id
-     * @param eventClassFamilySchema
-     *            the event class family schema
+     * @return the list of event class family versions
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException;
+
+    /**
+     * Adds the event class family version to existing ECF.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @param eventClassFamilyVersion
+     *            the event class family version dto
      * @param createdUsername
      *            the created username
      * @throws ControlServiceException
      *             the control service exception
      */
-    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+    void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
             throws ControlServiceException;
 
     /**

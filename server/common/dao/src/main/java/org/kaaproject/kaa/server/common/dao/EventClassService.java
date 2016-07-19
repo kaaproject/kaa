@@ -55,19 +55,19 @@ public interface EventClassService {
     /**
      * Save event class family.
      *
-     * @param eventClassFamilyVersionDto the event class family version dto
+     * @param eventClassFamilyDto the event class family dto
      * @return the event class family dto
      */
-    EventClassFamilyDto saveEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersionDto);
+    EventClassFamilyDto saveEventClassFamily(EventClassFamilyDto eventClassFamilyDto);
 
     /**
      * Add event class family schema.
      *
      * @param eventClassFamilyId the event class family id
-     * @param eventClassFamilySchema the event class family schema
+     * @param eventClassFamilyVersion the event class family version
      * @param createdUsername the created username
      */
-    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername);
+    void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername);
 
     /**
      * Find event classes by event class family Id and version.

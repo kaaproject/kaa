@@ -23,11 +23,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 
 import javax.persistence.*;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FQN;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TYPE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
@@ -42,7 +38,6 @@ public class EventClass extends BaseSchema<EventClassDto> {
     private Tenant tenant;
 
     @ManyToOne
-    @JoinColumn(name = EVENT_CLASS_EVENT_CLASS_FAMILY_ID, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private EventClassFamilyVersion ecf;
 

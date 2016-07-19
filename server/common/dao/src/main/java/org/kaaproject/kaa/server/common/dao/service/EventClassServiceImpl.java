@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.kaaproject.avro.ui.shared.NamesValidator;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
@@ -38,8 +40,6 @@ import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
-import org.kaaproject.kaa.server.common.dao.schema.EventSchemaException;
-import org.kaaproject.kaa.server.common.dao.schema.EventSchemaMetadata;
 import org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,36 +100,46 @@ public class EventClassServiceImpl implements EventClassService {
 
     @Override
     public EventClassFamilyDto saveEventClassFamily(
-            EventClassFamilyVersionDto eventClassFamilyVersionDto) {
+            EventClassFamilyDto eventClassFamilyDto) {
         EventClassFamilyDto savedEventClassFamilyDto = null;
-        if (isValidSqlObject(eventClassFamilyVersionDto)) {
-            savedEventClassFamilyDto = getDto(eventClassFamilyDao.findById(eventClassFamilyVersionDto.getId()));
-            savedEventClassFamilyDto.setCreatedTime(System.currentTimeMillis());
-            EventClassFamily ecf = new EventClassFamily(savedEventClassFamilyDto);
-            List<EventClassFamilyVersion> schemas = new ArrayList<>();
-            findEventClassFamilyVersionsById(eventClassFamilyVersionDto.getId()).forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
-            schemas.add(new EventClassFamilyVersion(eventClassFamilyVersionDto));
-            ecf.setSchemas(schemas);
-            savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(ecf));
+        if (isValidSqlObject(eventClassFamilyDto)) {
+            if (eventClassFamilyDao.validateName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getName())) {
+                if (StringUtils.isBlank(eventClassFamilyDto.getId())) {
+                    if (NamesValidator.validateNamespace(eventClassFamilyDto.getNamespace())) {
+                        if (NamesValidator.validateClassName(eventClassFamilyDto.getClassName())) {
+                            if (eventClassFamilyDao.validateClassName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getClassName())) {
+                                eventClassFamilyDto.setCreatedTime(System.currentTimeMillis());
+                            } else {
+                                LOG.debug("Can't save event class family. Class name should be unique within the tenant.");
+                                throw new IncorrectParameterException("Incorrect event class family. Class name should be unique within the tenant.");
+                            }
+                        } else {
+                            LOG.debug("Can't save event class family. Class name [{}] is not valid.", eventClassFamilyDto.getClassName());
+                            throw new IncorrectParameterException("Incorrect event class family. Class name is not valid. '" + eventClassFamilyDto.getClassName() + "' is not a valid identifier.");
+                        }
+                    } else {
+                        LOG.debug("Can't save event class family. Namespace [{}] is not valid.", eventClassFamilyDto.getNamespace());
+                        throw new IncorrectParameterException("Incorrect event class family. Namespace is not valid. '" + eventClassFamilyDto.getNamespace() + "' is not a valid identifier.");
+                    }
+                }
+                savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(new EventClassFamily(eventClassFamilyDto)));
+            } else {
+                LOG.debug("Can't save event class family. Name should be unique within the tenant.");
+                throw new IncorrectParameterException("Incorrect event class family. Name should be unique within the tenant.");
+            }
         }
         return savedEventClassFamilyDto;
     }
 
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId,
-            String eventClassFamilySchema, String createdUsername) {
+    public void addEventClassFamilyVersion(String eventClassFamilyId,
+                                           EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername) {
         EventClassFamilyDto eventClassFamily = findEventClassFamilyById(eventClassFamilyId);
         if (eventClassFamily != null) {
-            List<EventSchemaMetadata> eventSchemas;
-            try {
-                eventSchemas = eventSchemaProcessor.processSchema(eventClassFamilySchema);
-            } catch (EventSchemaException e) {
-                LOG.warn("Can't process event class family schema.", e);
-                throw new IncorrectParameterException("Incorrect event class family schema.");
-            }
-            List<String> fqns = new ArrayList<>(eventSchemas.size());
-            for (EventSchemaMetadata eventSchema : eventSchemas) {
-                fqns.add(eventSchema.getFqn());
+            List<EventClassDto> records = eventClassFamilyVersion.getRecords();
+            List<String> fqns = new ArrayList<>(records.size());
+            for (EventClassDto eventClass : records) {
+                fqns.add(eventClass.getFqn());
             }
             if (validateEventClassFamilyFqns(eventClassFamily, fqns)) {
                 List<EventClassFamilyVersionDto> schemasDto = findEventClassFamilyVersionsById(eventClassFamilyId);
@@ -143,20 +153,21 @@ public class EventClassServiceImpl implements EventClassService {
                         }
                     });
                     version = schemasDto.get(schemasDto.size()-1).getVersion()+1;
+                } else {
+                    schemasDto = new ArrayList<>();
                 }
-                EventClassFamilyVersionDto eventClassFamilyVersion = new EventClassFamilyVersionDto();
                 eventClassFamilyVersion.setVersion(version);
                 eventClassFamilyVersion.setCreatedTime(System.currentTimeMillis());
                 eventClassFamilyVersion.setCreatedUsername(createdUsername);
                 schemasDto.add(eventClassFamilyVersion);
                 EventClassFamily ecf = new EventClassFamily(eventClassFamily);
                 List<EventClassFamilyVersion> schemas = new ArrayList<>();
+                for (EventClassDto eventClass : records) {
+                    saveEventClass(eventClassFamily, eventClass, version);
+                }
                 schemasDto.forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
                 ecf.setSchemas(schemas);
-                eventClassFamilyDao.save(new EventClassFamily(eventClassFamily));
-                for (EventSchemaMetadata eventSchema : eventSchemas) {
-                    saveEventClassSchema(eventClassFamily, eventSchema, version);
-                }
+                eventClassFamilyDao.save(ecf);
             } else {
                 LOG.debug("Can't process event class family schema.");
                 throw new IncorrectParameterException("Incorrect event class family schema. FQNs should be unique within the tenant.");
@@ -167,15 +178,11 @@ public class EventClassServiceImpl implements EventClassService {
         }
     }
 
-    private void saveEventClassSchema(EventClassFamilyDto eventClassFamilyDto, EventSchemaMetadata eventSchema, int version) {
-        EventClassDto eventClass = new EventClassDto();
+    private void saveEventClass(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass, int version) {
         eventClass.setTenantId(eventClassFamilyDto.getTenantId());
         eventClass.setEcfId(eventClassFamilyDto.getId());
-        eventClass.setFqn(eventSchema.getFqn());
-        eventClass.setType(eventSchema.getType());
         eventClass.setVersion(version);
-        eventClass.setCtlSchemaId(eventSchema.getCtlSchemaId());
-        eventClassDao.save(new EventClass(eventClass));
+        //eventClassDao.save(new EventClass(eventClass));
     }
 
     private boolean validateEventClassFamilyFqns(EventClassFamilyDto eventClassFamily, List<String> fqns) {

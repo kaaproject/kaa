@@ -310,11 +310,13 @@ public interface KaaAdminService extends RemoteService {
 
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws KaaAdminServiceException;
 
-    EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException;
+    List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws KaaAdminServiceException;
+
+    EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException;
 
     void addEventClassFamilySchemaForm(String eventClassFamilyId, RecordField schemaForm) throws KaaAdminServiceException;
 
-    void addEventClassFamilySchema(String eventClassFamilyId, byte[] schema) throws KaaAdminServiceException;
+    void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException;
 
     List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type) throws KaaAdminServiceException;
 

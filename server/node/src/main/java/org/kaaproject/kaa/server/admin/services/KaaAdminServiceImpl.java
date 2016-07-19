@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.codehaus.jackson.JsonNode;
@@ -2697,19 +2696,29 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
-            EventClassFamilyDto storedEventClassFamily = null;
-            if (!isEmpty(eventClassFamilyVersion.getId())) {
-                storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyVersion.getId());
+            return controlService.getEventClassFamilyVersions(eventClassFamilyId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            if (!isEmpty(eventClassFamily.getId())) {
+                EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamily.getId());
                 Utils.checkNotNull(storedEventClassFamily);
                 checkTenantId(storedEventClassFamily.getTenantId());
             } else {
                 String username = getCurrentUser().getUsername();
-                eventClassFamilyVersion.setCreatedUsername(username);
+                eventClassFamily.setCreatedUsername(username);
             }
-            return controlService.editEventClassFamily(eventClassFamilyVersion);
+            eventClassFamily.setTenantId(getTenantId());
+            return controlService.editEventClassFamily(eventClassFamily);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2740,19 +2749,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId, byte[] data) throws KaaAdminServiceException {
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             checkEventClassFamilyId(eventClassFamilyId);
-            String schema = new String(data);
-            SchemaUtil.compileAvroSchema(validateSchema(schema, false));
 
             EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(storedEventClassFamily);
             checkTenantId(storedEventClassFamily.getTenantId());
 
             String username = getCurrentUser().getUsername();
-            //todo: load list of ctls
+            controlService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

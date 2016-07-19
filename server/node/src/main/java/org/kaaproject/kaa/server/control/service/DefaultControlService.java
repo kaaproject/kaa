@@ -1486,14 +1486,14 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editEventClassFamily
      * (org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto)
      */
     @Override
-    public EventClassFamilyDto editEventClassFamily(EventClassFamilyVersionDto eventClassFamilyVersion) throws ControlServiceException {
-        return eventClassService.saveEventClassFamily(eventClassFamilyVersion);
+    public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException {
+        return eventClassService.saveEventClassFamily(eventClassFamily);
     }
 
     /*
@@ -1520,15 +1520,26 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * addEventClassFamilySchema(java.lang.String, java.lang.String,
-     * java.lang.String)
+     * getEventClassFamilyVersions (java.lang.String)
      */
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException {
+        return eventClassService.findEventClassFamilyVersionsById(eventClassFamilyId);
+    }
+
+    /*
+         * (non-Javadoc)
+         *
+         * @see org.kaaproject.kaa.server.control.service.ControlService#
+         * addEventClassFamilyVersion(java.lang.String, java.lang.String,
+         * java.lang.String)
+         */
+    @Override
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
             throws ControlServiceException {
-        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
+        eventClassService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion, createdUsername);
     }
 
     /*

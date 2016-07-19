@@ -72,7 +72,7 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
     protected long createdTime;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID, nullable = false)
+    @JoinColumn(name = EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID)
     private List<EventClassFamilyVersion> schemas;
 
     public EventClassFamily() {
