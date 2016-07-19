@@ -53,6 +53,7 @@ import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.node.service.initialization.KaaNodeInitializationService;
 import org.slf4j.Logger;
@@ -358,10 +359,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     private void createUsers() throws Exception {
         LOG.info("Creating users...");
         client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
-        loginTenantAdmin(tenantAdminUser);
         if (createTenantAdminNeeded()) {
-            tenantAdminDto = createTenant(tenantAdminUser);
-
+            tenantAdminDto = createTenantAdmin(tenantAdminUser);
             loginTenantAdmin(tenantAdminUser);
             if (createTenantDeveloperNeeded()) {
                 tenantDeveloperDto = createTenantDeveloper(tenantDeveloperUser);
@@ -487,14 +486,24 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
     }
 
+    protected TenantDto createTenant() throws Exception{
+        loginKaaAdmin();
+        TenantDto tenantDto = new TenantDto();
+        tenantDto.setName(generateString(TENANT_NAME));
+       tenantDto= client.editTenant(tenantDto);
+        return tenantDto;
+    }
+
+
+
     /**
      * Creates the tenant.
      *
      * @return the tenant user dto
      * @throws Exception the exception
      */
-    protected TenantAdminDto createTenant() throws Exception {
-        return createTenant(null);
+    protected TenantAdminDto createTenantAdmin() throws Exception {
+        return createTenantAdmin(null);
     }
 
     /**
@@ -504,17 +513,21 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the tenant user dto
      * @throws Exception the exception
      */
-    protected TenantAdminDto createTenant(String username) throws Exception {
+    protected TenantAdminDto createTenantAdmin(String username) throws Exception {
         loginKaaAdmin();
         if (username == null) {
             username = generateString(username);
         }
-            TenantDto tenantDto=null;
+            TenantDto tenantDto = new TenantDto();
             if(client.getTenants().isEmpty()) {
-                tenantDto = new TenantDto();
                 tenantDto.setName(TENANT_NAME);
                 tenantDto = client.editTenant(tenantDto);
-            }else tenantDto=client.getTenant("1");
+            }else {
+              for(TenantDto t :client.getTenants()){
+                  if(t.getName().equals(TENANT_NAME))
+                      tenantDto=t;
+              }
+            }
 
         org.kaaproject.kaa.common.dto.admin.UserDto tenAdmin = new org.kaaproject.kaa.common.dto.admin.UserDto();
         tenAdmin.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
@@ -554,6 +567,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         tenantDeveloper.setMail(username + "@demoproject.org");
         tenantDeveloper.setFirstName("Tenant");
         tenantDeveloper.setLastName("Developer");
+        tenantDeveloper.setTenantId(tenantAdminDto.getTenant().getId());
         tenantDeveloper = client.editUser(tenantDeveloper);
 
         if (StringUtils.isNotBlank(tenantDeveloper.getTempPassword())) {
@@ -591,8 +605,9 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         user.setLastName(generateString("User"));
         user.setAuthority(authority);
         if (tenant == null) {
-            tenant = createTenant();
+            tenant = createTenantAdmin();
         }
+        user.setTenantId(tenantAdminDto.getTenant().getId());
         loginTenantAdmin(tenant.getUsername());
         UserDto savedUser = client.editUser(user);
         return savedUser;
@@ -619,7 +634,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         ApplicationDto application = new ApplicationDto();
         application.setName(generateString(APPLICATION));
         if (tenant == null) {
-            tenant = createTenant();
+            tenant = createTenantAdmin();
         }
         loginTenantAdmin(tenant.getUsername());
         ApplicationDto savedApplication = client
@@ -1159,7 +1174,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
         eventClassFamily.setClassName(className);
         if (strIsEmpty(tenantId)) {
-            TenantAdminDto tenant = createTenant(tenantAdminUser);
+            TenantAdminDto tenant = createTenantAdmin(tenantAdminUser);
             eventClassFamily.setTenantId(tenant.getId());
         }
         else {

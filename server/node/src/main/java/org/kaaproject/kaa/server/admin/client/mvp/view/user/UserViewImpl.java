@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.regexp.shared.RegExp;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
@@ -133,8 +134,15 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
     @Override
     protected boolean validate() {
+        String pattern = "^(?:[a-zA-Z0-9_'^&/+-])+(?:\\.(?:[a-zA-Z0-9_'^&/+-])+)\" +\n" +
+                "            \"*@(?:(?:\\\\[?(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\\\.)\" +\n" +
+                "            \"{3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\]?)|(?:[a-zA-Z0-9-]+\\\\.)\" +\n" +
+                "            \"+(?:[a-zA-Z]){2,}\\.?)$";
+
+        RegExp regExp=RegExp.compile(pattern);
+
         boolean result = userName.getValue().length()>0;
-        result &= email.getValue().length()>0;
+        result &= regExp.test(email.getValue());
         result &= authority.getValue() != null;
         return result;
     }

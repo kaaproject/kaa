@@ -84,7 +84,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     @Test
     public void testGetEventClassFamiliesByTenantId() throws Exception {
         List<EventClassFamilyDto> eventClassFamilies  = new ArrayList<>(10);
-        TenantAdminDto tenant = createTenant(tenantAdminUser);
+        TenantAdminDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         for (int i=0;i<10;i++) {
             EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId(), ""+i);
@@ -147,7 +147,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyName() throws Exception {
-        TenantAdminDto tenant = createTenant(tenantAdminUser);
+        TenantAdminDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
         final EventClassFamilyDto secondEventClassFamily = createEventClassFamily(tenant.getId(), "test");
@@ -200,7 +200,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyFqns() throws Exception {
-        TenantAdminDto tenant = createTenant(tenantAdminUser);
+        TenantAdminDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
         client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
