@@ -9,7 +9,7 @@ sort_idx: 30
 
 * TOC
 {:toc}
- 
+
 ## MariaDB cluster setup
 
 We need at least 3 hosts running together with Ubuntu 14.04 Operating system to form a reliable cluster. 
@@ -116,7 +116,7 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_cluster_name="MariaDB_Cluster"
   wsrep_node_address="ubuntu-node1"
   wsrep_node_name="ubuntu-node1"
-  wsrep_sst_auth="root:'password for the MariaDB'"
+  wsrep_sst_auth="root:'your password'"
   wsrep_node_incoming_address=172.1.1.1
   wsrep_sst_receive_address=172.1.1.1
   wsrep_slave_threads=16
@@ -132,7 +132,7 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_cluster_name="MariaDB_Cluster"
   wsrep_node_address="ubuntu-node2"
   wsrep_node_name="ubuntu-node2"
-  wsrep_sst_auth="root:'password for the MariaDB'"
+  wsrep_sst_auth="root:'your password'"
   wsrep_node_incoming_address=172.2.2.2
   wsrep_sst_receive_address=172.2.2.2
   wsrep_slave_threads=16
@@ -148,7 +148,7 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_cluster_name="MariaDB_Cluster"
   wsrep_node_address="ubuntu-node3"
   wsrep_node_name="ubuntu-node3"
-  wsrep_sst_auth="root:'password for the MariaDB'"
+  wsrep_sst_auth="root:'your password'"
   wsrep_node_incoming_address=172.3.3.3
   wsrep_sst_receive_address=172.3.3.3
   wsrep_slave_threads=16
@@ -218,6 +218,8 @@ To fix this, copy the contents of the maintenance file to each individual node a
 
 To start the MariaDB cluster, do the following:
 
+> Please check ports 4444 and 4567. This ports must be free and open for connections from hosts with other nodes - this is important for ```wsrep``` communication. 
+
 1. Stop the running MariaDB service by typing the following line on each of the nodes.
 
    ```bash
@@ -245,12 +247,9 @@ You can also confirm the status of your running cluster and its replication by r
 The cluster size will be also displayed in the output of this command.
 
 ```bash
-  root@ubuntu-node1:~# mysql -u root -pmariadb_admin_password -e
-  'SELECT VARIABLE_VALUE as "cluster size" FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME="wsrep_cluster_size"'
-  root@ubuntu-node2:~# mysql -u root -pmariadb_admin_password -e
-  'SELECT VARIABLE_VALUE as "cluster size" FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME="wsrep_cluster_size"'
-  root@ubuntu-node3:~# mysql -u root -pmariadb_admin_password -e
-  'SELECT VARIABLE_VALUE as "cluster size" FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME="wsrep_cluster_size"'
+  root@ubuntu-node1:~# mysql -u root -pmariadb_admin_password -e 'SHOW STATUS LIKE "wsrep_cluster_size"'
+  root@ubuntu-node2:~# mysql -u root -pmariadb_admin_password -e 'SHOW STATUS LIKE "wsrep_cluster_size"'
+  root@ubuntu-node3:~# mysql -u root -pmariadb_admin_password -e 'SHOW STATUS LIKE "wsrep_cluster_size"'
 ```
 
 ### Create new user
