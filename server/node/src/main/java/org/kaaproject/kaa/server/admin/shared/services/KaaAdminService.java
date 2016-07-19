@@ -45,11 +45,7 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.*;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -189,11 +185,13 @@ public interface KaaAdminService extends RemoteService {
 
     NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException;
 
-    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema, byte[] schema) throws KaaAdminServiceException;
+    NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException;
 
-    NotificationSchemaDto getNotificationSchemaForm(String notificationSchemaId) throws KaaAdminServiceException;
+    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
 
-    NotificationSchemaDto editNotificationSchemaForm(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
+    NotificationSchemaViewDto saveNotificationSchemaView(NotificationSchemaViewDto notificationSchema) throws KaaAdminServiceException;
+
+    NotificationSchemaViewDto createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
     List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 

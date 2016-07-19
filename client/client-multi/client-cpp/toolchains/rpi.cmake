@@ -20,4 +20,4 @@ set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
 set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
 
 #Set target environment directory
-set(CMAKE_FIND_ROOT_PATH  $ENV{INSTALLDIR}/arm-linux-gnueabihf/libc/usr)
+set(CMAKE_FIND_ROOT_PATH  $ENV{INSTALLDIR})

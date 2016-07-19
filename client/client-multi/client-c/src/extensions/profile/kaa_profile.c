@@ -250,21 +250,15 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 #endif
 
     if (!self->status->is_registered) {
-        bool need_deallocation = false;
-
         if (!self->extension_data->public_key.buffer) {
-            ext_get_endpoint_public_key((char **)&self->extension_data->public_key.buffer
-                                      , (size_t *)&self->extension_data->public_key.size
-                                      , &need_deallocation);
+            ext_get_endpoint_public_key((uint8_t **)&self->extension_data->public_key.buffer,
+                                        (size_t *)&self->extension_data->public_key.size);
         }
 
         if (self->extension_data->public_key.buffer && self->extension_data->public_key.size > 0) {
             *expected_size += sizeof(uint32_t); // public key size
             *expected_size += kaa_aligned_size_get(self->extension_data->public_key.size); // public key
 
-            if (need_deallocation) {
-                self->extension_data->public_key.destroy = kaa_data_destroy;
-            }
         } else {
             return KAA_ERR_BADDATA;
         }

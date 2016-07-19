@@ -149,8 +149,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
 
     private final BaseListView<NotificationSchemaDto> notificationSchemasView = new NotificationSchemasViewImpl();
-    private final BaseSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
-    private final BaseSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
+    private final BaseCtlSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
+    private final BaseCtlSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
 
     private final BaseListView<LogSchemaDto> logSchemasView = new LogSchemasViewImpl();
     private final BaseSchemaView logSchemaView = new LogSchemaViewImpl(false);
@@ -353,12 +353,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getNotificationSchemaView() {
+    public BaseCtlSchemaView getNotificationSchemaView() {
         return notificationSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateNotificationSchemaView() {
+    public BaseCtlSchemaView getCreateNotificationSchemaView() {
         return createNotificationSchemaView;
     }
 

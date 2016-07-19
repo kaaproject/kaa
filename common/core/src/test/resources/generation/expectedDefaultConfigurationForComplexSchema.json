@@ -1,1 +1,1 @@
-{"test_array":[],"test_array2":[],"nullableField1":null,"__uuid":"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010","testField1":null,"testField2":{"testField3":[]},"testField5":1,"testField6":{"int":1},"bytesField":"\u0001\u0002\u0003\u0004\u0005","enumField":"item_a"}
+{"test_array":[],"test_array2":[],"nullableField1":null,"__uuid":"AQIDBAUGBwgJCgsMDQ4PEA==","testField1":null,"testField2":{"testField3":[]},"testField5":1,"testField6":{"int":1},"bytesField":"AQIDBAU=","enumField":"item_a"}

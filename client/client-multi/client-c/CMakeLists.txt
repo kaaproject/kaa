@@ -54,9 +54,9 @@
 #
 #	- `cc32xx`
 #	- `esp8266`
-#	- `x86-64`
+#	- `posix`
 #
-#	Default: `x86-64`
+#	Default: `posix`
 #
 #	- `KAA_UNITETESTS_COMPILE` - compile unit tests.
 #
@@ -69,9 +69,11 @@
 #
 #	Note: requires [cmocka](https://cmocka.org/) test framework to be installed.
 
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(Kaa-c C)
+
+include(ExternalProject)
 
 option(WITH_EXTENSION_PROFILE "Enable profile extension" ON)
 option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
@@ -79,6 +81,7 @@ option(WITH_EXTENSION_EVENT "Enable event extension" ON)
 option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
 option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
 option(WITH_EXTENSION_USER "Enable user extension" ON)
+option(WITH_ENCRYPTION "Enable encryption" ON)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -94,7 +97,7 @@ set(CMAKE_MODULE_PATH
 #
 # NOTE: Platform specific compilation flags should be set
 # in the corresponding platform CMake script(s).
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic -D_GNU_SOURCE")
 
 set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Os")
 
@@ -116,7 +119,7 @@ set(KAA_THIRDPARTY_LIBRARIES "")
 
 # Sets the default build platform to POSIX.
 if (NOT DEFINED KAA_PLATFORM)
-    set(KAA_PLATFORM "x86-64")
+    set(KAA_PLATFORM "posix")
 endif ()
 
 #
@@ -174,7 +177,25 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
-        )
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/aes.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/asn1parse.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/asn1write.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/bignum.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/ctr_drbg.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/entropy.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/entropy_poll.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/md.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/md_wrap.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/oid.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pk.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pkwrite.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pk_wrap.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/rsa.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/sha256.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pkparse.c
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/sha1.c
+  )
+
 
 # Includes auto-generated Cmake's scripts.
 include(${CMAKE_CURRENT_LIST_DIR}/listfiles/CMakeGen.cmake)
@@ -182,7 +203,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/listfiles/CMakeGen.cmake)
 # Kaa include directories
 set(KAA_INCLUDE_DIRS
         ${KAA_INCLUDE_PATHS}         # Provided by platform cmake
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_LIST_DIR}/src
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
 
@@ -194,6 +216,8 @@ add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
 target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 
+add_dependencies(kaac kaa_rsa_keygen)
+
 message("BOOTSTRAP ENABLED")
 include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
 target_link_libraries(kaac PUBLIC extension_bootstrap)
@@ -202,7 +226,7 @@ if(WITH_EXTENSION_PROFILE)
     message("PROFILE ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/profile/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_profile)
+    target_link_libraries(kaac PUBLIC extension_profile)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_PROFILE)
 endif()
@@ -211,7 +235,7 @@ if(WITH_EXTENSION_USER)
     message("USER EXTENSION ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/user/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_user)
+    target_link_libraries(kaac PUBLIC extension_user)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_USER)
 endif()
@@ -220,7 +244,7 @@ if(WITH_EXTENSION_CONFIGURATION)
     message("CONFIGURATION ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/configuration/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_configuration)
+    target_link_libraries(kaac PUBLIC extension_configuration)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_CONFIGURATION)
 endif()
@@ -229,7 +253,7 @@ if(WITH_EXTENSION_EVENT)
     message("EVENTS ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/event/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_event)
+    target_link_libraries(kaac PUBLIC extension_event)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_EVENTS)
 endif()
@@ -238,7 +262,7 @@ if(WITH_EXTENSION_LOGGING)
     message("LOGGING ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/logging/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_logging)
+    target_link_libraries(kaac PUBLIC extension_logging)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_LOGGING)
 endif()
@@ -247,12 +271,18 @@ if(WITH_EXTENSION_NOTIFICATION)
     message("NOTIFICATION ENABLED")
 
     include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/notification/CMakeLists.txt)
-    target_link_libraries(kaac PRIVATE extension_notification)
+    target_link_libraries(kaac PUBLIC extension_notification)
 else()
     add_definitions(-DKAA_DISABLE_FEATURE_NOTIFICATION)
 endif()
 
-message("KAA WILL BE INSTALLED TO  ${CMAKE_INSTALL_PREFIX} ")
+if(WITH_ENCRYPTION)
+    message("ENCRYPTION ENABLED")
+
+    add_definitions(-DKAA_ENCRYPTION)
+endif()
+
+message("KAA WILL BE INSTALLED TO  ${CMAKE_INSTALL_PREFIX}")
 install(DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION include/kaa
         FILES_MATCHING PATTERN *.h)
 
@@ -261,3 +291,11 @@ install(TARGETS kaac DESTINATION lib)
 add_subdirectory(Modules/doxygen)
 
 add_subdirectory(Modules/cppcheck)
+
+externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
+                    INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
+                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
+
+externalproject_add_step(kaa_rsa_keygen "Copying generated files"
+                         COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
+                         "${KAA_SRC_FOLDER}/gen" DEPENDEES install)

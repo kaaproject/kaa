@@ -37,39 +37,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
-import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
-import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
-import org.kaaproject.kaa.common.dto.ChangeType;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
-import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
-import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -116,6 +84,7 @@ import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceExceptio
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1091,8 +1060,14 @@ public class DefaultControlService implements ControlService {
         }
         String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
 
+        CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
+        if (notificationCtlSchema == null) {
+            throw new NotFoundException("Profile CTL schema not found!");
+        }
+        String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
+
         DataSchema profileDataSchema = new DataSchema(profileSchemaBodyString);
-        DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
+        DataSchema notificationDataSchema = new DataSchema(notificationSchemaBodyString);
         ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
         DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
@@ -1982,10 +1957,13 @@ public class DefaultControlService implements ControlService {
                         .arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
                 break;
             case NOTIFICATION_SCHEMA:
-                schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(),
-                        NotificationTypeDto.USER, key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.NOTIFICATION_SCHEMA);
-                schema = schemaDto.getSchema();
+                NotificationSchemaDto notificationSchemaDto =
+                        notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(), NotificationTypeDto.USER, key.getSchemaVersion());
+                if (notificationSchemaDto == null) {
+                    throw new NotFoundException("Schema " + RecordFiles.NOTIFICATION_SCHEMA + " not found!");
+                }
+                CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(notificationSchemaDto.getCtlSchemaId());
+                schema = ctlSchemaDto.getBody();
                 fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "notification", key.getSchemaVersion() })
                         .getMessage();
                 break;
