@@ -179,19 +179,19 @@ public class CtlSchemaPlace extends TreePlace {
     @Override
     public TreePlace createDefaultPreviousPlace() {
         if (Utils.isNotBlank(applicationId)) {
-            if (schemaType != null) { 
+            if (schemaType != null) {
                 if (schemaType == SchemaType.ENDPOINT_PROFILE) {
                     return new ProfileSchemasPlace(applicationId);
-                } else if(schemaType == SchemaType.CONFIGURATION) {
+                } else if (schemaType == SchemaType.CONFIGURATION) {
                     return new ConfigurationSchemasPlace(applicationId);
                 } else if (schemaType == SchemaType.SERVER_PROFILE){
                     return new ServerProfileSchemasPlace(applicationId);
                 } else {
                     return new NotificationSchemasPlace(applicationId);
                 }
-            } else {    
+            } else {
                 return new ApplicationCtlSchemasPlace(applicationId);
-            }            
+            }
         } else {
             if (KaaAdmin.getAuthInfo().getAuthority() == KaaAuthorityDto.KAA_ADMIN) {
                 return new SystemCtlSchemasPlace();

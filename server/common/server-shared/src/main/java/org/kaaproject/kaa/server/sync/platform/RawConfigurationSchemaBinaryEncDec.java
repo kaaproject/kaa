@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.server.sync.ClientSync;
 
 @KaaPlatformProtocol
-public class BinaryEncDecUseRawSchema extends BinaryEncDec{
+public class RawConfigurationSchemaBinaryEncDec extends BinaryEncDec {
 
     @Override
     public int getId() {

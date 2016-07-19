@@ -156,7 +156,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
         if (create) {
             ConverterType converterType;
 
-            if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+            if (place.getSchemaType() == SchemaType.CONFIGURATION) {
                 converterType = ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
             } else {
                 converterType = ConverterType.FORM_AVRO_CONVERTER;

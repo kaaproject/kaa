@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
 
 @KaaPlatformProtocol
-public class AvroEncDecUseRawChema extends AvroEncDec {
+public class RawConfigurationSchemaAvroEncDec extends AvroEncDec {
 
     @Override
     public int getId() {
