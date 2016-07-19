@@ -67,25 +67,6 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, tenantName);
 
-//        userName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, create);
-//        userName.setWidth("100%");
-//        userName.addInputHandler(this);
-//
-//        Label userLabel = new Label(Utils.constants.tenantAdminUsername());
-//        if (create) {
-//            userLabel.addStyleName(REQUIRED);
-//        }
-//        detailsTable.setWidget(1, 0, userLabel);
-//        detailsTable.setWidget(1, 1, userName);
-//
-//        email = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
-//        email.setWidth("100%");
-//        email.addInputHandler(this);
-//
-//        Label emailLabel = new Label(Utils.constants.tenantAdminEmail());
-//        emailLabel.addStyleName(REQUIRED);
-//        detailsTable.setWidget(2, 0, emailLabel);
-//        detailsTable.setWidget(2, 1, email);
 
         tenantName.setFocus(true);
     }
