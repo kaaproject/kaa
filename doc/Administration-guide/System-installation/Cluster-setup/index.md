@@ -25,13 +25,16 @@ A set of databases (for example MongoDB + PostgreSQL) depends on your particular
 In this guide we assume that you had already set up your SQL and NoSQL database clusters, so this tutorial doesn't cover such themes like setting up ones for Cassandra, MongoDB or PostgreSQL. 
 Refer to official [Cassandra](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation in order to setup corresponding database cluster.
 
-MariaDB come with out of the box master-master replication support thus we recommend to use this database in your Kaa cluster. 
+MariaDB come with out-of-the-box master-master replication support thus we recommend to use this database in your Kaa cluster. 
 You can find detailed instructions in [MariaDB cluster setup guide]({{root_url}}Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/).
 
 > Note: In a cluster you need to connect to databases from external hosts so you need to allow such external connections in corresponding database security configurations and configure firewall rules for database host machine. 
 > Refer to official documentation for corresponding database for security configuration details.
 
 In addition to added on ```kaa-node``` service installation step firewall rules on every endpoint Kaa Administrator need to add some more rules for databases (depending on a set databases in the cluster) and Zookeeper ports.
+
+> Note: This configuration will not affect AWS deployment or any other cloud provider and must be applied only if you setting up cluster on VMs or separate Linux machines. 
+> Next instructions depend on specific cloud provider. 
 
 ```bash
 # MongoDB port
@@ -79,27 +82,6 @@ In this guide we chose default ports for databases and Zookeeper service:
 | MariaDB    | 3306  |
 | PostgreSQL | 5432  |
 | Zookeeper  | 2181  |
-
-## List of configuration properties
-
-You can find configuration files for Kaa node service in the ```/etc/kaa-node/conf``` directory.
-List of properties that you need to edit in order to set up cluster:
-
- | Property name             | Example values                                                                 | Description                                                      | File location                                                              |
- |-------------------------- |------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
- | control_server_enabled    | true/false                                                                     | Determines whether control server enabled on this node or not    | /etc/kaa-node/conf/kaa-node.properties                                     |
- | bootstrap_server_enabled  | true/false                                                                     | Determines whether bootstrap server enabled on this node or not  | /etc/kaa-node/conf/kaa-node.properties                                     |
- | operations_server_enabled | true/false                                                                     | Determines whether operations server enabled on this node or not | /etc/kaa-node/conf/kaa-node.properties                                     |
- | zk_host_port_list         | localhost:2181, 172.1.1.1:2181                                                 | Comma-separated list of Zookeeper nodes hostname:port            | /etc/kaa-node/conf/kaa-node.properties                                     |
- | node id                   | 1-255                                                                          | Single line of text that represents node id                      | /etc/zookeeper/myid                                                        |
- | sql_host_port             | 172.1.1.1:3306                                                                 | SQL database (MariaDB or PostgreSQL) host/ip_address and port    | /etc/kaa-node/conf/sql-dao.properties                                      |
- | sql_provider_name         | postgresql, mysql:failover                                                     | JDBC database provider name                                      | /etc/kaa-node/conf/sql-dao.properties                                      |
- | jdbc_url                  | jdbc:mysql:failover://172.1.1.1:3306/kaa, jdbc:postgresql://172.1.1.1:5432/kaa | SQL database host                                                | /etc/kaa-node/conf/admin-dao.properties                                    |
- | nosql_db_provider_name    | cassandra/mongodb                                                              | Determines whether Cassandra or MongoDB provider will be used    | /etc/kaa-node/conf/nosql-dao.properties                                    |
- | node_list                 | 172.1.1.1:9042, 172.2.2.2:9042, ...                                            | Comma-separated list of Cassandra nodes hostname:port            | /etc/kaa-node/conf/common-dao-cassandra.properties                         |
- | servers                   | 172.1.1.1:27017, 172.2.2.2:27017, ...                                          | Comma-separated list of MongoDB nodes hostname:port              | /etc/kaa-node/conf/common-dao-mongodb.properties                           |
-
-<br/>
 
 ## Cluster configuration steps
 
@@ -223,7 +205,7 @@ In order to configure SQL database in a cluster follow next steps:
    
    ```bash
    # specify jdbc database hosts and ports
-   jdbc_host_port=127.1.1.1:3306,127.2.2.2:3306,127.3.3.3:3306
+   jdbc_host_port=172.1.1.1:3306,172.2.2.2:3306,172.3.3.3:3306
    
    # specify jdbc database provider name
    sql_provider_name=mysql:failover
@@ -260,7 +242,7 @@ In order to configure SQL database in a cluster follow next steps:
    
    ```bash
    # specify jdbc database url
-   jdbc_url=jdbc:mysql:failover://172.1.1.1:5432,172.2.2.2:5432,172.3.3.3:5432/kaa
+   jdbc_url=jdbc:mysql:failover://172.1.1.1:3306,172.2.2.2:3306,172.3.3.3:3306/kaa
    ```
    
    <br>
@@ -285,7 +267,7 @@ And also configure [username and password]({{root_url}}Administration-guide/Syst
 ### NoSQL database configuration
 
 NoSQL database configuration will be almost the same as in single node setup too except for database node list, refer to [Single node installation guide - NoSQL database configuration]({{root_url}}Administration-guide/System-installation/Single-node-installation/#nosql-database-configuration) section for more details. 
-Select NoSQL database ```mongo``` or ```cassandra``` in ```/etc/kaa-node/conf/dao.properties``` file.
+Select NoSQL database ```mongo``` or ```cassandra``` in ```/etc/kaa-node/conf/sql-dao.properties``` file.
 
 ```bash
  # NoSQL database provider name, autogenerated when mongo-dao or cassandra-dao profile is activated
@@ -335,7 +317,7 @@ Assuming that we peek standard Cassandra port, for all three nodes property woul
 
 ```bash
  # Specify node list
- node_list=127.1.1.1:9042,127.2.2.2:9042,127.3.3.3:9042
+ node_list=172.1.1.1:9042,172.2.2.2:9042,172.3.3.3:9042
 ```
 
 <br>
