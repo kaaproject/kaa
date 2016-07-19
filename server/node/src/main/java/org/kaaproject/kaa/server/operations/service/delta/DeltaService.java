@@ -24,22 +24,34 @@ import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntr
 
 /**
  * Service that performs delta calculation process.
- *
+ * 
  * @author ashvayka
  */
 public interface DeltaService {
 
-
+    /**
+     * Gets the delta.
+     *
+     * @param request
+     *            the request
+     * @return the delta
+     * @throws GetDeltaException
+     *             the get delta exception
+     */
     GetDeltaResponse getDelta(GetDeltaRequest request) throws GetDeltaException;
 
     /**
      * Gets the up to date configuration for given endpoint profile
-     *
-     * @param appToken    - the application token
-     * @param endpointKey - the endpoint key
-     * @param profile     - the endpoint profile
+     * 
+     * @param appToken
+     *            - the application token
+     * @param endpointKey
+     *            - the endpoint key
+     * @param profile
+     *            - the endpoint profile
      * @return cache entry
-     * @throws GetDeltaException the get delta exception
+     * @throws GetDeltaException
+     *             the get delta exception
      */
     ConfigurationCacheEntry getConfiguration(String appToken, String endpointKey, EndpointProfileDto profile) throws GetDeltaException;
 

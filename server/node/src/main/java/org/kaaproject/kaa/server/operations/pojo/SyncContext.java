@@ -35,7 +35,7 @@ import org.kaaproject.kaa.server.sync.UserServerSync;
  */
 public class SyncContext {
 
-
+    /** The response. */
     private final ServerSync response;
 
     private String endpointKey;
@@ -48,10 +48,13 @@ public class SyncContext {
 
     private AppSeqNumber appSeqNumber;
 
+    /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
 
+    /** The system nf version. */
     private int systemNfVersion;
 
+    /** The user nf version. */
     private int userNfVersion;
 
     public static SyncContext failure(Integer requestId) {
@@ -84,21 +87,38 @@ public class SyncContext {
         this.subscriptionStates = subscriptionStates;
     }
 
-
+    /**
+     * Gets the response.
+     *
+     * @return the response
+     */
     public ServerSync getResponse() {
         return response;
     }
 
+    /**
+     * Gets the subscription states.
+     *
+     * @return the subscription states
+     */
     public Map<String, Integer> getSubscriptionStates() {
         return subscriptionStates;
     }
 
-
+    /**
+     * Gets the system nf version.
+     *
+     * @return the system nf version
+     */
     public int getSystemNfVersion() {
         return systemNfVersion;
     }
 
-
+    /**
+     * Gets the user nf version.
+     *
+     * @return the user nf version
+     */
     public int getUserNfVersion() {
         return userNfVersion;
     }

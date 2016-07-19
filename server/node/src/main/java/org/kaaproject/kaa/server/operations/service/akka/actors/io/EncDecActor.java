@@ -37,16 +37,18 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-
+/**
+ * The Class EncDecActor.
+ */
 public class EncDecActor extends UntypedActor {
 
-
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(EncDecActor.class);
 
     private final EncDecActorMessageProcessor messageProcessor;
-
+    /** Current redirection rules */
     private final HashMap<Long, RedirectionRule> redirectionRules; // NOSONAR
-
+    /** random */
     private final Random random;
 
     /**
@@ -63,28 +65,38 @@ public class EncDecActor extends UntypedActor {
         this.random = new Random();
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see akka.actor.UntypedActor#preStart()
+     */
     @Override
     public void preStart() {
         LOG.info("Starting " + this);
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see akka.actor.UntypedActor#postStop()
+     */
     @Override
     public void postStop() {
         LOG.info("Stoped " + this);
     }
 
-
+    /**
+     * The Class ActorCreator.
+     */
     public static class ActorCreator implements Creator<EncDecActor> {
 
-
+        /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-
+        /** The eps actor. */
         private final ActorRef epsActor;
 
-
+        /** The Akka service context */
         private final AkkaContext context;
 
         private final Set<String> platformProtocols;
@@ -103,7 +115,11 @@ public class EncDecActor extends UntypedActor {
             this.platformProtocols = new HashSet<String>(platformProtocols);
         }
 
-
+        /*
+         * (non-Javadoc)
+         * 
+         * @see akka.japi.Creator#create()
+         */
         @Override
         public EncDecActor create() throws Exception {
             return new EncDecActor(epsActor, context, platformProtocols);
@@ -114,7 +130,11 @@ public class EncDecActor extends UntypedActor {
         }
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
+     */
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message.getClass().getName());
