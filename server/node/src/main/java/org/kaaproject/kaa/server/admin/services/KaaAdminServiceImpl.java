@@ -2597,7 +2597,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             byte[] body = getFileContent(fileItemName);
 
             JsonNode json = new ObjectMapper().readTree(body);
-            json = AvroUtils.injectUuids(json);
+            AvroUtils.injectUuids(json);
             body = json.toString().getBytes();
 
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);

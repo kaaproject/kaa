@@ -93,7 +93,7 @@ public class AvroUtils {
     }
 
 
-    public static JsonNode injectUuids(JsonNode json) {
+    public static void injectUuids(JsonNode json) {
         boolean containerWithoutId = json.isContainerNode() && !json.has(UUID_FIELD);
         boolean notArray = !json.isArray();
         boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
@@ -106,11 +106,9 @@ public class AvroUtils {
             if (node.isContainerNode())
                 injectUuids(node);
         }
-
-        return json;
     }
 
-    public static JsonNode removeUuids(JsonNode json) {
+    public static void removeUuids(JsonNode json) {
         boolean containerWithId = json.isContainerNode() && json.has(UUID_FIELD);
         boolean isArray = json.isArray();
         boolean childIsNotArray = !(json.size() == 1 && json.getElements().next().isArray());
@@ -123,7 +121,5 @@ public class AvroUtils {
             if (node.isContainerNode())
                 removeUuids(node);
         }
-
-        return json;
     }
 }

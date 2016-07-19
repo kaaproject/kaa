@@ -365,7 +365,7 @@ public class DefaultDeltaService implements DeltaService {
 
     private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, AbstractKaaData<?> mergedConf, EndpointObjectHash userConfigurationHash) throws IOException {
         JsonNode json = new ObjectMapper().readTree(mergedConf.getRawData());
-        json = AvroUtils.removeUuids(json);
+        AvroUtils.removeUuids(json);
         byte[] configuration = GenericAvroConverter.toRawData(json.toString(), mergedConf.getSchema().getRawSchema());
         return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
                 userConfigurationHash);
