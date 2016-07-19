@@ -133,7 +133,7 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length);
  *                     of the RSA public key in base64 encoding
  * @param [out] length The length of the SHA1.
  */
-void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length);
+kaa_error_t ext_get_sha1_base64_public(uint8_t **sha1, size_t *length);
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

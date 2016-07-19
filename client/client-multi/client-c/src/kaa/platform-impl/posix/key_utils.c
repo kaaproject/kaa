@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <utilities/kaa_mem.h>
+#include <utilities/kaa_aes_rsa.h>
 #include <platform/ext_key_utils.h>
 #include <mbedtls/pk.h>
 #include <mbedtls/entropy.h>
@@ -28,7 +29,6 @@
 
 #include <kaa_rsa_key_gen.h>
 
-#define KAA_SESSION_KEY_LENGTH         16
 #define ENC_SESSION_KEY_LENGTH         256
 #define KAA_SIGNATURE_LENGTH           256
 #define AES_ECB_ENCRYPTION_CHUNCK_SIZE 16
@@ -67,15 +67,14 @@ void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
         return;
     }
     static int key_length;
-    static int initialization = false;
+    static int initialized = false;
     static uint8_t buff[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
-    if (!initialization)
-    {
+    if (!initialized) {
         key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, buff, sizeof(buff));
         if (key_length < 0) {
             return;
-	}
-        initialization = true;
+	    }
+        initialized = true;
     }
     *buffer = buff;
     *buffer_size = key_length;
@@ -102,7 +101,7 @@ static int rsa_encrypt(mbedtls_pk_context *pk, const uint8_t *input, size_t inpu
     mbedtls_ctr_drbg_free(&ctr_drbg);
     mbedtls_entropy_free(&entropy);
 
-    return ret;
+    return ret ? KAA_ERR_BADDATA : KAA_ERR_NONE;
 }
 
 static kaa_error_t set_rsa_public_key(mbedtls_pk_context *pk, const uint8_t *key, size_t key_size)
@@ -111,63 +110,11 @@ static kaa_error_t set_rsa_public_key(mbedtls_pk_context *pk, const uint8_t *key
         return KAA_ERR_BADPARAM;
     }
 
-    if (mbedtls_pk_parse_public_key(pk, key, key_size)!= 0) {
+    if (mbedtls_pk_parse_public_key(pk, key, key_size) != 0) {
         return KAA_ERR_INVALID_PUB_KEY;
     }
 
     return KAA_ERR_NONE;
-}
-
-static kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_size,
-        uint8_t *output, const uint8_t *key)
-{
-    if ((input_size % 16) != 0 || !input) {
-        return KAA_ERR_BADPARAM;
-    }
-
-    if (mode != MBEDTLS_AES_ENCRYPT && mode != MBEDTLS_AES_DECRYPT) {
-        return KAA_ERR_BADPARAM;
-    }
-
-    static bool initialized = false;
-    static mbedtls_aes_context aes_ctx;
-
-    if (!initialized) {
-        mbedtls_aes_init(&aes_ctx);
-        initialized = true;
-    }
-
-    if (mode == MBEDTLS_AES_ENCRYPT) {
-        mbedtls_aes_setkey_enc(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
-        mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_ENCRYPT, input, output);
-    } else if (mode == MBEDTLS_AES_DECRYPT) {
-        mbedtls_aes_setkey_dec(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
-        mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_DECRYPT, input, output);
-    }
-
-    return KAA_ERR_NONE;
-}
-
-static int init_aes_key(unsigned char *key, size_t bytes)
-{
-    mbedtls_ctr_drbg_context ctr_drbg;
-    mbedtls_entropy_context entropy;
-
-    const uint8_t pers[] = "aes_generate_key";
-    int ret;
-
-    mbedtls_entropy_init(&entropy);
-    mbedtls_ctr_drbg_init(&ctr_drbg);
-
-    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-            pers, sizeof(pers) - 1)) == 0) {
-        ret = mbedtls_ctr_drbg_random(&ctr_drbg, key, bytes);
-    }
-
-    mbedtls_ctr_drbg_free(&ctr_drbg);
-    mbedtls_entropy_free(&entropy);
-
-    return ret;
 }
 
 /* Performs initialization of the keys */
@@ -184,7 +131,7 @@ kaa_error_t kaa_init_keys(void)
         if (mbedtls_pk_parse_keyfile(&pk_context_, KAA_PRIVATE_KEY_STORAGE, NULL)) {
 #ifdef KAA_RUNTIME_KEY_GENERATION
             if (rsa_genkey(&pk_context_)) {
-                return -1;
+                return KAA_ERR_BADDATA;
             }
 #else
             return KAA_ERR_BADDATA;
@@ -192,7 +139,7 @@ kaa_error_t kaa_init_keys(void)
         }
          if (mbedtls_pk_parse_public_keyfile(&pk_pub_context, KAA_PUBLIC_KEY_STORAGE)) {
 #ifdef KAA_RUNTIME_KEY_GENERATION
-		pk_pub_context = pk_context_;
+            pk_pub_context = pk_context_;
 #else
             return KAA_ERR_BADDATA;
 #endif
@@ -206,6 +153,9 @@ kaa_error_t kaa_init_keys(void)
 void  kaa_deinit_keys(void)
 {
     mbedtls_pk_free(&pk_context_);
+#ifndef KAA_RUNTIME_KEY_GENERATION
+    mbedtls_pk_free(&pk_pub_context);
+#endif
 }
 
 void ext_get_endpoint_session_key(uint8_t **buffer, size_t *buffer_size)
@@ -232,8 +182,8 @@ kaa_error_t ext_encrypt_data(const uint8_t *input, size_t payload_size, uint8_t 
     while (enc_data_size >= KAA_SESSION_KEY_LENGTH) {
         if (aes_encrypt_decrypt(MBEDTLS_AES_ENCRYPT, input,
                 KAA_SESSION_KEY_LENGTH,
-                output, keys.session_key) < 0) {
-            return KAA_ERR_BADDATA;
+                output, keys.session_key) != KAA_ERR_NONE) {
+            return KAA_ERR_BADPARAM;
         }
 
         enc_data_size -= KAA_SESSION_KEY_LENGTH;
@@ -282,7 +232,7 @@ kaa_error_t ext_get_encrypted_session_key(uint8_t **buffer, size_t *buffer_size,
 
     mbedtls_pk_context local_ctx;
     mbedtls_pk_init(&local_ctx);
-    int err = set_rsa_public_key(&local_ctx, remote_key, remote_key_size);
+    kaa_error_t err = set_rsa_public_key(&local_ctx, remote_key, remote_key_size);
     if (err) {
         goto exit;
     }
@@ -316,41 +266,6 @@ size_t ext_get_encrypted_data_size(size_t input_size)
     return input_size + AES_ECB_ENCRYPTION_CHUNCK_SIZE;
 }
 
-static int rsa_sign(mbedtls_pk_context *pk, const uint8_t *input,
-        size_t input_size, uint8_t *output, size_t *output_size)
-{
-    int ret = 0;
-    uint8_t hash[32];
-    mbedtls_entropy_context entropy;
-    mbedtls_ctr_drbg_context ctr_drbg;
-    const uint8_t pers[] = "mbedtls_pk_sign";
-
-    mbedtls_entropy_init(&entropy);
-    mbedtls_ctr_drbg_init(&ctr_drbg);
-
-
-    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-            pers,sizeof(pers) - 1)) != 0) {
-        goto exit;
-    }
-
-    const mbedtls_md_info_t *info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
-
-    if ((ret = mbedtls_md(info, input, input_size, hash)) != 0) {
-        goto exit;
-    }
-
-    ret = mbedtls_pk_sign(pk, MBEDTLS_MD_SHA1, hash, 0, output, output_size,
-            mbedtls_ctr_drbg_random, &ctr_drbg);
-
-exit:
-    mbedtls_ctr_drbg_free(&ctr_drbg);
-    mbedtls_entropy_free(&entropy);
-
-    return ret;
-}
-
-
 kaa_error_t ext_get_signature(const uint8_t *input, size_t input_size,
                               uint8_t **output, size_t *output_size)
 {
@@ -359,7 +274,6 @@ kaa_error_t ext_get_signature(const uint8_t *input, size_t input_size,
     }
 
     kaa_error_t error = rsa_sign(&pk_context_, input, input_size, keys.signature, output_size);
-
     if (error) {
         return KAA_ERR_BADDATA;
     }
@@ -375,43 +289,43 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
         return;
     }
     static uint8_t sha1_public[KAA_SHA1_PUB_LEN];
-    static int initialization = false;
-    if (!initialization) {
+    static int initialized = false;
+    if (!initialized) {
         uint8_t pub_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
         int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
         if (key_length < 0) {
             return;
         }
         sha1_from_public_key(pub_key, key_length, sha1_public);
-        initialization = true;
+        initialized = true;
     }
     *length = KAA_SHA1_PUB_LEN;
     *sha1 = sha1_public;
 }
 
-void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
+kaa_error_t ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
 {
     if (!sha1 || !length) {
-        return;
+        return KAA_ERR_BADPARAM;
     }
     static size_t sha1_base64_len = 0;
     static uint8_t sha1_base64_buffer[1024];
-    static int initialization = false;
-    if (!initialization) {
+    static int initialized = false;
+    if (!initialized) {
         uint8_t pub_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
         uint8_t sha1_public[SHA1_LENGTH];
         int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
         if (key_length < 0) {
-            return;
+            return KAA_ERR_BADDATA;
         }
         sha1_from_public_key(pub_key, key_length, sha1_public);
         int error = sha1_to_base64(sha1_public, sizeof(sha1_public), sha1_base64_buffer, sizeof(sha1_base64_buffer), &sha1_base64_len);
         if (error) {
-            return;
+            return KAA_ERR_BADDATA;
         }
-        initialization = true;
+        initialized = true;
     }
     *sha1 = (uint8_t *)sha1_base64_buffer;
     *length = sha1_base64_len;
-
+    return KAA_ERR_NONE;
 }

@@ -15,6 +15,7 @@
  */
 
 #include <kaa_rsa_key_gen.h>
+#include <assert.h>
 
 /* File structure */
 #define GUARD_IFNDEF                    "#ifndef KAA_RSA_KEYS_H_\n"
@@ -119,17 +120,20 @@ exit:
 void store_key(FILE *fd, const char *prefix, size_t prefix_size,
                       uint8_t *key, size_t length)
 {
+    if (!prefix || !prefix_size || !key || !length)
+        return;
     char buffer[512];
     size_t i;
-    fwrite(prefix, prefix_size, 1, fd);
-    fwrite(KEY_STARTS, sizeof(KEY_STARTS) - 1, 1, fd);
+    assert(fwrite(prefix, prefix_size, 1, fd) == 1);
+    assert(fwrite(KEY_STARTS, sizeof(KEY_STARTS) - 1, 1, fd) == 1);
 
     for (i = 0; i < length; i++) {
-        size_t written = sprintf(buffer, "0x%02X, ", (int) key[i]);
-        fwrite(buffer, written, 1, fd);
+        size_t written = snprintf(buffer, sizeof(buffer) - 1,  "0x%02X, ", (int) key[i]);
+        assert(sizeof(buffer) - 1 >= written);
+        assert(fwrite(buffer, written, 1, fd) == 1);
     }
 
-    fwrite(KEY_ENDS, sizeof(KEY_ENDS) - 1, 1, fd);
+    assert(fwrite(KEY_ENDS, sizeof(KEY_ENDS) - 1, 1, fd) == 1);
 }
 
 int sha1_store(FILE *fd, uint8_t *sha1, size_t sha1_len, uint8_t *sha1_base64, size_t sha1_base64_len)
@@ -175,14 +179,17 @@ int kaa_keys_store(uint8_t *public_key, size_t public_key_length,
 
     size_t written;
     char buffer[512];
-    fwrite(GUARD_IFNDEF, sizeof(GUARD_IFNDEF) - 1, 1, fd);
-    fwrite(GUARD_DEF, sizeof(GUARD_DEF) - 1, 1, fd);
+    assert(fwrite(GUARD_IFNDEF, sizeof(GUARD_IFNDEF) - 1, 1, fd) == 1);
+    assert(fwrite(GUARD_DEF, sizeof(GUARD_DEF) - 1, 1, fd) == 1);
 
-    written = snprintf(buffer, sizeof(PUBLIC_KEY_LEN) + 2, PUBLIC_KEY_LEN, public_key_length);
-    fwrite(buffer, written, 1, fd);
+    written = snprintf(buffer, sizeof(buffer) - 1, PUBLIC_KEY_LEN, public_key_length);
+    assert(sizeof(buffer) -1 >= written);
+    assert(sizeof(buffer) - 1 >= written);
+    assert(fwrite(buffer, written, 1, fd) == 1);
 
-    written = snprintf(buffer, sizeof(PRIVATE_KEY_LEN) + 3, PRIVATE_KEY_LEN, private_key_length);
-    fwrite(buffer, written, 1, fd);
+    written = snprintf(buffer, sizeof(buffer) - 1, PRIVATE_KEY_LEN, private_key_length);
+    assert(sizeof(buffer) - 1 >= written);
+    assert(fwrite(buffer, written, 1, fd) == 1);
 
     /* Write public key */
     uint8_t *key_begins = public_key + KAA_RSA_PUBLIC_KEY_LENGTH_MAX - public_key_length;
@@ -202,18 +209,20 @@ int kaa_keys_store(uint8_t *public_key, size_t public_key_length,
         printf("Error while encoding base64");
     }
 
-    written = snprintf(buffer, sizeof(KAA_SHA1_PUB_LEN) + 2, KAA_SHA1_PUB_LEN, sizeof(sha1));
-    fwrite(buffer, written, 1, fd);
+    written = snprintf(buffer, sizeof(buffer) - 1, KAA_SHA1_PUB_LEN, sizeof(sha1));
+    assert(sizeof(buffer) - 1 >= written);
+    assert(fwrite(buffer, written, 1, fd) == 1);
 
-    written = snprintf(buffer, sizeof(KAA_SHA1_PUB_BASE64_LEN) + 2, KAA_SHA1_PUB_BASE64_LEN, sha1_base64_len);
-    fwrite(buffer, written, 1, fd);
+    written = snprintf(buffer, sizeof(buffer) - 1, KAA_SHA1_PUB_BASE64_LEN, sha1_base64_len);
+    assert(sizeof(buffer) - 1 >= written);
+    assert(fwrite(buffer, written, 1, fd) == 1);
 
     error = sha1_store(fd, sha1, sizeof(sha1), sha1_base64_buffer, sha1_base64_len);
     if (error) {
         printf("Can't store sha1\n");
     }
 
-    fwrite(GUARD_ENDIF, sizeof(GUARD_ENDIF) - 1, 1, fd);
+    assert(fwrite(GUARD_ENDIF, sizeof(GUARD_ENDIF) - 1, 1, fd) == 1);
     fclose(fd);
 
     return 0;

@@ -46,7 +46,7 @@
 
 #define SHA1_LENGTH 20
 
-/*
+/**
  * Structure which contains Endpoint keys.
  *
  * public_key is a pointer to RSA public key.
@@ -56,11 +56,12 @@
  * caching calculated keys.
  */
 typedef struct {
-    uint8_t public_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
-    uint8_t private_key[KAA_RSA_PRIVATE_KEY_LENGTH_MAX];
-    size_t  public_key_length;
-    size_t  private_key_length;
+    uint8_t public_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX]; ///< RSA public key
+    uint8_t private_key[KAA_RSA_PRIVATE_KEY_LENGTH_MAX]; ///< RSA public key
+    size_t  public_key_length; ///< RSA public key length
+    size_t  private_key_length; ///< RSA private key length
 } endpoint_keys_t;
+
 
 /**
  * @brief Return context for the given RSA keys

@@ -166,6 +166,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/avro_src/io.c
         ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
         ${KAA_SRC_FOLDER}/collections/kaa_list.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_aes_rsa.c
         ${KAA_SRC_FOLDER}/utilities/kaa_log.c
         ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
         ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
@@ -275,6 +276,8 @@ add_subdirectory(Modules/doxygen)
 
 add_subdirectory(Modules/cppcheck)
 
+#Set key pair generation parameter for posix platform
+#Use application for another platform
 if(${KAA_PLATFORM} STREQUAL "posix")
     option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
     if(${KAA_RUNTIME_KEY_GENERATION})
