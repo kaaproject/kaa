@@ -73,7 +73,7 @@ void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
         key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, buff, sizeof(buff));
         if (key_length < 0) {
             return;
-	    }
+        }
         initialized = true;
     }
     *buffer = buff;
