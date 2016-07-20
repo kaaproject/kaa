@@ -709,30 +709,39 @@ import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
 
-// Create the Kaa desktop context for the application.
-DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
-
-// Create a Kaa client and add a listener which displays the Kaa client configuration 
-// as soon as the Kaa client is started. 
-kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
-@Override
-public void onStarted() {
-    super.onStarted();
-    displayConfiguration();
+public static void main(String[] args) {
+    // Create the Kaa desktop context for the application.
+    DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
+    
+    // Create a Kaa client and add a listener which displays the Kaa client configuration 
+    // as soon as the Kaa client is started. 
+    kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
+    @Override
+    public void onStarted() {
+        super.onStarted();
+        printConfiguration(kaaClient.getConfiguration());
+    }
+    });
+    
+    // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
+    kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
+    
+    // Add a listener which displays the Kaa client configuration each time it is updated.
+    kaaClient.addConfigurationListener(new ConfigurationListener() {
+    @Override
+    public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
+        printConfiguration(sampleConfiguration);
+    }
+    });
+        
+    // Start the Kaa client and connect it to the Kaa server.
+    kaaClient.start();
+    ...
 }
-});
 
-// Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
-kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
-
-// Add a listener which displays the Kaa client configuration each time it is updated.
-kaaClient.addConfigurationListener(new ConfigurationListener() {
-@Override
-public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
-    LOG.info("Configuration was updated");
-    displayConfiguration();
+private static void printConfiguration(SampleConfiguration sampleConfiguration) {
+    LOG.info("Current configuration: {}", sampleConfiguration);
 }
-});
 
 ```
 
@@ -752,13 +761,13 @@ const char savedConfig[] = "saved_config.cfg";
 
 class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
-    void displayConfiguration(const KaaRootConfiguration &configuration)
+    void printConfiguration(const KaaRootConfiguration &configuration)
     {
-        ...
+        std::cout << "Configuration body: " << configuration << std::endl;
     }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        displayConfiguration(configuration);
+        printConfiguration(configuration);
     }
 };
 
@@ -800,16 +809,16 @@ int main()
  
 static kaa_client_t *kaa_client = NULL;
 
-void kaa_demo_print_configuration_message(
+void print_configuration(
         const kaa_root_configuration_t *configuration) {
-        ...
+        printf(configuration);
 }
 
 kaa_error_t kaa_demo_configuration_receiver(void *context,
                                             const kaa_root_configuration_t *configuration) {
     (void) context;
-    demo_printf("Received configuration data\r\n");
-    kaa_demo_print_configuration_message(configuration);
+    printf("Received configuration data\r\n");
+    print_configuration(configuration);
     kaa_client_stop(kaa_client);
     return KAA_ERR_NONE;
 }
@@ -819,7 +828,7 @@ int main(/*int argc, char *argv[]*/) {
     //Initialize Kaa client.
     kaa_error_t error_code = kaa_client_create(&kaa_client, NULL);
     if (error_code) {
-        demo_printf("Failed create Kaa client\r\n");
+        printf("Failed create Kaa client\r\n");
         return 2;
     }
 
@@ -833,18 +842,18 @@ int main(/*int argc, char *argv[]*/) {
             &receiver);
 
     if (error_code) {
-        demo_printf("Failed to add configuration receiver\r\n");
+        printf("Failed to add configuration receiver\r\n");
         return 3;
     }
 
-    kaa_demo_print_configuration_message(
+    print_configuration(
             kaa_configuration_manager_get_configuration(
                     kaa_client_get_context(kaa_client)->configuration_manager));
 
     //Start Kaa client main loop.
     error_code = kaa_client_start(kaa_client, NULL, NULL, 0);
     if(error_code) {
-        demo_printf("Failed to start Kaa main loop\r\n");
+        printf("Failed to start Kaa main loop\r\n");
         return 4;
     }
 
@@ -894,6 +903,21 @@ int main(/*int argc, char *argv[]*/) {
     
     // Start the Kaa client and connect it to the Kaa server.
     [self.kaaClient start];
+}
+
+- (void)onConfigurationUpdate:(KAASampleConfiguration *)configuration {
+    [self addLogWithText:@"Configuration was updated"];
+    [self printConfiguration];
+}
+
+- (void)printConfiguration {
+    KAASampleConfiguration *configuration = [self.kaaClient getConfiguration];
+    NSArray *links = [configuration AddressList].data;
+    NSMutableString *confBody = [NSMutableString stringWithFormat:@"Configuration body :\n"];
+    for (KAALink *link in links) {
+        [confBody appendString:[NSString stringWithFormat:@"%@ - %@\n", link.label, link.url]];
+    }
+    [self addLogWithText:confBody];
 }
 
 ```
