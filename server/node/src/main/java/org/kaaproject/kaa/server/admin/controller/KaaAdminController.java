@@ -1076,7 +1076,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public ConfigurationSchemaDto createConfigurationSchema(@RequestBody  ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException {
+    public ConfigurationSchemaDto saveConfigurationSchema(@RequestBody  ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException {
         return kaaAdminService.saveConfigurationSchema(configurationSchema);
     }
 
