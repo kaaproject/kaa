@@ -207,7 +207,7 @@ public interface KaaAdminService extends RemoteService {
 
     NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException;
 
-    NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
+    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
 
     NotificationSchemaViewDto saveNotificationSchemaView(NotificationSchemaViewDto notificationSchema) throws KaaAdminServiceException;
 

@@ -182,11 +182,11 @@ public class CtlSchemaPlace extends TreePlace {
             if (schemaType != null) { 
                 if (schemaType == SchemaType.ENDPOINT_PROFILE) {
                     return new ProfileSchemasPlace(applicationId);
-                } else if (schemaType == SchemaType.SERVER_PROFILE){
+                } else if (schemaType == SchemaType.SERVER_PROFILE) {
                     return new ServerProfileSchemasPlace(applicationId);
                 } else if (schemaType == SchemaType.NOTIFICATION) {
                     return new NotificationSchemasPlace(applicationId);
-                } else {
+                } else if (schemaType == SchemaType.LOG_SCHEMA) {
                     return new LogSchemasPlace(applicationId);
                 }
             } else {    

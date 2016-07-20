@@ -1069,7 +1069,7 @@ public class DefaultControlService implements ControlService {
 
         CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
         if (notificationCtlSchema == null) {
-            throw new NotFoundException("Notification CTL schema not found!");
+            throw new NotFoundException("Profile CTL schema not found!");
         }
         String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
 
@@ -1160,7 +1160,7 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.NotificationSchemaDto)
      */
     @Override
-    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
+    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
         return notificationService.saveNotificationSchema(notificationSchema);
     }
 

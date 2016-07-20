@@ -279,7 +279,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         notificationSchemaDto.setType(NotificationTypeDto.USER);
         notificationSchemaDto = notificationService.saveNotificationSchema(notificationSchemaDto);
         if (notificationSchemaDto == null) {
-            throw new RuntimeException("Can't save default notification schema "); //NOSONAR
+            throw new RuntimeException("Can't save default profile schema "); //NOSONAR
         }
         return notificationSchemaDto;
     }

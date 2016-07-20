@@ -252,11 +252,11 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         } else if (place.getSchemaType() != null) {
                             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
                                 goTo(new ProfileSchemasPlace(place.getApplicationId()));
-                            } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE){
+                            } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
-                            } else if (place.getSchemaType() == SchemaType.NOTIFICATION){
+                            } else if (place.getSchemaType() == SchemaType.NOTIFICATION) {
                                 goTo(new NotificationSchemasPlace(place.getApplicationId()));
-                            } else {
+                            } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
                                 goTo(new LogSchemasPlace(place.getApplicationId()));
                             }
                         } else if (place.getPreviousPlace() != null) {
@@ -403,7 +403,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         callback.onSuccess(null);
                     }
                 });
-            } else {
+            } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
                 KaaAdmin.getDataSource().createLogSchemaFormCtlSchema(entity, new BusyAsyncCallback<LogSchemaViewDto>() {
                     @Override
                     public void onFailureImpl(Throwable caught) {
