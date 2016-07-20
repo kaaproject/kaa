@@ -49,14 +49,7 @@ import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
-import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.ResultCode;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
@@ -529,16 +522,15 @@ public class KaaAdminController {
     /**
      * Edits user profile to all user profiles.
      *
-     * @param userDto
+     * @param userProfileUpdateDto
      *            the user dto
-     * @return the user dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
     @RequestMapping(value = "userProfile", method = RequestMethod.POST)
     @ResponseBody
-    public UserDto editUserProfile(@RequestBody UserDto userDto) throws KaaAdminServiceException {
-        return kaaAdminService.editUserProfile(userDto);
+    public void editUserProfile(@RequestBody UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
+        kaaAdminService.editUserProfile(userProfileUpdateDto);
     }
 
     /**

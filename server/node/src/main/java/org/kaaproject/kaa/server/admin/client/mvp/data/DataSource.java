@@ -38,13 +38,8 @@ import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -102,12 +97,12 @@ public class DataSource {
                 });
     }
 
-    public void editUserProfile(UserDto user,
-            final AsyncCallback<UserDto> callback) {
-        rpcService.editUserProfile(user,
-                new DataCallback<UserDto>(callback) {
+    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
+            final AsyncCallback<Void> callback) {
+        rpcService.editUserProfile(userProfileUpdateDto,
+                new DataCallback<Void>(callback) {
                     @Override
-                    protected void onResult(UserDto result) {
+                    protected void onResult(Void result) {
                     }
                 });
     }

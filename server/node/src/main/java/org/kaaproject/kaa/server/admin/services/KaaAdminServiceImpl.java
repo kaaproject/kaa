@@ -82,12 +82,7 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -575,17 +570,25 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public org.kaaproject.kaa.common.dto.admin.UserDto editUserProfile(org.kaaproject.kaa.common.dto.admin.UserDto userDto)
+    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto)
             throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_USER, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.KAA_ADMIN, KaaAuthorityDto.TENANT_ADMIN);
         try {
-            checkUserProfile(userDto);
+            if(!userProfileUpdateDto.getUsername().equals(getCurrentUser().getUsername())){
+                throw new IllegalArgumentException("Username is not valid.");
+            }
+            if(!userProfileUpdateDto.getAuthority().equals(getCurrentUser().getAuthority())){
+                throw new IllegalArgumentException("Authority is not valid.");
+            }
+            org.kaaproject.kaa.common.dto.admin.UserDto userDto = new org.kaaproject.kaa.common.dto.admin.UserDto();
+            userDto.setUsername(userProfileUpdateDto.getUsername());
+            userDto.setFirstName(userProfileUpdateDto.getFirstName());
+            userDto.setLastName(userProfileUpdateDto.getLastName());
+            userDto.setMail(userProfileUpdateDto.getMail());
+            userDto.setAuthority(userProfileUpdateDto.getAuthority());
             userDto.setExternalUid(getCurrentUser().getExternalUid());
-            Long userId = saveUser(userDto);
-            User user = userFacade.findById(userId);
-            org.kaaproject.kaa.common.dto.admin.UserDto result = new org.kaaproject.kaa.common.dto.admin.UserDto(user.getId().toString(),
-                    user.getUsername(), user.getFirstName(), user.getLastName(), user.getMail(), KaaAuthorityDto.valueOf(user
-                    .getAuthorities().iterator().next().getAuthority()));
-            return result;
+            checkUserProfile(userDto);
+            saveUser(userDto);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
