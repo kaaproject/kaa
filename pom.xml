@@ -15,7 +15,7 @@ Copyright 2014-2016 CyberVision, Inc.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kaaproject</groupId>
@@ -274,8 +274,8 @@ Copyright 2014-2016 CyberVision, Inc.
             <id>repository</id>
             <distributionManagement>
                 <repository>
-                    <id>kaa.release</id>
-                    <url>http://repository.kaaproject.org/repository/internal/</url>
+                  <id>kaa.release</id>
+                  <url>http://repository.kaaproject.org/repository/internal/</url>
                 </repository>
                 <snapshotRepository>
                     <id>kaa.snapshots</id>
@@ -1369,8 +1369,8 @@ Copyright 2014-2016 CyberVision, Inc.
                     </tags>
                 </configuration>
             </plugin>
-            <!-- uncomment when all licence headers will be added <plugin> 
-                <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId> 
+            <!-- uncomment when all licence headers will be added <plugin>
+                <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId>
                 <version>${rat.version}</version> </plugin> -->
         </plugins>
     </reporting>

@@ -15,6 +15,7 @@
  */
 
 package org.kaaproject.kaa.client;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -99,14 +100,17 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * <p>
  * Abstract class that holds general elements of Kaa library.
  * </p>
+ *
  * <p>
  * This class creates and binds Kaa library modules. Public access to each
  * module is performed using {@link KaaClient} interface.
  * </p>
+ *
  * <p>
  * Http client ({@link AbstractHttpClient}) is used to provide basic
  * communication with Bootstrap and Operation servers using HTTP protocol.
@@ -114,6 +118,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
+ *
  * @see KaaClient
  * @see AbstractHttpClient
  * @see PersistentStorage

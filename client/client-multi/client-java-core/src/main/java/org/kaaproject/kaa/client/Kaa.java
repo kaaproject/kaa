@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * context} and optional {@link KaaClientStateListener state listener}.
  *
  * @author Andrew Shvayka
+ *
  */
 public class Kaa {
     private static final Logger LOG = LoggerFactory.getLogger(Kaa.class);

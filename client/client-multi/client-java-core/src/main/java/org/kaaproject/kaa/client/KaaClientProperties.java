@@ -16,17 +16,6 @@
 
 package org.kaaproject.kaa.client;
 
-import org.apache.commons.compress.utils.Charsets;
-import org.kaaproject.kaa.client.channel.GenericTransportInfo;
-import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.TransportProtocolId;
-import org.kaaproject.kaa.client.util.Base64;
-import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
-import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -39,6 +28,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.compress.utils.Charsets;
+import org.kaaproject.kaa.client.channel.GenericTransportInfo;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.util.Base64;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.kaaproject.kaa.client.util.Utils.isBlank;
 
@@ -92,7 +92,7 @@ public class KaaClientProperties extends Properties {
 
     private static Properties loadProperties(String propsLocation) throws IOException {
         Properties properties = null;
-        String propertiesLocation = isBlank(propsLocation) ? DEFAULT_CLIENT_PROPERTIES : propsLocation;
+        String propertiesLocation =  isBlank(propsLocation) ? DEFAULT_CLIENT_PROPERTIES : propsLocation;
         if (System.getProperty(KAA_CLIENT_PROPERTIES_FILE) != null) {
             propertiesLocation = System.getProperty(KAA_CLIENT_PROPERTIES_FILE);
         }
@@ -264,4 +264,5 @@ public class KaaClientProperties extends Properties {
             throw new IllegalArgumentException(errorMessage);
         }
     }
+
 }

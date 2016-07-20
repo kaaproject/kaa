@@ -16,6 +16,17 @@
 
 package org.kaaproject.kaa.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
@@ -36,6 +47,7 @@ import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
 import org.kaaproject.kaa.client.exceptions.KaaUnsupportedPlatformException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
+import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
@@ -49,17 +61,6 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class KaaClientTest {
 

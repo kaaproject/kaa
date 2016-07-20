@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
  * Bootstrap manager manages the list of available operation servers.
  *
  * @author Yaroslav Zeygerman
+ *
  */
 public interface BootstrapManager {
 
@@ -53,6 +54,7 @@ public interface BootstrapManager {
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.
      *
      * @param accessPointId endpoint's DNS.
+     *
      */
     void useNextOperationsServerByAccessPointId(int accessPointId);
 

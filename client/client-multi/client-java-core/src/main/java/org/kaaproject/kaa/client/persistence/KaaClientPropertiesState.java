@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.persistence;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
