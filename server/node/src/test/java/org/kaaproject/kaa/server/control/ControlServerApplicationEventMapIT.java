@@ -21,12 +21,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.*;
 import org.springframework.web.client.ResourceAccessException;
 
 /**
@@ -114,14 +112,14 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
         ApplicationDto application = createApplication(tenantAdminDto);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
         createApplicationEventFamilyMap(application.getApplicationToken(), eventClassFamily.getId(), 1);
-
         loginTenantDeveloper(tenantDeveloperUser);
         List<EcfInfoDto> vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
         Assert.assertNotNull(vacantEcfs);
         Assert.assertEquals(0, vacantEcfs.size());
 
         loginTenantAdmin(tenantAdminUser);
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(eventClassFamily.getId());
+        client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
 
         loginTenantDeveloper(tenantDeveloperUser);
         vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
