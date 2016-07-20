@@ -27,8 +27,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -417,11 +419,19 @@ public abstract class HibernateAbstractTest extends AbstractTest {
 
         EventClass eventClass;
         EventClassFamilyVersion eventClassFamilyVersion = eventClassFamily.getSchemas().get(0);
-        List<EventClass> eventClasses = new ArrayList<>(count);
+        List<EventClass> records = eventClassFamilyVersion.getRecords();
+        if (records == null) {
+            records = new ArrayList<>();
+        }
         for (int i = 0; i < count; i++) {
             eventClass = new EventClass();
             eventClass.setTenant(tenant);
-            eventClass.setCtlSchema(generateCTLSchema(DEFAULT_FQN, i, tenant, CTLSchemaScopeDto.TENANT));
+            Integer version = 1;
+            try {
+                version = ctlSchemaDao.find().stream().max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion())).get().getVersion()+1;
+            } catch (NoSuchElementException e) {}
+
+            eventClass.setCtlSchema(generateCTLSchema(DEFAULT_FQN, version, tenant, CTLSchemaScopeDto.TENANT));
             eventClass.setEcf(eventClassFamilyVersion);
             eventClass.setFqn("Test FQN" + RANDOM.nextInt());
             eventClass.setType(EventClassType.EVENT);
@@ -431,11 +441,15 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             eventClass.setCreatedUsername("test createdUsername" + RANDOM.nextInt());
             eventClass.setCreatedTime(new Date().getTime());
             eventClass.setApplication(generateApplication(tenant));
-
-            eventClass = eventClassDao.save(eventClass);
-            Assert.assertNotNull(eventClass);
-            eventClasses.add(eventClass);
+            records.add(eventClass);
         }
+        eventClassFamilyVersion.setRecords(records);
+        eventClassFamilyDao.save(eventClassFamily);
+        eventClassFamily = eventClassFamilyDao.findById(eventClassFamily.getStringId());
+        Long ecfvId = eventClassFamilyVersion.getId();
+        eventClassFamilyVersion = eventClassFamily.getSchemas().stream().filter(ecfv -> ecfv.getId().equals(ecfvId)).collect(Collectors.toList()).get(0);
+        List<EventClass> eventClasses = new ArrayList<>(count);
+        eventClasses.addAll(eventClassFamilyVersion.getRecords());
         return eventClasses;
     }
 
