@@ -156,7 +156,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
      */
     public byte[] encodeToJsonBytes(T record) throws IOException{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos, false, true);
+        jsonEncoder = EncoderFactory.get().jsonEncoder(this.schema, baos, true);
         datumWriter.write(record, jsonEncoder);
         jsonEncoder.flush();
         baos.flush();
