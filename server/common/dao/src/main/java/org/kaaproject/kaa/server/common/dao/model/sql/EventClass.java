@@ -62,10 +62,6 @@ public class EventClass extends BaseSchema<EventClassDto> {
         if (tenantId != null) {
             this.tenant = new Tenant(tenantId);
         }
-        Long ecfId = getLongId(dto.getEcfId());
-        if (ecfId != null) {
-            this.ecf = new EventClassFamilyVersion(ecfId);
-        }
         this.fqn = dto.getFqn();
         this.type = dto.getType();
     }

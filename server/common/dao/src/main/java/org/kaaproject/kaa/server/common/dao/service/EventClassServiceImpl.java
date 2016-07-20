@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.avro.ui.shared.NamesValidator;
@@ -163,9 +164,10 @@ public class EventClassServiceImpl implements EventClassService {
                 EventClassFamily ecf = new EventClassFamily(eventClassFamily);
                 List<EventClassFamilyVersion> schemas = new ArrayList<>();
                 for (EventClassDto eventClass : records) {
-                    saveEventClass(eventClassFamily, eventClass, version);
+                    setEventClassProperties(eventClassFamily, eventClass, version);
                 }
                 schemasDto.forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
+                setEventClassECF(schemas);
                 ecf.setSchemas(schemas);
                 eventClassFamilyDao.save(ecf);
             } else {
@@ -178,11 +180,14 @@ public class EventClassServiceImpl implements EventClassService {
         }
     }
 
-    private void saveEventClass(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass, int version) {
+    private void setEventClassProperties(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass, int version) {
         eventClass.setTenantId(eventClassFamilyDto.getTenantId());
         eventClass.setEcfId(eventClassFamilyDto.getId());
         eventClass.setVersion(version);
-        //eventClassDao.save(new EventClass(eventClass));
+    }
+
+    private void setEventClassECF(List<EventClassFamilyVersion> ecfvList) {
+        ecfvList.forEach(ecfv -> ecfv.getRecords().forEach(ec -> ec.setEcf(ecfv)));
     }
 
     private boolean validateEventClassFamilyFqns(EventClassFamilyDto eventClassFamily, List<String> fqns) {
@@ -194,7 +199,9 @@ public class EventClassServiceImpl implements EventClassService {
         List<EventClassDto> eventClasses;
         if (isValidSqlId(ecfId)) {
             LOG.debug("Find event classes by family id [{}] version [{}] and type [{}]", ecfId, version, type);
-            eventClasses = convertDtoList(eventClassDao.findByEcfIdVersionAndType(ecfId, version, type));
+            EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
+            EventClassFamilyVersion ecfv = ecf.getSchemas().stream().filter(s -> s.getVersion() == version).collect(Collectors.toList()).get(0);
+            eventClasses = convertDtoList(eventClassDao.findByEcfIdVersionAndType(String.valueOf(ecfv.getId()), ecfv.getVersion(), type));
         } else {
             throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);
         }

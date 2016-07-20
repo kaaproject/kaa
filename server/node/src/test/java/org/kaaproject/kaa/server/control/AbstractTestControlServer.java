@@ -292,7 +292,6 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-                new H2DBTestRunner().truncateSequences(dataSource);
             } else {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);

@@ -134,8 +134,9 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
         List<EventClassDto> eventClasses = client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
         Assert.assertNotNull(eventClasses);
         Assert.assertEquals(1, eventClasses.size());
+        eventClassFamilyVersion = client.getEventClassFamilyVersionsById(eventClassFamily.getId()).get(0);
         for (EventClassDto eventClass : eventClasses) {
-            Assert.assertEquals(eventClassFamily.getId(), eventClass.getEcfId());
+            Assert.assertEquals(eventClassFamilyVersion.getId(), eventClass.getEcfId());
             Assert.assertEquals(0, eventClass.getVersion());
         }
     }
