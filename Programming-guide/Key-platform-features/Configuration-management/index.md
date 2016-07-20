@@ -15,29 +15,78 @@ The Kaa Configuration subsystem is responsible for configuring endpoints by supp
 via the Kaa server. The fact that Kaa operates with the uniformly structured data deserves a special emphasis. By knowing the data structure of the
 application, Kaa provides a number of very useful features, such as:
 
-* Automatic generation of the data object model in the endpoint SDK
+* Automatic generation of the configuration object model in the endpoint SDK
 * Automatic generation of the default configuration
-* Enforcement of the data integrity
-* Endpoint-specific data view that is based on the endpoint membership in endpoint groups
+* Enforcement of the configuration integrity
+* Endpoint-specific configuration view that is based on the endpoint membership in endpoint groups
 
-Control service automatically assigns a version number to the schema, once a new configuration schema is loaded into the Kaa application 
-generates three corresponding derivative schemas (a [base schema](#base-schema), [override schema](##override-schema), and [protocol schema](#protocol-schema)),
-and populates configuration data in the "all" group with the default values.
+# Configuration management
 
-# Configuration management overview
-
-The structure of the configuration data is determined by the customizable configuration schema, which is created under the application using Administration UI or
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO). It is the responsibility of the Kaa developer to construct the configuration schema
-for the application and make the Kaa client interpret the data supplied by the endpoint SDK. The Kaa administrator, in turn, can provision
-the configuration schema into the Kaa server and set the configuration data accordingly.
-
-![Configuration management overview](attach/configuration.png)
-
-The following image example illustrates how to add configuration schema from Administration UI.
+The structure of the configuration data is determined by the customizable configuration schema. 
+It is the responsibility of the Kaa developer to construct the configuration schema and make the client application interpret the data supplied by the endpoint SDK.
+Kaa developer can provision the configuration schema using Administration UI (see image below) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO).
 
 ![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
 
-# Configuration schema
+Once a new configuration schema is provisioned, Kaa 
+generates corresponding derivative schemas (a [base schema](#base-schema) and [override schema](#override-schema)),
+and [populates configuration data](#records-auto-generation) in the "all" group with the default values.
+
+In the current Kaa version, any configuration schema updates require updates of the client application.
+
+Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers are capable of maintaining more than one
+configuration schema version. For this purpose, a new, sequentially incremented version number is automatically assigned to every new configuration schema
+loaded into the Kaa server. Configuration data is managed independently for every schema version.
+
+The endpoints report their supported configuration data schema version in the service profile. The Kaa server, in response, supplies them with the data updates
+that correspond to the reported version.
+
+## Application-specific configuration management
+
+Kaa allows simultaneously updating configuration data for all endpoints under the application which use the same configuration schema. For this purpose,
+Kaa uses a _base schema_ which is derived from the configuration schema. The base schema assigns an address to each addressable record from the configuration
+schema and in this way enables updating the record values.
+
+For each Kaa application, there is a default "all" endpoint group to which all endpoints registered under the application belong. The "all" group contains
+base schemas for all configuration schemas under the application as well as the corresponding default configuration data sets. The "all" group has weight 0.
+When a new configuration schema version is loaded into the application, the server automatically creates the corresponding base schema and
+default configuration data for the "all" group (by applying the default records generation algorithm described in the previous section to the root record in
+the base schema). This configuration data may be changed either via the Web UI or through the integration interface as follows:
+
+* the user retrieves the corresponding base schema
+* specifies new configuration data that corresponds to the base schema format
+* submits this data to the server.
+
+After the new configuration is submitted, the server overwrites the current configuration data which is stored in the "all" group for the base schema
+in question. Finally, Kaa delivers the up-to-date configuration data to all endpoints that support the corresponding configuration schema.
+
+The fact that the "all" group has weight 0 results in the following: if apart from the schema-specific update the user introduces the
+[group-specific update](#group-specific-configuration-management) too, any conflicts in values between these two updates will be resolved by giving preference
+to the group-specific update (because 0 is the lowest priority value).
+
+## Group-specific configuration management
+
+Kaa allows updating configuration data for a specific endpoint group under the application, which is a more targeted approach than that described in
+[Application-specific configuration management](#application-specific-configuration-management) for the "all" group. To implement such a modification, Kaa distributes
+_configuration override data_ to the endpoint group. The structure of the _configuration override data_ is specified by the _override schema_, which is
+derived from the configuration schema used by the target endpoint group. As different from the base schema, the override schema allows
+updating fields selectively, leaving some of them without any change if necessary.
+
+
+## User-specific configuration management
+
+The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) allows 
+updating configuration data for the specific user under the application. The user-specific
+configuration management implements the same approach as in [Group-specific configuration](#group-specific-configuration-management) management,
+based on the override schema and override algorithm.
+
+>**NOTE:**
+> Since each endpoint belongs to only one user at a time, the override algorithm does not support data set merges as in the group-specific
+configuration management. <br/>
+The override algorithm applies user-specific overrides only after all group-specific overrides have been applied.
+
+
+# Configuration schemas
 
 A _configuration_ schema is a user-defined specification of the application data model that Kaa Configuration subsystem uses to configure endpoints registered
 under the application. In other words, the configuration schema defines in which format the actual configuration data should be entered by the user/developer
@@ -240,7 +289,7 @@ derivative schemas, which is done for the addressing purposes. For this reason, 
 }
 ```
 
-# Addressing
+## Addressing
 
 A field in Kaa configuration is addressable if the record containing this field is addressable (the **addressable** attribute of the record is ```true```).
 Addressable field values can be updated via the group-specific configuration mechanism.
@@ -309,7 +358,7 @@ The following fields are addressable in the provided schema.
 However, the fields within the instances of ```org.kaaproject.kaa.schema.sample.nestedRecordT``` contained in ```/arrayOfRecords``` are not addressable,
 because it is not possible to address records within arrays in the current Kaa version.
 
-# Records auto-generation
+## Records auto-generation
 
 For every configuration schema, Kaa constructs the default configuration data records. During this process of the default configuration data generation,
 each record in the schema is analyzed one-by-one in the depth-first, top-to-bottom order, as follows:
@@ -442,28 +491,6 @@ This schema would default to the following record.
 
 The Kaa server stores the auto-generated default records in a cache and re-uses them in further operation.
 
-# Schema-specific configuration management
-
-Kaa allows simultaneously updating configuration data for all endpoints under the application which use the same configuration schema. For this purpose,
-Kaa uses a _base schema_ which is derived from the configuration schema. The base schema assigns an address to each addressable record from the configuration
-schema and in this way enables updating the record values.
-
-For each Kaa application, there is a default "all" endpoint group to which all endpoints registered under the application belong. The "all" group contains
-base schemas for all configuration schemas under the application as well as the corresponding default configuration data sets. The "all" group has weight 0.
-When a new configuration schema version is loaded into the application, the server automatically creates the corresponding base schema and
-default configuration data for the "all" group (by applying the default records generation algorithm described in the previous section to the root record in
-the base schema). This configuration data may be changed either via the Web UI or through the integration interface as follows:
-
-* the user retrieves the corresponding base schema
-* specifies new configuration data that corresponds to the base schema format
-* submits this data to the server.
-
-After the new configuration is submitted, the server overwrites the current configuration data which is stored in the "all" group for the base schema
-in question. Finally, Kaa delivers the up-to-date configuration data to all endpoints that support the corresponding configuration schema.
-
-The fact that the "all" group has weight 0 results in the following: if apart from the schema-specific update the user introduces the
-[group-specific update](#group-specific-configuration-management) too, any conflicts in values between these two updates will be resolved by giving preference
-to the group-specific update (because 0 is the lowest priority value).
 
 ## Base schema
 
@@ -558,14 +585,6 @@ The following rules apply for object creation.
 * If the resolved UUID is equal to some other UUID which is already in use or to unknown value, Kaa generates a new UUID for the object and stores it in the
 database.
 
-# Group-specific configuration management
-
-Kaa allows updating configuration data for a specific endpoint group under the application, which is a more targeted approach than that described in
-[Schema-specific configuration management](#schema-specific-configuration-management) for the "all" group. To implement such a modification, Kaa distributes
-_configuration override data_ to the endpoint group. The structure of the _configuration override data_ is specified by the _override schema_, which is
-derived from the configuration schema used by the target endpoint group. As different from the base schema, the override schema allows
-updating fields selectively, leaving some of them without any change if necessary (using the ```org.kaaproject.configuration.unchangedT``` type).
-
 ## Override schema
 
 The override schema is obtained by transforming the configuration schema and looks very similar to the base schema. The difference is that when constructing
@@ -653,35 +672,231 @@ In case of the conflicting field alues, the field is set with the value from the
 Record UUID fields never change from the values in the lowest weight group they were first encountered in. <br/>
 Both profile schema and configuration schema versions the endpoint supports are taken into account during the merge. <br/>
 
-# User-specific configuration management
-
-The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) allows 
-updating configuration data for the specific user under the application. The user-specific
-configuration management implements the same approach as in [Group-specific configuration](#group-specific-configuration-management) management,
-based on the override schema and override algorithm.
-
->**NOTE:**
-> Since each endpoint belongs to only one user at a time, the override algorithm does not support data set merges as in the group-specific
-configuration management. <br/>
-The override algorithm applies user-specific overrides only after all group-specific overrides have been applied.
-
 # Endpoint data synchronization
 
-After calculating the up-to-date configuration for the endpoint, the Operations service constructs a update complete endpoint configuration. 
+After receiving configuration update for the endpoint group, the Operations service calculates and delivers the up-to-date configuration for all affected endpoints. 
 
-Having received the update, the endpoint merges it with the existing configuration data, notifies the client application about the update, and
+Having received the update, the endpoint notifies the client application about the update and
 persists the resulting configuration. The data storage location is set as an abstraction in the endpoint, therefore the concrete location for
 persisting the data is defined in the client implementation.
 
-Data consistency is ensured by the hash comparison between the endpoint and the server.
+Data consistency is ensured by the configuration hash comparison between the endpoint and the server.
 
-# Schema versioning
+![Configuration management overview](attach/configuration.png)
 
-In the current Kaa version, any configuration schema updates require updates of the [client application]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#configuration-kaa-sdk).
+# Configuration management SDK API
 
-Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers are capable of maintaining more than one
-configuration schema version. For this purpose, a new, sequentially incremented version number is automatically assigned to every new configuration schema
-loaded into the Kaa server. Configuration data is managed independently for every schema version.
+The configuration management API varies depending on the target SDK platform. However, the general approach is the same.
 
-The endpoints report their supported configuration data schema version in the service profile. The Kaa server, in response, supplies them with the data updates
-that correspond to the reported version.
+The Kaa client application should use the following code.
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>
+  <li><a data-toggle="tab" href="#C_plus_plus-1">C++</a></li>
+  <li><a data-toggle="tab" href="#C-1">C</a></li>
+  <li><a data-toggle="tab" href="#Objective-C-1">Objective-C</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="Java-1" class="tab-pane fade in active" markdown="1" >
+
+```java
+
+import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
+import org.kaaproject.kaa.client.Kaa;
+import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
+import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
+
+// Create the Kaa desktop context for the application.
+DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
+
+// Create a Kaa client and add a listener which displays the Kaa client configuration 
+// as soon as the Kaa client is started. 
+kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
+@Override
+public void onStarted() {
+    super.onStarted();
+    displayConfiguration();
+}
+});
+
+// Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
+kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
+
+// Add a listener which displays the Kaa client configuration each time it is updated.
+kaaClient.addConfigurationListener(new ConfigurationListener() {
+@Override
+public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
+    LOG.info("Configuration was updated");
+    displayConfiguration();
+}
+});
+
+```
+
+</div>
+<div id="C_plus_plus-1" class="tab-pane fade" markdown="1" >
+
+```c++
+#include <memory>
+#include <iostream>
+ 
+#include <kaa/Kaa.hpp>
+#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+ 
+using namespace kaa;
+
+const char savedConfig[] = "saved_config.cfg";
+
+class UserConfigurationReceiver : public IConfigurationReceiver {
+public:
+    void displayConfiguration(const KaaRootConfiguration &configuration)
+    {
+        ...
+    }
+    virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
+    {
+        displayConfiguration(configuration);
+    }
+};
+
+int main()
+{
+    // Initialize the Kaa endpoint.
+    auto kaaClient = Kaa::newClient();
+
+    // Set up a configuration subsystem.
+    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>(savedConfig));
+    kaaClient->setConfigurationStorage(storage);
+
+    // Set configuration update receiver.
+    UserConfigurationReceiver receiver;
+    kaaClient->addConfigurationListener(receiver);
+
+    // Run the Kaa endpoint.
+    kaaClient->start();
+
+    // Wait for the Enter key before exiting.
+    std::cin.get();
+    
+}
+
+```
+
+</div>
+<div id="C-1" class="tab-pane fade" markdown="1" >
+
+
+```c
+#include <target.h>
+
+#include <kaa/kaa_error.h>
+#include <kaa/kaa_context.h>
+#include <kaa/platform/kaa_client.h>
+#include <kaa/utilities/kaa_log.h>
+#include <kaa_configuration_manager.h>
+ 
+static kaa_client_t *kaa_client = NULL;
+
+void kaa_demo_print_configuration_message(
+        const kaa_root_configuration_t *configuration) {
+        ...
+}
+
+kaa_error_t kaa_demo_configuration_receiver(void *context,
+                                            const kaa_root_configuration_t *configuration) {
+    (void) context;
+    demo_printf("Received configuration data\r\n");
+    kaa_demo_print_configuration_message(configuration);
+    kaa_client_stop(kaa_client);
+    return KAA_ERR_NONE;
+}
+
+int main(/*int argc, char *argv[]*/) {
+
+    //Initialize Kaa client.
+    kaa_error_t error_code = kaa_client_create(&kaa_client, NULL);
+    if (error_code) {
+        demo_printf("Failed create Kaa client\r\n");
+        return 2;
+    }
+
+    kaa_configuration_root_receiver_t receiver = {
+            NULL,
+            &kaa_demo_configuration_receiver
+    };
+
+    error_code = kaa_configuration_manager_set_root_receiver(
+            kaa_client_get_context(kaa_client)->configuration_manager,
+            &receiver);
+
+    if (error_code) {
+        demo_printf("Failed to add configuration receiver\r\n");
+        return 3;
+    }
+
+    kaa_demo_print_configuration_message(
+            kaa_configuration_manager_get_configuration(
+                    kaa_client_get_context(kaa_client)->configuration_manager));
+
+    //Start Kaa client main loop.
+    error_code = kaa_client_start(kaa_client, NULL, NULL, 0);
+    if(error_code) {
+        demo_printf("Failed to start Kaa main loop\r\n");
+        return 4;
+    }
+
+}
+
+```
+
+</div>
+<div id="Objective-C-1" class="tab-pane fade" markdown="1" >
+
+```objc
+#import <Kaa/Kaa.h>
+ 
+#import "ViewController.h"
+
+@import Kaa;
+
+@interface ViewController () <KaaClientStateDelegate, ConfigurationDelegate, ProfileContainer>
+
+@property (nonatomic, weak) IBOutlet UITextView *logTextView;
+
+@property (nonatomic, strong) id<KaaClient> kaaClient;
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    [self addLogWithText:@"ConfigurationDemo started"];
+
+    // Create a Kaa client and add a listener which displays the Kaa client configuration
+    // as soon as the Kaa client is started.
+    self.kaaClient = [KaaClientFactory clientWithStateDelegate:self];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *configurationPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"savedconfig.cfg"];
+
+    // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
+    [self.kaaClient setConfigurationStorage:[SimpleConfigurationStorage storageWithPath:configurationPath]];
+    
+    // Add a listener which displays the Kaa client configuration each time it is updated.
+    [self.kaaClient addConfigurationDelegate:self];
+    
+    [self.kaaClient setProfileContainer:self];
+    
+    // Start the Kaa client and connect it to the Kaa server.
+    [self.kaaClient start];
+}
+
+```
+
+</div>
+</div>
