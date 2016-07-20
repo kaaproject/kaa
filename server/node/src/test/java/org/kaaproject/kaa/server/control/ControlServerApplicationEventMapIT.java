@@ -21,11 +21,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.event.*;
-import org.springframework.web.client.ResourceAccessException;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 
 /**
  * The Class ControlServerApplicationEventMapIT.
