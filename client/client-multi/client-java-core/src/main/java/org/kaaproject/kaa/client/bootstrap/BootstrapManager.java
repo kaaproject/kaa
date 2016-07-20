@@ -36,6 +36,7 @@ public interface BootstrapManager {
 
     /**
      * Receives the latest list of servers from the bootstrap server.
+     *
      * @throws TransportException the transport exception
      */
     void receiveOperationsServerList() throws TransportException;
@@ -44,6 +45,7 @@ public interface BootstrapManager {
      * Force switch to the next operations server that support given {@link TransportProtocolId}
      *
      * @param transportId of the transport protocol.
+     * @param status failover status
      * @see TransportProtocolId
      */
     void useNextOperationsServer(TransportProtocolId transportId, FailoverStatus status);

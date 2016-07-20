@@ -93,7 +93,7 @@ let
       + target cc3200Support "cc3200"
               "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake -DCC32XX_SDK='${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk' -DCC32XX_TOOLCHAIN_PATH='${gcc-arm-embedded}'"
       + target esp8266Support "esp8266"
-              "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake"
+              "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake -DESP8266_TOOLCHAIN_PATH='${gcc-xtensa-lx106}' -DESP8266_SDK_PATH='${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk'"
       + target raspberrypiSupport "rpi"
               "-DCMAKE_PREFIX_PATH=${raspberrypi-openssl} -DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
     };
@@ -129,15 +129,10 @@ in stdenv.mkDerivation {
     raspberrypi-openssl
   ];
 
-  shellHook =
-    lib.optionalString esp8266Support ''
-      export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}"
-      export ESP8266_SDK_BASE=${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk
-    '' +
-    ''
-      export CTEST_OUTPUT_ON_FAILURE=1
+  shellHook = ''
+    export CTEST_OUTPUT_ON_FAILURE=1
 
-      cp ${kaa-generic-makefile}/Makefile .
-      chmod 644 Makefile
-    '';
+    cp ${kaa-generic-makefile}/Makefile .
+    chmod 644 Makefile
+  '';
 }

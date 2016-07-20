@@ -253,13 +253,11 @@ public class AdminClient {
     }
 
     public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("notificationSchema", notificationSchema);
-        return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", params, NotificationSchemaDto.class);
+        return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", notificationSchema, NotificationSchemaDto.class);
     }
 
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "editNotificationSchema", notificationSchema, NotificationSchemaDto.class);
+    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "saveNotificationSchema", notificationSchema, NotificationSchemaDto.class);
     }
 
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {

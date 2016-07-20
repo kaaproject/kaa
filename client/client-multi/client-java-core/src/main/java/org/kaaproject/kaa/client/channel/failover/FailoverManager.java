@@ -28,7 +28,7 @@ public interface FailoverManager {
      * Needs to be invoked when a server fail occurs.
      *
      * @param connectionInfo the connection information of the failed server.
-     * @param status
+     * @param status failover status
      *
      *
      * @see org.kaaproject.kaa.client.channel.TransportConnectionInfo
