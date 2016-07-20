@@ -1,7 +1,7 @@
----
+﻿---
 layout: page
 title: Log appenders
-permalink: /:path/Customization-guide/Customizable-system-components/Log-appenders
+permalink: /:path/
 sort_idx: 30
 ---
 
