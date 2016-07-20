@@ -728,7 +728,7 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
+    NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
 
     /**
      * Gets the notification schema.

@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.TransportType;
  * Use this manager to add or remove specific network channel implementation for
  * client-server communication.<br>
  * <br>
- * 
+ *
  * <pre>
  * {@code
  * class SpecificDataChannel implements KaaDataChannel {...}
@@ -41,7 +41,7 @@ import org.kaaproject.kaa.common.TransportType;
  * kaaClient.getChannelManager().addChannel(dataChannel1);
  * }
  * </pre>
- * 
+ *
  * The code above registers new data channel in the KaaChannelManager instance.
  * This channel will be used by each transport abstraction which is supported by
  * this channel (See {@link KaaDataChannel#getSupportedTransportTypes()}).<br>
@@ -57,7 +57,7 @@ import org.kaaproject.kaa.common.TransportType;
  * {@link TransportType#EVENT}]. <br>
  * and they are added to {@link #addChannel(KaaDataChannel)} in the following
  * order: <br>
- * 
+ *
  * <pre>
  * {
  *     &#064;code
@@ -67,7 +67,6 @@ import org.kaaproject.kaa.common.TransportType;
  *     kaaClient.getChannelManager().addChannel(channelB);
  * }
  * </pre>
- * 
  * then <b>ChannelA</b> instance will be used to receive
  * {@link TransportType#EVENT} and {@link TransportType#LOGGING} data, but to
  * transmit only {@link TransportType#LOGGING} data. For
@@ -116,9 +115,7 @@ public interface KaaChannelManager {
      * Updates the manager by adding the channel.
      *
      * @param channel
-     *            the channel to be added.
-     * @see KaaDataChannel
-     *
+     *            sending/receiving data for endpoint server
      */
     void addChannel(KaaDataChannel channel);
 
@@ -166,10 +163,9 @@ public interface KaaChannelManager {
     /**
      * Reports to Channel Manager in case link with server was not established.
      *
-     * @param server
-     *            the parameters of server that was not connected.
+     * @param server the parameters of server that was not connected.
+     * @param status failover status
      * @see TransportConnectionInfo
-     *
      */
     void onServerFailed(TransportConnectionInfo server, FailoverStatus status);
 
@@ -197,7 +193,7 @@ public interface KaaChannelManager {
     void syncAll(TransportType type);
 
     /**
-     * Returns information about server that is used for data transfer for specified {@link TransportType} 
+     * Returns information about server that is used for data transfer for specified {@link TransportType}
      * @param   type - type that is used to identify active channel
      * @return  TransportConnectionInfo active server
      */

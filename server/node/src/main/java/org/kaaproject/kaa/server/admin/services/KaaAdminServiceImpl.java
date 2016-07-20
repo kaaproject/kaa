@@ -1533,12 +1533,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
     public NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(notificationSchemaId);
-            Utils.checkNotNull(notificationSchema);
-            checkApplicationId(notificationSchema.getApplicationId());
+            NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
             NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
             return notificationSchemaViewDto;
@@ -1547,6 +1546,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1560,7 +1560,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema)
+    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1573,7 +1573,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 checkApplicationId(storedNotificationSchema.getApplicationId());
             }
             notificationSchema.setType(NotificationTypeDto.USER);
-            return controlService.editNotificationSchema(notificationSchema);
+            return controlService.saveNotificationSchema(notificationSchema);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1600,7 +1600,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     notificationSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
-            NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
+            NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
             return getNotificationSchemaView(savedNotificationSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1619,7 +1619,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             notificationSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
             CtlSchemaFormDto savedCtlSchemaForm = saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
-            NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
+            NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
             return getNotificationSchemaView(savedNotificationSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);
