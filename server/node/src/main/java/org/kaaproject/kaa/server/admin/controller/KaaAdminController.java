@@ -1157,10 +1157,10 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+    public NotificationSchemaDto createNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveNotificationSchema(notificationSchema);
     }
 
     /**
@@ -1172,11 +1172,11 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "editNotificationSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "saveNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public NotificationSchemaDto editNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
+    public NotificationSchemaDto saveNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+        return kaaAdminService.saveNotificationSchema(notificationSchema);
     }
 
     /**
