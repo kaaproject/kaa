@@ -24,26 +24,20 @@ public class UserProfileUpdateDto implements Serializable {
 
     private static final long serialVersionUID = 8016870008519720555L;
 
-    private String username;
     private String firstName;
     private String lastName;
     private String mail;
-    private KaaAuthorityDto authority;
 
-    public UserProfileUpdateDto(String username, String firstName, String lastName, String mail, KaaAuthorityDto authority) {
-        this.username = username;
+    public UserProfileUpdateDto(String firstName, String lastName, String mail) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.mail = mail;
-        this.authority = authority;
     }
 
     public UserProfileUpdateDto(UserDto userDto) {
-        this.username = userDto.getUsername();
         this.firstName = userDto.getFirstName();
         this.lastName = userDto.getLastName();
         this.mail = userDto.getMail();
-        this.authority = userDto.getAuthority();
     }
 
     public UserProfileUpdateDto() {
@@ -73,22 +67,6 @@ public class UserProfileUpdateDto implements Serializable {
         this.mail = mail;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public KaaAuthorityDto getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(KaaAuthorityDto authority) {
-        this.authority = authority;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,7 +74,6 @@ public class UserProfileUpdateDto implements Serializable {
 
         UserProfileUpdateDto that = (UserProfileUpdateDto) o;
 
-        if (!username.equals(that.username)) return false;
         if (!firstName.equals(that.firstName)) return false;
         if (!lastName.equals(that.lastName)) return false;
         return mail.equals(that.mail);
@@ -105,8 +82,7 @@ public class UserProfileUpdateDto implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = username.hashCode();
-        result = 31 * result + firstName.hashCode();
+        int result = firstName.hashCode();
         result = 31 * result + lastName.hashCode();
         result = 31 * result + mail.hashCode();
         return result;
@@ -115,11 +91,9 @@ public class UserProfileUpdateDto implements Serializable {
     @Override
     public String toString() {
         return "UserProfileUpdateDto{" +
-                "username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
+                "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", mail='" + mail + '\'' +
-                ", authority=" + authority +
                 '}';
     }
 }

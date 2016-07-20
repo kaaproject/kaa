@@ -574,21 +574,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_USER, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.KAA_ADMIN, KaaAuthorityDto.TENANT_ADMIN);
         try {
-            if(!userProfileUpdateDto.getUsername().equals(getCurrentUser().getUsername())){
-                throw new IllegalArgumentException("Username is not valid.");
-            }
-            if(!userProfileUpdateDto.getAuthority().equals(getCurrentUser().getAuthority())){
-                throw new IllegalArgumentException("Authority is not valid.");
-            }
-            org.kaaproject.kaa.common.dto.admin.UserDto userDto = new org.kaaproject.kaa.common.dto.admin.UserDto();
-            userDto.setUsername(userProfileUpdateDto.getUsername());
-            userDto.setFirstName(userProfileUpdateDto.getFirstName());
-            userDto.setLastName(userProfileUpdateDto.getLastName());
-            userDto.setMail(userProfileUpdateDto.getMail());
-            userDto.setAuthority(userProfileUpdateDto.getAuthority());
-            userDto.setExternalUid(getCurrentUser().getExternalUid());
-            checkUserProfile(userDto);
-            saveUser(userDto);
+            User user = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
+            user.setFirstName(userProfileUpdateDto.getFirstName());
+            user.setLastName(userProfileUpdateDto.getLastName());
+            user.setMail(userProfileUpdateDto.getMail());
+            userFacade.save(user);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
