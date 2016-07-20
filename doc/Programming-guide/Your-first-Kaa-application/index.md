@@ -445,7 +445,6 @@ import java.util.TimerTask;
  * Class implement functionality for First Kaa application
  *
  * @author Maksym Liashenko
- * @see <a href="http://docs.kaaproject.org/display/KAA/Your+first+Kaa+application"> Documentation</a>
  */
 public class FirstDemo {
 
@@ -496,7 +495,12 @@ public class FirstDemo {
             }
         }, true);
 
-        kaaClient.setLogUploadStrategy(new RecordCountLogUploadStrategy(1));
+        /*
+         *  Used by log collector on each adding of the new log record in order to check whether to send logs to server.
+         *  Start log upload when there is records in storage.
+         */
+        RecordCountLogUploadStrategy strategy = new RecordCountLogUploadStrategy(1);
+        kaaClient.setLogUploadStrategy(strategy);
 
         /*
          * Persist configuration in a local storage to avoid downloading it each
@@ -528,7 +532,8 @@ public class FirstDemo {
     }
 
     /*
-    * Retrieves current temperature.
+    * Method, that emaulate getting temperature from real sensor.
+    * Retrieves random temperature.
     */
     private static int getTemperatureRand() {
         return new Random().nextInt(10) + 31;
