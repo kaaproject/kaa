@@ -52,7 +52,7 @@ public class ApplicationController extends AdminController {
     @RequestMapping(value = "applications", method = RequestMethod.GET)
     @ResponseBody
     public List<ApplicationDto> getApplications() throws KaaAdminServiceException {
-        return kaaAdminService.getApplications();
+        return applicationService.getApplications();
     }
 
     /**
@@ -63,7 +63,8 @@ public class ApplicationController extends AdminController {
      * @throws KaaAdminServiceException the kaa admin service exception
      */
     @ApiOperation(value = "Get application based on application token",
-            notes = "Returns an application by applicationToken")
+            notes = "Returns an application by applicationToken. The current user must have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or " +
+                    "TENANT_USER.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER, or TENANT_USER) or " +
@@ -75,7 +76,7 @@ public class ApplicationController extends AdminController {
     public ApplicationDto getApplicationByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getApplicationByApplicationToken(applicationToken);
+        return applicationService.getApplicationByApplicationToken(applicationToken);
     }
 
     /**
@@ -100,7 +101,7 @@ public class ApplicationController extends AdminController {
     public ApplicationDto editApplication(
             @ApiParam(name = "application", value = "ApplicationDto body. Mandatory fields: name, tenantId", required = true)
             @RequestBody ApplicationDto application) throws KaaAdminServiceException {
-        return kaaAdminService.editApplication(application);
+        return applicationService.editApplication(application);
     }
 
 }

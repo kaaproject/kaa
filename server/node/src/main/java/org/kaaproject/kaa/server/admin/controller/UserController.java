@@ -56,7 +56,7 @@ public class UserController extends AdminController {
      * @throws Exception the exception
      */
     @ApiOperation(value = "Get user authentication status",
-            notes = "Returns information about the current authorized user.")
+            notes = "Returns information about the current authorized user. Only authorized users are allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "auth/checkAuth", method = RequestMethod.GET)
@@ -108,7 +108,7 @@ public class UserController extends AdminController {
      * @throws Exception the exception
      */
     @ApiOperation(value = "Change user password",
-            notes = "Changes the password of a user.")
+            notes = "Changes the password of a user. Only authorized users are allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified parameters are not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
@@ -148,7 +148,7 @@ public class UserController extends AdminController {
     @RequestMapping(value = "userProfile", method = RequestMethod.GET)
     @ResponseBody
     public UserDto getUserProfile() throws KaaAdminServiceException {
-        return kaaAdminService.getUserProfile();
+        return userService.getUserProfile();
     }
 
     /**
@@ -168,7 +168,7 @@ public class UserController extends AdminController {
     public UserDto editUserProfile(
             @ApiParam(name = "userDto", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
             @RequestBody UserDto userDto) throws KaaAdminServiceException {
-        return kaaAdminService.editUserProfile(userDto);
+        return userService.editUserProfile(userDto);
     }
 
     /**
@@ -187,7 +187,7 @@ public class UserController extends AdminController {
     @RequestMapping(value = "users", method = RequestMethod.GET)
     @ResponseBody
     public List<UserDto> getUsers() throws KaaAdminServiceException {
-        return kaaAdminService.getUsers();
+        return userService.getUsers();
     }
 
     /**
@@ -211,7 +211,7 @@ public class UserController extends AdminController {
     public UserDto getUser(
             @ApiParam(name = "userId", value = "A unique user identifier", required = true)
             @PathVariable String userId) throws KaaAdminServiceException {
-        return kaaAdminService.getUser(userId);
+        return userService.getUser(userId);
     }
 
     /**
@@ -239,7 +239,7 @@ public class UserController extends AdminController {
         try {
             CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
             user.setExternalUid(result.getUserId().toString());
-            UserDto userDto = kaaAdminService.editUser(user);
+            UserDto userDto = userService.editUser(user);
             if (StringUtils.isNotBlank(result.getPassword())) {
                 userDto.setTempPassword(result.getPassword());
             }
@@ -269,6 +269,6 @@ public class UserController extends AdminController {
     public void deleteUser(
             @ApiParam(name = "userId", value = "An old password of the user", required = true)
             @RequestParam(value = "userId") String userId) throws KaaAdminServiceException {
-        kaaAdminService.deleteUser(userId);
+        userService.deleteUser(userId);
     }
 }

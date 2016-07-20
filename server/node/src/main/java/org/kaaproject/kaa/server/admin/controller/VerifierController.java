@@ -60,7 +60,7 @@ public class VerifierController extends AdminController {
     public List<UserVerifierDto> getUserVerifiersByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getRestUserVerifiersByApplicationToken(applicationToken);
+        return verifierService.getRestUserVerifiersByApplicationToken(applicationToken);
     }
 
     /**
@@ -83,7 +83,7 @@ public class VerifierController extends AdminController {
     public UserVerifierDto getUserVerifier(
             @ApiParam(name = "userVerifierId", value = "A unique owner verifier identifier", required = true)
             @PathVariable String userVerifierId) throws KaaAdminServiceException {
-        return kaaAdminService.getRestUserVerifier(userVerifierId);
+        return verifierService.getRestUserVerifier(userVerifierId);
     }
 
     /**
@@ -109,7 +109,7 @@ public class VerifierController extends AdminController {
             @ApiParam(name = "userVerifier", value = "UserVerifierDto body. Mandatory fields: pluginClassName, pluginTypeName, applicationId, name, " +
                     "jsonConfiguration", required = true)
             @RequestBody UserVerifierDto userVerifier) throws KaaAdminServiceException {
-        return kaaAdminService.editRestUserVerifier(userVerifier);
+        return verifierService.editRestUserVerifier(userVerifier);
     }
 
     /**
@@ -133,7 +133,7 @@ public class VerifierController extends AdminController {
     public void deleteUserVerifier(
             @ApiParam(name = "userVerifierId", value = "A unique owner verifier identifier", required = true)
             @RequestParam(value = "userVerifierId") String userVerifierId) throws KaaAdminServiceException {
-        kaaAdminService.deleteUserVerifier(userVerifierId);
+        verifierService.deleteUserVerifier(userVerifierId);
     }
 
 }

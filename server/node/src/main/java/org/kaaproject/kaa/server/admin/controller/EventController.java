@@ -62,7 +62,7 @@ public class EventController extends AdminController {
     @RequestMapping(value = "eventClassFamilies", method = RequestMethod.GET)
     @ResponseBody
     public List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException {
-        return kaaAdminService.getEventClassFamilies();
+        return eventService.getEventClassFamilies();
     }
 
     /**
@@ -85,7 +85,7 @@ public class EventController extends AdminController {
     public EventClassFamilyDto getEventClassFamily(
             @ApiParam(name = "eventClassFamilyId", value = "A unique event class family identifier", required = true)
             @PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
-        return kaaAdminService.getEventClassFamily(eventClassFamilyId);
+        return eventService.getEventClassFamily(eventClassFamilyId);
     }
 
     /**
@@ -110,7 +110,7 @@ public class EventController extends AdminController {
     public EventClassFamilyDto editEventClassFamily(
             @ApiParam(name = "eventClassFamily", value = "EventClassFamilyDto body. Mandatory fields: name, className, namespace", required = true)
             @RequestBody EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
-        return kaaAdminService.editEventClassFamily(eventClassFamily);
+        return eventService.editEventClassFamily(eventClassFamily);
     }
 
     /**
@@ -140,7 +140,7 @@ public class EventController extends AdminController {
             @ApiParam(name = "file", value = "Event class family schema represented in json format", required = true)
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
-        kaaAdminService.addEventClassFamilySchema(eventClassFamilyId, data);
+        eventService.addEventClassFamilySchema(eventClassFamilyId, data);
     }
 
     /**
@@ -171,7 +171,7 @@ public class EventController extends AdminController {
             @RequestParam(value = "version") int version,
             @ApiParam(name = "type", value = "The event classes type, one of [\"EVENT\", \"OBJECT\"]", required = true)
             @RequestParam(value = "type") EventClassType type) throws KaaAdminServiceException {
-        return kaaAdminService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type);
+        return eventService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type);
     }
 
     /**
@@ -196,7 +196,7 @@ public class EventController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.getApplicationEventFamilyMapsByApplicationToken(applicationToken);
+        return eventService.getApplicationEventFamilyMapsByApplicationToken(applicationToken);
     }
 
     /**
@@ -221,7 +221,7 @@ public class EventController extends AdminController {
             @ApiParam(name = "applicationEventFamilyMapId", value = "A unique application event family map identifier", required = true)
             @PathVariable String applicationEventFamilyMapId)
             throws KaaAdminServiceException {
-        return kaaAdminService.getApplicationEventFamilyMap(applicationEventFamilyMapId);
+        return eventService.getApplicationEventFamilyMap(applicationEventFamilyMapId);
     }
 
     /**
@@ -248,7 +248,7 @@ public class EventController extends AdminController {
                     "eventMaps", required = true)
             @RequestBody ApplicationEventFamilyMapDto applicationEventFamilyMap)
             throws KaaAdminServiceException {
-        return kaaAdminService.editApplicationEventFamilyMap(applicationEventFamilyMap);
+        return eventService.editApplicationEventFamilyMap(applicationEventFamilyMap);
     }
 
     /**
@@ -272,7 +272,7 @@ public class EventController extends AdminController {
     public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getVacantEventClassFamiliesByApplicationToken(applicationToken);
+        return eventService.getVacantEventClassFamiliesByApplicationToken(applicationToken);
     }
 
     /**
@@ -296,7 +296,7 @@ public class EventController extends AdminController {
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getEventClassFamiliesByApplicationToken(applicationToken);
+        return eventService.getEventClassFamiliesByApplicationToken(applicationToken);
     }
 
 }

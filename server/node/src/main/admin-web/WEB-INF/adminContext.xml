@@ -88,7 +88,7 @@
             <property name="passwordEncoder" ref="encoder"/>
     </bean>
     
-	<bean id="kaaAdminService" class="org.kaaproject.kaa.server.admin.services.KaaAdminServiceImpl">
+	<bean id="kaaAdminService" class="org.kaaproject.kaa.server.admin.services.AdminServiceImpl" abstract="true">
             <property name="passwordEncoder" ref="encoder"/>
     </bean>
 	

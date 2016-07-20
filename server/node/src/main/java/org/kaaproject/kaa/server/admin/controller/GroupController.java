@@ -96,7 +96,7 @@ public class GroupController extends AdminController {
     public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getEndpointGroupsByApplicationToken(applicationToken);
+        return groupService.getEndpointGroupsByApplicationToken(applicationToken);
     }
 
     /**
@@ -121,7 +121,7 @@ public class GroupController extends AdminController {
     public EndpointGroupDto getEndpointGroup(
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @PathVariable String endpointGroupId) throws KaaAdminServiceException {
-        return kaaAdminService.getEndpointGroup(endpointGroupId);
+        return groupService.getEndpointGroup(endpointGroupId);
     }
 
     /**
@@ -146,7 +146,7 @@ public class GroupController extends AdminController {
     public EndpointGroupDto editEndpointGroup(
             @ApiParam(name = "endpointGroup", value = "EndpointGroupDto body. Mandatory fields: name, applicationId, weight", required = true)
             @RequestBody EndpointGroupDto endpointGroup) throws KaaAdminServiceException {
-        return kaaAdminService.editEndpointGroup(endpointGroup);
+        return groupService.editEndpointGroup(endpointGroup);
     }
 
     /**
@@ -170,7 +170,7 @@ public class GroupController extends AdminController {
     public void deleteEndpointGroup(
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        kaaAdminService.deleteEndpointGroup(endpointGroupId);
+        groupService.deleteEndpointGroup(endpointGroupId);
     }
 
     /**
@@ -199,7 +199,7 @@ public class GroupController extends AdminController {
             @ApiParam(name = "includeDeprecated", value = "[“true” or ”false”] if “true”, all profile filter records will be returned, including deprecated " +
                     "ones. If “false”, only active and inactive profile filter records will be returned", required = true)
             @RequestParam(value = "includeDeprecated") boolean includeDeprecated) throws KaaAdminServiceException {
-        return kaaAdminService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
+        return groupService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
     }
 
     /**
@@ -232,7 +232,7 @@ public class GroupController extends AdminController {
             @RequestParam(value = "serverProfileSchemaId", required = false) String serverProfileSchemaId,
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        return kaaAdminService.getProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
+        return groupService.getProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
     }
 
     /**
@@ -258,7 +258,7 @@ public class GroupController extends AdminController {
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @PathVariable String endpointGroupId)
             throws KaaAdminServiceException {
-        return kaaAdminService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId);
+        return groupService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId);
     }
 
     /**
@@ -286,7 +286,7 @@ public class GroupController extends AdminController {
             @ApiParam(name = "profileFilter", value = "ProfileFilterDto body. Mandatory fields: applicationId, body, either endpointProfileSchemaId or " +
                     "serverProfileSchemaId or both of them", required = true)
             @RequestBody ProfileFilterDto profileFilter) throws KaaAdminServiceException {
-        return kaaAdminService.editProfileFilter(profileFilter);
+        return groupService.editProfileFilter(profileFilter);
     }
 
     /**
@@ -311,7 +311,7 @@ public class GroupController extends AdminController {
     public ProfileFilterDto activateProfileFilter(
             @ApiParam(name = "profileFilterId", value = "A unique profile filter identifier", required = true)
             @RequestBody String profileFilterId) throws KaaAdminServiceException {
-        return kaaAdminService.activateProfileFilter(profileFilterId);
+        return groupService.activateProfileFilter(profileFilterId);
     }
 
     /**
@@ -336,7 +336,7 @@ public class GroupController extends AdminController {
     public ProfileFilterDto deactivateProfileFilter(
             @ApiParam(name = "profileFilterId", value = "A unique profile filter identifier", required = true)
             @RequestBody String profileFilterId) throws KaaAdminServiceException {
-        return kaaAdminService.deactivateProfileFilter(profileFilterId);
+        return groupService.deactivateProfileFilter(profileFilterId);
     }
 
     /**
@@ -368,7 +368,7 @@ public class GroupController extends AdminController {
             @RequestParam(value = "serverProfileSchemaId", required = false) String serverProfileSchemaId,
             @ApiParam(name = "endpointGroupId", value = "The ID of the endpoint group.", required = true)
             @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        kaaAdminService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
+        groupService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
     }
 
     /**
@@ -402,7 +402,7 @@ public class GroupController extends AdminController {
                     required = false)
             @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET, required = false) String offset,
             HttpServletRequest request) throws KaaAdminServiceException {
-        EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit,
+        EndpointProfilesPageDto endpointProfilesPageDto = groupService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit,
                 offset);
         if (endpointProfilesPageDto.hasEndpointProfiles()) {
             PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
@@ -443,7 +443,7 @@ public class GroupController extends AdminController {
             @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET, required = false) String offset,
             HttpServletRequest request)
             throws KaaAdminServiceException {
-        EndpointProfilesBodyDto endpointProfilesBodyDto = kaaAdminService.getEndpointProfileBodyByEndpointGroupId(endpointGroupId, limit,
+        EndpointProfilesBodyDto endpointProfilesBodyDto = groupService.getEndpointProfileBodyByEndpointGroupId(endpointGroupId, limit,
                 offset);
         if (endpointProfilesBodyDto.hasEndpointBodies()) {
             PageLinkDto pageLinkDto = createNext(endpointProfilesBodyDto.getPageLinkDto(), request);

@@ -70,7 +70,7 @@ public class ConfigurationController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.getConfigurationSchemasByApplicationToken(applicationToken);
+        return configurationService.getConfigurationSchemasByApplicationToken(applicationToken);
     }
 
     /**
@@ -96,7 +96,7 @@ public class ConfigurationController extends AdminController {
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @PathVariable String endpointGroupId)
             throws KaaAdminServiceException {
-        return kaaAdminService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
+        return configurationService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
     }
 
     /**
@@ -120,7 +120,7 @@ public class ConfigurationController extends AdminController {
     public ConfigurationSchemaDto getConfigurationSchema(
             @ApiParam(name = "configurationSchemaId", value = "A unique configuration schema identifier", required = true)
             @PathVariable String configurationSchemaId) throws KaaAdminServiceException {
-        return kaaAdminService.getConfigurationSchema(configurationSchemaId);
+        return configurationService.getConfigurationSchema(configurationSchemaId);
     }
 
     /**
@@ -150,7 +150,7 @@ public class ConfigurationController extends AdminController {
             @ApiParam(name = "file", value = "Configuration schema body represented in json format", required = true)
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
-        return kaaAdminService.editConfigurationSchema(configurationSchema, data);
+        return configurationService.editConfigurationSchema(configurationSchema, data);
     }
 
     /**
@@ -177,7 +177,7 @@ public class ConfigurationController extends AdminController {
             @ApiParam(name = "configurationSchema", value = "ConfigurationSchemaDto body. Mandatory fields: applicationId, name", required = true)
             @RequestBody ConfigurationSchemaDto configurationSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.editConfigurationSchema(configurationSchema, null);
+        return configurationService.editConfigurationSchema(configurationSchema, null);
     }
 
     /**
@@ -206,7 +206,7 @@ public class ConfigurationController extends AdminController {
             @ApiParam(name = "includeDeprecated", value = "[“true” or ”false”] if “true”, all configuration records will be returned, including deprecated " +
                     "ones. If “false”, only active and inactive configuration records will be returned", required = true)
             @RequestParam(value = "includeDeprecated") boolean includeDeprecated) throws KaaAdminServiceException {
-        return kaaAdminService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
+        return configurationService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
     }
 
     /**
@@ -235,7 +235,7 @@ public class ConfigurationController extends AdminController {
             @RequestParam(value = "schemaId") String schemaId,
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        return kaaAdminService.getConfigurationRecord(schemaId, endpointGroupId);
+        return configurationService.getConfigurationRecord(schemaId, endpointGroupId);
     }
 
 
@@ -258,7 +258,7 @@ public class ConfigurationController extends AdminController {
             @RequestParam(value = "schemaId") String schemaId,
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @RequestParam("endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        String response = kaaAdminService.getConfigurationRecord(schemaId, endpointGroupId).getActiveStructureDto().getBody();
+        String response = configurationService.getConfigurationRecord(schemaId, endpointGroupId).getActiveStructureDto().getBody();
         String decodedResponse = new String(response.getBytes(), DECODING_CHARSET);
         return decodedResponse;
     }
@@ -287,7 +287,7 @@ public class ConfigurationController extends AdminController {
     public ConfigurationDto editConfiguration(
             @ApiParam(name = "configuration", value = "ConfigurationDto body. Mandatory fields: applicationId, schemaId, endpointGroupId, body", required = true)
             @RequestBody ConfigurationDto configuration) throws KaaAdminServiceException {
-        return kaaAdminService.editConfiguration(configuration);
+        return configurationService.editConfiguration(configuration);
     }
 
     /**
@@ -300,7 +300,7 @@ public class ConfigurationController extends AdminController {
     @ResponseStatus(value = HttpStatus.OK)
     public void editUserConfiguration(
             @RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
-        kaaAdminService.editUserConfiguration(endpointUserConfiguration);
+        configurationService.editUserConfiguration(endpointUserConfiguration);
     }
 
     /**
@@ -325,7 +325,7 @@ public class ConfigurationController extends AdminController {
     public ConfigurationDto activateConfiguration(
             @ApiParam(name = "configurationId", value = "A unique configuration identifier", required = true)
             @RequestBody String configurationId) throws KaaAdminServiceException {
-        return kaaAdminService.activateConfiguration(configurationId);
+        return configurationService.activateConfiguration(configurationId);
     }
 
     /**
@@ -350,7 +350,7 @@ public class ConfigurationController extends AdminController {
     public ConfigurationDto deactivateConfiguration(
             @ApiParam(name = "configurationId", value = "A unique configuration identifier", required = true)
             @RequestBody String configurationId) throws KaaAdminServiceException {
-        return kaaAdminService.deactivateConfiguration(configurationId);
+        return configurationService.deactivateConfiguration(configurationId);
     }
 
     /**
@@ -378,7 +378,7 @@ public class ConfigurationController extends AdminController {
             @RequestParam(value = "schemaId") String schemaId,
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        kaaAdminService.deleteConfigurationRecord(schemaId, endpointGroupId);
+        configurationService.deleteConfigurationRecord(schemaId, endpointGroupId);
     }
 
 }

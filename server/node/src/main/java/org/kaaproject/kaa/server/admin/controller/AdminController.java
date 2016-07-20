@@ -19,10 +19,23 @@ package org.kaaproject.kaa.server.admin.controller;
 import io.swagger.annotations.Api;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
+import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
+import org.kaaproject.kaa.server.admin.shared.services.ApplicationService;
+import org.kaaproject.kaa.server.admin.shared.services.ConfigurationService;
+import org.kaaproject.kaa.server.admin.shared.services.CtlService;
+import org.kaaproject.kaa.server.admin.shared.services.DeviceManagementService;
+import org.kaaproject.kaa.server.admin.shared.services.EventService;
+import org.kaaproject.kaa.server.admin.shared.services.GroupService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
+import org.kaaproject.kaa.server.admin.shared.services.LoggingService;
+import org.kaaproject.kaa.server.admin.shared.services.NotificationService;
+import org.kaaproject.kaa.server.admin.shared.services.ProfileService;
+import org.kaaproject.kaa.server.admin.shared.services.SdkService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.admin.shared.services.TenantService;
+import org.kaaproject.kaa.server.admin.shared.services.UserService;
+import org.kaaproject.kaa.server.admin.shared.services.VerifierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +62,88 @@ public abstract class AdminController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
     /**
-     * The kaa admin service.
+     * The kaa admin UI service.
      */
     @Autowired
-    KaaAdminService kaaAdminService;
+    AdminUIService adminUIService;
+
+    /**
+     * The kaa application service.
+     */
+    @Autowired
+    ApplicationService applicationService;
+
+    /**
+     * The kaa configuration service.
+     */
+    @Autowired
+    ConfigurationService configurationService;
+
+    /**
+     * The kaa CTL service.
+     */
+    @Autowired
+    CtlService ctlService;
+
+    /**
+     * The kaa device management service.
+     */
+    @Autowired
+    DeviceManagementService deviceManagementService;
+
+    /**
+     * The kaa event service.
+     */
+    @Autowired
+    EventService eventService;
+
+    /**
+     * The kaa group service.
+     */
+    @Autowired
+    GroupService groupService;
+
+    /**
+     * The kaa logging service.
+     */
+    @Autowired
+    LoggingService loggingService;
+
+    /**
+     * The kaa notification service.
+     */
+    @Autowired
+    NotificationService notificationService;
+
+    /**
+     * The kaa profile service.
+     */
+    @Autowired
+    ProfileService profileService;
+
+    /**
+     * The kaa sdk service.
+     */
+    @Autowired
+    SdkService sdkService;
+
+    /**
+     * The kaa tenant service.
+     */
+    @Autowired
+    TenantService tenantService;
+
+    /**
+     * The kaa user service.
+     */
+    @Autowired
+    UserService userService;
+
+    /**
+     * The kaa verifier service.
+     */
+    @Autowired
+    VerifierService verifierService;
 
     /**
      * The kaa auth service.
@@ -72,6 +163,7 @@ public abstract class AdminController {
     @Autowired
     @Qualifier("encoder")
     PasswordEncoder passwordEncoder;
+
 
     /**
      * Gets the file content.

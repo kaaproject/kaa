@@ -68,7 +68,7 @@ public class NotificationController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.getNotificationSchemasByApplicationToken(applicationToken);
+        return notificationService.getNotificationSchemasByApplicationToken(applicationToken);
     }
 
     /**
@@ -92,7 +92,7 @@ public class NotificationController extends AdminController {
     public List<VersionDto> getUserNotificationSchemasByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getUserNotificationSchemasByApplicationToken(applicationToken);
+        return notificationService.getUserNotificationSchemasByApplicationToken(applicationToken);
     }
 
     /**
@@ -116,22 +116,20 @@ public class NotificationController extends AdminController {
     public NotificationSchemaDto getNotificationSchema(
             @ApiParam(name = "notificationSchemaId", value = "A unique notification schema identifier", required = true)
             @PathVariable String notificationSchemaId) throws KaaAdminServiceException {
-        return kaaAdminService.getNotificationSchema(notificationSchemaId);
+        return notificationService.getNotificationSchema(notificationSchemaId);
     }
 
     /**
      * Adds notification schema to the list of all notification schemas.
      *
-     * @param notificationSchema
-     *            the notification schema
+     * @param notificationSchema the notification schema
      * @return the notification schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
-    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
     @ResponseBody
     public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+        return notificationService.editNotificationSchema(notificationSchema);
     }
 
     /**
@@ -159,7 +157,7 @@ public class NotificationController extends AdminController {
             @ApiParam(name = "notificationSchema", value = "NotificationSchemaDto body. Mandatory fields: applicationId, name", required = true)
             @RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.editNotificationSchema(notificationSchema);
+        return notificationService.editNotificationSchema(notificationSchema);
     }
 
     /**
@@ -183,7 +181,7 @@ public class NotificationController extends AdminController {
     public List<TopicDto> getTopicsByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getTopicsByApplicationToken(applicationToken);
+        return notificationService.getTopicsByApplicationToken(applicationToken);
     }
 
     /**
@@ -208,7 +206,7 @@ public class NotificationController extends AdminController {
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @RequestParam(value = "endpointGroupId") String endpointGroupId)
             throws KaaAdminServiceException {
-        return kaaAdminService.getTopicsByEndpointGroupId(endpointGroupId);
+        return notificationService.getTopicsByEndpointGroupId(endpointGroupId);
     }
 
     /**
@@ -232,7 +230,7 @@ public class NotificationController extends AdminController {
     public List<TopicDto> getVacantTopicsByEndpointGroupId(
             @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
             @PathVariable String endpointGroupId) throws KaaAdminServiceException {
-        return kaaAdminService.getVacantTopicsByEndpointGroupId(endpointGroupId);
+        return notificationService.getVacantTopicsByEndpointGroupId(endpointGroupId);
     }
 
     /**
@@ -256,7 +254,7 @@ public class NotificationController extends AdminController {
     public TopicDto getTopic(
             @ApiParam(name = "topicId", value = "A unique topic identifier", required = true)
             @PathVariable String topicId) throws KaaAdminServiceException {
-        return kaaAdminService.getTopic(topicId);
+        return notificationService.getTopic(topicId);
     }
 
     /**
@@ -281,7 +279,7 @@ public class NotificationController extends AdminController {
     public TopicDto editTopic(
             @ApiParam(name = "topic", value = "TopicDto body. Mandatory fields: applicationId, name, type", required = true)
             @RequestBody TopicDto topic) throws KaaAdminServiceException {
-        return kaaAdminService.editTopic(topic);
+        return notificationService.editTopic(topic);
     }
 
     /**
@@ -304,7 +302,7 @@ public class NotificationController extends AdminController {
     public void deleteTopic(
             @ApiParam(name = "topicId", value = "A unique topic identifier", required = true)
             @RequestParam(value = "topicId") String topicId) throws KaaAdminServiceException {
-        kaaAdminService.deleteTopic(topicId);
+        notificationService.deleteTopic(topicId);
     }
 
     /**
@@ -331,7 +329,7 @@ public class NotificationController extends AdminController {
             @RequestParam(value = "endpointGroupId") String endpointGroupId,
             @ApiParam(name = "topicId", value = "A unique topic identifier", required = true)
             @RequestParam(value = "topicId") String topicId) throws KaaAdminServiceException {
-        kaaAdminService.addTopicToEndpointGroup(endpointGroupId, topicId);
+        notificationService.addTopicToEndpointGroup(endpointGroupId, topicId);
     }
 
     /**
@@ -358,7 +356,7 @@ public class NotificationController extends AdminController {
             @RequestParam(value = "endpointGroupId") String endpointGroupId,
             @ApiParam(name = "topicId", value = "A unique topic identifier", required = true)
             @RequestParam(value = "topicId") String topicId) throws KaaAdminServiceException {
-        kaaAdminService.removeTopicFromEndpointGroup(endpointGroupId, topicId);
+        notificationService.removeTopicFromEndpointGroup(endpointGroupId, topicId);
     }
 
     /**
@@ -388,7 +386,7 @@ public class NotificationController extends AdminController {
             @ApiParam(name = "file", value = "Notification schema represented in json format", required = true)
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
-        return kaaAdminService.sendNotification(notification, data);
+        return notificationService.sendNotification(notification, data);
     }
 
     /**
@@ -422,7 +420,7 @@ public class NotificationController extends AdminController {
             @ApiParam(name = "file", value = "Notification schema represented in json format", required = true)
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
-        return kaaAdminService.sendUnicastNotification(notification, clientKeyHash, data);
+        return notificationService.sendUnicastNotification(notification, clientKeyHash, data);
     }
 
 }

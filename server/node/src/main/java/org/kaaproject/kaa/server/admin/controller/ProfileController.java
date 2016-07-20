@@ -64,7 +64,7 @@ public class ProfileController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.getProfileSchemasByApplicationToken(applicationToken);
+        return profileService.getProfileSchemasByApplicationToken(applicationToken);
     }
 
     /**
@@ -89,7 +89,7 @@ public class ProfileController extends AdminController {
     public EndpointProfileSchemaDto getProfileSchema(
             @ApiParam(name = "profileSchemaId", value = "A unique client-side endpoint profile schema identifier", required = true)
             @PathVariable String profileSchemaId) throws KaaAdminServiceException {
-        return kaaAdminService.getProfileSchema(profileSchemaId);
+        return profileService.getProfileSchema(profileSchemaId);
     }
 
     /**
@@ -115,7 +115,7 @@ public class ProfileController extends AdminController {
     public EndpointProfileSchemaDto saveProfileSchema(
             @ApiParam(name = "profileSchema", value = "EndpointProfileSchemaDto body. Mandatory fields: applicationId, ctlSchemaId, name", required = true)
             @RequestBody EndpointProfileSchemaDto profileSchema) throws KaaAdminServiceException {
-        return kaaAdminService.saveProfileSchema(profileSchema);
+        return profileService.saveProfileSchema(profileSchema);
     }
 
     /**
@@ -140,7 +140,7 @@ public class ProfileController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.getServerProfileSchemasByApplicationToken(applicationToken);
+        return profileService.getServerProfileSchemasByApplicationToken(applicationToken);
     }
 
     /**
@@ -165,7 +165,7 @@ public class ProfileController extends AdminController {
     public ServerProfileSchemaDto getServerProfileSchema(
             @ApiParam(name = "serverProfileSchemaId", value = "A unique server-side endpoint profile schema identifier", required = true)
             @PathVariable String serverProfileSchemaId) throws KaaAdminServiceException {
-        return kaaAdminService.getServerProfileSchema(serverProfileSchemaId);
+        return profileService.getServerProfileSchema(serverProfileSchemaId);
     }
 
     /**
@@ -192,7 +192,7 @@ public class ProfileController extends AdminController {
             @ApiParam(name = "serverProfileSchema", value = "ServerProfileSchemaDto body. Mandatory fields: applicationId, ctlSchemaId, name", required = true)
             @RequestBody ServerProfileSchemaDto serverProfileSchema)
             throws KaaAdminServiceException {
-        return kaaAdminService.saveServerProfileSchema(serverProfileSchema);
+        return profileService.saveServerProfileSchema(serverProfileSchema);
     }
 
     /**
@@ -221,7 +221,7 @@ public class ProfileController extends AdminController {
             @ApiParam(name = "serverProfileBody", value = "The server-side endpoint profile body", required = true)
             @RequestParam(value = "serverProfileBody") String serverProfileBody)
             throws Exception {
-        return kaaAdminService.updateServerProfile(endpointProfileKey, version, serverProfileBody);
+        return profileService.updateServerProfile(endpointProfileKey, version, serverProfileBody);
     }
 
     /**
@@ -245,7 +245,7 @@ public class ProfileController extends AdminController {
     public EndpointProfileDto getEndpointProfileByKeyHash(
             @ApiParam(name = "endpointProfileKey", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
             @PathVariable String endpointProfileKey) throws KaaAdminServiceException {
-        return kaaAdminService.getEndpointProfileByKeyHash(endpointProfileKey);
+        return profileService.getEndpointProfileByKeyHash(endpointProfileKey);
     }
 
     /**
@@ -269,7 +269,7 @@ public class ProfileController extends AdminController {
     public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(
             @ApiParam(name = "endpointProfileKey", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
             @PathVariable String endpointProfileKey) throws KaaAdminServiceException {
-        return kaaAdminService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
+        return profileService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
     }
 
     /**
@@ -295,7 +295,7 @@ public class ProfileController extends AdminController {
     public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(
             @ApiParam(name = "userExternalId", value = "A unique endpoint owner identifier", required = true)
             @RequestParam("userExternalId") String endpointUserExternalId) throws KaaAdminServiceException {
-        return this.kaaAdminService.getEndpointProfilesByUserExternalId(endpointUserExternalId);
+        return this.profileService.getEndpointProfilesByUserExternalId(endpointUserExternalId);
     }
 
     /**
@@ -318,7 +318,7 @@ public class ProfileController extends AdminController {
     public void removeEndpointProfileByKeyHash(
             @ApiParam(name = "endpointProfileKeyHash", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
             @RequestParam(value = "endpointProfileKeyHash") String endpointProfileKeyHash) throws KaaAdminServiceException {
-        kaaAdminService.removeEndpointProfileByKeyHash(endpointProfileKeyHash);
+        profileService.removeEndpointProfileByKeyHash(endpointProfileKeyHash);
     }
 
 }

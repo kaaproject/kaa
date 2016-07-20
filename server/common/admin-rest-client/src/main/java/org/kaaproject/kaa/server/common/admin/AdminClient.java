@@ -220,12 +220,6 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "application/" + token, ApplicationDto.class);
     }
 
-    public void deleteApplication(String applicationId) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("applicationId", applicationId);
-        restTemplate.postForLocation(restTemplate.getUrl() + "delApplication", params);
-    }
-
     public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, String schemaResource)
             throws Exception {
         return createConfigurationSchema(configurationSchema, getFileResource(schemaResource));

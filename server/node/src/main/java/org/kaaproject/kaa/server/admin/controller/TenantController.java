@@ -58,7 +58,7 @@ public class TenantController extends AdminController {
     @RequestMapping(value = "tenants", method = RequestMethod.GET)
     @ResponseBody
     public List<TenantUserDto> getTenants() throws KaaAdminServiceException {
-        return kaaAdminService.getTenants();
+        return tenantService.getTenants();
     }
 
     /**
@@ -69,7 +69,7 @@ public class TenantController extends AdminController {
      * @throws KaaAdminServiceException the kaa admin service exception
      */
     @ApiOperation(value = "Get tenant",
-            notes = "Returns tenant by associated userId.")
+            notes = "Returns tenant by associated userId. Only users with the KAA_ADMIN role are allowed to submit this request.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Invalid userId supplied"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
@@ -81,7 +81,7 @@ public class TenantController extends AdminController {
     public TenantUserDto getTenant(
             @ApiParam(name = "userId", value = "A unique user identifier", required = true)
             @PathVariable("userId") String userId) throws KaaAdminServiceException {
-        return kaaAdminService.getTenant(userId);
+        return tenantService.getTenant(userId);
     }
 
     /**
@@ -92,7 +92,8 @@ public class TenantController extends AdminController {
      * @throws KaaAdminServiceException the kaa admin service exception
      */
     @ApiOperation(value = "Create/Edit tenant",
-            notes = "Creates or edits a tenant. If a tenant with the specified ID does not exist, it will be created. If a tenant with the specified ID exists, it will be updated.")
+            notes = "Creates or edits a tenant. If a tenant with the specified ID does not exist, it will be created. If a tenant with the specified ID " +
+                    "exists, it will be updated. Only users with the KAA_ADMIN role are allowed to submit this request.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the  KAA_ADMIN role"),
@@ -112,7 +113,7 @@ public class TenantController extends AdminController {
             }
             CreateUserResult result = userFacade.saveUserDto(tenantUser, passwordEncoder);
             tenantUser.setExternalUid(result.getUserId().toString());
-            TenantUserDto tenant = kaaAdminService.editTenant(tenantUser);
+            TenantUserDto tenant = tenantService.editTenant(tenantUser);
             if (StringUtils.isNotBlank(result.getPassword())) {
                 tenant.setTempPassword(result.getPassword());
             }

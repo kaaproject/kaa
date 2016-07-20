@@ -82,7 +82,7 @@ public class LoggingController extends AdminController {
     public List<LogSchemaDto> getLogSchemasByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getLogSchemasByApplicationToken(applicationToken);
+        return loggingService.getLogSchemasByApplicationToken(applicationToken);
     }
 
     /**
@@ -105,7 +105,7 @@ public class LoggingController extends AdminController {
     public LogSchemaDto getLogSchema(
             @ApiParam(name = "logSchemaId", value = "A unique log schema identifier", required = true)
             @PathVariable String logSchemaId) throws KaaAdminServiceException {
-        return kaaAdminService.getLogSchema(logSchemaId);
+        return loggingService.getLogSchema(logSchemaId);
     }
 
     /**
@@ -133,7 +133,7 @@ public class LoggingController extends AdminController {
             @ApiParam(name = "schemaVersion", value = "The version of the requested log schema", required = true)
             @PathVariable int schemaVersion)
             throws KaaAdminServiceException {
-        return kaaAdminService.getLogSchemaByApplicationTokenAndVersion(applicationToken, schemaVersion);
+        return loggingService.getLogSchemaByApplicationTokenAndVersion(applicationToken, schemaVersion);
     }
 
     /**
@@ -165,7 +165,7 @@ public class LoggingController extends AdminController {
             @RequestPart("file") MultipartFile file)
             throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
-        return kaaAdminService.editLogSchema(logSchema, data);
+        return loggingService.editLogSchema(logSchema, data);
     }
 
     /**
@@ -190,7 +190,7 @@ public class LoggingController extends AdminController {
     public LogSchemaDto editLogSchema(
             @ApiParam(name = "logSchema", value = "LogSchemaDto body. Mandatory fields: applicationId, name", required = true)
             @RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editLogSchema(logSchema, null);
+        return loggingService.editLogSchema(logSchema, null);
     }
 
     /**
@@ -214,7 +214,7 @@ public class LoggingController extends AdminController {
     public List<LogAppenderDto> getLogAppendersByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getRestLogAppendersByApplicationToken(applicationToken);
+        return loggingService.getRestLogAppendersByApplicationToken(applicationToken);
     }
 
     /**
@@ -239,7 +239,7 @@ public class LoggingController extends AdminController {
     public LogAppenderDto getLogAppender(
             @ApiParam(name = "logAppenderId", value = "A unique log appender identifier", required = true)
             @PathVariable String logAppenderId) throws KaaAdminServiceException {
-        return kaaAdminService.getRestLogAppender(logAppenderId);
+        return loggingService.getRestLogAppender(logAppenderId);
     }
 
     /**
@@ -263,7 +263,7 @@ public class LoggingController extends AdminController {
     public LogAppenderDto editLogAppender(
             @ApiParam(name = "logAppender", value = "LogAppenderDto body", required = true)
             @RequestBody LogAppenderDto logAppender) throws KaaAdminServiceException {
-        return kaaAdminService.editRestLogAppender(logAppender);
+        return loggingService.editRestLogAppender(logAppender);
     }
 
     /**
@@ -286,7 +286,7 @@ public class LoggingController extends AdminController {
     public void deleteLogAppender(
             @ApiParam(name = "logAppenderId", value = "A unique log appender identifier", required = true)
             @RequestParam(value = "logAppenderId") String logAppenderId) throws KaaAdminServiceException {
-        kaaAdminService.deleteLogAppender(logAppenderId);
+        loggingService.deleteLogAppender(logAppenderId);
     }
 
     /**

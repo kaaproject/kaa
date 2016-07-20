@@ -61,7 +61,7 @@ public class DeviceManagementController extends AdminController {
             @ApiParam(name = "credentialsBody", value = "The public key hash of the endpoint in Base64 URL safe format", required = true)
             @RequestParam String credentialsBody)
             throws KaaAdminServiceException {
-        return this.kaaAdminService.provisionCredentials(applicationToken, credentialsBody);
+        return this.deviceManagementService.provisionCredentials(applicationToken, credentialsBody);
     }
 
     /**
@@ -91,7 +91,7 @@ public class DeviceManagementController extends AdminController {
             @ApiParam(name = "serverProfileBody", value = "The body of server-side endpoint profile", required = true)
             @RequestParam String serverProfileBody)
             throws KaaAdminServiceException {
-        this.kaaAdminService.provisionRegistration(applicationToken, credentialsId, serverProfileVersion, serverProfileBody);
+        this.deviceManagementService.provisionRegistration(applicationToken, credentialsId, serverProfileVersion, serverProfileBody);
     }
 
     /**
@@ -117,7 +117,7 @@ public class DeviceManagementController extends AdminController {
             @RequestParam String applicationToken,
             @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
             @RequestParam String credentialsId) throws KaaAdminServiceException {
-        this.kaaAdminService.revokeCredentials(applicationToken, credentialsId);
+        this.deviceManagementService.revokeCredentials(applicationToken, credentialsId);
     }
 
     /**
@@ -145,7 +145,7 @@ public class DeviceManagementController extends AdminController {
             @RequestParam String applicationToken,
             @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
             @RequestParam String credentialsId) throws KaaAdminServiceException {
-        this.kaaAdminService.onCredentialsRevoked(applicationToken, credentialsId);
+        this.deviceManagementService.onCredentialsRevoked(applicationToken, credentialsId);
     }
 
 }

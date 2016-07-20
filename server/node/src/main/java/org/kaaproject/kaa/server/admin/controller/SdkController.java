@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -70,7 +71,7 @@ public class SdkController extends AdminController {
             @ApiParam(name = "sdkProfile", value = "SdkProfileDto body. Mandatory fields: applicationId, configurationSchemaVersion, logSchemaVersion, " +
                     "notificationSchemaVersion, profileSchemaVersion, name", required = true)
             @RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
-        return kaaAdminService.createSdkProfile(sdkProfile);
+        return sdkService.createSdkProfile(sdkProfile);
     }
 
     /**
@@ -93,7 +94,7 @@ public class SdkController extends AdminController {
     public void deleteSdkProfile(
             @ApiParam(name = "sdkProfileId", value = "A unique SDK profile identifier", required = true)
             @RequestParam(value = "sdkProfileId") String sdkProfileId) throws KaaAdminServiceException {
-        kaaAdminService.deleteSdkProfile(sdkProfileId);
+        sdkService.deleteSdkProfile(sdkProfileId);
     }
 
     /**
@@ -116,7 +117,7 @@ public class SdkController extends AdminController {
     public List<SdkProfileDto> getSdkProfilesByApplicationToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getSdkProfilesByApplicationToken(applicationToken);
+        return sdkService.getSdkProfilesByApplicationToken(applicationToken);
     }
 
     /**
@@ -140,7 +141,7 @@ public class SdkController extends AdminController {
     public SdkProfileDto getSdkProfile(
             @ApiParam(name = "sdkProfileId", value = "A unique SDK profile identifier", required = true)
             @PathVariable String sdkProfileId) throws KaaAdminServiceException {
-        return kaaAdminService.getSdkProfile(sdkProfileId);
+        return sdkService.getSdkProfile(sdkProfileId);
     }
 
     /**
@@ -171,8 +172,8 @@ public class SdkController extends AdminController {
             @RequestParam(value = "targetPlatform") String targetPlatform, HttpServletRequest request, HttpServletResponse response)
             throws KaaAdminServiceException {
         try {
-            SdkProfileDto sdkProfile = kaaAdminService.getSdkProfile(sdkProfileId);
-            FileData sdkData = kaaAdminService.getSdk(sdkProfile, SdkPlatform.valueOf(targetPlatform.toUpperCase()));
+            SdkProfileDto sdkProfile = sdkService.getSdkProfile(sdkProfileId);
+            FileData sdkData = sdkService.getSdk(sdkProfile, SdkPlatform.valueOf(targetPlatform.toUpperCase()));
             response.setContentType(sdkData.getContentType());
             ServletUtils.prepareDisposition(request, response, sdkData.getFileName());
             response.setContentLength(sdkData.getFileData().length);
@@ -193,10 +194,23 @@ public class SdkController extends AdminController {
     @ResponseStatus(value = HttpStatus.OK)
     public void flushSdkCache() throws KaaAdminServiceException {
         try {
-            kaaAdminService.flushSdkCache();
+            sdkService.flushSdkCache();
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    /**
+     * Gets the schema versions by application token.
+     *
+     * @param applicationToken the application token
+     * @return the schema versions
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @RequestMapping(value = "schemaVersions/{applicationToken}", method = RequestMethod.GET)
+    @ResponseBody
+    public SchemaVersions getSchemaVersionsByApplicationToken(@PathVariable String applicationToken) throws KaaAdminServiceException {
+        return sdkService.getSchemaVersionsByApplicationToken(applicationToken);
     }
 
 }

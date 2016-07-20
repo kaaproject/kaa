@@ -75,7 +75,7 @@ public class CtlController extends AdminController {
             @RequestParam(required = false) String tenantId,
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
             @RequestParam(required = false) String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.saveCTLSchemaWithAppToken(body, tenantId, applicationToken);
+        return ctlService.saveCTLSchemaWithAppToken(body, tenantId, applicationToken);
     }
 
     /**
@@ -107,7 +107,7 @@ public class CtlController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
             @RequestParam(required = false) String applicationToken)
             throws KaaAdminServiceException {
-        kaaAdminService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
+        ctlService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
     }
 
     /**
@@ -139,7 +139,7 @@ public class CtlController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
             @RequestParam(required = false) String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
+        return ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
     }
 
     /**
@@ -161,7 +161,7 @@ public class CtlController extends AdminController {
     public CTLSchemaDto getCTLSchemaById(
             @ApiParam(name = "id", value = "A unique CTL schema identifier", required = true)
             @RequestParam String id) throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemaById(id);
+        return ctlService.getCTLSchemaById(id);
     }
 
     /**
@@ -175,7 +175,7 @@ public class CtlController extends AdminController {
      */
     @ApiOperation(value = "Check CTL schema FQN",
             notes = "Checks if CTL schema with same fqn is already exists in the sibling application. Only authorized users are allowed to perform this " +
-                    "operation.\n")
+                    "operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The Tenant ID of the CTL schema does not match the Tenant ID of the authenticated user"),
@@ -190,7 +190,7 @@ public class CtlController extends AdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
             @RequestParam(required = false) String applicationToken)
             throws KaaAdminServiceException {
-        return kaaAdminService.checkFqnExistsWithAppToken(fqn, tenantId, applicationToken);
+        return ctlService.checkFqnExistsWithAppToken(fqn, tenantId, applicationToken);
     }
 
     /**
@@ -215,7 +215,7 @@ public class CtlController extends AdminController {
             @ApiParam(name = "fqn", value = "The fully qualified name of the CTL schema", required = true)
             @RequestParam String fqn)
             throws KaaAdminServiceException {
-        return kaaAdminService.promoteScopeToTenant(applicationId, fqn);
+        return ctlService.promoteScopeToTenant(applicationId, fqn);
     }
 
     /**
@@ -232,7 +232,7 @@ public class CtlController extends AdminController {
     @RequestMapping(value = "CTL/getSystemSchemas", method = RequestMethod.GET)
     @ResponseBody
     public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
-        return kaaAdminService.getSystemLevelCTLSchemas();
+        return ctlService.getSystemLevelCTLSchemas();
     }
 
     /**
@@ -242,14 +242,15 @@ public class CtlController extends AdminController {
      * @throws KaaAdminServiceException the kaa admin service exception
      */
     @ApiOperation(value = "Get tenant CTL schemas",
-            notes = "Returns a list of available CTL schemas metadata for current tenant. Only authorized users are allowed to perform this operation.")
+            notes = "Returns a list of available CTL schemas metadata for current tenant. The current user must have one of the following roles: " +
+                    "TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "CTL/getTenantSchemas", method = RequestMethod.GET)
     @ResponseBody
     public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException {
-        return kaaAdminService.getTenantLevelCTLSchemas();
+        return ctlService.getTenantLevelCTLSchemas();
     }
 
     /**
@@ -260,7 +261,8 @@ public class CtlController extends AdminController {
      * @throws KaaAdminServiceException the kaa admin service exception
      */
     @ApiOperation(value = "Get application CTL schemas",
-            notes = "Returns a list of available CTL schemas metadata for an application. Only authorized users are allowed to perform this operation.")
+            notes = "Returns a list of available CTL schemas metadata for an application. The current user must have one of the following roles: " +
+                    "TENANT_DEVELOPER or TENANT_USER.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER, or TENANT_USER) or Tenant ID of " +
@@ -272,7 +274,7 @@ public class CtlController extends AdminController {
     public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
-        return kaaAdminService.getApplicationLevelCTLSchemasByAppToken(applicationToken);
+        return ctlService.getApplicationLevelCTLSchemasByAppToken(applicationToken);
     }
 
     /**
@@ -311,7 +313,7 @@ public class CtlController extends AdminController {
             @RequestParam(required = false) String applicationToken,
             HttpServletRequest request, HttpServletResponse response) throws KaaAdminServiceException {
         try {
-            FileData output = kaaAdminService.exportCTLSchemaByAppToken(fqn, version, applicationToken, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
+            FileData output = ctlService.exportCTLSchemaByAppToken(fqn, version, applicationToken, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
             ServletUtils.prepareDisposition(request, response, output.getFileName());
             response.setContentType(output.getContentType());
             response.setContentLength(output.getFileData().length);

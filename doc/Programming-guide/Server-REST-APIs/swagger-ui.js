@@ -6182,7 +6182,7 @@
                         results.push('-d \'' + body.replace(/\'/g, '\\u0027') + '\'');
                     }
 
-                    return 'curl ' + (results.join(' ')) + ' \'' + obj.url + '\'';
+                    return 'curl -v -S -u username:password ' + (results.join(' ')) + ' \'' + obj.url + '\' | python -mjson.tool';
                 };
 
                 Operation.prototype.encodePathCollection = function (type, name, value) {
