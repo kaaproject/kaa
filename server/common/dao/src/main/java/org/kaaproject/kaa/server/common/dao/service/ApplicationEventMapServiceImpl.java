@@ -27,7 +27,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.event.*;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
