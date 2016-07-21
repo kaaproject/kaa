@@ -491,8 +491,7 @@ public class AbstractTest {
             if (isBlank(appId)) {
                 app = generateApplicationDto();
                 appId = app.getId();
-            }
-            else {
+            } else {
                 app = applicationService.findAppById(appId);
             }
             LogSchemaDto schemaDto;
@@ -503,7 +502,7 @@ public class AbstractTest {
                 CTLSchemaDto ctlSchema = null;
                 try {
                     ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
-                } catch (DatabaseProcessingException e){
+                } catch (DatabaseProcessingException e) {
                     ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
                 }
@@ -598,7 +597,7 @@ public class AbstractTest {
         CTLSchemaDto ctlSchema = null;
         try {
             ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
-        } catch (DatabaseProcessingException e){
+        } catch (DatabaseProcessingException e) {
             ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
         }

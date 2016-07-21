@@ -288,9 +288,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         schema.setName(DEFAULT_SCHEMA_NAME);
         schema.setCreatedUsername(createdUsername);
         schema = logSchemaService.saveLogSchema(schema);
-        if (schema == null) {
-            throw new RuntimeException("Can't save default log schema "); //NOSONAR
-        }
         return schema;
     }
 

@@ -1054,27 +1054,15 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
 
-        CTLSchemaDto logCtlSchema = ctlService.findCTLSchemaById(logSchema.getCtlSchemaId());
-        if (logCtlSchema == null) {
-            throw new NotFoundException("Log CTL schema not found!");
-        }
+        CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
 
         String logSchemaBodyString = ctlService.flatExportAsString(logCtlSchema);
 
-        CTLSchemaDto profileCtlSchema = ctlService.findCTLSchemaById(profileSchema.getCtlSchemaId());
-        if (profileCtlSchema == null) {
-            throw new NotFoundException("Profile CTL schema not found!");
-        }
+        CTLSchemaDto profileCtlSchema = getCTLSchemaById(profileSchema.getCtlSchemaId());
 
-        CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
-        if (notificationCtlSchema == null) {
-            throw new NotFoundException("Notification CTL schema not found!");
-        }
+        CTLSchemaDto notificationCtlSchema = getCTLSchemaById(notificationSchema.getCtlSchemaId());
 
-        CTLSchemaDto confCtlSchema = ctlService.findCTLSchemaById(configurationSchema.getCtlSchemaId());
-        if (confCtlSchema == null) {
-            throw new NotFoundException("Configuration CTL schema not found!");
-        }
+        CTLSchemaDto confCtlSchema = getCTLSchemaById(configurationSchema.getCtlSchemaId());
 
         String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
         String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
@@ -1149,10 +1137,7 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
         try {
-            CTLSchemaDto logCtlSchema = ctlService.findCTLSchemaById(logSchema.getCtlSchemaId());
-            if (logCtlSchema == null) {
-                throw new NotFoundException("Log CTL schema not found!");
-            }
+            CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
             Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
             String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
             return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
@@ -1927,10 +1912,7 @@ public class DefaultControlService implements ControlService {
 
         Schema recordWrapperSchema = null;
         try {
-            CTLSchemaDto logCtlSchema = ctlService.findCTLSchemaById(logSchema.getCtlSchemaId());
-            if (logCtlSchema == null) {
-                throw new NotFoundException("Log CTL schema not found!");
-            }
+            CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
             recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
         } catch (IOException e) {
             LOG.error("Unable to get Record Structure Schema", e);
@@ -2073,7 +2055,12 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException {
-        return ctlService.findCTLSchemaById(schemaId);
+        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(schemaId);
+        if (ctlSchemaDto == null) {
+            LOG.error("CTL schema with Id [{}] not found!", schemaId);
+            throw new NotFoundException("CTL schema not found!");
+        }
+        return ctlSchemaDto;
     }
 
     @Override
