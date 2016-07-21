@@ -16,46 +16,46 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class EcfSchemasGrid extends AbstractKaaGrid<EventSchemaVersionDto, Integer> {
+public class EcfSchemasGrid extends AbstractKaaGrid<EventClassFamilyVersionDto, Integer> {
 
     public EcfSchemasGrid() {
         super(Unit.PX, false, true);
     }
 
     @Override
-    protected float constructColumnsImpl(DataGrid<EventSchemaVersionDto> table) {
+    protected float constructColumnsImpl(DataGrid<EventClassFamilyVersionDto> table) {
         float prefWidth = 0;
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.schemaVersion(),
-                new StringValueProvider<EventSchemaVersionDto>() {
+                new StringValueProvider<EventClassFamilyVersionDto>() {
                     @Override
-                    public String getValue(EventSchemaVersionDto item) {
+                    public String getValue(EventClassFamilyVersionDto item) {
                         return item.getVersion() + "";
                     }
                 }, 80);
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.author(),
-                new StringValueProvider<EventSchemaVersionDto>() {
+                new StringValueProvider<EventClassFamilyVersionDto>() {
                     @Override
-                    public String getValue(EventSchemaVersionDto item) {
+                    public String getValue(EventClassFamilyVersionDto item) {
                         return item.getCreatedUsername();
                     }
                 }, 80);
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.dateCreated(),
-                new StringValueProvider<EventSchemaVersionDto>() {
+                new StringValueProvider<EventClassFamilyVersionDto>() {
                     @Override
-                    public String getValue(EventSchemaVersionDto item) {
+                    public String getValue(EventClassFamilyVersionDto item) {
                         return Utils.millisecondsToDateString(item.getCreatedTime());
                     }
                 }, 80);
@@ -64,7 +64,7 @@ public class EcfSchemasGrid extends AbstractKaaGrid<EventSchemaVersionDto, Integ
     }
 
     @Override
-    protected Integer getObjectId(EventSchemaVersionDto value) {
+    protected Integer getObjectId(EventClassFamilyVersionDto value) {
         if (value != null) {
             return value.getVersion();
         } else {
