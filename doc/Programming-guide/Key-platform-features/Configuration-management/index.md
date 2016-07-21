@@ -763,7 +763,7 @@ class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
     void printConfiguration(const KaaRootConfiguration &configuration)
     {
-        std::cout << "Configuration body: " << configuration << std::endl;
+        std::cout << "Current configuration: " << configuration << std::endl;
     }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
@@ -811,7 +811,7 @@ static kaa_client_t *kaa_client = NULL;
 
 void print_configuration(
         const kaa_root_configuration_t *configuration) {
-        printf(configuration);
+        printf("Current configuration: " configuration);
 }
 
 kaa_error_t kaa_demo_configuration_receiver(void *context,
@@ -917,6 +917,7 @@ int main(/*int argc, char *argv[]*/) {
     for (KAALink *link in links) {
         [confBody appendString:[NSString stringWithFormat:@"%@ - %@\n", link.label, link.url]];
     }
+    [self addLogWithText:@"Current configuration:"];
     [self addLogWithText:confBody];
 }
 
