@@ -59,6 +59,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -1043,18 +1044,29 @@ public interface ControlService {
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException;
 
     /**
-     * Adds the event class family schema.
+     * Gets the list of event class family versions.
      *
      * @param eventClassFamilyId
      *            the event class family id
-     * @param eventClassFamilySchema
-     *            the event class family schema
+     * @return the list of event class family versions
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException;
+
+    /**
+     * Adds the event class family version to existing ECF.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @param eventClassFamilyVersion
+     *            the event class family version dto
      * @param createdUsername
      *            the created username
      * @throws ControlServiceException
      *             the control service exception
      */
-    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+    void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
             throws ControlServiceException;
 
     /**

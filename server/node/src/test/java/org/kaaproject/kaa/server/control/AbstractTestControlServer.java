@@ -56,10 +56,10 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification;
 import org.kaaproject.kaa.server.appenders.file.config.FileSystemAppenderConfig;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
@@ -68,6 +68,7 @@ import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
@@ -239,6 +240,10 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     @Autowired
     private KaaNodeInitializationService kaaNodeInitializationService;
 
+    /** The event class service. */
+    @Autowired
+    protected EventClassService eventClassService;
+
     /** The client. */
     protected AdminClient client;
 
@@ -309,7 +314,6 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
-//                new H2DBTestRunner().truncateSequences(dataSource);
             } else {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
@@ -1187,6 +1191,25 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         return savedEventClassFamily;
     }
 
+    protected EventClassFamilyVersionDto createEventClassFamilyVersion(String ecfId) throws Exception {
+        EventClassFamilyVersionDto eventClassFamilyVersion = new EventClassFamilyVersionDto();
+        List<EventClassDto> records = new ArrayList<>();
+
+        String className = "Test" + random.nextInt(1000);
+        CTLSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        EventClassDto ec = new EventClassDto();
+        ApplicationDto application = createApplication(tenantAdminDto);
+        ec.setApplicationId(application.getId());
+        ec.setFqn(EVENT_CLASS_FAMILY_NAMESPACE + "." + className);
+        ec.setType(EventClassType.EVENT);
+        ec.setCtlSchemaId(ctlSchema.getId());
+        ec.setName("test");
+        records.add(ec);
+
+        eventClassFamilyVersion.setRecords(records);
+        return eventClassFamilyVersion;
+    }
+
     /**
      * Creates the application event family map.
      *
@@ -1222,6 +1245,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         EventClassFamilyDto eventClassFamily = null;
         if (strIsEmpty(ecfId)) {
             eventClassFamily = createEventClassFamily(tenantId);
+            ecfId = eventClassFamily.getId();
         }
         else {
             loginTenantAdmin(tenantAdminUser);
@@ -1229,13 +1253,14 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
         applicationEventFamilyMap.setEcfId(eventClassFamily.getId());
         applicationEventFamilyMap.setEcfName(eventClassFamily.getName());
-        if (eventClassFamily.getSchemas() == null || eventClassFamily.getSchemas().size()<version) {
-            int start = eventClassFamily.getSchemas() == null ? 0 : eventClassFamily.getSchemas().size();
-            for (int i=start;i<version;i++) {
-                loginTenantAdmin(tenantAdminUser);
-                client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-            }
+        List<EventClassFamilyVersionDto> storedECFVersions = client.getEventClassFamilyVersionsById(ecfId);
+
+        loginTenantAdmin(tenantAdminUser);
+        EventClassFamilyVersionDto testECFVersion = createEventClassFamilyVersion(ecfId);
+        if (storedECFVersions == null || storedECFVersions.size()<version) {
+            client.addEventClassFamilyVersion(eventClassFamily.getId(), testECFVersion);
         }
+
         loginTenantDeveloper(tenantDeveloperUser);
         applicationEventFamilyMap.setVersion(version);
         List<EventClassDto> eventClasses = client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), version, EventClassType.EVENT);

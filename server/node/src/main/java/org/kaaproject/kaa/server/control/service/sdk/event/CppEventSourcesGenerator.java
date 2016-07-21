@@ -226,13 +226,15 @@ public class CppEventSourcesGenerator {
             TarEntryData tarEntry = new TarEntryData(entry, data);
             eventSources.add(tarEntry);
 
-            String eventFamilySchema = efm.getEcfSchema();
+            List<String> eventCtlSchemas = efm.getRawCtlsSchemas();
             String eventFamilySchemaPath = EVENT_FAMILY_SCHEMA_PATH_TEMPLATE.replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName());
-            entry = new TarArchiveEntry(eventFamilySchemaPath);
-            data = eventFamilySchema.getBytes();
-            entry.setSize(data.length);
-            tarEntry = new TarEntryData(entry, data);
-            eventSources.add(tarEntry);
+            for (String ctlSchema : eventCtlSchemas) {
+                entry = new TarArchiveEntry(eventFamilySchemaPath);
+                data = ctlSchema.getBytes();
+                entry.setSize(data.length);
+                tarEntry = new TarEntryData(entry, data);
+                eventSources.add(tarEntry);
+            }
         }
 
         String eventFamilyFactorySource = eventFamilyFactoryHpp.

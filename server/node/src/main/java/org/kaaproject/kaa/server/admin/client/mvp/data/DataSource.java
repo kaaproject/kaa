@@ -53,7 +53,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -466,13 +466,13 @@ public class DataSource {
 
     public void editEcf(EventClassFamilyDto ecf,
             final AsyncCallback<EventClassFamilyDto> callback) {
-        rpcService.editEventClassFamily(ecf,
-                new DataCallback<EventClassFamilyDto>(callback) {
-                    @Override
-                    protected void onResult(EventClassFamilyDto result) {
-                        refreshEcfs();
-                    }
-                });
+//        rpcService.editEventClassFamily(ecf,
+//                new DataCallback<EventClassFamilyDto>(callback) {
+//                    @Override
+//                    protected void onResult(EventClassFamilyDto result) {
+//                        refreshEcfs();
+//                    }
+//                });
     }
 
     public void getEcf(String ecfId,
@@ -491,7 +491,7 @@ public class DataSource {
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
-                        eventBus.fireEvent(new DataEvent(EventSchemaVersionDto.class));
+                        eventBus.fireEvent(new DataEvent(EventClassFamilyVersionDto.class));
                     }
                 });
     }

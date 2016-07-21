@@ -66,6 +66,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -76,7 +77,6 @@ import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.servlet.ServletUtils;
-import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
@@ -1919,6 +1919,21 @@ public class KaaAdminController {
     }
 
     /**
+     * Gets the event class family versions by its id.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @return the list of event class family version dto
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "eventClassFamilyVersions/{eventClassFamilyId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(@PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
+        return kaaAdminService.getEventClassFamilyVersions(eventClassFamilyId);
+    }
+
+    /**
      * Edits event class family to the list of all event class families.
      *
      * @param eventClassFamily
@@ -1934,22 +1949,21 @@ public class KaaAdminController {
     }
 
     /**
-     * Adds the event class family schema to the event class family with
+     * Adds the event class family version to existing event class family with
      * specific id. Current user will be marked as creator of schema.
      *
      * @param eventClassFamilyId
      *            the event class family id
-     * @param file
-     *            the file
+     * @param eventClassFamilyVersion
+     *            the version of event class family
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "addEventClassFamilySchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "addEventClassFamilyVersion", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseStatus(value = HttpStatus.OK)
-    public void addEventClassFamilySchema(@RequestPart(value = "eventClassFamilyId") String eventClassFamilyId,
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        kaaAdminService.addEventClassFamilySchema(eventClassFamilyId, data);
+    public void addEventClassFamilyVersion(@RequestPart(value = "eventClassFamilyId") String eventClassFamilyId,
+                                           @RequestPart(value = "eventClassFamilyVersion") EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
+        kaaAdminService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion);
     }
 
     /**

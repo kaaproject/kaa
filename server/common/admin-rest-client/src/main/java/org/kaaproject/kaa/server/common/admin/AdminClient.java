@@ -72,6 +72,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -613,6 +614,13 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "eventClassFamily/" + ecfId, EventClassFamilyDto.class);
     }
 
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersionsById(String ecfId) {
+        ParameterizedTypeReference<List<EventClassFamilyVersionDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyVersionDto>>() {
+        };
+        ResponseEntity<List<EventClassFamilyVersionDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "eventClassFamilyVersions/" + ecfId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public EventClassFamilyDto getEventClassFamily(String familyName) {
         ParameterizedTypeReference<List<EventClassFamilyDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyDto>>() {
         };
@@ -633,11 +641,11 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public void addEventClassFamilySchema(String eventClassFamilyId, String schemaResource) throws Exception {
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("eventClassFamilyId", eventClassFamilyId);
-        params.add("file", getFileResource(schemaResource));
-        restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilySchema", params);
+        params.add("eventClassFamilyVersion", eventClassFamilyVersion);
+        restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilyVersion", params);
     }
 
     public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type)

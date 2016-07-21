@@ -122,19 +122,22 @@ public class ObjCEventClassesGenerator {
         for (EventFamilyMetadata efm : eventFamilies) {
 
             LOG.debug("Generating schemas for event family {}", efm.getEcfName());
-            Schema schema = new Schema.Parser().parse(efm.getEcfSchema());
-            try (
-                    OutputStream hdrStream = new ByteArrayOutputStream();
-                    OutputStream srcStream = new ByteArrayOutputStream()
-            ) {
+            List<Schema> eventCtlSchemas = new ArrayList<>();
+            efm.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
+            for (Schema ctlSchema : eventCtlSchemas) {
+                try (
+                        OutputStream hdrStream = new ByteArrayOutputStream();
+                        OutputStream srcStream = new ByteArrayOutputStream()
+                ) {
 
-                Compiler compiler = new ObjectiveCCompiler(schema, EVENT_GEN, hdrStream, srcStream);
-                compiler.generate();
+                    Compiler compiler = new ObjectiveCCompiler(ctlSchema, EVENT_GEN, hdrStream, srcStream);
+                    compiler.generate();
 
-                eventGenHeaderBuilder.append(hdrStream.toString()).append("\n");
-                eventGenSourceBuilder.append(srcStream.toString()).append("\n");
-            } catch (Exception e) {
-                LOG.error("Got exception while generating object from schema: " + efm.getEcfSchema(), e);
+                    eventGenHeaderBuilder.append(hdrStream.toString()).append("\n");
+                    eventGenSourceBuilder.append(srcStream.toString()).append("\n");
+                } catch (Exception e) {
+                    LOG.error("Got exception while generating object from schema: " + ctlSchema, e);
+                }
             }
 
             LOG.error("Processing {}", efm.getEcfName());

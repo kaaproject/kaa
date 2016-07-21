@@ -43,8 +43,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
@@ -100,8 +98,8 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -131,10 +129,8 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
-import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -161,8 +157,6 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Charsets;
 
 import net.iharder.Base64;
-
-import javax.persistence.Convert;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -2730,12 +2724,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             EventClassFamilyDto eventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(eventClassFamily);
             checkTenantId(eventClassFamily.getTenantId());
-            for (EventSchemaVersionDto eventSchemaVersion : eventClassFamily.getSchemas()) {
-                Schema schema = new Schema.Parser().parse(eventSchemaVersion.getSchema());
-                RecordField schemaForm = ecfSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-                eventSchemaVersion.setSchemaForm(schemaForm);
-            }
             return eventClassFamily;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            return controlService.getEventClassFamilyVersions(eventClassFamilyId);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2772,7 +2771,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             checkTenantId(storedEventClassFamily.getTenantId());
 
             String username = getCurrentUser().getUsername();
-            controlService.addEventClassFamilySchema(eventClassFamilyId, schemaString, username);
+            //todo: load list of ctls
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2785,19 +2784,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId, byte[] data) throws KaaAdminServiceException {
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             checkEventClassFamilyId(eventClassFamilyId);
-            String schema = new String(data);
-            SchemaUtil.compileAvroSchema(validateSchema(schema, false));
 
             EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
             Utils.checkNotNull(storedEventClassFamily);
             checkTenantId(storedEventClassFamily.getTenantId());
 
             String username = getCurrentUser().getUsername();
-            controlService.addEventClassFamilySchema(eventClassFamilyId, schema, username);
+            controlService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

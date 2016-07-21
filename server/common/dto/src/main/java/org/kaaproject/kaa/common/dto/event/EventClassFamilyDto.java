@@ -33,8 +33,7 @@ public class EventClassFamilyDto implements HasId, Serializable {
     private String description;
     private String createdUsername;
     private long createdTime;
-    private List<EventSchemaVersionDto> schemas;
-    
+
     @Override
     public String getId() {
         return id;
@@ -59,14 +58,6 @@ public class EventClassFamilyDto implements HasId, Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<EventSchemaVersionDto> getSchemas() {
-        return schemas;
-    }
-
-    public void setSchemas(List<EventSchemaVersionDto> schemas) {
-        this.schemas = schemas;
     }
 
     public String getNamespace() {
@@ -124,7 +115,6 @@ public class EventClassFamilyDto implements HasId, Serializable {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result
                 + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((schemas == null) ? 0 : schemas.hashCode());
         result = prime * result
                 + ((tenantId == null) ? 0 : tenantId.hashCode());
         return result;
@@ -185,13 +175,6 @@ public class EventClassFamilyDto implements HasId, Serializable {
                 return false;
             }
         } else if (!namespace.equals(other.namespace)) {
-            return false;
-        }
-        if (schemas == null) {
-            if (other.schemas != null) {
-                return false;
-            }
-        } else if (!schemas.equals(other.schemas)) {
             return false;
         }
         if (tenantId == null) {

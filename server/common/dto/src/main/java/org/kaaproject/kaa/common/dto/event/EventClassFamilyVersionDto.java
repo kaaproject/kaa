@@ -17,20 +17,19 @@
 package org.kaaproject.kaa.common.dto.event;
 
 import java.io.Serializable;
+import java.util.List;
 
-import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.HasId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"schemaForm"})
-public class EventSchemaVersionDto implements HasId, Serializable {
+public class EventClassFamilyVersionDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -6565622945148633465L;
 
     private String id;
-    private String schema;
-    protected RecordField schemaForm;
+    private List<EventClassDto> records;
     private int version;
     private String createdUsername;
     private long createdTime;
@@ -45,20 +44,12 @@ public class EventSchemaVersionDto implements HasId, Serializable {
         this.id = id;
     }
 
-    public String getSchema() {
-        return schema;
-    }
-    
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-    
-    public RecordField getSchemaForm() {
-        return schemaForm;
+    public List<EventClassDto> getRecords() {
+        return records;
     }
 
-    public void setSchemaForm(RecordField schemaForm) {
-        this.schemaForm = schemaForm;
+    public void setRecords(List<EventClassDto> records) {
+        this.records = records;
     }
 
     public int getVersion() {
@@ -92,8 +83,8 @@ public class EventSchemaVersionDto implements HasId, Serializable {
         result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
         result = prime * result
                 + ((createdUsername == null) ? 0 : createdUsername.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         result = prime * result + version;
+        result = prime * result + ((records == null) ? 0 : records.hashCode());
         return result;
     }
 
@@ -108,7 +99,7 @@ public class EventSchemaVersionDto implements HasId, Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        EventSchemaVersionDto other = (EventSchemaVersionDto) obj;
+        EventClassFamilyVersionDto other = (EventClassFamilyVersionDto) obj;
         if (createdTime != other.createdTime) {
             return false;
         }
@@ -119,11 +110,11 @@ public class EventSchemaVersionDto implements HasId, Serializable {
         } else if (!createdUsername.equals(other.createdUsername)) {
             return false;
         }
-        if (schema == null) {
-            if (other.schema != null) {
+        if (records == null) {
+            if (other.records != null) {
                 return false;
             }
-        } else if (!schema.equals(other.schema)) {
+        } else if (!records.equals(other.records)) {
             return false;
         }
         return version == other.version;
@@ -131,7 +122,7 @@ public class EventSchemaVersionDto implements HasId, Serializable {
 
     @Override
     public String toString() {
-        return "EventSchemaVersionDto [schema=" + schema + ", version="
+        return "EventClassFamilyVersionDto [version="
                 + version + ", createdUsername=" + createdUsername
                 + ", createdTime=" + createdTime + "]";
     }
