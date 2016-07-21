@@ -162,18 +162,21 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             if (app == null) {
                 app = generateApplication(null);
             }
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
             ConfigurationSchema schema;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schema = new ConfigurationSchema();
                 schema.setApplication(app);
-                schema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
+                schema.setCreatedUsername("Test User");
+                schema.setCtlSchema(ctlSchema);
                 schema.setVersion(i + 1);
+                schema.setName("Test Name");
                 schema = configurationSchemaDao.save(schema);
                 Assert.assertNotNull(schema);
                 schemas.add(schema);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Can't generate configuration schemas {}", e);
             Assert.fail("Can't generate configuration schemas." + e.getMessage());
         }

@@ -156,7 +156,7 @@ public interface KaaAdminService extends RemoteService {
 
     RecordField createCommonEmptySchemaForm() throws KaaAdminServiceException;
 
-    RecordField createConfigurationEmptySchemaForm() throws KaaAdminServiceException;
+    ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
     RecordField createEcfEmptySchemaForm() throws KaaAdminServiceException;
 
@@ -188,11 +188,11 @@ public interface KaaAdminService extends RemoteService {
 
     ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException;
 
-    ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema, byte[] schema) throws KaaAdminServiceException;
+    ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException;
 
-    ConfigurationSchemaDto getConfigurationSchemaForm(String configurationSchemaId) throws KaaAdminServiceException;
+    ConfigurationSchemaViewDto getConfigurationSchemaView(String configurationSchemaId) throws KaaAdminServiceException;
 
-    ConfigurationSchemaDto editConfigurationSchemaForm(ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException;
+    ConfigurationSchemaViewDto saveConfigurationSchemaView(ConfigurationSchemaViewDto confSchemaView) throws KaaAdminServiceException;
 
     List<NotificationSchemaDto> getNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -430,12 +430,11 @@ public interface KaaAdminService extends RemoteService {
 
     CtlSchemaFormDto getCTLSchemaFormByMetaInfoIdAndVer(String metaInfoId, int version) throws KaaAdminServiceException;
 
-    CtlSchemaFormDto createNewCTLSchemaFormInstance(String metaInfoId, 
-            Integer sourceVersion, String applicationId) throws KaaAdminServiceException;
+    CtlSchemaFormDto createNewCTLSchemaFormInstance(String metaInfoId, Integer sourceVersion, String applicationId, ConverterType converterType) throws KaaAdminServiceException;
 
     RecordField generateCtlSchemaForm(String fileItemName, String applicationId) throws KaaAdminServiceException;
 
-    CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+    CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm, ConverterType converterType) throws KaaAdminServiceException;
 
     boolean checkFqnExists(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 

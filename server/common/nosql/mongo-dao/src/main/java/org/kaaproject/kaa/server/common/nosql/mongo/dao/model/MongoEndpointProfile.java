@@ -18,31 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CHANGED_FLAG;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ECF_VERSION_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SEQ_NUM;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SIMPLE_TOPIC_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_TOPIC_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_NF_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.*;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -121,6 +97,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     private String sdkToken;
     @Field(EP_SERVER_PROFILE_PROPERTY)
     private DBObject serverProfile;
+    @Field(EP_USE_RAW_SCHEMA)
+    private Boolean useConfigurationRawSchema;
     @Version
     @Field(OPT_LOCK)
     private Long version;
@@ -159,6 +137,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getServerProfileBody()));
+        this.useConfigurationRawSchema = dto.isUseConfigurationRawSchema();
         this.version = dto.getVersion();
     }
 
@@ -360,6 +339,14 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.sdkToken = sdkToken;
     }
 
+    public Boolean getUseConfigurationRawSchema() {
+        return useConfigurationRawSchema;
+    }
+
+    public void setUseConfigurationRawSchema(Boolean useConfigurationRawSchema) {
+        this.useConfigurationRawSchema = useConfigurationRawSchema;
+    }
+
     public Long getVersion() {
         return version;
     }
@@ -437,6 +424,9 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) {
             return false;
         }
+        if (useConfigurationRawSchema != null ? !useConfigurationRawSchema.equals(that.useConfigurationRawSchema) : that.useConfigurationRawSchema != null) {
+            return false;
+        }
 
         return true;
     }
@@ -461,6 +451,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         result = 31 * result + (topicHash != null ? Arrays.hashCode(topicHash) : 0);
         result = 31 * result + systemNfVersion;
         result = 31 * result + userNfVersion;
+        result = 31 * result + (useConfigurationRawSchema != null ? useConfigurationRawSchema.hashCode() : 0);
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
         return result;
     }
@@ -489,6 +480,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
                 ", systemNfVersion=" + systemNfVersion +
                 ", userNfVersion=" + userNfVersion +
                 ", sdkToken=" + sdkToken +
+                ", useRawSchema=" + useConfigurationRawSchema +
                 ", version=" + version +
                 '}';
     }
@@ -522,6 +514,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile != null ? MongoDaoUtil.decodeReservedCharacteres(serverProfile).toString() : "");
+        dto.setUseConfigurationRawSchema(useConfigurationRawSchema);
         dto.setVersion(version);
         return dto;
     }

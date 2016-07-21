@@ -227,21 +227,8 @@ public class AdminClient {
         restTemplate.postForLocation(restTemplate.getUrl() + "delApplication", params);
     }
 
-    public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, String schemaResource)
-            throws Exception {
-        return createConfigurationSchema(configurationSchema, getFileResource(schemaResource));
-    }
-
-    public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, ByteArrayResource schemaResource)
-            throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("configurationSchema", configurationSchema);
-        params.add("file", schemaResource);
-        return restTemplate.postForObject(restTemplate.getUrl() + "createConfigurationSchema", params, ConfigurationSchemaDto.class);
-    }
-
-    public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "editConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
+    public ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "saveConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
     }
 
     public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchema) throws Exception {

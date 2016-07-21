@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -23,6 +24,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 
@@ -67,7 +69,8 @@ public class ProfileSchemaActivity
     protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
         KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, 
                 null,  
-                applicationId, 
+                applicationId,
+                ConverterType.FORM_AVRO_CONVERTER,
                 callback);
     }
 

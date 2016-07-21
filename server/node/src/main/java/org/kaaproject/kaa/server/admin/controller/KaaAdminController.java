@@ -1070,37 +1070,16 @@ public class KaaAdminController {
     /**
      * Adds configuration schema to the list of all configuration schemas.
      *
-     * @param configurationSchema
-     *            the сonfiguration schema
-     * @param file
-     *            the file
+     * @param configurationSchema the сonfiguration schema
      * @return the сonfiguration schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
-    @RequestMapping(value = "createConfigurationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public ConfigurationSchemaDto createConfigurationSchema(@RequestPart("configurationSchema") ConfigurationSchemaDto configurationSchema,
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return kaaAdminService.editConfigurationSchema(configurationSchema, data);
+    public ConfigurationSchemaDto saveConfigurationSchema(@RequestBody  ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveConfigurationSchema(configurationSchema);
     }
 
-    /**
-     * Edits existing configuration schema.
-     *
-     * @param configurationSchema
-     *            the сonfiguration schema
-     * @return the сonfiguration schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "editConfigurationSchema", method = RequestMethod.POST)
-    @ResponseBody
-    public ConfigurationSchemaDto editConfigurationSchema(@RequestBody ConfigurationSchemaDto configurationSchema)
-            throws KaaAdminServiceException {
-        return kaaAdminService.editConfigurationSchema(configurationSchema, null);
-    }
 
     /**
      * Gets the notification schemas by application token.
