@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms;
 
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.KAA_NAMESPACE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_SIZE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_TYPE;
-
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +26,10 @@ import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.apache.avro.generic.GenericData;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
+
+import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.*;
 
 public class AvroUtils {
 
@@ -92,4 +92,34 @@ public class AvroUtils {
         }
     }
 
+
+    public static void injectUuids(JsonNode json) {
+        boolean containerWithoutId = json.isContainerNode() && !json.has(UUID_FIELD);
+        boolean notArray = !json.isArray();
+        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
+
+        if (containerWithoutId && notArray && childIsNotArray) {
+            ((ObjectNode)json).put(UUID_FIELD, (Integer)null);
+        }
+
+        for (JsonNode node : json) {
+            if (node.isContainerNode())
+                injectUuids(node);
+        }
+    }
+
+    public static void removeUuids(JsonNode json) {
+        boolean containerWithId = json.isContainerNode() && json.has(UUID_FIELD);
+        boolean isArray = json.isArray();
+        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next().isArray());
+
+        if (containerWithId && !isArray && childIsNotArray) {
+            ((ObjectNode)json).remove(UUID_FIELD);
+        }
+
+        for (JsonNode node : json) {
+            if (node.isContainerNode())
+                removeUuids(node);
+        }
+    }
 }

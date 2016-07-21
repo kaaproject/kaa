@@ -85,32 +85,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * The Class DefaultOperationsService.
- */
+
 @Service
 public class DefaultOperationsService implements OperationsService {
 
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationsService.class);
 
-    /** The delta service. */
     @Autowired
     DeltaService deltaService;
 
-    /** The profile service. */
     @Autowired
     ProfileService profileService;
 
-    /** The cache service. */
     @Autowired
     CacheService cacheService;
 
-    /** The delta service. */
     @Autowired
     HistoryDeltaService historyDeltaService;
 
-    /** The notification delta service. */
     @Autowired
     NotificationDeltaService notificationDeltaService;
 
@@ -200,8 +192,7 @@ public class DefaultOperationsService implements OperationsService {
         return context;
     }
 
-    private EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto endpointProfile,
-            boolean userConfigurationChanged) {
+    private EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto endpointProfile, boolean userConfigurationChanged) {
         LOG.debug("[{}][{}] going to sync endpoint group states", appToken, endpointId);
 
         Function<EndpointProfileDto, Pair<EndpointProfileDto, HistoryDelta>> updateFunction = profile -> {
@@ -285,6 +276,19 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     @Override
+    public SyncContext syncUseConfigurationRawSchema(SyncContext context, boolean useConfigurationRawSchema) {
+        EndpointProfileDto profile = context.getEndpointProfile();
+        if(profile.isUseConfigurationRawSchema() != useConfigurationRawSchema) {
+            ClientSyncMetaData metaData = context.getMetaData();
+            EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromBytes(toByteArray(metaData.getEndpointPublicKeyHash()));
+            profile = profileService.updateProfile(metaData, endpointKeyHash, useConfigurationRawSchema);
+            profile = syncProfileState(metaData.getApplicationToken(), context.getEndpointKey(), profile, false);
+            context.setEndpointProfile(profile);
+        }
+        return context;
+    }
+
+    @Override
     public SyncContext syncNotification(SyncContext context, NotificationClientSync request) {
         if (request != null) {
             GetNotificationResponse notificationResponse = calculateNotificationDelta(context.getMetaData().getApplicationToken(), request,
@@ -337,8 +341,7 @@ public class DefaultOperationsService implements OperationsService {
         return null;
     }
 
-    private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData,
-            ProfileClientSync request) {
+    private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData, ProfileClientSync request) {
         LOG.debug("[{}][{}] register endpoint. request: {}", endpointId, requestHash, request);
         byte[] endpointKey = toByteArray(request.getEndpointPublicKey());
         byte[] profileBody = toByteArray(request.getProfileBody());
@@ -361,7 +364,7 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     private EventServerSync processEventSyncResponse(String endpointId, int requestHash, String appToken, EventClientSync request,
-            EndpointProfileDto profile) {
+                                                     EndpointProfileDto profile) {
         EventServerSync response = new EventServerSync();
         List<EventListenersRequest> requests = request.getEventListenersRequests();
         if (requests != null && !requests.isEmpty()) {
@@ -393,7 +396,7 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     private List<EndpointAttachResponse> processEndpointAttachRequests(String endpointId, int requestHash, UserClientSync syncRequest,
-            EndpointProfileDto profile) {
+                                                                       EndpointProfileDto profile) {
         List<EndpointAttachRequest> requests = syncRequest.getEndpointAttachRequests();
         if (requests != null && !requests.isEmpty()) {
             LOG.debug("[{}][{}] processing {} endpoint attach requests", endpointId, requestHash, requests.size());
@@ -411,7 +414,7 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     private List<EndpointDetachResponse> processEndpointDetachRequests(String endpointId, int requestHash, UserClientSync syncRequest,
-            EndpointProfileDto profile) {
+                                                                       EndpointProfileDto profile) {
         List<EndpointDetachRequest> requests = syncRequest.getEndpointDetachRequests();
         if (requests != null && !requests.isEmpty()) {
             LOG.debug("[{}] processing {} endpoint detach requests", endpointId, requests.size());
@@ -431,8 +434,7 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Builds the notification sync response.
      *
-     * @param notificationResponse
-     *            the notification response
+     * @param notificationResponse the notification response
      * @return the notification sync response
      */
     private static NotificationServerSync buildNotificationSyncResponse(GetNotificationResponse notificationResponse) {
@@ -454,14 +456,14 @@ public class DefaultOperationsService implements OperationsService {
                 topic.setId(topicDto.getId());
                 topic.setName(topicDto.getName());
                 switch (topicDto.getType()) {
-                case MANDATORY:
-                    topic.setSubscriptionType(SubscriptionType.MANDATORY);
-                    break;
-                case OPTIONAL:
-                    topic.setSubscriptionType(SubscriptionType.OPTIONAL);
-                    break;
-                default:
-                    break;
+                    case MANDATORY:
+                        topic.setSubscriptionType(SubscriptionType.MANDATORY);
+                        break;
+                    case OPTIONAL:
+                        topic.setSubscriptionType(SubscriptionType.OPTIONAL);
+                        break;
+                    default:
+                        break;
                 }
                 topicList.add(topic);
             }
@@ -478,8 +480,7 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Convert notification.
      *
-     * @param notificationDto
-     *            the notification dto
+     * @param notificationDto the notification dto
      * @return the notification
      */
     private static Notification convertNotification(NotificationDto notificationDto) {
@@ -487,14 +488,14 @@ public class DefaultOperationsService implements OperationsService {
         notification.setBody(ByteBuffer.wrap(notificationDto.getBody()));
         notification.setTopicId(notificationDto.getTopicId());
         switch (notificationDto.getType()) {
-        case SYSTEM:
-            notification.setType(NotificationType.SYSTEM);
-            break;
-        case USER:
-            notification.setType(NotificationType.CUSTOM);
-            break;
-        default:
-            break;
+            case SYSTEM:
+                notification.setType(NotificationType.SYSTEM);
+                break;
+            case USER:
+                notification.setType(NotificationType.CUSTOM);
+                break;
+            default:
+                break;
         }
         if (notificationDto.getSecNum() >= 0) {
             notification.setSeqNumber(notificationDto.getSecNum());
@@ -508,11 +509,9 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Builds the conf sync response.
      *
-     * @param deltaResponse
-     *            the conf response
+     * @param deltaResponse the conf response
      * @return the conf sync response
-     * @throws GetDeltaException
-     *             the get delta exception
+     * @throws GetDeltaException the get delta exception
      */
     private static ConfigurationServerSync buildConfSyncResponse(GetDeltaResponse deltaResponse) throws GetDeltaException {
         ConfigurationServerSync response = new ConfigurationServerSync();
@@ -533,15 +532,15 @@ public class DefaultOperationsService implements OperationsService {
             }
         }
         switch (deltaResponse.getResponseType()) {
-        case CONF_RESYNC:
-            response.setResponseStatus(SyncResponseStatus.RESYNC);
-            break;
-        case DELTA:
-            response.setResponseStatus(SyncResponseStatus.DELTA);
-            break;
-        default:
-            response.setResponseStatus(SyncResponseStatus.NO_DELTA);
-            break;
+            case CONF_RESYNC:
+                response.setResponseStatus(SyncResponseStatus.RESYNC);
+                break;
+            case DELTA:
+                response.setResponseStatus(SyncResponseStatus.DELTA);
+                break;
+            default:
+                response.setResponseStatus(SyncResponseStatus.NO_DELTA);
+                break;
         }
         return response;
     }
@@ -549,12 +548,9 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Calculate notification delta.
      *
-     * @param syncRequest
-     *            the sync request
-     * @param profile
-     *            the profile
-     * @param historyDelta
-     *            the history delta
+     * @param syncRequest  the sync request
+     * @param profile      the profile
+     * @param historyDelta the history delta
      * @return the gets the notification response
      */
     private GetNotificationResponse calculateNotificationDelta(String appToken, NotificationClientSync syncRequest, SyncContext context) {
@@ -566,15 +562,11 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Calculate configuration delta.
      *
-     * @param appToken
-     *            the application token
-     * @param request
-     *            the request
-     * @param context
-     *            the context
+     * @param appToken the application token
+     * @param request  the request
+     * @param context  the context
      * @return the gets the delta response
-     * @throws GetDeltaException
-     *             the get delta exception
+     * @throws GetDeltaException the get delta exception
      */
     private GetDeltaResponse calculateConfigurationDelta(String appToken, ConfigurationClientSync request, SyncContext context)
             throws GetDeltaException {
@@ -592,15 +584,10 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Fetch history.
      *
-     * @param endpointKey
-     *            the endpoint id
-     * @param applicationToken
-     *            the application token
-     * @param profile
-     *            the profile
-     * @param endSeqNumber
-     *            the end seq number
-     *
+     * @param endpointKey      the endpoint id
+     * @param applicationToken the application token
+     * @param profile          the profile
+     * @param endSeqNumber     the end seq number
      * @return the history delta
      */
     private HistoryDelta fetchHistory(String endpointKey, String applicationToken, EndpointProfileDto profile, int endSeqNumber) {
@@ -617,8 +604,7 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Checks if is first request.
      *
-     * @param profile
-     *            the profile
+     * @param profile the profile
      * @return true, if is first request
      */
     public static boolean isFirstRequest(EndpointProfileDto profile) {
@@ -628,8 +614,7 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * To byte array.
      *
-     * @param buffer
-     *            the buffer
+     * @param buffer the buffer
      * @return the byte[]
      */
     private static byte[] toByteArray(ByteBuffer buffer) {

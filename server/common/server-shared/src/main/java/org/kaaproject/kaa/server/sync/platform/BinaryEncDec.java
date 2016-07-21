@@ -212,6 +212,7 @@ public class BinaryEncDec implements PlatformEncDec {
         LOG.trace("received data for protocol id {} and version {} that contain {} extensions", protocolId, protocolVersion,
                 extensionsCount);
         ClientSync sync = parseExtensions(buf, protocolVersion, extensionsCount);
+        sync.setUseConfigurationRawSchema(false);
         LOG.trace("Decoded binary data {}", sync);
         return sync;
     }
