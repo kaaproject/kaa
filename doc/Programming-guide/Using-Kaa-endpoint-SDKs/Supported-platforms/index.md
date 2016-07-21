@@ -45,7 +45,6 @@ sort_idx: 60
 | Windows            | [{{X}}]({{WC}}) |                    |                        |                      |
 | Raspberry Pi       | [{{X}}]({{RC}}) | [{{X}}]({{RCPP}})  |                        |                      |
 | Beaglebone         | [{{X}}]({{BC}}) | [{{X}}]({{BCPP}})  |                        |                      |
-| Snappy Ubuntu Core | [{{X}}]({{SC}}) |                    |                        |                      |
 | QNX Neutrino RTOS  | [{{X}}]({{QC}}) |                    |                        |                      |
 | Samsung Artik 5    |                 | [{{X}}]({{SCPP}})  |                        |                      |
 | Intel Edison       |                 | [{{X}}]({{ICPP}})  |                        |                      |
