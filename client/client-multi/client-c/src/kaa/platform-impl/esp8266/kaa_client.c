@@ -273,8 +273,8 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
         if (kaa_client->external_process) {
             if (KAA_TIME() - kaa_client->external_process_last_call >= (kaa_time_t)kaa_client->external_process_max_delay) {
                 kaa_client->external_process(kaa_client->external_process_context);
+                kaa_client->external_process_last_call = KAA_TIME();
             }
-            kaa_client->external_process_last_call = KAA_TIME();
         }
         if (kaa_process_failover(kaa_client->context)) {
             kaa_client->bootstrap_complete = false;
