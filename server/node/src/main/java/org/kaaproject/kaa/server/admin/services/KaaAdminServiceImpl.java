@@ -2638,23 +2638,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private JsonNode injectUuids(JsonNode json) {
-        boolean containerWithoutId = json.isContainerNode() && !json.has("__uuid");
-        boolean notArray = !(json instanceof ArrayNode);
-        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
-
-        if (containerWithoutId && notArray && childIsNotArray) {
-            ((ObjectNode)json).put("__uuid", (Integer)null);
-        }
-
-        for (JsonNode node : json) {
-            if (node.isContainerNode())
-                injectUuids(node);
-        }
-
-        return json;
-    }
-
     private void checkExpiredDate(NotificationDto notification) throws KaaAdminServiceException {
         if (null != notification.getExpiredAt() && notification.getExpiredAt().before(new Date())) {
             throw new IllegalArgumentException("Overdue expiry time for notification!");
