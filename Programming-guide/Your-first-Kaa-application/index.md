@@ -500,6 +500,7 @@ public class FirstDemo {
          *  Start log upload when there is records in storage.
          */
         RecordCountLogUploadStrategy strategy = new RecordCountLogUploadStrategy(1);
+        strategy.setMaxParrelelUpload(1);
         kaaClient.setLogUploadStrategy(strategy);
 
         /*
