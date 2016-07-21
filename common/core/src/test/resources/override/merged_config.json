@@ -3,7 +3,7 @@
         {
             "testField4": 2,
             "__uuid": {
-                "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+                "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEA=="
             }
         }
     ],
@@ -13,7 +13,7 @@
         "string": "str"
     },
     "__uuid": {
-        "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+        "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEA=="
     },
     "testField1": null,
     "testField2": {
@@ -21,29 +21,29 @@
             {
                 "testField4": 1,
                 "__uuid": {
-                    "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+                    "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEA=="
                 }
             },
             {
                 "testField4": 2,
                 "__uuid": {
-                    "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+                    "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEA=="
                 }
             },
             {
                 "testField4": 3,
                 "__uuid": {
-                    "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+                    "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEA=="
                 }
             }, {
                 "testField4": 4,
                 "__uuid": {
-                    "org.kaaproject.configuration.uuidT": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001"
+                    "org.kaaproject.configuration.uuidT": "AAAAAAAAAAAAAAAAAAAAAQ=="
                 }
             }
         ],
         "__uuid": {
-            "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0010"
+            "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEA=="
         }
     },
     "testField5": {
@@ -55,12 +55,12 @@
                 {
                     "testField4": 5,
                     "__uuid": {
-                        "org.kaaproject.configuration.uuidT": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001"
+                        "org.kaaproject.configuration.uuidT": "AAAAAAAAAAAAAAAAAAAAAQ=="
                     }
                 }
             ],
             "__uuid": {
-                "org.kaaproject.configuration.uuidT": "\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000B\f\r\u000E\u000F\u0011"
+                "org.kaaproject.configuration.uuidT": "AQIDBAUGBwgJCgsMDQ4PEQ=="
             }
         }
     },

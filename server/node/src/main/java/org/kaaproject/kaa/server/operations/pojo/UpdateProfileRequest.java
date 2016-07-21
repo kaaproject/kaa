@@ -31,16 +31,12 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  */
 public class UpdateProfileRequest {
 
-    /** The endpoint key hash. */
     private final EndpointObjectHash endpointKeyHash;
 
-    /** The profile. */
     private final byte[] profile;
 
-    /** The app token. */
     private final String appToken;
 
-    /** The sdk token. */
     private final String sdkToken;
 
     private final String accessToken;

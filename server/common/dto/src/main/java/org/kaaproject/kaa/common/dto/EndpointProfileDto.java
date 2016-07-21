@@ -58,6 +58,7 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
     private String serverHash;
     private String sdkToken;
     private Long version;
+    private boolean useConfigurationRawSchema;
     
     @Override
     public String getId() {
@@ -283,6 +284,15 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
         this.version = version;
     }
 
+
+    public boolean isUseConfigurationRawSchema() {
+        return useConfigurationRawSchema;
+    }
+
+    public void setUseConfigurationRawSchema(boolean useConfigurationRawSchema) {
+        this.useConfigurationRawSchema = useConfigurationRawSchema;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -349,6 +359,10 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
             return false;
         }
 
+        if (useConfigurationRawSchema != that.useConfigurationRawSchema) {
+            return false;
+        }
+
         return true;
     }
 
@@ -371,8 +385,10 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
         result = 31 * result + systemNfVersion;
         result = 31 * result + userNfVersion;
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
+        result = 31 * result + (useConfigurationRawSchema ? 1 : 0);
         return result;
     }
+
 
     @Override
     public String toString() {
@@ -423,6 +439,8 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
         builder.append(serverHash);
         builder.append(", sdkToken=");
         builder.append(sdkToken);
+        builder.append(", useRawSchema=");
+        builder.append(useConfigurationRawSchema);
         builder.append("]");
         return builder.toString();
     }

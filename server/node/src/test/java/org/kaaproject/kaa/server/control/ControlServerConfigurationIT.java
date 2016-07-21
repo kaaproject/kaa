@@ -147,9 +147,9 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     public void testGetVacantSchemasByEndpointGroupId() throws Exception {
 
         EndpointGroupDto endpointGroup = createEndpointGroup();
-        ConfigurationSchemaDto configurationSchema1 = createConfigurationSchema(endpointGroup.getApplicationId());
-        ConfigurationSchemaDto configurationSchema2 = createConfigurationSchema(endpointGroup.getApplicationId());
-        ConfigurationSchemaDto configurationSchema3 = createConfigurationSchema(endpointGroup.getApplicationId());
+        ConfigurationSchemaDto configurationSchema1 = createConfigurationSchema(endpointGroup.getApplicationId(), null);
+        ConfigurationSchemaDto configurationSchema2 = createConfigurationSchema(endpointGroup.getApplicationId(), null);
+        ConfigurationSchemaDto configurationSchema3 = createConfigurationSchema(endpointGroup.getApplicationId(), null);
 
         createConfiguration(configurationSchema1.getId(), endpointGroup.getId());
         createConfiguration(configurationSchema2.getId(), endpointGroup.getId());

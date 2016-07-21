@@ -242,12 +242,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ConfigurationDto createDefaultConfigurationWithSchema(String appId, String groupId, String createdUsername) {
         ConfigurationSchemaDto schema = new ConfigurationSchemaDto();
         schema.setApplicationId(appId);
-        DataSchema confSchema = new KaaSchemaFactoryImpl().createDataSchema(getStringFromFile(DEFAULT_CONFIGURATION_SCHEMA_FILE, ApplicationServiceImpl.class));
-        if (!confSchema.isEmpty()) {
-            schema.setSchema(confSchema.getRawSchema());
-        } else {
-            throw new RuntimeException("Can't read default configuration schema."); //NOSONAR
-        }
+        CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+        schema.setCtlSchemaId(ctlSchema.getId());
         schema.setName(DEFAULT_SCHEMA_NAME);
         schema.setCreatedUsername(createdUsername);
         ConfigurationSchemaDto savedSchema = configurationService.saveConfSchema(schema, groupId);
@@ -279,7 +275,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         notificationSchemaDto.setType(NotificationTypeDto.USER);
         notificationSchemaDto = notificationService.saveNotificationSchema(notificationSchemaDto);
         if (notificationSchemaDto == null) {
-            throw new RuntimeException("Can't save default profile schema "); //NOSONAR
+            throw new RuntimeException("Can't save default notification schema "); //NOSONAR
         }
         return notificationSchemaDto;
     }

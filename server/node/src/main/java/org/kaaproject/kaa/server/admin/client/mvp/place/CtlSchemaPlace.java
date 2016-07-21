@@ -182,7 +182,9 @@ public class CtlSchemaPlace extends TreePlace {
             if (schemaType != null) { 
                 if (schemaType == SchemaType.ENDPOINT_PROFILE) {
                     return new ProfileSchemasPlace(applicationId);
-                } else if (schemaType == SchemaType.SERVER_PROFILE) {
+                } else if (schemaType == SchemaType.CONFIGURATION) {
+                    return new ConfigurationSchemasPlace(applicationId);
+                } else if (schemaType == SchemaType.SERVER_PROFILE){
                     return new ServerProfileSchemasPlace(applicationId);
                 } else if (schemaType == SchemaType.NOTIFICATION) {
                     return new NotificationSchemasPlace(applicationId);
@@ -199,10 +201,12 @@ public class CtlSchemaPlace extends TreePlace {
                 return new TenantCtlSchemasPlace();
             }
         }
+        return null;
     }
     
-    public static enum SchemaType {
-        
+    public enum SchemaType {
+
+        CONFIGURATION,
         ENDPOINT_PROFILE,
         SERVER_PROFILE,
         NOTIFICATION,

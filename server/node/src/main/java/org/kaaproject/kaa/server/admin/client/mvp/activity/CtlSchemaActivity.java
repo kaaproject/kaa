@@ -28,15 +28,26 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.*;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
+import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.schema.*;
+import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -154,8 +165,16 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
     @Override
     protected void onEntityRetrieved() {
         if (create) {
-            KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getMetaInfoId(), 
-                    place.getVersion(), place.getApplicationId(), 
+            ConverterType converterType;
+
+            if (place.getSchemaType() == SchemaType.CONFIGURATION) {
+                converterType = ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
+            } else {
+                converterType = ConverterType.FORM_AVRO_CONVERTER;
+            }
+
+            KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getMetaInfoId(),
+                    place.getVersion(), place.getApplicationId(), converterType,
                     new BusyAsyncCallback<CtlSchemaFormDto>() {
                         @Override
                         public void onSuccessImpl(CtlSchemaFormDto result) {
@@ -169,7 +188,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         public void onFailureImpl(Throwable caught) {
                             Utils.handleException(caught, detailsView);
                         }
-            });
+                    });
         } else {
             if (entity == null) {
                 goTo(place.getPreviousPlace());
@@ -252,6 +271,8 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         } else if (place.getSchemaType() != null) {
                             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
                                 goTo(new ProfileSchemasPlace(place.getApplicationId()));
+                            } else if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                                goTo(new ConfigurationSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.NOTIFICATION) {
@@ -379,6 +400,18 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
+            } else if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                KaaAdmin.getDataSource().createConfigurationSchemaFormCtlSchema(entity,
+                        new BusyAsyncCallback<ConfigurationSchemaViewDto>() {
+                            @Override
+                            public void onFailureImpl(Throwable caught) {
+                                callback.onFailure(caught);
+                            }
+                            @Override
+                            public void onSuccessImpl(ConfigurationSchemaViewDto result) {
+                                callback.onSuccess(null);
+                            }
+                        });
             } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                 KaaAdmin.getDataSource().createServerProfileSchemaFormCtlSchema(entity, 
                         new BusyAsyncCallback<ServerProfileSchemaViewDto>() {
@@ -417,7 +450,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 });
             }
         } else {
-            KaaAdmin.getDataSource().editCTLSchemaForm(entity, callback);
+            KaaAdmin.getDataSource().editCTLSchemaForm(entity, ConverterType.FORM_AVRO_CONVERTER, callback);
         }
     }
 

@@ -24,6 +24,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
@@ -66,6 +67,7 @@ public class LogSchemaActivity
         KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
                 null,
                 applicationId,
+                ConverterType.FORM_AVRO_CONVERTER,
                 callback);
     }
 

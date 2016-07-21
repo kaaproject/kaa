@@ -54,9 +54,9 @@
 #
 #	- `cc32xx`
 #	- `esp8266`
-#	- `x86-64`
+#	- `posix`
 #
-#	Default: `x86-64`
+#	Default: `posix`
 #
 #	- `KAA_UNITETESTS_COMPILE` - compile unit tests.
 #
@@ -119,7 +119,7 @@ set(KAA_THIRDPARTY_LIBRARIES "")
 
 # Sets the default build platform to POSIX.
 if (NOT DEFINED KAA_PLATFORM)
-    set(KAA_PLATFORM "x86-64")
+    set(KAA_PLATFORM "posix")
 endif ()
 
 #

@@ -52,6 +52,8 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -181,7 +183,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The merged configuration memorizer. */
-    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The delta memorizer. */
     private final CacheTemporaryMemorizer<DeltaCacheKey, ConfigurationCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
@@ -835,14 +837,13 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable(value = "mergedConfigurations", key = "#key")
-    public BaseData getMergedConfiguration(final List<EndpointGroupStateDto> key,
-            final Computable<List<EndpointGroupStateDto>, BaseData> worker) {
-        return mergedConfigurationMemorizer.compute(key, new Computable<List<EndpointGroupStateDto>, BaseData>() {
-
+    public Pair<BaseData, RawData> getMergedConfiguration(final List<EndpointGroupStateDto> key,
+                                                          final Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker) {
+        return mergedConfigurationMemorizer.compute(key, new Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>>() {
             @Override
-            public BaseData compute(List<EndpointGroupStateDto> key) {
+            public Pair<BaseData, RawData> compute(List<EndpointGroupStateDto> key) {
                 LOG.debug("Fetching result for getMergedConfiguration");
-                BaseData result = worker.compute(key);
+                Pair<BaseData, RawData> result = worker.compute(key);
                 return result;
             }
         });

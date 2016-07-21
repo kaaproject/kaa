@@ -20,10 +20,17 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +38,11 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
+import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
@@ -69,25 +78,105 @@ public class KaaClientPropertiesStateTest {
         return props;
     }
 
-    @Test
-    public void testKeys() throws Exception {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
-        state.getPublicKey();
-        state.getPrivateKey();
-        File pub = new File(WORK_DIR + KEY_PUBLIC);
-        File priv = new File(WORK_DIR + KEY_PRIVATE);
-        assertArrayEquals(KeyUtil.getPrivate(priv).getEncoded(), state.getPrivateKey().getEncoded());
-        assertArrayEquals(KeyUtil.getPublic(pub).getEncoded(), state.getPublicKey().getEncoded());
-        pub.delete();
-        priv.delete();
-        state.getPrivateKey();
-        state.getPublicKey();
-        assertNotNull(state.getPrivateKey().getEncoded());
-        assertNotNull(state.getPublicKey().getEncoded());
+    @Test(expected = KaaRuntimeException.class)
+    public void testInitKeys() throws IOException, InvalidKeyException {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(),
+                getProperties());
+
+        assertNull(state.getPrivateKey());
+        assertNull(state.getPublicKey());
     }
 
     @Test
-    public void testProfileHash() throws IOException  {
+    public void testGenerateKeys() throws IOException, InvalidKeyException {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(),
+                getProperties(), true);
+
+        assertNotNull(state.getPrivateKey());
+        assertNotNull(state.getPublicKey());
+    }
+
+    @Test
+    public void testDefaultStrategyKeys() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(),
+                getProperties());
+
+        PersistentStorage storage = new FilePersistentStorage();
+        String clientPrivateKeyFileLocation = getProperties().getPrivateKeyFileFullName();
+        String clientPublicKeyFileLocation = getProperties().getPublicKeyFileFullName();
+
+        OutputStream privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
+        OutputStream publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
+        KeyPair keyPair = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
+
+        assertArrayEquals(keyPair.getPrivate().getEncoded(), state.getPrivateKey().getEncoded());
+        assertArrayEquals(keyPair.getPublic().getEncoded(), state.getPublicKey().getEncoded());
+
+        //clean
+        new File(WORK_DIR + KEY_PUBLIC).delete();
+        new File(WORK_DIR + KEY_PRIVATE).delete();
+    }
+
+    @Test(expected = KaaRuntimeException.class)
+    public void testDefaultStrategyRecreateKeys() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(),
+                getProperties());
+
+        PersistentStorage storage = new FilePersistentStorage();
+        String clientPrivateKeyFileLocation = getProperties().getPrivateKeyFileFullName();
+        String clientPublicKeyFileLocation = getProperties().getPublicKeyFileFullName();
+
+        OutputStream privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
+        OutputStream publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
+        KeyPair keyPair = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
+
+        assertArrayEquals(keyPair.getPrivate().getEncoded(), state.getPrivateKey().getEncoded());
+        assertArrayEquals(keyPair.getPublic().getEncoded(), state.getPublicKey().getEncoded());
+
+        File pub = new File(WORK_DIR + KEY_PUBLIC);
+        File priv = new File(WORK_DIR + KEY_PRIVATE);
+
+        //clean
+        Files.delete(Paths.get(WORK_DIR + KEY_PUBLIC));
+        new File(WORK_DIR + KEY_PRIVATE).delete();
+        state.clean();
+
+        state.getPublicKey();
+        state.getPrivateKey();
+    }
+
+    @Test(expected = KaaRuntimeException.class)
+    public void testInitKeys2() throws IOException, InvalidKeyException {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(),
+                getProperties());
+
+        assertNull(state.getPrivateKey());
+        assertNull(state.getPublicKey());
+    }
+
+    @Test
+    public void testRecreateKeys() throws IOException, InvalidKeyException {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(),
+                getProperties(), true);
+
+        state.getPublicKey();
+        state.getPrivateKey();
+
+        File pub = new File(WORK_DIR + KEY_PUBLIC);
+        File priv = new File(WORK_DIR + KEY_PRIVATE);
+
+        assertArrayEquals(KeyUtil.getPrivate(priv).getEncoded(), state.getPrivateKey().getEncoded());
+        assertArrayEquals(KeyUtil.getPublic(pub).getEncoded(), state.getPublicKey().getEncoded());
+
+        pub.delete();
+        priv.delete();
+
+        assertNotNull(state.getPublicKey());
+        assertNotNull(state.getPrivateKey());
+    }
+
+    @Test
+    public void testProfileHash() throws IOException {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
         state.setProfileHash(hash);
@@ -95,7 +184,7 @@ public class KaaClientPropertiesStateTest {
     }
 
     @Test
-    public void testNfSubscription() throws IOException  {
+    public void testNfSubscription() throws IOException {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
         Topic topic1 = Topic.newBuilder().setId(1234).setName("testName")
@@ -120,12 +209,12 @@ public class KaaClientPropertiesStateTest {
         state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
         assertEquals(expected, state.getNfSubscriptions());
-        
+
         state.addTopicSubscription(topic1.getId());
-        
+
         expected.put(topic1.getId(), 0);
         assertEquals(expected, state.getNfSubscriptions());
-        
+
         state.updateTopicSubscriptionInfo(topic1.getId(), 5);
         expected.put(topic1.getId(), 5);
         assertEquals(expected, state.getNfSubscriptions());
@@ -178,7 +267,7 @@ public class KaaClientPropertiesStateTest {
     }
 
     @Test
-    public void testNeedProfileResync() throws Exception{
+    public void testNeedProfileResync() throws Exception {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         Assert.assertFalse(state.isNeedProfileResync());
 

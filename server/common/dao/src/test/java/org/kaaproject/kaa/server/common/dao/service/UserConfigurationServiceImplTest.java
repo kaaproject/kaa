@@ -45,7 +45,7 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void findUserConfigurationByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        ConfigurationSchemaDto schema = generateConfSchemaDto(appDto.getId(), 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, appDto.getId(), 1).get(0);
         EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
@@ -71,7 +71,7 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void removeByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        ConfigurationSchemaDto schema = generateConfSchemaDto(appDto.getId(), 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, appDto.getId(), 1).get(0);
         generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
