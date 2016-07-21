@@ -568,7 +568,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     @Override
     public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto)
             throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_USER, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.KAA_ADMIN, KaaAuthorityDto.TENANT_ADMIN);
         try {
             checkUserProfile(userProfileUpdateDto);
             User user = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
