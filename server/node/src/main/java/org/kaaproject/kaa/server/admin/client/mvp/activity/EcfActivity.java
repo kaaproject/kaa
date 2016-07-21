@@ -21,7 +21,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.data.EcfSchemasDataProvider;
@@ -51,7 +51,7 @@ public class EcfActivity
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
         if (!create) {
-            AbstractGrid<EventSchemaVersionDto, Integer> ecfSchemasGrid = detailsView.getEcfSchemasGrid();
+            AbstractGrid<EventClassFamilyVersionDto, Integer> ecfSchemasGrid = detailsView.getEcfSchemasGrid();
             ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid, detailsView);
         }
     }
@@ -107,7 +107,7 @@ public class EcfActivity
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
         if (!create) {
-            ecfSchemasDataProvider.setSchemas(entity.getSchemas());
+//            ecfSchemasDataProvider.setSchemas(entity.getSchemas());
             ecfSchemasDataProvider.reload();
         }
     }

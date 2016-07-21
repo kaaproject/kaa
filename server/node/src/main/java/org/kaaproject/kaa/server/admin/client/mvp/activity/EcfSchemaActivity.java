@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
@@ -87,17 +87,17 @@ public class EcfSchemaActivity
             });
             detailsView.getEcfSchemaForm().setFormDataLoader(this);
         } else {
-            EventSchemaVersionDto schema = null;
-            for (EventSchemaVersionDto schemaVersion : entity.getSchemas()) {
-                if (schemaVersion.getVersion()==place.getVersion()) {
-                    schema = schemaVersion;
-                    break;
-                }
-            }
+            EventClassFamilyVersionDto schema = null;
+//            for (EventClassFamilyVersionDto schemaVersion : entity.getSchemas()) {
+//                if (schemaVersion.getVersion()==place.getVersion()) {
+//                    schema = schemaVersion;
+//                    break;
+//                }
+//            }
             detailsView.getVersion().setValue(""+schema.getVersion());
             detailsView.getCreatedUsername().setValue(schema.getCreatedUsername());
             detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
-            detailsView.getEcfSchemaForm().setValue(schema.getSchemaForm());
+//            detailsView.getEcfSchemaForm().setValue(schema.getSchemaForm());
         }
     }
 
