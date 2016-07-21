@@ -1019,8 +1019,12 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             logSchema.setApplicationId(applicationId);
         }
+
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        logSchema.setCtlSchemaId(ctlSchema.getId());
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema, TEST_LOG_SCHEMA);
+        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema);
         return savedLogSchema;
     }
 

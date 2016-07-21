@@ -762,23 +762,33 @@ public class DataSource {
                 });
     }
 
-    public void editLogSchemaForm(LogSchemaDto logSchema,
-            final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.editLogSchemaForm(logSchema,
-                new DataCallback<LogSchemaDto>(callback) {
+    public void saveLogSchemaView(LogSchemaViewDto logSchema,
+            final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.saveLogSchemaView(logSchema,
+                new DataCallback<LogSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(LogSchemaDto result) {
-                        eventBus.fireEvent(new DataEvent(LogSchemaDto.class));
+                    protected void onResult(LogSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(LogSchemaViewDto.class));
                     }
                 });
     }
 
-    public void getLogSchemaForm(String logSchemaId,
-            final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.getLogSchemaForm(logSchemaId,
-                new DataCallback<LogSchemaDto>(callback) {
+    public void getLogSchemaView(String logSchemaId,
+            final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.getLogSchemaView(logSchemaId,
+                new DataCallback<LogSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(LogSchemaDto result) {
+                    protected void onResult(LogSchemaViewDto result) {
+                    }
+                });
+    }
+
+    public void createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
+                                 final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.createLogSchemaFormCtlSchema(ctlSchemaForm,
+                new DataCallback<LogSchemaViewDto>(callback) {
+                    @Override
+                    protected void onResult(LogSchemaViewDto result) {
                     }
                 });
     }

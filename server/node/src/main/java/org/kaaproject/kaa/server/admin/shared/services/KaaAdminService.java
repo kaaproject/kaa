@@ -221,11 +221,15 @@ public interface KaaAdminService extends RemoteService {
 
     LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException;
 
-    LogSchemaDto editLogSchema(LogSchemaDto profileSchema, byte[] schema) throws KaaAdminServiceException;
+    LogSchemaDto saveLogSchema(LogSchemaDto profileSchema) throws KaaAdminServiceException;
 
-    LogSchemaDto getLogSchemaForm(String logSchemaId) throws KaaAdminServiceException;
+    LogSchemaViewDto getLogSchemaView(String logSchemaId) throws KaaAdminServiceException;
 
-    LogSchemaDto editLogSchemaForm(LogSchemaDto logSchema) throws KaaAdminServiceException;
+    LogSchemaViewDto saveLogSchemaView(LogSchemaViewDto logSchema) throws KaaAdminServiceException;
+
+    LogSchemaViewDto createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+
+    String getFlatSchemaByCtlSchemaId(String logSchemaId) throws KaaAdminServiceException;
 
     List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws KaaAdminServiceException;
 

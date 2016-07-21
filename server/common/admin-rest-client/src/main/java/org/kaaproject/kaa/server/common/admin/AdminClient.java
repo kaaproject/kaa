@@ -246,19 +246,16 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveNotificationSchema", notificationSchema, NotificationSchemaDto.class);
     }
 
-    public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {
-        return createLogSchema(logSchema, getFileResource(schemaResource));
+    public LogSchemaDto createLogSchema(LogSchemaDto logSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "createLogSchema", logSchema, LogSchemaDto.class);
     }
 
-    public LogSchemaDto createLogSchema(LogSchemaDto logSchema, ByteArrayResource schemaResource) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("logSchema", logSchema);
-        params.add("file", schemaResource);
-        return restTemplate.postForObject(restTemplate.getUrl() + "createLogSchema", params, LogSchemaDto.class);
+    public LogSchemaDto saveLogSchema(LogSchemaDto logSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "saveLogSchema", logSchema, LogSchemaDto.class);
     }
 
-    public LogSchemaDto editLogSchema(LogSchemaDto logSchema) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "editLogSchema", logSchema, LogSchemaDto.class);
+    public String getFlatSchemaByCtlSchemaId(String id) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getFlatSchemaByCtlSchemaId?id={id}", String.class, id);
     }
 
     public TopicDto createTopic(TopicDto topic) throws Exception {

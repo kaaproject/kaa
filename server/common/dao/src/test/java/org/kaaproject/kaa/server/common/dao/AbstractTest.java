@@ -486,17 +486,27 @@ public class AbstractTest {
 
     protected List<LogSchemaDto> generateLogSchemaDto(String appId, int count) {
         List<LogSchemaDto> schemas = Collections.emptyList();
+        ApplicationDto app = null;
         try {
             if (isBlank(appId)) {
-                appId = generateApplicationDto().getId();
+                app = generateApplicationDto();
+                appId = app.getId();
+            } else {
+                app = applicationService.findAppById(appId);
             }
             LogSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schemaDto = new LogSchemaDto();
                 schemaDto.setApplicationId(appId);
-                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"))
-                        .getRawSchema());
+                CTLSchemaDto ctlSchema = null;
+                try {
+                    ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+                } catch (DatabaseProcessingException e) {
+                    ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
+
+                }
+                schemaDto.setCtlSchemaId(ctlSchema.getId());
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setName("Test Name");
                 schemaDto = logSchemaService.saveLogSchema(schemaDto);
@@ -587,7 +597,7 @@ public class AbstractTest {
         CTLSchemaDto ctlSchema = null;
         try {
             ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
-        } catch (DatabaseProcessingException e){
+        } catch (DatabaseProcessingException e) {
             ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
         }
