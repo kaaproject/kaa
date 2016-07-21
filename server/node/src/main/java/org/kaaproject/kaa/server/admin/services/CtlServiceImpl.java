@@ -52,7 +52,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("ctlService")
-public class CtlServiceImpl extends AdminServiceImpl implements CtlService {
+public class CtlServiceImpl extends AbstractAdminService implements CtlService {
 
     @Override
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws KaaAdminServiceException {

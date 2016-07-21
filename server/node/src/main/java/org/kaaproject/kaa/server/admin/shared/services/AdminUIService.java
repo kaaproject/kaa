@@ -52,4 +52,3 @@ public interface AdminUIService extends RemoteService {
     RecordField getRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
 
 }
-

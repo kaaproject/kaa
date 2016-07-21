@@ -32,7 +32,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("verifierService")
-public class VerifierServiceImpl extends AdminServiceImpl implements VerifierService {
+public class VerifierServiceImpl extends AbstractAdminService implements VerifierService {
 
     @Override
     public List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException {

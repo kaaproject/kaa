@@ -52,7 +52,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("notificationService")
-public class NotificationServiceImpl extends AdminServiceImpl implements NotificationService {
+public class NotificationServiceImpl extends AbstractAdminService implements NotificationService {
 
     /**
      * The Constant LOG.

@@ -39,7 +39,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("eventService")
-public class EventServiceImpl extends AdminServiceImpl implements EventService {
+public class EventServiceImpl extends AbstractAdminService implements EventService {
 
     @Override
     public List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException {

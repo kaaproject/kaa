@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service("tenantService")
-public class TenantServiceImpl extends AdminServiceImpl implements TenantService {
+public class TenantServiceImpl extends AbstractAdminService implements TenantService {
 
     /**
      * The Constant LOG.

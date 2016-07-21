@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service("deviceManagementService")
-public class DeviceManagementServiceImpl extends AdminServiceImpl implements DeviceManagementService {
+public class DeviceManagementServiceImpl extends AbstractAdminService implements DeviceManagementService {
 
     @Override
     public CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException {

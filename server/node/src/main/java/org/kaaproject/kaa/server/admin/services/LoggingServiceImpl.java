@@ -38,7 +38,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("loggingService")
-public class LoggingServiceImpl extends AdminServiceImpl implements LoggingService {
+public class LoggingServiceImpl extends AbstractAdminService implements LoggingService {
 
     /**
      * The Constant LOG.

@@ -62,12 +62,12 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("profileService")
-public class ProfileServiceImpl extends AdminServiceImpl implements ProfileService {
+public class ProfileServiceImpl extends AbstractAdminService implements ProfileService {
 
     /**
      * The Constant LOG.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(AdminServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProfileServiceImpl.class);
 
     @Autowired
     CtlService ctlService;

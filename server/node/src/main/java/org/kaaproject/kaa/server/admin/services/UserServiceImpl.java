@@ -31,7 +31,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("userService")
-public class UserServiceImpl extends AdminServiceImpl implements UserService {
+public class UserServiceImpl extends AbstractAdminService implements UserService {
 
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto getUserProfile() throws KaaAdminServiceException {

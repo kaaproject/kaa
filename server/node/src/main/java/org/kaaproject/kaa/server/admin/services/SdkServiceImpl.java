@@ -47,7 +47,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("sdkService")
-public class SdkServiceImpl extends AdminServiceImpl implements SdkService {
+public class SdkServiceImpl extends AbstractAdminService implements SdkService {
 
     @Autowired
     ApplicationService applicationService;

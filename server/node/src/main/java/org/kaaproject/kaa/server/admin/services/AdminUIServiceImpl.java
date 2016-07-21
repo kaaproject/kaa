@@ -33,7 +33,7 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.springframework.stereotype.Service;
 
 @Service("adminUIService")
-public class AdminUIServiceImpl extends AdminServiceImpl implements AdminUIService {
+public class AdminUIServiceImpl extends AbstractAdminService implements AdminUIService {
 
     @Override
     public PropertiesDto getMailProperties() throws KaaAdminServiceException {

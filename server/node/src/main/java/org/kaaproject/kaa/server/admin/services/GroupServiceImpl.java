@@ -49,7 +49,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("groupService")
-public class GroupServiceImpl extends AdminServiceImpl implements GroupService {
+public class GroupServiceImpl extends AbstractAdminService implements GroupService {
 
     /**
      * The Constant MAX_LIMIT.

@@ -73,12 +73,12 @@ import java.util.Set;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
-public abstract class AdminServiceImpl implements InitializingBean {
+public abstract class AbstractAdminService implements InitializingBean {
 
     /**
      * The Constant LOG.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(AdminServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminService.class);
 
     @Autowired
     ControlService controlService;

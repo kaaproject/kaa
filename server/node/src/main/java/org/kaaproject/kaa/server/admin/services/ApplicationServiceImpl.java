@@ -29,7 +29,7 @@ import java.util.List;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("applicationService")
-public class ApplicationServiceImpl extends AdminServiceImpl implements ApplicationService {
+public class ApplicationServiceImpl extends AbstractAdminService implements ApplicationService {
 
     @Override
     public List<ApplicationDto> getApplications() throws KaaAdminServiceException {
