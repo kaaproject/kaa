@@ -10,6 +10,10 @@ sort_idx: 30
 * TOC
 {:toc}
 
+> **Verified against host OS:**
+> 
+> * Ubuntu 14.04 LTS Desktop 64 bit
+
 ## MariaDB cluster setup
 
 We need at least 3 hosts running together with Ubuntu 14.04 Operating system to form a reliable cluster. 
@@ -112,7 +116,7 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   [mysqld]
   wsrep_provider=/usr/lib/galera/libgalera_smm.so
   wsrep_provider_options="gcache.size=256M; gcache.page_size=128M"
-  wsrep_cluster_address=gcomm://ubuntu-node1
+  wsrep_cluster_address=gcomm://172.1.1.1,172.2.2.2,172.3.3.3
   wsrep_cluster_name="MariaDB_Cluster"
   wsrep_node_address="ubuntu-node1"
   wsrep_node_name="ubuntu-node1"
@@ -122,13 +126,13 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_slave_threads=16
 ```
 
-##### Configurations For `ubuntu-node2`
+##### Configurations for `ubuntu-node2`
 
 ```bash
   [mysqld]
   wsrep_provider=/usr/lib/galera/libgalera_smm.so
   wsrep_provider_options="gcache.size=256M; gcache.page_size=128M"
-  wsrep_cluster_address=gcomm://ubuntu-node1
+  wsrep_cluster_address=gcomm://172.1.1.1,172.2.2.2,172.3.3.3
   wsrep_cluster_name="MariaDB_Cluster"
   wsrep_node_address="ubuntu-node2"
   wsrep_node_name="ubuntu-node2"
@@ -138,13 +142,13 @@ Proceed to set the wsrep configurations on each node under the `[mysqld]`, using
   wsrep_slave_threads=16
 ```
 
-##### Configurations For `ubuntu-node3`
+##### Configurations for `ubuntu-node3`
 
 ```bash
   [mysqld]
   wsrep_provider=/usr/lib/galera/libgalera_smm.so
   wsrep_provider_options="gcache.size=256M; gcache.page_size=128M"
-  wsrep_cluster_address=gcomm://ubuntu-node1
+  wsrep_cluster_address=gcomm://172.1.1.1,172.2.2.2,172.3.3.3
   wsrep_cluster_name="MariaDB_Cluster"
   wsrep_node_address="ubuntu-node3"
   wsrep_node_name="ubuntu-node3"
