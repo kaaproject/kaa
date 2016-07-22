@@ -114,7 +114,7 @@ public class CustomCredentialsService implements CredentialsService {
 
 ```
 
-2. In in /usr/lib/kaa-node/conf/kaaNodeContext.xml register CredentialsServiceLocator for your new credential service 
+2. In /usr/lib/kaa-node/conf/kaaNodeContext.xml register CredentialsServiceLocator for your new credential service 
 
 ```xml
 
