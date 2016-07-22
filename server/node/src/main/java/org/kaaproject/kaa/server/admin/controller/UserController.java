@@ -26,6 +26,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -154,8 +155,7 @@ public class UserController extends AbstractAdminController {
     /**
      * Edits user profile to all user profiles.
      *
-     * @param userDto the user dto
-     * @return the user dto
+     * @param userProfileUpdateDto the user profile dto
      * @throws KaaAdminServiceException the kaa admin service exception
      */
     @ApiOperation(value = "Edit user profile",
@@ -165,10 +165,10 @@ public class UserController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "userProfile", method = RequestMethod.POST)
     @ResponseBody
-    public UserDto editUserProfile(
-            @ApiParam(name = "userDto", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
-            @RequestBody UserDto userDto) throws KaaAdminServiceException {
-        return userService.editUserProfile(userDto);
+    public void editUserProfile(
+            @ApiParam(name = "userProfileUpdateDto", value = "UserProfileUpdateDto body.", required = true)
+            @RequestBody UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
+        userService.editUserProfile(userProfileUpdateDto);
     }
 
     /**

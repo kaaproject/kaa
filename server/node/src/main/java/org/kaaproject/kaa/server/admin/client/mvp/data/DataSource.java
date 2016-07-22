@@ -45,6 +45,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -162,12 +163,12 @@ public class DataSource {
                 });
     }
 
-    public void editUserProfile(UserDto user,
-                                final AsyncCallback<UserDto> callback) {
-        userRpcService.editUserProfile(user,
-                new DataCallback<UserDto>(callback) {
+    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
+            final AsyncCallback<Void> callback) {
+        userRpcService.editUserProfile(userProfileUpdateDto,
+                new DataCallback<Void>(callback) {
                     @Override
-                    protected void onResult(UserDto result) {
+                    protected void onResult(Void result) {
                     }
                 });
     }

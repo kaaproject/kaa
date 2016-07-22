@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.shared.services;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface UserService extends RemoteService {
 
     UserDto getUserProfile() throws KaaAdminServiceException;
 
-    UserDto editUserProfile(UserDto userDto) throws KaaAdminServiceException;
+    void editUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException;
 
     List<UserDto> getUsers() throws KaaAdminServiceException;
 
