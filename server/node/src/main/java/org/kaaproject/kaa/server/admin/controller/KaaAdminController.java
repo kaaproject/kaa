@@ -1128,21 +1128,6 @@ public class KaaAdminController {
     }
 
     /**
-     * Adds notification schema to the list of all notification schemas.
-     *
-     * @param notificationSchema
-     *            the notification schema
-     * @return the notification schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST)
-    @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
-        return kaaAdminService.saveNotificationSchema(notificationSchema);
-    }
-
-    /**
      * Edits existing notification schema.
      *
      * @param notificationSchema
@@ -1204,22 +1189,6 @@ public class KaaAdminController {
     public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(@PathVariable String applicationToken, @PathVariable int schemaVersion)
             throws KaaAdminServiceException {
         return kaaAdminService.getLogSchemaByApplicationTokenAndVersion(applicationToken, schemaVersion);
-    }
-
-    /**
-     * Adds log schema to the list of all log schemas.
-     *
-     * @param logSchema
-     *            the log schema
-     * @return the log schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST)
-    @ResponseBody
-    public LogSchemaDto createLogSchema(@RequestBody LogSchemaDto logSchema)
-            throws KaaAdminServiceException {
-        return kaaAdminService.saveLogSchema(logSchema);
     }
 
     /**
