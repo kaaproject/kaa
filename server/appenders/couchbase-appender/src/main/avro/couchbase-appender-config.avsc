@@ -1,26 +1,43 @@
 {
-    "namespace": "org.kaaproject.kaa.server.appenders.couchbase.config.gen",
-    "type": "record",
-    "name": "CouchbaseConfig",
-    "fields": 
-    [
-            {
-               "name": "couchbaseServerUris", 
-               "displayName": "Couchbase servers list",
-               "minRowCount": 1,
-               "type": {
-                  "type": "array",
-                  "items": {
-                      "namespace": "org.kaaproject.kaa.server.appenders.couchbase.config.gen",
-                      "type": "record",
-                      "name": "CouchbaseServerUri",
-                      "fields": [
-                          {"name": "serverUri", "displayName": "Server URI", "by_default": "http://127.0.0.1:8091/pools", "type": "string"}
-                      ]
-                  }
-               }
-            },
-        {"name": "bucket", "displayName": "Couchbase bucket name", "by_default": "default", "type": "string"},
-        {"name": "password", "displayName": "Couchbase bucket password", "inputType": "password", "type": ["string", "null"]}
+    "namespace":"org.kaaproject.kaa.server.appenders.couchbase.config.gen",
+    "type":"record",
+    "name":"CouchbaseConfig",
+    "fields":[
+        {
+            "name":"couchbaseServerUris",
+            "displayName":"Couchbase servers list",
+            "minRowCount":1,
+            "type":{
+                "type":"array",
+                "items":{
+                    "namespace":"org.kaaproject.kaa.server.appenders.couchbase.config.gen",
+                    "type":"record",
+                    "name":"CouchbaseServerUri",
+                    "fields":[
+                        {
+                            "name":"serverUri",
+                            "displayName":"Server URI",
+                            "by_default":"http://127.0.0.1:8091/pools",
+                            "type":"string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name":"bucket",
+            "displayName":"Couchbase bucket name",
+            "by_default":"default",
+            "type":"string"
+        },
+        {
+            "name":"password",
+            "displayName":"Couchbase bucket password",
+            "inputType":"password",
+            "type":[
+                "string",
+                "null"
+            ]
+        }
     ]
 }

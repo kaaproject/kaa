@@ -44,6 +44,7 @@ import java.util.List;
 public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserConfigurationMongoDaoTest.class);
+    private static final String OVERRIDE_USER_DATA_JSON = "dao/user/overrideData.json";
 
     @BeforeClass
     public static void init() throws Exception {
@@ -62,7 +63,7 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void saveEndpointUserConfigurationDtoTest() throws IOException {
-        EndpointUserConfigurationDto userConfigurationDto = generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        EndpointUserConfigurationDto userConfigurationDto = generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         Assert.assertNotNull(userConfigurationDto);
         Assert.assertEquals(userConfigurationDto, new MongoEndpointUserConfiguration(userConfigurationDto).toDto());
     }
@@ -71,10 +72,10 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void findByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        ConfigurationSchemaDto schema = generateConfSchemaDto(appDto.getId(),1).get(0);
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, appDto.getId(),1).get(0);
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         MongoEndpointUserConfiguration found = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
         Assert.assertEquals(firstUserConfigurationDto, found.toDto());
     }
@@ -83,10 +84,10 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void removeByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        ConfigurationSchemaDto configurationSchemaDto = generateConfSchemaDto(appDto.getId(),1).get(0);
-        generateEndpointUserConfigurationDto(userDto, appDto, configurationSchemaDto, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        ConfigurationSchemaDto configurationSchemaDto = generateConfSchemaDto(null, appDto.getId(),1).get(0);
+        generateEndpointUserConfigurationDto(userDto, appDto, configurationSchemaDto, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getVersion());
         MongoEndpointUserConfiguration removed = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getVersion());
         Assert.assertNull(removed);
@@ -99,8 +100,8 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void findByUserIdTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUserDto(null);
         ApplicationDto appDto = generateApplicationDto();
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         List<MongoEndpointUserConfiguration> expectedList = new ArrayList<>();
         expectedList.add(new MongoEndpointUserConfiguration(firstUserConfigurationDto));
         expectedList.add(new MongoEndpointUserConfiguration(secondUserConfigurationDto));

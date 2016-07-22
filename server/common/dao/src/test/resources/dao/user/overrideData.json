@@ -6,7 +6,7 @@
     "org.kaa.config.testRecordT" : {
       "testField3" : { "int" : 34 },
       "__uuid" : {
-        "org.kaaproject.configuration.uuidT" : "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0034"
+        "org.kaaproject.configuration.uuidT" : "AAAAAAAAAAAAAAAAAAAANA=="
       }
     }
   },
@@ -14,6 +14,6 @@
     "string" : "bcd"
   },
   "__uuid" : {
-    "org.kaaproject.configuration.uuidT" : "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0234"
+    "org.kaaproject.configuration.uuidT" : "AAAAAAAAAAAAAAAAAAAAfw=="
   }
 }

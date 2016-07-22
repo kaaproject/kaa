@@ -31,88 +31,54 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  */
 public final class DeltaCacheKey implements Serializable {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The app id. */
     private final AppVersionKey appConfigVersionKey;
 
-    /** The endpoint groups. */
     private final List<EndpointGroupStateDto> endpointGroups;
 
-    /** The endpoint conf hash. */
     private final EndpointObjectHash endpointConfHash;
 
-    /** Supports only resync delta encoded using base schema */
+    // indicates that client want to receive resync based on base schema
     private final boolean resyncOnly;
 
-    /** The user conf hash. */
+    private final boolean useRawSchema;
+
     private final EndpointObjectHash userConfHash;
 
-    /**
-     * Instantiates a new delta cache key.
-     *
-     * @param appConfigVersionKey
-     *            the app config version key
-     * @param endpointGroups
-     *            the endpoint groups
-     * @param userConfHash
-     *            the user conf hash
-     * @param endpointConfHash
-     *            the endpoint conf hash
-     */
+
     public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
             EndpointObjectHash endpointConfHash) {
-        this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, false);
+        this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, true, false);
     }
 
-    /**
-     * Instantiates a new delta cache key.
-     *
-     * @param appConfigVersionKey
-     *            the app config version key
-     * @param endpointGroups
-     *            the endpoint groups
-     * @param userConfHash
-     *            the user conf hash
-     * @param endpointConfHash
-     *            the endpoint conf hash
-     * @param resyncOnly
-     *            indicates that client want to receive resync based on base
-     *            schema
-     */
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
+                         EndpointObjectHash endpointConfHash, boolean useRawSchema) {
+        this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, useRawSchema, false);
+    }
+
     public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups,
-            EndpointObjectHash userConfHash, EndpointObjectHash endpointConfHash, boolean resyncOnly) {
+            EndpointObjectHash userConfHash, EndpointObjectHash endpointConfHash, boolean useRawSchema, boolean resyncOnly) {
         this.appConfigVersionKey = appConfigVersionKey;
         this.userConfHash = userConfHash;
         this.endpointGroups = endpointGroups;
         this.endpointConfHash = endpointConfHash;
+        this.useRawSchema = useRawSchema;
         this.resyncOnly = resyncOnly;
+
     }
 
-    /**
-     * Gets the app config version key.
-     *
-     * @return the app config version key
-     */
+
     public AppVersionKey getAppConfigVersionKey() {
         return appConfigVersionKey;
     }
 
-    /**
-     * Gets the endpoint groups.
-     *
-     * @return the endpoint groups
-     */
+
     public List<EndpointGroupStateDto> getEndpointGroups() {
         return endpointGroups;
     }
 
-    /**
-     * Gets the endpoint conf hash.
-     *
-     * @return the endpoint conf hash
-     */
+
     public EndpointObjectHash getEndpointConfHash() {
         return endpointConfHash;
     }
@@ -127,11 +93,10 @@ public final class DeltaCacheKey implements Serializable {
         return resyncOnly;
     }
 
-    /**
-     * Gets the user id.
-     *
-     * @return the user id
-     */
+    public boolean isUseRawSchema() {
+        return useRawSchema;
+    }
+
     public EndpointObjectHash getUserConfHash() {
         return userConfHash;
     }

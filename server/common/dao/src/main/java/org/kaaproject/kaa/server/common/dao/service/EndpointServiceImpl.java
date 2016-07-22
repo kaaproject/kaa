@@ -85,12 +85,16 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Autowired
     private EndpointGroupDao<EndpointGroup> endpointGroupDao;
+
     @Autowired
     private HistoryService historyService;
+
     @Autowired
     private ServerProfileService serverProfileService;
+
     @Autowired
     private CTLService ctlService;
+
     @Autowired
     private TopicDao<Topic> topicDao;
 

@@ -226,21 +226,8 @@ public class AdminClient {
         restTemplate.postForLocation(restTemplate.getUrl() + "delApplication", params);
     }
 
-    public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, String schemaResource)
-            throws Exception {
-        return createConfigurationSchema(configurationSchema, getFileResource(schemaResource));
-    }
-
-    public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, ByteArrayResource schemaResource)
-            throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("configurationSchema", configurationSchema);
-        params.add("file", schemaResource);
-        return restTemplate.postForObject(restTemplate.getUrl() + "createConfigurationSchema", params, ConfigurationSchemaDto.class);
-    }
-
-    public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "editConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
+    public ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "saveConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
     }
 
     public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchema) throws Exception {
@@ -251,20 +238,12 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveServerProfileSchema", serverProfileSchema, ServerProfileSchemaDto.class);
     }
 
-    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, String schemaResource) throws Exception {
-        return createNotificationSchema(notificationSchema, getFileResource(schemaResource));
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", notificationSchema, NotificationSchemaDto.class);
     }
 
-    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, ByteArrayResource schemaResource)
-            throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("notificationSchema", notificationSchema);
-        params.add("file", schemaResource);
-        return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", params, NotificationSchemaDto.class);
-    }
-
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "editNotificationSchema", notificationSchema, NotificationSchemaDto.class);
+    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "saveNotificationSchema", notificationSchema, NotificationSchemaDto.class);
     }
 
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {

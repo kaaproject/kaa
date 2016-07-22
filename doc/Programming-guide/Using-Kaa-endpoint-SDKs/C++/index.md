@@ -2,12 +2,10 @@
 layout: page
 title: C++
 permalink: /:path/
-nav: /:path/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Cpp-endpoint-SDK
 sort_idx: 20
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 Kaa C++ SDK is a cross-platform implementation of Kaa Endpoint.
 It enables IoT functionality on any platform which provides C++ runtime.

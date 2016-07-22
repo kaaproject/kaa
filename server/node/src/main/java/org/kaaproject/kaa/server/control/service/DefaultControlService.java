@@ -37,39 +37,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
-import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
-import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
-import org.kaaproject.kaa.common.dto.ChangeType;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
-import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
-import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -116,6 +84,7 @@ import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceExceptio
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1089,14 +1058,30 @@ public class DefaultControlService implements ControlService {
         if (profileCtlSchema == null) {
             throw new NotFoundException("Profile CTL schema not found!");
         }
+
+        CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
+        if (notificationCtlSchema == null) {
+            throw new NotFoundException("Notification CTL schema not found!");
+        }
+
+        CTLSchemaDto confCtlSchema = ctlService.findCTLSchemaById(configurationSchema.getCtlSchemaId());
+        if (confCtlSchema == null) {
+            throw new NotFoundException("Configuration CTL schema not found!");
+        }
+
+        String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
         String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
+        String confSchemaBodyString = ctlService.flatExportAsString(confCtlSchema);
 
         DataSchema profileDataSchema = new DataSchema(profileSchemaBodyString);
-        DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
+        DataSchema confDataSchema = new DataSchema(confSchemaBodyString);
+        DataSchema notificationDataSchema = new DataSchema(notificationSchemaBodyString);
         ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
         DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
         String profileSchemaBody = profileDataSchema.getRawSchema();
+        String confSchemaBody = confDataSchema.getRawSchema();
+
 
         byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
                 configurationSchema.getBaseSchema());
@@ -1131,7 +1116,7 @@ public class DefaultControlService implements ControlService {
         try {
             sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkProfile,
                     profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
-                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
+                    confSchemaBody, defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new ControlServiceException(e);
@@ -1174,7 +1159,7 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.NotificationSchemaDto)
      */
     @Override
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
+    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
         return notificationService.saveNotificationSchema(notificationSchema);
     }
 
@@ -1951,6 +1936,7 @@ public class DefaultControlService implements ControlService {
             data = generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
         } else {
             AbstractSchemaDto schemaDto = null;
+            ConfigurationSchemaDto confSchemaDto = null;
             String fileName = null;
             String schema = null;
             switch (key.getRecordFiles()) {
@@ -1958,34 +1944,33 @@ public class DefaultControlService implements ControlService {
                 schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
                 checkSchema(schemaDto, RecordFiles.LOG_SCHEMA);
                 schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() }).getMessage();
-                break;
-            case CONFIGURATION_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_SCHEMA);
-                schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration", key.getSchemaVersion() })
+                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() })
                         .getMessage();
                 break;
+            case CONFIGURATION_SCHEMA:
+                throw new RuntimeException("Not implemented!");
             case CONFIGURATION_BASE_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
-                schema = ((ConfigurationSchemaDto) schemaDto).getBaseSchema();
+                confSchemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
+                schema = confSchemaDto.getBaseSchema();
                 fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-base", key.getSchemaVersion() })
                         .getMessage();
                 break;
             case CONFIGURATION_OVERRIDE_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
-                schema = ((ConfigurationSchemaDto) schemaDto).getOverrideSchema();
-                fileName = MessageFormatter
-                        .arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
+                confSchemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
+                schema = confSchemaDto.getOverrideSchema();
+                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() })
+                        .getMessage();
                 break;
             case NOTIFICATION_SCHEMA:
-                schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(),
-                        NotificationTypeDto.USER, key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.NOTIFICATION_SCHEMA);
-                schema = schemaDto.getSchema();
+                NotificationSchemaDto notificationSchemaDto =
+                        notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(), NotificationTypeDto.USER, key.getSchemaVersion());
+                if (notificationSchemaDto == null) {
+                    throw new NotFoundException("Schema " + RecordFiles.NOTIFICATION_SCHEMA + " not found!");
+                }
+                CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(notificationSchemaDto.getCtlSchemaId());
+                schema = ctlSchemaDto.getBody();
                 fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "notification", key.getSchemaVersion() })
                         .getMessage();
                 break;
@@ -1996,6 +1981,7 @@ public class DefaultControlService implements ControlService {
             default:
                 break;
             }
+
             byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
             data.setFileName(fileName);
             data.setFileData(schemaData);
@@ -2051,14 +2037,11 @@ public class DefaultControlService implements ControlService {
     /**
      * Check schema.
      *
-     * @param schemaDto
-     *            the schema dto
-     * @param file
-     *            the file
-     * @throws NotFoundException
-     *             the control service exception
+     * @param schemaDto the schema dto
+     * @param file      the file
+     * @throws NotFoundException the control service exception
      */
-    private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
+    private void checkSchema(VersionDto schemaDto, RecordFiles file) throws NotFoundException {
         if (schemaDto == null) {
             throw new NotFoundException("Schema " + file + " not found!");
         }

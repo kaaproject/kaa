@@ -101,12 +101,12 @@ public interface ClientFactory {
     BaseCtlSchemaView getCreateServerProfileSchemaView();
 
     BaseListView<ConfigurationSchemaDto> getConfigurationSchemasView();
-    BaseSchemaView getConfigurationSchemaView();
-    BaseSchemaView getCreateConfigurationSchemaView();
+    BaseCtlSchemaView getConfigurationSchemaView();
+    BaseCtlSchemaView getCreateConfigurationSchemaView();
 
     BaseListView<NotificationSchemaDto> getNotificationSchemasView();
-    BaseSchemaView getNotificationSchemaView();
-    BaseSchemaView getCreateNotificationSchemaView();
+    BaseCtlSchemaView getNotificationSchemaView();
+    BaseCtlSchemaView getCreateNotificationSchemaView();
 
     BaseListView<LogSchemaDto> getLogSchemasView();
     BaseSchemaView getLogSchemaView();

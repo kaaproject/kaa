@@ -5,8 +5,7 @@ permalink: /:path/
 sort_idx: 20
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 # The guide provides information on how to cross-compile C++ SDK for Raspberry PI
 
@@ -21,9 +20,17 @@ sort_idx: 20
         mkdir rpi_root && cd rpi_root
         export RPI_ROOT=$(pwd)
         git clone --depth 1 https://github.com/raspberrypi/tools.git
+        export CROSS=arm-linux-gnuebihf
+
+    If x86_32 operating system in use, execute:
+
         export INSTALLDIR=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr
         export PATH=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin:$PATH
-        export CROSS=arm-linux-gnueabihf
+
+    If x86_64 operating system in use, execute:
+
+        export INSTALLDIR=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/arm-linux-gnueabihf/libc/usr
+        export PATH=$RPI_ROOT/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
 
 2. Download and install zlib.
 
