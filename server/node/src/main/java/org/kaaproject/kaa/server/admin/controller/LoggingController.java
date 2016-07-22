@@ -144,10 +144,9 @@ public class LoggingController extends AbstractAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
+    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST)
     @ResponseBody
-    public LogSchemaDto createLogSchema(
-            @RequestPart("logSchema") LogSchemaDto logSchema)
+    public LogSchemaDto createLogSchema(@RequestBody LogSchemaDto logSchema)
             throws KaaAdminServiceException {
         return loggingService.saveLogSchema(logSchema);
     }
@@ -171,7 +170,7 @@ public class LoggingController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "saveLogSchema", method = RequestMethod.POST)
     @ResponseBody
-    public LogSchemaDto editLogSchema(
+    public LogSchemaDto saveLogSchema(
             @ApiParam(name = "logSchema", value = "LogSchemaDto body.", required = true)
             @RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
         return loggingService.saveLogSchema(logSchema);

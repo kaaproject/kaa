@@ -126,7 +126,7 @@ public class NotificationController extends AbstractAdminController {
      * @return the notification schema dto
      * @throws KaaAdminServiceException the kaa admin service exception
      */
-    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
+    @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
     public NotificationSchemaDto createNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
         return notificationService.saveNotificationSchema(notificationSchema);
@@ -153,7 +153,7 @@ public class NotificationController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "saveNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public NotificationSchemaDto editNotificationSchema(
+    public NotificationSchemaDto saveNotificationSchema(
             @ApiParam(name = "notificationSchema", value = "NotificationSchemaDto body.", required = true)
             @RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {

@@ -138,7 +138,7 @@ public class ConfigurationController extends AbstractAdminController {
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
                     "of the application does not match the Tenant ID of the authenticated user"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
+    @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST)
     @ResponseBody
     public ConfigurationSchemaDto saveConfigurationSchema(
             @ApiParam(name = "configurationSchema", value = "ConfigurationSchemaDto body", required = true)
