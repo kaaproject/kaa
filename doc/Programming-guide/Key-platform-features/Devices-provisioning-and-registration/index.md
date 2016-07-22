@@ -134,7 +134,7 @@ Value of key which was added you will see in Admin UI.
 
 ![credential](attach/credential.png)
 
-3. In in /usr/lib/kaa-node/conf/common-dao-context.xml
+3. In /usr/lib/kaa-node/conf/common-dao-context.xml
 
 ```xml
 
