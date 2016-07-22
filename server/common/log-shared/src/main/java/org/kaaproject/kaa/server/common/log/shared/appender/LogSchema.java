@@ -22,8 +22,11 @@ public final class LogSchema {
 
     private final LogSchemaDto logSchemaDto;
 
-    public LogSchema(LogSchemaDto logSchemaDto) {
+    private final String schema;
+
+    public LogSchema(LogSchemaDto logSchemaDto, String schema) {
         this.logSchemaDto = logSchemaDto;
+        this.schema = schema;
     }
 
     public String getId() {
@@ -34,12 +37,16 @@ public final class LogSchema {
         return logSchemaDto.getApplicationId();
     }
 
-    public String getSchema() {
-        return logSchemaDto.getSchema();
+    public String getCtlSchemaId() {
+        return logSchemaDto.getCtlSchemaId();
     }
 
     public int getVersion() {
         return logSchemaDto.getVersion();
+    }
+
+    public String getSchema() {
+        return schema;
     }
 
     @Override

@@ -34,7 +34,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSchemasPlace> {
+public class LogSchemasActivity extends AbstractBaseCtlSchemasActivity<LogSchemaDto, LogSchemasPlace> {
 
     private String applicationId;
 

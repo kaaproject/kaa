@@ -28,15 +28,26 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.*;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
+import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.schema.*;
+import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -177,7 +188,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         public void onFailureImpl(Throwable caught) {
                             Utils.handleException(caught, detailsView);
                         }
-            });
+                    });
         } else {
             if (entity == null) {
                 goTo(place.getPreviousPlace());
@@ -264,8 +275,10 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 goTo(new ConfigurationSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
-                            } else {
+                            } else if (place.getSchemaType() == SchemaType.NOTIFICATION) {
                                 goTo(new NotificationSchemasPlace(place.getApplicationId()));
+                            } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
+                                goTo(new LogSchemasPlace(place.getApplicationId()));
                             }
                         } else if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
@@ -411,7 +424,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 callback.onSuccess(null);
                             }
                     });
-            } else {
+            } else if (place.getSchemaType() == SchemaType.NOTIFICATION) {
                 KaaAdmin.getDataSource().createNotificationSchemaFormCtlSchema(entity, new BusyAsyncCallback<NotificationSchemaViewDto>() {
                     @Override
                     public void onFailureImpl(Throwable caught) {
@@ -420,6 +433,18 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
 
                     @Override
                     public void onSuccessImpl(NotificationSchemaViewDto notificationSchemaViewDto) {
+                        callback.onSuccess(null);
+                    }
+                });
+            } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
+                KaaAdmin.getDataSource().createLogSchemaFormCtlSchema(entity, new BusyAsyncCallback<LogSchemaViewDto>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(LogSchemaViewDto logSchemaViewDto) {
                         callback.onSuccess(null);
                     }
                 });

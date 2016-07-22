@@ -1053,20 +1053,15 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
 
-        CTLSchemaDto profileCtlSchema = ctlService.findCTLSchemaById(profileSchema.getCtlSchemaId());
-        if (profileCtlSchema == null) {
-            throw new NotFoundException("Profile CTL schema not found!");
-        }
+        CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
 
-        CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
-        if (notificationCtlSchema == null) {
-            throw new NotFoundException("Notification CTL schema not found!");
-        }
+        String logSchemaBodyString = ctlService.flatExportAsString(logCtlSchema);
 
-        CTLSchemaDto confCtlSchema = ctlService.findCTLSchemaById(configurationSchema.getCtlSchemaId());
-        if (confCtlSchema == null) {
-            throw new NotFoundException("Configuration CTL schema not found!");
-        }
+        CTLSchemaDto profileCtlSchema = getCTLSchemaById(profileSchema.getCtlSchemaId());
+
+        CTLSchemaDto notificationCtlSchema = getCTLSchemaById(notificationSchema.getCtlSchemaId());
+
+        CTLSchemaDto confCtlSchema = getCTLSchemaById(configurationSchema.getCtlSchemaId());
 
         String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
         String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
@@ -1076,7 +1071,7 @@ public class DefaultControlService implements ControlService {
         DataSchema confDataSchema = new DataSchema(confSchemaBodyString);
         DataSchema notificationDataSchema = new DataSchema(notificationSchemaBodyString);
         ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
-        DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
+        DataSchema logDataSchema = new DataSchema(logSchemaBodyString);
 
         String profileSchemaBody = profileDataSchema.getRawSchema();
         String confSchemaBody = confDataSchema.getRawSchema();
@@ -1150,7 +1145,8 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
         try {
-            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
             String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
             return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
         } catch (Exception e) {
@@ -1225,8 +1221,21 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.logs.LogSchemaDto)
      */
     @Override
-    public LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException {
+    public LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException {
         return logSchemaService.saveLogSchema(logSchemaDto);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.control.service.ControlService#editLogSchema
+     * (org.kaaproject.kaa.common.dto.logs.LogSchemaDto)
+     */
+    @Override
+    public String getFlatSchemaByCtlSchemaId(String schemaId) throws ControlServiceException{
+        CTLSchemaDto ctlSchemaDto = getCTLSchemaById(schemaId);
+        return ctlService.flatExportAsString(ctlSchemaDto);
     }
 
     /*
@@ -1922,7 +1931,8 @@ public class DefaultControlService implements ControlService {
 
         Schema recordWrapperSchema = null;
         try {
-            recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
+            recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
         } catch (IOException e) {
             LOG.error("Unable to get Record Structure Schema", e);
             throw new ControlServiceException(e);
@@ -1960,12 +1970,7 @@ public class DefaultControlService implements ControlService {
             String schema = null;
             switch (key.getRecordFiles()) {
             case LOG_SCHEMA:
-                schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.LOG_SCHEMA);
-                schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() })
-                        .getMessage();
-                break;
+                throw new RuntimeException("Not implemented!");
             case CONFIGURATION_SCHEMA:
                 throw new RuntimeException("Not implemented!");
             case CONFIGURATION_BASE_SCHEMA:
@@ -1983,16 +1988,7 @@ public class DefaultControlService implements ControlService {
                         .getMessage();
                 break;
             case NOTIFICATION_SCHEMA:
-                NotificationSchemaDto notificationSchemaDto =
-                        notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(), NotificationTypeDto.USER, key.getSchemaVersion());
-                if (notificationSchemaDto == null) {
-                    throw new NotFoundException("Schema " + RecordFiles.NOTIFICATION_SCHEMA + " not found!");
-                }
-                CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(notificationSchemaDto.getCtlSchemaId());
-                schema = ctlSchemaDto.getBody();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "notification", key.getSchemaVersion() })
-                        .getMessage();
-                break;
+                throw new RuntimeException("Not implemented!");
             case PROFILE_SCHEMA:
                 throw new RuntimeException("Not implemented!");
             case SERVER_PROFILE_SCHEMA:
@@ -2078,7 +2074,12 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException {
-        return ctlService.findCTLSchemaById(schemaId);
+        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(schemaId);
+        if (ctlSchemaDto == null) {
+            LOG.error("CTL schema with Id [{}] not found!", schemaId);
+            throw new NotFoundException("CTL schema not found!");
+        }
+        return ctlSchemaDto;
     }
 
     @Override
