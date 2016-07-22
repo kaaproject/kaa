@@ -2101,7 +2101,7 @@ public class KaaAdminController {
     }
 
     /**
-     * Binds credentials to the server-side endpoint profile specified.
+     * Binds server-side endpoint profile to the specified credential.
      *
      * @param applicationToken The application Token
      * @param credentialsId The ID of the credentials to bind
