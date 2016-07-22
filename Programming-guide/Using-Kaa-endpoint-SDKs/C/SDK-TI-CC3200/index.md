@@ -5,8 +5,7 @@ permalink: /:path/
 sort_idx: 30
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -15,7 +14,7 @@ This guide explains how to build applications for Texas Instruments CC3200 Launc
 
 # Installing necessary components for Linux (Ubuntu)
 
-Before building the C SDK for the CC3200 platform on Linux, you need to perform the following installation.
+Before building the C SDK for the CC3200 platform on Linux, you need to perform the next installation steps.
 
 1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded)
 
@@ -39,12 +38,12 @@ Before building the C SDK for the CC3200 platform on Linux, you need to perform 
     1. Reload the rules.
 
             sudo udevadm control --reload-rules
-    1. To use Openocd as a regular user, add yourself to the dialout group.
+    1. To use OpenOCD as a regular user, add yourself to the dialout group.
 
             sudo usermod -a -G dialout <username>
     1. Log out and log in to finish the process.
     NOTE: The board should be enumerated as `/dev/ttyUSB{0,1}`. Use ttyUSB1 for UART.
-1. Install CC3200SDK.
+1. Install CC3200 SDK.
     1. Install [Wine](https://www.winehq.org/).
 
             sudo apt-get install wine
@@ -91,22 +90,23 @@ Before building the C SDK for the CC3200 platform on Windows, you need to perfor
 
     Refer to [SO question page](http://superuser.com/questions/304541/how-to-install-new-packages-on-cygwin) for details how to install packages on Cygwin.
 1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded) to the `opt\kaa` directory under the Cygwin root folder (default is `C:\cygwin`).
-1. Install [CC3200SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa` (if the directory doesn't exist, create it) directory under the Cygwin root folder.
+1. Install [CC3200 SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa` (if the directory doesn't exist, create it) directory under the Cygwin root folder.
 1. Install [cmake](http://www.cmake.org/) and add it bin directory to the system environment.
 
 To enable debugging for your CC3200 applications, you will also need to build OpenOCD as described in [the official CC3200-Getting_Started_Guide][cc3200-getting-started-guide] (item 3.3.3).
 
-For more information, please refer to the official [CC3200-Getting_Started_Guide][cc3200-getting-started-guide]
+For more information, please refer to [the official CC3200 Getting Started Guide][cc3200-getting-started-guide].
 
 [cc3200-getting-started-guide]: http://www.ti.com/lit/ug/swru376d/swru376d.pdf
 
 # Creating applications based on C SDK
 
-Before creating applications based on the C SDK, you should obtain the C SDK and build a static library from it. To do so, generate the [C SDK in Admin UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk), then extract the archive.
+Before creating applications based on the C SDK, you should obtain the C SDK and build a static library from it.
+To do so, generate the [C SDK in Admin UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk), then extract the archive.
 
-## Building C SDK for Linux
+## Building C SDK on Linux
 
-Change directory to where SDK was unpacked and execute the following for:
+Change directory to where SDK was unpacked and execute the following:
 
 ```
 mkdir -p build
@@ -117,7 +117,7 @@ make
 
 Refer to [C SDK Linux page]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for more details.
 
-## Building C SDK for Windows
+## Building C SDK on Windows
 
 Open the Cygwin terminal and execute the following:
 
