@@ -43,7 +43,7 @@ import java.util.List;
 
 @Api(value = "Common Type Library", description = "Provides function for manage CTL", basePath = "/kaaAdmin/rest")
 @Controller
-public class CtlController extends AdminController {
+public class CtlController extends AbstractAdminController {
 
     /**
      * The Constant BUFFER.
@@ -323,6 +323,30 @@ public class CtlController extends AdminController {
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
+    }
+
+    /**
+     * Get existing flat schema.
+     *
+     * @param id
+     *            of the CTL schema
+     * @return the flat schema string
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @ApiOperation(value = "Get flat schema by it's id",
+            notes = "Returns a flat schema. Only authorized users are allowed to perform this operation.")
+    @RequestMapping(value = "CTL/getFlatSchemaByCtlSchemaId", params = { "id" }, method = RequestMethod.GET)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The tenant ID of the CTL schema does not match the tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "A CTL schema with the specified id does not exist."),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @ResponseBody
+    public String getFlatSchemaByCtlSchemaId(
+            @ApiParam(name = "id", value = "A unique CTL schema identifier", required = true)
+            @RequestParam String id) throws KaaAdminServiceException {
+        return ctlService.getFlatSchemaByCtlSchemaId(id);
     }
 
 }

@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -45,6 +46,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaCreationException;
@@ -60,6 +62,7 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
@@ -97,6 +100,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private HistoryService historyService;
+
+
+    @Autowired
+    private CTLService ctlService;
 
     @Autowired
     private SchemaGenerationAlgorithmFactory schemaGeneratorFactory;
@@ -499,7 +506,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     private void generateSchemas(ConfigurationSchemaDto schema) throws SchemaCreationException {
-        DataSchema dataSchema = new DataSchema(schema.getSchema());
+        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(schema.getCtlSchemaId());
+        String sch = ctlService.flatExportAsString(ctlSchema);
+        DataSchema dataSchema = new DataSchema(sch);
         if (!dataSchema.isEmpty()) {
             SchemaGenerationAlgorithm schemaGenerator = schemaGeneratorFactory.createSchemaGenerator(dataSchema);
             ProtocolSchema protocol = schemaGenerator.getProtocolSchema();

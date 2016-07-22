@@ -1,0 +1,27 @@
+{
+  "AddressList": {
+    "array": [
+      {
+        "label": "Kaa website",
+        "url": "http://www.kaaproject.org",
+        "__uuid":null
+      },
+      {
+        "label": "Kaa GitHub repository",
+        "url": "https://github.com/kaaproject/kaa",
+        "__uuid":null
+      },
+      {
+        "label": "Kaa docs",
+        "url": "http://docs.kaaproject.org/display/KAA/Kaa+IoT+Platform+Home",
+        "__uuid":null
+      },
+      {
+        "label": "Kaa configuration design reference",
+        "url": "http://docs.kaaproject.org/display/KAA/Configuration",
+        "__uuid":null
+      }
+    ]
+  },
+  "__uuid":null
+}

@@ -27,10 +27,11 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ConfigSchemaGrid extends BaseSchemasGrid<ConfigurationSchemaDto> {
+public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto> {
 
     private Column<ConfigurationSchemaDto,ConfigurationSchemaDto> downloadBaseSchemaColumn;
     private Column<ConfigurationSchemaDto,ConfigurationSchemaDto> downloadOverrideSchemaColumn;

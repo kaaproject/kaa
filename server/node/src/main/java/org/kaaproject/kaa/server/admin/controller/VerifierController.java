@@ -37,7 +37,7 @@ import java.util.List;
 
 @Api(value = "Verifiers", description = "Provides function for manage verifiers", basePath = "/kaaAdmin/rest")
 @Controller
-public class VerifierController extends AdminController {
+public class VerifierController extends AbstractAdminController {
 
     /**
      * Gets all user verifiers by application token.

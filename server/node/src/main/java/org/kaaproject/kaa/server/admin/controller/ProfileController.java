@@ -40,7 +40,7 @@ import java.util.List;
 
 @Api(value = "Profiling", description = "Provides function for manage profiles", basePath = "/kaaAdmin/rest")
 @Controller
-public class ProfileController extends AdminController {
+public class ProfileController extends AbstractAdminController {
 
     /**
      * Gets the profile schemas by application token.

@@ -43,7 +43,7 @@ public interface NotificationService extends RemoteService {
 
     NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException;
 
-    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
+    NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
 
     List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
 

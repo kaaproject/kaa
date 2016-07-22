@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
 
 /**
  * The interface ProfileService is used to model profile service. Profile
@@ -61,12 +62,10 @@ public interface ProfileService {
      */
     EndpointProfileDto registerProfile(RegisterProfileRequest request);
 
-    /**
-     * Update profile.
-     *
-     * @param requst
-     *            the requst
-     * @return the endpoint profile dto
-     */
-    EndpointProfileDto updateProfile(UpdateProfileRequest requst);
+
+    EndpointProfileDto updateProfile(UpdateProfileRequest request);
+
+
+    EndpointProfileDto updateProfile(ClientSyncMetaData metaData, EndpointObjectHash keyHash, boolean useConfigurationRawSchema);
+
 }

@@ -44,7 +44,7 @@ import java.util.List;
 
 @Api(value = "Events", description = "Provides function for manage events", basePath = "/kaaAdmin/rest")
 @Controller
-public class EventController extends AdminController {
+public class EventController extends AbstractAdminController {
 
     /**
      * Gets all event class families.

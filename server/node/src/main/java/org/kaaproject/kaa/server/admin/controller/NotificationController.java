@@ -43,7 +43,7 @@ import java.util.List;
 
 @Api(value = "Notifications", description = "Provides function for manage notifications", basePath = "/kaaAdmin/rest")
 @Controller
-public class NotificationController extends AdminController {
+public class NotificationController extends AbstractAdminController {
 
     /**
      * Gets the notification schemas by application token.
@@ -128,8 +128,8 @@ public class NotificationController extends AdminController {
      */
     @RequestMapping(value = "createNotificationSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
     @ResponseBody
-    public NotificationSchemaDto createNotificationSchema(@RequestPart("notificationSchema") NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
-        return notificationService.editNotificationSchema(notificationSchema);
+    public NotificationSchemaDto createNotificationSchema(@RequestBody NotificationSchemaDto notificationSchema) throws KaaAdminServiceException {
+        return notificationService.saveNotificationSchema(notificationSchema);
     }
 
     /**
@@ -151,13 +151,13 @@ public class NotificationController extends AdminController {
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
                     "of the application does not match the Tenant ID of the authenticated user"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "editNotificationSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "saveNotificationSchema", method = RequestMethod.POST)
     @ResponseBody
     public NotificationSchemaDto editNotificationSchema(
-            @ApiParam(name = "notificationSchema", value = "NotificationSchemaDto body. Mandatory fields: applicationId, name", required = true)
+            @ApiParam(name = "notificationSchema", value = "NotificationSchemaDto body.", required = true)
             @RequestBody NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
-        return notificationService.editNotificationSchema(notificationSchema);
+        return notificationService.saveNotificationSchema(notificationSchema);
     }
 
     /**

@@ -29,6 +29,8 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -58,7 +60,7 @@ public interface ConfigurationService extends RemoteService {
 
     ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException;
 
-    ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema, byte[] schema) throws KaaAdminServiceException;
+    ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException;
 
     List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws KaaAdminServiceException;
 
@@ -74,13 +76,11 @@ public interface ConfigurationService extends RemoteService {
 
     void deleteConfigurationRecord(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
 
-    RecordField createConfigurationEmptySchemaForm() throws KaaAdminServiceException;
-
     RecordField generateConfigurationSchemaForm(String fileItemName) throws KaaAdminServiceException;
 
-    ConfigurationSchemaDto editConfigurationSchemaForm(ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException;
+    ConfigurationSchemaViewDto saveConfigurationSchemaView(ConfigurationSchemaViewDto confSchemaView) throws KaaAdminServiceException;
 
-    ConfigurationSchemaDto getConfigurationSchemaForm(String configurationSchemaId) throws KaaAdminServiceException;
+    ConfigurationSchemaViewDto getConfigurationSchemaView(String configurationSchemaId) throws KaaAdminServiceException;
 
     ConfigurationRecordViewDto getConfigurationRecordView(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
 
@@ -97,5 +97,7 @@ public interface ConfigurationService extends RemoteService {
     List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
+
+    ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
 }

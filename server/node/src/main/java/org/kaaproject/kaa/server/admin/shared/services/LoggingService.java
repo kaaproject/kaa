@@ -22,6 +22,8 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
 
 import java.util.List;
 
@@ -36,7 +38,7 @@ public interface LoggingService extends RemoteService {
 
     LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException;
 
-    LogSchemaDto editLogSchema(LogSchemaDto profileSchema, byte[] schema) throws KaaAdminServiceException;
+    LogSchemaDto saveLogSchema(LogSchemaDto profileSchema) throws KaaAdminServiceException;
 
     List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException;
 
@@ -56,14 +58,16 @@ public interface LoggingService extends RemoteService {
 
     List<VersionDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
 
-    LogSchemaDto getLogSchemaForm(String logSchemaId) throws KaaAdminServiceException;
-
-    LogSchemaDto editLogSchemaForm(LogSchemaDto logSchema) throws KaaAdminServiceException;
+    LogSchemaViewDto getLogSchemaView(String logSchemaId) throws KaaAdminServiceException;
 
     LogAppenderDto getLogAppenderForm(String appenderId) throws KaaAdminServiceException;
 
     LogAppenderDto editLogAppenderForm(LogAppenderDto appender) throws KaaAdminServiceException;
 
     List<PluginInfoDto> getLogAppenderPluginInfos() throws KaaAdminServiceException;
+
+    LogSchemaViewDto saveLogSchemaView(LogSchemaViewDto logSchema) throws KaaAdminServiceException;
+
+    LogSchemaViewDto createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
 }

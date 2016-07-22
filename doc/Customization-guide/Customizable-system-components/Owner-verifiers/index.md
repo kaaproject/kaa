@@ -8,8 +8,7 @@ sort_idx: 40
 * TOC
 {:toc}
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 This guide contains information about how to create custom owner verifiers and add them to existed. Please refer to [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership) for information about default owner verifiers
 and access token flow.

@@ -31,6 +31,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
@@ -107,7 +108,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     }
 
     @Override
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema)
+    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -120,7 +121,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
                 checkApplicationId(storedNotificationSchema.getApplicationId());
             }
             notificationSchema.setType(NotificationTypeDto.USER);
-            return controlService.editNotificationSchema(notificationSchema);
+            return controlService.saveNotificationSchema(notificationSchema);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -305,14 +306,14 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
         }
     }
 
+    @Override
     public NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(notificationSchemaId);
-            Utils.checkNotNull(notificationSchema);
-            checkApplicationId(notificationSchema.getApplicationId());
+            NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
-            NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto));
+            NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto,
+                    ConverterType.FORM_AVRO_CONVERTER));
             return notificationSchemaViewDto;
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -336,11 +337,11 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
                             metaInfo.getMetaInfo().getApplicationId());
                     notificationSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(notificationSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(notificationSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
                     notificationSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
-            NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
+            NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
             return getNotificationSchemaView(savedNotificationSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -357,9 +358,9 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
             notificationSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             notificationSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             notificationSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
-            NotificationSchemaDto savedNotificationSchema = editNotificationSchema(notificationSchema);
+            NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
             return getNotificationSchemaView(savedNotificationSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);

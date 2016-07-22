@@ -34,7 +34,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ConfigurationSchemasActivity extends AbstractListActivity<ConfigurationSchemaDto, ConfigurationSchemasPlace> {
+public class ConfigurationSchemasActivity extends AbstractBaseCtlSchemasActivity<ConfigurationSchemaDto, ConfigurationSchemasPlace> {
 
     private String applicationId;
 
@@ -71,6 +71,7 @@ public class ConfigurationSchemasActivity extends AbstractListActivity<Configura
 
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
+        super.onCustomRowAction(event);
         Integer schemaVersion = Integer.valueOf(event.getClickedId());
         final int action = event.getAction();
         AsyncCallback<String> callback = new AsyncCallback<String>() {

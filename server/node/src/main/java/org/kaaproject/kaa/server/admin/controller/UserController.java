@@ -46,7 +46,7 @@ import java.util.List;
 
 @Api(value = "User", description = "Provides function for manage users", basePath = "/kaaAdmin/rest")
 @Controller
-public class UserController extends AdminController {
+public class UserController extends AbstractAdminController {
 
     /**
      * Check auth of kaa admin.

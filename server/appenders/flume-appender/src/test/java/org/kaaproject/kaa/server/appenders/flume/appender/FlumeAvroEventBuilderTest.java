@@ -67,7 +67,7 @@ public class FlumeAvroEventBuilderTest {
         
         LogSchemaDto schemaDto = new LogSchemaDto();
         schemaDto.setVersion(SCHEMA_VERSION);
-        LogSchema logSchema = new LogSchema(schemaDto);
+        LogSchema logSchema = new LogSchema(schemaDto, "");
         eventPack.setLogSchema(logSchema);
 
         BaseSchemaInfo schemaInfo = new BaseSchemaInfo("1", getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));

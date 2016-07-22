@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.common.dto;
 
-public class ConfigurationSchemaDto extends AbstractSchemaDto {
+public class ConfigurationSchemaDto extends BaseSchemaDto {
 
     private static final long serialVersionUID = 7053272285029134851L;
 
@@ -55,58 +55,6 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
 
     public void setStatus(UpdateStatus status) {
         this.status = status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ConfigurationSchemaDto)) {
-            return false;
-        }
-
-        ConfigurationSchemaDto that = (ConfigurationSchemaDto) o;
-
-        if (version != that.version) {
-            return false;
-        }
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
-            return false;
-        }
-        if (baseSchema != null ? !baseSchema.equals(that.baseSchema) : that.baseSchema != null) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-        if (overrideSchema != null ? !overrideSchema.equals(that.overrideSchema) : that.overrideSchema != null) {
-            return false;
-        }
-        if (protocolSchema != null ? !protocolSchema.equals(that.protocolSchema) : that.protocolSchema != null) {
-            return false;
-        }
-        if (schema != null ? !schema.equals(that.schema) : that.schema != null) {
-            return false;
-        }
-        if (status != that.status) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
-        result = 31 * result + version;
-        result = 31 * result + (schema != null ? schema.hashCode() : 0);
-        result = 31 * result + (protocolSchema != null ? protocolSchema.hashCode() : 0);
-        result = 31 * result + (baseSchema != null ? baseSchema.hashCode() : 0);
-        result = 31 * result + (overrideSchema != null ? overrideSchema.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        return result;
     }
 
     @Override

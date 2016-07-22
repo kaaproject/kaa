@@ -34,7 +34,7 @@ import java.util.List;
 
 @Api(value = "Application", description = "Provides function for manage applications", basePath = "/kaaAdmin/rest")
 @Controller
-public class ApplicationController extends AdminController {
+public class ApplicationController extends AbstractAdminController {
 
     /**
      * Gets all applications.

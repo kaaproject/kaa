@@ -139,7 +139,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void findConfSchemaByIdTest() {
-        List<ConfigurationSchemaDto> schemas = generateConfSchemaDto(null, 1);
+        List<ConfigurationSchemaDto> schemas = generateConfSchemaDto(null, null, 1);
         ConfigurationSchemaDto schema = schemas.get(0);
         ConfigurationSchemaDto foundSchema = configurationService.findConfSchemaById(schema.getId());
         Assert.assertNotNull(foundSchema);
@@ -222,13 +222,14 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void saveConfSchemaTest() throws SchemaCreationException, IOException {
-        String id = generateConfSchemaDto(null, 1).get(0).getId();
+        String id = generateConfSchemaDto(null, null, 1).get(0).getId();
         ConfigurationSchemaDto schema = configurationService.findConfSchemaById(id);
         Assert.assertNotNull(schema);
+        int version = schema.getVersion();
         schema.setId(null);
-        schema.setSchema(new DataSchema(readSchemaFileAsString("dao/configuration/default_schema.json")).getRawSchema());
         ConfigurationSchemaDto saved = configurationService.saveConfSchema(schema);
         Assert.assertNotNull(saved);
+        Assert.assertNotEquals(version, saved.getVersion());
         Assert.assertNotEquals(schema.getId(), saved.getId());
     }
 
@@ -272,14 +273,14 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     @Test
     public void createDefaultSchemaTest() {
         String id = generateApplicationDto().getId();
-        ConfigurationSchemaDto schema = generateConfSchemaDto(id, 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, id, 1).get(0);
         ConfigurationDto config = configurationService.findConfigurationByAppIdAndVersion(id, schema.getVersion());
         Assert.assertEquals(config.getStatus(), UpdateStatus.ACTIVE);
     }
 
     @Test
     public void findDefaultConfigurationBySchemaIdTest() {
-        ConfigurationSchemaDto schema = generateConfSchemaDto(null, 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, null, 1).get(0);
         ConfigurationDto configuration = configurationService.findDefaultConfigurationBySchemaId(schema.getId());
         Assert.assertNotNull(configuration);
         Assert.assertEquals(UpdateStatus.ACTIVE, configuration.getStatus());
@@ -288,7 +289,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void findConfigurationByEndpointGroupIdAndVersionTest() {
-        ConfigurationSchemaDto schema = generateConfSchemaDto(null, 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, null, 1).get(0);
         String groupId = generateEndpointGroupDto(schema.getApplicationId()).getId();
         ConfigurationDto config = generateConfigurationDto(schema.getId(), groupId, 1, true, false).get(0);
         ConfigurationDto configuration = configurationService.findConfigurationByEndpointGroupIdAndVersion(groupId, schema.getVersion());
@@ -318,7 +319,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void deleteConfigurationRecordTest() {
-        ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, 1).get(0);
+        ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, null, 1).get(0);
         EndpointGroupDto group = generateEndpointGroupDto(schemaDto.getApplicationId());
         generateConfigurationDto(schemaDto.getId(), group.getId(), 1, true, false);
         ChangeConfigurationNotification notification = configurationService.deleteConfigurationRecord(schemaDto.getId(), group.getId(),
@@ -335,7 +336,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     @Test
     public void findAllConfigurationRecordsByEndpointGroupIdTest() {
         String id = generateApplicationDto().getId();
-        ConfigurationSchemaDto schema = generateConfSchemaDto(id, 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, id, 1).get(0);
         EndpointGroupDto group = generateEndpointGroupDto(id);
         generateConfigurationDto(schema.getId(), group.getId(), 1, true, false);
         List<ConfigurationRecordDto> records = (List<ConfigurationRecordDto>) configurationService
@@ -350,7 +351,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void findConfigurationRecordBySchemaIdAndEndpointGroupIdTest() {
-        ConfigurationSchemaDto schema = generateConfSchemaDto(null, 1).get(0);
+        ConfigurationSchemaDto schema = generateConfSchemaDto(null, null, 1).get(0);
         EndpointGroupDto group = generateEndpointGroupDto(schema.getApplicationId());
         ConfigurationDto activeConfig = generateConfigurationDto(schema.getId(), group.getId(), 1, true, false).get(0);
         ConfigurationDto inactiveConfig = generateConfigurationDto(schema.getId(), group.getId(), 1, false, false).get(0);
@@ -363,7 +364,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     @Test
     public void findVacantSchemasByEndpointGroupIdTest() {
         ApplicationDto application = generateApplicationDto();
-        List<ConfigurationSchemaDto> schemas = generateConfSchemaDto(application.getId(), 4);
+        List<ConfigurationSchemaDto> schemas = generateConfSchemaDto(null, application.getId(), 4);
         EndpointGroupDto groupOne = generateEndpointGroupDto(application.getId());
         ConfigurationSchemaDto schemaOne = schemas.get(0);
         generateConfigurationDto(schemaOne.getId(), groupOne.getId(), 1, true, false);
@@ -380,7 +381,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void findConfigurationSchemaVersionsByAppIdTest() {
-        ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, 1).get(0);
+        ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, null, 1).get(0);
         List<VersionDto> versions = configurationService.findConfigurationSchemaVersionsByAppId(schemaDto.getApplicationId());
         Assert.assertFalse(versions.isEmpty());
         Assert.assertEquals(2, versions.size());

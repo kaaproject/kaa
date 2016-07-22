@@ -41,7 +41,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Api(value = "Tenant", description = "Provides function for manage tenants", basePath = "/kaaAdmin/rest")
 @Controller
-public class TenantController extends AdminController {
+public class TenantController extends AbstractAdminController {
 
     /**
      * Gets all tenants.

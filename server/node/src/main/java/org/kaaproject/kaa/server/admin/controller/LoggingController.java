@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +47,7 @@ import java.util.List;
 
 @Api(value = "Logging", description = "Provides function for manage logging", basePath = "/kaaAdmin/rest")
 @Controller
-public class LoggingController extends AdminController {
+public class LoggingController extends AbstractAdminController {
 
     /**
      * The Constant BUFFER.
@@ -139,33 +138,18 @@ public class LoggingController extends AdminController {
     /**
      * Adds log schema to the list of all log schemas.
      *
-     * @param logSchema the log schema
-     * @param file      the file
+     * @param logSchema
+     *            the log schema
      * @return the log schema dto
-     * @throws KaaAdminServiceException the kaa admin service exception
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
      */
-    @ApiOperation(value = "Create/Edit log schema",
-            notes = "Creates or updates a log schema. If a log schema with the specified ID does not exist, then it will be created and its createUsername " +
-                    "field of the schema will be set to the name of the user who has uploaded it, a unique version number will be generated (incrementally) " +
-                    "for this schema. If a configuration with the specified ID exists, the configuration will be updated. Only users with the " +
-                    "TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "The specified log schema is not a valid avro schema"),
-            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-                    "of the application does not match the Tenant ID of the authenticated user"),
-            @ApiResponse(code = 404, message = "A file with a schema not found in the form data"),
-            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "createLogSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
     @ResponseBody
     public LogSchemaDto createLogSchema(
-            @ApiParam(name = "logSchema", value = "LogSchemaDto body. Mandatory fields: applicationId, name", required = true)
-            @RequestPart("logSchema") LogSchemaDto logSchema,
-            @ApiParam(name = "file", value = "Log schema represented in json format", required = true)
-            @RequestPart("file") MultipartFile file)
+            @RequestPart("logSchema") LogSchemaDto logSchema)
             throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return loggingService.editLogSchema(logSchema, data);
+        return loggingService.saveLogSchema(logSchema);
     }
 
     /**
@@ -185,12 +169,12 @@ public class LoggingController extends AdminController {
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
                     "of the application does not match the Tenant ID of the authenticated user"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "editLogSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "saveLogSchema", method = RequestMethod.POST)
     @ResponseBody
     public LogSchemaDto editLogSchema(
-            @ApiParam(name = "logSchema", value = "LogSchemaDto body. Mandatory fields: applicationId, name", required = true)
+            @ApiParam(name = "logSchema", value = "LogSchemaDto body.", required = true)
             @RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
-        return loggingService.editLogSchema(logSchema, null);
+        return loggingService.saveLogSchema(logSchema);
     }
 
     /**

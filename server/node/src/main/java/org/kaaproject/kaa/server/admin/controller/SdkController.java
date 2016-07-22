@@ -44,7 +44,7 @@ import java.util.List;
 
 @Api(value = "SDK profiles", description = "Provides function for manage SDK profiles", basePath = "/kaaAdmin/rest")
 @Controller
-public class SdkController extends AdminController {
+public class SdkController extends AbstractAdminController {
 
     /**
      * The Constant BUFFER.

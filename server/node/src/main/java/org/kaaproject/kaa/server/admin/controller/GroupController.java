@@ -48,7 +48,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Api(value = "Grouping", description = "Provides function for manage groups", basePath = "/kaaAdmin/rest")
 @Controller
-public class GroupController extends AdminController {
+public class GroupController extends AbstractAdminController {
 
     /**
      * The Constant LOG.

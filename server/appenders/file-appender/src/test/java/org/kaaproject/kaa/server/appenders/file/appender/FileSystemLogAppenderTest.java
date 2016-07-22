@@ -78,8 +78,7 @@ public class FileSystemLogAppenderTest {
             BasicEndpointProfile theLog = new BasicEndpointProfile("test");
 
             LogSchemaDto schemaDto = new LogSchemaDto();
-            schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-            LogSchema schema = new LogSchema(schemaDto);
+            LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
             LogEvent logEvent = new LogEvent();
 
             logEvent.setLogData(converter.encode(theLog));
@@ -123,8 +122,7 @@ public class FileSystemLogAppenderTest {
             ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
 
             LogSchemaDto schemaDto = new LogSchemaDto();
-            schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-            LogSchema schema = new LogSchema(schemaDto);
+            LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
             LogEvent logEvent = new LogEvent();
 
             logEvent.setLogData(new byte[0]);

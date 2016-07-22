@@ -33,6 +33,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
@@ -270,7 +271,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
                             metaInfo.getMetaInfo().getApplicationId());
                     profileSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(profileSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(profileSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
                     profileSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
@@ -291,7 +292,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
             profileSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             profileSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             profileSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             profileSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
             EndpointProfileSchemaDto savedProfileSchema = saveProfileSchema(profileSchema);
             return getProfileSchemaView(savedProfileSchema.getId());
@@ -306,7 +307,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         try {
             EndpointProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(profileSchema.getCtlSchemaId());
-            return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto));
+            return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -363,7 +364,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         try {
             ServerProfileSchemaDto serverProfileSchema = getServerProfileSchema(serverProfileSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
-            return new ServerProfileSchemaViewDto(serverProfileSchema, toCtlSchemaForm(ctlSchemaDto));
+            return new ServerProfileSchemaViewDto(serverProfileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -386,7 +387,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
                             metaInfo.getMetaInfo().getApplicationId());
                     serverProfileSchema.setCtlSchemaId(schema.getId());
                 } else {
-                    CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(serverProfileSchemaView.getCtlSchemaForm());
+                    CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(serverProfileSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
                     serverProfileSchema.setCtlSchemaId(ctlSchemaForm.getId());
                 }
             }
@@ -407,7 +408,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
             serverProfileSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
             serverProfileSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
             serverProfileSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-            CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm);
+            CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
             serverProfileSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
             ServerProfileSchemaDto savedServerProfileSchema = saveServerProfileSchema(serverProfileSchema);
             return getServerProfileSchemaView(savedServerProfileSchema.getId());

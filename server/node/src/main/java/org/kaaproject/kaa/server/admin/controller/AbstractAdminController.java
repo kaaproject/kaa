@@ -48,18 +48,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 /**
- * The Class AdminController.
+ * The Class AbstractAdminController.
  */
 @Api(value = "Admin REST API",
         description = "Provides function for manage Kaa cluster", basePath = "/kaaAdmin/rest")
 @Controller
 @RequestMapping("api")
-public abstract class AdminController {
+public abstract class AbstractAdminController {
 
     /**
      * The Constant LOG.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminController.class);
 
     /**
      * The kaa admin UI service.

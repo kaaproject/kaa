@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Api(value = "Device management", description = "Provides function for device management", basePath = "/kaaAdmin/rest")
 @Controller
-public class DeviceManagementController extends AdminController {
+public class DeviceManagementController extends AbstractAdminController {
 
     /**
      * Provides security credentials, allowing an endpoint that uses them to

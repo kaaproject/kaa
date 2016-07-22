@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 {% if page.redirect_to == "$HOME" %}
-    {% capture path %}/kaa/{{site.data.latest_version.version}}/{% endcapture %}
-    {% for hash in site.data.menu[path]["subitems"] %}
-        {% if forloop.first %}
-            {% capture redirect_url %}{{hash[1]["url"]}}{% endcapture %}
-        {% endif %}
-    {% endfor %}
+	{% capture redirect_url %}{{ home_url }}{% endcapture %}
 {% else %}
-    {% capture redirect_url %}{{root_url}}{{page.redirect_to}}{% endcapture %}
+	{% capture redirect_url %}{{root_url}}{{page.redirect_to}}{% endcapture %}
 {% endif %}
 <link rel="canonical" href="{{ redirect_url }}"/>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />

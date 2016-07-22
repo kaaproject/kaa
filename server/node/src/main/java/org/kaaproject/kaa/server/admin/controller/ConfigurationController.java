@@ -34,17 +34,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.util.List;
 
 @Api(value = "Configuration", description = "Provides function for manage configuration", basePath = "/kaaAdmin/rest")
 @Controller
-public class ConfigurationController extends AdminController {
+public class ConfigurationController extends AbstractAdminController {
 
     private static final Charset DECODING_CHARSET = Charset.forName("ISO-8859-1");
 
@@ -127,7 +125,6 @@ public class ConfigurationController extends AdminController {
      * Adds configuration schema to the list of all configuration schemas.
      *
      * @param configurationSchema the сonfiguration schema
-     * @param file                the file
      * @return the сonfiguration schema dto
      * @throws KaaAdminServiceException the kaa admin service exception
      */
@@ -140,44 +137,13 @@ public class ConfigurationController extends AdminController {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
                     "of the application does not match the Tenant ID of the authenticated user"),
-            @ApiResponse(code = 404, message = "A file with a schema does not found in the form data"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "createConfigurationSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
+    @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
     @ResponseBody
-    public ConfigurationSchemaDto createConfigurationSchema(
-            @ApiParam(name = "configurationSchema", value = "ConfigurationSchemaDto body. Mandatory fields: applicationId, name", required = true)
-            @RequestPart("configurationSchema") ConfigurationSchemaDto configurationSchema,
-            @ApiParam(name = "file", value = "Configuration schema body represented in json format", required = true)
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return configurationService.editConfigurationSchema(configurationSchema, data);
-    }
-
-    /**
-     * Edits existing configuration schema.
-     *
-     * @param configurationSchema the сonfiguration schema
-     * @return the сonfiguration schema dto
-     * @throws KaaAdminServiceException the kaa admin service exception
-     */
-    @ApiOperation(value = "Create configuration schema",
-            notes = "Uploads a configuration schema. A unique version number will be generated (incrementally) for the uploaded schema, and the " +
-                    "createUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER or " +
-                    "TENANT_USER role are allowed to perform this operation.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Specified configuration schema is not a valid avro schema"),
-            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-                    "of the application does not match the Tenant ID of the authenticated user"),
-            @ApiResponse(code = 404, message = "A file with a schema does not found in the form data"),
-            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "editConfigurationSchema", method = RequestMethod.POST)
-    @ResponseBody
-    public ConfigurationSchemaDto editConfigurationSchema(
-            @ApiParam(name = "configurationSchema", value = "ConfigurationSchemaDto body. Mandatory fields: applicationId, name", required = true)
-            @RequestBody ConfigurationSchemaDto configurationSchema)
-            throws KaaAdminServiceException {
-        return configurationService.editConfigurationSchema(configurationSchema, null);
+    public ConfigurationSchemaDto saveConfigurationSchema(
+            @ApiParam(name = "configurationSchema", value = "ConfigurationSchemaDto body", required = true)
+            @RequestBody  ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException {
+        return configurationService.saveConfigurationSchema(configurationSchema);
     }
 
     /**
