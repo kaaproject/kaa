@@ -9,54 +9,66 @@ sort_idx: 10
 * TOC
 {:toc}
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
  
-Kaa establishes a mechanism to uniquely identify each endpoint and the associated tokens and credentials issued to that endpoint.
+Kaa establishes a mechanism to uniquely identify each endpoint and associated endpoint credentials. 
+This article contains brief description of endpoint authentication mechanism and also process of provisioning and validation of endpoint credentials and registration information.
 
-## Endpoint Credentials
+## Endpoint Authentication
 
-Credential is an object that is verified when presented to the verifier in an authentication transaction. 
-It establish the identity of endpoint. 
+Kaa uses hybrid encryption system that is based on RSA with 2048-bit keypair and AES with 256(512)-bit key. 
+During the start of new session, endpoint delivers encrypted session key and the digital signature of this key.
+Session key is a randomly generated AES key that is also encrypted with public key of the kaa node which serves this session or request. 
+Session key signature is based on the private key of the endpoint.
+In order to authenticate endpoint and validate integrity of the request, kaa node validates signature of the session key.
 
-In Kaa used asymmetric cryptography. It's a cryptographic system that uses pairs of keys: public and private keys. 
-During a first connection, Kaa [exchanges with endpoint public keys](#credentials-service).
-In such an approach, all messages that will be send from Kaa or endpoint will be encrypted with a appropriate public key. 
-For example, message from endpoint will be encrypted and decrypted with a own public and private key respectively.
+Although other authentication strategies are possible they are out of scope of this article.
 
-The message cannot be decrypted by anyone who does not possess the matching private key, who is thus presumed to be the owner of that key and the endpoint associated with the public key. 
+## Endpoint Registration
 
-By default [SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) generate a key pair(private and public key) and send request for registration of public key in Kaa. 
-Also you can generate your own key pair and set them to the root folder of your project.
-Registration of public keys occurs only once.
+The endpoint registration is the process of initial communication setup that ensures that the endpoint is registered within the Kaa cluster along with the corresponding security credentials and the endpoint profile. 
+It is not until the endpoint registers on the server that the Kaa framework services become available to the client application. 
+During the process of registration, the Kaa endpoint at first communicates with one or multiple Bootstrap services to obtain a list of available Operations services, 
+and then with the Operations service to submit the endpoint data and complete the registration.
+
+
+![Endpoint Registration](attach/registration.png)
+
+### Operations service list resolution
+
+Initially, the Kaa endpoint SDK does not include any information about Operations services for security and load-balancing reasons. 
+Instead, during the SDK generation, a Control service embeds a list of available Bootstrap services into the SDK (using a properties file for Java implementation, a header file for C++, etc.). 
+The endpoint selects a random Bootstrap service from the list and sends a resolution request to the selected Bootstrap service. 
+The resolution request contains the application token that can be used by the Bootstrap service in specific load-balancing strategies. 
+The resolution response from the Bootstrap service contains a prioritized list of Operations services with their connectivity details and is signed with the Bootstrap service private key. 
+The endpoint verifies the signature of the response by using the Bootstrap public key available from the build time parameters and retains the received information.
+
+### Endpoint Autorization
+
+Endpoint autorization is done by validating endpoint credentials using corresponding credentials service. 
+Credentials service may be configured separately for each application use either [Admin UI]() or [REST API](). 
+
+At the moment of writing Kaa endpoint credentials is identifier is based on hash of endpoint RSA Key Pair.
+During the start of new session, operations service lookup credentials service based on application identifier and uses this credentials service to lookup status of provided credentials object. 
+If Credentials object is not found or this credentials are in use by other endpoint, new session is rejected by Kaa node.
+
+### Endpoint Registration information
+
+Kaa platform user is able to provision server-side profile for new endpoints using information about endpoint credentials (See following [REST API](TODO) call for more details). 
+This server-side profile will be used during endpoint registration. 
+Registration service is responsible for storage and queries of this information based on credentials or endpoint identifier.
+This feature may be useful in multiple use-cases. 
+For example, endpoint manufacturer may provision some secure information to the server-side endpoint profile based on security keys that are available only during manufacturing process.
+
 
 ## Credentials service
 
-Exist four methods for working with credentials service. Only users with the **TENANT_ADMIN** role are allowed to submit this request.
+Kaa provides two credentials service implementations out-of-the box:
 
-1. [Provision security credentials]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) of endpoints to allowing them interact with the specified application. 
-2. [Binds server-side endpoint profile to the specified credential]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
-3. [Revoke security credentials from the corresponding credentials storage]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).  
-    Api for revoking the given credentials and setting their to appropriate status. All subsequent requests will be forbidden.
-    
-    Exist three credential status:
-    
-    * AVAILABLE
-    * IN_USE
-    * REVOKED
+1. Trustful credentials service -  default implementation that allows any endpoint to register and connect to Kaa cluster. (like the previous version of Kaa)
+2. Internal credentials service -  allows connecting with Kaa for specified list of endpoints whose credentials was previously provisioned with Kaa [REST API](TODO).
 
-4. [Notify the Kaa cluster about security credentials revocation]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).  
-    API for launching an asynchronous process to terminate all active sessions of the corresponding registered endpoint with the specified credentials.
-    All subsequent requests will be forbidden.
-
-Kaa provides two credentials service
-
-1. Trustful credentials service -  allows any endpoint to register and connect to Kaa cluster. (like the previous version of Kaa)
-2. Internal credentials service -  allows connecting with Kaa for specified list of endpoints whose credentials was previously provisioned with Kaa REST API.
-
-When Tenant Admin create application he can specify credential service for this application. By default **"Trustful"** is used.
-
-## Creating custom credentials service
+### Custom credentials service implementation
 
 1. Create class which implements all method of 
 [CredentialsService interface](https://github.com/kaaproject/kaa/blob/1d429a30bb4b5206376b740bb21483929a881ace/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java)
@@ -121,7 +133,7 @@ public class CustomCredentialsService implements CredentialsService {
 
 Value of key which was added you will see in Admin UI.
 
-![credential](credential.png)
+![credential](attach/credential.png)
 
 3. In in /usr/lib/kaa-node/conf/common-dao-context.xml
 
@@ -131,7 +143,7 @@ Value of key which was added you will see in Admin UI.
 
 ```
 
-##  Custom credentials service provisioning
+### Custom credentials service provisioning
 
 To provision your credentials service, do the following:
 
