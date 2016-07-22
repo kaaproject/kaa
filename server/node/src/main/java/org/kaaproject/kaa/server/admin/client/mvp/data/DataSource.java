@@ -38,13 +38,8 @@ import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -102,12 +97,12 @@ public class DataSource {
                 });
     }
 
-    public void editUserProfile(UserDto user,
-            final AsyncCallback<UserDto> callback) {
-        rpcService.editUserProfile(user,
-                new DataCallback<UserDto>(callback) {
+    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
+            final AsyncCallback<Void> callback) {
+        rpcService.editUserProfile(userProfileUpdateDto,
+                new DataCallback<Void>(callback) {
                     @Override
-                    protected void onResult(UserDto result) {
+                    protected void onResult(Void result) {
                     }
                 });
     }
@@ -762,23 +757,33 @@ public class DataSource {
                 });
     }
 
-    public void editLogSchemaForm(LogSchemaDto logSchema,
-            final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.editLogSchemaForm(logSchema,
-                new DataCallback<LogSchemaDto>(callback) {
+    public void saveLogSchemaView(LogSchemaViewDto logSchema,
+            final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.saveLogSchemaView(logSchema,
+                new DataCallback<LogSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(LogSchemaDto result) {
-                        eventBus.fireEvent(new DataEvent(LogSchemaDto.class));
+                    protected void onResult(LogSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(LogSchemaViewDto.class));
                     }
                 });
     }
 
-    public void getLogSchemaForm(String logSchemaId,
-            final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.getLogSchemaForm(logSchemaId,
-                new DataCallback<LogSchemaDto>(callback) {
+    public void getLogSchemaView(String logSchemaId,
+            final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.getLogSchemaView(logSchemaId,
+                new DataCallback<LogSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(LogSchemaDto result) {
+                    protected void onResult(LogSchemaViewDto result) {
+                    }
+                });
+    }
+
+    public void createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
+                                 final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.createLogSchemaFormCtlSchema(ctlSchemaForm,
+                new DataCallback<LogSchemaViewDto>(callback) {
+                    @Override
+                    protected void onResult(LogSchemaViewDto result) {
                     }
                 });
     }

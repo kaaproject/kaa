@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -76,6 +77,8 @@ public class ApplicationLogActorMessageProcessorTest {
     private static final int SERVER_PROFILE_SCHEMA_ID = 200;
     private static final String SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID = "2000";
 
+    public static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
+
     private static final int REQUEST_ID = 100;
 
     private static final int REQUIRED_APPENDERS_COUNT = 2;
@@ -110,7 +113,7 @@ public class ApplicationLogActorMessageProcessorTest {
         // Log schema
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setVersion(LOG_SCHEMA_VERSION);
-        logSchema = new LogSchema(logSchemaDto);
+        logSchema = new LogSchema(logSchemaDto, "");
 
         // Log appenders
         required = new LogAppender[REQUIRED_APPENDERS_COUNT];
@@ -175,6 +178,25 @@ public class ApplicationLogActorMessageProcessorTest {
         EndpointProfileDataDto endpoint = new EndpointProfileDataDto(ENDPOINT_ID, ENDPOINT_KEY, CLIENT_PROFILE_SCHEMA_ID, "", SERVER_PROFILE_SCHEMA_ID, "");
         BaseLogEventPack pack = new BaseLogEventPack(endpoint, System.currentTimeMillis(), LOG_SCHEMA_VERSION, new ArrayList<LogEvent>());
         message = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), pack);
+    }
+
+    protected CTLSchemaDto generateCTLSchemaDto(String tenantId) {
+        return generateCTLSchemaDto(DEFAULT_FQN, tenantId, null, 100);
+    }
+
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
+        CTLSchemaDto ctlSchema = new CTLSchemaDto();
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
+        ctlSchema.setVersion(version);
+        String name = fqn.substring(fqn.lastIndexOf(".") + 1);
+        String namespace = fqn.substring(0, fqn.lastIndexOf("."));
+        StringBuilder body = new StringBuilder("{\"type\": \"record\",");
+        body = body.append("\"name\": \"").append(name).append("\",");
+        body = body.append("\"namespace\": \"").append(namespace).append("\",");
+        body = body.append("\"version\": ").append(version).append(",");
+        body = body.append("\"dependencies\": [], \"fields\": []}");
+        ctlSchema.setBody(body.toString());
+        return ctlSchema;
     }
 
     /**
