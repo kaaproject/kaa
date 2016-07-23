@@ -438,40 +438,30 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Class implement functionality for First Kaa application
- *
- * @author Maksym Liashenko
+ * Class implement functionality for First Kaa application. Application send temperature data
+ * from the Kaa endpoint with required configured sampling period
  */
-public class FirstDemo {
+public class FirstKaaDemo {
 
-    private static final long DEFAULT_SAMPLE_TIME = 1000L;
+    private static final long DEFAULT_START_DELAY = 1000L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(FirstDemo.class);
-    private static Timer timer = new Timer();
+    private static final Logger LOG = LoggerFactory.getLogger(FirstKaaDemo.class);
+
     private static KaaClient kaaClient;
 
+    private static ScheduledFuture<?> scheduledFuture;
+    private static ScheduledExecutorService scheduledExecutorService;
 
     public static void main(String[] args) {
-        LOG.info("Kaa First Demo app starting!");
-        startKaaClient();
+        LOG.info(FirstKaaDemo.class.getSimpleName() + " app starting!");
 
-        LOG.info("--= Press any key to exit =--");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            LOG.error("IOException has occurred: " + e.getMessage());
-        }
-        LOG.info("Stopping...");
-
-        timer.cancel();
-        stopKaaClient();
-    }
-
-    private static void startKaaClient() {
+        scheduledExecutorService = Executors.newScheduledThreadPool(1);
         /*
          * Create the Kaa desktop context for the application.
          */
@@ -481,26 +471,14 @@ public class FirstDemo {
          * Create a Kaa client and add a listener which displays the Kaa client
          * configuration as soon as the Kaa client is started.
          */
-        kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
-            @Override
-            public void onStarted() {
-                super.onStarted();
-                LOG.info("Kaa client started");
-
-                Configuration configuration = kaaClient.getConfiguration();
-                LOG.info("Default sample period: " + configuration.getSamplePeriod());
-
-                onKaaStarted(configuration.getSamplePeriod() * 1000L);
-
-            }
-        }, true);
+        kaaClient = Kaa.newClient(desktopKaaPlatformContext, new FirstKaaClientStateListener(), true);
 
         /*
          *  Used by log collector on each adding of the new log record in order to check whether to send logs to server.
-         *  Start log upload when there is records in storage.
+         *  Start log upload when there is at least one record in storage.
          */
         RecordCountLogUploadStrategy strategy = new RecordCountLogUploadStrategy(1);
-        strategy.setMaxParrelelUpload(1);
+        strategy.setMaxParallelUploads(1);
         kaaClient.setLogUploadStrategy(strategy);
 
         /*
@@ -512,9 +490,8 @@ public class FirstDemo {
         kaaClient.addConfigurationListener(new ConfigurationListener() {
             @Override
             public void onConfigurationUpdate(Configuration configuration) {
-                LOG.info("Received configuration data. New sample period: " + configuration.getSamplePeriod());
-
-                onChangedConfiguration(configuration.getSamplePeriod() * 1000L);
+                LOG.info("Received configuration data. New sample period: {}", configuration.getSamplePeriod());
+                onChangedConfiguration(TimeUnit.SECONDS.toMillis(configuration.getSamplePeriod()));
             }
         });
 
@@ -522,18 +499,21 @@ public class FirstDemo {
          * Start the Kaa client and connect it to the Kaa server.
          */
         kaaClient.start();
-    }
 
-    private static void addTemperatureRecord(DataCollection data) {
-        kaaClient.addLogRecord(data);
-    }
+        LOG.info("--= Press any key to exit =--");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            LOG.error("IOException has occurred: {}", e.getMessage());
+        }
+        LOG.info("Stopping...");
 
-    private static void stopKaaClient() {
+        scheduledExecutorService.shutdown();
         kaaClient.stop();
     }
 
     /*
-    * Method, that emaulate getting temperature from real sensor.
+    * Method, that emulate getting temperature from real sensor.
     * Retrieves random temperature.
     */
     private static int getTemperatureRand() {
@@ -542,29 +522,58 @@ public class FirstDemo {
 
     private static void onKaaStarted(long time) {
         if (time == 0) {
-            time = DEFAULT_SAMPLE_TIME;
+            time = DEFAULT_START_DELAY;
         }
-        timer.schedule(new TemperatureTimerTask(), DEFAULT_SAMPLE_TIME, time);
+
+        scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        int temperature = getTemperatureRand();
+                        kaaClient.addLogRecord(new DataCollection(temperature));
+
+                        LOG.info("Sampled Temperature: {}", temperature);
+                    }
+                }, DEFAULT_START_DELAY, time, TimeUnit.MILLISECONDS);
     }
 
     private static void onChangedConfiguration(long time) {
         if (time == 0) {
-            time = DEFAULT_SAMPLE_TIME;
+            time = DEFAULT_START_DELAY;
         }
-        timer.cancel();
+        scheduledFuture.cancel(false);
 
-        timer = new Timer();
-        timer.schedule(new TemperatureTimerTask(), DEFAULT_SAMPLE_TIME, time);
+        scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+                        int temperature = getTemperatureRand();
+                        kaaClient.addLogRecord(new DataCollection(temperature));
+
+                        LOG.info("Sampled Temperature: {}", temperature);
+                    }
+                }, DEFAULT_START_DELAY, time, TimeUnit.MILLISECONDS);
     }
 
-    private static class TemperatureTimerTask extends TimerTask {
+    private static class FirstKaaClientStateListener extends SimpleKaaClientStateListener {
 
         @Override
-        public void run() {
-            int temperature = getTemperatureRand();
-            addTemperatureRecord(new DataCollection(temperature));
+        public void onStarted() {
+            super.onStarted();
+            LOG.info("Kaa client started");
 
-            LOG.info("Sampled Temperature: " + temperature);
+            Configuration configuration = kaaClient.getConfiguration();
+            LOG.info("Default sample period: {}", configuration.getSamplePeriod());
+
+            onKaaStarted(TimeUnit.SECONDS.toMillis(configuration.getSamplePeriod()));
+
+        }
+
+        @Override
+        public void onStopped() {
+            super.onStopped();
+            LOG.info("Kaa client stopped");
         }
     }
 }
