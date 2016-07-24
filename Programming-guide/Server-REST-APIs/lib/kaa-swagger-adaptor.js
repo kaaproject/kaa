@@ -28,8 +28,7 @@ function kaaSwaggerAdaptor () {
 
       console.log('-----', li_dom_id, $('#' + li_dom_id));
       Docs.expandOperation($('#' + li_content_dom_id));
-      $('#main').animate({scrollTop: $('#' + li_dom_id).offset().top}, 500);
-      console.log('111111');
+      $('#main').animate({scrollTop: $('#' + li_dom_id).offset().top + $("#main").scrollTop()}, 700);
 
       //$('#' + li_dom_id).slideto();
       break;
