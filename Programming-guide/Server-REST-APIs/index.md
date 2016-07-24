@@ -2,13 +2,10 @@
 layout: page
 title: Server REST APIs
 permalink: /:path/
-nav: /:path/Programming-guide/Server-REST-APIs
 sort_idx: 60
 ---
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/2.1.4/css/screen.min.css">
-
-  <link href='css/custom.css' media='screen' rel='stylesheet' type='text/css'/>
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.ba-bbq/1.2.1/jquery.ba-bbq.min.js"></script>
@@ -22,6 +19,7 @@ sort_idx: 60
   <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
   <script src='lib/backbone-min.js' type='text/javascript'></script>
   <script src='swagger-ui.min.js' type='text/javascript'></script>
+  <script src='lib/kaa-swagger-adaptor.js' type='text/javascript'></script>
 
   <script type="text/javascript">
     $(function () {
@@ -35,7 +33,13 @@ sort_idx: 60
         },
     onFailure: function(data) {
           log("debug");
-        }
+        },
+        onComplete: function(swaggerApi, swaggerUi) {
+          var kaaAdaptor = new kaaSwaggerAdaptor();
+          var toc = kaaAdaptor.buildSwaggerUiTocList(swaggerApi);
+          DOM.getInstance().replaceToc(toc);
+          kaaAdaptor.scrollToApiFromURL();
+        },
       });
       window.swaggerUi.load();
       function log() {
