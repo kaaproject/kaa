@@ -39,64 +39,6 @@
 		};
 	}());
 
-	var DOM = (function () {
-
-		var instance = null;
-
-		function init() {
-			function getSearchVersion() {
-				var dropDownVersionSelect = document.getElementById(VERSIONSELECT_ID);
-				return dropDownVersionSelect.options[dropDownVersionSelect.selectedIndex].value;
-			}
-
-			function setSearchVersion(searchVersion) {
-				document.getElementById(VERSIONSELECT_ID).value = searchVersion;
-			}
-
-			function setSearchQuerry(searchTerm) {
-				document.getElementById(SEARCHBOX_ID).setAttribute("value", searchTerm);
-			}
-
-			function showError(errorStr) {
-				document.getElementById(SEARCHRESULTS_ID).innerHTML = '<p>' + errorStr + '</p>';
-			}
-
-			function updateSearchResults(data, lunarSearchResultsArray, searchTerm, textProcessCallback) {
-				if (lunarSearchResultsArray.length < 1) {
-					document.getElementById(SEARCHRESULTS_ID).innerHTML = NORESULTS;
-					return;
-				}
-				document.getElementById(SEARCHRESULTS_ID).innerHTML = lunarSearchResultsArray.reduce(function (previousValue, currentValue, index, array) {
-					var item = data[currentValue.ref];
-					var url = UTILS.replaceIfBlank(item.url, DEFAULT_URL);
-					var title = UTILS.replaceIfBlank(item.title, DEFAULT_TITLE);
-					var text = UTILS.replaceIfBlank( textProcessCallback(item.content, searchTerm), DEFAULT_TEXT);
-					return previousValue + '<li><a href="' + url + '"><h3>' + title + '</h3></a>' + '<p>' + text + '</p></li>';
-				}, '');
-			}
-
-			return {
-				getSearchVersion : getSearchVersion,
-				setSearchVersion : setSearchVersion,
-				setSearchQuerry : setSearchQuerry,
-				showError : showError,
-				updateSearchResults : updateSearchResults,
-			};
-		}
-
-		function getInstance() {
-			if( ! instance ) {
-				instance = new init();
-			}
-			return instance;
-		}
-
-		return {
-			getInstance : getInstance
-		};
-
-	}());
-
 	function urlBuilder (baseUrl) {
 		this.baseUrl = baseUrl;
 		this.buildSearchDictionaryUrl = function buildSearchDictionaryUrl(searchVersion) {
