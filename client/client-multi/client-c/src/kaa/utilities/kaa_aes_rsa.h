@@ -27,17 +27,32 @@
 
 /**
  * @brief generate AES key
+ *
+ * @param[out] key Generated AES key
+ * @param[in] bytes Size of the AES key
  */
 int init_aes_key(unsigned char *key, size_t bytes);
 
 /**
  * @brief encrypt or decrypt with AES key
+ *
+ * @param[in]   mode          Mode of encryption
+ * @param[in]   input         Pointer to input data
+ * @param[in]   input_size    Size of input data
+ * @param[out]  output        Pointer to output data
+ * @param[in]   key           Pointer to AES key
  */
 kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_size,
         uint8_t *output, const uint8_t *key);
 
 /**
  * @brief create RSA signature
+ *
+ * @param[in]   pk            Pointer to a pk structure
+ * @param[in]   input         Pointer to input data
+ * @param[in]   input_size    Size of input data
+ * @param[out]  output        Pointer to RSA signature
+ * @param[out]  output_size   Size of RSA signature
  */
 int rsa_sign(mbedtls_pk_context *pk, const uint8_t *input, size_t input_size,
         uint8_t *output, size_t *output_size);

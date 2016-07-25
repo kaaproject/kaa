@@ -68,31 +68,12 @@ typedef struct {
  */
 int rsa_genkey(mbedtls_pk_context *pk);
 
-/** 
- * @brief extract RSA keys from mbedtls_pk_context
- * @return public and private RSA keys
- */
-int kaa_write_keys(mbedtls_pk_context *pk, uint8_t *public_key,
-                          size_t *public_key_length, uint8_t *private_key,
-                          size_t *private_key_length);
-
 /**
  * @brief generate RSA keys in mbedtls_pk_context
  */
 int rsa_keys_create(mbedtls_pk_context *pk, uint8_t *public_key,
-                           size_t *public_key_length, uint8_t *private_key,
-                           size_t *private_key_length);
-
-/**
- * @brief store keys in header files
- */
-void store_key(FILE *fd, const char *prefix, size_t prefix_size,
-                      uint8_t *key, size_t length);
-
-/**
- * @brief store sha1 and sha1
- */
-int sha1_store(FILE *fd, uint8_t *sha1, size_t sha1_len, uint8_t *sha1_base64, size_t sha1_base64_len);
+        size_t *public_key_length, uint8_t *private_key,
+        size_t *private_key_length);
 
 /**
  * @brief generate sha1
@@ -108,4 +89,4 @@ int sha1_to_base64(uint8_t *key, size_t length, uint8_t *base64, size_t base64_l
  * @brief store RSA keys, sha1 and sha1_base64
  */
 int kaa_keys_store(uint8_t *public_key, size_t public_key_length,
-                          uint8_t *private_key, size_t private_key_length);
+        uint8_t *private_key, size_t private_key_length);

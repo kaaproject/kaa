@@ -72,8 +72,9 @@ int rsa_sign(mbedtls_pk_context *pk, const uint8_t *input,
         size_t input_size, uint8_t *output, size_t *output_size)
 {
     // TODO(KAA-982): Use asserts
-    if (!input || !input_size || !output || !output_size)
+    if (!input || !input_size || !output || !output_size) {
         return KAA_ERR_BADPARAM;
+    }
     int ret = 0;
     uint8_t hash[32];
     mbedtls_entropy_context entropy;
