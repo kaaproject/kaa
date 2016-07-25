@@ -536,7 +536,7 @@ blockquote:before{
     display: block;
 }
 blockquote table{
-	outline: 2px solid #eaf7e8;
+	outline: 2px solid #FFF2DF;
 }
 blockquote.note{
 	padding: 15px 20px 15px 50px;
