@@ -34,9 +34,8 @@ public class LogSchemaTest {
         LogSchemaDto dto = new LogSchemaDto();
         dto.setId(ID);
         dto.setApplicationId(APPLICATION_ID);
-        dto.setSchema(SCHEMA);
         dto.setVersion(VERSION);
-        LogSchema logSchema = new LogSchema(dto);
+        LogSchema logSchema = new LogSchema(dto, SCHEMA);
         
         Assert.assertEquals(ID, logSchema.getId());
         Assert.assertEquals(APPLICATION_ID, logSchema.getApplicationId());

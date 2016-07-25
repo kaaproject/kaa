@@ -147,7 +147,6 @@ public class CassandraLogAppenderTest {
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setCreatedTime(System.currentTimeMillis());
-        logSchemaDto.setSchema(LogData.getClassSchema().toString());
 
         if (includeServerProfile) {
             BaseSchemaInfo schemaInfo = new BaseSchemaInfo(Integer.toString(RANDOM.nextInt()), this.getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));
@@ -155,7 +154,7 @@ public class CassandraLogAppenderTest {
             logEventPack.setServerProfile(new BaseProfileInfo(schemaInfo, body));
         }
 
-        logEventPack.setLogSchema(new LogSchema(logSchemaDto));
+        logEventPack.setLogSchema(new LogSchema(logSchemaDto, LogData.getClassSchema().toString()));
         return logEventPack;
     }
 

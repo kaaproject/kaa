@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.common.dto.logs;
 
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
+import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 
-public class LogSchemaDto extends AbstractSchemaDto {
+public class LogSchemaDto extends BaseSchemaDto {
 
     private static final long serialVersionUID = -7023640650614573350L;
 

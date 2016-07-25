@@ -49,14 +49,7 @@ import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
-import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.ResultCode;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
@@ -529,16 +522,15 @@ public class KaaAdminController {
     /**
      * Edits user profile to all user profiles.
      *
-     * @param userDto
+     * @param userProfileUpdateDto
      *            the user dto
-     * @return the user dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
     @RequestMapping(value = "userProfile", method = RequestMethod.POST)
     @ResponseBody
-    public UserDto editUserProfile(@RequestBody UserDto userDto) throws KaaAdminServiceException {
-        return kaaAdminService.editUserProfile(userDto);
+    public void editUserProfile(@RequestBody UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
+        kaaAdminService.editUserProfile(userProfileUpdateDto);
     }
 
     /**
@@ -1070,37 +1062,16 @@ public class KaaAdminController {
     /**
      * Adds configuration schema to the list of all configuration schemas.
      *
-     * @param configurationSchema
-     *            the сonfiguration schema
-     * @param file
-     *            the file
+     * @param configurationSchema the сonfiguration schema
      * @return the сonfiguration schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
-    @RequestMapping(value = "createConfigurationSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST)
     @ResponseBody
-    public ConfigurationSchemaDto createConfigurationSchema(@RequestPart("configurationSchema") ConfigurationSchemaDto configurationSchema,
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return kaaAdminService.editConfigurationSchema(configurationSchema, data);
+    public ConfigurationSchemaDto saveConfigurationSchema(@RequestBody  ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveConfigurationSchema(configurationSchema);
     }
 
-    /**
-     * Edits existing configuration schema.
-     *
-     * @param configurationSchema
-     *            the сonfiguration schema
-     * @return the сonfiguration schema dto
-     * @throws KaaAdminServiceException
-     *             the kaa admin service exception
-     */
-    @RequestMapping(value = "editConfigurationSchema", method = RequestMethod.POST)
-    @ResponseBody
-    public ConfigurationSchemaDto editConfigurationSchema(@RequestBody ConfigurationSchemaDto configurationSchema)
-            throws KaaAdminServiceException {
-        return kaaAdminService.editConfigurationSchema(configurationSchema, null);
-    }
 
     /**
      * Gets the notification schemas by application token.
@@ -1232,18 +1203,15 @@ public class KaaAdminController {
      *
      * @param logSchema
      *            the log schema
-     * @param file
-     *            the file
      * @return the log schema dto
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value = "createLogSchema", method = RequestMethod.POST)
     @ResponseBody
-    public LogSchemaDto createLogSchema(@RequestPart("logSchema") LogSchemaDto logSchema, @RequestPart("file") MultipartFile file)
+    public LogSchemaDto createLogSchema(@RequestBody LogSchemaDto logSchema)
             throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return kaaAdminService.editLogSchema(logSchema, data);
+        return kaaAdminService.saveLogSchema(logSchema);
     }
 
     /**
@@ -1255,10 +1223,25 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "editLogSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "saveLogSchema", method = RequestMethod.POST)
     @ResponseBody
-    public LogSchemaDto editLogSchema(@RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editLogSchema(logSchema, null);
+    public LogSchemaDto saveLogSchema(@RequestBody LogSchemaDto logSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveLogSchema(logSchema);
+    }
+
+    /**
+     * Get existing log schema.
+     *
+     * @param id
+     *            of log schema
+     * @return the log schema string
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "CTL/getFlatSchemaByCtlSchemaId", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public String getFlatSchemaByCtlSchemaId(@RequestParam String id) throws KaaAdminServiceException {
+        return kaaAdminService.getFlatSchemaByCtlSchemaId(id);
     }
 
     /**

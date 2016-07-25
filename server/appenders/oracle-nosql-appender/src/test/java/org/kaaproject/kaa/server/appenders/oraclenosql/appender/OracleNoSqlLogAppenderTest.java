@@ -182,8 +182,7 @@ public class OracleNoSqlLogAppenderTest {
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         
         LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema schema = new LogSchema(schemaDto);
+        LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
         
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), null);
@@ -210,8 +209,7 @@ public class OracleNoSqlLogAppenderTest {
         events.add(event3);
 
         LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema schema = new LogSchema(schemaDto);
+        LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
 
         
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
@@ -238,16 +236,15 @@ public class OracleNoSqlLogAppenderTest {
         
 
         LogSchemaDto dto = new LogSchemaDto();
-        dto.setSchema(EMPTY_SCHEMA);
         dto.setVersion(1);
-        LogSchema schema = new LogSchema(dto);
+        LogSchema schema = new LogSchema(dto, EMPTY_SCHEMA);
         int version = dto.getVersion();
 
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, version, events);
         logEventPack.setLogSchema(schema);
         Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
-        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
+        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schema.getSchema()) {
 
             @Override
             public GenericRecord decodeBinary(byte[] bytes) {
@@ -260,7 +257,7 @@ public class OracleNoSqlLogAppenderTest {
             }
         };
 
-        converters.put(dto.getSchema(), converter);
+        converters.put(schema.getSchema(), converter);
         ReflectionTestUtils.setField(logAppender, "converters", converters);
 
         Assert.assertEquals(0, getKeyValuesCount());

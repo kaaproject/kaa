@@ -133,7 +133,7 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
                                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestData));
                             }
                         } else if (CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME.equals(data.getName())) {
-                            nextProtocol = Integer.valueOf(attribute.getString());
+                            nextProtocol = ByteBuffer.wrap(attribute.get()).getInt();
                             LOG.trace("[{}] next protocol is {}", getSessionUuid(), nextProtocol);
                         }
                     }

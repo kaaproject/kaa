@@ -22,6 +22,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.Actio
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -33,7 +34,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 
-public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
+public class LogSchemaGrid extends BaseCtlSchemasGrid<LogSchemaDto>{
 
     private Column<LogSchemaDto,LogSchemaDto> downloadLibraryColumn;
 
