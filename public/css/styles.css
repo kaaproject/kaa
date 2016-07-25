@@ -520,9 +520,9 @@ button.colapse_control.more:before {
 
 /* quote */
 blockquote{
-	padding: 15px 20px 15px 50px;
-	border-left: 5px solid #72cb66;
-    background: #eaf7e8;
+	padding: 15px 20px 15px 15px;
+	border-left: 5px solid #F7AD41;
+    background: #FFF2DF;
 	position: relative;
 	font-size: 16px;
 }
@@ -534,37 +534,50 @@ blockquote:before{
     width: 40px;
     height: 36px;
     display: block;
-	background-image: url('{{ site.baseurl }}/public/notes/note.png');
 }
 blockquote table{
 	outline: 2px solid #eaf7e8;
 }
+blockquote.note{
+	padding: 15px 20px 15px 50px;
+	border-left: 5px solid #72cb66;
+    background: #eaf7e8;
+}
+blockquote.note:before{
+	background-image: url('/public/notes/note.png');
+}
+blockquote.note table{
+	outline: 2px solid #eaf7e8;
+}
 blockquote.tip{
+	padding: 15px 20px 15px 50px;
 	border-left: 5px solid #4650ad;
     background: #ecedf7;
 }
 blockquote.tip:before{
-	background-image: url('{{ site.baseurl }}/public/notes/tip.png');
+	background-image: url('/public/notes/tip.png');
 }
 blockquote.tip table{
 	outline: 2px solid #ecedf7;
 }
 blockquote.important{
+	padding: 15px 20px 15px 50px;
 	border-left: 5px solid #F7AD41;
     background: #FFF2DF;
 }
 blockquote.important:before{
-	background-image: url('{{ site.baseurl }}/public/notes/important.png');
+	background-image: url('/public/notes/important.png');
 }
 blockquote.important table{
 	outline: 2px solid #FFF2DF;
 }
 blockquote.caution{
+	padding: 15px 20px 15px 50px;
 	border-left: 5px solid #f22f2f;
     background: #feeaea;
 }
 blockquote.caution:before{
-	background-image: url('{{ site.baseurl }}/public/notes/caution.png');
+	background-image: url('/public/notes/caution.png');
 }
 blockquote.caution table{
 	outline: 2px solid #feeaea;
