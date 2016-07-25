@@ -302,15 +302,23 @@ void test_profile_sync_serialize(void **state)
         ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     }
 
-    network_order_32 = KAA_HTONS(TEST_PUB_KEY_SIZE) << 16 | PUB_KEY_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    uint16_t  network_order_16 = KAA_HTONS(PUB_KEY_VALUE  << 8);
+    error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(network_order_16));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_16 = KAA_HTONS(TEST_PUB_KEY_SIZE);
+    error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(network_order_16));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_message_write_aligned(manual_writer, test_ep_key, TEST_PUB_KEY_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    network_order_32 = KAA_HTONS(access_token_size) << 16 | ACCESS_TOKEN_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
+    network_order_16 = KAA_HTONS(ACCESS_TOKEN_VALUE << 8);
+    error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(network_order_16));
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    network_order_16 = KAA_HTONS(access_token_size);
+    error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(network_order_16));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_message_write_aligned(manual_writer, access_token, access_token_size);
