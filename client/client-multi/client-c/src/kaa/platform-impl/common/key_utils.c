@@ -14,7 +14,6 @@
  *  limitations under the License.
  */
 
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -272,11 +271,12 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
     *length = KAA_SHA1_PUB_LEN;
 }
 
-kaa_error_t ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
+kaa_error_t ext_get_sha1_base64_public(const uint8_t **sha1, size_t *length)
 {
     if (!sha1 || !length) {
         return KAA_ERR_BADPARAM;
     }
     *sha1 = (uint8_t *)KAA_SHA1_PUB_BASE64;
     *length = KAA_SHA1_PUB_BASE64_LEN;
+    return KAA_ERR_NONE;
 }

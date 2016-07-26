@@ -200,8 +200,6 @@ add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
 target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 
-add_dependencies(kaac kaa_rsa_keygen)
-
 message("BOOTSTRAP ENABLED")
 include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
 target_link_libraries(kaac PUBLIC extension_bootstrap)
@@ -286,6 +284,7 @@ if(${KAA_PLATFORM} STREQUAL "posix")
     add_subdirectory(tools/kaa_encryption/rsa_key_gen)
     target_link_libraries(kaac PUBLIC rsa_keygen)
 else()
+    add_dependencies(kaac kaa_rsa_keygen)
     externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
                         INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
                         CMAKE_ARGS -DKAA_SDK_DIR=${KAA_SDK_DIR}

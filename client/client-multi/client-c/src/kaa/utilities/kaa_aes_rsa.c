@@ -41,7 +41,7 @@ int init_aes_key(unsigned char *key, size_t bytes)
 kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_size,
         uint8_t *output, const uint8_t *key)
 {
-    if ((input_size % 16) != 0 || !input) {
+    if ((input_size % 16) != 0 || !input || !input_size) {
         return KAA_ERR_BADPARAM;
     }
 
@@ -58,9 +58,11 @@ kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_siz
     }
 
     if (mode == MBEDTLS_AES_ENCRYPT) {
+        /* KAA_SESSION_KEY_LENGTH * 8 - size in bits */
         mbedtls_aes_setkey_enc(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
         mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_ENCRYPT, input, output);
     } else {
+        /* KAA_SESSION_KEY_LENGTH * 8 - size in bits */
         mbedtls_aes_setkey_dec(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
         mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_DECRYPT, input, output);
     }

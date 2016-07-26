@@ -39,10 +39,7 @@ endpoint_keys_t keys;
 
 static int fwrite_check(int n, int count)
 {
-    if (n != count) {
-        return 1;
-    }
-    return 0;
+    return (n != count) ? 1 : 0;
 }
 
 static size_t snprintf_check(int buffer_size, int written)
@@ -139,7 +136,6 @@ static int store_key(FILE *fd, const char *prefix, size_t prefix_size,
         return -1;
     }
     char buffer[512];
-    size_t i;
     if (fwrite_check(fwrite(prefix, prefix_size, 1, fd), 1)) {
         return -1;
     }
@@ -147,7 +143,7 @@ static int store_key(FILE *fd, const char *prefix, size_t prefix_size,
         return -1;
     }
 
-    for (i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
         size_t written = snprintf_check(sizeof(buffer) - 1,
                 snprintf(buffer, sizeof(buffer) - 1,  "0x%02X, ", (int) key[i]));
         if (fwrite_check(fwrite(buffer, written, 1, fd), 1)) {
@@ -210,10 +206,12 @@ int kaa_keys_store(uint8_t *public_key, size_t public_key_length,
     size_t written;
     char buffer[512];
     if (fputs(GUARD_IFNDEF, fd) <= 0) {
-        return -1;
+        error = 1;
+        goto exit;
     }
     if (fputs(GUARD_DEF, fd) <= 0) {
-        return -1;
+        error = 1;
+        goto exit;
     }
 
     written = snprintf_check(sizeof(buffer) - 1, snprintf(buffer, sizeof(buffer) - 1, PUBLIC_KEY_LEN, public_key_length));

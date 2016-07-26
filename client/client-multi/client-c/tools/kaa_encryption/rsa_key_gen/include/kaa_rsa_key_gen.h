@@ -15,9 +15,11 @@
  */
 
 /**
- * @file kaa_rsa_key_gen.h
  * @brief Kaa rsa key generation library
  */
+
+#ifndef KAA_RSA_KEY_GEN_H_
+#define KAA_RSA_KEY_GEN_H_
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -67,19 +69,19 @@ typedef struct {
 
 
 /**
- * @brief Return context for the given RSA keys
+ * @brief generate RSA keys in mbedtls_pk_context
  */
 int rsa_genkey(mbedtls_pk_context *pk);
 
 /**
- * @brief generate RSA keys in mbedtls_pk_context
+ * @brief create RSA keys and store then in der format
  */
 int rsa_keys_create(mbedtls_pk_context *pk, uint8_t *public_key,
         size_t *public_key_length, uint8_t *private_key,
         size_t *private_key_length);
 
 /**
- * @brief generate sha1
+ * @brief generate sha1 representation of the public key
  */
 int sha1_from_public_key(uint8_t *key, size_t length, uint8_t *sha1);
 
@@ -102,3 +104,5 @@ int kaa_keys_store(uint8_t *public_key, size_t public_key_length,
  * @param[in]   mode          Mode of public or private key storage
  */
 int write_rsa_key(mbedtls_pk_context *key, const char *output_file, int mode);
+
+#endif /* KAA_RSA_KEY_GEN_H */

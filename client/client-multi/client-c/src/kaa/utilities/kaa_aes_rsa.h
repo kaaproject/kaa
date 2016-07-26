@@ -23,6 +23,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef KAA_AES_RSA_H_
+#define KAA_AES_RSA_H_
+
 #define KAA_SESSION_KEY_LENGTH         16
 
 /**
@@ -56,3 +59,5 @@ kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_siz
  */
 int rsa_sign(mbedtls_pk_context *pk, const uint8_t *input, size_t input_size,
         uint8_t *output, size_t *output_size);
+
+#endif /* KAA_AES_RSA_H */

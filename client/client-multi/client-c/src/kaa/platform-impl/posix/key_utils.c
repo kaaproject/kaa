@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <assert.h>
 #include <utilities/kaa_mem.h>
 #include <utilities/kaa_aes_rsa.h>
 #include <platform/ext_key_utils.h>
@@ -72,6 +73,8 @@ void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
     if (!initialized) {
         key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, buff, sizeof(buff));
         if (key_length < 0) {
+            *buffer = NULL;
+            *buffer_size = 0;
             return;
         }
         initialized = true;
@@ -181,6 +184,7 @@ kaa_error_t ext_encrypt_data(const uint8_t *input, size_t payload_size, uint8_t 
 
     /* Adding PKCS7 padding */
     size_t enc_data_size = ext_get_encrypted_data_size(payload_size);
+    assert(enc_data_size >= payload_size);
     uint8_t padding = enc_data_size - payload_size;
     memset(output + payload_size, padding, padding);
 
@@ -300,6 +304,8 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
         uint8_t pub_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
         int key_length = mbedtls_pk_write_pubkey_der(&pk_pub_context, pub_key, KAA_RSA_PUBLIC_KEY_LENGTH_MAX);
         if (key_length < 0) {
+            *sha1 = NULL;
+            *length = 0;
             return;
         }
         sha1_from_public_key(pub_key, key_length, sha1_public);
@@ -309,7 +315,7 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
     *sha1 = sha1_public;
 }
 
-kaa_error_t ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
+kaa_error_t ext_get_sha1_base64_public(const uint8_t **sha1, size_t *length)
 {
     if (!sha1 || !length) {
         return KAA_ERR_BADPARAM;
