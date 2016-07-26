@@ -148,6 +148,7 @@ public class AvroEncDec implements PlatformEncDec {
                 return null;
             }
             ClientSync sync = convert(source);
+            sync.setUseConfigurationRawSchema(false);
             LOG.trace("Decoded client sync {}", sync);
             return sync;
         } catch (IOException e) {
@@ -170,6 +171,7 @@ public class AvroEncDec implements PlatformEncDec {
         }
         LOG.trace("Encoding server sync {}", sync);
         SyncResponse response = convert(sync);
+
         LOG.trace("Encoded server sync {}", response);
         try {
             byte[] data = serverSyncConverter.toByteArray(response);

@@ -38,13 +38,8 @@ import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
-import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -102,12 +97,12 @@ public class DataSource {
                 });
     }
 
-    public void editUserProfile(UserDto user,
-            final AsyncCallback<UserDto> callback) {
-        rpcService.editUserProfile(user,
-                new DataCallback<UserDto>(callback) {
+    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
+            final AsyncCallback<Void> callback) {
+        rpcService.editUserProfile(userProfileUpdateDto,
+                new DataCallback<Void>(callback) {
                     @Override
-                    protected void onResult(UserDto result) {
+                    protected void onResult(Void result) {
                     }
                 });
     }
@@ -379,10 +374,11 @@ public class DataSource {
                 });
     }
 
-    public void createConfigurationEmptySchemaForm(final AsyncCallback<RecordField> callback) {
-        rpcService.createConfigurationEmptySchemaForm(new DataCallback<RecordField>(callback) {
+    public void createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm, final AsyncCallback<ConfigurationSchemaViewDto> callback) {
+        rpcService.createConfigurationSchemaFormCtlSchema(ctlSchemaForm, new DataCallback<ConfigurationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(RecordField result) {
+                    protected void onResult(ConfigurationSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(ConfigurationSchemaViewDto.class));
                     }
                 });
     }
@@ -465,13 +461,13 @@ public class DataSource {
 
     public void editEcf(EventClassFamilyDto ecf,
             final AsyncCallback<EventClassFamilyDto> callback) {
-        rpcService.editEventClassFamily(ecf,
-                new DataCallback<EventClassFamilyDto>(callback) {
-                    @Override
-                    protected void onResult(EventClassFamilyDto result) {
-                        refreshEcfs();
-                    }
-                });
+//        rpcService.editEventClassFamily(ecf,
+//                new DataCallback<EventClassFamilyDto>(callback) {
+//                    @Override
+//                    protected void onResult(EventClassFamilyDto result) {
+//                        refreshEcfs();
+//                    }
+//                });
     }
 
     public void getEcf(String ecfId,
@@ -671,25 +667,25 @@ public class DataSource {
 
     }
 
-    public void editConfigurationSchemaForm(
-            ConfigurationSchemaDto configurationSchema,
-            final AsyncCallback<ConfigurationSchemaDto> callback) {
-        rpcService.editConfigurationSchemaForm(configurationSchema,
-                new DataCallback<ConfigurationSchemaDto>(callback) {
+    public void saveConfigurationSchemaView(
+            ConfigurationSchemaViewDto configurationSchema,
+            final AsyncCallback<ConfigurationSchemaViewDto> callback) {
+        rpcService.saveConfigurationSchemaView(configurationSchema,
+                new DataCallback<ConfigurationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationSchemaDto result) {
+                    protected void onResult(ConfigurationSchemaViewDto result) {
                         eventBus.fireEvent(new DataEvent(
                                 ConfigurationSchemaDto.class));
                     }
                 });
     }
 
-    public void getConfigurationSchemaForm(String configurationSchemaId,
-            final AsyncCallback<ConfigurationSchemaDto> callback) {
-        rpcService.getConfigurationSchemaForm(configurationSchemaId,
-                new DataCallback<ConfigurationSchemaDto>(callback) {
+    public void getConfigurationSchemaView(String configurationSchemaId,
+                                           final AsyncCallback<ConfigurationSchemaViewDto> callback) {
+        rpcService.getConfigurationSchemaView(configurationSchemaId,
+                new DataCallback<ConfigurationSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ConfigurationSchemaDto result) {
+                    protected void onResult(ConfigurationSchemaViewDto result) {
                     }
                 });
     }
@@ -770,23 +766,33 @@ public class DataSource {
                 });
     }
 
-    public void editLogSchemaForm(LogSchemaDto logSchema,
-            final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.editLogSchemaForm(logSchema,
-                new DataCallback<LogSchemaDto>(callback) {
+    public void saveLogSchemaView(LogSchemaViewDto logSchema,
+            final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.saveLogSchemaView(logSchema,
+                new DataCallback<LogSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(LogSchemaDto result) {
-                        eventBus.fireEvent(new DataEvent(LogSchemaDto.class));
+                    protected void onResult(LogSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(LogSchemaViewDto.class));
                     }
                 });
     }
 
-    public void getLogSchemaForm(String logSchemaId,
-            final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.getLogSchemaForm(logSchemaId,
-                new DataCallback<LogSchemaDto>(callback) {
+    public void getLogSchemaView(String logSchemaId,
+            final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.getLogSchemaView(logSchemaId,
+                new DataCallback<LogSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(LogSchemaDto result) {
+                    protected void onResult(LogSchemaViewDto result) {
+                    }
+                });
+    }
+
+    public void createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
+                                 final AsyncCallback<LogSchemaViewDto> callback) {
+        rpcService.createLogSchemaFormCtlSchema(ctlSchemaForm,
+                new DataCallback<LogSchemaViewDto>(callback) {
+                    @Override
+                    protected void onResult(LogSchemaViewDto result) {
                     }
                 });
     }
@@ -842,9 +848,9 @@ public class DataSource {
     }
     
     public void createNewCTLSchemaFormInstance(String metaInfoId, Integer sourceVersion, 
-            String applicationId,
+            String applicationId, ConverterType converterType,
             final AsyncCallback<CtlSchemaFormDto> callback) {
-        rpcService.createNewCTLSchemaFormInstance(metaInfoId, sourceVersion, applicationId,
+        rpcService.createNewCTLSchemaFormInstance(metaInfoId, sourceVersion, applicationId, converterType,
                 new DataCallback<CtlSchemaFormDto>(callback) {
                     @Override
                     protected void onResult(CtlSchemaFormDto result) {
@@ -863,8 +869,8 @@ public class DataSource {
     }
     
     public void editCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm,
-            final AsyncCallback<CtlSchemaFormDto> callback) {
-        rpcService.saveCTLSchemaForm(ctlSchemaForm, 
+                                  ConverterType converterType, final AsyncCallback<CtlSchemaFormDto> callback) {
+        rpcService.saveCTLSchemaForm(ctlSchemaForm, converterType,
                 new DataCallback<CtlSchemaFormDto>(callback) {
                     @Override
                     protected void onResult(CtlSchemaFormDto result) {

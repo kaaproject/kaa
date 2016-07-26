@@ -70,7 +70,7 @@ public class LogSchemaServiceImpl implements LogSchemaService {
 
     @Override
     public LogSchemaDto findLogSchemaByAppIdAndVersion(String appId,
-            int schemaVersion) {
+                                                       int schemaVersion) {
         validateId(appId, "Can't find log schema. Invalid application id: " + appId);
         return getDto(logSchemaDao.findByApplicationIdAndVersion(appId, schemaVersion));
     }
@@ -98,7 +98,11 @@ public class LogSchemaServiceImpl implements LogSchemaService {
                 throw new IncorrectParameterException("Invalid log schema id: " + id);
             }
         }
-        return getDto(logSchemaDao.save(new LogSchema(logSchemaDto)));
+        LogSchemaDto savedSchema = getDto(logSchemaDao.save(new LogSchema(logSchemaDto)));
+        if (savedSchema == null) {
+            throw new RuntimeException("Can't save log schema");
+        }
+        return savedSchema;
     }
 
     @Override

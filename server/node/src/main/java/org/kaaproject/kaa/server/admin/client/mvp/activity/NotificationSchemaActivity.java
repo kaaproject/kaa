@@ -24,6 +24,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
@@ -63,9 +64,8 @@ public class NotificationSchemaActivity extends AbstractBaseCtlSchemaActivity<No
 
     @Override
     protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
-                null,
-                applicationId,
+        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, null, applicationId,
+                ConverterType.FORM_AVRO_CONVERTER,
                 callback);
     }
 

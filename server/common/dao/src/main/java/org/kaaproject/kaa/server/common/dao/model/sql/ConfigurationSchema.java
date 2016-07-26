@@ -36,7 +36,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SC
 @Entity
 @Table(name = CONFIGURATION_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
+public class ConfigurationSchema extends BaseSchema<ConfigurationSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = -8854035430683210037L;
 
@@ -95,9 +95,6 @@ public class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implemen
         this.overrideSchema = overrideSchema;
     }
 
-    public String getApplicationId() {
-        return application != null ? application.getStringId() : null;
-    }
 
     @Override
     public ConfigurationSchemaDto toDto() {
@@ -118,60 +115,11 @@ public class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implemen
         return new ConfigurationSchema(id);
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 37;
-        int result = 1;
-        result = prime * result + super.hashCode();
-        result = prime * result + ((baseSchema == null) ? 0 : baseSchema.hashCode());
-        result = prime * result + ((protocolSchema == null) ? 0 : protocolSchema.hashCode());
-        result = prime * result + ((overrideSchema == null) ? 0 : overrideSchema.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ConfigurationSchema other = (ConfigurationSchema) obj;
-        if (baseSchema == null) {
-            if (other.baseSchema != null) {
-                return false;
-            }
-        } else if (!baseSchema.equals(other.baseSchema)) {
-            return false;
-        }
-        if (protocolSchema == null) {
-            if (other.protocolSchema != null) {
-                return false;
-            }
-        } else if (!protocolSchema.equals(other.protocolSchema)) {
-            return false;
-        }
-        if (overrideSchema == null) {
-            if (other.overrideSchema != null) {
-                return false;
-            }
-        } else if (!overrideSchema.equals(other.overrideSchema)) {
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public String toString() {
         return "ConfigurationSchema [version=" + version + ", name=" + name + ", description="
-                + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", endpointCount=" + endpointCount + ", id=" + id
+                + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime  + ", id=" + id
                 + "]";
     }
 

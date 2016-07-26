@@ -126,10 +126,10 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testGetEventClassesByFamilyIdVersionAndType() throws Exception {
-        tenantAdminDto = createTenant(tenantAdminUser);
+        TenantUserDto tenant = createTenant(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenantAdminDto.getId());
-        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(eventClassFamily.getId());
+        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getTenantId());
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenant.getTenantId());
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
         List<EventClassDto> eventClasses = client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
         Assert.assertNotNull(eventClasses);
@@ -169,10 +169,10 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testAddEventClassFamilyVersion() throws Exception {
-        tenantAdminDto = createTenant(tenantAdminUser);
+        TenantUserDto tenant = createTenant(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenantAdminDto.getId());
-        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(eventClassFamily.getId());
+        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getTenantId());
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenant.getTenantId());
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
         List<EventClassFamilyVersionDto> schemas = eventClassService.findEventClassFamilyVersionsById(eventClassFamily.getId());
         Assert.assertNotNull(schemas);
@@ -197,17 +197,16 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyFqns() throws Exception {
-        tenantAdminDto = createTenant(tenantAdminUser);
+        TenantUserDto tenant = createTenant(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenantAdminDto.getId());
-        final EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(eventClassFamily.getId());
+        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getTenantId());
+        final EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenant.getTenantId());
         loginTenantAdmin(tenantAdminUser);
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
-        final EventClassFamilyDto secondEventClassFamily = createEventClassFamily(tenantAdminDto.getId(), "test");
         checkBadRequest(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.addEventClassFamilyVersion(secondEventClassFamily.getId(), eventClassFamilyVersion);
+                createEventClassFamily(tenant.getTenantId());
             }
         });
     }

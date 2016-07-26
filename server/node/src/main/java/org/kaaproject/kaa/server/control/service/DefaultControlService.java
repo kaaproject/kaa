@@ -1053,24 +1053,29 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
 
-        CTLSchemaDto profileCtlSchema = ctlService.findCTLSchemaById(profileSchema.getCtlSchemaId());
-        if (profileCtlSchema == null) {
-            throw new NotFoundException("Profile CTL schema not found!");
-        }
-        String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
+        CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
 
-        CTLSchemaDto notificationCtlSchema = ctlService.findCTLSchemaById(notificationSchema.getCtlSchemaId());
-        if (notificationCtlSchema == null) {
-            throw new NotFoundException("Profile CTL schema not found!");
-        }
+        String logSchemaBodyString = ctlService.flatExportAsString(logCtlSchema);
+
+        CTLSchemaDto profileCtlSchema = getCTLSchemaById(profileSchema.getCtlSchemaId());
+
+        CTLSchemaDto notificationCtlSchema = getCTLSchemaById(notificationSchema.getCtlSchemaId());
+
+        CTLSchemaDto confCtlSchema = getCTLSchemaById(configurationSchema.getCtlSchemaId());
+
         String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
+        String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
+        String confSchemaBodyString = ctlService.flatExportAsString(confCtlSchema);
 
         DataSchema profileDataSchema = new DataSchema(profileSchemaBodyString);
+        DataSchema confDataSchema = new DataSchema(confSchemaBodyString);
         DataSchema notificationDataSchema = new DataSchema(notificationSchemaBodyString);
         ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
-        DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
+        DataSchema logDataSchema = new DataSchema(logSchemaBodyString);
 
         String profileSchemaBody = profileDataSchema.getRawSchema();
+        String confSchemaBody = confDataSchema.getRawSchema();
+
 
         byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
                 configurationSchema.getBaseSchema());
@@ -1114,7 +1119,7 @@ public class DefaultControlService implements ControlService {
         try {
             sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkProfile,
                     profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
-                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
+                    confSchemaBody, defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new ControlServiceException(e);
@@ -1140,7 +1145,8 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
         try {
-            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
             String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
             return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
         } catch (Exception e) {
@@ -1157,7 +1163,7 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.NotificationSchemaDto)
      */
     @Override
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
+    public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
         return notificationService.saveNotificationSchema(notificationSchema);
     }
 
@@ -1215,8 +1221,21 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.logs.LogSchemaDto)
      */
     @Override
-    public LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException {
+    public LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException {
         return logSchemaService.saveLogSchema(logSchemaDto);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.kaaproject.kaa.server.control.service.ControlService#editLogSchema
+     * (org.kaaproject.kaa.common.dto.logs.LogSchemaDto)
+     */
+    @Override
+    public String getFlatSchemaByCtlSchemaId(String schemaId) throws ControlServiceException{
+        CTLSchemaDto ctlSchemaDto = getCTLSchemaById(schemaId);
+        return ctlService.flatExportAsString(ctlSchemaDto);
     }
 
     /*
@@ -1923,7 +1942,8 @@ public class DefaultControlService implements ControlService {
 
         Schema recordWrapperSchema = null;
         try {
-            recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
+            recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
         } catch (IOException e) {
             LOG.error("Unable to get Record Structure Schema", e);
             throw new ControlServiceException(e);
@@ -1956,47 +1976,30 @@ public class DefaultControlService implements ControlService {
             data = generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
         } else {
             AbstractSchemaDto schemaDto = null;
+            ConfigurationSchemaDto confSchemaDto = null;
             String fileName = null;
             String schema = null;
             switch (key.getRecordFiles()) {
             case LOG_SCHEMA:
-                schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.LOG_SCHEMA);
-                schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "log", key.getSchemaVersion() }).getMessage();
-                break;
+                throw new RuntimeException("Not implemented!");
             case CONFIGURATION_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_SCHEMA);
-                schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration", key.getSchemaVersion() })
-                        .getMessage();
-                break;
+                throw new RuntimeException("Not implemented!");
             case CONFIGURATION_BASE_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
-                schema = ((ConfigurationSchemaDto) schemaDto).getBaseSchema();
+                confSchemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
+                schema = confSchemaDto.getBaseSchema();
                 fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-base", key.getSchemaVersion() })
                         .getMessage();
                 break;
             case CONFIGURATION_OVERRIDE_SCHEMA:
-                schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
-                schema = ((ConfigurationSchemaDto) schemaDto).getOverrideSchema();
-                fileName = MessageFormatter
-                        .arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
-                break;
-            case NOTIFICATION_SCHEMA:
-                NotificationSchemaDto notificationSchemaDto =
-                        notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(), NotificationTypeDto.USER, key.getSchemaVersion());
-                if (notificationSchemaDto == null) {
-                    throw new NotFoundException("Schema " + RecordFiles.NOTIFICATION_SCHEMA + " not found!");
-                }
-                CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(notificationSchemaDto.getCtlSchemaId());
-                schema = ctlSchemaDto.getBody();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "notification", key.getSchemaVersion() })
+                confSchemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
+                schema = confSchemaDto.getOverrideSchema();
+                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() })
                         .getMessage();
                 break;
+            case NOTIFICATION_SCHEMA:
+                throw new RuntimeException("Not implemented!");
             case PROFILE_SCHEMA:
                 throw new RuntimeException("Not implemented!");
             case SERVER_PROFILE_SCHEMA:
@@ -2004,6 +2007,7 @@ public class DefaultControlService implements ControlService {
             default:
                 break;
             }
+
             byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
             data.setFileName(fileName);
             data.setFileData(schemaData);
@@ -2059,14 +2063,11 @@ public class DefaultControlService implements ControlService {
     /**
      * Check schema.
      *
-     * @param schemaDto
-     *            the schema dto
-     * @param file
-     *            the file
-     * @throws NotFoundException
-     *             the control service exception
+     * @param schemaDto the schema dto
+     * @param file      the file
+     * @throws NotFoundException the control service exception
      */
-    private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
+    private void checkSchema(VersionDto schemaDto, RecordFiles file) throws NotFoundException {
         if (schemaDto == null) {
             throw new NotFoundException("Schema " + file + " not found!");
         }
@@ -2084,7 +2085,12 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException {
-        return ctlService.findCTLSchemaById(schemaId);
+        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(schemaId);
+        if (ctlSchemaDto == null) {
+            LOG.error("CTL schema with Id [{}] not found!", schemaId);
+            throw new NotFoundException("CTL schema not found!");
+        }
+        return ctlSchemaDto;
     }
 
     @Override

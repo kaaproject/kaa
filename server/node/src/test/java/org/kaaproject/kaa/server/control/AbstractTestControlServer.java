@@ -638,17 +638,18 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected ConfigurationSchemaDto createConfigurationSchema() throws Exception {
-        return createConfigurationSchema(null);
+        return createConfigurationSchema(null, null);
     }
 
     /**
      * Creates the configuration schema.
      *
      * @param applicationId the application id
+     * @param ctlSchemaId
      * @return the configuration schema dto
      * @throws Exception the exception
      */
-    protected ConfigurationSchemaDto createConfigurationSchema(String applicationId) throws Exception {
+    protected ConfigurationSchemaDto createConfigurationSchema(String applicationId, String ctlSchemaId) throws Exception {
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setStatus(UpdateStatus.ACTIVE);
         configurationSchema.setName(generateString("Test Schema"));
@@ -660,9 +661,16 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             configurationSchema.setApplicationId(applicationId);
         }
+
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+            configurationSchema.setCtlSchemaId(ctlSchema.getId());
+        } else {
+            configurationSchema.setCtlSchemaId(ctlSchemaId);
+        }
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        ConfigurationSchemaDto savedConfigurationSchema = client
-                .createConfigurationSchema(configurationSchema, TEST_CONFIG_SCHEMA);
+        ConfigurationSchemaDto savedConfigurationSchema = client.saveConfigurationSchema(configurationSchema);
         return savedConfigurationSchema;
     }
 
@@ -891,7 +899,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         ConfigurationSchemaDto configSchema = null;
         if (strIsEmpty(configurationSchemaId)) {
-            configSchema = createConfigurationSchema(applicationId);
+            configSchema = createConfigurationSchema(applicationId, null);
             configuration.setSchemaId(configSchema.getId());
         } else {
             loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -1015,8 +1023,12 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             logSchema.setApplicationId(applicationId);
         }
+
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        logSchema.setCtlSchemaId(ctlSchema.getId());
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema, TEST_LOG_SCHEMA);
+        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema);
         return savedLogSchema;
     }
 
@@ -1179,15 +1191,14 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         return savedEventClassFamily;
     }
 
-    protected EventClassFamilyVersionDto createEventClassFamilyVersion(String ecfId) throws Exception {
+    protected EventClassFamilyVersionDto createEventClassFamilyVersion(String tenantId) throws Exception {
         EventClassFamilyVersionDto eventClassFamilyVersion = new EventClassFamilyVersionDto();
         List<EventClassDto> records = new ArrayList<>();
 
-        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        String className = "Test" + random.nextInt(1000);
+        CTLSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantId, null, null, null);
         EventClassDto ec = new EventClassDto();
-        ApplicationDto application = createApplication(tenantAdminDto);
-        ec.setApplicationId(application.getId());
-        ec.setFqn(EVENT_CLASS_FAMILY_NAMESPACE + ".Test" + random.nextInt(1000));
+        ec.setFqn(EVENT_CLASS_FAMILY_NAMESPACE + "." + className);
         ec.setType(EventClassType.EVENT);
         ec.setCtlSchemaId(ctlSchema.getId());
         ec.setName("test");
@@ -1243,7 +1254,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         List<EventClassFamilyVersionDto> storedECFVersions = client.getEventClassFamilyVersionsById(ecfId);
 
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyVersionDto testECFVersion = createEventClassFamilyVersion(ecfId);
+        EventClassFamilyVersionDto testECFVersion = createEventClassFamilyVersion(tenantAdminDto.getTenantId());
         if (storedECFVersions == null || storedECFVersions.size()<version) {
             client.addEventClassFamilyVersion(eventClassFamily.getId(), testECFVersion);
         }

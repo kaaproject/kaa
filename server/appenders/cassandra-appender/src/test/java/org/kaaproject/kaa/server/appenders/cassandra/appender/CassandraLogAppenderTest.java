@@ -65,6 +65,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
+
 public class CassandraLogAppenderTest {
 
     public static final String KEY_SPACE_NAME = "kaa_test";
@@ -73,7 +74,7 @@ public class CassandraLogAppenderTest {
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
 
     @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 20000l);
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 4 * 60000L);
 
     private static final Random RANDOM = new Random();
 
@@ -146,7 +147,6 @@ public class CassandraLogAppenderTest {
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setCreatedTime(System.currentTimeMillis());
-        logSchemaDto.setSchema(LogData.getClassSchema().toString());
 
         if (includeServerProfile) {
             BaseSchemaInfo schemaInfo = new BaseSchemaInfo(Integer.toString(RANDOM.nextInt()), this.getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));
@@ -154,7 +154,7 @@ public class CassandraLogAppenderTest {
             logEventPack.setServerProfile(new BaseProfileInfo(schemaInfo, body));
         }
 
-        logEventPack.setLogSchema(new LogSchema(logSchemaDto));
+        logEventPack.setLogSchema(new LogSchema(logSchemaDto, LogData.getClassSchema().toString()));
         return logEventPack;
     }
 

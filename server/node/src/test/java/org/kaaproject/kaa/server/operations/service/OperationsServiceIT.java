@@ -253,7 +253,7 @@ public class OperationsServiceIT extends AbstractTest {
         confSchema = new ConfigurationSchema();
         confSchema.setApplication(application);
         confSchema.setVersion(CONF_SCHEMA_VERSION);
-        confSchema.setSchema(dataSchema);
+        confSchema.setCtlSchema(ctlSchema);
         try {
             confSchema = new ConfigurationSchema(configurationService.saveConfSchema(confSchema.toDto()));
         } catch (IncorrectParameterException e) {

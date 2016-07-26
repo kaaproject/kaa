@@ -120,7 +120,7 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
         Assert.assertEquals(0, vacantEcfs.size());
 
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(eventClassFamily.getId());
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdminDto.getTenantId());
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
 
         loginTenantDeveloper(tenantDeveloperUser);
