@@ -320,6 +320,8 @@ public interface KaaAdminService extends RemoteService {
 
     List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type) throws KaaAdminServiceException;
 
+    void deleteEventClassById(String eventClassId) throws KaaAdminServiceException;
+
     List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken) throws KaaAdminServiceException;

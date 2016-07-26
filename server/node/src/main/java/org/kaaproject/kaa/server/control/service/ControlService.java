@@ -1075,6 +1075,14 @@ public interface ControlService {
             throws ControlServiceException;
 
     /**
+     * Remove Event Class by id.
+     *
+     * @param eventClassId
+     * @throws ControlServiceException
+     */
+    void deleteEventClassById(String eventClassId) throws ControlServiceException;
+
+    /**
      * Edits the application event family map.
      *
      * @param applicationEventFamilyMap

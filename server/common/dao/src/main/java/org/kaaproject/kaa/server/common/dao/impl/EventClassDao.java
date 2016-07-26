@@ -48,9 +48,9 @@ public interface EventClassDao<T> extends SqlDao<T> {
     /**
      * Remove all Event Classes by Event Class Family id.
      *
-     * @param tenantId the tenant id
+     * @param ecfId the tenant id
      */
-    void removeByEcfId(String tenantId);
+    void deleteEventClassById(String ecfId);
 
     /**
      * Find Event Class by Tenant id and FQN.

@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -82,6 +83,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EventClassViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.header.HeaderViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemasViewImpl;
@@ -195,8 +197,11 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EcfView ecfView = new EcfViewImpl(false);
     private final EcfView createEcfView = new EcfViewImpl(true);
 
-    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl(false);
-    private final EcfSchemaView createEcfSchemaView = new EcfSchemaViewImpl(true);
+    private final BaseCtlSchemaView eventClassView = new EventClassViewImpl(false);
+    private final BaseCtlSchemaView createEventClassView = new EventClassViewImpl(true);
+
+    //private final BaseListView<EventClassDto> ecfSchemaView = new EcfSchemaViewImpl(false);
+    private final BaseListView<EventClassDto> createEcfSchemaView = new EcfSchemaViewImpl(true);
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
@@ -466,12 +471,17 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public EcfSchemaView getEcfSchemaView() {
-        return ecfSchemaView;
+    public BaseCtlSchemaView getEventClassView() {
+        return eventClassView;
     }
 
     @Override
-    public EcfSchemaView getCreateEcfSchemaView() {
+    public BaseCtlSchemaView getCreateEventClassView() {
+        return createEventClassView;
+    }
+
+    @Override
+    public BaseListView<EventClassDto>  getCreateEcfSchemaView() {
         return createEcfSchemaView;
     }
 

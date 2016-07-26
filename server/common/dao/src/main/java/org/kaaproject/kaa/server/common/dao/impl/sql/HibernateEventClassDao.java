@@ -90,7 +90,7 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
     }
 
     @Override
-    public void removeByEcfId(String ecfId) {
+    public void deleteEventClassById(String ecfId) {
         if (isNotBlank(ecfId)) {
             List<EventClass> eventClasses = findListByCriterionWithAlias(ECF_PROPERTY, ECF_ALIAS,
                     Restrictions.eq(ECF_REFERENCE, Long.valueOf(ecfId)));

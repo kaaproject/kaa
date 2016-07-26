@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -62,6 +63,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.web.bindery.event.shared.EventBus;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 
 public interface ClientFactory {
     EventBus getEventBus();
@@ -135,8 +137,14 @@ public interface ClientFactory {
     EcfView getEcfView();
     EcfView getCreateEcfView();
 
-    EcfSchemaView getEcfSchemaView();
-    EcfSchemaView getCreateEcfSchemaView();
+    BaseCtlSchemaView getEventClassView();
+    BaseCtlSchemaView getCreateEventClassView();
+
+//    EcfSchemaView getEcfSchemaView();
+//    EcfSchemaView getCreateEcfSchemaView();
+
+    //BaseListView<EventClassDto> getEcfSchemaView();
+    BaseListView<EventClassDto> getCreateEcfSchemaView();
 
     BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
     AefMapView getAefMapView();

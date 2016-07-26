@@ -106,7 +106,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
     @Override
     protected void initDetailsTable() {
-        
+
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
@@ -124,7 +124,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
         dateTimeCreatedLabel.setVisible(!create);
         createdDateTime.setVisible(!create);
-        
+
         Label nameLabel = new Label(Utils.constants.name());
         nameLabel.addStyleName(REQUIRED);
         name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
@@ -135,7 +135,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
         Label namespaceLabel = new Label(Utils.constants.namespace());
         Label classNameLabel = new Label(Utils.constants.className());
-        if (create) {  
+        if (create) {
             namespaceLabel.addStyleName(REQUIRED);
             classNameLabel.addStyleName(REQUIRED);
             namespace = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
@@ -148,7 +148,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         }
         namespace.setWidth("100%");
         className.setWidth("100%");
-        
+
         detailsTable.setWidget(3, 0, namespaceLabel);
         detailsTable.setWidget(3, 1, namespace);
 
@@ -164,7 +164,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         description.addInputHandler(this);
 
         detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
-        
+
         ecfSchemasGrid = new EcfSchemasGrid();
         ecfSchemasGrid.setSize("700px", "200px");
         Label ecfSchemasLabel = new Label(Utils.constants.schemas());
@@ -182,7 +182,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         detailsTable.setWidget(8, 2, addEcfSchemaButton);
         addEcfSchemaButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
         detailsTable.getCellFormatter().setHorizontalAlignment(8, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-        
+
         ecfSchemasLabel.setVisible(!create);
         ecfSchemasGrid.setVisible(!create);
         addEcfSchemaButton.setVisible(!create);

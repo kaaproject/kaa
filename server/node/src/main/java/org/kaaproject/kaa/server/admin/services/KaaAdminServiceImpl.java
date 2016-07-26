@@ -2782,6 +2782,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public void deleteEventClassById(String eventClassId) throws KaaAdminServiceException{
+        try {
+            controlService.deleteEventClassById(eventClassId);
+        } catch (ControlServiceException e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);

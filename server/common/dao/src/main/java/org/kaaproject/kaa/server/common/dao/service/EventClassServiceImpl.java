@@ -226,7 +226,13 @@ public class EventClassServiceImpl implements EventClassService {
         } else {
             throw new IncorrectParameterException("Incorrect tenant id: " + tenantId);
         }
+    }
 
+    @Override
+    public void removeEventClassById(String eventClassId) {
+        Validator.validateId(eventClassId, "Unable to remove Event Class. Invalid Event Class ID: " + eventClassId);
+        eventClassDao.removeById(eventClassId);
+        LOG.debug("Removed Event Class [{}]", eventClassId);
     }
 
 

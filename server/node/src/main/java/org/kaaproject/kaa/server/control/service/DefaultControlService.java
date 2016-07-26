@@ -1563,6 +1563,17 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * removeEventClassById(java.lang.String)
+     */
+    @Override
+    public void deleteEventClassById(String eventClassId) throws ControlServiceException {
+        eventClassService.removeEventClassById(eventClassId);
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editApplicationEventFamilyMap

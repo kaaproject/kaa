@@ -495,6 +495,15 @@ public class DataSource {
                 });
     }
 
+    public void deleteEventClassById(String eventClassId, final AsyncCallback<Void> callback) {
+        rpcService.deleteEventClassById(eventClassId, new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+            }
+        });
+
+    }
+
     public void getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type,
             final AsyncCallback<List<EventClassDto>> callback) {
         rpcService.getEventClassesByFamilyIdVersionAndType(ecfId, version, type,
