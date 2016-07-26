@@ -133,6 +133,12 @@ kaa_error_t kaa_init_keys(void)
             if (rsa_genkey(&pk_context_)) {
                 return KAA_ERR_BADDATA;
             }
+            if (write_rsa_key(&pk_context_, KAA_PRIVATE_KEY_STORAGE, PRIVATE_KEY)) {
+                return KAA_ERR_BADPARAM;
+            }
+            if (write_rsa_key(&pk_context_, KAA_PUBLIC_KEY_STORAGE, PUBLIC_KEY)) {
+                return KAA_ERR_BADPARAM;
+            }
 #else
             return KAA_ERR_BADDATA;
 #endif

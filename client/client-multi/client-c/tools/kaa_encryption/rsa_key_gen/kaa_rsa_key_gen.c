@@ -278,3 +278,40 @@ exit:
     fclose(fd);
     return error;
 }
+
+int write_rsa_key(mbedtls_pk_context *key, const char *output_file, int mode)
+{
+    FILE *f;
+    unsigned char output_buf[16000];
+    unsigned char *c = output_buf;
+    size_t len = 0;
+
+    memset(output_buf, 0, 16000);
+    if (mode == PRIVATE_KEY) {
+        if (mbedtls_pk_write_key_pem( key, output_buf, 16000) != 0) {
+            return 1;
+        }
+    } else if (mode == PUBLIC_KEY) {
+        if (mbedtls_pk_write_pubkey_pem(key, output_buf, 16000) != 0) {
+            return 1;
+        }
+    } else {
+        return 1;
+    }
+
+    len = strlen((char *)output_buf );
+
+    if ((f = fopen( output_file, "wb")) == NULL) {
+        return 1;
+    }
+
+    if (fwrite(c, 1, len, f) != len)
+    {
+        fclose(f);
+        return 1;
+    }
+
+    fclose(f);
+
+    return 0;
+}

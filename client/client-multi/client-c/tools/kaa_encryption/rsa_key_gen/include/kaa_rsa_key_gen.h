@@ -46,6 +46,9 @@
 
 #define SHA1_LENGTH 20
 
+#define PRIVATE_KEY 0
+#define PUBLIC_KEY  1
+
 /**
  * Structure which contains Endpoint keys.
  *
@@ -90,3 +93,12 @@ int sha1_to_base64(uint8_t *key, size_t length, uint8_t *base64, size_t base64_l
  */
 int kaa_keys_store(uint8_t *public_key, size_t public_key_length,
         uint8_t *private_key, size_t private_key_length);
+
+/**
+ * @brief Write RSA public or private key in pem format
+ *
+ * @param[in]   key           Pointer to a pk structure
+ * @param[in]   output_file   File path
+ * @param[in]   mode          Mode of public or private key storage
+ */
+int write_rsa_key(mbedtls_pk_context *key, const char *output_file, int mode);
