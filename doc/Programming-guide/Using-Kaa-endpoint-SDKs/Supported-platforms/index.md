@@ -11,7 +11,6 @@ sort_idx: 60
 {% capture EC %}{{sdk_c}}/SDK-ESP8266/{% endcapture %}
 {% capture TC %}{{sdk_c}}/SDK-TI-CC3200/{% endcapture %}
 {% capture UC %}{{sdk_c}}/SDK-UDOO/{% endcapture %}
-{% capture WC %}{{sdk_c}}/SDK-Windows/{% endcapture %}
 {% capture RC %}{{sdk_c}}/SDK-RPi/{% endcapture %}
 {% capture BC %}{{sdk_c}}/SDK-Beaglebone/{% endcapture %}
 {% capture QC %}{{sdk_c}}/SDK-QNX-Neutrino/{% endcapture %}
@@ -22,6 +21,7 @@ sort_idx: 60
 {% capture BCPP %}{{sdk_cpp}}/SDK-Beaglebone/{% endcapture %}
 {% capture SCPP %}{{sdk_cpp}}/SDK-Samsung-Artik-5/{% endcapture %}
 {% capture ICPP %}{{sdk_cpp}}/SDK-Edison/{% endcapture %}
+{% capture WCPP %}{{sdk_cpp}}/SDK-Windows/{% endcapture %}
 
 {% capture obj %}Objective-C{% endcapture %}
 {% capture sdk_obj %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C{% endcapture %}
@@ -42,7 +42,7 @@ sort_idx: 60
 | ESP8266            | [{{X}}]({{EC}}) |                    |                        |                      |
 | {{TICC3200}}       | [{{X}}]({{TC}}) |                    |                        |                      |
 | UDOO               | [{{X}}]({{UC}}) |                    |                        |                      |
-| Windows            | [{{X}}]({{WC}}) |                    |                        |                      |
+| Windows            |                 | [{{X}}]({{WCPP}})  |                        |                      |
 | Raspberry Pi       | [{{X}}]({{RC}}) | [{{X}}]({{RCPP}})  |                        |                      |
 | Beaglebone         | [{{X}}]({{BC}}) | [{{X}}]({{BCPP}})  |                        |                      |
 | Snappy Ubuntu Core | [{{X}}]({{SC}}) |                    |                        |                      |

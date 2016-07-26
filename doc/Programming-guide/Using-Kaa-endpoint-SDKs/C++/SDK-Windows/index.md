@@ -4,19 +4,11 @@ title: Windows
 permalink: /:path/
 sort_idx: 50
 ---
-<!-- Start: Cross links helper -->
-<!-- This header should be placed in all files that h
+
 {% include variables.md %}
-<!-- End:   Cross links helper -->
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [Prerequisites](#prerequisites)
-- [Instructions](#instructions)
-- [Demo applications](#demo-applications)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+* TOC
+{:toc}
 
 
 ## Prerequisites
