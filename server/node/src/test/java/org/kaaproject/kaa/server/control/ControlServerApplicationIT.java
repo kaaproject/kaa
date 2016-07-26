@@ -109,24 +109,6 @@ public class ControlServerApplicationIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test delete application.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testDeleteApplication() throws Exception {
-        final ApplicationDto application = createApplication();
-        client.deleteApplication(application.getId());
-        
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.getApplicationByApplicationToken(application.getApplicationToken());
-            }
-        });
-   }
-
-    /**
      * Assert applications equals.
      *
      * @param application the application

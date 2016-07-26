@@ -16,26 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client;
 
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
-import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
-import org.kaaproject.kaa.server.admin.client.layout.AppLayout;
-import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.activity.AppActivityMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.activity.HeaderActivityMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.activity.NavigationActivityMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.data.DataSource;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.KaaAdminPlaceHistoryMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantAdminPlaceHistoryMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantDeveloperPlaceHistoryMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantUserPlaceHistoryMapper;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
-
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.core.client.EntryPoint;
@@ -53,6 +33,23 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.web.bindery.event.shared.EventBus;
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
+import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
+import org.kaaproject.kaa.server.admin.client.layout.AppLayout;
+import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.activity.AppActivityMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.activity.HeaderActivityMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.activity.NavigationActivityMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.data.DataSource;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.KaaAdminPlaceHistoryMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantAdminPlaceHistoryMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantDeveloperPlaceHistoryMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantUserPlaceHistoryMapper;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
 
 public class KaaAdmin implements EntryPoint {
 
@@ -118,11 +115,10 @@ public class KaaAdmin implements EntryPoint {
     private void init() {
         Utils.injectKaaStyles();
         
-        KaaAdminServiceAsync rpcService = GWT.create(KaaAdminService.class);
         ClientFactory clientFactory = GWT.create(ClientFactory.class);
         EventBus eventBus = clientFactory.getEventBus();
 
-        dataSource = new DataSource(rpcService, eventBus);
+        dataSource = new DataSource(eventBus);
 
         PlaceController placeController = clientFactory.getPlaceController();
 
