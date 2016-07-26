@@ -8,11 +8,10 @@ function kaaSwaggerAdaptor () {
     switch (fragments.length) {
     case 1:
       if (fragments[0].length > 0) { // prevent matching "#/"
-      // Expand all operations for the resource and scroll to it
-      var dom_id = 'resource_' + fragments[0];
-
-      Docs.expandEndpointListForResource(fragments[0]);
-        $("#" + dom_id).slideto();
+        // Expand all operations for the resource and scroll to it
+        var dom_id = 'resource_' + fragments[0];
+        Docs.expandEndpointListForResource(fragments[0]);
+        $('#main').animate({scrollTop: $('#' + dom_id).offset().top + $("#main").scrollTop()}, 700);
       }
       break;
     case 2:
@@ -41,7 +40,7 @@ function kaaSwaggerAdaptor () {
     operation_link.setAttribute('href','#!/' + operation.encodedParentId + '/' + operation.nickname);
     operation_link.setAttribute('id', 'markdown-toc-' + operation.nickname);
     operation_entry.appendChild(operation_link);
-    var operation_text = document.createTextNode(operation.path);
+    var operation_text = document.createTextNode(operation.summary);
     operation_link.appendChild(operation_text);
     operation_link.onclick = function () {
       shebangWorkaround(this.getAttribute("href"));
