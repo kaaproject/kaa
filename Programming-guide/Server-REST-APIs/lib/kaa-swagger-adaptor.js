@@ -1,7 +1,6 @@
 function kaaSwaggerAdaptor () {
 
-  function shebangWorkaround(url)
-  {
+  function shebangWorkaround(url) {
     // If shebang has an operation nickname in it..
     // e.g. /docs/#!/words/get_search
     var fragments = $.param.fragment(url).split('/');
