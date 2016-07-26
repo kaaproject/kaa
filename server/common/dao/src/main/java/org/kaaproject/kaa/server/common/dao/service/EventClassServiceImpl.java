@@ -36,8 +36,10 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
@@ -62,6 +64,9 @@ public class EventClassServiceImpl implements EventClassService {
 
     @Autowired
     private EventSchemaProcessor eventSchemaProcessor;
+
+    @Autowired
+    private CTLSchemaDao<CTLSchema> ctlSchemaDao;
 
     @Override
     public List<EventClassFamilyDto> findEventClassFamiliesByTenantId(
@@ -164,10 +169,10 @@ public class EventClassServiceImpl implements EventClassService {
                 EventClassFamily ecf = new EventClassFamily(eventClassFamily);
                 List<EventClassFamilyVersion> schemas = new ArrayList<>();
                 for (EventClassDto eventClass : records) {
-                    setEventClassProperties(eventClassFamily, eventClass, version);
+                    setEventClassProperties(eventClassFamily, eventClass);
                 }
                 schemasDto.forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
-                setEventClassECF(schemas);
+                setBackreference(schemas);
                 ecf.setSchemas(schemas);
                 eventClassFamilyDao.save(ecf);
             } else {
@@ -180,13 +185,12 @@ public class EventClassServiceImpl implements EventClassService {
         }
     }
 
-    private void setEventClassProperties(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass, int version) {
+    private void setEventClassProperties(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass) {
         eventClass.setTenantId(eventClassFamilyDto.getTenantId());
-        eventClass.setEcfId(eventClassFamilyDto.getId());
-        eventClass.setVersion(version);
+        eventClass.setVersion(ctlSchemaDao.findById(eventClass.getCtlSchemaId()).getVersion());
     }
 
-    private void setEventClassECF(List<EventClassFamilyVersion> ecfvList) {
+    private void setBackreference(List<EventClassFamilyVersion> ecfvList) {
         ecfvList.forEach(ecfv -> ecfv.getRecords().forEach(ec -> ec.setEcf(ecfv)));
     }
 

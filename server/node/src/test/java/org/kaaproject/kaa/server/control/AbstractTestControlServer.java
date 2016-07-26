@@ -1191,15 +1191,13 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         return savedEventClassFamily;
     }
 
-    protected EventClassFamilyVersionDto createEventClassFamilyVersion(String ecfId) throws Exception {
+    protected EventClassFamilyVersionDto createEventClassFamilyVersion(String tenantId) throws Exception {
         EventClassFamilyVersionDto eventClassFamilyVersion = new EventClassFamilyVersionDto();
         List<EventClassDto> records = new ArrayList<>();
 
         String className = "Test" + random.nextInt(1000);
-        CTLSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        CTLSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantId, null, null, null);
         EventClassDto ec = new EventClassDto();
-        ApplicationDto application = createApplication(tenantAdminDto);
-        ec.setApplicationId(application.getId());
         ec.setFqn(EVENT_CLASS_FAMILY_NAMESPACE + "." + className);
         ec.setType(EventClassType.EVENT);
         ec.setCtlSchemaId(ctlSchema.getId());
@@ -1256,7 +1254,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         List<EventClassFamilyVersionDto> storedECFVersions = client.getEventClassFamilyVersionsById(ecfId);
 
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyVersionDto testECFVersion = createEventClassFamilyVersion(ecfId);
+        EventClassFamilyVersionDto testECFVersion = createEventClassFamilyVersion(tenantAdminDto.getTenantId());
         if (storedECFVersions == null || storedECFVersions.size()<version) {
             client.addEventClassFamilyVersion(eventClassFamily.getId(), testECFVersion);
         }

@@ -381,7 +381,6 @@ public abstract class HibernateAbstractTest extends AbstractTest {
     }
 
     protected List<EventClassFamily> generateEventClassFamily(Tenant tenant, int count) {
-        int eventSchemaVersionsCount = 2;
         if (tenant == null) {
             tenant = generateTenant();
         }
@@ -396,20 +395,38 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             eventClassFamily.setDescription("Test Description");
             eventClassFamily.setName("Test Name" + RANDOM.nextInt());
             eventClassFamily.setNamespace("Test Namespace");
-            List<EventClassFamilyVersion> eventSchemaVersions = new ArrayList<>(eventSchemaVersionsCount);
-            for (int j = 0; j < eventSchemaVersionsCount; j++) {
-                EventClassFamilyVersion eventSchemaVersion = new EventClassFamilyVersion();
-                eventSchemaVersion.setCreatedTime(new Date().getTime());
-                eventSchemaVersion.setCreatedUsername("Test Username");
-                eventSchemaVersion.setVersion(1);
-                eventSchemaVersions.add(eventSchemaVersion);
-            }
-            eventClassFamily.setSchemas(eventSchemaVersions);
             eventClassFamily = eventClassFamilyDao.save(eventClassFamily);
             Assert.assertNotNull(eventClassFamily);
             eventClassFamilies.add(eventClassFamily);
         }
         return eventClassFamilies;
+    }
+
+    protected List<EventClassFamilyVersion> generateEventClassFamilyVersion(EventClassFamily eventClassFamily, int ecfvCount, int ecCount) {
+        List<EventClassFamilyVersion> ecfvList = new ArrayList<>(ecfvCount);
+        for (int i = 0; i < ecfvCount; i++) {
+           EventClassFamilyVersion ecfv = new EventClassFamilyVersion();
+            List<EventClass> ecList = new ArrayList<>();
+            for (int j = 0; j < ecCount; j++) {
+                EventClass ec = new EventClass();
+                ec.setTenant(eventClassFamily.getTenant());
+                Integer version;
+                try {
+                    version = ctlSchemaDao.find().stream().max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion())).get().getVersion()+1;
+                } catch (NoSuchElementException e) {
+                    version = 1;
+                }
+
+                ec.setCtlSchema(generateCTLSchema(DEFAULT_FQN, version, eventClassFamily.getTenant(), CTLSchemaScopeDto.TENANT));
+                ec.setEcf(ecfv);
+                ec.setFqn("Test FQN" + RANDOM.nextInt());
+                ec.setType(EventClassType.EVENT);
+                ecList.add(ec);
+            }
+            ecfv.setRecords(ecList);
+            ecfvList.add(ecfv);
+        }
+        return ecfvList;
     }
 
     protected List<EventClass> generateEventClass(Tenant tenant, EventClassFamily eventClassFamily, int count) {
@@ -420,40 +437,11 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             eventClassFamily = generateEventClassFamily(tenant, 1).get(0);
         }
 
-        EventClass eventClass;
-        EventClassFamilyVersion eventClassFamilyVersion = eventClassFamily.getSchemas().get(0);
-        List<EventClass> records = eventClassFamilyVersion.getRecords();
-        if (records == null) {
-            records = new ArrayList<>();
-        }
-        for (int i = 0; i < count; i++) {
-            eventClass = new EventClass();
-            eventClass.setTenant(tenant);
-            Integer version = 1;
-            try {
-                version = ctlSchemaDao.find().stream().max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion())).get().getVersion()+1;
-            } catch (NoSuchElementException e) {}
-
-            eventClass.setCtlSchema(generateCTLSchema(DEFAULT_FQN, version, tenant, CTLSchemaScopeDto.TENANT));
-            eventClass.setEcf(eventClassFamilyVersion);
-            eventClass.setFqn("Test FQN" + RANDOM.nextInt());
-            eventClass.setType(EventClassType.EVENT);
-            eventClass.setVersion(1);
-            eventClass.setName("test schema name" + RANDOM.nextInt());
-            eventClass.setDescription("test schema description" + RANDOM.nextInt());
-            eventClass.setCreatedUsername("test createdUsername" + RANDOM.nextInt());
-            eventClass.setCreatedTime(new Date().getTime());
-            eventClass.setApplication(generateApplication(tenant));
-            records.add(eventClass);
-        }
-        eventClassFamilyVersion.setRecords(records);
-        eventClassFamilyDao.save(eventClassFamily);
-        eventClassFamily = eventClassFamilyDao.findById(eventClassFamily.getStringId());
-        Long ecfvId = eventClassFamilyVersion.getId();
-        eventClassFamilyVersion = eventClassFamily.getSchemas().stream().filter(ecfv -> ecfv.getId().equals(ecfvId)).collect(Collectors.toList()).get(0);
-        List<EventClass> eventClasses = new ArrayList<>(count);
-        eventClasses.addAll(eventClassFamilyVersion.getRecords());
-        return eventClasses;
+        List<EventClassFamilyVersion> ecfvList = generateEventClassFamilyVersion(eventClassFamily, 1, count);
+        eventClassFamily.setSchemas(ecfvList);
+        eventClassFamily = eventClassFamilyDao.save(eventClassFamily);
+        List<EventClass> storedECs = eventClassFamily.getSchemas().get(0).getRecords();
+        return storedECs;
     }
 
     protected List<ApplicationEventFamilyMap> generateApplicationEventFamilyMap(Tenant tenant, Application application,
