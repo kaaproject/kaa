@@ -262,8 +262,8 @@ public interface CacheService {
      *
      * Remove key from hash
      *
-     * @param hash
-     * @param endpointKey
+     * @param hash the hash
+     * @param endpointKey the endpoint key
      */
     void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
