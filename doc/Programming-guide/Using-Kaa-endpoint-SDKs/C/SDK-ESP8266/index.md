@@ -71,7 +71,7 @@ The detailed installation instructions can be found below.
 
 1. Prerequisites
 
-        sudo apt-get install autoconf libtool libtool-bin bison build-essential gawk git gperf flex texinfo libtool libncurses5-dev libc6-dev-amd64 python-serial libexpat-dev python-setuptools
+        sudo apt-get install autoconf libtool libtool-bin bison g++5 build-essential gawk git gperf flex texinfo libtool libncurses5-dev libc6-dev-amd64 python-serial libexpat-dev python-setuptools
 
 2. Set the `ESPRESSIF_HOME` variable.
 This variable will be used throughout the installation process, and denotes a directory where ESP8266 SDK and toolchain will be placed.
