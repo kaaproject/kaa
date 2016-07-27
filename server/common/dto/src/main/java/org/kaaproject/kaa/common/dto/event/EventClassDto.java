@@ -24,7 +24,7 @@ public class EventClassDto extends BaseSchemaDto {
     private static final long serialVersionUID = 2052580632293959408L;
 
     private String tenantId;
-    private String ecfId;
+    private String ecfvId;
     private String fqn;
     private EventClassType type;
 
@@ -36,12 +36,12 @@ public class EventClassDto extends BaseSchemaDto {
         this.tenantId = tenantId;
     }
 
-    public String getEcfId() {
-        return ecfId;
+    public String getEcfvId() {
+        return ecfvId;
     }
 
-    public void setEcfId(String ecfId) {
-        this.ecfId = ecfId;
+    public void setEcfvId(String ecfvId) {
+        this.ecfvId = ecfvId;
     }
 
     public String getFqn() {
@@ -64,7 +64,7 @@ public class EventClassDto extends BaseSchemaDto {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
+        result = prime * result + ((ecfvId == null) ? 0 : ecfvId.hashCode());
         result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result
@@ -87,11 +87,11 @@ public class EventClassDto extends BaseSchemaDto {
             return false;
         }
         EventClassDto other = (EventClassDto) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
+        if (ecfvId == null) {
+            if (other.ecfvId != null) {
                 return false;
             }
-        } else if (!ecfId.equals(other.ecfId)) {
+        } else if (!ecfvId.equals(other.ecfvId)) {
             return false;
         }
         if (fqn == null) {
@@ -136,7 +136,7 @@ public class EventClassDto extends BaseSchemaDto {
         builder.append(", tenantId=");
         builder.append(tenantId);
         builder.append(", ecfId=");
-        builder.append(ecfId);
+        builder.append(ecfvId);
         builder.append(", fqn=");
         builder.append(fqn);
         builder.append(", type=");

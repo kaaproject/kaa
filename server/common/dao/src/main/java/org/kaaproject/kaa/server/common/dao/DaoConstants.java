@@ -37,6 +37,7 @@ public class DaoConstants {
     public static final String TOPICS_PROPERTY = "topics";
     public static final String CONFIGURATION_SCHEMA_PROPERTY = "configurationSchema";
     public static final String ECF_PROPERTY = "ecf";
+    public static final String ECFV_PROPERTY = "ecfv";
     public static final String VERSION_PROPERTY = "version";
     public static final String SCHEMA_VERSION_PROPERTY = "schemaVersion";
     public static final String EVENT_CLASS_TYPE_PROPERTY = "type";
@@ -53,6 +54,7 @@ public class DaoConstants {
     public static final String TOPIC_ALIAS = "topic";
     public static final String CONFIGURATION_SCHEMA_ALIAS = "configurationSchema";
     public static final String ECF_ALIAS = "ecf";
+    public static final String ECFV_ALIAS = "ecfv";
 
     public static final String TENANT_REFERENCE = TENANT_ALIAS + "." + ID_PROPERTY;
     public static final String ENDPOINT_PROFILE_SCHEMA_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
@@ -64,6 +66,7 @@ public class DaoConstants {
     public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
     public static final String CONFIGURATION_SCHEMA_REFERENCE = CONFIGURATION_SCHEMA_ALIAS + "." + ID_PROPERTY;
     public static final String ECF_REFERENCE = ECF_ALIAS + "." + ID_PROPERTY;
+    public static final String ECFV_REFERENCE = ECFV_ALIAS + "." + ID_PROPERTY;
 
     public static final String OPTIMISTIC_LOCK_PROPERTY = "OPT_LOCK";
 

@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
@@ -136,7 +135,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
         Assert.assertEquals(1, eventClasses.size());
         eventClassFamilyVersion = client.getEventClassFamilyVersionsById(eventClassFamily.getId()).get(0);
         for (EventClassDto eventClass : eventClasses) {
-            Assert.assertEquals(eventClassFamilyVersion.getId(), eventClass.getEcfId());
+            Assert.assertEquals(eventClassFamilyVersion.getId(), eventClass.getEcfvId());
             Assert.assertEquals(0, eventClass.getVersion());
         }
     }

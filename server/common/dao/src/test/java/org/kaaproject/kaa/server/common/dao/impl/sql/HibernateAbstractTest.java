@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -40,7 +39,6 @@ import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
@@ -418,7 +416,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 }
 
                 ec.setCtlSchema(generateCTLSchema(DEFAULT_FQN, version, eventClassFamily.getTenant(), CTLSchemaScopeDto.TENANT));
-                ec.setEcf(ecfv);
+                ec.setEcfv(ecfv);
                 ec.setFqn("Test FQN" + RANDOM.nextInt());
                 ec.setType(EventClassType.EVENT);
                 ecList.add(ec);

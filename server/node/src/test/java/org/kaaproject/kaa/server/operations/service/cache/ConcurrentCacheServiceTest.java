@@ -338,7 +338,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
         final EventClassDto ecDto = new EventClassDto();
         ecDto.setId(EVENT_CLASS_ID);
-        ecDto.setEcfId(EVENT_CLASS_FAMILY_ID);
+        ecDto.setEcfvId(EVENT_CLASS_FAMILY_ID);
 
         final List<EventClassDto> eventClassDtos = new ArrayList<>();
         eventClassDtos.add(ecDto);
@@ -353,7 +353,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
         final EventClassDto evcDto = new EventClassDto();
         evcDto.setId(EVENT_CLASS_ID);
-        evcDto.setEcfId(EVENT_CLASS_FAMILY_ID);
+        evcDto.setEcfvId(EVENT_CLASS_FAMILY_ID);
         evcDto.setVersion(EVENT_CLASS_FAMILY_VERSION);
 
         when(eventClassService.findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)).then(
