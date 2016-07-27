@@ -7,7 +7,7 @@ sort_idx: 20
 
 {% include variables.md %}
 
-* auto generated TOC:
+* TOC:
 {:toc}
 
 
@@ -905,7 +905,7 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
 ### SQL database configuration
 
 You can choose which SQL database to use: MariaDB (used by default) or PostgreSQL.
-You can find SQL database configuration property file templates in ```/etc/kaa-node/conf/``` folder: ```maria-dao.properties.template```, ```mariadb-dao.properties.template``` files for MariaDB database and ```postgre-dao.properties.template```, ```postgresql-dao.properties.template``` files for PostgreSQL.
+You can find SQL database configuration property file templates in /etc/kaa-node/conf/ folder: maria-dao.properties.template, mariadb-dao.properties.template files for MariaDB database and postgre-dao.properties.template, postgresql-dao.properties.template files for PostgreSQL.
 
 <ul>
 <li style="list-style-type: none;">
