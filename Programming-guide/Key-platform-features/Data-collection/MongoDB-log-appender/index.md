@@ -30,7 +30,7 @@ To create a log appender of the MongoDB storage type, do the following:
 
 # Creating MongoDB log appender with Admin REST API
 
-It is also possible to create a MongoDB log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a MongoDB log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the MongoDB log appender via Admin Rest API.
 
 ## Configuration
