@@ -45,13 +45,15 @@ public:
 
 private:
     void start();
-    void stop(bool force);
+    void stop();
+    void forceStop();
+    void waitForWorkersShutdown();
 
     enum class State {
         CREATED,
         RUNNING,
         PENDING_SHUTDOWN,
-        STOPPED
+        STOPPED,
     };
 
 private:
@@ -63,7 +65,7 @@ private:
     std::list<ThreadPoolTask>    tasks_;
 
     KAA_MUTEX_DECLARE(threadPoolGuard_);
-    KAA_CONDITION_VARIABLE    onNewTask_;
+    KAA_CONDITION_VARIABLE    onThreadpoolEvent_;
 };
 
 } /* namespace kaa */

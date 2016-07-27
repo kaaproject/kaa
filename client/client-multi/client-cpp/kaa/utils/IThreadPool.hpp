@@ -27,11 +27,34 @@ typedef std::function<void()> ThreadPoolTask;
 
 class IThreadPool {
 public:
+
+    /**
+     * Add a task for execution.
+     *
+     * @param task The task to add.
+     */
     virtual void add(const ThreadPoolTask& task) = 0;
 
+    /**
+     * @brief Blocks until all tasks have completed execution after
+     * a shutdown request, or the timeout occurs.
+     *
+     * @note Call only after shutdown().
+     *
+     * @param seconds The maximum time in seconds to wait.
+     */
     virtual void awaitTermination(std::size_t seconds) = 0;
 
+    /**
+     * @brief Initiates a shutdown in which previously added tasks
+     * are executed, but no new tasks will be accepted.
+     */
     virtual void shutdown() = 0;
+
+    /**
+     * @brief Initiates a shutdown in which all executing tasks
+     * will complete. Pending tasks will be declined.
+     */
     virtual void shutdownNow() = 0;
 
     virtual ~IThreadPool() {}
