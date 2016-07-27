@@ -19,44 +19,7 @@
 #include <chrono>
 #include <stdexcept>
 
-#include "kaa/common/exception/KaaException.hpp"
-
 namespace kaa {
-
-class Worker {
-public:
-    Worker(ThreadPool& threadPool)
-        : threadPool_(threadPool)
-    { }
-
-    void operator() ()
-    {
-        while (true) {
-            ThreadPoolTask task;
-
-            {
-                KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPool_.threadPoolGuard_);
-
-                threadPool_.onNewTask_.wait(tasksLock,
-                        [this]{ return threadPool_.state_ == ThreadPool::State::STOPPED || !threadPool_.tasks_.empty(); });
-
-                if (threadPool_.state_ == ThreadPool::State::STOPPED && threadPool_.tasks_.empty()) {
-                    return;
-                }
-
-                task = std::move(threadPool_.tasks_.front());
-                threadPool_.tasks_.pop_front();
-            }
-
-            try {
-                task();
-            } catch (...) {}
-        }
-    }
-
-private:
-    ThreadPool& threadPool_;
-};
 
 ThreadPool::ThreadPool(std::size_t workerCount)
     : workerCount_(workerCount)
@@ -68,13 +31,7 @@ ThreadPool::ThreadPool(std::size_t workerCount)
 
 ThreadPool::~ThreadPool()
 {
-    stop(true);
-
-    for (auto &worker : workers_) {
-        if (worker.joinable()) {
-            worker.join();
-        }
-    }
+    shutdownNow();
 }
 
 void ThreadPool::add(const ThreadPoolTask& task)
@@ -103,42 +60,85 @@ void ThreadPool::add(const ThreadPoolTask& task)
 void ThreadPool::awaitTermination(std::size_t seconds)
 {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
-    stop(true);
+    shutdownNow();
 }
 
 void ThreadPool::shutdown()
 {
-    stop(false);
+    stop();
 }
 
 void ThreadPool::shutdownNow()
 {
-    stop(true);
+    forceStop();
+    waitForWorkersShutdown();
 }
 
 void ThreadPool::start()
 {
     for (std::size_t i = 0; i < workerCount_; ++i) {
-        workers_.emplace_back(Worker(*this));
+        workers_.emplace_back([this]()
+            {
+                while (true) {
+                    ThreadPoolTask task;
+
+                    {
+                        KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
+
+                        onNewTask_.wait(tasksLock,
+                                [this]{ return state_ == ThreadPool::State::STOPPED || !tasks_.empty(); });
+
+                        if (state_ == ThreadPool::State::STOPPED && tasks_.empty()) {
+                            return;
+                        }
+
+                        task = std::move(tasks_.front());
+                        tasks_.pop_front();
+                    }
+
+                    try {
+                        task();
+                    } catch (...) {
+                        // Just suppress an exception as
+                        // it is unknown where to log this.
+                    }
+                }
+            }
+        );
     }
 
     state_ = State::RUNNING;
 }
 
-void ThreadPool::stop(bool force)
+void ThreadPool::stop()
+{
+    {
+        KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
+        state_ = State::PENDING_SHUTDOWN;
+    }
+
+    onNewTask_.notify_all();
+}
+
+void ThreadPool::forceStop()
 {
     {
         KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
 
-        if (force) {
-            tasks_.clear();
-            state_ = State::STOPPED;
-        } else {
-            state_ = State::PENDING_SHUTDOWN;
-        }
+        tasks_.clear();
+        state_ = State::STOPPED;
     }
 
     onNewTask_.notify_all();
+}
+
+void ThreadPool::waitForWorkersShutdown()
+{
+    for (auto &worker : workers_) {
+        if (worker.joinable()) {
+            worker.join();
+        }
+    }
 }
 
 } /* namespace kaa */

@@ -45,7 +45,9 @@ public:
 
 private:
     void start();
-    void stop(bool force);
+    void stop();
+    void forceStop();
+    void waitForWorkersShutdown();
 
     enum class State {
         CREATED,

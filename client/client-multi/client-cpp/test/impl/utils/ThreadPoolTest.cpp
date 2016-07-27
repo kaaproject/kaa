@@ -203,38 +203,34 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTest)
     ThreadPool threadPool;
 
     bool isStart = false;
-    std::size_t timeToWait = 2;
+    std::size_t taskExecutionTime = 1;
     std::uint16_t expectedTaskCount = 0;
     std::atomic_uint actualTaskCount(0);
     std::size_t timeToWaitAllTasks = 0;
 
-    ThreadPoolTask task = [&mutex, &onStartCondition, &actualTaskCount, &isStart, &timeToWait] ()
+    ThreadPoolTask task = [&mutex, &onStartCondition, &actualTaskCount, &isStart, &taskExecutionTime] ()
                               {
                                     {
                                         std::unique_lock<std::mutex> lock(mutex);
                                         onStartCondition.wait(lock, [&isStart] () { return isStart; });
                                     }
-                                    std::this_thread::sleep_for(std::chrono::seconds(timeToWait));
+                                    std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
                                     actualTaskCount++;
                               };
 
-    // This task should be executed.
+    // Executed.
     threadPool.add(task);
     ++expectedTaskCount;
-    timeToWaitAllTasks += timeToWait;
+    timeToWaitAllTasks += taskExecutionTime;
 
-    // This task should be executed.
+    // Executed.
     threadPool.add(task);
     ++expectedTaskCount;
-    timeToWaitAllTasks += timeToWait;
+    timeToWaitAllTasks += taskExecutionTime;
 
-    // This task should be skipped.
+    // Declined.
     threadPool.add(task);
-    timeToWaitAllTasks += timeToWait;
-
-    // This task should be skipped.
-    threadPool.add(task);
-    timeToWaitAllTasks += timeToWait;
+    timeToWaitAllTasks += taskExecutionTime;
 
     {
         std::unique_lock<std::mutex> lock(mutex);
@@ -242,11 +238,9 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTest)
         onStartCondition.notify_all();
     }
 
-    std::size_t timeToWaitTwoTask = 2 * timeToWait - 1; // '-1' to wake up a bit more earlier than third task will start.
+    threadPool.awaitTermination(expectedTaskCount * taskExecutionTime);
 
-    threadPool.awaitTermination(timeToWaitTwoTask);
-
-    std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks - timeToWaitTwoTask));
+    std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks));
 
     BOOST_CHECK_EQUAL(actualTaskCount.load(), expectedTaskCount);
 }
