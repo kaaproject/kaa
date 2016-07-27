@@ -133,6 +133,13 @@ Public DNS or IP of your instance are available from your instance description.
 
 <br>
 
+If an error occurs, and for some reason did not run the UI part of Kaa Sandbox instance, the error can be found in the logs in the Kaa Sandbox.
+All logs are on this path - /var/log/kaa. Log system in Kaa are configured in a such way:
+    - Kaa Sandbox Frame project brings their logs in kaa-sandbox.log;
+    - Kaa Avro UI brings their logs at avro-ui-sandbox.log;
+    - Kaa node brings their logs at kaa-node.log, the most important log file for understanding the current situation.
+And there are two log files on init and shutdown Kaa Node and two files on init and shutdown Kaa Sandbox.
+
 </div></div>
 
 # Launching your first Kaa application
