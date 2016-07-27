@@ -30,7 +30,7 @@ To create a log appender of the Kafka storage type, do the following:
 
 # Creating Kafka log appender with Admin REST API
 
-It is also possible to create a Kafka log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a Kafka log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the Kafka log appender for the Cell Monitor demo application available in Kaa Sandbox.
 
 ## Configuration
