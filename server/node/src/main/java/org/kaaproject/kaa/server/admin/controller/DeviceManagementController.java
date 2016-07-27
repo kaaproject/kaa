@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -62,6 +63,34 @@ public class DeviceManagementController extends AbstractAdminController {
             @RequestParam String credentialsBody)
             throws KaaAdminServiceException {
         return this.deviceManagementService.provisionCredentials(applicationToken, credentialsBody);
+    }
+
+    /**
+     * Provides the status of given credentials.
+     *
+     * @param applicationToken     The application Token
+     * @param credentialsId The ID of the credentials
+     * @return Credentials status
+     * @throws KaaAdminServiceException - if an exception occures.
+     */
+    @ApiOperation(value = "Provides the status of given credentials",
+            notes = " Only users with the TENANT_ADMIN role are allowed to submit this request.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Parameter conditions \"applicationToken, credentialsId\" not met for actual request parameters"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
+            @ApiResponse(code = 404, message = "The requested item was not found"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "credentialsStatus", params = {"applicationToken", "credentialsId"}, method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public CredentialsStatus getCredentialsStatus(
+            @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+            @RequestParam String applicationToken,
+            @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
+            @RequestParam String credentialsId)
+            throws KaaAdminServiceException {
+        return this.deviceManagementService.getCredentialsStatus(applicationToken, credentialsId);
     }
 
     /**
