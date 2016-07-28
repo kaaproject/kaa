@@ -77,6 +77,8 @@ public interface KaaAdminService extends RemoteService {
 
     TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException;
 
+    List<UserDto> findAllTenantAdminsByTenantId(String id) throws KaaAdminServiceException;
+
     void deleteTenant(String tenantId) throws KaaAdminServiceException;
 
     List<ApplicationDto> getApplications() throws KaaAdminServiceException;

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -230,6 +231,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
      * @throws Exception the exception
      */
     @Test
+
     public void testGenerateJavaSdkWithInvalidProfileSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);

@@ -400,7 +400,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication(tenantAdminDto);;
         this.loginTenantAdmin(tenantAdminUser);
 
-        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getId(), null, null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
         final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
 
         Assert.assertNull(metaInfo3.getApplicationId());

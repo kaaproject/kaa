@@ -23,6 +23,7 @@ import java.util.List;
 import com.google.gwt.regexp.shared.RegExp;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
@@ -112,8 +113,14 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
         });
 
         List<KaaAuthorityDto> possibleAuthorities = new ArrayList<KaaAuthorityDto>();
-        possibleAuthorities.add(KaaAuthorityDto.TENANT_DEVELOPER);
-        possibleAuthorities.add(KaaAuthorityDto.TENANT_USER);
+
+        if(KaaAdmin.getAuthInfo().getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+            possibleAuthorities.add(KaaAuthorityDto.TENANT_DEVELOPER);
+            possibleAuthorities.add(KaaAuthorityDto.TENANT_USER);
+        }
+        if(KaaAdmin.getAuthInfo().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)){
+            possibleAuthorities.add(KaaAuthorityDto.TENANT_ADMIN);
+        }
 
         authority.setAcceptableValues(possibleAuthorities);
 
@@ -134,17 +141,17 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
     @Override
     protected boolean validate() {
-        String pattern = "^(?:[a-zA-Z0-9_'^&/+-])+(?:\\.(?:[a-zA-Z0-9_'^&/+-])+)\" +\n" +
-                "            \"*@(?:(?:\\\\[?(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\\\.)\" +\n" +
-                "            \"{3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\]?)|(?:[a-zA-Z0-9-]+\\\\.)\" +\n" +
-                "            \"+(?:[a-zA-Z]){2,}\\.?)$";
-
-        RegExp regExp=RegExp.compile(pattern);
-
-        boolean result = userName.getValue().length()>0;
-        result &= regExp.test(email.getValue());
-        result &= authority.getValue() != null;
-        return result;
+//        String pattern = "^(?:[a-zA-Z0-9_'^&/+-])+(?:\\.(?:[a-zA-Z0-9_'^&/+-])+)\" +\n" +
+//                "            \"*@(?:(?:\\\\[?(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\\\.)\" +\n" +
+//                "            \"{3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\]?)|(?:[a-zA-Z0-9-]+\\\\.)\" +\n" +
+//                "            \"+(?:[a-zA-Z]){2,}\\.?)$";
+//
+//        RegExp regExp=RegExp.compile(pattern);
+//
+//        boolean result = userName.getValue().length()>0;
+//        result &= regExp.test(email.getValue());
+//        result &= authority.getValue() != null;
+        return true;
     }
 
     @Override

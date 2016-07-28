@@ -215,7 +215,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     protected static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
 
     /** The tenant admin dto. */
-    protected TenantAdminDto tenantAdminDto;
+    protected org.kaaproject.kaa.common.dto.admin.UserDto tenantAdminDto;
 
     /** The tenant developer dto. */
     protected UserDto tenantDeveloperDto;
@@ -502,7 +502,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the tenant user dto
      * @throws Exception the exception
      */
-    protected TenantAdminDto createTenantAdmin() throws Exception {
+    protected org.kaaproject.kaa.common.dto.admin.UserDto createTenantAdmin() throws Exception {
         return createTenantAdmin(null);
     }
 
@@ -513,10 +513,10 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the tenant user dto
      * @throws Exception the exception
      */
-    protected TenantAdminDto createTenantAdmin(String username) throws Exception {
+    protected org.kaaproject.kaa.common.dto.admin.UserDto createTenantAdmin(String username) throws Exception {
         loginKaaAdmin();
         if (username == null) {
-            username = generateString(username);
+            username = generateString(TENANT_ADMIN_USERNAME);
         }
             TenantDto tenantDto = new TenantDto();
             if(client.getTenants().isEmpty()) {
@@ -545,12 +545,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             client.changePassword(tenAdmin.getUsername(), tenAdmin.getTempPassword(), tenantAdminPassword);
         }
 
-        TenantAdminDto tenantAdmin = new TenantAdminDto();
-        tenantAdmin.setUsername(username);
-        tenantAdmin.setId(tenAdmin.getId());
-        tenantAdmin.setTenant(tenantDto);
 
-        return tenantAdmin;
+        return tenAdmin;
     }
 
     /**
@@ -567,7 +563,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         tenantDeveloper.setMail(username + "@demoproject.org");
         tenantDeveloper.setFirstName("Tenant");
         tenantDeveloper.setLastName("Developer");
-        tenantDeveloper.setTenantId(tenantAdminDto.getTenant().getId());
+        tenantDeveloper.setTenantId(tenantAdminDto.getTenantId());
         tenantDeveloper = client.editUser(tenantDeveloper);
 
         if (StringUtils.isNotBlank(tenantDeveloper.getTempPassword())) {
@@ -596,7 +592,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the user dto
      * @throws Exception the exception
      */
-    protected UserDto createUser(TenantAdminDto tenant, KaaAuthorityDto authority) throws Exception {
+    protected UserDto createUser(org.kaaproject.kaa.common.dto.admin.UserDto tenant, KaaAuthorityDto authority) throws Exception {
         UserDto user = new UserDto();
         String username = generateString(USERNAME);
         user.setUsername(username);
@@ -607,7 +603,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         if (tenant == null) {
             tenant = createTenantAdmin();
         }
-        user.setTenantId(tenantAdminDto.getTenant().getId());
+        user.setTenantId(tenantAdminDto.getTenantId());
         loginTenantAdmin(tenant.getUsername());
         UserDto savedUser = client.editUser(user);
         return savedUser;
@@ -630,7 +626,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the application dto
      * @throws Exception the exception
      */
-    protected ApplicationDto createApplication(TenantAdminDto tenant) throws Exception {
+    protected ApplicationDto createApplication(org.kaaproject.kaa.common.dto.admin.UserDto tenant) throws Exception {
         ApplicationDto application = new ApplicationDto();
         application.setName(generateString(APPLICATION));
         if (tenant == null) {
@@ -706,7 +702,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileSchema.setApplicationId(applicationId);
         }
         if (strIsEmpty(ctlSchemaId)) {
-            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getId(), null, null, null);
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
             profileSchema.setCtlSchemaId(ctlSchema.getId());
         } else {
             profileSchema.setCtlSchemaId(ctlSchemaId);
@@ -736,7 +732,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileSchema.setApplicationId(applicationId);
         }
         if (strIsEmpty(ctlSchemaId)) {
-            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getId(), null, null, null);
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
             profileSchema.setCtlSchemaId(ctlSchema.getId());
         }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -1178,7 +1174,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
         eventClassFamily.setClassName(className);
         if (strIsEmpty(tenantId)) {
-            TenantAdminDto tenant = createTenantAdmin(tenantAdminUser);
+            org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
             eventClassFamily.setTenantId(tenant.getId());
         }
         else {

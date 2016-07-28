@@ -363,41 +363,36 @@ public class DefaultControlService implements ControlService {
         userService.removeUserById(userId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmins
-     * ()
-     */
+//    /*
+//     * (non-Javadoc)
+//     *
+//     * @see
+//     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmins
+//     * ()
+//     */
+//    @Override
+//    public List<TenantAdminDto> getTenantAdmins() throws ControlServiceException {
+//        return userService.findAllTenantAdmins();
+//    }
+
     @Override
-    public List<TenantAdminDto> getTenantAdmins() throws ControlServiceException {
-        return userService.findAllTenantAdmins();
+    public List<UserDto> findAllTenantAdminsByTenantId(String tenantId) throws ControlServiceException {
+        return userService.findAllTenantAdminsByTenantId(tenantId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmin
-     * (java.lang.String)
-     */
-    @Override
-    public TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException {
-        return userService.findTenantAdminById(tenantId);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editTenantAdmin
-     * (org.kaaproject.kaa.common.dto.TenantAdminDto)
-     */
-    @Override
-    public TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException {
-        return userService.saveTenantAdmin(tenantAdmin);
-    }
+
+//    /*
+//     * (non-Javadoc)
+//     *
+//     * @see
+//     * org.kaaproject.kaa.server.control.service.ControlService#editTenantAdmin
+//     * (org.kaaproject.kaa.common.dto.TenantAdminDto)
+//     */
+//    @Override
+//    public TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException {
+//        return userService.saveTenantAdmin(tenantAdmin);
+//    }
 
     /*
      * (non-Javadoc)

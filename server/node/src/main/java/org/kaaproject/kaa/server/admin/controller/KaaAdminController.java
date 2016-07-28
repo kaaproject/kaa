@@ -62,6 +62,7 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring4gwt.server.SpringGwtRemoteServiceServlet;
+import org.springframework.aop.config.SimpleBeanFactoryAwareAspectInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -365,6 +366,7 @@ public class KaaAdminController {
     public ResultCode changePassword(@RequestParam(value = "username") String username,
             @RequestParam(value = "oldPassword") String oldPassword, @RequestParam(value = "newPassword") String newPassword)
             throws Exception {
+
         ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
         if (resultCode == ResultCode.USER_NOT_FOUND) {
             throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));

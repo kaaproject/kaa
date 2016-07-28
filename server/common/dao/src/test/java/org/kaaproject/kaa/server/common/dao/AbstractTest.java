@@ -61,7 +61,6 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
@@ -504,21 +503,21 @@ public class AbstractTest {
         return schemas;
     }
 
-    protected TenantAdminDto generateTenantAdminDto(TenantDto tenantDto, String userId) {
-        TenantAdminDto tenant = new TenantAdminDto();
-        tenant.setName(generateString(TENANT_NAME));
+    protected UserDto generateTenantAdmin(TenantDto tenantDto, String userId) {
+        UserDto tenant = new UserDto();
+        tenant.setUsername(generateString(TENANT_NAME));
         if (tenantDto == null) {
             tenantDto = generateTenantDto();
         }
-        tenant.setTenant(tenantDto);
+        tenant.setTenantId(tenantDto.getId());
         if (isBlank(userId)) {
             List<UserDto> users = generateUsersDto(tenantDto.getId(), KaaAuthorityDto.TENANT_ADMIN, 1);
-            tenant.setUserId(users.get(0).getId());
+            tenant.setId(users.get(0).getId());
         } else {
-            tenant.setUserId(userId);
+            tenant.setId(userId);
         }
         tenant.setExternalUid(UUID.randomUUID().toString());
-        tenant = userService.saveTenantAdmin(tenant);
+        tenant = userService.saveUser(tenant);
         return tenant;
     }
 

@@ -16,16 +16,17 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.tenant;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 
@@ -34,6 +35,10 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
     private SizedTextBox tenantName;
+
+    private UsersGrid tenantAdminsGrid;
+
+    private Button tenantAdminAddButton;
 
 
     public TenantViewImpl(boolean create) {
@@ -68,7 +73,19 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         detailsTable.setWidget(0, 1, tenantName);
 
 
+            tenantAdminsGrid = new UsersGrid(false, true);
+            tenantAdminsGrid.setWidth("100%");
+            tenantAdminsGrid.setSize("1000px", "400px");
+
+        detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
+
+        tenantAdminAddButton  = new Button(Utils.constants.addNewUser());
+        tenantAdminAddButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
         tenantName.setFocus(true);
+        if(!create) {
+            detailsTable.setWidget(1,0,tenantAdminsGrid);
+            detailsTable.setWidget(2, 0, tenantAdminAddButton);
+        }
     }
 
     @Override
@@ -86,6 +103,17 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
     public HasValue<String> getTenantName() {
         return tenantName;
     }
+
+    @Override
+    public AbstractGrid<UserDto, String> getTenantAdminsGrid() {
+        return  tenantAdminsGrid;
+    }
+
+    @Override
+    public HasClickHandlers getAddTenantAdminButton() {
+        return tenantAdminAddButton;
+    }
+
 
 
 }

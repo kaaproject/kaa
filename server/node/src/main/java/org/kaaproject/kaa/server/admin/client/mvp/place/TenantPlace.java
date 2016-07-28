@@ -18,11 +18,15 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
+
+import java.util.List;
 
 public class TenantPlace extends TreePlace {
 
     private String tenantName;
     private String tenantId;
+
 
     public TenantPlace(String tenantId) {
         this.tenantId=tenantId;

@@ -84,6 +84,16 @@ public class DataSource {
                 });
     }
 
+    public void loadAllTenantAdminsByTenantId(String tenantId,  final AsyncCallback<List<UserDto>> callback) {
+
+            rpcService.findAllTenantAdminsByTenantId(tenantId, new DataCallback<List<UserDto>>(
+                    callback) {
+                @Override
+                protected void onResult(List<UserDto> result) {
+                    eventBus.fireEvent(new DataEvent(UserDto.class, true));
+                }
+            });
+    }
     public void editUserProfile(UserDto user,
             final AsyncCallback<UserDto> callback) {
         rpcService.editUserProfile(user,
