@@ -1221,6 +1221,51 @@
         }
       }
     },
+    "/api/credentialsStatus" : {
+      "get" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Provides the status of given credentials",
+        "description" : " Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "getCredentialsStatus",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsId",
+          "in" : "query",
+          "description" : "A unique credentials identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string",
+              "enum" : [ "AVAILABLE", "IN_USE", "REVOKED" ]
+            }
+          },
+          "400" : {
+            "description" : "Parameter conditions \"applicationToken, credentialsId\" not met for actual request parameters"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "404" : {
+            "description" : "The requested item was not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
     "/api/deactivateConfiguration" : {
       "post" : {
         "tags" : [ "Configuration" ],
