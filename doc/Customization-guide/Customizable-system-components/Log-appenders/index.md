@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: Log appenders
 permalink: /:path/

@@ -100,6 +100,7 @@ sort_idx: 50
 ### Endpoint SDK  
 >A software development kit that is a library used for communication, data marshaling, persistence, and other functions performed between an endpoint and [Kaa server]({{root_url}}Glossary/#kaa-server).
 >An SDK is used to create [Kaa clients]({{root_url}}Glossary/#kaa-client) on the connected endpoints of the same type within a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).  
+>See also [SDK type]({{root_url}}Glossary/#sdk-type)
 >For more information, see [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs).
 
 ## F
@@ -148,6 +149,11 @@ sort_idx: 50
 >A multi-purpose middleware platform for building complete end-to-end IoT solutions, connected applications, and smart products.
 >The Kaa platform comprises [Kaa server]({{root_url}}Glossary/#kaa-server), [endpoint SDKs]({{root_url}}Glossary/#endpoint-sdk), and [Kaa applications]({{root_url}}Glossary/#kaa-application).  
 >For more information, see [Key platform features]({{root_url}}Programming-guide/Key-platform-features).
+
+## Kaa Sandbox  
+>A preconfigured virtual environment designed for the users who want to use their private [instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment) of [Kaa platform]({{root_url}}Glossary/#kaa-instance-kaa-deployment) for educational, development, and proof-of-concept purposes.
+>The Sandbox also includes a selection of demo applications that illustrate various aspects of the platform functionality.  
+>For more information, see [Getting started]({{root_url}}Getting-started).
 
 ### Kaa server
 >Kaa server functions as the back-end part of the [platform]({{root_url}}Glossary/#kaa-platform).

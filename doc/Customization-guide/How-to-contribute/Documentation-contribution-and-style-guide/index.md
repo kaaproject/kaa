@@ -26,7 +26,7 @@ The target audience of this guide is Kaa development team and anyone contributin
 * Use the following template to auto-generate the TOC:
 
 {% raw %}
-  ```
+```
   * TOC
   {:toc}
 ```
@@ -293,7 +293,7 @@ function fancyAlert(arg) {
 * Kaa project uses [Jekyll](https://jekyllrb.com/) to publish the documentation on the web.
 * Include a YAML front matter block with a `layout`, `title` and `permalink` keys at the beginning of each page.
 
-  ```
+```
 ---
 layout: page
 title: Documentation style guide
@@ -304,7 +304,7 @@ permalink: /:path/
 * Include `variables.md` files to capture `root_url`. This will allow you to refer to other pages.
 
 {% raw %}
-  ```
+```
 {% include variables.md %}
 ```
 {% endraw %}
@@ -312,7 +312,7 @@ permalink: /:path/
 * Refer to another page using `root_url`, e.g.,  [Glossary]({{root_url}}Glossary).
 
 {% raw %}
-  ```
+```
 [Glossary]({{root_url}}Glossary)
 ```
 {% endraw %}
@@ -322,12 +322,12 @@ Click the **Src** tab to see the source code used to generate the tabs.
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Preview1">Preview</a></li>
-  <li><a data-toggle="tab" href="#Src1">Src</a></li>
+  <li class="active"><a data-toggle="tab" href="#Preview12">Preview</a></li>
+  <li><a data-toggle="tab" href="#Src12">Src</a></li>
 </ul>
 
 <div class="tab-content">
-<div id="Preview1" class="tab-pane fade in active" markdown="1" >
+<div id="Preview12" class="tab-pane fade in active" markdown="1" >
 
 <div class="well">
 <ul class="nav nav-tabs">
@@ -357,7 +357,7 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 
 </div></div></div>
 
-</div><div id="Src1" class="tab-pane fade " markdown="1" >
+</div><div id="Src12" class="tab-pane fade " markdown="1" >
 
 ```
 <ul class="nav nav-tabs">

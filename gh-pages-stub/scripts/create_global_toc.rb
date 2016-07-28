@@ -85,7 +85,8 @@ class GlobalMenu
   def loadDoc(key)
     Dir.glob("#{key}/**/index.md") do |md_file|
       dirname = File.dirname(md_file)
-      header = YAML.load(loadHeader(md_file))
+      puts md_file
+	header = YAML.load(loadHeader(md_file))
       if header.has_key?('permalink')
         url = md_file.gsub("/index.md","")
         url = url.gsub("#{key}","")
