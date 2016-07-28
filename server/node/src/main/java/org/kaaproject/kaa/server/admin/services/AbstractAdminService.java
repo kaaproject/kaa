@@ -101,6 +101,7 @@ public abstract class AbstractAdminService implements InitializingBean {
     @Value("#{properties[additional_plugins_scan_package]}")
     String additionalPluginsScanPackage;
 
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     SchemaFormAvroConverter simpleSchemaFormAvroConverter;
