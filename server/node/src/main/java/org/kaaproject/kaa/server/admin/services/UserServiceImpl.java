@@ -49,14 +49,19 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     }
 
     @Override
-    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto)
+    public void editUserProfile(UserProfileUpdateDto userDto)
             throws KaaAdminServiceException {
         try {
-            checkUserProfile(userProfileUpdateDto);
             User user = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
-            user.setFirstName(userProfileUpdateDto.getFirstName());
-            user.setLastName(userProfileUpdateDto.getLastName());
-            user.setMail(userProfileUpdateDto.getMail());
+            if (!isEmpty(userDto.getFirstName())) {
+                user.setFirstName(userDto.getFirstName());
+            }
+            if (!isEmpty(userDto.getLastName())) {
+                user.setLastName(userDto.getLastName());
+            }
+            if (!isEmpty(userDto.getMail())) {
+                user.setMail(userDto.getMail());
+            }
             userFacade.save(user);
         } catch (Exception e) {
             throw Utils.handleException(e);
