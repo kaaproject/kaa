@@ -28,7 +28,7 @@ set(ESP8266_SRC
     ${ESP8266_SRC_FOLDER}/status.c
     ${ESP8266_SRC_FOLDER}/tcp_utils.c
     ${ESP8266_SRC_FOLDER}/time.c
-    ${KAA_SRC_FOLDER}/platform-impl/common/common_key_utils.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/key_utils.c
     ${ESP8266_SRC_FOLDER}/exit.c
     ${ESP8266_SRC_FOLDER}/snprintf.c
     ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
