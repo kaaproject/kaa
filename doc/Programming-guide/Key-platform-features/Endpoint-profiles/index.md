@@ -121,8 +121,18 @@ If you want to review the added Avro schema, open the corresponding **Client-sid
 
 ### REST API for Client-side endpoint profile
 
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling) 
-documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) documentation page for detailed description of the REST API, 
+its purpose, interfaces and features supported.
+
+Admin REST API provides the following actions:
+
+* [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
+* [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
+* [Get endpoint profiles by owner ID]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfilesByUserExternalId)
+* [Get client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getProfileSchema)
+* [Get client-side endpoint profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getProfileSchemasByApplicationToken)
+* [Delete endpoint]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/removeEndpointProfileByKeyHash)
+* [Create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema)
 
 
 ### Client side endpoint profile SDK API ###
@@ -395,7 +405,20 @@ If you want to review the added Avro schema, open the corresponding **Server-sid
 
 ### REST API for Server-side endpoint profile
 
-Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) for getting more information.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) documentation page for detailed description of the REST API, 
+its purpose, interfaces and features supported.
+
+Admin REST API provides the following actions:
+
+* [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
+* [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
+* [Get endpoint profiles by owner ID]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfilesByUserExternalId)
+* [Delete endpoint]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/removeEndpointProfileByKeyHash)
+* [Create server-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema)
+* [Get server-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getServerProfileSchema)
+* [Get server-side endpoint profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getServerProfileSchemasByApplicationToken)
+* [Update server-side endpoint profile]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/updateServerProfile)
+
 
 ## System part of endpoint profile ##
 
