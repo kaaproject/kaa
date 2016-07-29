@@ -13,7 +13,7 @@ sort_idx: 30
 Kaa provides a mechanism for endpoints aggregation within the application that is based on groups. Grouping endpoints enables you to activate specific configuration parameters, 
 control access to notification topics, etc.
 This guide will familiarize you with the basic concepts of designing endpoint groups. It is assumed that you have either set up a Kaa Sandbox, or a fully-blown Kaa cluster 
-already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Grouping) or 
+already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or 
 [Admin UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins)). 
 It is strongly recommended to get familiar with Endpoint profiles before you proceed.
 
