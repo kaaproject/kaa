@@ -40,6 +40,8 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
 
     private Button tenantAdminAddButton;
 
+    private Label lableUser;
+
 
     public TenantViewImpl(boolean create) {
         super(create);
@@ -66,6 +68,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         tenantName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
         tenantName.setWidth("100%");
         tenantName.addInputHandler(this);
+        lableUser = new Label("Users");
 
         Label titleLabel = new Label(Utils.constants.tenantName());
         titleLabel.addStyleName(REQUIRED);
@@ -77,14 +80,15 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
             tenantAdminsGrid.setWidth("100%");
             tenantAdminsGrid.setSize("1000px", "400px");
 
-        detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
+        detailsTable.getFlexCellFormatter().setColSpan(2, 0, 3);
 
         tenantAdminAddButton  = new Button(Utils.constants.addNewUser());
         tenantAdminAddButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
         tenantName.setFocus(true);
         if(!create) {
-            detailsTable.setWidget(1,0,tenantAdminsGrid);
-            detailsTable.setWidget(2, 0, tenantAdminAddButton);
+            detailsTable.setWidget(2,0,tenantAdminsGrid);
+            detailsTable.setWidget(3, 3, tenantAdminAddButton);
+            detailsTable.setWidget(1, 0, lableUser);
         }
     }
 

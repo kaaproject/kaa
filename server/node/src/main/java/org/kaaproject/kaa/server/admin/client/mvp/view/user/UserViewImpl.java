@@ -141,17 +141,9 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
     @Override
     protected boolean validate() {
-//        String pattern = "^(?:[a-zA-Z0-9_'^&/+-])+(?:\\.(?:[a-zA-Z0-9_'^&/+-])+)\" +\n" +
-//                "            \"*@(?:(?:\\\\[?(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\\\.)\" +\n" +
-//                "            \"{3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\]?)|(?:[a-zA-Z0-9-]+\\\\.)\" +\n" +
-//                "            \"+(?:[a-zA-Z]){2,}\\.?)$";
-//
-//        RegExp regExp=RegExp.compile(pattern);
-//
-//        boolean result = userName.getValue().length()>0;
-//        result &= regExp.test(email.getValue());
-//        result &= authority.getValue() != null;
-        return true;
+        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        RegExp regExp=RegExp.compile(pattern);
+        return userName.getValue().length()>0 &&  authority.getValue() != null && regExp.test(email.getValue());
     }
 
     @Override

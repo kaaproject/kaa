@@ -33,10 +33,7 @@ public class UserDto extends org.kaaproject.kaa.common.dto.UserDto {
     @Size(min = 2 , max = 225)
     @NotNull(message="email can't be null")
     @Pattern(
-            regexp = "^(?:[a-zA-Z0-9_'^&/+-])+(?:\\.(?:[a-zA-Z0-9_'^&/+-])+)" +
-            "*@(?:(?:\\[?(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\.)" +
-            "{3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\]?)|(?:[a-zA-Z0-9-]+\\.)" +
-            "+(?:[a-zA-Z]){2,}\\.?)$",
+            regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
             message = "email doesn't match regular expression pattern")
     private String mail;
     private String tempPassword;

@@ -163,37 +163,7 @@ public interface ControlService {
     List<UserDto> findAllTenantAdminsByTenantId(String tenantId) throws ControlServiceException;
 
 
-    /**
-     * Gets the tenant admin.
-     *
-     * @param tenantId
-     *            the tenant id
-     * @return the tenant admin
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-//    TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException;
 
-//    /**
-//     * Edits the tenant admin.
-//     *
-//     * @param tenantAdmin
-//     *            the tenant admin
-//     * @return the tenant admin dto
-//     * @throws ControlServiceException
-//     *             the control service exception
-//     */
-//    TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException;
-
-    /**
-     * Delete tenant admin.
-     *
-     * @param tenantId
-     *            the tenant id
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-    void deleteTenantAdmin(String tenantId) throws ControlServiceException;
 
     /**
      * Gets the application.

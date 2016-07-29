@@ -139,53 +139,6 @@ public class UserServiceImpl implements UserService {
         return convertDtoList(userDao.find());
     }
 
-//    @Override
-//    public List<TenantAdminDto> findAllTenantAdmins() {
-//        LOG.debug("Try to find all admin tenants");
-//        List<TenantDto> tenants = findAllTenants();
-//        List<TenantAdminDto> tenantAdmins = new ArrayList<TenantAdminDto>(tenants.size());
-//        for (TenantDto tenant : tenants) {
-//            TenantAdminDto tenantAdmin = new TenantAdminDto();
-//            tenantAdmin.setId(tenant.getId());
-//            tenantAdmin.setName(tenant.getName());
-//            List<User> users = userDao.findByTenantIdAndAuthority(tenant.getId(), KaaAuthorityDto.TENANT_ADMIN.name());
-//            if (!users.isEmpty()) {
-//                tenantAdmin.setUserId(users.get(0).getId().toString());
-//                tenantAdmin.setUsername(users.get(0).getUsername());
-//                tenantAdmin.setExternalUid(users.get(0).getExternalUid());
-//            }
-//            tenantAdmins.add(tenantAdmin);
-//        }
-//        return tenantAdmins;
-//    }
-//
-//    //remove
-//    @Override
-//    public TenantAdminDto saveTenantAdmin(TenantAdminDto tenantAdminDto) {
-//        TenantAdminDto tenantAdmin = new TenantAdminDto();
-//        if (isValidSqlObject(tenantAdminDto)) {
-//            TenantDto tenant = new TenantDto();
-//            tenant.setId(tenantAdminDto.getId());
-//            tenant.setName(tenantAdminDto.getName());
-//            tenant = saveTenant(tenant);
-//            tenantAdmin.setId(tenant.getId());
-//            tenantAdmin.setName(tenant.getName());
-//        }
-//        if (StringUtils.isEmpty(tenantAdminDto.getUserId()) || isValidSqlId(tenantAdminDto.getUserId())) {
-//            UserDto user = new UserDto();
-//            user.setId(tenantAdminDto.getUserId());
-//            user.setUsername(tenantAdminDto.getUsername());
-//            user.setExternalUid(tenantAdminDto.getExternalUid());
-//            user.setTenantId(tenantAdmin.getId());
-//            user.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-//            user = saveUser(user);
-//            tenantAdmin.setUserId(user.getId());
-//            tenantAdmin.setUsername(user.getUsername());
-//            tenantAdmin.setExternalUid(user.getExternalUid());
-//            tenantAdmin.setId(user.getTenantId());
-//        }
-//        return tenantAdmin;
-//    }
 
     @Override
     public void removeTenantAdminById(String tenantId) {

@@ -89,13 +89,7 @@ public interface UserService {
      */
     UserDto findUserById(String id);
 
-//    /**
-//     * Save tenant admin.
-//     *
-//     * @param tenantAdminDto the tenant dto
-//     * @return the tenant dto
-//     */
-//    TenantAdminDto saveTenantAdmin(TenantAdminDto tenantAdminDto);
+
 
     /**
      * remove tenant admin.
@@ -126,12 +120,6 @@ public interface UserService {
      */
     List<UserDto> findAllUsers();
 
-//    /**
-//     * Find all tenant admins.
-//     *
-//     * @return the list of tenant admins
-//     */
-//    List<TenantAdminDto> findAllTenantAdmins();
 
     /**
      * Find all tenant users.
