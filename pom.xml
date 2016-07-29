@@ -134,6 +134,9 @@ Copyright 2014-2016 CyberVision, Inc.
         <guava-gwt.version>18.0</guava-gwt.version>
         <swagger-maven-plugin.version>3.1.3</swagger-maven-plugin.version>
         <swagger-annotations.version>1.5.9</swagger-annotations.version>
+        <javax.el>2.2.4</javax.el>
+        <org.glassfish.web>2.2.4</org.glassfish.web>
+        <hibernate-validator>5.2.4.Final</hibernate-validator>
     </properties>
 
     <modules>

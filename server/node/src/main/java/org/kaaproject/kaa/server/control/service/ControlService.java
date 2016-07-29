@@ -150,19 +150,14 @@ public interface ControlService {
      */
     void deleteUser(String userId) throws ControlServiceException;
 
-//    /**
-//     * Gets the tenant admins.
-//     *
-//     * @return the tenant admins
-//     * @throws ControlServiceException
-//     *             the control service exception
-//     */
-//    List<TenantAdminDto> getTenantAdmins() throws ControlServiceException;
-
-
+    /**
+     * Gets the tenant admins by tenant id.
+     *
+     * @return the tenant admins
+     * @throws ControlServiceException
+     *             the control service exception
+     */
     List<UserDto> findAllTenantAdminsByTenantId(String tenantId) throws ControlServiceException;
-
-
 
 
     /**

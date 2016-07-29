@@ -27,7 +27,7 @@ jdbc_username=sqladmin
 jdbc_password=admin
 
 # specify jdbc database hosts and ports
-jdbc_host_port=10.2.3.66:3306
+jdbc_host_port=localhost:3306
 
 # specify jdbc database provider name
 sql_provider_name=mysql:failover
