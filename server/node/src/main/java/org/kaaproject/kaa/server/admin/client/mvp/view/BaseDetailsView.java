@@ -42,7 +42,7 @@ public interface BaseDetailsView extends IsWidget, HasErrorMessage {
 
     void setPresenter(Presenter presenter);
 
-    public interface Presenter {
+    interface Presenter {
         void goTo(Place place);
     }
 
