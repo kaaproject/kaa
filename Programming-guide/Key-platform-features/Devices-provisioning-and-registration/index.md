@@ -61,7 +61,7 @@ If Credentials object is not found or this credentials are in use by other endpo
 ### Endpoint Registration information
 
 Kaa platform user is able to provision server-side profile for new endpoints using information about endpoint credentials 
-(See following [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionRegistration) call for more details). 
+(See following [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionCredentials) call for more details). 
 This server-side profile will be used during endpoint registration. 
 Registration service is responsible for storage and queries of this information based on credentials or endpoint identifier.
 This feature may be useful in multiple use-cases. 
@@ -74,7 +74,7 @@ Kaa provides two credentials service implementations out-of-the box:
 
 1. Trustful credentials service -  default implementation that allows any endpoint to register and connect to Kaa cluster. (like the previous version of Kaa)
 2. Internal credentials service -  allows connecting with Kaa for specified list of endpoints whose credentials was previously provisioned with Kaa 
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionRegistration).
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionCredentials).
 
 ### Custom credentials service implementation
 
