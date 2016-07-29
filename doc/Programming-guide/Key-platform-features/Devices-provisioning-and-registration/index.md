@@ -25,7 +25,8 @@ Although other authentication strategies are possible they are out of scope of t
 
 ## Endpoint Registration
 
-The endpoint registration is the process of initial communication setup that ensures that the endpoint is registered within the Kaa cluster along with the corresponding security credentials and the endpoint profile. 
+The endpoint registration is the process of initial communication setup that ensures that the endpoint is registered within the Kaa cluster 
+along with the corresponding security credentials and the endpoint profile. 
 It is not until the endpoint registers on the server that the Kaa framework services become available to the client application. 
 During the process of registration, the Kaa endpoint at first communicates with one or multiple Bootstrap services to obtain a list of available Operations services, 
 and then with the Operations service to submit the endpoint data and complete the registration.
@@ -36,24 +37,31 @@ and then with the Operations service to submit the endpoint data and complete th
 ### Operations service list resolution
 
 Initially, the Kaa endpoint SDK does not include any information about Operations services for security and load-balancing reasons. 
-Instead, during the SDK generation, a Control service embeds a list of available Bootstrap services into the SDK (using a properties file for Java implementation, a header file for C++, etc.). 
+Instead, during the SDK generation, a Control service embeds a list of available Bootstrap services into the SDK 
+(using a properties file for Java implementation, a header file for C++, etc.). 
 The endpoint selects a random Bootstrap service from the list and sends a resolution request to the selected Bootstrap service. 
 The resolution request contains the application token that can be used by the Bootstrap service in specific load-balancing strategies. 
-The resolution response from the Bootstrap service contains a prioritized list of Operations services with their connectivity details and is signed with the Bootstrap service private key. 
+The resolution response from the Bootstrap service contains a prioritized list of Operations services with their connectivity details and 
+is signed with the Bootstrap service private key. 
 The endpoint verifies the signature of the response by using the Bootstrap public key available from the build time parameters and retains the received information.
 
-### Endpoint Autorization
+### Endpoint Authorization
 
-Endpoint autorization is done by validating endpoint credentials using corresponding credentials service. 
-Credentials service may be configured separately for each application use either [Admin UI]() or [REST API](). 
+Endpoint authorization is done by validating endpoint credentials using corresponding credentials service. 
+Credentials service may be configured separately for each application use either Admin UI or 
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Application/editApplication). 
+
+![credential](attach/credentials-for-apps.png)
 
 At the moment of writing Kaa endpoint credentials is identifier is based on hash of endpoint RSA Key Pair.
-During the start of new session, operations service lookup credentials service based on application identifier and uses this credentials service to lookup status of provided credentials object. 
+During the start of new session, operations service lookup credentials service based on application identifier 
+and uses this credentials service to lookup status of provided credentials object. 
 If Credentials object is not found or this credentials are in use by other endpoint, new session is rejected by Kaa node.
 
 ### Endpoint Registration information
 
-Kaa platform user is able to provision server-side profile for new endpoints using information about endpoint credentials (See following [REST API](TODO) call for more details). 
+Kaa platform user is able to provision server-side profile for new endpoints using information about endpoint credentials 
+(See following [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionRegistration) call for more details). 
 This server-side profile will be used during endpoint registration. 
 Registration service is responsible for storage and queries of this information based on credentials or endpoint identifier.
 This feature may be useful in multiple use-cases. 
@@ -65,7 +73,8 @@ For example, endpoint manufacturer may provision some secure information to the 
 Kaa provides two credentials service implementations out-of-the box:
 
 1. Trustful credentials service -  default implementation that allows any endpoint to register and connect to Kaa cluster. (like the previous version of Kaa)
-2. Internal credentials service -  allows connecting with Kaa for specified list of endpoints whose credentials was previously provisioned with Kaa [REST API](TODO).
+2. Internal credentials service -  allows connecting with Kaa for specified list of endpoints whose credentials was previously provisioned with Kaa 
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionRegistration).
 
 ### Custom credentials service implementation
 
@@ -148,7 +157,7 @@ To provision your credentials service, do the following:
 
 1. Build your application using next command: 
 
-   ```
+   ```bash
       $ mvn clean install
    ```
 
