@@ -677,7 +677,7 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
+    NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
 
     /**
      * Gets the notification schema.
@@ -735,7 +735,18 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException;
+    LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException;
+
+    /**
+     * Get the log schema.
+     *
+     * @param schemaId
+     *            the log schema string
+     * @return the log schema dto
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    String getFlatSchemaByCtlSchemaId(String schemaId) throws ControlServiceException;
 
     /**
      * Gets the log schemas by application id.

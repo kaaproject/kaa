@@ -145,16 +145,16 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseCtlSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
     private final BaseListView<ConfigurationSchemaDto> configurationSchemasView = new ConfigurationSchemasViewImpl();
-    private final BaseSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
-    private final BaseSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
+    private final BaseCtlSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
+    private final BaseCtlSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
 
     private final BaseListView<NotificationSchemaDto> notificationSchemasView = new NotificationSchemasViewImpl();
     private final BaseCtlSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
     private final BaseCtlSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
 
     private final BaseListView<LogSchemaDto> logSchemasView = new LogSchemasViewImpl();
-    private final BaseSchemaView logSchemaView = new LogSchemaViewImpl(false);
-    private final BaseSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
+    private final BaseCtlSchemaView logSchemaView = new LogSchemaViewImpl(false);
+    private final BaseCtlSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
 
     private final BaseListView<EndpointGroupDto> endpointGroupsView = new EndpointGroupsViewImpl();
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
@@ -338,12 +338,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getConfigurationSchemaView() {
+    public BaseCtlSchemaView getConfigurationSchemaView() {
         return configurationSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateConfigurationSchemaView() {
+    public BaseCtlSchemaView getCreateConfigurationSchemaView() {
         return createConfigurationSchemaView;
     }
 
@@ -368,12 +368,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getLogSchemaView() {
+    public BaseCtlSchemaView getLogSchemaView() {
         return logSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateLogSchemaView() {
+    public BaseCtlSchemaView getCreateLogSchemaView() {
         return createLogSchemaView;
     }
 

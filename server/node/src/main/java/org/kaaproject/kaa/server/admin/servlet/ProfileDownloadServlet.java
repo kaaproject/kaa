@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
+import org.kaaproject.kaa.server.admin.shared.services.ProfileService;
 import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class ProfileDownloadServlet extends HttpServlet implements Servlet, Serv
     private static final String PROFILE_FILE_NAME_PATTERN = "ep-{}-{}-profile-{}.json";
 
     @Autowired
-    private KaaAdminService adminService;
+    private ProfileService profileService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -68,7 +68,7 @@ public class ProfileDownloadServlet extends HttpServlet implements Servlet, Serv
         ProfileType profileType = ProfileType.valueOf(profileTypeString);
         
         try {
-            EndpointProfileDto profile = adminService.getEndpointProfileByKeyHash(endpointKey);
+            EndpointProfileDto profile = profileService.getEndpointProfileByKeyHash(endpointKey);
             String json;
             String fileName = MessageFormatter.arrayFormat(PROFILE_FILE_NAME_PATTERN, 
                     new Object[] { endpointKey, profileType.name().toLowerCase(), System.currentTimeMillis() }).getMessage();

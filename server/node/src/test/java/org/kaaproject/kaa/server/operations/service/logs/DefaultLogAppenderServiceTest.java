@@ -20,11 +20,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.appenders.mongo.appender.LogEventDao;
 import org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -62,6 +64,7 @@ public class DefaultLogAppenderServiceTest {
     private ApplicationService applicationService;
     private LogSchemaService logSchemaService;
     private LogEventDao logEventDao;
+    private CTLService ctlService;
 
     private LogAppendersService logAppendersService;
 
@@ -76,6 +79,7 @@ public class DefaultLogAppenderServiceTest {
         logAppenderService = new DefaultLogAppenderService();
         applicationService = mock(ApplicationService.class);
         logSchemaService = mock(LogSchemaService.class);
+        ctlService = mock(CTLService.class);
         logEventDao = mock(LogEventDao.class);
         logAppendersService = mock(LogAppendersService.class);
 
@@ -177,7 +181,11 @@ public class DefaultLogAppenderServiceTest {
 
         when(logSchemaService.findLogSchemaByAppIdAndVersion(APPLICATION_ID, LOG_SCHEMA_VERSION)).thenReturn(dto);
 
-        LogSchema logSchema = logAppenderService.getLogSchema(APPLICATION_ID, LOG_SCHEMA_VERSION);
+        CTLSchemaDto ctlSchemaDto = new CTLSchemaDto();
+
+        when(ctlService.findCTLSchemaById(dto.getCtlSchemaId())).thenReturn(ctlSchemaDto);
+
+        LogSchema logSchema = new LogSchema(dto, ctlSchemaDto.getBody());
 
         Assert.assertEquals(dto, ReflectionTestUtils.getField(logSchema, "logSchemaDto"));
     }

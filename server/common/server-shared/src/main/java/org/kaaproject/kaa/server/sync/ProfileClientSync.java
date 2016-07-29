@@ -23,12 +23,11 @@ public class ProfileClientSync {
     private ByteBuffer profileBody;
     private String endpointAccessToken;
 
+
     public ProfileClientSync() {
     }
 
-    /**
-     * All-args constructor.
-     */
+
     public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
             String endpointAccessToken) {
         this.endpointPublicKey = endpointPublicKey;
@@ -36,56 +35,33 @@ public class ProfileClientSync {
         this.endpointAccessToken = endpointAccessToken;
     }
 
-    /**
-     * Gets the value of the 'endpointPublicKey' field.
-     */
+
     public ByteBuffer getEndpointPublicKey() {
         return endpointPublicKey;
     }
 
-    /**
-     * Sets the value of the 'endpointPublicKey' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
     public void setEndpointPublicKey(ByteBuffer value) {
         this.endpointPublicKey = value;
     }
 
-    /**
-     * Gets the value of the 'profileBody' field.
-     */
+
     public ByteBuffer getProfileBody() {
         return profileBody;
     }
 
-    /**
-     * Sets the value of the 'profileBody' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
     public void setProfileBody(ByteBuffer value) {
         this.profileBody = value;
     }
 
-    /**
-     * Gets the value of the 'endpointAccessToken' field.
-     */
+
     public String getEndpointAccessToken() {
         return endpointAccessToken;
     }
 
-    /**
-     * Sets the value of the 'endpointAccessToken' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
     public void setEndpointAccessToken(String value) {
         this.endpointAccessToken = value;
     }
+
 
     @Override
     public int hashCode() {

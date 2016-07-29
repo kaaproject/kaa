@@ -94,16 +94,16 @@ public interface ClientFactory {
     BaseCtlSchemaView getCreateServerProfileSchemaView();
 
     BaseListView<ConfigurationSchemaDto> getConfigurationSchemasView();
-    BaseSchemaView getConfigurationSchemaView();
-    BaseSchemaView getCreateConfigurationSchemaView();
+    BaseCtlSchemaView getConfigurationSchemaView();
+    BaseCtlSchemaView getCreateConfigurationSchemaView();
 
     BaseListView<NotificationSchemaDto> getNotificationSchemasView();
     BaseCtlSchemaView getNotificationSchemaView();
     BaseCtlSchemaView getCreateNotificationSchemaView();
 
     BaseListView<LogSchemaDto> getLogSchemasView();
-    BaseSchemaView getLogSchemaView();
-    BaseSchemaView getCreateLogSchemaView();
+    BaseCtlSchemaView getLogSchemaView();
+    BaseCtlSchemaView getCreateLogSchemaView();
 
     BaseListView<EndpointGroupDto> getEndpointGroupsView();
     EndpointGroupView getEndpointGroupView();
