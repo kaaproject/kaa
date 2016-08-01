@@ -1083,6 +1083,38 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>${swagger-maven-plugin.version}</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <!--info tag is required in plugin bun unused in doc view -->
+                            <info>
+                                <title>Admin REST API</title>
+                                <version>${project.version}</version>
+                                <description>Kaa Admin REST API</description>
+                            </info>
+                            <springmvc>true</springmvc>
+                            <locations>org.kaaproject.kaa.server.admin.controller</locations>
+                            <schemes>http,https</schemes>
+                            <host>localhost:8080</host>
+                            <basePath>/kaaAdmin/rest</basePath>
+                            <swaggerApiReader>com.github.kongchen.swagger.docgen.reader.SpringMvcApiReader</swaggerApiReader>
+                            <swaggerDirectory>doc/Programming-guide/Server-REST-APIs</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
         	<plugins>
