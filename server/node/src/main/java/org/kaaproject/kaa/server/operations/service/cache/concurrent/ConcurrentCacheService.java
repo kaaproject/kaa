@@ -725,7 +725,7 @@ public class ConcurrentCacheService implements CacheService {
                     String applicationId = mapping.getApplicationId();
                     ApplicationDto appDto = applicationService.findAppById(applicationId);
                     RouteTableKey routeTableKey = new RouteTableKey(appDto.getApplicationToken(), new EventClassFamilyVersion(
-                            ecfvId, key.getVersion()));
+                            ecfId, key.getVersion()));
                     if (!routeKeys.contains(routeTableKey)) {
                         for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
                             if (eventMap.getEventClassId().equals(eventClass.getId())
