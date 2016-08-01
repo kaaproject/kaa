@@ -51,6 +51,7 @@ import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -1058,6 +1059,13 @@ public class AdminClient {
         parameters.add("serverProfileVersion", serverProfileVersion);
         parameters.add("serverProfileBody", serverProfileBody);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistration", parameters);
+    }
+
+    public CredentialsStatus getCredentialsStatus(String applicationToken, String credentialsId) {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationToken", applicationToken);
+        parameters.add("credentialsId", credentialsId);
+        return this.restTemplate.postForObject(restTemplate.getUrl() + "credentialsStatus", parameters, CredentialsStatus.class);
     }
 
     public void revokeCredentials(String applicationToken, String credentialsId) {
