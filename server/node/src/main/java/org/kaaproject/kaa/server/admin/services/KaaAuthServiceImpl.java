@@ -140,13 +140,15 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     @Transactional(propagation=Propagation.REQUIRED, rollbackFor=Exception.class)
     public ResultCode changePassword(String username, String oldPassword,
             String newPassword) throws Exception {
-        User currentUser = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
         User userEntity = userFacade.findByUserName(username);
+        boolean firstTimeLogin = userEntity.isTempPassword();
+
         if (userEntity == null) {
             return ResultCode.USER_NOT_FOUND;
         }
-        if (!userEntity.equals(currentUser)) {
-            return ResultCode.PERMISSION_DENIED;
+        if (!firstTimeLogin) {
+            User currentUser = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
+            if (!currentUser.equals(userEntity)) return ResultCode.PERMISSION_DENIED;
         }
         if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
             return ResultCode.OLD_PASSWORD_MISMATCH;
