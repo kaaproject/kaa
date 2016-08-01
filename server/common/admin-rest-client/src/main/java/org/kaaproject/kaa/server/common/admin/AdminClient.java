@@ -233,8 +233,16 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveServerProfileSchema", serverProfileSchema, ServerProfileSchemaDto.class);
     }
 
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "createNotificationSchema", notificationSchema, NotificationSchemaDto.class);
+    }
+
     public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
         return restTemplate.postForObject(restTemplate.getUrl() + "saveNotificationSchema", notificationSchema, NotificationSchemaDto.class);
+    }
+
+    public LogSchemaDto createLogSchema(LogSchemaDto logSchema) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "createLogSchema", logSchema, LogSchemaDto.class);
     }
 
     public LogSchemaDto saveLogSchema(LogSchemaDto logSchema) throws Exception {

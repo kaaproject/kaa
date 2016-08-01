@@ -963,7 +963,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .saveNotificationSchema(notificationSchema);
+                .createNotificationSchema(notificationSchema);
         return savedSchema;
     }
 
@@ -987,7 +987,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         notificationSchema.setCtlSchemaId(ctlSchema.getId());
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .saveNotificationSchema(notificationSchema);
+                .createNotificationSchema(notificationSchema);
         return savedSchema;
     }
 
@@ -1024,7 +1024,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         logSchema.setCtlSchemaId(ctlSchema.getId());
 
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        LogSchemaDto savedLogSchema = client.saveLogSchema(logSchema);
+        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema);
         return savedLogSchema;
     }
 
