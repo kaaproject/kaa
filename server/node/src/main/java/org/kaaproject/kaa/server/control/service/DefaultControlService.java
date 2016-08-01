@@ -453,6 +453,11 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException {
+        ApplicationDto storedApplication = applicationService.findAppByApplicationToken(application.getApplicationToken());
+        if (storedApplication != null) {
+            application.setId(storedApplication.getId());
+        }
+
         boolean update = !isEmpty(application.getId());
         ApplicationDto appDto = applicationService.saveApp(application);
         if (update) {
