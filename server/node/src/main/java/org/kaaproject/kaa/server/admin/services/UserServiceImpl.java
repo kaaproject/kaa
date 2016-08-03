@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
+import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -95,8 +98,19 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        User stored = userFacade.findByUserName(user.getUsername());
+        boolean createNewUser = (stored == null);
+
+        if (createNewUser)  {
+            checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        } else {
+            checkUserId(String.valueOf(stored.getId()));
+        }
+
         try {
+            CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
+            user.setExternalUid(result.getUserId().toString());
+
             if (!isEmpty(user.getId())) {
                 org.kaaproject.kaa.common.dto.UserDto storedUser = controlService.getUser(user.getId());
                 Utils.checkNotNull(storedUser);
@@ -110,7 +124,12 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             userDto.setTenantId(getTenantId());
             userDto.setAuthority(user.getAuthority());
             org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(userDto);
-            return toUser(savedUser);
+
+            UserDto editedUser = toUser(savedUser);
+            if (StringUtils.isNotBlank(result.getPassword())) {
+                editedUser.setTempPassword(result.getPassword());
+            }
+            return editedUser;
 
         } catch (Exception e) {
             throw Utils.handleException(e);

@@ -21,14 +21,19 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * The Class ControlServerUserIT.
  */
 public class ControlServerUserIT extends AbstractTestControlServer {
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.control.AbstractTestControlServer#createTenantDeveloperNeeded()
@@ -100,13 +105,34 @@ public class ControlServerUserIT extends AbstractTestControlServer {
     @Test
     public void testUpdateUser() throws Exception {
         UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
-        
+
+        final String PASSWORD = "test_password";
+        client.changePassword(user.getUsername(), user.getTempPassword(), PASSWORD);
+        client.login(user.getUsername(), PASSWORD);
+
         user.setFirstName(generateString("NewFirst"));
         user.setLastName(generateString("NewLast"));
-        
         UserDto updatedUser = client.editUser(user);
         
         assertUsersEquals(updatedUser, user);
+    }
+
+    /**
+     * Test fail update user due to access policy.
+     * User credentials should be changed by owner only.
+     * Expected: HttpClientErrorException (403 Forbidden)
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testFailUpdateUser() throws Exception {
+        expectedException.expect(HttpClientErrorException.class);
+        expectedException.expectMessage("403 Forbidden");
+
+        UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
+        user.setFirstName(generateString("NewFirst"));
+        user.setLastName(generateString("NewLast"));
+        UserDto updatedUser = client.editUser(user);
     }
     
     /**
