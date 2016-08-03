@@ -89,7 +89,7 @@ public class DefaultDeltaService implements DeltaService {
     @Autowired
     private EndpointService endpointService;
 
-    /** The configuration merger factory. */
+
     @Autowired
     private OverrideAlgorithmFactory configurationOverrideFactory;
 
@@ -120,7 +120,7 @@ public class DefaultDeltaService implements DeltaService {
         LOG.debug("[{}][{}] Calculating new configuration", appToken, endpointId);
         AppVersionKey appConfigVersionKey = new AppVersionKey(appToken, profile.getConfigurationVersion());
         DeltaCacheKey deltaKey = new DeltaCacheKey(appConfigVersionKey, profile.getGroupState(), EndpointObjectHash.fromBytes(profile
-                .getUserConfigurationHash()), null, true);
+                .getUserConfigurationHash()), null, profile.isUseConfigurationRawSchema(), true);
         LOG.debug("[{}][{}] Built resync delta key {}", appToken, endpointId, deltaKey);
         return getDelta(endpointId, profile.getEndpointUserId(), deltaKey, profile.isUseConfigurationRawSchema());
     }
@@ -188,8 +188,14 @@ public class DefaultDeltaService implements DeltaService {
 
         final DeltaCacheKey newKey;
         if (userConfiguration != null) {
-            newKey = new DeltaCacheKey(deltaKey.getAppConfigVersionKey(), deltaKey.getEndpointGroups(),
-                    EndpointObjectHash.fromString(userConfiguration.getBody()), deltaKey.getEndpointConfHash(), deltaKey.isResyncOnly());
+            newKey = new DeltaCacheKey(
+                    deltaKey.getAppConfigVersionKey(),
+                    deltaKey.getEndpointGroups(),
+                    EndpointObjectHash.fromString(userConfiguration.getBody()),
+                    deltaKey.getEndpointConfHash(),
+                    useConfigurationRawSchema,
+                    deltaKey.isResyncOnly()
+            );
         } else {
             newKey = deltaKey;
         }
@@ -373,7 +379,7 @@ public class DefaultDeltaService implements DeltaService {
         return mergedConfiguration;
     }
 
-    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, String jsonData, String schema,  EndpointObjectHash userConfigurationHash) throws IOException {
+    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, String jsonData, String schema, EndpointObjectHash userConfigurationHash) throws IOException {
         byte[] configuration = GenericAvroConverter.toRawData(jsonData, schema);
         return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
                 userConfigurationHash);
