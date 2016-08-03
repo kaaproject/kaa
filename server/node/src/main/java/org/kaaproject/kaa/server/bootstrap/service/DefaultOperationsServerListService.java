@@ -73,7 +73,11 @@ public class DefaultOperationsServerListService implements OperationsServerListS
     }
 
     public void init(BootstrapNode zkNode) {
-        LOG.info("Initializing with {}", zkNode);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Initializing with {}", zkNode);
+        } else {
+            LOG.info("Initializing with BootstrapNode");
+        }
         opsMap.clear();
         synchronized (listenerLock) {
             LOG.info("Registering as listener to ZK updates");
@@ -118,7 +122,11 @@ public class DefaultOperationsServerListService implements OperationsServerListS
     }
 
     private void addNode(OperationsNodeInfo info) {
-        LOG.info("Add/Update node {}", info);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Add/Update node {}", info);
+        } else {
+            LOG.info("Add/Update node");
+        }
         opsMap.put(getNameFromConnectionInfo(info.getConnectionInfo()), info);
         LOG.info("Cleanup cached responses");
         cache.clear();
@@ -126,9 +134,17 @@ public class DefaultOperationsServerListService implements OperationsServerListS
 
     private void removeNode(OperationsNodeInfo info) {
         if (opsMap.remove(getNameFromConnectionInfo(info.getConnectionInfo())) != null) {
-            LOG.info("Removed node {}", info);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Removed node {}", info);
+            } else {
+                LOG.info("Removed node");
+            }
         } else {
-            LOG.warn("Failed to remove node {}", info);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Failed to remove node {}", info);
+            } else {
+                LOG.warn("Failed to remove node");
+            }
         }
         LOG.info("Cleanup cached responses");
         cache.clear();
