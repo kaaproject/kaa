@@ -33,7 +33,7 @@ tr, tr:nth-child(even) {background-color: #fafafa}
 th {
     background-color: #f4f4f4;
 }
- 
+
 .nav {
    font-family: 'Open Sans', Tahoma;
    font-size:13px;
@@ -132,7 +132,7 @@ hr {
    padding-left:0;
    padding-right:0;
    overflow:auto;
-   
+
 }
 #main .img-circle {
    margin-top:18px;
@@ -145,7 +145,7 @@ hr {
   overflow: auto;
   height:100%;
   min-height:100%;
-  
+
 }*/
 
 #main .footer {
@@ -207,7 +207,7 @@ hr {
 
 .logo {
   display:block;
-  
+
   background-color:#ffffff;
   /*color:#3B5999;
   height:28px;
@@ -257,14 +257,14 @@ h1,h2,h3 {
     text-shadow:0 0 1px rgba(0,0,0,.3);
 }
 .form-control {
-	
+
 }
 
 .panel textarea, .well textarea, textarea.form-control
 {
    resize: none;
 }
-  
+
 .badge{
    color:#3B5999;
    background-color:#fff;
@@ -273,7 +273,7 @@ h1,h2,h3 {
    background-color:#3B5999;
    color:#fff;
 }
-    
+
 .jumbotron {
   background-color:transparent;
 }
@@ -372,7 +372,7 @@ small.text-muted {
   #sidebar, #sidebar a, #sidebar-footer a {
     padding-left:0px;
   }
-  
+
   #sidebar .nav a{
 	padding-left: 10px;
   }
@@ -475,7 +475,7 @@ img {
 	max-height: 600px; /*for really big images*/
 }
 
-button.colapse_control{
+button.collapse_control{
     border: none;
     border-radius: 0;
     outline: none;
@@ -488,11 +488,11 @@ button.colapse_control{
 	width: 120px;
 }
 
-button.colapse_control.more{
+button.collapse_control.more{
 	margin-top: 10px;
 }
 
-button.colapse_control:before {
+button.collapse_control:before {
     content: "";
     display: block;
     border-left: 5px solid transparent;
@@ -505,7 +505,7 @@ button.colapse_control:before {
     top: 13px;
 }
 
-button.colapse_control.more:before {
+button.collapse_control.more:before {
     border-top: 5px solid #fff;
     border-bottom: 0px;
 }
