@@ -16,9 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+<<<<<<< 3c10f3f09412187070c25c939a3c2beac3e5a708
 import org.kaaproject.kaa.common.dto.UserDto;
+=======
+import org.kaaproject.kaa.common.dto.admin.UserDto;
+>>>>>>> KAA-1196 user could be edited only by owner
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
+import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -99,6 +105,7 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
+<<<<<<< 3c10f3f09412187070c25c939a3c2beac3e5a708
 
         if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
             checkAuthority(KaaAuthorityDto.KAA_ADMIN);
@@ -109,7 +116,21 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
                 user.setTenantId(getTenantId());
             }
         }
+=======
+        User stored = userFacade.findByUserName(user.getUsername());
+        boolean createNewUser = (stored == null);
+
+        if (createNewUser)  {
+            checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        } else {
+            checkUserId(String.valueOf(stored.getId()));
+        }
+
+>>>>>>> KAA-1196 user could be edited only by owner
         try {
+            CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
+            user.setExternalUid(result.getUserId().toString());
+
             if (!isEmpty(user.getId())) {
                 UserDto storedUser = controlService.getUser(user.getId());
                 Utils.checkNotNull(storedUser);
@@ -124,8 +145,18 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             userDto.setExternalUid(userId.toString());
             userDto.setTenantId(user.getTenantId());
             userDto.setAuthority(user.getAuthority());
+<<<<<<< 3c10f3f09412187070c25c939a3c2beac3e5a708
             UserDto savedUser = controlService.editUser(userDto);
             return toUser(savedUser);
+=======
+            org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(userDto);
+
+            UserDto editedUser = toUser(savedUser);
+            if (StringUtils.isNotBlank(result.getPassword())) {
+                editedUser.setTempPassword(result.getPassword());
+            }
+            return editedUser;
+>>>>>>> KAA-1196 user could be edited only by owner
 
         } catch (Exception e) {
             throw Utils.handleException(e);
