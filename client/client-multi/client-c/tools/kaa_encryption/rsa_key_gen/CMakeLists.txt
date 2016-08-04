@@ -15,14 +15,10 @@
 #
 
 cmake_minimum_required(VERSION 2.8.12)
-project(kaa_rsa_keygen_app C)
+project(kaa_rsa_keygen C)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic -D_GNU_SOURCE")
+add_library(rsa_keygen kaa_rsa_key_gen.c)
+target_include_directories(rsa_keygen PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
-include_directories(rsa_key_gen)
-
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/rsa_key_gen)
-
-add_executable(generate_rsa_keys kaa_rsa_key_gen_app.c)
-
-target_link_libraries(generate_rsa_keys rsa_keygen)
+add_subdirectory(${KAA_SDK_DIR}/thirdparty/mbedtls kaa_mbedtls)
+target_link_libraries(rsa_keygen kaa_mbedtls)
