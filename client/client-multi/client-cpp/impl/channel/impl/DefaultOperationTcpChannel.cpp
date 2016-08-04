@@ -426,7 +426,9 @@ void DefaultOperationTcpChannel::startThreads()
                                                                                                 % getId()
                                                                                                 % e.what());
 
-                        //TODO: Reset IO service and, perhaps, notify the channel manager about a transport failover.
+                        //TODO: http://jira.kaaproject.org/browse/KAA-1321
+                        // Reset IO service and, perhaps, notify
+                        // the channel manager about a transport failover.
                     }
                 });
     }

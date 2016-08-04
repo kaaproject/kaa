@@ -147,6 +147,8 @@ private:
     std::vector<std::thread>                         ioThreads_;
     std::unique_ptr<boost::asio::streambuf>          responseBuffer_;
 
+    // TODO: http://jira.kaaproject.org/browse/KAA-1321
+    // Use states and present them as enum
     bool isConnected_ = false;
     bool isFirstResponseReceived_ = false;
     bool isPendingSyncRequest_ = false;

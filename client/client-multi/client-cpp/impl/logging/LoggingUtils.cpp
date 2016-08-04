@@ -310,7 +310,7 @@ std::string LoggingUtils::toString(const TransportProtocolId& protocolId) {
                                                                                 str();
 }
 
-std::string LoggingUtils::toString(const std::uint8_t* vec, const size_t& length) {
+std::string LoggingUtils::toString(const std::uint8_t* vec, std::size_t length) {
     std::ostringstream ss;
     ss << "[ ";
     if (vec != nullptr && length > 0) {
@@ -568,7 +568,7 @@ std::string LoggingUtils::toString(SyncResponseResultType type) {
 
 std::string LoggingUtils::toString(const EventSyncRequest::events_t& events) {
     if (!events.is_null()) {
-        return EventsToString(events.get_array());
+        return toString(events.get_array());
     }
 
     return "null";
@@ -576,7 +576,7 @@ std::string LoggingUtils::toString(const EventSyncRequest::events_t& events) {
 
 std::string LoggingUtils::toString(const EventSyncResponse::events_t& events) {
     if (!events.is_null()) {
-        return EventsToString(events.get_array());
+        return toString(events.get_array());
     }
 
     return "null";
@@ -719,7 +719,7 @@ std::string LoggingUtils::toString(LogDeliveryErrorCode code) {
     return result;
 }
 
-std::string LoggingUtils::EventsToString(const std::vector<Event>& events) {
+std::string LoggingUtils::toString(const std::vector<Event>& events) {
     std::ostringstream stream;
     stream << "[";
     for (auto it = events.begin(); it != events.end(); ++it) {
@@ -738,11 +738,11 @@ std::string LoggingUtils::toString(KaaFailoverReason reason)
 {
     switch (reason) {
         case KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA:
-            return "BOOTSTRAP_SERVERS_NA";
+            return "ALL_BOOTSTRAP_SERVERS_NA";
         case KaaFailoverReason::NO_OPERATIONS_SERVERS_RECEIVED:
             return "NO_OPERATIONS_SERVERS_RECEIVED";
         case KaaFailoverReason::ALL_OPERATIONS_SERVERS_NA:
-            return "OPERATIONS_SERVERS_NA";
+            return "ALL_OPERATIONS_SERVERS_NA";
         case KaaFailoverReason::CURRENT_BOOTSTRAP_SERVER_NA:
             return "CURRENT_BOOTSTRAP_SERVER_NA";
         case KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA:

@@ -26,7 +26,7 @@ enum class KaaFailoverReason {
     /**
      * An endpoint could not establish a connection/session to all Bootstrap server.
      */
-    ALL_BOOTSTRAP_SERVERS_NA = 0,
+    ALL_BOOTSTRAP_SERVERS_NA,
 
     /**
      * An endpoint received the empty list of Operations servers.
@@ -69,7 +69,7 @@ enum class FailoverStrategyAction {
     /**
      *  No action.
      */
-    NOOP = 0,
+    NOOP,
 
     /**
      *  Connect again to a current Bootstrap/Operations server.

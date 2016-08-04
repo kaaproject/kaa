@@ -68,17 +68,18 @@ void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
 }
 
 void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
-    if (!connectionInfo) {
-        KAA_LOG_WARN(boost::format("Failed to process '%s' failover: null connection data")
-                                                        % LoggingUtils::toString(reason));
-        return;
-    }
 
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Failed to process '%s' failover for %s: channel manager stopped")
                                                         % LoggingUtils::toString(reason)
                                                         % LoggingUtils::toString(*connectionInfo));
-        return;
+        throw KaaException("channel manager stopped");
+    }
+
+    if (!connectionInfo) {
+        KAA_LOG_WARN(boost::format("Failed to process '%s' failover: null connection data")
+                                                        % LoggingUtils::toString(reason));
+        throw KaaException("empty connection info pointer");
     }
 
     KAA_LOG_TRACE(boost::format("Processing '%s' failover for %s")
@@ -102,10 +103,11 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
     }
 }
 
-/*
- * NOTE: Expects a valid connection info, that is not null and has the type Bootstrap.
- */
 void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
+    if (!connectionInfo) {
+        throw KaaException("empty connection info pointer");
+    }
+
     FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
     switch (decision.getAction()) {
          case FailoverStrategyAction::NOOP:
@@ -127,6 +129,9 @@ void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr conn
          }
          case FailoverStrategyAction::USE_NEXT_BOOTSTRAP_SERVER:
          {
+             /*
+              * In conjunction with ALL_BOOTSTRAP_SERVERS_NA lead to switching to the first Bootstrap server.
+              */
              bool forceFirstBootstrapServer = (KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA == reason);
              auto nextBootstrapServer = getNextBootstrapServer(connectionInfo->getTransportId(), forceFirstBootstrapServer);
 

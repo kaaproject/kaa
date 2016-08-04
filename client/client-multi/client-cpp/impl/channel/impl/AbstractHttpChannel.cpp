@@ -31,11 +31,11 @@ static KaaFailoverReason getNotAccessibleFailoverReason(ServerType type)
 AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager& channelManager,
                                          const KeyPair& clientKeys,
                                          IKaaClientContext& context)
-    : channelManager_(channelManager),
-      context_(context),
-      clientKeys_(clientKeys),
-      httpDataProcessor_(context),
-      httpClient_(context)
+    : channelManager_(channelManager)
+    , context_(context)
+    , clientKeys_(clientKeys)
+    , httpDataProcessor_(context)
+    , httpClient_(context)
 {
 
 }

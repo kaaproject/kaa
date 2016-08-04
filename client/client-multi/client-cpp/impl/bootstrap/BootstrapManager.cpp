@@ -30,7 +30,8 @@
 
 namespace kaa {
 
-void BootstrapManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+void BootstrapManager::setFailoverStrategy(IFailoverStrategyPtr strategy)
+{
     failoverStrategy_ = strategy;
 }
 
@@ -107,9 +108,6 @@ void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& proto
             }
             break;
         }
-        case FailoverStrategyAction::USE_NEXT_BOOTSTRAP_SERVER:
-            onCurrentBootstrapServerFailed(KaaFailoverReason::ALL_OPERATIONS_SERVERS_NA);
-            break;
         case FailoverStrategyAction::STOP_CLIENT:
             KAA_LOG_WARN("Stopping client according to failover strategy decision!");
             client_->stop();

@@ -92,20 +92,18 @@ private:
     void onServerFailed(KaaFailoverReason reason);
 
 private:
-    IKaaChannelManager&    channelManager_;
-    IKaaClientContext&     context_;
-    KeyPair                clientKeys_;
-
-    IKaaDataMultiplexer *multiplexer_ = nullptr;
-    IKaaDataDemultiplexer *demultiplexer_ = nullptr;
-
-    IPTransportInfoPtr currentServer_;
-    HttpDataProcessor httpDataProcessor_;
-    HttpClient httpClient_;
+    IKaaChannelManager&      channelManager_;
+    IKaaClientContext&       context_;
+    KeyPair                  clientKeys_;
+    IPTransportInfoPtr       currentServer_;
+    HttpDataProcessor        httpDataProcessor_;
+    HttpClient               httpClient_;
 
     KAA_MUTEX_DECLARE(channelGuard_);
 
-    ConnectivityCheckerPtr connectivityChecker_;
+    IKaaDataMultiplexer      *multiplexer_   = nullptr;
+    IKaaDataDemultiplexer    *demultiplexer_ = nullptr;
+    ConnectivityCheckerPtr   connectivityChecker_;
 };
 
 }

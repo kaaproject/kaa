@@ -78,7 +78,7 @@ public:
         return toString(vec.data(), vec.size());
     }
 
-    static std::string toString(const boost::shared_array<std::uint8_t>& vec, const size_t&length) {
+    static std::string toString(const boost::shared_array<std::uint8_t>& vec, std::size_t length) {
         return toString(vec.get(), length);
     }
 
@@ -90,7 +90,7 @@ public:
         return toString(reinterpret_cast<const std::uint8_t*>(data.data()), data.length());
     }
 
-    static std::string toString(const std::uint8_t* vec, const size_t& length);
+    static std::string toString(const std::uint8_t* vec, std::size_t length);
 
     static std::string toString(SyncResponseStatus status);
 
@@ -151,7 +151,7 @@ public:
     static std::string toString(ServerType type);
 
 private:
-    static std::string EventsToString(const std::vector<Event>& events);
+    static std::string toString(const std::vector<Event>& events);
 };
 
 }  // namespace kaa

@@ -92,7 +92,6 @@ private:
     IBootstrapManager&    bootstrapManager_;
     IKaaClientContext&    context_;
 
-    // Temporary solution to stop app
     IKaaClient           *client_;
 
     IFailoverStrategyPtr failoverStrategy_;
