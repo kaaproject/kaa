@@ -7,7 +7,7 @@ target 'Kaa' do
   pod 'sqlite3', :inhibit_warnings => true
 end
 
-target :KaaTests, :exclusive => true do
+target :KaaTests do
   pod 'OCMockito', '~> 2.0.1'
 end
 
