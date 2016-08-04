@@ -8,6 +8,8 @@ sort_idx: 10
 * TOC
 {:toc}
 
+{% include variables.md %}
+
 *C SDK* is a portable, lightweight and fast library that provides APIs for Kaa clients to conveniently use various platform features.
 It specially designed to reduce development efforts and decrease time-to-market when developing your IoT embedded solutions.
 
