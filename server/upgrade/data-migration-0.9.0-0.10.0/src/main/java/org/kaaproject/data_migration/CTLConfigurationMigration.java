@@ -4,14 +4,22 @@ package org.kaaproject.data_migration;
 import org.apache.avro.Schema;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
+import org.kaaproject.data_migration.model.Configuration;
 import org.kaaproject.data_migration.model.ConfigurationSchema;
 import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.CtlMetaInfo;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -21,6 +29,10 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 public class CTLConfigurationMigration {
+//    private static final Logger LOG = LoggerFactory.getLogger(CTLConfigurationMigration.class.getSimpleName());
+
+    private static final String UUID_FIELD = "__uuid";
+    private static final String UUID_VALUE = "org.kaaproject.configuration.uuidT";
 
     private Connection connection;
     private final int NUM_OF_BASE_SCHEMA_FIELDS = 8;
@@ -30,7 +42,9 @@ public class CTLConfigurationMigration {
         this.connection = connection;
     }
 
-    public void transform() throws SQLException {
+    public void transform() throws SQLException, IOException {
+        updateUuids();
+
         QueryRunner runner = new QueryRunner();
         try {
             List<ConfigurationSchema> schemas  = runner.query(connection, "select conf.id as id, created_time as createdTime, created_username as createdUsername, description, name, schems, version, application_id as appId " +
@@ -82,5 +96,47 @@ public class CTLConfigurationMigration {
             DbUtils.closeQuietly(connection);
         }
 
+    }
+
+    private void updateUuids() throws SQLException, IOException {
+        QueryRunner run = new QueryRunner();
+
+        ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<Configuration>(Configuration.class);
+        try {
+            List<Configuration> configs = run.query(this.connection, "SELECT * FROM configuration", rsHandler);
+            for (Configuration config : configs) {
+                JsonNode json = new ObjectMapper().readTree(config.getConfiguration_body());
+                JsonNode jsonEncoded = encodeUuids(json);
+                byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
+
+                int updates = run.update(this.connection, "UPDATE configuration SET configuration_body=? WHERE id=?", encodedConfigurationBody,config.getId());
+                if (updates != 1) {
+//                    LOG.error("Failed to update configuration: {}", config);
+                } else {
+//                    LOG.info("Updated configuration: {}", config);
+                }
+            }
+        } catch (SQLException e) {
+//            LOG.error("Failed to load configurations. {}", e);
+        } finally {
+            DbUtils.close(this.connection);
+        }
+    }
+
+    private JsonNode encodeUuids(JsonNode json) throws IOException {
+        if (json.has(UUID_FIELD)) {
+            JsonNode j = json.get(UUID_FIELD);
+            if (j.has(UUID_VALUE)) {
+                String value = j.get(UUID_VALUE).asText();
+                String encodedValue = Base64.getEncoder().encodeToString(value.getBytes("ISO-8859-1"));
+                ((ObjectNode)j).put(UUID_VALUE, encodedValue);
+            }
+        }
+
+        for (JsonNode node : json) {
+            if (node.isContainerNode()) encodeUuids(node);
+        }
+
+        return json;
     }
 }
