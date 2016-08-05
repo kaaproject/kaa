@@ -8,6 +8,10 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.kaaproject.data_migration.model.ConfigurationSchema;
 import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.CtlMetaInfo;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.admin.AdminClient;
+
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -20,6 +24,7 @@ public class CTLConfigurationMigration {
 
     private Connection connection;
     private final int NUM_OF_BASE_SCHEMA_FIELDS = 8;
+    private AdminClient client = new AdminClient("localhost", 8080);
 
     public CTLConfigurationMigration(Connection connection) {
         this.connection = connection;
@@ -38,22 +43,13 @@ public class CTLConfigurationMigration {
             runner.update(connection, "update configuration_schems set id = id + " + shift + " order by id desc");
             schemas.forEach(s -> s.setId(s.getId() + shift));
             Map<Ctl, List<ConfigurationSchema>> confSchemasToCTL = new HashMap<>();
-            Long currentCTLMetaId = runner.query(connection, "select max(id) as max_id from ctl_metainfo", rs -> rs.next() ? rs.getLong("max_id") : null);
-            Long currentCtlId = runner.query(connection, "select max(id) as max_id from ctl", rs -> rs.next() ? rs.getLong("max_id") : null);
+
             // CTL creation
             for (ConfigurationSchema schema : schemas) {
-                currentCTLMetaId++;
-                currentCtlId++;
-                Schema schemaBody = new Schema.Parser().parse(schema.getSchems());
-                String fqn = schemaBody.getFullName();
-                String defaultRecord = ""; //TODO
                 Long tenantId = runner.query(connection, "select tenant_id from application where id = " + schema.getAppId(), rs -> rs.next() ? rs.getLong("tenant_id") : null);
-                runner.insert(connection, "insert into ctl_metainfo values(?, ?, ?, ?)", rs -> null, currentCTLMetaId, fqn, schema.getAppId(), tenantId);
-                runner.insert(connection, "insert into ctl values(?, ?, ?, ?, ?, ?, ?)", rs -> null, currentCtlId, schema.getSchems(), schema.getCreatedTime(),
-                        schema.getCreatedUsername(), defaultRecord, schema.getVersion(), currentCTLMetaId);
-
+                CTLSchemaDto ctlSchemaDto = client.saveCTLSchemaWithAppToken(schema.getSchems(), tenantId.toString(), schema.getAppId().toString());
                 // aggregate configuration schemas with same fqn
-                Ctl ctl = new Ctl(currentCtlId, new CtlMetaInfo(fqn, schema.getAppId(), tenantId));
+                Ctl ctl = new Ctl(Long.parseLong(ctlSchemaDto.getId()), new CtlMetaInfo(ctlSchemaDto.getMetaInfo().getFqn(), schema.getAppId(), tenantId));
                 if (confSchemasToCTL.containsKey(ctl)) {
                     List<ConfigurationSchema> list = confSchemasToCTL.get(ctl);
                     list.add(schema);
