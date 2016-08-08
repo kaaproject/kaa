@@ -37,4 +37,6 @@ public interface UserService extends RemoteService {
     UserDto editUser(UserDto user) throws KaaAdminServiceException;
 
     void deleteUser(String userId) throws KaaAdminServiceException;
+
+    List<UserDto> findAllTenantAdminsByTenantId(String id) throws KaaAdminServiceException;
 }

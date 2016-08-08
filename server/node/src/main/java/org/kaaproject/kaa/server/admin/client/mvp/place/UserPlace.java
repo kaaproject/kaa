@@ -22,11 +22,17 @@ import com.google.gwt.place.shared.Prefix;
 public class UserPlace extends TreePlace {
 
     private String userId;
+    private String tenId;
     private String userName;
 
     public UserPlace(String userId) {
-        this.userId = userId;
+       this(userId,null);
     }
+    public UserPlace(String userId,String tenId) {
+        this.userId = userId;
+        this.tenId=tenId;
+    }
+
 
     public void setUserName(String name) {
         this.userName = name;
@@ -36,19 +42,24 @@ public class UserPlace extends TreePlace {
         return userId;
     }
 
+    public String getTenId() {
+        return tenId;
+    }
+
     @Prefix(value = "usr")
     public static class Tokenizer implements PlaceTokenizer<UserPlace>, PlaceConstants {
 
         @Override
         public UserPlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new UserPlace(PlaceParams.getParam(USER_ID));
+            return new UserPlace(PlaceParams.getParam(USER_ID),PlaceParams.getParam(TENANT_ID));
         }
 
         @Override
         public String getToken(UserPlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(USER_ID, place.getUserId());
+            PlaceParams.putParam(TENANT_ID, place.getTenId());
             return PlaceParams.generateToken();
         }
     }

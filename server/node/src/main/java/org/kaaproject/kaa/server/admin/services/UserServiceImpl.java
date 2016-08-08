@@ -17,11 +17,11 @@
 package org.kaaproject.kaa.server.admin.services;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
-import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.admin.shared.services.UserService;
 import org.springframework.stereotype.Service;
 
@@ -37,12 +37,7 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto getUserProfile() throws KaaAdminServiceException {
         try {
-            User user = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
-            Utils.checkNotNull(user);
-            org.kaaproject.kaa.common.dto.admin.UserDto result = new org.kaaproject.kaa.common.dto.admin.UserDto(user.getId().toString(),
-                    user.getUsername(), user.getFirstName(), user.getLastName(), user.getMail(), KaaAuthorityDto.valueOf(user
-                    .getAuthorities().iterator().next().getAuthority()));
-            return result;
+            return toUser(getCurrentUser());
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -81,11 +76,15 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
 
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto getUser(String userId) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
-            org.kaaproject.kaa.common.dto.UserDto user = controlService.getUser(userId);
+            UserDto user = controlService.getUser(userId);
             Utils.checkNotNull(user);
-            checkTenantId(user.getTenantId());
+            if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)) {
+                checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+            } else  {
+                checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+                checkTenantId(user.getTenantId());
+            }
             return toUser(user);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -95,21 +94,32 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+
+        if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+            checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        }
+        else {
+            checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+            if(user.getTenantId()==null){
+                user.setTenantId(getTenantId());
+            }
+        }
         try {
             if (!isEmpty(user.getId())) {
-                org.kaaproject.kaa.common.dto.UserDto storedUser = controlService.getUser(user.getId());
+                UserDto storedUser = controlService.getUser(user.getId());
                 Utils.checkNotNull(storedUser);
-                checkTenantId(storedUser.getTenantId());
+                if(getCurrentUser().getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+                    checkTenantId(storedUser.getTenantId());
+                }
             }
             Long userId = saveUser(user);
-            org.kaaproject.kaa.common.dto.UserDto userDto = new org.kaaproject.kaa.common.dto.UserDto();
+            UserDto userDto = new UserDto();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setExternalUid(userId.toString());
-            userDto.setTenantId(getTenantId());
+            userDto.setTenantId(user.getTenantId());
             userDto.setAuthority(user.getAuthority());
-            org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(userDto);
+            UserDto savedUser = controlService.editUser(userDto);
             return toUser(savedUser);
 
         } catch (Exception e) {
@@ -119,13 +129,14 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
 
     @Override
     public void deleteUser(String userId) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
-            org.kaaproject.kaa.common.dto.UserDto user = controlService.getUser(userId);
+            UserDto user = controlService.getUser(userId);
             Utils.checkNotNull(user);
-            checkTenantId(user.getTenantId());
-            if (KaaAuthorityDto.KAA_ADMIN.equals(user.getAuthority()) || KaaAuthorityDto.TENANT_ADMIN.equals(user.getAuthority())) {
-                throw new KaaAdminServiceException("Can't delete KAA admin or Tenant admin user!", ServiceErrorCode.PERMISSION_DENIED);
+            if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+                checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+            }else {
+                checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+                checkTenantId(user.getTenantId());
             }
             userFacade.deleteUser(Long.valueOf(user.getExternalUid()));
             controlService.deleteUser(user.getId());
@@ -133,6 +144,23 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             throw Utils.handleException(e);
         }
     }
+
+    @Override
+    public List<org.kaaproject.kaa.common.dto.admin.UserDto> findAllTenantAdminsByTenantId(String tenantId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        List<org.kaaproject.kaa.common.dto.admin.UserDto> tenantAdminList=new ArrayList<>();
+        try {
+            List<UserDto> userDtoList=controlService.findAllTenantAdminsByTenantId(tenantId);
+            if(userDtoList!=null){
+                for(UserDto userDto:userDtoList)
+                    tenantAdminList.add(toUser(userDto));
+            }
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+        return tenantAdminList;
+    }
+
 
     private void checkUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
         if (isEmpty(userProfileUpdateDto.getFirstName())) {
@@ -142,16 +170,6 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
         } else if (isEmpty(userProfileUpdateDto.getMail())) {
             throw new IllegalArgumentException("Mail is not valid.");
         }
-    }
-
-    private org.kaaproject.kaa.common.dto.admin.UserDto toUser(org.kaaproject.kaa.common.dto.UserDto tenantUser) {
-        User user = userFacade.findById(Long.valueOf(tenantUser.getExternalUid()));
-        org.kaaproject.kaa.common.dto.admin.UserDto result = new org.kaaproject.kaa.common.dto.admin.UserDto(user.getId().toString(),
-                user.getUsername(), user.getFirstName(), user.getLastName(), user.getMail(), KaaAuthorityDto.valueOf(user.getAuthorities()
-                .iterator().next().getAuthority()));
-        result.setId(tenantUser.getId());
-        result.setTenantId(tenantUser.getTenantId());
-        return result;
     }
 
 }
