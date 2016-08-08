@@ -45,17 +45,15 @@
     [self.state clean];
 }
 
-- (void)testDefaultKeysStrategy {
+- (void)testDefaultKeyStrategy {
     [KeyUtils deleteExistingKeyPair];
     
-    @try {
-        self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
-        SecKeyRef __unused privateKey = [self.state privateKey];
-        SecKeyRef __unused publicKey = [self.state publicKey];
-        XCTFail(@"testDefaultKeysStrategy failed");
-    } @catch (NSException *exception) {
-        NSLog(@"testDefaultKeysStrategy succeeded");
-    }
+    self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
+    
+    SecKeyRef privateKey = [self.state privateKey];
+    SecKeyRef publicKey = [self.state publicKey];
+    XCTAssertTrue(privateKey != NULL);
+    XCTAssertTrue(publicKey != NULL);
 }
 
 - (void)testDefaultKeyStrategyPreloadedKeys {
