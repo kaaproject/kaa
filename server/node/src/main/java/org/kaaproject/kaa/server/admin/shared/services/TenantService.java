@@ -34,5 +34,4 @@ public interface TenantService extends RemoteService {
 
     void deleteTenant(String tenantId) throws KaaAdminServiceException;
 
-    List<UserDto> findAllTenantAdminsByTenantId(String id) throws KaaAdminServiceException;
 }

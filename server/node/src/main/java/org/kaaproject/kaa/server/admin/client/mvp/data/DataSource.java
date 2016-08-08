@@ -147,7 +147,7 @@ public class DataSource {
 
     public void loadAllTenantAdminsByTenantId(String tenantId,  final AsyncCallback<List<UserDto>> callback) {
 
-            tenantRpcService.findAllTenantAdminsByTenantId(tenantId, new DataCallback<List<UserDto>>(
+            userRpcService.findAllTenantAdminsByTenantId(tenantId, new DataCallback<List<UserDto>>(
                     callback) {
                 @Override
                 protected void onResult(List<UserDto> result) {

@@ -180,6 +180,14 @@ public class AdminClient {
         return entity.getBody();
     }
 
+
+    public List<UserDto> getAllTenantAdminsBytenantId(String tenantId){
+        ParameterizedTypeReference<List<UserDto>> typeRef = new ParameterizedTypeReference<List<UserDto>>() {
+        };
+        ResponseEntity<List<UserDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "admins/" + tenantId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public TenantDto getTenant(String userId) throws Exception {
         return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantDto.class);
     }

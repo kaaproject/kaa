@@ -639,6 +639,46 @@
         }
       }
     },
+    "/api/admins/{tenantId}" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Select tenant admins by tenant id",
+        "description" : "",
+        "operationId" : "findAllTenantAdminsByTenantId",
+        "parameters" : [ {
+          "name" : "",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/UserDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "The specified tenantId is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The user with the specified tenantId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
     "/api/application" : {
       "post" : {
         "tags" : [ "Application" ],

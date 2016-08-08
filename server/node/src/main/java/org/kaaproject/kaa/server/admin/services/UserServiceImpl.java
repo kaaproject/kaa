@@ -145,6 +145,23 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
         }
     }
 
+    @Override
+    public List<org.kaaproject.kaa.common.dto.admin.UserDto> findAllTenantAdminsByTenantId(String tenantId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        List<org.kaaproject.kaa.common.dto.admin.UserDto> tenantAdminList=new ArrayList<>();
+        try {
+            List<UserDto> userDtoList=controlService.findAllTenantAdminsByTenantId(tenantId);
+            if(userDtoList!=null){
+                for(UserDto userDto:userDtoList)
+                    tenantAdminList.add(toUser(userDto));
+            }
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+        return tenantAdminList;
+    }
+
+
     private void checkUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
         if (isEmpty(userProfileUpdateDto.getFirstName())) {
             throw new IllegalArgumentException("First name is not valid.");
