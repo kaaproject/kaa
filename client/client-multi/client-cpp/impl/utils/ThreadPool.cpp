@@ -48,7 +48,7 @@ void ThreadPool::add(const ThreadPoolTask& task)
         }
 
         if (state_ != State::RUNNING) {
-            throw std::runtime_error("Thread pool pending shutdown");
+            throw std::logic_error("Thread pool pending shutdown");
         }
 
         tasks_.push_back(task);
