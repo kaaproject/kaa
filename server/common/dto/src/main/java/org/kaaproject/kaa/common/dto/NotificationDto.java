@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
-public class NotificationDto implements HasId, HasVersion, Serializable {
+public class NotificationDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -4470699717187588732L;
 
@@ -34,8 +34,7 @@ public class NotificationDto implements HasId, HasVersion, Serializable {
     private byte[] body;
     private Date expiredAt;
     private int secNum = -1;
-    private Long version;
-    
+
     public String getId() {
         return id;
     }
@@ -116,16 +115,6 @@ public class NotificationDto implements HasId, HasVersion, Serializable {
         this.secNum = secNum;
     }
 
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-    
     @Override
     public boolean equals(Object o) {
         if (this == o) {

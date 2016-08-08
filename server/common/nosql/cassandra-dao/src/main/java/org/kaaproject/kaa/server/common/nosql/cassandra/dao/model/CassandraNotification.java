@@ -16,8 +16,21 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.model.Notification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.Date;
+
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
@@ -33,22 +46,6 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_SEQ_NUM_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_TOPIC_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_VERSION_PROPERTY;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.Date;
-
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.Notification;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
-
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
 
 
 @Table(name = NF_COLUMN_FAMILY_NAME)
@@ -87,9 +84,6 @@ public final class CassandraNotification implements Notification, Serializable {
     private ByteBuffer body;
     @Column(name = NF_EXPIRED_AT_PROPERTY)
     private Date expiredAt;
-    
-    @Column(name = OPT_LOCK)
-    private Long version;
 
     public CassandraNotification() {
     }
@@ -119,7 +113,6 @@ public final class CassandraNotification implements Notification, Serializable {
         if (isBlank(id)) {
             generateId();
         }
-        this.version = dto.getVersion();
     }
 
     public String getTopicId() {
@@ -201,16 +194,6 @@ public final class CassandraNotification implements Notification, Serializable {
     public void setExpiredAt(Date expiredAt) {
         this.expiredAt = expiredAt;
     }
-    
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -279,7 +262,6 @@ public final class CassandraNotification implements Notification, Serializable {
         dto.setBody(body != null ? getBytes(body) : null);
         dto.setExpiredAt(expiredAt);
         dto.setSecNum(seqNum);
-        dto.setVersion(version);
         return dto;
     }
 

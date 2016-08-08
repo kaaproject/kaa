@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class NotificationMongoDao extends AbstractVersionableMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
+public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
 
