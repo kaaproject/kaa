@@ -1,13 +1,8 @@
 package org.kaaproject.data_migration.model;
 
-import java.util.Arrays;
-
-/**
- * Created by user482400 on 04.08.16.
- */
 public class EventSchemaVersion {
     private Long    id;
-    private byte[] schems;
+    private String schems;
 
     public Long getId() {
         return id;
@@ -17,11 +12,11 @@ public class EventSchemaVersion {
         this.id = id;
     }
 
-    public byte[] getSchems() {
+    public String getSchems() {
         return schems;
     }
 
-    public void setSchems(byte[] schems) {
+    public void setSchems(String schems) {
         this.schems = schems;
     }
 
@@ -29,7 +24,7 @@ public class EventSchemaVersion {
     public String toString() {
         return "EventSchemaVersion{" +
                 "id=" + id +
-                ", schems=" + Arrays.toString(schems) +
+                ", schems=" + schems +
                 '}';
     }
 }

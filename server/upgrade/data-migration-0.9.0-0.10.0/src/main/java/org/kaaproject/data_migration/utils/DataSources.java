@@ -12,6 +12,9 @@ public enum DataSources {
     MARIADB(getMariaDB()), POSTGRES(getPostgreSQL());
 
     private final DataSource ds;
+    private static final String USER_NAME = "root";
+    private static final String PASSWORD = "root";
+    private static final String DB_NAME = "kaa";
 
 
      DataSources(DataSource ds) {

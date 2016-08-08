@@ -1,6 +1,5 @@
 package org.kaaproject.data_migration.model;
 
-
 public class ConfigurationSchema {
 
     private Long id;

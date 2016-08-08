@@ -1,6 +1,5 @@
 package org.kaaproject.data_migration.model;
 
-
 public class Ctl {
     private final Long id;
     private final CtlMetaInfo metaInfo;

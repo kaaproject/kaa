@@ -1,8 +1,5 @@
 package org.kaaproject.data_migration.model;
 
-/**
- * Created by user482400 on 04.08.16.
- */
 public class EventClass {
     private Long    id;
     private String  schems;

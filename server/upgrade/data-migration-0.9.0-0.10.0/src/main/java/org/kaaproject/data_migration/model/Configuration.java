@@ -2,9 +2,6 @@ package org.kaaproject.data_migration.model;
 
 import java.io.Serializable;
 
-/**
- * Created by user482400 on 04.08.16.
- */
 public class Configuration implements Serializable {
 
     private static final long serialVersionUID = -1176562073;

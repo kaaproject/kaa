@@ -1,6 +1,5 @@
 package org.kaaproject.data_migration;
 
-
 import org.apache.avro.Schema;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -24,12 +23,10 @@ import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
-
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -57,11 +54,9 @@ public class CTLConfigurationMigration {
     }
 
     public void transform() throws SQLException, IOException {
-        updateUuids();
-
         QueryRunner runner = new QueryRunner();
         try {
-//            Utils.runFile(runner, connection, "doc/constraint_update_before.sql");
+            updateUuids();
 
             List<ConfigurationSchema> schemas  = runner.query(connection,
                     "select conf.id as id, created_time as createdTime, created_username as createdUsername, description, name, schems, version, application_id as appId " +
