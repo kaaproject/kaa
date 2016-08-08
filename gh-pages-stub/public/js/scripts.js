@@ -117,7 +117,7 @@ var COLLAPSING_CODE_BLOCS = (function () {
       $(CODE_BLOCK_SELECTOR).each(function(index) {
         var content = UTILS.splitByLines($(this).html());
         if(content.length > linesToShow) {
-          var SMALL_TEXT = content.slice(0, linesToShow - 1).join("\n");
+          var SMALL_TEXT = content.slice(0, linesToShow).join("\n");
           var FULL_TEXT = content.slice(linesToShow).join("\n");
           $(this).html(formatHTML(SMALL_TEXT, FULL_TEXT, index, moreButtonText));
         }
