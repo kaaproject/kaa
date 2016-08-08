@@ -28,7 +28,7 @@ namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager,
                                      const BootstrapServers& servers,
-                                     IKaaClientContext &context,
+                                     IKaaClientContext& context,
                                      IKaaClient *client)
     : bootstrapManager_(manager)
     , context_(context)
@@ -83,8 +83,8 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
     }
 
     KAA_LOG_TRACE(boost::format("Processing '%s' failover for %s")
-                                                    % LoggingUtils::toString(reason)
-                                                    % LoggingUtils::toString(*connectionInfo));
+                                                % LoggingUtils::toString(reason)
+                                                % LoggingUtils::toString(*connectionInfo));
 
     if (connectionInfo->isFailedState()) {
         KAA_LOG_TRACE(boost::format("Ignoring failover: marked as already failed %s")

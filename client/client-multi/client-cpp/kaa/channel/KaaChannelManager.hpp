@@ -39,7 +39,7 @@ class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage
 public:
     KaaChannelManager(IBootstrapManager& manager,
                       const BootstrapServers& servers,
-                      IKaaClientContext &context,
+                      IKaaClientContext& context,
                       IKaaClient *client);
 
     ~KaaChannelManager() { doShutdown(); }

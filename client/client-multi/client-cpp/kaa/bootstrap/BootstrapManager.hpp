@@ -38,8 +38,9 @@ public:
         , context_(context)
         , retryTimer_("BootstrapManager retryTimer")
         , client_(client)
-        { }
-    ~BootstrapManager() { }
+    {
+
+    }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void receiveOperationsServerList();
@@ -64,7 +65,7 @@ private:
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
 
-    IKaaClientContext &context_;
+    IKaaClientContext& context_;
 
     IFailoverStrategyPtr failoverStrategy_;
 
