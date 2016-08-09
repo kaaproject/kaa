@@ -23,7 +23,7 @@
 namespace kaa {
 
 enum class KaaFailoverReason {
-    BOOTSTRAP_SERVERS_NA = 0,   /*!< No accessible bootstrap servers. */
+    BOOTSTRAP_SERVERS_NA = 0,   /*!< No accessible bootstrap services. */
     NO_OPERATION_SERVERS_RECEIVED,
     OPERATION_SERVERS_NA,
     CURRENT_BOOTSTRAP_SERVER_NA,

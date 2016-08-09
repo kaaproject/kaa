@@ -96,7 +96,7 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
 
     @Override
     public void onNotification(Notification notification) throws TException {
-        LOG.debug("Received Notification from control server {}", notification);
+        LOG.debug("Received Notification from control service {}", notification);
         LOG.debug("Going to notify cache service..");
         processCacheNotification(notification);
         if (notification.getOp() != Operation.APP_UPDATE) {

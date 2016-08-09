@@ -96,7 +96,7 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
                  case FailoverStrategyAction::RETRY:
                  {
                      std::size_t period = decision.getRetryPeriod();
-                     KAA_LOG_WARN(boost::format("Attempt to reconnect to first bootstrap server will be made in %1% secs "
+                     KAA_LOG_WARN(boost::format("Attempt to reconnect to first bootstrap service will be made in %1% secs "
                              "according to failover strategy decision.") % period);
                      bsTransportId_ = connectionInfo->getTransportId();
                      retryTimer_.stop();
@@ -188,10 +188,10 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
             channel->setServer(connectionInfo);
         } else {
             if (channel->getServerType() == ServerType::BOOTSTRAP) {
-                KAA_LOG_WARN(boost::format("Failed to find bootstrap server for channel \"%1%\" %2%")
+                KAA_LOG_WARN(boost::format("Failed to find bootstrap service for channel \"%1%\" %2%")
                             % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
             } else {
-                KAA_LOG_INFO(boost::format("Failed to find operations server for channel \"%1%\" %2%")
+                KAA_LOG_INFO(boost::format("Failed to find operations service for channel \"%1%\" %2%")
                             % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
             }
         }

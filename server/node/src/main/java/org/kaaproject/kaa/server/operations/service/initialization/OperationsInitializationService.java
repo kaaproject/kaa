@@ -80,7 +80,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
     @Autowired
     private CacheService cacheService;
     
-    /** The operations server config. */
+    /** The operations service config. */
     @Autowired
     private OperationsServerConfig operationsServerConfig;
 

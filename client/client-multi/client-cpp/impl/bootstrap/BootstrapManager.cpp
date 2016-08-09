@@ -89,7 +89,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                 case FailoverStrategyAction::RETRY:
                 {
                     std::size_t period = decision.getRetryPeriod();
-                    KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
+                    KAA_LOG_WARN(boost::format("Attempt to receive operations service list will be made in %1% secs "
                                                "according to failover strategy decision.") % period);
                     retryTimer_.stop();
                     retryTimer_.start(period, [&] { receiveOperationsServerList(); });
@@ -112,7 +112,7 @@ void BootstrapManager::useNextOperationsServerByAccessPointId(std::int32_t id)
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
-    KAA_LOG_DEBUG(boost::format("Going to use new operations server: access_point=0x%X") % id);
+    KAA_LOG_DEBUG(boost::format("Going to use new operations service: access_point=0x%X") % id);
 
     auto servers = getOPSByAccessPointId(id);
     if (servers.size() > 0) {
@@ -142,7 +142,7 @@ void BootstrapManager::setChannelManager(IKaaChannelManager* manager)
 void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers)
 {
     if (operationsServers.empty()) {
-        KAA_LOG_WARN("Received empty operations server list");
+        KAA_LOG_WARN("Received empty operations service list");
 
         KaaFailoverReason failoverReason = KaaFailoverReason::NO_OPERATION_SERVERS_RECEIVED;
         FailoverStrategyDecision decision = failoverStrategy_->onFailover(failoverReason);
@@ -153,14 +153,14 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
         case FailoverStrategyAction::RETRY:
         {
             std::size_t period = decision.getRetryPeriod();
-            KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
+            KAA_LOG_WARN(boost::format("Attempt to receive operations service list will be made in %1% secs "
                                        "according to failover strategy decision.") % period);
             retryTimer_.stop();
             retryTimer_.start(period, [&] { receiveOperationsServerList(); });
             break;
         }
         case FailoverStrategyAction::USE_NEXT_BOOTSTRAP:
-            KAA_LOG_WARN("Try next bootstrap server.");
+            KAA_LOG_WARN("Try next bootstrap service.");
             channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer(),
                                             failoverReason);
             break;
@@ -176,7 +176,7 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
-    KAA_LOG_INFO(boost::format("Received %1% new operations servers") % operationsServers.size());
+    KAA_LOG_INFO(boost::format("Received %1% new operations services") % operationsServers.size());
 
     lastOperationsServers_.clear();
     operationServers_.clear();

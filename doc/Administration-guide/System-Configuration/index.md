@@ -13,14 +13,14 @@ The Kaa cluster node is comprised of the [Control](Configuration-Control-service
 
 
 ``` bash 
-# Specifies if Control Server is enabled.
-control_server_enabled=true
+# Specifies if Control Service is enabled.
+control_service_enabled=true
 
-# Specifies if Bootstrap Server is enabled.
-bootstrap_server_enabled=true
+# Specifies if Bootstrap Service is enabled.
+bootstrap_service_enabled=true
 
-# Specifies if Operations Server is enabled.
-operations_server_enabled=true
+# Specifies if Operations Service is enabled.
+operations_service_enabled=true
 ```
 
 

@@ -46,7 +46,7 @@ public:
     virtual ServerType getServerType() = 0;
 
     /**
-     * Retrieves the access point id (operations/bootstrap server id).
+     * Retrieves the access point id (operations/bootstrap service id).
      *
      * @return The access point id.
      */
