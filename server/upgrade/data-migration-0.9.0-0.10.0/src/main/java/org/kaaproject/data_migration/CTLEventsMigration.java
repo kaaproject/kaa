@@ -7,7 +7,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.kaaproject.data_migration.model.EventClass;
 import org.kaaproject.data_migration.model.EventSchemaVersion;
-import org.kaaproject.data_migration.utils.Utils;
+import org.kaaproject.data_migration.utils.datadefinition.DataDefinition;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 
@@ -29,9 +29,11 @@ public class CTLEventsMigration {
     private static final String EVENT_CLASS_TABLE_NAME = "events_class";
     private static final String BASE_SCHEMA_TABLE_NAME = "base_schems";
     private static final String CTL_TABLE_NAME = "ctl";
+    private DataDefinition dd;
 
     public CTLEventsMigration(Connection connection) {
         this.connection = connection;
+        this.dd = new DataDefinition(connection);
     }
 
     public void transform() throws SQLException, IOException {
@@ -65,7 +67,7 @@ public class CTLEventsMigration {
         //3
         run.update(connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " RENAME " + EVENT_CLASS_FAMILY_VERSION_TABLE_NAME);
         //4
-        Utils.dropFK(connection, EVENT_CLASS_TABLE_NAME, EVENT_CLASS_FAMILY_TABLE_NAME);
+        dd.dropUnnamedFK(EVENT_CLASS_TABLE_NAME, EVENT_CLASS_FAMILY_TABLE_NAME);
         run.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " CHANGE events_class_family_id events_class_family_versions_id bigint(20)");
         //5
         ResultSetHandler<List<EventClass>> ecHandler = new BeanListHandler<EventClass>(EventClass.class);
