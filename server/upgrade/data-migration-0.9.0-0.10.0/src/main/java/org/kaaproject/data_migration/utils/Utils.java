@@ -3,26 +3,43 @@ package org.kaaproject.data_migration.utils;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Base64;
 
-public class Utils {
+final public class Utils {
 
-    private static final String QUERY_FIND_FK_NAME = "SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = 'kaa' AND TABLE_NAME = '%s' and referenced_table_name='%s'";
+    private static final String UUID_FIELD = "__uuid";
+    private static final String UUID_VALUE = "org.kaaproject.configuration.uuidT";
 
-    public static void runFile(QueryRunner runner, Connection connection, String fileName) throws IOException, SQLException {
-        String query = IOUtils.toString(Utils.class.getClassLoader().getResourceAsStream(fileName));
-        runner.update(connection, query);
+
+
+
+
+    public static JsonNode encodeUuids(JsonNode json) throws IOException {
+        if (json.has(UUID_FIELD)) {
+            JsonNode j = json.get(UUID_FIELD);
+            if (j.has(UUID_VALUE)) {
+                String value = j.get(UUID_VALUE).asText();
+                String encodedValue = Base64.getEncoder().encodeToString(value.getBytes("ISO-8859-1"));
+                ((ObjectNode)j).put(UUID_VALUE, encodedValue);
+            }
+        }
+
+        for (JsonNode node : json) {
+            if (node.isContainerNode()) encodeUuids(node);
+        }
+
+        return json;
     }
 
-    public static void dropFK(Connection connection, String tableName, String referencedTableName) throws SQLException {
-        QueryRunner runner = new QueryRunner();
 
-        String query = String.format(QUERY_FIND_FK_NAME, tableName, referencedTableName);
-        String fkName = runner.query(connection, query, rs -> rs.next() ? rs.getString(1) : null);
-        runner.update(connection, "ALTER TABLE " + tableName + " DROP FOREIGN KEY " + fkName);
-    }
+
+
+
 
 }
