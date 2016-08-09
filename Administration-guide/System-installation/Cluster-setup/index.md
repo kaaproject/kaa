@@ -38,9 +38,9 @@ It is necessary to edit next properties to set up cluster:
  
  | Property name             | Example values                   | Description                                                      | File location                                                              | 
  |-------------------------- |--------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
- | control_server_enabled    | true/false                       | Determines whether control server enabled on this node or not    | /etc/kaa-node/conf/kaa-node.properties                                     |
- | bootstrap_server_enabled  | true/false                       | Determines whether bootstrap server enabled on this node or not  | /etc/kaa-node/conf/kaa-node.properties                                     |
- | operations_server_enabled | true/false                       | Determines whether operations server enabled on this node or not | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | control_service_enabled   | true/false                       | Determines whether control service enabled on this node or not   | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | bootstrap_service_enabled | true/false                       | Determines whether bootstrap service enabled on this node or not | /etc/kaa-node/conf/kaa-node.properties                                     |
+ | operations_service_enabled| true/false                       | Determines whether operations service enabled on this node or not| /etc/kaa-node/conf/kaa-node.properties                                     |
  | zk_host_port_list         | localhost:2181, anotherhost:2181 | Comma-separated list of Zookeeper nodes hostname:port            | /etc/kaa-node/conf/kaa-node.properties                                     |
  | node id                   | 1-255                            | single line of text that represents node id                      | /etc/zookeeper/myid                                                        |
  | jdbc_host                 | localhost                        | PostgreSQL database hostname                                     | /etc/kaa-node/conf/dao.properties, /etc/kaa-node/conf/admin-dao.properties |
@@ -63,14 +63,14 @@ Stop kaa-node service before starting configuration by executing next command:
 Kaa services (bootstrap, control or operations) can be enabled or disabled on node by editing corresponding properties in ```/etc/kaa-node/conf/kaa-node.properties``` file.
 
 ```bash
-# Specifies if Control Server is enabled.
-control_server_enabled=true
+# Specifies if Control Service is enabled.
+control_service_enabled=true
 
-# Specifies if Bootstrap Server is enabled.
-bootstrap_server_enabled=true
+# Specifies if Bootstrap Service is enabled.
+bootstrap_service_enabled=true
 
-# Specifies if Operations Server is enabled.
-operations_server_enabled=true
+# Specifies if Operations Service is enabled.
+operations_service_enabled=true
 ```
 
 Kaa-node transport properties, in this properties we need to specify IP address of current node.
