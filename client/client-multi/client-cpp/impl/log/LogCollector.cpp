@@ -375,7 +375,7 @@ void LogCollector::switchAccessPoint()
         if (timeoutAccessPointId_ == logChannel->getServer()->getAccessPointId()) {
             KAA_LOG_WARN("Try to switch to another Operations server...");
             channelManager_->onServerFailed(logChannel->getServer(),
-                                            KaaFailoverReason::OPERATION_SERVERS_NA);
+                                            KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
             KAA_MUTEX_LOCKING("timeoutsGuard_");
             KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
             KAA_MUTEX_LOCKED("timeoutsGuard_");

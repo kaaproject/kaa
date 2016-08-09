@@ -42,10 +42,6 @@ public final class MongoEndpointNotification implements EndpointNotification, Se
     @Field(EP_NF_ENDPOINT_KEY_HASH)
     private byte[] endpointKeyHash;
     private MongoNotification notification;
-    
-    @Version
-    @Field(OPT_LOCK)
-    private Long version;
 
     public MongoEndpointNotification() {
     }

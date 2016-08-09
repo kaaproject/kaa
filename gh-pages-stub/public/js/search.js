@@ -4,12 +4,6 @@
 	var VERSION_SELECTOR = 'version';
 	var BASEURL_SELECTOR = 'baseUrl';
 	var NORESULTS       = '<li>No results found</li>';
-	var VERSIONSELECT_ID = 'version-select';
-	var SEARCHBOX_ID     = 'search-box';
-	var SEARCHRESULTS_ID = 'search-results'
-	var DEFAULT_TITLE    = 'No title';
-	var DEFAULT_URL      = '404.html';
-	var DEFAULT_TEXT     = '...';
 	var SEARCH_DICTIONARY_FILE = 'search_dictionary.json';
 	var SHOW_OFFSET = 75;
 

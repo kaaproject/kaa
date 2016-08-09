@@ -20,9 +20,9 @@
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <exception>
 
 #include "kaa/utils/ThreadPool.hpp"
-#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(ThreadPoolCreationtTest)
     BOOST_CHECK_NO_THROW({ ThreadPool pool; });
     BOOST_CHECK_NO_THROW({ ThreadPool pool(10); });
 
-    BOOST_CHECK_THROW({ ThreadPool pool(0); }, KaaException);
+    BOOST_CHECK_THROW({ ThreadPool pool(0); }, std::exception);
 }
 
 BOOST_AUTO_TEST_CASE(BadTaskTest)
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(BadTaskTest)
     ThreadPool pool;
     ThreadPoolTask task;
 
-    BOOST_CHECK_THROW(pool.add(task), KaaException);
+    BOOST_CHECK_THROW(pool.add(task), std::exception);
 }
 
 BOOST_AUTO_TEST_CASE(TaskWithExceptionTest)
@@ -120,7 +120,6 @@ BOOST_AUTO_TEST_CASE(AddThreadPoolTaskTest)
     for (std::size_t i = 1; i <= taskSourceCount; ++i) {
         std::size_t taskRepeat = rand() % 10 + 1;
         expectedTaskCount += taskRepeat;
-//        std::cout << "Source #" << i << ": " << taskRepeat << " task(s)" << std::endl;
         taskSources.push_back(std::thread(TestTaskSource(pool, task, taskRepeat)));
     }
 
@@ -131,12 +130,9 @@ BOOST_AUTO_TEST_CASE(AddThreadPoolTaskTest)
     }
 
     {
-//        std::cout << "Waiting for task(s) will be executed..." << std::endl;
         std::unique_lock<std::mutex> lock(m);
         onTestComplete.wait(lock, [&expectedTaskCount, &actualTaskCount] () { return actualTaskCount == expectedTaskCount; });
     }
-
-//    std::cout << "All tasks are executed" << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE(ShutdownNowTest)
@@ -195,52 +191,108 @@ BOOST_AUTO_TEST_CASE(PendingAllTaskShutdownTest)
     }
 }
 
-BOOST_AUTO_TEST_CASE(AwaitTerminationTest)
+BOOST_AUTO_TEST_CASE(AwaitTerminationWithoutShutdownTest)
 {
-    std::mutex m;
-    std::condition_variable onStart;
+    ThreadPool threadPool;
+
+    // Just to init thread pool
+    threadPool.add([] { });
+
+    BOOST_CHECK_THROW(threadPool.awaitTermination(5), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(AwaitTerminationAllTaskCompletedTest)
+{
+    std::mutex mutex;
+    std::condition_variable onStartCondition;
 
     ThreadPool threadPool;
 
     bool isStart = false;
-    std::size_t timeToWait = 2;
+    std::size_t taskExecutionTime = 1;
+    std::uint16_t expectedTaskCount = rand() % 5 + 1;
+    std::atomic_uint actualTaskCount(0);
+    std::size_t ONE_YEAR_TO_WAIT = 365 * 24 * 3600;
+
+    ThreadPoolTask task = [&mutex, &onStartCondition, &actualTaskCount, &isStart, &taskExecutionTime] ()
+                              {
+                                    {
+                                        std::unique_lock<std::mutex> lock(mutex);
+                                        onStartCondition.wait(lock, [&isStart] () { return isStart; });
+                                    }
+
+                                    std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
+                                    actualTaskCount++;
+                              };
+
+    for (auto i = expectedTaskCount; i > 0; --i) {
+        threadPool.add(task);
+    }
+
+    auto startTime = std::time(nullptr);
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        isStart = true;
+        onStartCondition.notify_all();
+    }
+
+    threadPool.shutdown();
+    threadPool.awaitTermination(ONE_YEAR_TO_WAIT);
+
+    auto finishTime = std::time(nullptr);
+
+    BOOST_CHECK_EQUAL(actualTaskCount.load(), expectedTaskCount);
+    BOOST_CHECK_LT((finishTime - startTime), ONE_YEAR_TO_WAIT);
+}
+
+BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
+{
+    std::mutex mutex;
+    std::condition_variable onStartCondition;
+
+    ThreadPool threadPool;
+
+    bool isStart = false;
+    std::size_t taskExecutionTime = 1;
     std::uint16_t expectedTaskCount = 0;
     std::atomic_uint actualTaskCount(0);
     std::size_t timeToWaitAllTasks = 0;
 
-    ThreadPoolTask task = [&m, &onStart, &actualTaskCount, &isStart, &timeToWait] ()
+    ThreadPoolTask task = [&mutex, &onStartCondition, &actualTaskCount, &isStart, &taskExecutionTime] ()
                               {
                                     {
-                                        std::unique_lock<std::mutex> lock(m);
-                                        onStart.wait(lock, [&isStart] () { return isStart; });
+                                        std::unique_lock<std::mutex> lock(mutex);
+                                        onStartCondition.wait(lock, [&isStart] () { return isStart; });
                                     }
-                                    std::this_thread::sleep_for(std::chrono::seconds(timeToWait));
+                                    std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
                                     actualTaskCount++;
                               };
 
+    // Executed.
     threadPool.add(task);
     ++expectedTaskCount;
-    timeToWaitAllTasks += timeToWait;
+    timeToWaitAllTasks += taskExecutionTime;
 
+    // Executed.
     threadPool.add(task);
     ++expectedTaskCount;
-    timeToWaitAllTasks += timeToWait;
+    timeToWaitAllTasks += taskExecutionTime;
 
+    // Declined.
     threadPool.add(task);
-    timeToWaitAllTasks += timeToWait;
-
-    threadPool.add(task);
-    timeToWaitAllTasks += timeToWait;
+    timeToWaitAllTasks += taskExecutionTime;
 
     {
-        std::unique_lock<std::mutex> lock(m);
+        std::unique_lock<std::mutex> lock(mutex);
         isStart = true;
-        onStart.notify_all();
+        onStartCondition.notify_all();
     }
 
-    std::size_t timeToWaitTwoTask = 2 * timeToWait - 1; // '-1' to wake up a bit more earlier than third task will start.
-    threadPool.awaitTermination(timeToWaitTwoTask);
+    threadPool.shutdown();
+    threadPool.awaitTermination(expectedTaskCount * taskExecutionTime);
 
+    // Assume no tasks have not been declined so wait for all of them
     std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks));
 
     BOOST_CHECK_EQUAL(actualTaskCount.load(), expectedTaskCount);

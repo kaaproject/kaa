@@ -369,7 +369,18 @@ public class NotificationController extends AbstractAdminController {
      */
     @ApiOperation(value = "Send notification",
             notes = "Sends a notification with the notification body from the specified file. Only users with the TENANT_DEVELOPER or TENANT_USER role are " +
-                    "allowed to perform this operation.")
+                    "allowed to perform this operation. If you want to set notification time to leave, you must set expiredAt field in the parameter " +
+                    "notification. If your notification schema contains one field \"message\" with Union type, notification body from the specified file " +
+                    "looks like below: " +
+                    "```{" +
+                    "  \"message\" : {" +
+                    "    \"string\" : \"Hello world!\"" +
+                    "  }" +
+                    "}```. " +
+                    "And for primitive string type of the field \"message\" notification body from the specified file looks like below: " +
+                    "```{" +
+                    "  \"message\" : \"Hello world!\"" +
+                    "}```")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified notification is not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
@@ -381,9 +392,10 @@ public class NotificationController extends AbstractAdminController {
     @RequestMapping(value = "sendNotification", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
     @ResponseBody
     public NotificationDto sendNotification(
-            @ApiParam(name = "notification", value = "NotificationDto body. Mandatory fields: applicationId, schemaId, version, topicId, type", required = true)
+            @ApiParam(name = "notification", value = "NotificationDto body. Mandatory fields: applicationId, schemaId, topicId, type", required = true)
             @RequestPart("notification") NotificationDto notification,
-            @ApiParam(name = "file", value = "Notification schema represented in json format", required = true)
+            @ApiParam(name = "file", value = "A file with notification body according to the specified notification schema represented in json format",
+                    required = true)
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return notificationService.sendNotification(notification, data);
@@ -401,7 +413,18 @@ public class NotificationController extends AbstractAdminController {
      */
     @ApiOperation(value = "Send unicast notification",
             notes = "Sends a unicast notification with the notification body from the specified file to the client identified by endpointKeyHash. Only users " +
-                    "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+                    "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation. If you want to set notification time to leave, " +
+                    "you must set expiredAt field in the parameter notification. If your notification schema contains one field \"message\" with Union type, " +
+                    "notification body from the specified file looks like below: " +
+                    "```{" +
+                    "  \"message\" : {" +
+                    "    \"string\" : \"Hello world!\"" +
+                    "  }" +
+                    "}```. " +
+                    "And for primitive string type of the field \"message\" notification body from the specified file looks like below: " +
+                    "```{" +
+                    "  \"message\" : \"Hello world!\"" +
+                    "}```")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified notification is not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
@@ -413,11 +436,12 @@ public class NotificationController extends AbstractAdminController {
     @RequestMapping(value = "sendUnicastNotification", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
     @ResponseBody
     public EndpointNotificationDto sendUnicastNotification(
-            @ApiParam(name = "notification", value = "NotificationDto body. Mandatory fields: applicationId, schemaId, version, topicId, type", required = true)
+            @ApiParam(name = "notification", value = "NotificationDto body. Mandatory fields: applicationId, schemaId, topicId, type", required = true)
             @RequestPart("notification") NotificationDto notification,
             @ApiParam(name = "endpointKeyHash", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
             @RequestPart("endpointKeyHash") String clientKeyHash,
-            @ApiParam(name = "file", value = "Notification schema represented in json format", required = true)
+            @ApiParam(name = "file", value = "A file with notification body according to the specified notification schema represented in json format",
+                    required = true)
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
         return notificationService.sendUnicastNotification(notification, clientKeyHash, data);

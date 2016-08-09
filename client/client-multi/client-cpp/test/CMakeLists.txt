@@ -65,6 +65,7 @@ set ( KAA_TEST_SOURCES
         ../impl/KaaDefaults.cpp
         ../impl/logging/Log.cpp
         ../impl/logging/DefaultLogger.cpp
+        ../impl/logging/LoggingUtils.cpp
         ../impl/http/HttpUrl.cpp
         ../impl/http/MultipartPostHttpRequest.cpp
         ../impl/http/HttpResponse.cpp
