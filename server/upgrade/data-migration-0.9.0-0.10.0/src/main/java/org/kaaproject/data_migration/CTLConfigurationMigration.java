@@ -133,18 +133,20 @@ public class CTLConfigurationMigration {
             byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
 
             int updates = run.update(this.connection, "UPDATE configuration SET configuration_body=? WHERE id=?", encodedConfigurationBody,config.getId());
-            if (updates == 1)  {
-                //TODO
+            if (updates != 1)  {
+                System.err.println("Error: failed to update configuration: " + config);
             }
         }
     }
 
     private JsonNode encodeUuids(JsonNode json) throws IOException {
+        final String LATIN_1 = "ISO-8859-1";
+
         if (json.has(UUID_FIELD)) {
             JsonNode j = json.get(UUID_FIELD);
             if (j.has(UUID_VALUE)) {
                 String value = j.get(UUID_VALUE).asText();
-                String encodedValue = Base64.getEncoder().encodeToString(value.getBytes("ISO-8859-1"));
+                String encodedValue = Base64.getEncoder().encodeToString(value.getBytes(LATIN_1));
                 ((ObjectNode)j).put(UUID_VALUE, encodedValue);
             }
         }
