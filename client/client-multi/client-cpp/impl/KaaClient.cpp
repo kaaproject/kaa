@@ -18,7 +18,7 @@
 
 #include "kaa/KaaClient.hpp"
 
-#include "kaa/channel/connectivity/IPConnectivityChecker.hpp"
+#include "kaa/channel/connectivity/PingConnectivityChecker.hpp"
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/KaaDefaults.hpp"
 
@@ -67,7 +67,7 @@ void KaaClient::init()
     context_.setStatus(status_);
     bootstrapManager_.reset(new BootstrapManager(context_, this));
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers(), context_, this));
-    failoverStrategy_.reset(new DefaultFailoverStrategy);
+    failoverStrategy_.reset(new DefaultFailoverStrategy(context_));
     channelManager_->setFailoverStrategy(failoverStrategy_);
     profileManager_.reset(new ProfileManager(context_));
 
@@ -104,6 +104,8 @@ void KaaClient::start()
 
     checkReadiness();
 
+    KAA_LOG_TRACE("Kaa client starting");
+
     /*
      * NOTE: Initialization of an executor context should be the first.
      */
@@ -117,6 +119,8 @@ void KaaClient::start()
 #endif
                 bootstrapManager_->receiveOperationsServerList();
                 stateListener_->onStarted();
+
+                KAA_LOG_INFO("Kaa client started");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on start: %s") % e.what());
                 stateListener_->onStartFailure(KaaException(e));
@@ -131,6 +135,8 @@ void KaaClient::stop()
     checkClientStateNot(State::CREATED, "Kaa client is not started");
     checkClientStateNot(State::STOPPED, "Kaa client is already stopped");
 
+    KAA_LOG_TRACE("Kaa client stopping...");
+
     /*
      * To prevent a race condition between stopping a client when it is already destroyed,
      * pass a reference to this client to a 'stop' task.
@@ -142,6 +148,8 @@ void KaaClient::stop()
                 channelManager_->shutdown();
                 status_->save();
                 stateListener_->onStopped();
+
+                KAA_LOG_INFO("Kaa client stopped");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on stop: %s") % e.what());
                 stateListener_->onStopFailure(KaaException(e));
@@ -156,12 +164,16 @@ void KaaClient::pause()
 {
     checkClientState(State::STARTED, "Kaa client is not started");
 
+    KAA_LOG_TRACE("Kaa client pausing");
+
     context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
                 status_->save();
                 channelManager_->pause();
                 stateListener_->onPaused();
+
+                KAA_LOG_INFO("Kaa client paused");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on pause: %s") % e.what());
                 stateListener_->onPauseFailure(KaaException(e));
@@ -175,11 +187,15 @@ void KaaClient::resume()
 {
     checkClientState(State::PAUSED, "Kaa client isn't paused");
 
+    KAA_LOG_TRACE("Kaa client resuming");
+
     context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
                 channelManager_->resume();
                 stateListener_->onResumed();
+
+                KAA_LOG_INFO("Kaa client resumed");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on resume: %s") % e.what());
                 stateListener_->onResumeFailure(KaaException(e));
@@ -262,23 +278,21 @@ void KaaClient::initKaaTransport()
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-    bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_, context_));
+    bootstrapChannel_.reset(new DefaultBootstrapChannel(*channelManager_, *clientKeys_, context_));
     bootstrapChannel_->setDemultiplexer(syncProcessor_.get());
     bootstrapChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, context_, this));
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(*channelManager_, *clientKeys_, context_));
     opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
     opsTcpChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
     channelManager_->addChannel(opsTcpChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
-    ConnectivityCheckerPtr connectivityChecker(new IPConnectivityChecker(
-            *static_cast<KaaChannelManager*>(channelManager_.get())));
-    channelManager_->setConnectivityChecker(connectivityChecker);
+    channelManager_->setConnectivityChecker(std::make_shared<PingConnectivityChecker>());
 #endif
 }
 
