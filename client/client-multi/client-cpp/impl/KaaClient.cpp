@@ -48,7 +48,8 @@ KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListen
     : logger_(new DefaultLogger(context->getProperties().getClientId(), context->getProperties().getLogFileName())),
       context_(context->getProperties(), *logger_, context->getExecutorContext()),
       status_(new ClientStatus(context_)),
-      platformContext_(context), stateListener_(listener)
+      stateListener_(listener),
+      platformContext_(context)
 {
     if (!stateListener_) {
         stateListener_ = std::make_shared<DummyKaaClientStateListener>();
