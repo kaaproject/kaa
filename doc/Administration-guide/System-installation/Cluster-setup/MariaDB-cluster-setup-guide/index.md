@@ -106,9 +106,9 @@ Add the following lines under `[mysqld]`.
   lower_case_table_names=1
 ```
 
-#### VSRep Providers Configurations
+#### WSRep providers configurations
 
-Proceed to set the wsrep configurations on each node under the `[mysqld]`, using the specific hostname, root password and IP address of each node.
+Proceed to set the `wsrep` configurations on each node under the `[mysqld]`, using the specific hostname, root password and IP address of each node.
 
 ##### Configurations for `ubuntu-node1`
 
