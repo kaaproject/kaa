@@ -13,39 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class TenantsDataProvider extends AbstractDataProvider<TenantDto, String>{
 
-    public TenantsDataProvider(AbstractGrid<TenantDto, String> dataGrid,
-                               HasErrorMessage hasErrorMessage) {
+public class TenantAdminDataProvider extends AbstractDataProvider<UserDto, String> {
+
+   private String tenantId;
+
+
+    public TenantAdminDataProvider(AbstractGrid<UserDto, String> dataGrid, HasErrorMessage hasErrorMessage,String tenantId) {
         super(dataGrid, hasErrorMessage);
+        this.tenantId=tenantId;
     }
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadTenants(new AsyncCallback<List<TenantDto>>() {
+        KaaAdmin.getDataSource().loadAllTenantAdminsByTenantId(tenantId, new AsyncCallback<List<UserDto>>() {
             @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
             }
+
             @Override
-            public void onSuccess(List<TenantDto> result) {
-                callback.onSuccess(result);
+            public void onSuccess(List<UserDto> userDtos) {
+                callback.onSuccess(userDtos);
             }
         });
     }
 
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 }
