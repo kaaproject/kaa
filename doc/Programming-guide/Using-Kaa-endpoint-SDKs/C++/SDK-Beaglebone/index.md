@@ -25,7 +25,7 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 
 1. Install build prerequisites.
 
-        sudo apt-get install cmake build-essentials
+        sudo apt-get install cmake build-essential
 
 1. Download toolchain.
 
