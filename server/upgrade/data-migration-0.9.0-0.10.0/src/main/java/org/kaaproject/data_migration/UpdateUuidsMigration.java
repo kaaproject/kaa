@@ -34,8 +34,8 @@ public class UpdateUuidsMigration {
                 byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
 
                 int updates = run.update(connection, "UPDATE configuration SET configuration_body=? WHERE id=?", encodedConfigurationBody, config.getId());
-                if (updates == 1) {
-                    //TODO
+                if (updates != 1) {
+                    System.err.println("Error: failed to update configuration: " + config);
                 }
             }
 
