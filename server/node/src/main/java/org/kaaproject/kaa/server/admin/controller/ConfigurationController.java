@@ -214,7 +214,7 @@ public class ConfigurationController extends AbstractAdminController {
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
                     "of the application does not match the Tenant ID of the authenticated user"),
             @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the " +
-                    "requested configuration record\n"),
+                    "requested configuration record"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "configurationRecordBody", params = {"schemaId", "endpointGroupId"}, method = RequestMethod.GET)
     @ResponseBody
@@ -257,14 +257,26 @@ public class ConfigurationController extends AbstractAdminController {
     }
 
     /**
-     * Edits endpoint group to the list of all endpoint groups.
+     * Creates or updates a configuration for the specific user under the application.
      *
      * @param endpointUserConfiguration the endpoint user configuration
      * @throws KaaAdminServiceException the kaa admin service exception
      */
+    @ApiOperation(value = "Create/Edit user configuration",
+            notes = "Creates or updates a configuration for the specific user under the application. TIf a configuration with the specified user ID does not " +
+                    "exist, then it will be created. If a configuration with the specified user ID exists, the configuration will be updated. Only users " +
+                    "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
+                    "of the application does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "A user with the specified userId or application with the specified appToken does not exists"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "userConfiguration", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void editUserConfiguration(
+            @ApiParam(name = "endpointUserConfiguration", value = "EndpointUserConfigurationDto body. Mandatory fields: userId, appToken, schemaVersion, " +
+                    "body", required = true)
             @RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
         configurationService.editUserConfiguration(endpointUserConfiguration);
     }
