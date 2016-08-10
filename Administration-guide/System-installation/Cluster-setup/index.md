@@ -16,7 +16,7 @@ sort_idx: 30
 
 This guide describes configuration of Kaa cluster on Linux nodes.
 
-The guide contains instructions on how to configure kaa-node service and required third party components like Apache Zookeeper service, SQL and NoSQL databases.
+The guide contains instructions on how to configure kaa-node service and required third party components like [Apache Zookeeper](https://zookeeper.apache.org/) service, SQL and NoSQL databases.
 
 ## Requirements
 
@@ -42,7 +42,7 @@ In order to set up Kaa cluster you need to have at least 3 Linux nodes with ```k
 > ```
 > In order to refresh key files stop ```kaa-node``` service, remove key files and start the service again.
 
-Also ```kaa-node``` service require some third party dependencies like SQL and NoSQL databases and Apache Zookeeper service, more details you can find in [Architecture overview]({{root_url}}Architecture-overview/). 
+Also ```kaa-node``` service requires some third party dependencies like SQL and NoSQL databases and Apache Zookeeper service, more details you can find in [Architecture overview]({{root_url}}Architecture-overview/). 
 You can find detailed instructions on how to install and configure Zookeeper service and one of supported SQL and NoSQL databases in [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/#installation-steps) guide. 
 A set of databases (for example MongoDB + PostgreSQL) depends on your particular use case and some useful recommendations you can find in [Planning your deployment]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/) guide.
 
