@@ -100,7 +100,7 @@ public class ApplicationLogActorTest {
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setVersion(TEST_SCHEMA_VERSION);
-        logSchema = new LogSchema(logSchemaDto);
+        logSchema = new LogSchema(logSchemaDto, "");
 
         logAppenders = new ArrayList<>();
         logAppender = mock(LogAppender.class);

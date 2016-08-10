@@ -129,7 +129,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>/usr/local/bin/avrogencpp</executable>
+                                    <executable>avrogencpp</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>-i</argument>

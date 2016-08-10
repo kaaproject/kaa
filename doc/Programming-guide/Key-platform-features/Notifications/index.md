@@ -21,7 +21,7 @@ We also recommend that you review [collecting endpoint profiles guide]({{root_ur
 The following diagram illustrates basic entities and data flows in scope of the notification management:
 
 * Notifications are generated based on the [notification schema](#notification-schema) created by the developer for the application 
-* The user or admin sends a notification via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) call or using Administration UI (see [Sending notifications](#sending-notifications)). 
+* The user or admin sends a notification via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) call or using Administration UI (see [Sending notifications](#sending-notifications)). 
 
 ![](images/basic_architecture_notification.png)
 
@@ -52,7 +52,7 @@ The default notification schema installed for Kaa applications is empty. For the
 }
 ```
 
-You can configure your own notification schema via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) call or use Administration UI as shown below. 
+You can configure your own notification schema via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) call or use Administration UI as shown below. 
 
 
 The list of notification schemas created by a tenant developer for the application is shown in the **Notification schemas** window.
@@ -80,7 +80,7 @@ In order for an endpoint to receive notifications associated with the topic, the
 
 Topics can be mandatory or optional. Mandatory topic notifications are delivered in an enforced manner. Optional topics require subscription. It is responsibility of the client code to add notification listeners and subscribe to optional topics.
 
-You can manage notification topics via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) call or using Administration UI as shown below.
+You can manage notification topics via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/editTopic) call or using Administration UI as shown below.
 
 To add a new notification topic to the application, do the following:
 
@@ -98,7 +98,7 @@ To add a new notification topic to the application, do the following:
     
     
 > **NOTE:** Once created, a notification topic does not impact any endpoints. To deliver notifications to some endpoint, at first you need to assign the topic to an endpoint group containing 
-this endpoint via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) or using [Administration UI](#add-notification-topic-to-endpoint-group).
+this endpoint via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/editTopic) or using [Administration UI](#add-notification-topic-to-endpoint-group).
 
 
 #### Add notification topic to endpoint group
@@ -152,7 +152,7 @@ Assuming that you have created custom endpoint groups from the [Using endpoint g
 </table>
 
 #### Sending notifications
-To send a notification, you can issue the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) request or Administration UI as described below.
+To send a notification, you can issue the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) request or Administration UI as described below.
 
 Do the following steps to send a notification:
 

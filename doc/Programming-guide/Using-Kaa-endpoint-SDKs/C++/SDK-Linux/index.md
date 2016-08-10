@@ -32,7 +32,7 @@ Before building the C++ endpoint SDK, install the following components on your m
 
    ```
    wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
-   tar -zxf avro-cpp-1.7.7.tar.gz
+   tar -zxf avro-cpp-1.7.5.tar.gz
    cd avro-cpp-1.7.5/
    cmake -G "Unix Makefiles"
    sudo make install

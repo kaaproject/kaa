@@ -31,6 +31,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.BooleanNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.TextNode;
+import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.shared.ArrayField.OverrideStrategy;
 import org.kaaproject.avro.ui.shared.FormField.FieldAccess;
@@ -52,7 +53,12 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
     public ConfigurationSchemaFormAvroConverter() throws IOException {
         super();
     }
-    
+
+
+    public ConfigurationSchemaFormAvroConverter(CtlSource ctlSource) throws IOException {
+        super(ctlSource);
+    }
+
     /**
      * Creates the addressable field.
      *
@@ -162,8 +168,7 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
         if (fieldType.getSchema().getName().equals(ARRAY_FIELD_TYPE)) {
             GenericData.EnumSymbol overrideStrategy = 
                     (GenericData.EnumSymbol)fieldType.get(OVERRIDE_STRATEGY);
-            if (overrideStrategy != null && 
-                                !overrideStrategy.toString().equalsIgnoreCase(OverrideStrategy.REPLACE.name())) {
+            if (overrideStrategy != null && !overrideStrategy.toString().equalsIgnoreCase(OverrideStrategy.REPLACE.name())) {
                 avroField.addProp(OVERRIDE_STRATEGY, overrideStrategy.toString().toLowerCase());
             }
         }

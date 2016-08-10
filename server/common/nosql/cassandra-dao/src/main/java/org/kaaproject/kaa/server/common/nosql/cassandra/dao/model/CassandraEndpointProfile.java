@@ -21,33 +21,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertECFVersionDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ACCESS_TOKEN_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_APP_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_LOG_SCHEMA_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SEQUENCE_NUMBER_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SIMPLE_TOPIC_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_TOPIC_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.*;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -126,7 +100,11 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     @Column(name = EP_SDK_TOKEN_PROPERTY)
     private String sdkToken;
     @Column(name = EP_SERVER_PROFILE_PROPERTY)
-    private String serverProfile;    
+    private String serverProfile;
+
+    @Column(name = EP_USE_RAW_SCHEMA)
+    private Boolean useConfigurationRawSchema;
+
     @Column(name = OPT_LOCK)
     private Long version;
 
@@ -160,6 +138,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = dto.getServerProfileBody();
+        this.useConfigurationRawSchema = dto.isUseConfigurationRawSchema();
         this.version = dto.getVersion();
     }
 
@@ -376,7 +355,15 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
-    
+
+    public Boolean getUseConfigurationRawSchema() {
+        return useConfigurationRawSchema;
+    }
+
+    public void setUseConfigurationRawSchema(Boolean useConfigurationRawSchema) {
+        this.useConfigurationRawSchema = useConfigurationRawSchema;
+    }
+
     @Override
     public Long getVersion() {
         return version;
@@ -420,6 +407,9 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null) return false;
         if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
         if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) return false;
+        if (useConfigurationRawSchema != null ? !useConfigurationRawSchema.equals(that.useConfigurationRawSchema) : that.useConfigurationRawSchema != null) {
+            return false;
+        }
         return serverProfile != null ? serverProfile.equals(that.serverProfile) : that.serverProfile == null;
 
     }
@@ -450,6 +440,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (ecfVersionStates != null ? ecfVersionStates.hashCode() : 0);
         result = 31 * result + (serverHash != null ? serverHash.hashCode() : 0);
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
+        result = 31 * result + (useConfigurationRawSchema != null ? useConfigurationRawSchema.hashCode() : 0);
         result = 31 * result + (serverProfile != null ? serverProfile.hashCode() : 0);
         return result;
     }
@@ -482,6 +473,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", ecfVersionStates=" + ecfVersionStates +
                 ", serverHash='" + serverHash + '\'' +
                 ", sdkToken='" + sdkToken + '\'' +
+                ", useRawSchema=" + useConfigurationRawSchema +
                 ", serverProfile='" + serverProfile + '\'' +
                 '}';
     }
@@ -515,6 +507,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
+        dto.setUseConfigurationRawSchema(useConfigurationRawSchema);
         dto.setVersion(version);
         return dto;
     }

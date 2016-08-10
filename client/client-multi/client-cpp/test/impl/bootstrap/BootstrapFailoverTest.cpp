@@ -46,12 +46,12 @@ BOOST_AUTO_TEST_CASE(BootstrapEmptyOperationalServersListTest)
     IKaaClientStateStoragePtr status (new MockKaaClientStateStorage);
     KaaClientContext context(properties, tmp_logger, exeContext, status);
     BootstrapManager bootstrapManager(context, nullptr);
-    IFailoverStrategyPtr failoverStrategy(std::make_shared<DefaultFailoverStrategy>());
+
     MockChannelManager channelManager;
     std::vector<ProtocolMetaData> operationServers;
 
     bootstrapManager.setChannelManager(&channelManager);
-    bootstrapManager.setFailoverStrategy(failoverStrategy);
+    bootstrapManager.setFailoverStrategy(std::make_shared<DefaultFailoverStrategy>(context));
 
     bootstrapManager.onServerListUpdated(operationServers);
 

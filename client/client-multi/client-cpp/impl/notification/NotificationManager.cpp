@@ -40,7 +40,7 @@ NotificationManager::NotificationManager(IKaaClientContext &context)
     for (auto &topic : topicList) {
          if (topics_.insert(std::make_pair(topic.id, topic)).second) {
              KAA_LOG_INFO(boost::format("Loaded topic: id='%1%', name='%2%', type=%3%")
-                 % topic.id % topic.name % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
+                 % topic.id % topic.name % LoggingUtils::toString(topic.subscriptionType));
          }
     }
 }

@@ -29,6 +29,10 @@ var UTILS = (function () {
 		return testStr;
 	}
 
+	my.splitByLines = function splitByLines(text) {
+		return text.match(/[^\r\n]+/g);
+	}
+
 	return my;
 
 }());

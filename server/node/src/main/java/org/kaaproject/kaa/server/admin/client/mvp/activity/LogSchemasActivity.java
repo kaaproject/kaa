@@ -34,7 +34,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSchemasPlace> {
+public class LogSchemasActivity extends AbstractBaseCtlSchemasActivity<LogSchemaDto, LogSchemasPlace> {
 
     private String applicationId;
 
@@ -71,8 +71,8 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
+        super.onCustomRowAction(event);
         Integer schemaVersion = Integer.valueOf(event.getClickedId());
-        final int action = event.getAction();
 
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
@@ -85,15 +85,6 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
             }
         };
 
-        switch (action) {
-            case KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY:
-                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
-                break;
-            case KaaRowAction.DOWNLOAD_SCHEMA:
-                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_SCHEMA, callback);
-                break;
-            default:
-                break;
-        }
+        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
     }
 }

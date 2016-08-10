@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
@@ -132,9 +133,18 @@ public class UserProfileActivity
     }
 
     @Override
-    protected void editEntity(UserDto entity,
-            AsyncCallback<UserDto> callback) {
-        KaaAdmin.getDataSource().editUserProfile(entity, callback);
+    protected void editEntity(UserDto entity, AsyncCallback<UserDto> callback) {
+        KaaAdmin.getDataSource().editUserProfile(new UserProfileUpdateDto(entity), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+            }
+
+            @Override
+            public void onSuccess(Void aVoid) {
+                reload();
+            }
+        });
     }
 
     private void showChangePasswordDialog() {

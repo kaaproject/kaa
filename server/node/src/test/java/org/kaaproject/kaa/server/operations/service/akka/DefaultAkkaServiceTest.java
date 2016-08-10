@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -141,6 +142,7 @@ import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -678,6 +680,8 @@ public class DefaultAkkaServiceTest {
                 .thenReturn(response);
         Mockito.when(operationsService.syncNotification(Mockito.any(SyncContext.class), Mockito.any(NotificationClientSync.class)))
                 .thenReturn(response);
+        Mockito.when(operationsService.syncUseConfigurationRawSchema(Mockito.any(SyncContext.class), Matchers.anyBoolean()))
+                .thenReturn(response);
     }
 
     private void whenSync(ClientSync request, SyncContext response) throws GetDeltaException {
@@ -692,6 +696,8 @@ public class DefaultAkkaServiceTest {
         Mockito.when(operationsService.processEventListenerRequests(response, request.getEventSync())).thenReturn(response);
         Mockito.when(operationsService.syncConfiguration(response, request.getConfigurationSync())).thenReturn(response);
         Mockito.when(operationsService.syncNotification(response, request.getNotificationSync())).thenReturn(response);
+
+        Mockito.when(operationsService.syncUseConfigurationRawSchema(response, request.isUseConfigurationRawSchema())).thenReturn(response);
     }
 
     @Test
@@ -1326,7 +1332,7 @@ public class DefaultAkkaServiceTest {
 
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
         Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
-        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto()));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto(), ""));
         EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setId("1");
         profileSchemaDto.setCtlSchemaId("22");

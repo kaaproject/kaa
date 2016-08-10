@@ -16,9 +16,11 @@
 
 package org.kaaproject.kaa.client.channel.impl.channels;
 
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.LinkedHashMap;
 
+import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.slf4j.Logger;
@@ -44,6 +46,7 @@ public class HttpRequestCreator {
         if (body != null && messageEncDec != null) {
             byte[] requestKeyEncoded = messageEncDec.getEncodedSessionKey();
             byte[] requestBodyEncoded = messageEncDec.encodeData(body);
+            byte[] nextProtocol = ByteBuffer.allocate(4).putInt(Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID_V2).array();
             byte[] signature = null;
             if(sign){
                 signature = messageEncDec.sign(requestKeyEncoded);
@@ -61,13 +64,12 @@ public class HttpRequestCreator {
             }
             LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>(); //NOSONAR
             if(sign){
-                requestEntity.put(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME,
-                    signature);
+                requestEntity.put(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME, signature);
             }
-            requestEntity.put(CommonEPConstans.REQUEST_KEY_ATTR_NAME,
-                    requestKeyEncoded);
-            requestEntity.put(CommonEPConstans.REQUEST_DATA_ATTR_NAME,
-                    requestBodyEncoded);
+            requestEntity.put(CommonEPConstans.REQUEST_KEY_ATTR_NAME, requestKeyEncoded);
+            requestEntity.put(CommonEPConstans.REQUEST_DATA_ATTR_NAME, requestBodyEncoded);
+            requestEntity.put(CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME, nextProtocol);
+
             return requestEntity;
         }
         return null;

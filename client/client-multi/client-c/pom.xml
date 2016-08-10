@@ -85,7 +85,6 @@
                         <exclude>thirdparty/</exclude>
                         <exclude>nix/astyle/max_indent.patch</exclude>
 
-                        <exclude>src/kaa/gen/kaa_keys_gen.h</exclude>
                         <!-- Temporary build files -->
                         <exclude>build-*/</exclude>
                         <exclude>Makefile</exclude>

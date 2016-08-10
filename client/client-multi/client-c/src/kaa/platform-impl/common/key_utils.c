@@ -14,7 +14,6 @@
  *  limitations under the License.
  */
 
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -22,6 +21,7 @@
 #include <string.h>
 #include <platform/ext_key_utils.h>
 #include <utilities/kaa_mem.h>
+#include <utilities/kaa_aes_rsa.h>
 #include <kaa_common.h>
 #include <kaa_error.h>
 #include <mbedtls/pk.h>
@@ -56,12 +56,7 @@ static endpoint_keys_t keys;
 static mbedtls_pk_context pk_context_;
 
 /* Some forward declarations of helpers */
-static int init_aes_key(unsigned char *key, size_t bytes);
 static kaa_error_t set_rsa_public_key(mbedtls_pk_context *pk, const uint8_t *key, size_t key_size);
-static kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_size,
-        uint8_t *output, const uint8_t *key);
-static int rsa_sign(mbedtls_pk_context *pk, const uint8_t *input, size_t input_size,
-        uint8_t *output, size_t *output_size);
 static int rsa_encrypt(mbedtls_pk_context *pk, const uint8_t *input,
         size_t input_len, uint8_t *output);
 
@@ -230,99 +225,6 @@ kaa_error_t ext_get_signature(const uint8_t *input, size_t input_size,
     return KAA_ERR_NONE;
 }
 
-/*
- * Generates AES Key.
- *
- * bytes The size of the key.
- * key   Generated AES Key.
- *
- */
-static int init_aes_key(unsigned char *key, size_t bytes)
-{
-    mbedtls_ctr_drbg_context ctr_drbg;
-    mbedtls_entropy_context entropy;
-
-    const uint8_t pers[] = "aes_generate_key";
-    int ret;
-
-    mbedtls_entropy_init(&entropy);
-    mbedtls_ctr_drbg_init(&ctr_drbg);
-
-    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-            pers, sizeof(pers) - 1)) == 0) {
-        ret = mbedtls_ctr_drbg_random(&ctr_drbg, key, bytes);
-    }
-
-    mbedtls_ctr_drbg_free(&ctr_drbg);
-    mbedtls_entropy_free(&entropy);
-
-    return ret;
-}
-
-static kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_size,
-        uint8_t *output, const uint8_t *key)
-{
-    if ((input_size % 16) != 0 || !input) {
-        return KAA_ERR_BADPARAM;
-    }
-
-    if (mode != MBEDTLS_AES_ENCRYPT && mode != MBEDTLS_AES_DECRYPT) {
-        return KAA_ERR_BADPARAM;
-    }
-
-    static bool initialized = false;
-    static mbedtls_aes_context aes_ctx;
-
-    if (!initialized) {
-        mbedtls_aes_init(&aes_ctx);
-        initialized = true;
-    }
-
-    if (mode == MBEDTLS_AES_ENCRYPT) {
-        mbedtls_aes_setkey_enc(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
-        mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_ENCRYPT, input, output);
-    } else if (mode == MBEDTLS_AES_DECRYPT) {
-        mbedtls_aes_setkey_dec(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
-        mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_DECRYPT, input, output);
-    }
-
-    return KAA_ERR_NONE;
-}
-
-static int rsa_sign(mbedtls_pk_context *pk, const uint8_t *input,
-        size_t input_size, uint8_t *output, size_t *output_size)
-{
-    int ret = 0;
-    uint8_t hash[32];
-    mbedtls_entropy_context entropy;
-    mbedtls_ctr_drbg_context ctr_drbg;
-    const uint8_t pers[] = "mbedtls_pk_sign";
-
-    mbedtls_entropy_init(&entropy);
-    mbedtls_ctr_drbg_init(&ctr_drbg);
-
-
-    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-            pers,sizeof(pers) - 1)) != 0) {
-        goto exit;
-    }
-
-    const mbedtls_md_info_t *info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
-
-    if ((ret = mbedtls_md(info, input, input_size, hash)) != 0) {
-        goto exit;
-    }
-
-    ret = mbedtls_pk_sign(pk, MBEDTLS_MD_SHA1, hash, 0, output, output_size,
-            mbedtls_ctr_drbg_random, &ctr_drbg);
-
-exit:
-    mbedtls_ctr_drbg_free(&ctr_drbg);
-    mbedtls_entropy_free(&entropy);
-
-    return ret;
-}
-
 static kaa_error_t set_rsa_public_key(mbedtls_pk_context *pk, const uint8_t *key, size_t key_size)
 {
     if (!pk || !key || !key_size) {
@@ -369,11 +271,12 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length)
     *length = KAA_SHA1_PUB_LEN;
 }
 
-void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length)
+kaa_error_t ext_get_sha1_base64_public(const uint8_t **sha1, size_t *length)
 {
     if (!sha1 || !length) {
-        return;
+        return KAA_ERR_BADPARAM;
     }
     *sha1 = (uint8_t *)KAA_SHA1_PUB_BASE64;
     *length = KAA_SHA1_PUB_BASE64_LEN;
+    return KAA_ERR_NONE;
 }
