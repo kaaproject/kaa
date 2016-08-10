@@ -26,15 +26,15 @@ public:
 
     MockTransportConnectionInfo ():mockTransportPID(someMockMagicNumber_, someMockMagicNumber_) {}
 
-    virtual ServerType getServerType() { return mockServerType_; };
+    virtual ServerType getServerType() const { return mockServerType_; };
 
-    virtual std::int32_t getAccessPointId() { return someMockMagicNumber_; };
+    virtual std::int32_t getAccessPointId() const { return someMockMagicNumber_; };
 
-    virtual TransportProtocolId getTransportId() { return mockTransportPID; };
+    virtual TransportProtocolId getTransportId() const { return mockTransportPID; };
 
-    virtual const std::vector<std::uint8_t>& getConnectionInfo() { return  mockConnectionInfo_; };
+    virtual const std::vector<std::uint8_t>& getConnectionInfo() const { return  mockConnectionInfo_; };
 
-    virtual bool isFailedState() { return false; };
+    virtual bool isFailedState() const { return false; };
 
     virtual void setFailedState() {};
 

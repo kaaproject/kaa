@@ -21,7 +21,6 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -30,17 +29,16 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_BODY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_EXPIRED_AT;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_LAST_MODIFY_TIME;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_BODY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_SCHEMA_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TYPE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_SEQ_NUM;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TOPIC_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TYPE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_VERSION;
 
 @Document(collection = MongoModelConstants.NOTIFICATION)
 public final class MongoNotification implements Notification, Serializable {
@@ -69,10 +67,7 @@ public final class MongoNotification implements Notification, Serializable {
     private Date expiredAt;
     @Field(NF_SEQ_NUM)
     private int secNum;
-    @Version
-    @Field(OPT_LOCK)
-    private Long version;
-    
+
     public MongoNotification() {
     }
 
@@ -87,7 +82,6 @@ public final class MongoNotification implements Notification, Serializable {
         this.body = getArrayCopy(dto.getBody());
         this.expiredAt = dto.getExpiredAt();
         this.secNum = dto.getSecNum();
-        this.version = dto.getVersion();
     }
 
     public String getId() {
@@ -130,16 +124,6 @@ public final class MongoNotification implements Notification, Serializable {
         return secNum;
     }
 
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -225,7 +209,6 @@ public final class MongoNotification implements Notification, Serializable {
         dto.setBody(getArrayCopy(body));
         dto.setExpiredAt(expiredAt);
         dto.setSecNum(secNum);
-        dto.setVersion(version);
         return dto;
     }
 }

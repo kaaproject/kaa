@@ -45,6 +45,10 @@ public:
     }
 
 protected:
+    virtual void doInit() = 0;
+    virtual void doStop() = 0;
+
+protected:
     IThreadPoolPtr createExecutor(std::size_t threadCount)
     {
         return std::make_shared<ThreadPool>(threadCount);
@@ -53,13 +57,10 @@ protected:
     void shutdownExecutor(IThreadPoolPtr threadPool)
     {
         if (threadPool) {
+            threadPool->shutdown();
             threadPool->awaitTermination(awaitTerminationTimeout_);
         }
     }
-
-protected:
-    virtual void doInit() = 0;
-    virtual void doStop() = 0;
 
 private:
     std::size_t useCount_;
