@@ -327,9 +327,9 @@ void KaaClient::initClientKeys()
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().data(), clientKeys_->getPublicKey().size());
     auto digest = publicKeyHash.getHashDigest();
-    publicKeyHash_ = Botan::base64_encode(digest.data(), digest.size());
+    std::string endpointKeyHash = Botan::base64_encode(digest.data(), digest.size());
 
-    status_->setEndpointKeyHash(publicKeyHash_);
+    status_->setEndpointKeyHash(endpointKeyHash);
     status_->save();
 
 }
@@ -562,9 +562,14 @@ std::string KaaClient::refreshEndpointAccessToken()
     return status_->refreshEndpointAccessToken();
 }
 
-std::string KaaClient::getEndpointAccessToken()
+std::string KaaClient::getEndpointAccessToken() const
 {
     return status_->getEndpointAccessToken();
+}
+
+std::string KaaClient::getEndpointKeyHash() const
+{
+    return status_->getEndpointKeyHash();
 }
 
 RecordFuture KaaClient::addLogRecord(const KaaUserLogRecord& record)
