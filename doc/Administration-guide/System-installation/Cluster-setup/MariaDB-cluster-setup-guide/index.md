@@ -25,7 +25,7 @@ The following is the hosts list that we had setup for this article, where we wil
   ubuntu-node3 172.3.3.3
 ```
 
-Now we will install the its required packages `rsync`, `galera` and `mariadb-galera-server` that need to be installed on all the three nodes.
+Now we will install the required packages `rsync`, `galera` and `mariadb-galera-server` that need to be installed on all the three nodes.
 
 ### Add the MariaDB Repositories
 
