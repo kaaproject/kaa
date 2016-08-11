@@ -5,6 +5,7 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.kaaproject.data_migration.model.Schema;
+import org.kaaproject.data_migration.utils.BaseSchemaIdCounter;
 import org.kaaproject.data_migration.utils.datadefinition.DataDefinition;
 
 import java.sql.Connection;
@@ -41,8 +42,11 @@ public abstract class AbstractCTLMigration {
         String toDelete = schemas.stream().map(s -> s.getId().toString()).collect(joining(", "));
         runner.update(connection, "delete from schems where id in (" + toDelete + ")");
 
-        // set Type of schema -- equals to name of the table
-        schemas.forEach( s -> s.setType(getName()));
+        // shift ids in order to avoid PK constraint violation during adding record to base_schema
+        Long shift = runner.query(connection, "select max(id) as max_id from "+ getName() + "_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
+        Long idShift = BaseSchemaIdCounter.getInstance().getAndShift(shift);
+        runner.update(connection, "update " + getName() + "_schems set id = id + " + idShift + " order by id desc");
+        schemas.forEach(s -> s.setId(s.getId() + idShift));
 
         return schemas;
     }

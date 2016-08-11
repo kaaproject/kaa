@@ -26,38 +26,25 @@ public class BaseSchemaRecordsCreation {
     }
 
     public void create(Map<Ctl, List<Schema>> ctlToSchemas) throws SQLException {
-        List<MigrationEntity> baseSchemas =  new ArrayList<>();
+        List<Object[]> params = new ArrayList<>();
+        int schemaCounter = 0;
         for (Ctl ctl : ctlToSchemas.keySet()) {
             for (Schema schema : ctlToSchemas.get(ctl)) {
-                baseSchemas.add(new MigrationEntity(ctl, schema));
+                schemaCounter++;
+                params.add(new Object[]{
+                        schema.getId(),
+                        schema.getCreatedTime(),
+                        schema.getCreatedUsername(),
+                        schema.getDescription(),
+                        schema.getName(),
+                        schema.getVersion(),
+                        ctl.getMetaInfo().getAppId(),
+                        ctl.getId()
+                });
             }
         }
 
-        // sort ids descending in order to avoid constraint violation during shifting ids
-        baseSchemas.sort((m1, m2) -> m2.getSchema().getId().compareTo(m1.getSchema().getId()));
-
-
-        Long shift = runner.query(connection, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
-        runner.update(connection, "update configuration_schems set id = id + " + shift + " order by id desc");
-        schemas.forEach(s -> s.setId(s.getId() + shift));
-
-
-        List<Object[]> params = new ArrayList<>();
-        for (Ctl ctl : confSchemasToCTL.keySet()) {
-            Schema schema = confSchemasToCTL.get(ctl);
-            params.add(new Object[]{
-                    schema.getId(),
-                    schema.getCreatedTime(),
-                    schema.getCreatedUsername(),
-                    schema.getDescription(),
-                    schema.getName(),
-                    schema.getVersion(),
-                    ctl.getMetaInfo().getAppId(),
-                    ctl.getId()
-            });
-        }
-
-        runner.batch(connection, "insert into base_schems values(?, ?, ?, ?, ?, ?, ?, ?)", params.toArray(new Object[schemas.size()][]));
+        runner.batch(connection, "insert into base_schems values(?, ?, ?, ?, ?, ?, ?, ?)", params.toArray(new Object[schemaCounter][]));
     }
 
 }

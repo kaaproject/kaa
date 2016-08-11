@@ -1,8 +1,10 @@
 package org.kaaproject.data_migration;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
 import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.Schema;
+import org.kaaproject.data_migration.utils.BaseSchemaIdCounter;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
 
 import java.io.IOException;
@@ -22,9 +24,13 @@ public class MigrateData {
         try {
             List<Schema> schemas = new ArrayList<>();
             conn = MARIADB.getDs().getConnection();
+            QueryRunner runner = new QueryRunner();
+            Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
+            BaseSchemaIdCounter.setInitValue(maxId);
             CTLConfigurationMigration configurationMigration = new CTLConfigurationMigration(conn);
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
+
 
             //before phase
             configurationMigration.beforeTransform();
