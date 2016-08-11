@@ -12,7 +12,6 @@ public class CtlMetaInfo {
         this.tenatnId = tenatnId;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -20,13 +19,16 @@ public class CtlMetaInfo {
 
         CtlMetaInfo that = (CtlMetaInfo) o;
 
-        return fqn != null ? fqn.equals(that.fqn) : that.fqn == null;
+        if (!fqn.equals(that.fqn)) return false;
+        return appId != null ? appId.equals(that.appId) : that.appId == null;
 
     }
 
     @Override
     public int hashCode() {
-        return fqn != null ? fqn.hashCode() : 0;
+        int result = fqn.hashCode();
+        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        return result;
     }
 
     public Long getAppId() {
