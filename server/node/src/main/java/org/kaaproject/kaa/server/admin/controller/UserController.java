@@ -273,17 +273,18 @@ public class UserController extends AbstractAdminController {
     }
 
 
-    @ApiOperation(value = "Select tenant admins by tenant id")
+    @ApiOperation(value = "Get tenant admins based on tenant id",
+     notes="Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified tenantId is not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-            @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
-                    "does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required KAA_ADMIN role"),
             @ApiResponse(code = 404, message = "The user with the specified tenantId does not exist"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "admins/{tenantId}", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
     public List<UserDto> findAllTenantAdminsByTenantId(
+            @ApiParam(name = "tenantId", value = "A unique tenant identifier", required = true)
             @PathVariable String tenantId) throws KaaAdminServiceException {
        return  userService.findAllTenantAdminsByTenantId(tenantId);
     }
