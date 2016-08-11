@@ -103,6 +103,22 @@ public class DeviceManagementServiceImpl extends AbstractAdminService implements
     }
 
     @Override
+    public CredentialsStatus getCredentialsStatus(
+            String applicationToken,
+            String credentialsId
+    ) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            String applicationId = checkApplicationToken(applicationToken);
+            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+            return credentials.get().getStatus();
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
     public List<String> getCredentialsServiceNames() throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {

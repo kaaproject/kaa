@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 
@@ -52,6 +53,7 @@ public class UserActivity extends
               detailsView.setTitle(entity.getUsername());
           }
           detailsView.getAuthority().setValue(entity.getAuthority());
+            entity.setTenantId(place.getTenId());
       }
 
       @Override

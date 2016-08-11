@@ -23,7 +23,7 @@ application, Kaa provides a number of very useful features, such as:
 
 The structure of the configuration data is determined by the customizable configuration schema. 
 It is the responsibility of the Kaa developer to construct the configuration schema and make the client application interpret the data supplied by the endpoint SDK.
-Kaa developer can provision the configuration schema using Administration UI (see image below) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO).
+Kaa developer can provision the configuration schema using Administration UI (see image below) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema).
 
 ![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
 
@@ -74,10 +74,9 @@ updating fields selectively, leaving some of them without any change if necessar
 
 ## User-specific configuration management
 
-The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) allows 
-updating configuration data for the specific user under the application. The user-specific
-configuration management implements the same approach as in [Group-specific configuration](#group-specific-configuration-management) management,
-based on the override schema and override algorithm.
+The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editUserConfiguration)
+allows updating configuration data for the specific user under the application. The user-specific configuration management implements the same approach as in
+[Group-specific configuration](#group-specific-configuration-management) management, based on the override schema and override algorithm.
 
 >**NOTE:**
 > Since each endpoint belongs to only one user at a time, the override algorithm does not support data set merges as in the group-specific

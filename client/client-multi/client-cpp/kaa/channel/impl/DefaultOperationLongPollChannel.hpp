@@ -40,7 +40,7 @@ namespace kaa {
 
 class DefaultOperationLongPollChannel : public IDataChannel {
 public:
-    DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context);
+    DefaultOperationLongPollChannel(IKaaChannelManager& channelManager, const KeyPair& clientKeys, IKaaClientContext &context);
     virtual ~DefaultOperationLongPollChannel();
 
     virtual void sync(TransportType type);
@@ -104,7 +104,7 @@ private:
     bool firstStart_;
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;
-    IKaaChannelManager *channelManager_;
+    IKaaChannelManager& channelManager_;
     std::shared_ptr<IPTransportInfo> currentServer_;
     HttpDataProcessor httpDataProcessor_;
     HttpClient httpClient_;

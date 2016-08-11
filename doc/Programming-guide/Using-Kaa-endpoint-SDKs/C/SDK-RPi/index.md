@@ -5,8 +5,7 @@ permalink: /:path/
 sort_idx: 60
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -21,12 +20,12 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 
 **Verified against:**
 
- - **Host OS:** **TODO [KAA-1198](http://jira.kaaproject.org/browse/KAA-1198): Verify against Ubuntu 14.04 64-bit LTS**
+ - **Host OS:** **Ubuntu 14.04 64-bit LTS**
  - **Target OS:** Raspbian Jessie (2015-11-21)
 
 1. Install build prerequisites.
 
-        sudo apt-get install cmake build-essentials
+        sudo apt-get install cmake build-essential
 
 1. Install toolchain.
 

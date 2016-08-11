@@ -37,7 +37,7 @@ const std::map<TransportType, ChannelDirection> DefaultOperationLongPollChannel:
                 { TransportType::EVENT, ChannelDirection::DOWN }
         };
 
-DefaultOperationLongPollChannel::DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
+DefaultOperationLongPollChannel::DefaultOperationLongPollChannel(IKaaChannelManager& channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
     : clientKeys_(clientKeys), work_(io_), pollThread_()
     , stopped_(true), isShutdown_(false), isPaused_(false), connectionInProgress_(false), taskPosted_(false), firstStart_(true)
     , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
@@ -151,7 +151,7 @@ void DefaultOperationLongPollChannel::executeTask()
         KAA_MUTEX_LOCKED("conditionMutex_");
         KAA_CONDITION_NOTIFY_ALL(waitCondition_);
         if (isServerFailed) {
-            channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_),
+            channelManager_.onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_),
                                             KaaFailoverReason::NO_CONNECTIVITY);
         }
         return;

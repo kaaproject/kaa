@@ -73,6 +73,9 @@ public class ApplicationServiceImpl extends AbstractAdminService implements Appl
             if (!isEmpty(application.getId())) {
                 checkApplicationId(application.getId());
             }
+            if (!isEmpty(application.getTenantId())) {
+                checkTenantId(application.getTenantId());
+            }
             application.setTenantId(getTenantId());
             return controlService.editApplication(application);
         } catch (Exception e) {

@@ -128,7 +128,6 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     error = kaa_context_create(kaa_context_p, logger);
     if (error) {
         KAA_LOG_FATAL(logger, error, "Failed to create Kaa context");
-        kaa_log_destroy(logger);
         *kaa_context_p = NULL;
         return error;
     }
@@ -140,8 +139,6 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     error = kaa_init_keys();
     if (error) {
         KAA_LOG_ERROR(logger, error, "Failed to initialize keys");
-        kaa_context_destroy(*kaa_context_p);
-        kaa_log_destroy(logger);
         return error;
     }
 

@@ -56,7 +56,7 @@ set BOTAN_ROOT=C:\local\%BOTAN_SRC%\%BUILD_PLATFORM%
 set BOTAN_URL=https://github.com/randombit/botan/archive/1.11.28.tar.gz
 
 @REM Sqlite configuration
-set SQLITE_SRC=sqlite-autoconf-3120200
+set SQLITE_SRC=sqlite-autoconf
 set SQLITE_ROOT=C:\local\%SQLITE_SRC%\
 set SQLITE_URL=https://www.sqlite.org/2016/sqlite-autoconf-3120200.tar.gz
 
