@@ -127,7 +127,6 @@ Copyright 2014-2016 CyberVision, Inc.
         <hsqldb.version>2.3.2</hsqldb.version>
         <ant.version>1.9.4</ant.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
-        <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
         <jetty.version>9.2.2.v20140723</jetty.version>
         <kafka.clients.version>0.8.2.0</kafka.clients.version>
         <guava-gwt.version>18.0</guava-gwt.version>
@@ -1323,11 +1322,6 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>co.cask.cdap</groupId>
-                <artifactId>cdap-stream-client</artifactId>
-                <version>${cdap-stream-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
