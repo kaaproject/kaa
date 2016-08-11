@@ -1,0 +1,33 @@
+# Database name
+db_name={{JDBC_DB_NAME}}
+
+# Specific configurations for DAO layer
+# Max wait time in seconds for history dao class. Custom property for Kaa History Service.
+dao_max_wait_time=5
+
+# specify hibernate sql dialect for mariaDB
+hibernate_dialect={{HIBERNATE_DIALECT}}
+
+# specify if hibernate will format sql request
+hibernate_format_sql=false
+
+# specify if show hibernate sql request
+hibernate_show_sql=false
+
+# specify hibernate hbm2ddl strategy
+hibernate_hbm2ddl_auto=update
+
+# specify jdbc mariaDB driver class
+jdbc_driver_className={{JDBC_DRIVER_CLASSNAME}}
+
+# specify jdbc database user name
+jdbc_username={{JDBC_USERNAME}}
+
+# specify jdbc mariaDB database password root
+jdbc_password={{JDBC_PASSWORD}}
+
+# specify jdbc database hosts and ports
+jdbc_host_port={{JDBC_HOST}}:{{JDBC_PORT}}
+
+# specify jdbc database provider name
+sql_provider_name={{SQL_PROVIDER_NAME}}
