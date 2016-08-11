@@ -85,6 +85,14 @@ public class Utils {
         }
     }
 
+    public static void checkEmailFormat(String email) throws KaaAdminServiceException {
+        String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
+                "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        if (email == null || !email.matches(EMAIL_REGEX)) {
+            throw new KaaAdminServiceException("Entered email is not valid or empty!", ServiceErrorCode.INVALID_ARGUMENTS);
+        }
+    }
+
     public static AuthUserDto getCurrentUser() throws KaaAdminServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AuthUserDto) {

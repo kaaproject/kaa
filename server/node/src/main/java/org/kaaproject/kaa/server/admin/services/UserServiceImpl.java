@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static org.kaaproject.kaa.server.admin.services.util.Utils.checkEmailUniquieness;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.checkNotNull;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkEmailFormat;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
@@ -120,6 +121,8 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
                     }
                 }
 
+                checkEmailFormat(user.getMail());
+
                 checkEmailUniquieness(
                         user.getMail(),
                         userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet())
@@ -200,17 +203,6 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             throw Utils.handleException(e);
         }
         return tenantAdminList;
-    }
-
-
-    private void checkUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
-        if (isEmpty(userProfileUpdateDto.getFirstName())) {
-            throw new IllegalArgumentException("First name is not valid.");
-        } else if (isEmpty(userProfileUpdateDto.getLastName())) {
-            throw new IllegalArgumentException("Last name is not valid.");
-        } else if (isEmpty(userProfileUpdateDto.getMail())) {
-            throw new IllegalArgumentException("Mail is not valid.");
-        }
     }
 
 }
