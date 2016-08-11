@@ -274,7 +274,7 @@ public class UserController extends AbstractAdminController {
 
 
     @ApiOperation(value = "Get tenant admins based on tenant id",
-     notes="Gets the tenant admin by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.")
+     notes="Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified tenantId is not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
