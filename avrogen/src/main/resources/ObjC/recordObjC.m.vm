@@ -62,6 +62,32 @@ $initstring {
     return @"$schema.getFullName()";
 }
 
+- (NSString *)description {
+    NSMutableString *fieldsDescription = [NSMutableString new]; 
+
+#foreach($field in $schema.getFields())
+#set ($field_name = $StyleUtils.fixCamelHumps($field.name()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroBoolean($field_schema)) 
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %hhd \n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroInt($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroLong($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld \n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroFloat($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %f \n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroDouble($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %f \n", @"$field_name", self.$field.name()]];
+#elseif ("$field_schema.getType()" == "ENUM")
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"$field_name", self.$field.name()]];
+#else
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"$field_name", self.$field.name()]];
+#end
+#end
+
+    return fieldsDescription;
+}
+
 ###if ($TypeConverter.isTypeOut($schema))
 - (void)serialize:(avro_writer_t)writer {
 #foreach ($field in $schema.getFields())
@@ -249,6 +275,8 @@ $initstring {
     #pragma unused(reader)
 #end
 }
+
+
 
 ## Generating serialize/deserialize/getSize methods for Unions
 

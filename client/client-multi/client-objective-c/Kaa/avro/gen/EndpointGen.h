@@ -24,6 +24,7 @@
 #import "KAAUnion.h"
 
 
+
 @interface TopicState : AvroBased
 
 @property(nonatomic) int64_t topicId;
@@ -34,11 +35,13 @@
 @end
 
 
+
 typedef enum {
     SYNC_RESPONSE_STATUS_NO_DELTA,
     SYNC_RESPONSE_STATUS_DELTA,
     SYNC_RESPONSE_STATUS_RESYNC,
 } SyncResponseStatus;
+
 
 
 typedef enum {
@@ -47,16 +50,19 @@ typedef enum {
 } NotificationType;
 
 
+
 typedef enum {
     SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION,
     SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION,
 } SubscriptionType;
 
 
+
 typedef enum {
     SUBSCRIPTION_COMMAND_TYPE_ADD,
     SUBSCRIPTION_COMMAND_TYPE_REMOVE,
 } SubscriptionCommandType;
+
 
 
 typedef enum {
@@ -67,12 +73,14 @@ typedef enum {
 } SyncResponseResultType;
 
 
+
 typedef enum {
     LOG_DELIVERY_ERROR_CODE_NO_APPENDERS_CONFIGURED,
     LOG_DELIVERY_ERROR_CODE_APPENDER_INTERNAL_ERROR,
     LOG_DELIVERY_ERROR_CODE_REMOTE_CONNECTION_ERROR,
     LOG_DELIVERY_ERROR_CODE_REMOTE_INTERNAL_ERROR,
 } LogDeliveryErrorCode;
+
 
 
 typedef enum {
@@ -86,6 +94,7 @@ typedef enum {
 } UserAttachErrorCode;
 
 
+
 @interface SubscriptionCommand : AvroBased
 
 @property(nonatomic) int64_t topicId;
@@ -94,6 +103,7 @@ typedef enum {
 - (instancetype)initWithTopicId:(int64_t)topicId command:(SubscriptionCommandType)command;
 
 @end
+
 
 
 @interface UserAttachRequest : AvroBased
@@ -105,6 +115,7 @@ typedef enum {
 - (instancetype)initWithUserVerifierId:(NSString *)userVerifierId userExternalId:(NSString *)userExternalId userAccessToken:(NSString *)userAccessToken;
 
 @end
+
 
 
 @interface UserAttachResponse : AvroBased
@@ -136,6 +147,7 @@ typedef enum {
 @end
 
 
+
 @interface UserAttachNotification : AvroBased
 
 @property(nonatomic, strong) NSString *userExternalId;
@@ -144,6 +156,7 @@ typedef enum {
 - (instancetype)initWithUserExternalId:(NSString *)userExternalId endpointAccessToken:(NSString *)endpointAccessToken;
 
 @end
+
 
 
 @interface UserDetachNotification : AvroBased
@@ -155,6 +168,7 @@ typedef enum {
 @end
 
 
+
 @interface EndpointAttachRequest : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -163,6 +177,7 @@ typedef enum {
 - (instancetype)initWithRequestId:(int32_t)requestId endpointAccessToken:(NSString *)endpointAccessToken;
 
 @end
+
 
 
 @interface EndpointAttachResponse : AvroBased
@@ -185,6 +200,7 @@ typedef enum {
 @end
 
 
+
 @interface EndpointDetachRequest : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -195,6 +211,7 @@ typedef enum {
 @end
 
 
+
 @interface EndpointDetachResponse : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -203,6 +220,7 @@ typedef enum {
 - (instancetype)initWithRequestId:(int32_t)requestId result:(SyncResponseResultType)result;
 
 @end
+
 
 
 @interface Event : AvroBased
@@ -236,6 +254,7 @@ typedef enum {
 @end
 
 
+
 @interface EventListenersRequest : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -244,6 +263,7 @@ typedef enum {
 - (instancetype)initWithRequestId:(int32_t)requestId eventClassFQNs:(NSArray *)eventClassFQNs;
 
 @end
+
 
 
 @interface EventListenersResponse : AvroBased
@@ -266,11 +286,13 @@ typedef enum {
 @end
 
 
+
 @interface EventSequenceNumberRequest : AvroBased
 
 
 
 @end
+
 
 
 @interface EventSequenceNumberResponse : AvroBased
@@ -280,6 +302,7 @@ typedef enum {
 - (instancetype)initWithSeqNum:(int32_t)seqNum;
 
 @end
+
 
 
 @interface Notification : AvroBased
@@ -313,6 +336,7 @@ typedef enum {
 @end
 
 
+
 @interface Topic : AvroBased
 
 @property(nonatomic) int64_t id;
@@ -324,6 +348,7 @@ typedef enum {
 @end
 
 
+
 @interface LogEntry : AvroBased
 
 @property(nonatomic, strong) NSData *data;
@@ -331,6 +356,7 @@ typedef enum {
 - (instancetype)initWithData:(NSData *)data;
 
 @end
+
 
 
 @interface SyncRequestMetaData : AvroBased
@@ -372,6 +398,7 @@ typedef enum {
 @end
 
 
+
 @interface ProfileSyncRequest : AvroBased
 
 @property(nonatomic, strong) KAAUnion *endpointPublicKey;
@@ -401,6 +428,7 @@ typedef enum {
 @end
 
 
+
 @interface ProtocolVersionPair : AvroBased
 
 @property(nonatomic) int32_t id;
@@ -411,6 +439,7 @@ typedef enum {
 @end
 
 
+
 @interface BootstrapSyncRequest : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -419,6 +448,7 @@ typedef enum {
 - (instancetype)initWithRequestId:(int32_t)requestId supportedProtocols:(NSArray *)supportedProtocols;
 
 @end
+
 
 
 @interface ConfigurationSyncRequest : AvroBased
@@ -438,6 +468,7 @@ typedef enum {
 # endif // KAA_UNION_BOOLEAN_OR_NULL_H_
 
 @end
+
 
 
 @interface NotificationSyncRequest : AvroBased
@@ -479,6 +510,7 @@ typedef enum {
 @end
 
 
+
 @interface UserSyncRequest : AvroBased
 
 @property(nonatomic, strong) KAAUnion *userAttachRequest;
@@ -515,6 +547,7 @@ typedef enum {
 # endif // KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_H_
 
 @end
+
 
 
 @interface EventSyncRequest : AvroBased
@@ -555,6 +588,7 @@ typedef enum {
 @end
 
 
+
 @interface LogSyncRequest : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -574,6 +608,7 @@ typedef enum {
 @end
 
 
+
 @interface ProtocolMetaData : AvroBased
 
 @property(nonatomic) int32_t accessPointId;
@@ -583,6 +618,7 @@ typedef enum {
 - (instancetype)initWithAccessPointId:(int32_t)accessPointId protocolVersionInfo:(ProtocolVersionPair *)protocolVersionInfo connectionInfo:(NSData *)connectionInfo;
 
 @end
+
 
 
 @interface BootstrapSyncResponse : AvroBased
@@ -595,6 +631,7 @@ typedef enum {
 @end
 
 
+
 @interface ProfileSyncResponse : AvroBased
 
 @property(nonatomic) SyncResponseStatus responseStatus;
@@ -602,6 +639,7 @@ typedef enum {
 - (instancetype)initWithResponseStatus:(SyncResponseStatus)responseStatus;
 
 @end
+
 
 
 @interface ConfigurationSyncResponse : AvroBased
@@ -633,6 +671,7 @@ typedef enum {
 @end
 
 
+
 @interface NotificationSyncResponse : AvroBased
 
 @property(nonatomic) SyncResponseStatus responseStatus;
@@ -660,6 +699,7 @@ typedef enum {
 # endif // KAA_UNION_ARRAY_TOPIC_OR_NULL_H_
 
 @end
+
 
 
 @interface UserSyncResponse : AvroBased
@@ -720,6 +760,7 @@ typedef enum {
 @end
 
 
+
 @interface EventSyncResponse : AvroBased
 
 @property(nonatomic, strong) KAAUnion *eventSequenceNumberResponse;
@@ -758,6 +799,7 @@ typedef enum {
 @end
 
 
+
 @interface LogDeliveryStatus : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -778,6 +820,7 @@ typedef enum {
 @end
 
 
+
 @interface LogSyncResponse : AvroBased
 
 @property(nonatomic, strong) KAAUnion *deliveryStatuses;
@@ -796,6 +839,7 @@ typedef enum {
 @end
 
 
+
 @interface RedirectSyncResponse : AvroBased
 
 @property(nonatomic) int32_t accessPointId;
@@ -803,6 +847,7 @@ typedef enum {
 - (instancetype)initWithAccessPointId:(int32_t)accessPointId;
 
 @end
+
 
 
 @interface ExtensionSync : AvroBased
@@ -813,6 +858,7 @@ typedef enum {
 - (instancetype)initWithExtensionId:(int32_t)extensionId payload:(NSData *)payload;
 
 @end
+
 
 
 @interface SyncRequest : AvroBased
@@ -914,6 +960,7 @@ typedef enum {
 @end
 
 
+
 @interface SyncResponse : AvroBased
 
 @property(nonatomic) int32_t requestId;
@@ -1012,6 +1059,7 @@ typedef enum {
 # endif // KAA_UNION_ARRAY_EXTENSION_SYNC_OR_NULL_H_
 
 @end
+
 
 
 @interface TopicSubscriptionInfo : AvroBased
