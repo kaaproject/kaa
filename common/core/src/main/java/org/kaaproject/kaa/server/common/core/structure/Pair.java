@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.server.common.core.structure;
 
-public class Pair<T1, T2> {
+import java.io.Serializable;
+
+public class Pair<T1, T2> implements Serializable {
 
     private final T1 v1;
     private final T2 v2;

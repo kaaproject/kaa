@@ -83,7 +83,7 @@ void ConfigurationManager::updateConfiguration(const std::uint8_t* data, const s
     configurationHash_ = EndpointObjectHash(data, dataSize);
 
     KAA_LOG_TRACE(boost::format("Calculated configuration hash: %1%") %
-            LoggingUtils::ByteArrayToString(configurationHash_.getHashDigest()));
+            LoggingUtils::toString(configurationHash_.getHashDigest()));
 }
 
 void ConfigurationManager::loadConfiguration()

@@ -16,28 +16,25 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.Date;
-
-
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
-
 import com.datastax.driver.core.utils.Bytes;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.Date;
+
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
 
 @Table(name = CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointNotification implements EndpointNotification, Serializable {
@@ -69,10 +66,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
     private Date expiredAt;
     @Column(name = CassandraModelConstants.ET_NF_TOPIC_ID_PROPERTY)
     private String topicId;
-    
-    //@Column(name = OPT_LOCK)
-    //private Long version;
-
 
     public CassandraEndpointNotification() {
     }

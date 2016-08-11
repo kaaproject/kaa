@@ -71,8 +71,8 @@ public class LogSchemasActivity extends AbstractBaseCtlSchemasActivity<LogSchema
 
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
+        super.onCustomRowAction(event);
         Integer schemaVersion = Integer.valueOf(event.getClickedId());
-        final int action = event.getAction();
 
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
@@ -85,15 +85,6 @@ public class LogSchemasActivity extends AbstractBaseCtlSchemasActivity<LogSchema
             }
         };
 
-        switch (action) {
-            case KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY:
-                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
-                break;
-            case KaaRowAction.DOWNLOAD_SCHEMA:
-                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_SCHEMA, callback);
-                break;
-            default:
-                break;
-        }
+        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
     }
 }

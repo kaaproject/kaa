@@ -1,3 +1,10 @@
+var VERSIONSELECT_ID = 'version-select';
+var SEARCHBOX_ID     = 'search-box';
+var SEARCHRESULTS_ID = 'search-results';
+var DEFAULT_URL      = '404.html';
+var DEFAULT_TITLE    = 'No title';
+var DEFAULT_TEXT     = '...';
+
 var DOM = (function () {
   var PAGE_TITLE='page-title';
   var MARKDOWN_TOC_ID='markdown-toc';
@@ -81,4 +88,70 @@ $('[data-toggle=offcanvas]').click(function() {
     $('#xs-menu').toggleClass('visible-xs').toggleClass('hidden-xs');
     $('#btnShow').toggle();
 });
+});
+
+var COLLAPSING_CODE_BLOCS = (function () {
+
+  var CODE_BLOCK_SELECTOR       = 'code';
+  var COLLAPSE_CLASS            = 'collapse';
+  var COLLAPSE_BUTTON_CLASS     = COLLAPSE_CLASS + '_control';
+  var COLLAPSE_BUTTON_SELECTOR  = '.' + COLLAPSE_BUTTON_CLASS;
+  var MORE_CLASS                = 'more';
+
+  var instance = null;
+
+  function init() {
+
+    function formatHTML(smallText, fullText, id, moreButtonText) {
+      return smallText +'<div id="id' + id + '" class="' + COLLAPSE_CLASS + '">' +
+      fullText + '</div>' + '<br><button data-toggle="' + COLLAPSE_CLASS + '" data-target="#id' +
+      id + '" class="' + COLLAPSE_BUTTON_CLASS + ' ' + MORE_CLASS + '">' + moreButtonText + '</button>';
+    }
+
+    function attachCollapseHandler(moreButtonText, lessButtonText) {
+      $(COLLAPSE_BUTTON_SELECTOR).click(function(){
+         if( $(this).hasClass(MORE_CLASS)) {
+             $(this).removeClass(MORE_CLASS);
+             $(this).html(lessButtonText);
+         } else {
+             $(this).addClass(MORE_CLASS);
+             $(this).html(moreButtonText);
+         }
+      });
+    }
+
+    function processAllCodeBlocs(linesToShow, moreButtonText, lessButtonText) {
+      $(CODE_BLOCK_SELECTOR).each(function(index) {
+        var content = UTILS.splitByLines($(this).html());
+        if(content.length > linesToShow) {
+          var SMALL_TEXT = content.slice(0, linesToShow).join("\n");
+          var FULL_TEXT = content.slice(linesToShow).join("\n");
+          $(this).html(formatHTML(SMALL_TEXT, FULL_TEXT, index, moreButtonText));
+        }
+      });
+      attachCollapseHandler(moreButtonText, lessButtonText);
+    }
+
+    return {
+      processAllCodeBlocs : processAllCodeBlocs,
+    };
+  }
+
+  function getInstance() {
+    if( ! instance ) {
+      instance = new init();
+    }
+    return instance;
+  }
+
+  return {
+    getInstance : getInstance
+  };
+}());
+
+$(document).ready(function(){/* off-canvas sidebar toggle */
+  var SHOW_LINES = 6;  // How many lines are shown by default
+  var MORE_TEXT = "Show full code"; // More button text
+  var LESS_TEXT = "Show less code"; // LESS button text
+  COLLAPSING_CODE_BLOCS.getInstance().processAllCodeBlocs(SHOW_LINES, MORE_TEXT, LESS_TEXT);
 });

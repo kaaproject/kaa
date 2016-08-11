@@ -22,15 +22,17 @@ To create a log appender of the MongoDB storage type, do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to _Mongo_.
-4. Fill in the Mongo log appender configuration form.
-5. Click **Add** button. Log appender is ready and operational at this point.
-
+3. Set the log appender type to _MongoDB_.
 ![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
+4. Fill in the MongoDB log appender [configuration](#configuration) form.
+5. Click **Add** button. Log appender is ready and operational at this point.
+![MongoDB log appender configuration part 1](attach/MongoDB-log-appender-configuration1.png)
+![MongoDB log appender configuration part 2](attach/MongoDB-log-appender-configuration2.png)
 
 # Creating MongoDB log appender with Admin REST API
 
-It is also possible to create a MongoDB log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a MongoDB log appender for your application by using
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the MongoDB log appender via Admin Rest API.
 
 ## Configuration

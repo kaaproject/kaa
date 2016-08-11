@@ -419,7 +419,6 @@ Key differences between contributing source code and documentation are:
   * [Jekyll](https://jekyllrb.com/)
   * [Jekyll-sitemap](https://github.com/jekyll/jekyll-sitemap)
   * [Jekyll-gist](https://github.com/jekyll/jekyll-gist)
-  * [Jekyll-paginate](https://github.com/jekyll/jekyll-paginate)
   * [Rouge](https://github.com/jneen/rouge)
 
    See the detailed installation instructions in the table below.
@@ -439,7 +438,7 @@ Key differences between contributing source code and documentation are:
 ```bash
 sudo apt-get update
 sudo apt-get install -y git ruby2.0 ruby2.0-dev build-essential
-sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
+sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap rouge
 ```
 
 </div><div id="Platform2" class="tab-pane fade" markdown="1" >
@@ -447,7 +446,7 @@ sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
 ```bash
 sudo apt-get update
 sudo apt-get install -y git build-essential ruby ruby-dev ruby-ffi
-sudo gem install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
+sudo gem install -N jekyll jekyll-gist jekyll-sitemap rouge
 ```
 
 </div><div id="Platform3" class="tab-pane fade" markdown="1" >
@@ -455,7 +454,7 @@ sudo gem install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
 ```bash
 sudo yum install -y ruby git ruby-devel
 sudo yum groupinstall -y 'Development Tools'
-sudo gem install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
+sudo gem install -N jekyll jekyll-gist jekyll-sitemap rouge
 ```
 
 </div><div id="Platform4" class="tab-pane fade" markdown="1" >
