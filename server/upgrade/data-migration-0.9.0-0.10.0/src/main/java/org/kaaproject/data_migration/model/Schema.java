@@ -18,7 +18,7 @@ public class Schema {
 
     private String schems;
 
-    private SchemaType type;
+    private String type;
 
 
     public Long getId() {
@@ -85,15 +85,12 @@ public class Schema {
         this.schems = schems;
     }
 
-    public SchemaType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(SchemaType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public enum SchemaType {
-        CONFIGURATION,NOTIFICATION, EVENTS, LOG;
-    }
 }

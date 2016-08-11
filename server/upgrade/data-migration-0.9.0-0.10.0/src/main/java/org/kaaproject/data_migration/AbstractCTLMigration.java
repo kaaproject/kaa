@@ -29,17 +29,6 @@ public abstract class AbstractCTLMigration {
     public void beforeTransform() throws SQLException {
         // delete relation between <feature>_schems to schems
         dd.dropUnnamedFK(getName() + "_schems", "schems");
-
-        // change FK constraint between table that contains data and appropriate <feature>_schems table
-        dd.dropUnnamedFK(getName(), getName() + "_schems");
-        dd.alterTable(getName())
-                .add(constraint("FK_" + getName() + "_schems_id")
-                        .foreignKey(getName() + "_schems_id")
-                        .references(getName() + "_schems", "id")
-                        .onDelete(CASCADE)
-                        .onUpdate(CASCADE)
-                )
-                .execute();
     }
 
 
@@ -52,20 +41,24 @@ public abstract class AbstractCTLMigration {
         String toDelete = schemas.stream().map(s -> s.getId().toString()).collect(joining(", "));
         runner.update(connection, "delete from schems where id in (" + toDelete + ")");
 
-        // set Type of schema
-        schemas.forEach( s -> s.setType(getType()));
+        // set Type of schema -- equals to name of the table
+        schemas.forEach( s -> s.setType(getName()));
 
         return schemas;
     }
 
 
     public void afterTransform() throws SQLException {
-
+        dd.alterTable(getName() + "_schems")
+                .add(constraint("FK_" + getName() + "_base_schems_id")
+                        .foreignKey("id")
+                        .references("base_schems", "id")
+                        .onDelete(CASCADE)
+                        .onUpdate(CASCADE)
+                )
+                .execute();
     }
-
-
 
     protected abstract String getName();
 
-    protected abstract Schema.SchemaType getType();
 }
