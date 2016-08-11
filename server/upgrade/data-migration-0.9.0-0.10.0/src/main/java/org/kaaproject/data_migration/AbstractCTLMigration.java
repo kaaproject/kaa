@@ -35,7 +35,9 @@ public abstract class AbstractCTLMigration {
 
     protected List<Schema> transform() throws SQLException {
         // fetch schemas of appropriate feature like configuration
-        List<Schema> schemas = runner.query(connection, "select f.id as id, created_time as createdTime, created_username as createdUsername, description, name, schems, version, application_id as appId " +
+        List<Schema> schemas = runner.query(connection, "select " +
+                "f.id as id, created_time as createdTime, created_username as createdUsername, " +
+                "description, name, schems, version, application_id as appId " +
                 "from " + getName() + "_schems f join schems s on f.id = s.id", new BeanListHandler<>(Schema.class));
 
         // delete the fetched ids from schema table

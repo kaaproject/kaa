@@ -21,6 +21,21 @@ public class Schema {
     private String type;
 
 
+    public Schema() {
+    }
+
+    public Schema(Long id, int version, String name, String description, String createdUsername, long createdTime, Long appId, String schems, String type) {
+        this.id = id;
+        this.version = version;
+        this.name = name;
+        this.description = description;
+        this.createdUsername = createdUsername;
+        this.createdTime = createdTime;
+        this.appId = appId;
+        this.schems = schems;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }

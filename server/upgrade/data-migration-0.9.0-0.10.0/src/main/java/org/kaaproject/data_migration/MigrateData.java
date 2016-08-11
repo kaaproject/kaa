@@ -28,15 +28,18 @@ public class MigrateData {
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
             CTLConfigurationMigration configurationMigration = new CTLConfigurationMigration(conn);
+            CTLEventsMigration eventsMigration = new CTLEventsMigration(conn);
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 
 
             //before phase
             configurationMigration.beforeTransform();
+            eventsMigration.beforeTransform();
 
             // transform phase
             schemas.addAll(configurationMigration.transform());
+            schemas.addAll(eventsMigration.transform());
 
             //aggregation phase
             Map<Ctl, List<Schema>> ctlToSchemas = aggregation.aggregate(schemas);
@@ -46,7 +49,7 @@ public class MigrateData {
 
             //after phase
             configurationMigration.afterTransform();
-
+            eventsMigration.afterTransform();
 
         } catch (SQLException | IOException | ConfigurationGenerationException e) {
             DbUtils.rollbackAndCloseQuietly(conn);
