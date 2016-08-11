@@ -1,17 +1,17 @@
 package org.kaaproject.data_migration.model;
 
 public class CtlMetaInfo {
-
+    private final Long id;
     private final String fqn;
     private final Long appId;
     private final Long tenatnId;
 
-    public CtlMetaInfo(String fqn, Long appId, Long tenatnId) {
+    public CtlMetaInfo(Long id, String fqn, Long appId, Long tenatnId) {
+        this.id = id;
         this.fqn = fqn;
         this.appId = appId;
         this.tenatnId = tenatnId;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -20,13 +20,18 @@ public class CtlMetaInfo {
 
         CtlMetaInfo that = (CtlMetaInfo) o;
 
-        return fqn != null ? fqn.equals(that.fqn) : that.fqn == null;
+        if (!fqn.equals(that.fqn)) return false;
+        if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
+        return tenatnId != null ? tenatnId.equals(that.tenatnId) : that.tenatnId == null;
 
     }
 
     @Override
     public int hashCode() {
-        return fqn != null ? fqn.hashCode() : 0;
+        int result = fqn.hashCode();
+        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        result = 31 * result + (tenatnId != null ? tenatnId.hashCode() : 0);
+        return result;
     }
 
     public Long getAppId() {
@@ -39,5 +44,9 @@ public class CtlMetaInfo {
 
     public String getFqn() {
         return fqn;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

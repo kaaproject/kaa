@@ -60,6 +60,7 @@ public class CTLEventsMigration {
         runner = new QueryRunner();
     }
 
+    //TODO better remove to docs because it distracts you from reading code
     /** Steps to migrate
      *
      * 1. remember (id,schems) :event_schems_versions

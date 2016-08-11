@@ -1,6 +1,6 @@
 package org.kaaproject.data_migration.model;
 
-public class ConfigurationSchema {
+public class Schema {
 
     private Long id;
 
@@ -17,6 +17,8 @@ public class ConfigurationSchema {
     private Long appId;
 
     private String schems;
+
+    private String type;
 
 
     public Long getId() {
@@ -82,4 +84,13 @@ public class ConfigurationSchema {
     public void setSchems(String schems) {
         this.schems = schems;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }
