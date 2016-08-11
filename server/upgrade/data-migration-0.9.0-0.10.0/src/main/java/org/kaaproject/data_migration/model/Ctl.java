@@ -1,12 +1,17 @@
 package org.kaaproject.data_migration.model;
 
+
+import com.sun.istack.internal.NotNull;
+
 public class Ctl {
     private final Long id;
     private final CtlMetaInfo metaInfo;
+    private final String defaultRecord;
 
-    public Ctl(Long id, CtlMetaInfo metaInfo) {
+    public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
         this.id = id;
         this.metaInfo = metaInfo;
+        this.defaultRecord = defaultRecord;
     }
 
     @Override
@@ -16,14 +21,16 @@ public class Ctl {
 
         Ctl ctl = (Ctl) o;
 
-        if (id != null ? !id.equals(ctl.id) : ctl.id != null) return false;
-        return metaInfo.equals(ctl.metaInfo);
+        if (!metaInfo.equals(ctl.metaInfo)) return false;
+        return defaultRecord.equals(ctl.defaultRecord);
 
     }
 
     @Override
     public int hashCode() {
-        return metaInfo.hashCode();
+        int result = metaInfo.hashCode();
+        result = 31 * result + defaultRecord.hashCode();
+        return result;
     }
 
     public Long getId() {
@@ -32,5 +39,9 @@ public class Ctl {
 
     public CtlMetaInfo getMetaInfo() {
         return metaInfo;
+    }
+
+    public String getDefaultRecord() {
+        return defaultRecord;
     }
 }
