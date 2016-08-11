@@ -214,8 +214,18 @@ Before you start with C application code, some preparation is required.
 
 <div id="prep-obj-c" class="tab-pane fade" markdown="1" >
 
-</div>
+You have to make some preparations before start with Objective-C application code.
 
+1. If you haven't done, please install CocoaPods.
+2. Extract Kaa SDK, open it folder in terminal and run
+
+        sh build.sh compile
+3. Go to xCode and choose template of the iOS Single View Application. Name it "My First Kaa Application", choose Objective-C language and leave other fields default values.
+4. Link SDK to your project as described in <a href="http://kaaproject.github.io/kaa/doc/client-objective-c/latest/index.html?src=contextnav">Objective-C SDK Reference</a>.
+5. Make sure that your application builds successfully.
+6. Replace code of `ViewController.m` with code from [Application code](#application-code) section.
+
+</div>
 
 </div>
 
@@ -230,6 +240,12 @@ Now it is time to write application code that will send temperature data with th
   <li><a data-toggle="tab" href="#app-java">Java SDK</a></li>
   <li><a data-toggle="tab" href="#app-obj-c">Objective-C</a></li>
 </ul>
+
+<div class="tab-content">
+<div id="#app-obj-c" class="tab-pane fade in active" markdown="1" >
+
+
+</div>
 
 <div class="tab-content">
 <div id="app-c" class="tab-pane fade in active" markdown="1" >
@@ -399,6 +415,117 @@ int main(void)
 
 <div id="app-obj-c" class="tab-pane fade" markdown="1" >
 
+```objc
+#import "ViewController.h"
+
+@import Kaa;
+
+@interface ViewController () <KaaClientStateDelegate, ConfigurationDelegate, ProfileContainer>
+
+@property (nonatomic, strong) id<KaaClient> kaaClient;
+@property (nonatomic, weak) NSTimer *samplingTimer;
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    NSLog(@"Your first application started");
+
+    // Create a Kaa client and add a listener which displays the Kaa client status
+    // as soon as the Kaa client is started.
+    self.kaaClient = [KaaClientFactory clientWithStateDelegate:self];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *configurationPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"savedconfig.cfg"];
+
+    // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
+    [self.kaaClient setConfigurationStorage:[SimpleConfigurationStorage storageWithPath:configurationPath]];
+    
+    // Add a listener which displays the Kaa client configuration each time it is updated.
+    [self.kaaClient addConfigurationDelegate:self];
+    
+    [self.kaaClient setProfileContainer:self];
+    
+    // Start the Kaa client and connect it to the Kaa server.
+    [self.kaaClient start];
+}
+
+#pragma mark - Supporting methods
+
+- (void)createSamplingTimerWithInterval:(NSInteger)period {
+    if (self.samplingTimer) {
+        [self.samplingTimer invalidate];
+    }
+    self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:period target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
+}
+
+- (void)generateTemperature {
+    NSInteger upperTemperatureLimit = 32;
+    NSInteger lowerTemperatureLimit = 25;
+    NSInteger temperature = arc4random()%(upperTemperatureLimit - lowerTemperatureLimit) + lowerTemperatureLimit;
+    NSLog(@"Sampled temperature: %ld", temperature);
+    [self.kaaClient addLogRecord:[[KAADataCollection alloc] initWithTemperature:(int32_t)temperature]];
+}
+
+#pragma mark - Delegate methods
+
+- (void)onStarted {
+    NSLog(@"Kaa client started");
+    [self displayConfiguration];
+}
+
+- (void)onStopped {
+    NSLog(@"Kaa client stopped");
+}
+
+- (void)onStartFailureWithException:(NSException *)exception {
+    NSLog(@"START FAILURE: %@ : %@", exception.name, exception.reason);
+}
+
+- (void)onPaused {
+    NSLog(@"Client paused");
+}
+
+- (void)onPauseFailureWithException:(NSException *)exception {
+    NSLog(@"PAUSE FAILURE: %@ : %@", exception.name, exception.reason);
+}
+
+- (void)onResume {
+    NSLog(@"Client resumed");
+}
+
+- (void)onResumeFailureWithException:(NSException *)exception {
+    NSLog(@"RESUME FAILURE: %@ : %@", exception.name, exception.reason);
+}
+
+- (void)onStopFailureWithException:(NSException *)exception {
+    NSLog(@"STOP FAILURE: %@ : %@", exception.name, exception.reason);
+}
+
+- (KAAEmptyData *)getProfile {
+    return [[KAAEmptyData alloc] init];
+}
+
+- (void)onConfigurationUpdate:(KAAConfiguration *)configuration {
+    NSLog(@"Configuration was updated");
+    [self displayConfiguration];
+}
+
+- (void)displayConfiguration {
+    KAAConfiguration *configuration = [self.kaaClient getConfiguration];
+    NSLog(@"Now sampling period is %d", configuration.samplePeriod);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self createSamplingTimerWithInterval:configuration.samplePeriod];
+    });
+}
+
+@end
+
+```
+
 </div>
 
 </div>
@@ -438,6 +565,11 @@ To launch C application next steps should be performed.
 </div>
 
 <div id="run-obj-c" class="tab-pane fade" markdown="1" >
+
+To launch Objective-C application next steps should be performed.
+
+1. Make sure that you have choosen "My First Kaa Application" target.
+2. Click on "play" button.
 
 </div>
 
