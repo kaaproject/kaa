@@ -1,26 +1,24 @@
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.data_migration;
 
-import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
-import org.kaaproject.data_migration.model.Schema;
-import org.kaaproject.data_migration.model.Ctl;
-import org.kaaproject.data_migration.model.CtlMetaInfo;
-import org.kaaproject.data_migration.utils.datadefinition.DataDefinition;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
-import org.kaaproject.kaa.server.common.core.configuration.RawData;
-import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
-import org.kaaproject.kaa.server.common.core.schema.RawSchema;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
 
-import static java.util.stream.Collectors.joining;
 import static org.kaaproject.data_migration.utils.datadefinition.Constraint.constraint;
 import static org.kaaproject.data_migration.utils.datadefinition.ReferenceOptions.CASCADE;
 
@@ -37,7 +35,7 @@ public class CTLConfigurationMigration extends AbstractCTLMigration {
 
         // change FK constraint between table that contains data and appropriate <feature>_schems table
         dd.dropUnnamedFK("configuration", "configuration_schems");
-        dd.alterTable(getName())
+        dd.alterTable(getPrefixTableName())
                 .add(constraint("FK_configuration_schems_id")
                         .foreignKey("configuration_schems_id")
                         .references("configuration_schems", "id")
@@ -48,7 +46,7 @@ public class CTLConfigurationMigration extends AbstractCTLMigration {
     }
 
     @Override
-    protected String getName() {
+    protected String getPrefixTableName() {
         return "configuration";
     }
 
