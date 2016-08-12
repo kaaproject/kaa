@@ -20,26 +20,31 @@ public class MigrateData {
 
     private static Connection conn;
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
         try {
             List<Schema> schemas = new ArrayList<>();
             conn = MARIADB.getDs().getConnection();
             QueryRunner runner = new QueryRunner();
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
-            CTLConfigurationMigration configurationMigration = new CTLConfigurationMigration(conn);
-            CTLEventsMigration eventsMigration = new CTLEventsMigration(conn);
+
+            List<AbstractCTLMigration> migrationList = new ArrayList<>();
+            migrationList.add(new CTLConfigurationMigration(conn));
+//            migrationList.add(new CTLEventsMigration(conn));
+
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 
 
             //before phase
-            configurationMigration.beforeTransform();
-            eventsMigration.beforeTransform();
+            for (AbstractCTLMigration m : migrationList) {
+                m.beforeTransform();
+            }
 
             // transform phase
-            schemas.addAll(configurationMigration.transform());
-            schemas.addAll(eventsMigration.transform());
+            for (AbstractCTLMigration m : migrationList) {
+                schemas.addAll(m.transform());
+            }
 
             //aggregation phase
             Map<Ctl, List<Schema>> ctlToSchemas = aggregation.aggregate(schemas);
@@ -47,13 +52,16 @@ public class MigrateData {
             //base schema records creation phase
             recordsCreation.create(ctlToSchemas);
 
+
             //after phase
-            configurationMigration.afterTransform();
-            eventsMigration.afterTransform();
+            for (AbstractCTLMigration m : migrationList) {
+                m.afterTransform();
+            }
+;
 
         } catch (SQLException | IOException | ConfigurationGenerationException e) {
             DbUtils.rollbackAndCloseQuietly(conn);
-        }  finally {
+        } finally {
             DbUtils.closeQuietly(conn);
         }
     }

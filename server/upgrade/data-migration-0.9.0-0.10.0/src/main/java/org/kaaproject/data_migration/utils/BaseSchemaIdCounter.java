@@ -8,12 +8,12 @@ public class BaseSchemaIdCounter {
 
     // can be called only once
     public static void setInitValue(Long value) {
-        BaseSchemaIdCounter i = getInstance();
+        getInstance();
         if(isInitMethodCalled) {
             return;
         }
         isInitMethodCalled = true;
-        i.value = value;
+        instance.value = value;
     }
 
     public Long getAndShift(Long shift) {
@@ -27,7 +27,7 @@ public class BaseSchemaIdCounter {
     }
 
     public static BaseSchemaIdCounter getInstance() {
-        if(instance != null) {
+        if(instance == null) {
             instance = new BaseSchemaIdCounter();
         }
         return instance;
