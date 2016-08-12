@@ -429,6 +429,8 @@ int main(void)
 @end
 
 static const NSInteger defaultSamplePeriod = 1;
+static const NSInteger upperTemperatureLimit = 35;
+static const NSInteger lowerTemperatureLimit = 20;
 
 @implementation ViewController
 
@@ -477,8 +479,9 @@ static const NSInteger defaultSamplePeriod = 1;
     if (period >= 0) {
         if (period == 0) {
             self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:defaultSamplePeriod target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
+        } else {
+            self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:period target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
         }
-        self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:period target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
     }
 }
 
@@ -487,8 +490,6 @@ static const NSInteger defaultSamplePeriod = 1;
  */
 
 - (void)generateTemperature {
-    NSInteger upperTemperatureLimit = 35;
-    NSInteger lowerTemperatureLimit = 20;
     NSInteger temperature = arc4random()%(upperTemperatureLimit - lowerTemperatureLimit) + lowerTemperatureLimit;
     NSLog(@"Sampled temperature: %ld", temperature);
     [self.kaaClient addLogRecord:[[KAADataCollection alloc] initWithTemperature:(int32_t)temperature]];
