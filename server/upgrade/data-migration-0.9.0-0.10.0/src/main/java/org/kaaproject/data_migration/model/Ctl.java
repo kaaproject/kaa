@@ -1,8 +1,6 @@
 package org.kaaproject.data_migration.model;
 
 
-import com.sun.istack.internal.NotNull;
-
 public class Ctl {
     private final Long id;
     private final CtlMetaInfo metaInfo;

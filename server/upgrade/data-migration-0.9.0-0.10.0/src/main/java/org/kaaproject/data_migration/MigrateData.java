@@ -27,14 +27,16 @@ public class MigrateData {
             QueryRunner runner = new QueryRunner();
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
-
+            UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn);
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
-//            migrationList.add(new CTLEventsMigration(conn));
+            migrationList.add(new CTLEventsMigration(conn));
 
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 
+            // convert uuids from latin1 to base64
+            updateUuidsMigration.transform();
 
             //before phase
             for (AbstractCTLMigration m : migrationList) {
@@ -57,7 +59,7 @@ public class MigrateData {
             for (AbstractCTLMigration m : migrationList) {
                 m.afterTransform();
             }
-;
+
 
         } catch (SQLException | IOException | ConfigurationGenerationException e) {
             DbUtils.rollbackAndCloseQuietly(conn);
