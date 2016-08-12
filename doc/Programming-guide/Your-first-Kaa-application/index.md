@@ -441,7 +441,7 @@ static const NSInteger defaultSamplePeriod = 1;
     // as soon as the Kaa client is started.
     self.kaaClient = [KaaClientFactory clientWithStateDelegate:self];
     
-    // Configure log upload strategy in order to upload logs right after adding a new one, set maximum of parallel log uploads to 1.
+    // Configure log uploading strategy so that logs are uploaded upon adding a new log. Set maximum parallel log uploads to 1.
     RecordCountLogUploadStrategy *logUploadStrategy = [[RecordCountLogUploadStrategy alloc] initWithCountThreshold:1];
     logUploadStrategy.maxParallelUploads = 1;
     [self.kaaClient setLogUploadStrategy:logUploadStrategy];
@@ -456,7 +456,7 @@ static const NSInteger defaultSamplePeriod = 1;
     // Add a delegate which displays the Kaa client configuration each time it is updated.
     [self.kaaClient addConfigurationDelegate:self];
     
-    // Add a delegate which returns Kaa profile on demand.
+    // Add a delegate which returns Kaa profile upon request.
     [self.kaaClient setProfileContainer:self];
     
     // Start the Kaa client and connect it to the Kaa server.
