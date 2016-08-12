@@ -472,6 +472,7 @@ static const NSInteger defaultSamplePeriod = 1;
 - (void)createSamplingTimerWithInterval:(NSInteger)period {
     if (self.samplingTimer) {
         [self.samplingTimer invalidate];
+        self.samplingTimer = nil;
     }
     if (period >= 0) {
         if (period == 0) {
@@ -493,7 +494,23 @@ static const NSInteger defaultSamplePeriod = 1;
     [self.kaaClient addLogRecord:[[KAADataCollection alloc] initWithTemperature:(int32_t)temperature]];
 }
 
-#pragma mark - Delegate methods
+- (void)displayConfiguration {
+    KAAConfiguration *configuration = [self.kaaClient getConfiguration];
+    if (configuration.samplePeriod >= 0) {
+        NSInteger samplePeriod = defaultSamplePeriod;
+        if (configuration.samplePeriod > 0) {
+            samplePeriod = configuration.samplePeriod;
+        }
+        NSLog(@"Now sample period is %ld", (long)samplePeriod);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self createSamplingTimerWithInterval:samplePeriod];
+        });
+    } else {
+        NSLog(@"Incorrect sample period. It must be > 0");
+    }
+}
+
+#pragma mark - KaaClientStateDelegate
 
 - (void)onStarted {
     NSLog(@"Kaa client started");
@@ -528,29 +545,17 @@ static const NSInteger defaultSamplePeriod = 1;
     NSLog(@"STOP FAILURE: %@ : %@", exception.name, exception.reason);
 }
 
+#pragma mark - ProfileContainer
+
 - (KAAEmptyData *)getProfile {
     return [[KAAEmptyData alloc] init];
 }
 
+#pragma mark - ConfigurationDelegate
+
 - (void)onConfigurationUpdate:(KAAConfiguration *)configuration {
     NSLog(@"Configuration was updated");
     [self displayConfiguration];
-}
-
-- (void)displayConfiguration {
-    KAAConfiguration *configuration = [self.kaaClient getConfiguration];
-    if (configuration.samplePeriod >= 0) {
-        NSInteger samplePeriod = defaultSamplePeriod;
-        if (configuration.samplePeriod > 0) {
-            samplePeriod = configuration.samplePeriod;
-        }
-        NSLog(@"Now sample period is %ld", (long)samplePeriod);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self createSamplingTimerWithInterval:samplePeriod];
-        });
-    } else {
-        NSLog(@"Incorrect sample period. It must be > 0");
-    }
 }
 
 @end
