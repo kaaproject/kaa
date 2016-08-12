@@ -68,10 +68,24 @@ $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 27017 -j ACCEPT
 # Cassandra port
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 9042 -j ACCEPT
 $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 9042 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 7000 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 7000 -j ACCEPT
+# 7001 if SSL is enabled
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 7001 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 7001 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 7199 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 7199 -j ACCEPT
+# for the Cassandra Thrift client
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9160 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 9160 -j ACCEPT
 
 # MariaDB port 
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
 $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 3306 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 2888 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 2888 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 3888 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 3888 -j ACCEPT
 
 # PostgreSQL port
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT
@@ -80,6 +94,10 @@ $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 5432 -j ACCEPT
 # Zookeeper port
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 2181 -j ACCEPT
 $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 2181 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 4444 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 4444 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 4567 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 4567 -j ACCEPT
 
 $ sudo apt-get install iptables-persistent
 $ sudo service iptables-persistent start
