@@ -36,8 +36,8 @@ public interface EcfView extends BaseDetailsView {
 
     public HasValue<String> getCreatedDateTime();
 
-    public AbstractGrid<EventClassFamilyVersionDto, Integer> getEcfSchemasGrid();
+    public AbstractGrid<EventClassFamilyVersionDto, Integer> getEcfVersionsGrid();
     
-    public HasClickHandlers getAddEcfSchemaButton();
+    public HasClickHandlers getAddEcfVersionButton();
 
 }

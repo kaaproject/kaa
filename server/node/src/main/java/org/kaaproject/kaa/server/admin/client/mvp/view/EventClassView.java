@@ -1,5 +1,10 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 
-public interface EventClassView {
+import com.google.gwt.user.client.ui.ValueListBox;
+
+public interface EventClassView extends BaseCtlSchemaView {
+
+    ValueListBox<String> getEventClassTypes();
+
 }

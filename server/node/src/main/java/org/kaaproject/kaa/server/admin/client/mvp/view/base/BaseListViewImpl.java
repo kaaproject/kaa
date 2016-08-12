@@ -51,6 +51,7 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
     @UiField public Button backButton;
     @UiField public Label titleLabel;
     @UiField public HorizontalPanel buttonsPanel;
+    @UiField public HorizontalPanel supportPanel;
     @UiField (provided=true) public final ImageTextButton addButton;
     @UiField (provided=true) public final AlertPanel errorPanel;
     @UiField (provided=true) public final KaaAdminStyle kaaAdminStyle;

@@ -225,7 +225,7 @@ public class EventClassServiceImpl implements EventClassService {
     @Override
     public EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn, int version) {
         if (isValidSqlId(tenantId)) {
-            LOG.debug("Find event class family by tenant id [{}] and fqn {}", tenantId, fqn);
+            LOG.debug("Find event class by tenant id [{}] and fqn {}", tenantId, fqn);
             return getDto(eventClassDao.findByTenantIdAndFqnAndVersion(tenantId, fqn, version));
         } else {
             throw new IncorrectParameterException("Incorrect tenant id: " + tenantId);
@@ -233,11 +233,12 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     @Override
-    public void removeEventClassById(String eventClassId) {
-        Validator.validateId(eventClassId, "Unable to remove Event Class. Invalid Event Class ID: " + eventClassId);
-        eventClassDao.removeById(eventClassId);
-        LOG.debug("Removed Event Class [{}]", eventClassId);
+    public EventClassDto findEventClassById(String eventClassId) {
+        if (isValidSqlId(eventClassId)) {
+            LOG.debug("Find event class by id [{}] ", eventClassId);
+            return getDto(eventClassDao.findById(eventClassId));
+        } else {
+            throw new IncorrectParameterException("Incorrect event class id: " + eventClassId);
+        }
     }
-
-
 }

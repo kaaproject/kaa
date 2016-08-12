@@ -16,15 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.web.bindery.event.shared.EventBus;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
-public abstract class AbstractSchemaPlace extends SchemasPlace {
+public abstract class AbstractSchemaPlaceEvent extends SchemasPlaceEvent {
 
     protected String schemaId;
 
-    public AbstractSchemaPlace(String applicationId, String schemaId) {
-        super(applicationId);
+    public AbstractSchemaPlaceEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+        super(ecfId, ecfVersionId, ecfVersion);
         this.schemaId = schemaId;
     }
 
@@ -32,21 +33,22 @@ public abstract class AbstractSchemaPlace extends SchemasPlace {
         return schemaId;
     }
 
-    public static abstract class Tokenizer<P extends AbstractSchemaPlace> implements PlaceTokenizer<P>, PlaceConstants {
+    public static abstract class Tokenizer<P extends AbstractSchemaPlaceEvent> implements PlaceTokenizer<P>, PlaceConstants {
 
         @Override
         public P getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(SCHEMA_ID));
+            return getPlaceImpl(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID), PlaceParams.getIntParam(ECF_VERSION), PlaceParams.getParam(SCHEMA_ID));
         }
 
-        protected abstract P getPlaceImpl(String applicationId, String schemaId);
+        protected abstract P getPlaceImpl(String ecfId, String ecfVersionId, int ecfVersion, String schemaId);
 
         @Override
         public String getToken(P place) {
             PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(SCHEMA_ID, place.getSchemaId());
+            PlaceParams.putParam(ECF_ID, place.getEcfId());
+            PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
+            PlaceParams.putParam(SCHEMA_ID, String.valueOf(place.getSchemaId()));
             return PlaceParams.generateToken();
         }
     }
@@ -60,4 +62,5 @@ public abstract class AbstractSchemaPlace extends SchemasPlace {
     public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
         return null;
     }
+
 }

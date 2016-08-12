@@ -40,6 +40,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -421,7 +422,7 @@ public class DataSource {
                 });
     }
 
-    public void generateEcfSchemaForm(String fileItemName,
+    public void generateEcfVersionForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
         rpcService.generateEcfSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
@@ -480,7 +481,7 @@ public class DataSource {
                 });
     }
 
-    public void addEcfSchema(String ecfId, RecordField schemaForm,
+    public void addEcfVersion(String ecfId, RecordField schemaForm,
             final AsyncCallback<Void> callback) {
         rpcService.addEventClassFamilySchemaForm(ecfId, schemaForm,
                 new DataCallback<Void>(callback) {
@@ -491,23 +492,96 @@ public class DataSource {
                 });
     }
 
-    public void deleteEventClassById(String eventClassId, final AsyncCallback<Void> callback) {
-        rpcService.deleteEventClassById(eventClassId, new DataCallback<Void>(callback) {
+    public void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback) {
+        rpcService.getEventClassView(eventClassId, new DataCallback<EventClassViewDto>(callback) {
             @Override
-            protected void onResult(Void result) {
+            protected void onResult(EventClassViewDto result) {
             }
         });
 
     }
 
-    public void getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type,
-            final AsyncCallback<List<EventClassDto>> callback) {
-        rpcService.getEventClassesByFamilyIdVersionAndType(ecfId, version, type,
-                new DataCallback<List<EventClassDto>>(callback) {
+    public void getEventClassViewByCtlSchemaId(EventClassDto eventClassViewDto, final AsyncCallback<EventClassViewDto> callback) {
+        rpcService.getEventClassViewByCtlSchemaId(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
             @Override
-            protected void onResult(List<EventClassDto> result) {
+            protected void onResult(EventClassViewDto result) {
             }
         });
+
+    }
+
+    public void saveEventClassView(EventClassViewDto eventClassViewDto, final AsyncCallback<EventClassViewDto> callback) {
+        rpcService.saveEventClassView(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
+            @Override
+            protected void onResult(EventClassViewDto result) {
+            }
+        });
+
+    }
+
+    public void createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaFormDto, final AsyncCallback<EventClassViewDto> callback) {
+        rpcService.createEventClassFormCtlSchema(ctlSchemaFormDto , new DataCallback<EventClassViewDto>(callback) {
+            @Override
+            protected void onResult(EventClassViewDto result) {
+            }
+        });
+
+    }
+
+    public void getEventClassTypes(final AsyncCallback<List<String>> callback) {
+        rpcService.getEventClassTypes(new DataCallback<List<String>>(callback) {
+            @Override
+            protected void onResult(List<String> result) {
+            }
+        });
+
+    }
+
+    public void getEventClassFamilyVersions(String eventClassFamilyId, final AsyncCallback<List<EventClassFamilyVersionDto>> callback) {
+        rpcService.getEventClassFamilyVersions(eventClassFamilyId, new DataCallback<List<EventClassFamilyVersionDto>>(callback) {
+            @Override
+            protected void onResult(List<EventClassFamilyVersionDto> result) {
+            }
+        });
+
+    }
+
+    public void getLastCtlSchemaReferenceDto(String ctlSchemaId, final AsyncCallback<CtlSchemaReferenceDto> callback) {
+        rpcService.getLastCtlSchemaReferenceDto(ctlSchemaId, new DataCallback<CtlSchemaReferenceDto>(callback) {
+            @Override
+            protected void onResult(CtlSchemaReferenceDto result) {
+            }
+        });
+
+    }
+
+    public void saveEventClassFamilyVersion(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto, final AsyncCallback<Void> callback) {
+        rpcService.saveEventClassFamilyVersion(eventClassFamilyId, eventClassViewDto,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                    }
+                });
+    }
+
+    public void getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type,
+                                                        final AsyncCallback<List<EventClassDto>> callback) {
+        rpcService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type,
+                new DataCallback<List<EventClassDto>>(callback) {
+                    @Override
+                    protected void onResult(List<EventClassDto> result) {
+                    }
+                });
+    }
+
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion,
+                                                        final AsyncCallback<Void> callback) {
+        rpcService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                    }
+                });
     }
 
     public void loadProfileSchemas(String applicationId,
@@ -806,13 +880,33 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void getTenantLevelCTLSchemas(
             final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
         rpcService.getTenantLevelCTLSchemas(
                 new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
                     @Override
                     protected void onResult(List<CTLSchemaMetaInfoDto> result) {
+                    }
+                });
+    }
+
+    public void getLastCreatedCTLSchemaByFqnAndVersion(String fqn, Integer version,
+             final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
+        rpcService.getLastCreatedCTLSchemaByFqnAndVersion(fqn, version,
+                new DataCallback<CTLSchemaMetaInfoDto>(callback) {
+                    @Override
+                    protected void onResult(CTLSchemaMetaInfoDto result) {
+                    }
+                });
+    }
+
+    public void getCTLSchemaById(String ctlSchemaId,
+             final AsyncCallback<CTLSchemaDto> callback) {
+        rpcService.getCTLSchemaById(ctlSchemaId,
+                new DataCallback<CTLSchemaDto>(callback) {
+                    @Override
+                    protected void onResult(CTLSchemaDto result) {
                     }
                 });
     }

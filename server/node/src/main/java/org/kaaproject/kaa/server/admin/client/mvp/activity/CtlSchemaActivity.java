@@ -31,6 +31,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EcfVersionPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EventClassPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
@@ -44,6 +46,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
@@ -56,27 +59,166 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto, CtlSchemaView, CtlSchemaPlace> 
-                                                implements ErrorMessageCustomizer, FormDataLoader {
+public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto, CtlSchemaView, CtlSchemaPlace>
+        implements ErrorMessageCustomizer, FormDataLoader {
 
-    private static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
-    
-    private Integer version = null;
+    protected static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
 
-    public CtlSchemaActivity(CtlSchemaPlace place,
-            ClientFactory clientFactory) {
+    protected Integer version = null;
+    private String ctlSchemaID;
+
+    public CtlSchemaActivity(CtlSchemaPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
-        version = place.getVersion();
-    }
-
-    @Override
-    protected String getEntityId(CtlSchemaPlace place) {
-        return place.isCreate() ? null : place.getMetaInfoId();
     }
 
     @Override
     protected CtlSchemaFormDto newEntity() {
         return null;
+    }
+
+    protected void bindDetailsView(boolean fireChanged) {
+        if (!create) {
+            List<Integer> schemaVersions = entity.getMetaInfo().getVersions();
+            Collections.sort(schemaVersions);
+
+            if (version == null && !schemaVersions.isEmpty()) {
+                version = schemaVersions.get(schemaVersions.size() - 1);
+            }
+            if (version != null) {
+                detailsView.getVersion().setValue(version);
+            }
+            detailsView.getVersion().setAcceptableValues(schemaVersions);
+            detailsView.setTitle(entity.getMetaInfo().getFqn());
+
+            registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.shallow(), new ActionMenuItemListener() {
+                @Override
+                public void onMenuItemSelected() {
+                    exportSchema(CTLSchemaExportMethod.SHALLOW);
+                }
+            }));
+            if (entity.hasDependencies()) {
+                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.deep(), new ActionMenuItemListener() {
+                    @Override
+                    public void onMenuItemSelected() {
+                        exportSchema(CTLSchemaExportMethod.DEEP);
+                    }
+                }));
+                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.flat(), new ActionMenuItemListener() {
+                    @Override
+                    public void onMenuItemSelected() {
+                        exportSchema(CTLSchemaExportMethod.FLAT);
+                    }
+                }));
+            }
+            registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.javaLibrary(), new ActionMenuItemListener() {
+                @Override
+                public void onMenuItemSelected() {
+                    exportSchema(CTLSchemaExportMethod.LIBRARY);
+                }
+            }));
+        }
+        detailsView.getScope().setText(Utils.getCtlScopeTitleString(entity.getMetaInfo().getScope()));
+        detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
+        detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
+        detailsView.getSchemaForm().setValue(entity.getSchema(), fireChanged);
+    }
+
+    protected void exportSchema(CTLSchemaExportMethod method) {
+        AsyncCallback<String> schemaExportCallback = new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+            }
+
+            @Override
+            public void onSuccess(String key) {
+                ServletHelper.exportCtlSchema(key);
+            }
+        };
+        KaaAdmin.getDataSource().prepareCTLSchemaExport(entity.getId(), method, schemaExportCallback);
+    }
+
+    @Override
+    protected void onSave() {
+        entity.setSchema(detailsView.getSchemaForm().getValue());
+    }
+
+    @Override
+    public String customizeErrorMessage(Throwable caught) {
+        String errorMessage = schemaErrorMessageCustomizer.customizeErrorMessage(caught);
+        if (errorMessage == null) {
+            errorMessage = caught.getLocalizedMessage();
+        }
+        return errorMessage;
+    }
+
+    @Override
+    protected CtlSchemaView getView(boolean create) {
+        if (create) {
+            return clientFactory.getCreateCtlSchemaView();
+        } else {
+            if (place.isEditable()) {
+                if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                    return clientFactory.getEditApplicationCtlSchemaView();
+                } else {
+                    return clientFactory.getEditCtlSchemaView();
+                }
+            } else {
+                return clientFactory.getViewCtlSchemaView();
+            }
+        }
+    }
+
+    @Override
+    protected void getEntity(String id,
+                             AsyncCallback<CtlSchemaFormDto> callback) {
+        if (version == null) {
+            KaaAdmin.getDataSource().getLatestCTLSchemaForm(id, callback);
+        } else {
+            KaaAdmin.getDataSource().getCTLSchemaFormByMetaInfoIdAndVer(id, version, callback);
+        }
+    }
+
+    @Override
+    protected void editEntity(final CtlSchemaFormDto entity,
+                              final AsyncCallback<CtlSchemaFormDto> callback) {
+        if (place.getScope().getLevel() > CTLSchemaScopeDto.SYSTEM.getLevel()) {
+            KaaAdmin.getDataSource().checkFqnExists(entity, new BusyAsyncCallback<Boolean>() {
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                    Utils.handleException(caught, detailsView);
+                }
+
+                @Override
+                public void onSuccessImpl(Boolean result) {
+                    if (!result) {
+                        editSchema(entity, callback);
+                    } else {
+                        ConfirmDialog.ConfirmListener listener = new ConfirmDialog.ConfirmListener() {
+                            @Override
+                            public void onNo() {
+                            }
+
+                            @Override
+                            public void onYes() {
+                                editSchema(entity, callback);
+                            }
+                        };
+                        ConfirmDialog dialog = new ConfirmDialog(listener, Utils.messages.commonTypeFqnAlreadyExistTitle(),
+                                Utils.messages.commonTypeFqnAlreadyExistsQuestion());
+                        dialog.center();
+                        dialog.show();
+                    }
+                }
+            });
+        } else {
+            editSchema(entity, callback);
+        }
+    }
+
+    @Override
+    protected String getEntityId(CtlSchemaPlace place) {
+        return place.isCreate() ? null : place.getMetaInfoId();
     }
 
     @Override
@@ -88,19 +230,31 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 @Override
                 public void onValueChange(ValueChangeEvent<Integer> event) {
                     detailsView.getVersion().setValue(version);
-                    goTo(new CtlSchemaPlace(place.getMetaInfoId(), event.getValue(), place.getScope(), place.getApplicationId(), place.isEditable(), false));
+                    if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                        goTo(new CtlSchemaPlace(place.getMetaInfoId(), event.getValue(), place.getScope(),
+                                place.getApplicationId(), place.isEditable(), false));
+                    } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
+                        goTo(new CtlSchemaPlace(place.getMetaInfoId(), event.getValue(), place.getScope(),
+                                place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), place.isEditable(), false));
+                    }
                 }
             }));
             registrations.add(detailsView.getCreateNewSchemaVersionButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     Integer version = detailsView.getVersion().getValue();
-                    CtlSchemaPlace newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(), place.getApplicationId(), true, true); 
+                    CtlSchemaPlace newPlace = null;
+                    if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                        newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(), place.getApplicationId(), true, true);
+                    } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
+                        newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(),
+                                place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, false);
+                    }
                     newPlace.setPreviousPlace(place);
                     goTo(newPlace);
                 }
             }));
-            
+
             registrations.add(detailsView.getUpdateSchemaScopeButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -111,16 +265,25 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         public void onFailureImpl(Throwable caught) {
                             Utils.handleException(caught, detailsView);
                         }
+
                         @Override
                         public void onSuccessImpl(CTLSchemaMetaInfoDto result) {
-                            CtlSchemaPlace place = new CtlSchemaPlace(result.getId(), version, result.getScope(), 
-                                    CtlSchemaActivity.this.place.getApplicationId(), result.getScope() == CTLSchemaScopeDto.APPLICATION, false);
+                            CtlSchemaPlace place = null;
+                            if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                                place = new CtlSchemaPlace(result.getId(), version, result.getScope(),
+                                        CtlSchemaActivity.this.place.getApplicationId(), result.getScope() == CTLSchemaScopeDto.APPLICATION, false);
+                            } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
+                                place = new CtlSchemaPlace(result.getId(), version, result.getScope(),
+                                        CtlSchemaActivity.this.place.getEcfId(), CtlSchemaActivity.this.place.getEcfVersionId(), CtlSchemaActivity.this.place.getEcfVersion(),
+                                        result.getScope() == CTLSchemaScopeDto.TENANT, false);
+                            }
+
                             goTo(place);
                         }
                     });
                 }
             }));
-            
+
             registrations.add(detailsView.getDeleteSchemaVersionButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -128,31 +291,39 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                     final String fqn = entity.getMetaInfo().getFqn();
                     ConfirmDialog.ConfirmListener listener = new ConfirmDialog.ConfirmListener() {
                         @Override
-                        public void onNo() {}
+                        public void onNo() {
+                        }
 
                         @Override
                         public void onYes() {
-                            KaaAdmin.getDataSource().deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, 
+                            KaaAdmin.getDataSource().deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version,
                                     entity.getMetaInfo().getTenantId(), place.getApplicationId(), new BusyAsyncCallback<Void>() {
-                                @Override
-                                public void onSuccessImpl(Void result) {
-                                    List<Integer> versions = entity.getMetaInfo().getVersions();
-                                    versions.remove(version);
-                                    if (versions.isEmpty()) {
-                                        goTo(place.getPreviousPlace());
-                                    } else {
-                                        goTo(new CtlSchemaPlace(place.getMetaInfoId(), versions.get(versions.size()-1), place.getScope(), place.getApplicationId(), true, false));
-                                    }
-                                }
-                                @Override
-                                public void onFailureImpl(Throwable caught) {
-                                    Utils.handleException(caught, detailsView);
-                                }
-                            });
+                                        @Override
+                                        public void onSuccessImpl(Void result) {
+                                            List<Integer> versions = entity.getMetaInfo().getVersions();
+                                            versions.remove(version);
+                                            if (versions.isEmpty()) {
+                                                goTo(place.getPreviousPlace());
+                                            } else {
+                                                if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                                                    goTo(new CtlSchemaPlace(place.getMetaInfoId(),
+                                                            versions.get(versions.size() - 1), place.getScope(), place.getApplicationId(), true, false));
+                                                } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
+                                                    goTo(new CtlSchemaPlace(place.getMetaInfoId(), versions.get(versions.size() - 1),
+                                                            place.getScope(), place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, false));
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailureImpl(Throwable caught) {
+                                            Utils.handleException(caught, detailsView);
+                                        }
+                                    });
                         }
                     };
-                    
-                    ConfirmDialog dialog = new ConfirmDialog(listener, Utils.messages.deleteCommonTypeVersionTitle(), 
+
+                    ConfirmDialog dialog = new ConfirmDialog(listener, Utils.messages.deleteCommonTypeVersionTitle(),
                             Utils.messages.deleteCommonTypeVersionQuestion(fqn, version.toString()));
                     dialog.center();
                     dialog.show();
@@ -184,6 +355,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                             }
                             bindDetailsView(true);
                         }
+
                         @Override
                         public void onFailureImpl(Throwable caught) {
                             Utils.handleException(caught, detailsView);
@@ -197,68 +369,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
             }
         }
     }
-    
-    private void bindDetailsView(boolean fireChanged) {
-        if (!create) {
-            List<Integer> schemaVersions = entity.getMetaInfo().getVersions();
-            Collections.sort(schemaVersions);
-            
-            if (version == null && !schemaVersions.isEmpty()) {
-                version = schemaVersions.get(schemaVersions.size()-1);
-            }
-            if (version != null) {
-                detailsView.getVersion().setValue(version);
-            }
-            detailsView.getVersion().setAcceptableValues(schemaVersions);
-            detailsView.setTitle(entity.getMetaInfo().getFqn());
-            
-            registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.shallow(), new ActionMenuItemListener() {
-                @Override
-                public void onMenuItemSelected() {
-                    exportSchema(CTLSchemaExportMethod.SHALLOW);
-                }
-            }));
-            if (entity.hasDependencies()) {
-                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.deep(), new ActionMenuItemListener() {
-                    @Override
-                    public void onMenuItemSelected() {
-                        exportSchema(CTLSchemaExportMethod.DEEP);
-                    }
-                }));
-                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.flat(), new ActionMenuItemListener() {
-                    @Override
-                    public void onMenuItemSelected() {
-                        exportSchema(CTLSchemaExportMethod.FLAT);
-                    }
-                }));
-            }
-            registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.javaLibrary(), new ActionMenuItemListener() {
-                @Override
-                public void onMenuItemSelected() {
-                    exportSchema(CTLSchemaExportMethod.LIBRARY);
-                }
-            }));            
-        }
-        detailsView.getScope().setText(Utils.getCtlScopeTitleString(entity.getMetaInfo().getScope()));
-        detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
-        detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
-        detailsView.getSchemaForm().setValue(entity.getSchema(), fireChanged);
-    }
-    
-    private void exportSchema(CTLSchemaExportMethod method) {
-        AsyncCallback<String> schemaExportCallback = new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, detailsView);
-            }
-            @Override
-            public void onSuccess(String key) {
-                ServletHelper.exportCtlSchema(key);
-            }
-        };
-        KaaAdmin.getDataSource().prepareCTLSchemaExport(entity.getId(), method, schemaExportCallback);
-    }
-    
+
     @Override
     protected void doSave(final EventBus eventBus) {
         onSave();
@@ -267,11 +378,16 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 new BusyAsyncCallback<CtlSchemaFormDto>() {
                     public void onSuccessImpl(CtlSchemaFormDto result) {
                         if (!create) {
-                            goTo(new CtlSchemaPlace(place.getMetaInfoId(), place.getVersion(), place.getScope(), place.getApplicationId(), true, false));
+                            if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                                goTo(new CtlSchemaPlace(place.getMetaInfoId(), place.getVersion(), place.getScope(), place.getApplicationId(), true, false));
+                            } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
+                                goTo(new CtlSchemaPlace(place.getMetaInfoId(), place.getVersion(),
+                                        place.getScope(), place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, false));
+                            }
                         } else if (place.getSchemaType() != null) {
                             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
                                 goTo(new ProfileSchemasPlace(place.getApplicationId()));
-                            } else if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                            } else if (place.getSchemaType() == SchemaType.CONFIGURATION) {
                                 goTo(new ConfigurationSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
                                 goTo(new ServerProfileSchemasPlace(place.getApplicationId()));
@@ -279,6 +395,8 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                                 goTo(new NotificationSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
                                 goTo(new LogSchemasPlace(place.getApplicationId()));
+                            } else if (place.getSchemaType() == SchemaType.EVENT_CLASS && place.getPreviousPlace() != null) {
+                                goTo(new EventClassPlace("-1", "", -1, "", ctlSchemaID, place.getEventClassDtoList()));
                             }
                         } else if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
@@ -288,26 +406,12 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                     public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, detailsView);
                     }
-        });
-    }
-
-    @Override
-    protected void onSave() {
-        entity.setSchema(detailsView.getSchemaForm().getValue());
-    }
-
-    @Override
-    public String customizeErrorMessage(Throwable caught) {
-        String errorMessage = schemaErrorMessageCustomizer.customizeErrorMessage(caught);
-        if (errorMessage == null) {
-            errorMessage = caught.getLocalizedMessage();        
-        }
-        return errorMessage;
+                });
     }
 
     @Override
     public void loadFormData(String fileItemName,
-            final AsyncCallback<RecordField> callback) {
+                             final AsyncCallback<RecordField> callback) {
         KaaAdmin.getDataSource().generateCtlSchemaForm(fileItemName, place.getApplicationId(), new AsyncCallback<RecordField>() {
             @Override
             public void onSuccess(RecordField result) {
@@ -316,6 +420,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 }
                 callback.onSuccess(result);
             }
+
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
@@ -323,131 +428,87 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
         });
     }
 
-    @Override
-    protected CtlSchemaView getView(boolean create) {
-        if (create) {
-            return clientFactory.getCreateCtlSchemaView();
-        } else {
-            if (place.isEditable()) {
-                if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
-                    return clientFactory.getEditApplicationCtlSchemaView();
-                } else {
-                    return clientFactory.getEditCtlSchemaView();
-                }
-            } else {
-                return clientFactory.getViewCtlSchemaView();
-            }
-        }
-    }
-
-    @Override
-    protected void getEntity(String id,
-            AsyncCallback<CtlSchemaFormDto> callback) {
-        if (version == null) {
-            KaaAdmin.getDataSource().getLatestCTLSchemaForm(id, callback);
-        } else {
-            KaaAdmin.getDataSource().getCTLSchemaFormByMetaInfoIdAndVer(id, version, callback);
-        }
-    }
-
-    @Override
-    protected void editEntity(final CtlSchemaFormDto entity,
-            final AsyncCallback<CtlSchemaFormDto> callback) {
-        if (place.getScope().getLevel() > CTLSchemaScopeDto.SYSTEM.getLevel()) {
-            KaaAdmin.getDataSource().checkFqnExists(entity, new BusyAsyncCallback<Boolean>() {
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, detailsView);
-                }
-                @Override
-                public void onSuccessImpl(Boolean result) {
-                    if (!result) {
-                        editSchema(entity, callback);
-                    } else {
-                        ConfirmDialog.ConfirmListener listener = new ConfirmDialog.ConfirmListener() {
-                            @Override
-                            public void onNo() {
-                            }
-
-                            @Override
-                            public void onYes() {
-                                editSchema(entity, callback);
-                            }
-                        };
-                        ConfirmDialog dialog = new ConfirmDialog(listener, Utils.messages.commonTypeFqnAlreadyExistTitle(), 
-                                Utils.messages.commonTypeFqnAlreadyExistsQuestion());
-                        dialog.center();
-                        dialog.show();
-                    }
-                }
-            });
-        } else {
-            editSchema(entity, callback);
-        }
-    }
-    
-    private void editSchema(CtlSchemaFormDto entity, final AsyncCallback<CtlSchemaFormDto> callback) {
+    protected void editSchema(CtlSchemaFormDto entity, final AsyncCallback<CtlSchemaFormDto> callback) {
         if (create && place.getSchemaType() != null) {
             if (place.getSchemaType() == SchemaType.ENDPOINT_PROFILE) {
-                KaaAdmin.getDataSource().createProfileSchemaFormCtlSchema(entity, 
+                KaaAdmin.getDataSource().createProfileSchemaFormCtlSchema(entity,
                         new BusyAsyncCallback<ProfileSchemaViewDto>() {
                             @Override
                             public void onFailureImpl(Throwable caught) {
                                 callback.onFailure(caught);
                             }
+
                             @Override
                             public void onSuccessImpl(ProfileSchemaViewDto result) {
                                 callback.onSuccess(null);
                             }
-                    });
-            } else if(place.getSchemaType() == SchemaType.CONFIGURATION) {
+                        });
+            } else if (place.getSchemaType() == SchemaType.CONFIGURATION) {
                 KaaAdmin.getDataSource().createConfigurationSchemaFormCtlSchema(entity,
                         new BusyAsyncCallback<ConfigurationSchemaViewDto>() {
                             @Override
                             public void onFailureImpl(Throwable caught) {
                                 callback.onFailure(caught);
                             }
+
                             @Override
                             public void onSuccessImpl(ConfigurationSchemaViewDto result) {
                                 callback.onSuccess(null);
                             }
                         });
             } else if (place.getSchemaType() == SchemaType.SERVER_PROFILE) {
-                KaaAdmin.getDataSource().createServerProfileSchemaFormCtlSchema(entity, 
+                KaaAdmin.getDataSource().createServerProfileSchemaFormCtlSchema(entity,
                         new BusyAsyncCallback<ServerProfileSchemaViewDto>() {
                             @Override
                             public void onFailureImpl(Throwable caught) {
                                 callback.onFailure(caught);
                             }
+
                             @Override
                             public void onSuccessImpl(ServerProfileSchemaViewDto result) {
                                 callback.onSuccess(null);
                             }
-                    });
+                        });
             } else if (place.getSchemaType() == SchemaType.NOTIFICATION) {
-                KaaAdmin.getDataSource().createNotificationSchemaFormCtlSchema(entity, new BusyAsyncCallback<NotificationSchemaViewDto>() {
-                    @Override
-                    public void onFailureImpl(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
+                KaaAdmin.getDataSource().createNotificationSchemaFormCtlSchema(entity,
+                        new BusyAsyncCallback<NotificationSchemaViewDto>() {
+                            @Override
+                            public void onFailureImpl(Throwable caught) {
+                                callback.onFailure(caught);
+                            }
 
-                    @Override
-                    public void onSuccessImpl(NotificationSchemaViewDto notificationSchemaViewDto) {
-                        callback.onSuccess(null);
-                    }
-                });
+                            @Override
+                            public void onSuccessImpl(NotificationSchemaViewDto notificationSchemaViewDto) {
+                                callback.onSuccess(null);
+                            }
+                        });
             } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
-                KaaAdmin.getDataSource().createLogSchemaFormCtlSchema(entity, new BusyAsyncCallback<LogSchemaViewDto>() {
-                    @Override
-                    public void onFailureImpl(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
+                KaaAdmin.getDataSource().createLogSchemaFormCtlSchema(entity,
+                        new BusyAsyncCallback<LogSchemaViewDto>() {
+                            @Override
+                            public void onFailureImpl(Throwable caught) {
+                                callback.onFailure(caught);
+                            }
 
-                    @Override
-                    public void onSuccessImpl(LogSchemaViewDto logSchemaViewDto) {
-                        callback.onSuccess(null);
-                    }
-                });
+                            @Override
+                            public void onSuccessImpl(LogSchemaViewDto logSchemaViewDto) {
+                                callback.onSuccess(null);
+                            }
+                        });
+            } else if (place.getSchemaType() == SchemaType.EVENT_CLASS) {
+                KaaAdmin.getDataSource().createEventClassFormCtlSchema(entity,
+                        new BusyAsyncCallback<EventClassViewDto>() {
+                            @Override
+                            public void onFailureImpl(Throwable caught) {
+                                callback.onFailure(caught);
+                            }
+
+                            @Override
+                            public void onSuccessImpl(EventClassViewDto eventClassViewDto) {
+                                ctlSchemaID = eventClassViewDto.getSchema().getCtlSchemaId();
+                                callback.onSuccess(null);
+                            }
+                        });
             }
         } else {
             KaaAdmin.getDataSource().editCTLSchemaForm(entity, ConverterType.FORM_AVRO_CONVERTER, callback);

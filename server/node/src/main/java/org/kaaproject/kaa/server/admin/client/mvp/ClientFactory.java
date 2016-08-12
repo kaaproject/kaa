@@ -38,15 +38,15 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EventClassView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -137,14 +137,10 @@ public interface ClientFactory {
     EcfView getEcfView();
     EcfView getCreateEcfView();
 
-    BaseCtlSchemaView getEventClassView();
-    BaseCtlSchemaView getCreateEventClassView();
+    EventClassView getEventClassView();
+    EventClassView getCreateEventClassView();
 
-//    EcfSchemaView getEcfSchemaView();
-//    EcfSchemaView getCreateEcfSchemaView();
-
-    //BaseListView<EventClassDto> getEcfSchemaView();
-    BaseListView<EventClassDto> getCreateEcfSchemaView();
+    EcfVersionView getCreateEcfVersionView();
 
     BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
     AefMapView getAefMapView();

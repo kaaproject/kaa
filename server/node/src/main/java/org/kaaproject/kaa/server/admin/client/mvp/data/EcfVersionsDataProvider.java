@@ -26,12 +26,12 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-public class EcfSchemasDataProvider extends AbstractDataProvider<EventClassFamilyVersionDto, Integer>{
+public class EcfVersionsDataProvider extends AbstractDataProvider<EventClassFamilyVersionDto, Integer>{
 
     private List<EventClassFamilyVersionDto> schemas = new ArrayList<>();
 
-    public EcfSchemasDataProvider(AbstractGrid<EventClassFamilyVersionDto, Integer> dataGrid,
-                                  HasErrorMessage hasErrorMessage) {
+    public EcfVersionsDataProvider(AbstractGrid<EventClassFamilyVersionDto, Integer> dataGrid,
+                                   HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }
 

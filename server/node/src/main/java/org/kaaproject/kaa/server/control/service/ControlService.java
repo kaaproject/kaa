@@ -1085,14 +1085,7 @@ public interface ControlService {
     List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
             throws ControlServiceException;
 
-    /**
-     * Remove Event Class by id.
-     *
-     * @param eventClassId
-     * @throws ControlServiceException
-     */
-    void deleteEventClassById(String eventClassId) throws ControlServiceException;
-
+    EventClassDto getEventClassById(String eventClassId) throws ControlServiceException;
     /**
      * Edits the application event family map.
      *

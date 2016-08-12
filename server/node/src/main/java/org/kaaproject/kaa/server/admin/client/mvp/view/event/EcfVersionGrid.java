@@ -24,13 +24,12 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class EventClassesGrid extends AbstractKaaGrid<EventClassDto, String> {
+public class EcfVersionGrid extends BaseCtlSchemasGrid<EventClassDto> {
 
-    public EventClassesGrid() {
-        super(Style.Unit.PX, true);
+    public EcfVersionGrid() {
     }
 
     @Override
@@ -69,8 +68,8 @@ public class EventClassesGrid extends AbstractKaaGrid<EventClassDto, String> {
 
     @Override
     protected float constructActions(DataGrid<EventClassDto> table, float prefWidth) {
+        super.constructActions(table, prefWidth);
         float result = 0;
-        if (enableActions) {
             Header<SafeHtml> deleteHeader;
             if (embedded) {
                 deleteHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(Utils.constants.remove()));
@@ -82,7 +81,7 @@ public class EventClassesGrid extends AbstractKaaGrid<EventClassDto, String> {
             table.addColumn(deleteColumn, deleteHeader);
             table.setColumnWidth(deleteColumn, 40, Style.Unit.PX);
             result += 40;
-        }
+
         return result;
     }
 }

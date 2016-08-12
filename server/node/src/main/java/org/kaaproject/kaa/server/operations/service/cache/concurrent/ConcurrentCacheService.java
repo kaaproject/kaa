@@ -693,7 +693,7 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getEventClassFamilyIdByEventClassFqn using key {}", key);
                 List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(key.getTenantId(), key.getFqn());
                 if (eventClasses != null && !eventClasses.isEmpty()) {
-                    return eventClasses.get(0).getEcfId();
+                    return eventClasses.get(0).getEcfvId();
                 } else {
                     LOG.warn("Fetching result for getEcfId using key {} Failed!", key);
                     return null;
@@ -715,7 +715,7 @@ public class ConcurrentCacheService implements CacheService {
                 EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(key.getTenantId(), key.getFqn(),
                         key.getVersion());
 
-                String eventClassFamilyId = eventClass.getEcfId();
+                String eventClassFamilyId = eventClass.getEcfvId();
 
                 List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(eventClassFamilyId,
                         key.getVersion());

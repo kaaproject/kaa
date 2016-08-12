@@ -314,11 +314,25 @@ public interface KaaAdminService extends RemoteService {
 
     void addEventClassFamilySchemaForm(String eventClassFamilyId, RecordField schemaForm) throws KaaAdminServiceException;
 
+    CtlSchemaReferenceDto getLastCtlSchemaReferenceDto(String ctlSchemaId) throws KaaAdminServiceException;
+
+    EventClassViewDto getEventClassView(String eventClassId) throws KaaAdminServiceException;
+
+    EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException;
+
+    EventClassDto getEventClass(String eventClassId) throws KaaAdminServiceException;
+
+    EventClassViewDto saveEventClassView(EventClassViewDto eventClassViewDto) throws KaaAdminServiceException;
+
+    EventClassViewDto createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+
+    List<String> getEventClassTypes() throws KaaAdminServiceException;
+
     void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException;
 
-    List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type) throws KaaAdminServiceException;
+    void saveEventClassFamilyVersion(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException;
 
-    void deleteEventClassById(String eventClassId) throws KaaAdminServiceException;
+    List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, Integer version, EventClassType type) throws KaaAdminServiceException;
 
     List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -419,6 +433,8 @@ public interface KaaAdminService extends RemoteService {
     List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException;
 
     List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException;
+
+    CTLSchemaMetaInfoDto getLastCreatedCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException;
 
     List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) throws KaaAdminServiceException;
 

@@ -109,10 +109,11 @@ public interface EventClassService {
     EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn, int version);
 
     /**
-     * Remove Event Class by id.
+     * Find event class by id.
      *
-     * @param eventClassId the tenant id
+     * @param eventClassId the eventClass id
+     * @return the event class dto
      */
-    void removeEventClassById(String eventClassId);
+    EventClassDto findEventClassById(String eventClassId);
 
 }

@@ -20,14 +20,14 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Prefix;
 
-public class ConfigurationSchemaPlace extends AbstractSchemaPlace {
+public class ConfigurationSchemaPlace extends AbstractSchemaPlaceApplication {
 
     public ConfigurationSchemaPlace(String applicationId, String schemaId) {
         super(applicationId, schemaId);
     }
 
     @Prefix(value = "confSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<ConfigurationSchemaPlace> {
+    public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<ConfigurationSchemaPlace> {
 
         @Override
         protected ConfigurationSchemaPlace getPlaceImpl(String applicationId,

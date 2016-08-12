@@ -198,7 +198,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
             dto.setTenantId(tenant.getStringId());
         }
         if (ecf != null) {
-            dto.setEcfId(ecf.getStringId());
+            dto.setEcfvId(ecf.getStringId());
         }
         dto.setFqn(fqn);
         dto.setType(type);

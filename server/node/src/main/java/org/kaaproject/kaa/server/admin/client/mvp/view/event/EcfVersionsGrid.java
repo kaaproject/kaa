@@ -23,9 +23,9 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class EcfSchemasGrid extends AbstractKaaGrid<EventClassFamilyVersionDto, Integer> {
+public class EcfVersionsGrid extends AbstractKaaGrid<EventClassFamilyVersionDto, Integer> {
 
-    public EcfSchemasGrid() {
+    public EcfVersionsGrid() {
         super(Unit.PX, false, true);
     }
 
