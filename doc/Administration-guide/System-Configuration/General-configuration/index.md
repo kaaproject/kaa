@@ -5,8 +5,8 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-After Kaa installation on Ubuntu/Debian OS (deb packages), configuration files for each Kaa component will be extracted into the
-/usr/lib/kaa-node/conf or /etc/kaa-node/conf directories.
+After [Kaa installation]({{root_url}}Administration-guide/System-installation/), configuration files for each Kaa component will be extracted into the
+/usr/lib/kaa-node/conf directory.
 
 The kaa-node.properties file is responsible for Kaa server configuration.
 
@@ -37,17 +37,20 @@ Specifies if Operations Service is enabled.
 #### thrift_host
 Default: _localhost_
 
-Thrift service host address.
+Thrift service host address. This information is used for Thrift remote procedure calls between nodes in
+[Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
+
 
 #### thrift_port
 Default: _9090_
 
-Thrift service port address.
+Thrift service port address. Thrift service host address. This information is used for Thrift remote procedure calls between nodes in
+[Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
 
 #### admin_port
 Default: _8080_
 
-Kaa Admin Web service port.
+Kaa Administration Web UI port.
 
 #### zk_enabled
 Default: _true_
@@ -57,12 +60,12 @@ Specifies if need to use zookeeper service. This is property have to be always _
 #### zk_host_port_list
 Default: _localhost:2181_
 
-Comma-separated url list of Zookeeper nodes: hostname:port.
+Comma-separated url list of Zookeeper nodes: hostname1:port1,hostname2:port2.
 
 #### zk_max_retry_time
 Default: _3000_
 
-The max retry time in milliseconds.
+The max retry time in milliseconds that retries to start Zookeeper service.
 
 #### zk_sleep_time
 Default: _1000_
@@ -89,16 +92,15 @@ Default: _0.0_
 
 Maximum redirect probability for existing sessions.
 
-
 #### recalculation_period
 Default: _10_
 
-Recalculate period in seconds for Operations service load process.
+Recalculate period in seconds for Operations service [load balancer]({{root_url}}Administration-guide/System-components-overview/#load-balancing-lb) process.
 
 #### user_hash_partitions
 Default: _10_
 
-Specify hash partitions count for each server node.
+Specify consistent-hash partitions count for each server node.
 
 #### max_number_neighbor_connections
 Default: _3_
@@ -113,7 +115,7 @@ Default time to live in seconds for historical information about Operations serv
 #### worker_thread_pool
 Default: _8_
 
-Handler thread pool executor size.
+Message Handler thread pool executor size.
 
 #### bootstrap_keys_private_key_location
 Default: _keys/bootstrap/private.key_
@@ -183,4 +185,6 @@ Frequency of load status check in milliseconds.
 #### additional_plugins_scan_package
 Default: _empty_
 
-Specify additional package to scan kaa plugins configuration.
+Specify additional package to scan kaa plugins configuration. For details look at
+[Log appender provisioning]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders#log-appender-provisioning) or
+[Owner verifier provisioning]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/#owner-verifier-provisioning).
