@@ -214,16 +214,17 @@ Before you start with C application code, some preparation is required.
 
 <div id="prep-obj-c" class="tab-pane fade" markdown="1" >
 
-You have to make some preparations before start with Objective-C application code.
+Before using the Objective-C application code, be sure to complete the following steps:
 
-1. If you haven't done, please install CocoaPods.
-2. Extract Kaa SDK, open it folder in terminal and run
+1. Install CocoaPods.
+2. Extract Kaa SDK, open a terminal from the extraction directory, and run the following command.
 
         sh build.sh compile
-3. Go to xCode and choose template of the iOS Single View Application. Name it "My First Kaa Application", choose Objective-C language and leave other fields default values.
-4. Link SDK to your project as described in <a href="http://kaaproject.github.io/kaa/doc/client-objective-c/latest/index.html?src=contextnav">Objective-C SDK Reference</a>.
+3. Go to xCode and choose a template of the iOS Single View Application.
+Name it "My First Kaa Application", choose Objective-C language and leave all other fields unchanged.
+4. Link the SDK to your project as described in [Objective-C SDK Reference]({{root_url}}client-objective-c/latest/index.html?src=contextnav").
 5. Make sure that your application builds successfully.
-6. Replace code of `ViewController.m` with code from [Application code](#application-code) section.
+6. Replace code in the ViewController.m file with the code from the [Application code](#application-code) section.
 
 </div>
 
@@ -427,6 +428,8 @@ int main(void)
 
 @end
 
+static const NSInteger defaultSamplePeriod = 1;
+
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -438,15 +441,22 @@ int main(void)
     // as soon as the Kaa client is started.
     self.kaaClient = [KaaClientFactory clientWithStateDelegate:self];
     
+    // Configure log upload strategy in order to upload logs right after adding a new one, set maximum of parallel log uploads to 1.
+    RecordCountLogUploadStrategy *logUploadStrategy = [[RecordCountLogUploadStrategy alloc] initWithCountThreshold:1];
+    logUploadStrategy.maxParallelUploads = 1;
+    [self.kaaClient setLogUploadStrategy:logUploadStrategy];
+    
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *configurationPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"savedconfig.cfg"];
 
     // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
     [self.kaaClient setConfigurationStorage:[SimpleConfigurationStorage storageWithPath:configurationPath]];
     
-    // Add a listener which displays the Kaa client configuration each time it is updated.
+    // Add a delegate which displays the Kaa client configuration each time it is updated.
     [self.kaaClient addConfigurationDelegate:self];
     
+    // Add a delegate which returns Kaa profile on demand.
     [self.kaaClient setProfileContainer:self];
     
     // Start the Kaa client and connect it to the Kaa server.
@@ -455,16 +465,29 @@ int main(void)
 
 #pragma mark - Supporting methods
 
+/**
+ * Schedules new timer each time when sample period was updated.
+ */
+
 - (void)createSamplingTimerWithInterval:(NSInteger)period {
     if (self.samplingTimer) {
         [self.samplingTimer invalidate];
     }
-    self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:period target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
+    if (period >= 0) {
+        if (period == 0) {
+            self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:defaultSamplePeriod target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
+        }
+        self.samplingTimer = [NSTimer scheduledTimerWithTimeInterval:period target:self selector:@selector(generateTemperature) userInfo:nil repeats:YES];
+    }
 }
 
+/**
+ * Used to simulate getting data from temperature sensor. Generates random numbers from 20 to 35.
+ */
+
 - (void)generateTemperature {
-    NSInteger upperTemperatureLimit = 32;
-    NSInteger lowerTemperatureLimit = 25;
+    NSInteger upperTemperatureLimit = 35;
+    NSInteger lowerTemperatureLimit = 20;
     NSInteger temperature = arc4random()%(upperTemperatureLimit - lowerTemperatureLimit) + lowerTemperatureLimit;
     NSLog(@"Sampled temperature: %ld", temperature);
     [self.kaaClient addLogRecord:[[KAADataCollection alloc] initWithTemperature:(int32_t)temperature]];
@@ -516,14 +539,21 @@ int main(void)
 
 - (void)displayConfiguration {
     KAAConfiguration *configuration = [self.kaaClient getConfiguration];
-    NSLog(@"Now sampling period is %d", configuration.samplePeriod);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self createSamplingTimerWithInterval:configuration.samplePeriod];
-    });
+    if (configuration.samplePeriod >= 0) {
+        NSInteger samplePeriod = defaultSamplePeriod;
+        if (configuration.samplePeriod > 0) {
+            samplePeriod = configuration.samplePeriod;
+        }
+        NSLog(@"Now sample period is %ld", (long)samplePeriod);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self createSamplingTimerWithInterval:samplePeriod];
+        });
+    } else {
+        NSLog(@"Incorrect sample period. It must be > 0");
+    }
 }
 
 @end
-
 ```
 
 </div>
@@ -566,10 +596,10 @@ To launch C application next steps should be performed.
 
 <div id="run-obj-c" class="tab-pane fade" markdown="1" >
 
-To launch Objective-C application next steps should be performed.
+To launch your Objective-C application:
 
-1. Make sure that you have choosen "My First Kaa Application" target.
-2. Click on "play" button.
+1. Select **My First Kaa Application** as target.
+2. Click **Play**.
 
 </div>
 
