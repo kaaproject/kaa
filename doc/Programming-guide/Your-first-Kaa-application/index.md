@@ -521,8 +521,10 @@ public class FirstKaaDemo {
     }
 
     private static void onKaaStarted(long time) {
-        if (time == 0) {
-            time = DEFAULT_START_DELAY;
+        if (time <= 0) {
+            LOG.error("Wrong time is used. Please, check your configuration!");
+            kaaClient.stop();
+            System.exit(0);
         }
 
         scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
@@ -534,7 +536,7 @@ public class FirstKaaDemo {
 
                         LOG.info("Sampled Temperature: {}", temperature);
                     }
-                }, DEFAULT_START_DELAY, time, TimeUnit.MILLISECONDS);
+                }, 0, time, TimeUnit.MILLISECONDS);
     }
 
     private static void onChangedConfiguration(long time) {
