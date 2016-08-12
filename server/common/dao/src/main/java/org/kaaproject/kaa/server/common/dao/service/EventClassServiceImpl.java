@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -95,6 +96,17 @@ public class EventClassServiceImpl implements EventClassService {
     public EventClassFamilyDto findEventClassFamilyById(String id) {
         validateSqlId(id, "Event class family id is incorrect. Can't find event class family by id " + id);
         return getDto(eventClassFamilyDao.findById(id));
+    }
+
+    @Override
+    public EventClassFamilyDto findEventClassFamilyByECFVersionId(String id) {
+        validateSqlId(id, "Event class family version id is incorrect. Can't find event class family by ECF version id " + id);
+
+        EventClassFamily eventClassFamily = eventClassFamilyDao.find().stream().
+                filter(ecf -> ecf.getSchemas().stream()
+                        .filter(ecfv -> ecfv.getStringId().equals(id)).count() > 0)
+                .findFirst().get();
+        return getDto(eventClassFamily);
     }
 
     @Override
@@ -191,7 +203,7 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     private void setBackreference(List<EventClassFamilyVersion> ecfvList) {
-        ecfvList.forEach(ecfv -> ecfv.getRecords().forEach(ec -> ec.setEcf(ecfv)));
+        ecfvList.forEach(ecfv -> ecfv.getRecords().forEach(ec -> ec.setEcfv(ecfv)));
     }
 
     private boolean validateEventClassFamilyFqns(EventClassFamilyDto eventClassFamily, List<String> fqns) {
@@ -205,7 +217,7 @@ public class EventClassServiceImpl implements EventClassService {
             LOG.debug("Find event classes by family id [{}] version [{}] and type [{}]", ecfId, version, type);
             EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
             EventClassFamilyVersion ecfv = ecf.getSchemas().stream().filter(s -> s.getVersion() == version).collect(Collectors.toList()).get(0);
-            eventClasses = convertDtoList(eventClassDao.findByEcfIdVersionAndType(String.valueOf(ecfv.getId()), ecfv.getVersion(), type));
+            eventClasses = convertDtoList(eventClassDao.findByEcfvIdVersionAndType(String.valueOf(ecfv.getId()), ecfv.getVersion(), type));
         } else {
             throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);
         }
@@ -225,11 +237,12 @@ public class EventClassServiceImpl implements EventClassService {
     @Override
     public EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn, int version) {
         if (isValidSqlId(tenantId)) {
-            LOG.debug("Find event class by tenant id [{}] and fqn {}", tenantId, fqn);
+            LOG.debug("Find event class family by tenant id [{}] and fqn {}", tenantId, fqn);
             return getDto(eventClassDao.findByTenantIdAndFqnAndVersion(tenantId, fqn, version));
         } else {
             throw new IncorrectParameterException("Incorrect tenant id: " + tenantId);
         }
+
     }
 
     @Override

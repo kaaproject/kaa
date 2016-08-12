@@ -49,7 +49,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private EventClassFamilyVersion ecf;
+    private EventClassFamilyVersion ecfv;
 
     @Column(name = EVENT_CLASS_FQN)
     private String fqn;
@@ -86,12 +86,12 @@ public class EventClass extends BaseSchema<EventClassDto> {
         this.tenant = tenant;
     }
 
-    public EventClassFamilyVersion getEcf() {
-        return ecf;
+    public EventClassFamilyVersion getEcfv() {
+        return ecfv;
     }
 
-    public void setEcf(EventClassFamilyVersion ecf) {
-        this.ecf = ecf;
+    public void setEcfv(EventClassFamilyVersion ecfv) {
+        this.ecfv = ecfv;
     }
 
     public String getFqn() {
@@ -114,7 +114,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((ecf == null) ? 0 : ecf.hashCode());
+        result = prime * result + ((ecfv == null) ? 0 : ecfv.hashCode());
         result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((getCtlSchema() == null) ? 0 : getCtlSchema().hashCode());
@@ -135,11 +135,11 @@ public class EventClass extends BaseSchema<EventClassDto> {
             return false;
         }
         EventClass other = (EventClass) obj;
-        if (ecf == null) {
-            if (other.ecf != null) {
+        if (ecfv == null) {
+            if (other.ecfv != null) {
                 return false;
             }
-        } else if (!ecf.equals(other.ecf)) {
+        } else if (!ecfv.equals(other.ecfv)) {
             return false;
         }
         if (fqn == null) {
@@ -197,8 +197,8 @@ public class EventClass extends BaseSchema<EventClassDto> {
         if (tenant != null) {
             dto.setTenantId(tenant.getStringId());
         }
-        if (ecf != null) {
-            dto.setEcfvId(ecf.getStringId());
+        if (ecfv != null) {
+            dto.setEcfvId(ecfv.getStringId());
         }
         dto.setFqn(fqn);
         dto.setType(type);
@@ -209,7 +209,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
 
     @Override
     public String toString() {
-        return "EventClass [ecf=" + ecf + ", fqn=" + fqn + ", type=" + type + ", ctlSchema=" + getCtlSchema() + ", id=" + id + "]";
+        return "EventClass [ecfv=" + ecfv + ", fqn=" + fqn + ", type=" + type + ", ctlSchema=" + getCtlSchema() + ", id=" + id + "]";
     }
 
 

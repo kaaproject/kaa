@@ -37,15 +37,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateEventClassDaoTest extends HibernateAbstractTest {
 
     @Test
-    public void removeByEcfId() {
+    public void removeByEcfvId() {
         List<EventClass> eventClasses = generateEventClass(null, null, 2);
         String id = eventClasses.get(0).getStringId();
         EventClass dto = eventClassDao.findById(id);
         Assert.assertNotNull(dto);
-        String ecfId = dto.getEcf().getStringId();
-        Assert.assertNotNull(ecfId);
+        String ecfvId = dto.getEcfv().getStringId();
+        Assert.assertNotNull(ecfvId);
 
-        eventClassDao.removeByEcfId(ecfId);
+        eventClassDao.removeByEcfvId(ecfvId);
         dto = eventClassDao.findById(id);
         Assert.assertNull(dto);
     }
@@ -67,7 +67,7 @@ public class HibernateEventClassDaoTest extends HibernateAbstractTest {
         List<EventClass> eventClasses = generateEventClass(null, null, 2);
         EventClass dto = eventClassDao.findById(eventClasses.get(0).getStringId());
         Assert.assertNotNull(dto);
-        List<EventClass> eventClassesList = eventClassDao.findByEcfId(dto.getEcf().getStringId());
+        List<EventClass> eventClassesList = eventClassDao.findByEcfvId(dto.getEcfv().getStringId());
         EventClass eventClass = null;
         for (EventClass found : eventClassesList) {
             if (dto.getId().equals(found.getId())) {

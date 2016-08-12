@@ -665,7 +665,7 @@ public class ConcurrentCacheService implements CacheService {
 
             @Override
             public String compute(EventClassFamilyIdKey key) {
-                LOG.debug("Fetching result for getEcfId using key {}", key);
+                LOG.debug("Fetching result for getEcfvId using key {}", key);
                 EventClassFamilyDto ecf = eventClassService.findEventClassFamilyByTenantIdAndName(key.getTenantId(), key.getName());
                 if (ecf != null) {
                     return ecf.getId();
@@ -693,9 +693,10 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getEventClassFamilyIdByEventClassFqn using key {}", key);
                 List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(key.getTenantId(), key.getFqn());
                 if (eventClasses != null && !eventClasses.isEmpty()) {
-                    return eventClasses.get(0).getEcfvId();
+                    String ecfvId = eventClasses.get(0).getEcfvId();
+                    return eventClassService.findEventClassFamilyByECFVersionId(ecfvId).getId();
                 } else {
-                    LOG.warn("Fetching result for getEcfId using key {} Failed!", key);
+                    LOG.warn("Fetching result for getEcfvId using key {} Failed!", key);
                     return null;
                 }
             }
@@ -715,15 +716,16 @@ public class ConcurrentCacheService implements CacheService {
                 EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(key.getTenantId(), key.getFqn(),
                         key.getVersion());
 
-                String eventClassFamilyId = eventClass.getEcfvId();
+                String ecfvId = eventClass.getEcfvId();
+                String ecfId = eventClassService.findEventClassFamilyByECFVersionId(ecfvId).getId();
 
-                List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(eventClassFamilyId,
+                List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(ecfId,
                         key.getVersion());
                 for (ApplicationEventFamilyMapDto mapping : mappingList) {
                     String applicationId = mapping.getApplicationId();
                     ApplicationDto appDto = applicationService.findAppById(applicationId);
                     RouteTableKey routeTableKey = new RouteTableKey(appDto.getApplicationToken(), new EventClassFamilyVersion(
-                            eventClassFamilyId, key.getVersion()));
+                            ecfId, key.getVersion()));
                     if (!routeKeys.contains(routeTableKey)) {
                         for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
                             if (eventMap.getEventClassId().equals(eventClass.getId())

@@ -45,6 +45,14 @@ public interface EventClassService {
     EventClassFamilyDto findEventClassFamilyById(String id);
 
     /**
+     * Find event class family by ECF version id.
+     *
+     * @param id the string id of event class family version
+     * @return the event class family dto object
+     */
+    EventClassFamilyDto findEventClassFamilyByECFVersionId(String id);
+
+    /**
      * Find event class family versions by id.
      *
      * @param id the string id of event class family

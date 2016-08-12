@@ -59,8 +59,8 @@ public class EventClassDto extends BaseSchemaDto {
     public void setType(EventClassType type) {
         this.type = type;
     }
-
-    @Override
+    
+     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -135,7 +135,7 @@ public class EventClassDto extends BaseSchemaDto {
         builder.append(id);
         builder.append(", tenantId=");
         builder.append(tenantId);
-        builder.append(", ecfvId=");
+        builder.append(", ecfId=");
         builder.append(ecfvId);
         builder.append(", fqn=");
         builder.append(fqn);
