@@ -24,7 +24,7 @@ public class CTLEventsMigration extends AbstractCTLMigration {
     private static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME = "events_class_family_versions";
     private static final String EVENT_CLASS_TABLE_NAME = "events_class";
     private static final String BASE_SCHEMA_TABLE_NAME = "base_schems";
-    private static final String CTL_TABLE_NAME = "ctl";
+    private static final String APPLICATION_EVENT_MAP_TABLE_NAME = "application_event_map";
 
     public CTLEventsMigration(Connection connection) {
         super(connection);
@@ -39,6 +39,8 @@ public class CTLEventsMigration extends AbstractCTLMigration {
     @Override
     public void beforeTransform() throws SQLException {
         dd.dropUnnamedFK(EVENT_CLASS_TABLE_NAME, EVENT_CLASS_FAMILY_TABLE_NAME);
+        dd.dropUnnamedFK(APPLICATION_EVENT_MAP_TABLE_NAME, EVENT_CLASS_TABLE_NAME);
+        runner.update(connection, "ALTER TABLE " + BASE_SCHEMA_TABLE_NAME + " CHANGE application_id application_id bigint(20)");
     }
 
     @Override
@@ -48,8 +50,14 @@ public class CTLEventsMigration extends AbstractCTLMigration {
                                 .foreignKey("events_class_family_versions_id")
                                 .references("events_class_family_versions", "id")
                                 .onDelete(CASCADE)
-                                .onUpdate(CASCADE)
-                )
+                                .onUpdate(CASCADE))
+                .execute();
+
+        dd.alterTable(APPLICATION_EVENT_MAP_TABLE_NAME)
+                .add(constraint("FK_events_class_id")
+                                .foreignKey("events_class_id")
+                                .references("events_class", "id")
+                                .onDelete(CASCADE))
                 .execute();
     }
 
@@ -98,6 +106,7 @@ public class CTLEventsMigration extends AbstractCTLMigration {
         Long shift = runner.query(connection, "select max(id) as max_id from "+ EVENT_CLASS_TABLE_NAME, rs -> rs.next() ? rs.getLong("max_id") : null);
         Long idShift = BaseSchemaIdCounter.getInstance().getAndShift(shift);
         runner.update(connection, "update " + EVENT_CLASS_TABLE_NAME + " set id = id + " + idShift + " order by id desc");
+        runner.update(connection, "update " + APPLICATION_EVENT_MAP_TABLE_NAME + " set events_class_id = events_class_id + " + idShift + " order by id desc");
         schemas.forEach(s -> s.setId(s.getId() + idShift));
 
         return schemas;
