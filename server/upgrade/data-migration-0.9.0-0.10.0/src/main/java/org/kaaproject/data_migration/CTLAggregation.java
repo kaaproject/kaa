@@ -61,7 +61,7 @@ public class CTLAggregation {
             Ctl ctl = new Ctl(currentCtlId, new CtlMetaInfo(currentCTLMetaId, fqn, schema.getAppId(), tenantId), defaultRecord);
 
             if (ctls.isEmpty()) {
-                confSchemasToCTL.put(ctl, asList(schema));
+                confSchemasToCTL.put(ctl, new ArrayList<>(asList(schema)));
                 ctls.add(ctl);
             } else {
                 Ctl ctlToCompare = sameFqn(ctls, ctl);
@@ -132,7 +132,7 @@ public class CTLAggregation {
     }
 
     private boolean bothAppIdNull(Ctl c1, Ctl c2) {
-        return c1.getMetaInfo().getAppId() != null && c2.getMetaInfo().getAppId() != null;
+        return c1.getMetaInfo().getAppId() == null && c2.getMetaInfo().getAppId() == null;
     }
 
 
@@ -150,7 +150,7 @@ public class CTLAggregation {
     }
 
 
-    ///TODO in future add npromotion if needed
+    ///TODO in future add promotion if needed
     private void putToMapSchema(Ctl c1, Ctl newCtl, Schema schema, String scope) {
         if (!sameBody(c1, newCtl)) {
             LOG.warn("Schemas in different %ss' scopes have different bodies {} and {} but the same fqn {}", scope, newCtl.getDefaultRecord(), c1.getDefaultRecord(), newCtl.getMetaInfo().getFqn());

@@ -23,8 +23,7 @@ public class UpdateUuidsMigration {
         this.connection = connection;
     }
 
-    public void transform() throws IOException {
-        try {
+    public void transform() throws IOException, SQLException {
             QueryRunner run = new QueryRunner();
             ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<Configuration>(Configuration.class);
             List<Configuration> configs = run.query(connection, "SELECT * FROM configuration", rsHandler);
@@ -38,12 +37,6 @@ public class UpdateUuidsMigration {
                     System.err.println("Error: failed to update configuration: " + config);
                 }
             }
-
-        }  catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
-        } finally {
-            DbUtils.closeQuietly(connection);
-        }
     }
 
 }
