@@ -73,7 +73,7 @@ public class EcfActivity
               public void onRowAction(RowActionEvent<Integer> event) {
                   Integer id = event.getClickedId();
                   if (event.getAction()==RowActionEvent.CLICK) {
-                      EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, "", id);
+                      EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, place.getEcfId(), id);
                       ecfVersionPlace.setPreviousPlace(place);
                       goTo(ecfVersionPlace);
                   }
@@ -119,9 +119,9 @@ public class EcfActivity
                 @Override
                 public void onSuccess(List<EventClassFamilyVersionDto> eventClassFamilyVersionDtos) {
                     ecfVersionsDataProvider.setSchemas(eventClassFamilyVersionDtos);
+                    ecfVersionsDataProvider.reload();
                 }
             });
-            ecfVersionsDataProvider.reload();
         }
     }
 

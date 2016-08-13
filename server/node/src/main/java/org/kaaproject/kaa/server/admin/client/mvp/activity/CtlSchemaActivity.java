@@ -396,7 +396,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                             } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
                                 goTo(new LogSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.EVENT_CLASS && place.getPreviousPlace() != null) {
-                                goTo(new EventClassPlace("-1", "", -1, "", ctlSchemaID, place.getEventClassDtoList()));
+                                goTo(new EventClassPlace(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), "", ctlSchemaID, place.getEventClassDtoList()));
                             }
                         } else if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());

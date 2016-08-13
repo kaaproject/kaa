@@ -312,8 +312,6 @@ public interface KaaAdminService extends RemoteService {
 
     EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException;
 
-    void addEventClassFamilySchemaForm(String eventClassFamilyId, RecordField schemaForm) throws KaaAdminServiceException;
-
     CtlSchemaReferenceDto getLastCtlSchemaReferenceDto(String ctlSchemaId) throws KaaAdminServiceException;
 
     EventClassViewDto getEventClassView(String eventClassId) throws KaaAdminServiceException;

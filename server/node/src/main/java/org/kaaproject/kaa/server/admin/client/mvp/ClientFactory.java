@@ -141,6 +141,7 @@ public interface ClientFactory {
     EventClassView getCreateEventClassView();
 
     EcfVersionView getCreateEcfVersionView();
+    EcfVersionView getEcfVersionView();
 
     BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
     AefMapView getAefMapView();

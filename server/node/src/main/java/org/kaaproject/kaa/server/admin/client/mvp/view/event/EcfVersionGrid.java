@@ -17,12 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -34,26 +29,7 @@ public class EcfVersionGrid extends BaseCtlSchemasGrid<EventClassDto> {
 
     @Override
     protected float constructColumnsImpl(DataGrid<EventClassDto> table) {
-        float prefWidth = 0;
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.name(),
-                new StringValueProvider<EventClassDto>() {
-                    @Override
-                    public String getValue(EventClassDto item) {
-                        return item.getName();
-                    }
-                }, 120);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.namespace(),
-                new StringValueProvider<EventClassDto>() {
-                    @Override
-                    public String getValue(EventClassDto item) {
-                        return item.getFqn();
-                    }
-                }, 160);
-
+        float prefWidth = super.constructColumnsImpl(table);
         prefWidth += constructStringColumn(table,
                 Utils.constants.classType(),
                 new StringValueProvider<EventClassDto>() {
@@ -66,22 +42,4 @@ public class EcfVersionGrid extends BaseCtlSchemasGrid<EventClassDto> {
         return prefWidth;
     }
 
-    @Override
-    protected float constructActions(DataGrid<EventClassDto> table, float prefWidth) {
-        super.constructActions(table, prefWidth);
-        float result = 0;
-            Header<SafeHtml> deleteHeader;
-            if (embedded) {
-                deleteHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(Utils.constants.remove()));
-            } else {
-                deleteHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(Utils.constants.delete()));
-            }
-
-            deleteColumn = constructDeleteColumn("");
-            table.addColumn(deleteColumn, deleteHeader);
-            table.setColumnWidth(deleteColumn, 40, Style.Unit.PX);
-            result += 40;
-
-        return result;
-    }
 }

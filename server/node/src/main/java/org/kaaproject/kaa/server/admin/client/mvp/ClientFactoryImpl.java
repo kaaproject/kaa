@@ -200,6 +200,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EventClassView createEventClassView = new EventClassViewImpl(true);
 
     private final EcfVersionView createEcfVersionView = new EcfVersionViewImpl(true);
+    private final EcfVersionView versionView = new EcfVersionViewImpl(false);
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
@@ -481,6 +482,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public EcfVersionView  getCreateEcfVersionView() {
         return createEcfVersionView;
+    }
+
+    @Override
+    public EcfVersionView getEcfVersionView() {
+        return versionView;
     }
 
     @Override

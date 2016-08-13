@@ -2749,24 +2749,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void addEventClassFamilySchemaForm(String eventClassFamilyId, RecordField schemaForm) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        try {
-            Schema schema = ecfSchemaFormAvroConverter.createSchemaFromSchemaForm(schemaForm);
-            String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
-
-            EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
-            Utils.checkNotNull(storedEventClassFamily);
-            checkTenantId(storedEventClassFamily.getTenantId());
-
-            String username = getCurrentUser().getUsername();
-            //todo: load list of ctls
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
     public CtlSchemaReferenceDto getLastCtlSchemaReferenceDto(String ctlSchemaId) throws KaaAdminServiceException {
         try {
             if (!isEmpty(ctlSchemaId)) {
@@ -2796,9 +2778,13 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException {
-        try {
+        try {//сюда когда отображает единицу
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
             EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
+            eventClassDto.setCreatedTime(System.currentTimeMillis());
+            //eventClassDto.setCreatedUsername(getCurrentUser().getUsername());
+            eventClassDto.setFqn(ctlSchemaDto.getMetaInfo().getFqn());
+            eventClassDto.setTenantId(getCurrentUser().getTenantId());
             return eventClassViewDto;
         } catch (ControlServiceException e) {
             throw Utils.handleException(e);
@@ -2894,12 +2880,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     @Override
     public void saveEventClassFamilyVersion(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException {
         EventClassFamilyVersionDto eventClassFamilyVersionDto = new EventClassFamilyVersionDto();
-        eventClassFamilyVersionDto.setCreatedTime(new Date().getTime());
+        eventClassFamilyVersionDto.setCreatedTime(System.currentTimeMillis());
         eventClassFamilyVersionDto.setCreatedUsername(getCurrentUser().getUsername());
         List<EventClassDto> eventClassDtoList = new ArrayList<>();
         for(EventClassViewDto classViewDto : eventClassViewDto){
             EventClassDto eventClassDto = classViewDto.getSchema();
             eventClassDto.setId(null);
+            eventClassDto.setFqn(classViewDto.getExistingMetaInfo().getMetaInfo().getFqn());
+            eventClassDto.setCreatedUsername(getCurrentUser().getUsername());
+            eventClassDto.setCreatedTime(System.currentTimeMillis());
             eventClassDtoList.add(eventClassDto);
         }
         eventClassFamilyVersionDto.setRecords(eventClassDtoList);

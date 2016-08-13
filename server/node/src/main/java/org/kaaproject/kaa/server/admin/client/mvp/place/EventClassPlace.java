@@ -38,6 +38,7 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
         super(ecfId, ecfVersionId, ecfVersion, schemaId);
         this.ctlSchemaId = ctlSchemaId;
         this.eventClassDtoList = eventClassDtoList;
+
     }
 
     public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId, List<EventClassViewDto> eventClassDtoList) {
@@ -50,6 +51,7 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
             this.eventClassDtoList = new ArrayList<>();
         }
         eventClassDtoList.add(eventClassViewDto);
+
     }
 
     public List<EventClassViewDto> getEventClassDtoList() {

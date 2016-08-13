@@ -24,6 +24,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ImageTextButton;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -33,8 +34,10 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
     public final ImageTextButton addSchemaButton;
 
     public EcfVersionViewImpl(boolean editable) {
-        super(editable);
+        super(true);
         this.addSchemaButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
+        addSchemaButton.setVisible(editable);
+        addButton.setVisible(editable);
         supportPanel.add(addSchemaButton);
     }
 

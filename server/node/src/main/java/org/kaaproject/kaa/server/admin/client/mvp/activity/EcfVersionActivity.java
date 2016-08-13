@@ -25,8 +25,6 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -42,7 +40,6 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.event.shared.EventBus;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 
 public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClassDto, EcfVersionPlace> {
 
@@ -53,16 +50,27 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
 
     public EcfVersionActivity(EcfVersionPlace place, ClientFactory clientFactory) {
         super(place, EventClassDto.class, clientFactory);
-        listView = clientFactory.getCreateEcfVersionView();
-        listView.setPresenter(this);
+        initListView( place);
+        this.listView.setPresenter(this);
         this.ecfId = place.getEcfId();
         this.ecfVersion = place.getEcfVersion();
         this.ecfVersionId = place.getEcfVersionId();
     }
 
+    private void initListView(EcfVersionPlace place){
+        if(place.getEcfVersionId() == null || place.getEcfVersionId() == ""){
+            this.listView = clientFactory.getCreateEcfVersionView();
+        } else {
+            this.listView = clientFactory.getEcfVersionView();
+        }
+    }
+
     @Override
     protected BaseListView<EventClassDto> getView() {
-        return clientFactory.getCreateEcfVersionView();
+        if (ecfVersionId == null || ecfVersionId == "") {
+            return clientFactory.getCreateEcfVersionView();
+        }
+        return clientFactory.getEcfVersionView();
     }
 
     @Override
@@ -103,11 +111,9 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
 
                             @Override
                             public void onSuccess(Void aVoid) {
-                                goTo(new EcfPlace(place.getEcfId()));//:TODO Vova save EcfVersion
+                                goTo(new EcfPlace(place.getEcfId()));
                             }
                         });
-
-
             }
         }));
 
@@ -115,7 +121,6 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
             @Override
             public void onRowAction(RowActionEvent<String> event) {
                 String id = String.valueOf(event.getClickedId());
-                Window.alert("getClickedId = " + event.getClickedId());
                 if (event.getAction() == RowActionEvent.CLICK) {
                     goTo(existingEntityPlace(id));
                 } else if (event.getAction() == RowActionEvent.DELETE) {

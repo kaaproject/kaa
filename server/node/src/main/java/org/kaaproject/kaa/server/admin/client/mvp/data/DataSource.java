@@ -462,13 +462,13 @@ public class DataSource {
 
     public void editEcf(EventClassFamilyDto ecf,
             final AsyncCallback<EventClassFamilyDto> callback) {
-//        rpcService.editEventClassFamily(ecf,
-//                new DataCallback<EventClassFamilyDto>(callback) {
-//                    @Override
-//                    protected void onResult(EventClassFamilyDto result) {
-//                        refreshEcfs();
-//                    }
-//                });
+        rpcService.editEventClassFamily(ecf,
+                new DataCallback<EventClassFamilyDto>(callback) {
+                    @Override
+                    protected void onResult(EventClassFamilyDto result) {
+                        refreshEcfs();
+                    }
+                });
     }
 
     public void getEcf(String ecfId,
@@ -477,17 +477,6 @@ public class DataSource {
                 new DataCallback<EventClassFamilyDto>(callback) {
                     @Override
                     protected void onResult(EventClassFamilyDto result) {
-                    }
-                });
-    }
-
-    public void addEcfVersion(String ecfId, RecordField schemaForm,
-            final AsyncCallback<Void> callback) {
-        rpcService.addEventClassFamilySchemaForm(ecfId, schemaForm,
-                new DataCallback<Void>(callback) {
-                    @Override
-                    protected void onResult(Void result) {
-                        eventBus.fireEvent(new DataEvent(EventClassFamilyVersionDto.class));
                     }
                 });
     }

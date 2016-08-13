@@ -130,6 +130,14 @@ public class EventClassActivity
     }
 
     @Override
+    protected void bindDetailsView(boolean fireChanged) {
+        super.bindDetailsView(fireChanged);
+        if (entity.getSchema().getType() != null) {
+            detailsView.getEventClassTypes().setValue(entity.getSchema().getType().toString());
+        }
+    }
+
+    @Override
     protected void onEntityRetrieved() {
         super.onEntityRetrieved();
         ValueListBox<String> eventClassTypes = this.detailsView.getEventClassTypes();
@@ -144,7 +152,6 @@ public class EventClassActivity
                 @Override
                 public void onSuccess(List<String> result) {
                     EventClassActivity.this.detailsView.getEventClassTypes().setAcceptableValues(result);
-                    detailsView.getEventClassTypes().setValue(result.get(0));
                 }
             });
         }

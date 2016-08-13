@@ -25,7 +25,6 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,14 +33,14 @@ import java.util.List;
 public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, String> {
 
     private String eventClassFamilyId;
-    private int version;
+    private int ecfVersion;
     private List<EventClassViewDto> eventClassViewDtoList;
 
     public EcfVersionDataProvider(AbstractGrid<EventClassDto, String> dataGrid, HasErrorMessage hasErrorMessage, String eventClassFamilyId,
-                                  int version, List<EventClassViewDto> eventClassViewDtoList) {
+                                  int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
         super(dataGrid, hasErrorMessage, false);
         this.eventClassFamilyId = eventClassFamilyId;
-        this.version = version;
+        this.ecfVersion = ecfVersion;
         this.eventClassViewDtoList = eventClassViewDtoList;
         addDataDisplay();
     }
@@ -49,8 +48,8 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
     @Override
     protected void loadData(final LoadCallback callback) {
 
-        if (version > 0) {
-            KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, null,
+        if (ecfVersion > 0) {
+            KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, ecfVersion, null,
                     new AsyncCallback<List<EventClassDto>>() {
                         @Override
                         public void onFailure(Throwable cause) {
@@ -70,14 +69,11 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
             for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
                 if (eventClassViewDto.getSchema() != null) {
                     CTLSchemaMetaInfoDto ctlSchemaMetaInfoDto = eventClassViewDto.getExistingMetaInfo().getMetaInfo();
-
                     EventClassDto eventClassDto = eventClassViewDto.getSchema();
                     eventClassDto.setCtlSchemaId(ctlSchemaMetaInfoDto.getId());
-                    eventClassDto.setFqn(ctlSchemaMetaInfoDto.getFqn());
+                    eventClassDto.setCreatedTime(System.currentTimeMillis());
                     eventClassDto.setId(String.valueOf(i++));
-
                     eventClassDtoList.add(eventClassDto);
-
                 }
             }
             callback.onSuccess(eventClassDtoList);
