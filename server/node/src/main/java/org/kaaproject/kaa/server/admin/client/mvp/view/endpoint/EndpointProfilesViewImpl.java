@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
@@ -49,6 +50,9 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
 
     public EndpointProfilesViewImpl() {
         super(false);
+
+        supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        supportPanel.setWidth("1000px");
 
         resetButton = new Button(Utils.constants.reset());
         supportPanel.add(resetButton);

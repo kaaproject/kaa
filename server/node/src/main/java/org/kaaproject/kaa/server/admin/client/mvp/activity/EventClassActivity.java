@@ -74,7 +74,24 @@ public class EventClassActivity
     @Override
     protected void editEntity(EventClassViewDto eventClassViewDto,
                               AsyncCallback<EventClassViewDto> callback) {
-        place.addEventClassViewDto(eventClassViewDto);
+
+        List<EventClassViewDto> eventClassDtoList = place.getEventClassDtoList();
+        if (eventClassDtoList != null && eventClassViewDto.getCtlSchemaForm() != null) {
+            int sizeArrays = eventClassDtoList.size();
+            for (int i = 0; i < sizeArrays; i++) {
+                if (eventClassDtoList.get(i).getId() == eventClassViewDto.getId()) {
+                    EventClassDto eventClassDto = eventClassDtoList.get(i).getSchema();
+                    eventClassDto.setName(eventClassViewDto.getSchema().getName());
+                    eventClassDtoList.get(i).setSchema(eventClassDto);
+                    EventClassViewDto updatedECV = eventClassDtoList.get(i);
+                    updatedECV.setSchema(eventClassDto);
+                    eventClassDtoList.set(i, updatedECV);
+                    i = sizeArrays;
+                }
+            }
+        } else {
+            place.addEventClassViewDto(eventClassViewDto);
+        }
         KaaAdmin.getDataSource().saveEventClassView(eventClassViewDto, callback);
     }
 
@@ -117,7 +134,7 @@ public class EventClassActivity
                 new BusyAsyncCallback<EventClassViewDto>() {
                     public void onSuccessImpl(EventClassViewDto result) {
                         if (!create) {
-                            goTo(existingSchemaPlaceForEvent(ecfId, ecfVersionId, ecfVersion, result.getId()));
+                            goTo(existingSchemaPlaceForEvent(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), result.getId()));
                         } else {
                             goTo(new EcfVersionPlace(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), place.getEventClassDtoList()));
                         }

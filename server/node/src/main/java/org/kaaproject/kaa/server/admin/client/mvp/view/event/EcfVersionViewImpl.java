@@ -20,6 +20,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
@@ -38,6 +39,8 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
         this.addSchemaButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
         addSchemaButton.setVisible(editable);
         addButton.setVisible(editable);
+        supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        supportPanel.setWidth("300px");
         supportPanel.add(addSchemaButton);
     }
 

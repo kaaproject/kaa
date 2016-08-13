@@ -58,6 +58,10 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
         return eventClassDtoList;
     }
 
+    public void setEventClassDtoList(List<EventClassViewDto> eventClassDtoList) {
+        this.eventClassDtoList = eventClassDtoList;
+    }
+
     public String getCtlSchemaId() {
         return ctlSchemaId;
     }
