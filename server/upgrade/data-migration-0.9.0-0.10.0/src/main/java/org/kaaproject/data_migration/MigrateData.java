@@ -47,7 +47,8 @@ public class MigrateData {
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
             migrationList.add(new CTLEventsMigration(conn));
-            migrationList.add(new CtlLogMigration(conn));
+            migrationList.add(new CTLNotificationMigration(conn));
+            migrationList.add(new CTLLogMigration(conn));
 
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);

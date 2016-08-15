@@ -42,7 +42,7 @@ public abstract class AbstractCTLMigration {
     }
 
     public void beforeTransform() throws SQLException {
-        // delete relation between <feature>_schems to schems
+        // delete relation between <table_prefix>_schems to schems
         dd.dropUnnamedFK(getPrefixTableName() + "_schems", "schems");
     }
 

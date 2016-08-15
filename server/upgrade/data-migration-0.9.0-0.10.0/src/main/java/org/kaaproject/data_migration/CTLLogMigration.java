@@ -18,11 +18,11 @@ package org.kaaproject.data_migration;
 
 import java.sql.Connection;
 
-public class CtlLogMigration extends AbstractCTLMigration {
+public class CTLLogMigration extends AbstractCTLMigration {
 
     public static final String LOG_SCHEMA_PREFIX_TABLE_NAME = "log";
 
-    public CtlLogMigration(Connection connection) {
+    public CTLLogMigration(Connection connection) {
         super(connection);
     }
 
