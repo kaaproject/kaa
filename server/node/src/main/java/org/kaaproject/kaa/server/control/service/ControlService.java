@@ -1030,6 +1030,9 @@ public interface ControlService {
             throws ControlServiceException;
 
     EventClassDto getEventClassById(String eventClassId) throws ControlServiceException;
+
+    void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException;
+
     /**
      * Edits the application event family map.
      *

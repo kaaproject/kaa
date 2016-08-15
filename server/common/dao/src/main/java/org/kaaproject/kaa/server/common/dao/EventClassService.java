@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
@@ -124,4 +125,11 @@ public interface EventClassService {
      */
     EventClassDto findEventClassById(String eventClassId);
 
+    /**
+     * Validate if there are intersections of same FQNs in event classes among list of chosen families.
+     *
+     * @param ecfList the list of AefMapInfoDto
+     * @return the event class dto
+     */
+    boolean isValidECFListInSdkProfile(List<AefMapInfoDto> ecfList);
 }

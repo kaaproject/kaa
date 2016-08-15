@@ -1573,6 +1573,19 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * validateECFListInSdkProfile(List<org.kaaproject.kaa.common.dto.event.AefMapInfoDto> ecfList)
+     */
+    @Override
+    public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException {
+        if (!eventClassService.isValidECFListInSdkProfile(ecfList)) {
+            throw new ControlServiceException("You have chosen event class families, where event classes have the same FQNs.");
+        }
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editApplicationEventFamilyMap

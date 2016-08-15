@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.avro.ui.shared.NamesValidator;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
@@ -253,5 +253,23 @@ public class EventClassServiceImpl implements EventClassService {
         } else {
             throw new IncorrectParameterException("Incorrect event class id: " + eventClassId);
         }
+    }
+
+    @Override
+    public boolean isValidECFListInSdkProfile(List<AefMapInfoDto> ecfList) {
+        List<EventClass> ecList = new ArrayList<>();
+        for (AefMapInfoDto ecfMap : ecfList) {
+            EventClassFamily ecf = eventClassFamilyDao.findById(ecfMap.getEcfId());
+            ecf.getSchemas().forEach(ecfv -> ecList.addAll(ecfv.getRecords()));
+        }
+
+        for (EventClass ec : ecList) {
+            long fqnMatches = ecList.stream().filter(ec2 -> ec2.getFqn().equals(ec.getFqn())).count();
+            if (fqnMatches > 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
