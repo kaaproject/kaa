@@ -22,6 +22,8 @@ import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.Schema;
 import org.kaaproject.data_migration.utils.BaseSchemaIdCounter;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -34,6 +36,7 @@ import static org.kaaproject.data_migration.utils.DataSources.MARIADB;
 
 public class MigrateData {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MigrateData.class);
     private static Connection conn;
 
     public static void main(String[] args) {
@@ -80,6 +83,7 @@ public class MigrateData {
 
 
         } catch (SQLException | IOException | ConfigurationGenerationException e) {
+            LOG.error("Error: " + e.getMessage(), e);
             DbUtils.rollbackAndCloseQuietly(conn);
         } finally {
             DbUtils.closeQuietly(conn);
