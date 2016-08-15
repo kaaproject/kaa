@@ -26,10 +26,10 @@
   ffi = {
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1m5mprppw0xcrv2mkim5zsk70v089ajzqiq5hpyb0xg96fcyzyxj";
+      sha256 = "1nkcrmxqr0vb1y4rwliclwlj2ajsi4ddpdx2gvzjy0xbkk5iqzfp";
       type = "gem";
     };
-    version = "1.9.10";
+    version = "1.9.14";
   };
   jekyll = {
     source = {
@@ -47,14 +47,6 @@
     };
     version = "1.4.0";
   };
-  jekyll-paginate = {
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "0r7bcs8fq98zldih4787zk5i9w24nz5wa26m84ssja95n3sas2l8";
-      type = "gem";
-    };
-    version = "1.1.0";
-  };
   jekyll-sass-converter = {
     source = {
       remotes = ["https://rubygems.org"];
@@ -66,10 +58,10 @@
   jekyll-sitemap = {
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1sg0yzhzja2lw48w5l23l3612pig5c2x4hf883c8bgz0rvr81di1";
+      sha256 = "17vmz9kb0v4874ljyc0s96l16lnhada5b241kwdiyap5lra6v7lf";
       type = "gem";
     };
-    version = "0.10.0";
+    version = "0.11.0";
   };
   jekyll-watch = {
     source = {

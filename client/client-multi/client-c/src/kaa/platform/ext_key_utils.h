@@ -43,7 +43,6 @@ void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size);
  * In case if kaa channel has encryption, this function has to be
  * called to perform keys initialization.
  *
- * @return KAA_ERR_NONE in case of successful initialization. The other value means failure.
  */
 kaa_error_t kaa_init_keys(void);
 
@@ -54,7 +53,7 @@ kaa_error_t kaa_init_keys(void);
  * called to perform keys deinitialization.
  *
  */
-void  kaa_deinit_keys(void);
+void kaa_deinit_keys(void);
 
 /**
  * Returns endpoint session key.
@@ -82,7 +81,6 @@ kaa_error_t ext_encrypt_data(const uint8_t *input, size_t input_size, uint8_t *o
  * @param[out] output_payload_size  The size of the payload data.
  * @param[out] output               The buffer which contains dectypted data will be filled in.
  *
- * @return error code.
  */
 kaa_error_t ext_decrypt_data(const uint8_t *input, size_t input_size,
         uint8_t *output, size_t *output_payload_size);
@@ -95,7 +93,6 @@ kaa_error_t ext_decrypt_data(const uint8_t *input, size_t input_size,
  * @param[in]   remote_key          Remote public key which will be used to encrypt session key.
  * @param[in]   remote_key_size     Remote public key's size.
  *
- * @return error code.
  */
 kaa_error_t ext_get_encrypted_session_key(uint8_t **buffer, size_t *buffer_size,
         const uint8_t *remote_key, size_t remote_key_size);
@@ -136,7 +133,7 @@ void ext_get_sha1_public(uint8_t **sha1, size_t *length);
  *                     of the RSA public key in base64 encoding
  * @param [out] length The length of the SHA1.
  */
-void ext_get_sha1_base64_public(uint8_t **sha1, size_t *length);
+kaa_error_t ext_get_sha1_base64_public(const uint8_t **sha1, size_t *length);
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

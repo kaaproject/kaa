@@ -1,0 +1,5213 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Kaa Admin REST API",
+    "version" : "0.10.0-SNAPSHOT",
+    "title" : "Admin REST API"
+  },
+  "host" : "localhost:8080",
+  "basePath" : "/kaaAdmin/rest",
+  "tags" : [ {
+    "name" : "Application",
+    "description" : "Provides function for manage applications"
+  }, {
+    "name" : "Common Type Library",
+    "description" : "Provides function for manage CTL"
+  }, {
+    "name" : "Configuration",
+    "description" : "Provides function for manage configuration"
+  }, {
+    "name" : "Device management",
+    "description" : "Provides function for device management"
+  }, {
+    "name" : "Events",
+    "description" : "Provides function for manage events"
+  }, {
+    "name" : "Grouping",
+    "description" : "Provides function for manage groups"
+  }, {
+    "name" : "Logging",
+    "description" : "Provides function for manage logging"
+  }, {
+    "name" : "Notifications",
+    "description" : "Provides function for manage notifications"
+  }, {
+    "name" : "Profiling",
+    "description" : "Provides function for manage profiles"
+  }, {
+    "name" : "SDK profiles",
+    "description" : "Provides function for manage SDK profiles"
+  }, {
+    "name" : "Tenant",
+    "description" : "Provides function for manage tenants"
+  }, {
+    "name" : "User",
+    "description" : "Provides function for manage users"
+  }, {
+    "name" : "Verifiers",
+    "description" : "Provides function for manage verifiers"
+  } ],
+  "schemes" : [ "http", "https" ],
+  "paths" : {
+    "/api/CTL/checkFqn" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Check CTL schema FQN",
+        "description" : "Checks if CTL schema with same fqn is already exists in the sibling application. Only authorized users are allowed to perform this operation.",
+        "operationId" : "checkFqnExistsWithAppToken",
+        "parameters" : [ {
+          "name" : "fqn",
+          "in" : "query",
+          "description" : "The fully qualified name of the CTL schema",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "A unique tenant identifier",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "boolean"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The Tenant ID of the CTL schema does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/deleteSchema" : {
+      "post" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Delete CTL schema",
+        "description" : "Deletes a CTL schema. Only authorized users are allowed to perform this operation.",
+        "operationId" : "deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken",
+        "parameters" : [ {
+          "name" : "fqn",
+          "in" : "query",
+          "description" : "The fully qualified name of the CTL schema",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "query",
+          "description" : "The version number of the CTL schema",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "A unique tenant identifier",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The tenant ID of the CTL schema does not match the tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A CTL schema with the specified fully qualified name, version number, tenant and application identifiers does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/exportSchema" : {
+      "post" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Export CTL schema",
+        "description" : "Exports a CTL schema and, depending on the export method specified, all of its dependencies. Only authorized users are allowed to perform this operation.",
+        "operationId" : "exportCTLSchemaByAppToken",
+        "parameters" : [ {
+          "name" : "fqn",
+          "in" : "query",
+          "description" : "The fully qualified name of the CTL schema",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "query",
+          "description" : "The version number of the CTL schema",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "method",
+          "in" : "query",
+          "description" : "The schema export method (either SHALLOW, FLAT, DEEP or LIBRARY)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Unknown export method specified"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The CTL schema with the given fqn, version and application Id does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/getApplicationSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Get application CTL schemas",
+        "description" : "Returns a list of available CTL schemas metadata for an application. The current user must have one of the following roles: TENANT_DEVELOPER or TENANT_USER.",
+        "operationId" : "getApplicationLevelCTLSchemasByAppToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER, or TENANT_USER) or Tenant ID of the application does not match the Tenant ID of the user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/getFlatSchemaByCtlSchemaId" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Get flat schema by it's id",
+        "description" : "Returns a flat schema. Only authorized users are allowed to perform this operation.",
+        "operationId" : "getFlatSchemaByCtlSchemaId",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "description" : "A unique CTL schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The tenant ID of the CTL schema does not match the tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A CTL schema with the specified id does not exist."
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/getSchema" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Get CTL schema",
+        "description" : "Returns a CTL schema. Only authorized users are allowed to perform this operation.",
+        "operationId" : "getCTLSchemaByFqnVersionTenantIdAndApplicationToken",
+        "parameters" : [ {
+          "name" : "fqn",
+          "in" : "query",
+          "description" : "The fully qualified name of the CTL schema",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "query",
+          "description" : "The version number of the CTL schema",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "A unique tenant identifier",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/CTLSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The tenant ID of the CTL schema does not match the tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A CTL schema with the specified fully qualified name and version number does not exist."
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/getSchemaById" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Get CTL schema by it's id",
+        "description" : "Returns a CTL schema. Only authorized users are allowed to perform this operation.",
+        "operationId" : "getCTLSchemaById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "description" : "A unique CTL schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/CTLSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The tenant ID of the CTL schema does not match the tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A CTL schema with the specified id does not exist."
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/getSystemSchemas" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Get system CTL schemas",
+        "description" : "Returns a list of available system CTL schemas metadata. Only authorized users are allowed to perform this operation.",
+        "operationId" : "getSystemLevelCTLSchemas",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/getTenantSchemas" : {
+      "get" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Get tenant CTL schemas",
+        "description" : "Returns a list of available CTL schemas metadata for current tenant. The current user must have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.",
+        "operationId" : "getTenantLevelCTLSchemas",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/promoteScopeToTenant" : {
+      "post" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Promote CTL schema from application scope to Tenant",
+        "description" : "Promote existing CTL schema meta info scope from application to tenant. Only authorized users are allowed to perform this operation.",
+        "operationId" : "promoteScopeToTenant",
+        "parameters" : [ {
+          "name" : "applicationId",
+          "in" : "query",
+          "description" : "A unique application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fqn",
+          "in" : "query",
+          "description" : "The fully qualified name of the CTL schema",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The Tenant ID of the CTL schema does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/CTL/saveSchema" : {
+      "post" : {
+        "tags" : [ "Common Type Library" ],
+        "summary" : "Create CTL schema",
+        "description" : "Creates a CTL schema with application token. Only authorized users are allowed to perform this operation.",
+        "operationId" : "saveCTLSchemaWithAppToken",
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "query",
+          "description" : "The CTL schema structure",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "A unique tenant identifier",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/CTLSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "The CTL schema body provided is invalid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The tenant ID of the CTL schema does not match the tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/activateConfiguration" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Activate configuration",
+        "description" : "Activates a configuration. Sets the status field of the configuration to ACTIVE, increments the sequenceNumber field value by 1, and sets the activateUsername and activatedTime fields to the name of the user who has submitted the request and the activation time respectively. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "activateConfiguration",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "configurationId",
+          "description" : "A unique configuration identifier",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ConfigurationDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Configuration with the specified configurationId not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/activateProfileFilter" : {
+      "post" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Activate profile filter",
+        "description" : "Activates a profile filter. Sets the status field of the profile filter to ACTIVE, increments the sequenceNumber field value by 1, and sets the activateUsername and activatedTime fields to the name of the user who submitted the request and the activation time respectively. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "activateProfileFilter",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "profileFilterId",
+          "description" : "A unique profile filter identifier",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileFilterDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Profile filter with the specified profileFilterId not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/addEventClassFamilySchema" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Add event class family schema",
+        "description" : "Adds the event class family schema to the event class family with the specified ID. The current user will be marked as the creator of schema. Only users with the TENANT_ADMIN role are allowed to perform this operation.",
+        "operationId" : "addEventClassFamilySchema",
+        "parameters" : [ {
+          "name" : "eventClassFamilyId",
+          "in" : "formData",
+          "description" : "A unique event class family identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "file",
+          "in" : "formData",
+          "description" : "Event class family schema represented in json format",
+          "required" : true,
+          "type" : "file"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "The specified event class family schema is not a valid avro schema"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the specified event class family does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A file with the event class family schema was not found in the form data or an event class family with the specified ID does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/addTopicToEpGroup" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Add topic to endpoint group",
+        "description" : "Adds the specified topic to the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "addTopicToEndpointGroup",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "topicId",
+          "in" : "query",
+          "description" : "A unique topic identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A topic with the specified topicId or an endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/admins/{tenantId}" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Select tenant admins by tenant id",
+        "description" : "",
+        "operationId" : "findAllTenantAdminsByTenantId",
+        "parameters" : [ {
+          "name" : "",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/UserDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "The specified tenantId is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The user with the specified tenantId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/application" : {
+      "post" : {
+        "tags" : [ "Application" ],
+        "summary" : "Create/Edit application",
+        "description" : "Creates or edits an application. To create an application you do not need to specify the application ID. To edit the application specify the application ID. If the application with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role are allowed to perform this operation.",
+        "operationId" : "editApplication",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "application",
+          "description" : "ApplicationDto body. Mandatory fields: name, tenantId",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ApplicationDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ApplicationDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the application to be edited does not match the Tenant ID of the user"
+          },
+          "404" : {
+            "description" : "An application to be edited with the specified application ID does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/application/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Application" ],
+        "summary" : "Get application based on application token",
+        "description" : "Returns an application by applicationToken. The current user must have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.",
+        "operationId" : "getApplicationByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ApplicationDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER, or TENANT_USER) or Tenant ID of the application does not match the Tenant ID of the user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/applicationEventMap" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create/Edit application event family map",
+        "description" : "Creates or edits an application event family map. If an application event family map with the specified ID does not exist, it will be created. If an application event family map with the specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editApplicationEventFamilyMap",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "applicationEventFamilyMap",
+          "description" : "ApplicationEventFamilyMapDto body. Mandatory fields: applicationId, ecfId, ecfName, eventMaps",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ApplicationEventFamilyMapDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ApplicationEventFamilyMapDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application event family map to be edited with the specified applicationEventFamilyMapId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/applicationEventMap/{applicationEventFamilyMapId}" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get application event family map",
+        "description" : "Returns an application event family map by application event family map ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getApplicationEventFamilyMap",
+        "parameters" : [ {
+          "name" : "applicationEventFamilyMapId",
+          "in" : "path",
+          "description" : "A unique application event family map identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ApplicationEventFamilyMapDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application event family map with the specified applicationEventFamilyMapId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/applicationEventMaps/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get application event family maps",
+        "description" : "Returns all application event family maps for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getApplicationEventFamilyMapsByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ApplicationEventFamilyMapDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/applications" : {
+      "get" : {
+        "tags" : [ "Application" ],
+        "summary" : "Get all applications",
+        "description" : "Returns all applications for the current authorized user within the current tenant. The current user must have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.",
+        "operationId" : "getApplications",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ApplicationDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER)"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/auth/changePassword" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Change user password",
+        "description" : "Changes the password of a user. Only authorized users are allowed to perform this operation.",
+        "operationId" : "changePassword",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "query",
+          "description" : "A user name of the user whose password is to be changed",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "oldPassword",
+          "in" : "query",
+          "description" : "An old password of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "newPassword",
+          "in" : "query",
+          "description" : "A new password of the user; it must be no shorter than 6 characters",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string",
+              "enum" : [ "OK", "USERNAME_EXISTS", "EMAIL_EXISTS", "USER_NOT_FOUND", "USER_EMAIL_NOT_FOUND", "USER_OR_EMAIL_NOT_FOUND", "USER_EMAIL_NOT_DEFINED", "OLD_PASSWORD_MISMATCH", "BAD_PASSWORD_STRENGTH" ]
+            }
+          },
+          "400" : {
+            "description" : "The specified parameters are not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/auth/checkAuth" : {
+      "get" : {
+        "tags" : [ "User" ],
+        "summary" : "Get user authentication status",
+        "description" : "Returns information about the current authorized user. Only authorized users are allowed to perform this operation.",
+        "operationId" : "checkAuth",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/AuthResultDto"
+            }
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/auth/createKaaAdmin" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Create user with KAA_ADMIN role",
+        "description" : "Creates a user with the KAA_ADMIN role.",
+        "operationId" : "createKaaAdmin",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "query",
+          "description" : "A user name of the Kaa admin user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password",
+          "in" : "query",
+          "description" : "A user password of the Kaa admin user; it must be no shorter than 6 characters",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "403" : {
+            "description" : "A user with the KAA_ADMIN role already exists"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/configuration" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Create/Edit configuration",
+        "description" : "Creates or updates a configuration. To create configuration you do not need to specify the configuration ID, createUsername field will be set to the name of the user who has uploaded it. To edit the configuration specify the configuration id. If a configuration with the specified ID exists, the configuration will be updated and its modifyUsername will be set to the user who has submitted the request. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editConfiguration",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "configuration",
+          "description" : "ConfigurationDto body. Mandatory fields: applicationId, schemaId, endpointGroupId, body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ConfigurationDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ConfigurationDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or a configuration with the specified configurationId not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/configurationRecord" : {
+      "get" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Get configuration record",
+        "description" : "Returns the configuration record for the specified endpoint group and configuration schema. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getConfigurationRecord",
+        "parameters" : [ {
+          "name" : "schemaId",
+          "in" : "query",
+          "description" : "A unique configuration schema identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ConfigurationRecordDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the requested configuration record"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/configurationRecordBody" : {
+      "get" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Get configuration record body",
+        "description" : "Returns the configuration record string body for the specified endpoint group and configuration schema. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getConfigurationRecordBody",
+        "parameters" : [ {
+          "name" : "schemaId",
+          "in" : "query",
+          "description" : "A unique configuration schema identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the requested configuration record\n"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/configurationRecords" : {
+      "get" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Get configuration records",
+        "description" : "Returns all configuration records for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getConfigurationRecordsByEndpointGroupId",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "includeDeprecated",
+          "in" : "query",
+          "description" : "[“true” or ”false”] if “true”, all configuration records will be returned, including deprecated ones. If “false”, only active and inactive configuration records will be returned",
+          "required" : true,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ConfigurationRecordDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/configurationSchema/{configurationSchemaId}" : {
+      "get" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Get configuration schema",
+        "description" : "Returns a configuration schema by configuration schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "getConfigurationSchema",
+        "parameters" : [ {
+          "name" : "configurationSchemaId",
+          "in" : "path",
+          "description" : "A unique configuration schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ConfigurationSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The configuration schema with the specified configurationSchemaId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/configurationSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Get configuration schemas",
+        "description" : "Returns all configuration schemas for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation. The application must be associated with the user who has submitted the request.",
+        "operationId" : "getConfigurationSchemasByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ConfigurationSchemaDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Application with the specified applicationId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/createSdkProfile" : {
+      "post" : {
+        "tags" : [ "SDK profiles" ],
+        "summary" : "Create SDK profile",
+        "description" : "Creates an SDK profile for further endpoint SDK generation. (Requires TENANT_DEVELOPER or TENANT_USER to perform this operation).",
+        "operationId" : "createSdkProfile",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "sdkProfile",
+          "description" : "SdkProfileDto body. Mandatory fields: applicationId, configurationSchemaVersion, logSchemaVersion, notificationSchemaVersion, profileSchemaVersion, name",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/SdkProfileDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/SdkProfileDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/credentialsStatus" : {
+      "get" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Provides the status of given credentials",
+        "description" : " Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "getCredentialsStatus",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsId",
+          "in" : "query",
+          "description" : "A unique credentials identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string",
+              "enum" : [ "AVAILABLE", "IN_USE", "REVOKED" ]
+            }
+          },
+          "400" : {
+            "description" : "Parameter conditions \"applicationToken, credentialsId\" not met for actual request parameters"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "404" : {
+            "description" : "The requested item was not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/deactivateConfiguration" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Deactivate configuration",
+        "description" : "Deactivates a configuration. Sets the status field of the configuration to DEPRECATED, sets the deactivatedTime field value to the time of the deactivation request, and sets the deactivateUsername field to the name of the user who has submitted the request. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deactivateConfiguration",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "configurationId",
+          "description" : "A unique configuration identifier",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ConfigurationDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Configuration with the specified configurationId not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/deactivateProfileFilter" : {
+      "post" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Deactivate profile filter",
+        "description" : "Deactivates a profile filter. Sets the status field of the profile filter to DEPRECATED, sets the deactivatedTime field value to the time of the deactivation request, and sets the deactivateUsername field to the name of the user who has submitted the request. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deactivateProfileFilter",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "profileFilterId",
+          "description" : "A unique profile filter identifier",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileFilterDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Profile filter with the specified profileFilterId not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delConfigurationRecord" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Delete configuration record",
+        "description" : "Deletes a configuration record by configuration schema ID and endpoint group ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deleteConfigurationRecord",
+        "parameters" : [ {
+          "name" : "schemaId",
+          "in" : "query",
+          "description" : "A unique configuration schema identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the requested configuration record"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delEndpointGroup" : {
+      "post" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Delete endpoint group",
+        "description" : "Deletes an endpoint group specified by endpoint group ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deleteEndpointGroup",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delLogAppender" : {
+      "post" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Delete log appender",
+        "description" : "Deletes a log appender by log appender ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deleteLogAppender",
+        "parameters" : [ {
+          "name" : "logAppenderId",
+          "in" : "query",
+          "description" : "A unique log appender identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A log appender with the specified logAppenderId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delProfileFilterRecord" : {
+      "post" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Delete profile filter record",
+        "description" : "Deletes a profile filter record based on client-side endpoint profile schema ID, server-side endpoint profile schema ID and endpoint group ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.You need to provide either endpointProfileSchemaId or serverProfileSchemaId parameter or use both of them with endpointGroupId parameter.",
+        "operationId" : "deleteProfileFilterRecord",
+        "parameters" : [ {
+          "name" : "endpointProfileSchemaId",
+          "in" : "query",
+          "description" : "The client-side endpoint profile schema ID",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "serverProfileSchemaId",
+          "in" : "query",
+          "description" : "The server-side endpoint profile schema ID",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "The ID of the endpoint group.",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid endpointGroupId/endpointProfileSchemaId/serverProfileSchemaId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the specified profile filter record"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delTopic" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Delete topic",
+        "description" : "Deletes a topic. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deleteTopic",
+        "parameters" : [ {
+          "name" : "topicId",
+          "in" : "query",
+          "description" : "A unique topic identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid topicId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The topic with the specified topicId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delUser" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Delete user",
+        "description" : "Deletes a user specified by user ID. Only users with the TENANT_ADMIN role are allowed to perform this operation.",
+        "operationId" : "deleteUser",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "An old password of the user",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "The specified userId is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The user with the specified userId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/delUserVerifier" : {
+      "post" : {
+        "tags" : [ "Verifiers" ],
+        "summary" : "Delete owner verifier",
+        "description" : "Deletes an owner verifier by the owner verifier ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "deleteUserVerifier",
+        "parameters" : [ {
+          "name" : "userVerifierId",
+          "in" : "query",
+          "description" : "A unique owner verifier identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid userVerifierId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An owner verifier with the specified userVerifierId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/deleteSdkProfile" : {
+      "post" : {
+        "tags" : [ "SDK profiles" ],
+        "summary" : "Delete SDK profile",
+        "description" : "Deletes an SDK profile from the database. (Requires TENANT_DEVELOPER or TENANT_USER to perform this operation).",
+        "operationId" : "deleteSdkProfile",
+        "parameters" : [ {
+          "name" : "sdkProfileId",
+          "in" : "query",
+          "description" : "A unique SDK profile identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid sdkProfileId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The SDK profile with the specified sdkProfileId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointGroup" : {
+      "post" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Create/Edit endpoint group",
+        "description" : "Creates or edits an endpoint group. To create endpoint group you do not need to specify the endpoint group ID. To edit the endpoint group specify the endpoint group ID. If an endpoint group with the specified id exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editEndpointGroup",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "endpointGroup",
+          "description" : "EndpointGroupDto body. Mandatory fields: name, applicationId, weight",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/EndpointGroupDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointGroupDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group to be edited with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointGroup/{endpointGroupId}" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get endpoint group based on endpoint group id",
+        "description" : "Returns an endpoint group by Endpoint Group ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getEndpointGroup",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "path",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointGroupDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointGroups/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get endpoint groups based on application token",
+        "description" : "Returns all endpoint groups for the specified application based on application token. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getEndpointGroupsByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EndpointGroupDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointProfile/{endpointProfileKey}" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get profile based on endpoint key",
+        "description" : "Returns the endpoint profile based on endpoint key hash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getEndpointProfileByKeyHash",
+        "parameters" : [ {
+          "name" : "endpointProfileKey",
+          "in" : "path",
+          "description" : "The key hash of the endpoint in Base64 URL safe format",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfileDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The endpoint profile with the specified endpointProfileKey does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointProfileBody/{endpointProfileKey}" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get client- and server-side endpoint profile bodies based on endpoint key",
+        "description" : "Returns the client- and server-side endpoint profile bodies based on endpoint key hash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getEndpointProfileBodyByKeyHash",
+        "parameters" : [ {
+          "name" : "endpointProfileKey",
+          "in" : "path",
+          "description" : "The key hash of the endpoint in Base64 URL safe format",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfileBodyDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group to be edited with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointProfileBodyByGroupId" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get endpoint profiles bodies based on endpoint group id",
+        "description" : "Returns the endpoint profiles bodies based on endpoint group id. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. Default limit value equals \"20\", default offset value equals \"0\". Maximum limit value is \"500\".",
+        "operationId" : "getEndpointProfileBodyByEndpointGroupId",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "The id of the endpoint group.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of shown profiles. (Optional parameter)",
+          "required" : false,
+          "type" : "string",
+          "default" : "20"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "The offset from beginning of profiles list. (Optional parameter)",
+          "required" : false,
+          "type" : "string",
+          "default" : "0"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfilesBodyDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId/limit/offset supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointProfileByGroupId" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get endpoint profiles based on endpoint group id",
+        "description" : "Returns the endpoint profiles based on endpoint group id. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. Default limit value equals \"20\", default offset value equals \"0\". Maximum limit value is \"500\".",
+        "operationId" : "getEndpointProfileByEndpointGroupId",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "The id of the endpoint group.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of shown profiles. (optional parameter)",
+          "required" : false,
+          "type" : "string",
+          "default" : "20"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "The offset from beginning of profiles list. (Optional parameter)",
+          "required" : false,
+          "type" : "string",
+          "default" : "0"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfilesPageDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId/limit/offset supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/endpointProfiles" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get endpoint profiles by owner ID",
+        "description" : "Returns a list of endpoint profiles by the ID of the endpoint owner. (Requires TENANT_DEVELOPER or TENANT_USER to request this information).",
+        "operationId" : "getEndpointProfilesByUserExternalId",
+        "parameters" : [ {
+          "name" : "userExternalId",
+          "in" : "query",
+          "description" : "A unique endpoint owner identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EndpointProfileDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid userExternalId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The endpoint user with the given ID not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/eventClassFamilies" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get event class families",
+        "description" : "Returns all event class families for the current authorized user within the current tenant. Only users with the TENANT_ADMIN role are allowed to request this information.",
+        "operationId" : "getEventClassFamilies",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EventClassFamilyDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the TENANT_ADMIN role"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/eventClassFamilies/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get application event class families",
+        "description" : "Returns all event class families for the specified application (being used by application event family maps). Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getEventClassFamiliesByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/AefMapInfoDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/eventClassFamily" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create/Edit event class family",
+        "description" : "Creates or edits an event class family. To create event class family you do not need to specify the event class family ID. To edit the event class family specify the event class family ID. If an event class family with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role are allowed to perform this operation.",
+        "operationId" : "editEventClassFamily",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "eventClassFamily",
+          "description" : "EventClassFamilyDto body. Mandatory fields: name, className, namespace",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/EventClassFamilyDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EventClassFamilyDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the editing event class family does not match the Tenant ID of the user"
+          },
+          "404" : {
+            "description" : "An event class family to be edited with the specified eventClassFamilyId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/eventClassFamily/{eventClassFamilyId}" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get event class family",
+        "description" : "Returns an event class family by event class family ID. Only users with the TENANT_ADMIN role are allowed to request this information.",
+        "operationId" : "getEventClassFamily",
+        "parameters" : [ {
+          "name" : "eventClassFamilyId",
+          "in" : "path",
+          "description" : "A unique event class family identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EventClassFamilyDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role TENANT_ADMIN or the Tenant ID of the event class family does not match the Tenant ID of the user"
+          },
+          "404" : {
+            "description" : "An event class family with the specified eventClassFamilyId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/eventClasses" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get event classes",
+        "description" : "Gets event classes by event class family ID, version and type. Only users with the TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getEventClassesByFamilyIdVersionAndType",
+        "parameters" : [ {
+          "name" : "eventClassFamilyId",
+          "in" : "query",
+          "description" : "A unique event class family identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "query",
+          "description" : "The version of the event class family schema",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "The event classes type, one of [\"EVENT\", \"OBJECT\"]",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "EVENT", "OBJECT" ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EventClassDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "One of the url parameters is empty (eventClassFamilyId, version or type)"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the event class family does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An event class family with the specified eventClassFamilyId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/logAppender" : {
+      "post" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Create/Edit log appender",
+        "description" : "Creates or edits a log appender. If a log appender with the specified ID does not exist, it will be created. If a log appender with the specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editLogAppender",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "logAppender",
+          "description" : "LogAppenderDto body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/LogAppenderDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/LogAppenderDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A log appender to be edited with the specified id does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/logAppender/{logAppenderId}" : {
+      "get" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Get log appender",
+        "description" : "Returns a log appender by log appender ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getLogAppender",
+        "parameters" : [ {
+          "name" : "logAppenderId",
+          "in" : "path",
+          "description" : "A unique log appender identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/LogAppenderDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A log appender with the specified logAppenderId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/logAppenders/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Get log appenders",
+        "description" : "Returns all log appenders for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getLogAppendersByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/LogAppenderDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/logSchema/{applicationToken}/{schemaVersion}" : {
+      "get" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Get log schema by application token and schema version",
+        "description" : "Returns a log schema for the specified schema version and application token. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getLogSchemaByApplicationTokenAndVersion",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "schemaVersion",
+          "in" : "path",
+          "description" : "The version of the requested log schema",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/LogSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group to be edited with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/logSchema/{logSchemaId}" : {
+      "get" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Get log schema",
+        "description" : "Returns a log schema by log schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getLogSchema",
+        "parameters" : [ {
+          "name" : "logSchemaId",
+          "in" : "path",
+          "description" : "A unique log schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/LogSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A log schema with the specified logSchemaId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/logSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Get log schemas",
+        "description" : "Returns all log schemas for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. The Tenant ID value of the application must match Tenant ID of the request submitter.",
+        "operationId" : "getLogSchemasByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/LogSchemaDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/notificationSchema/{notificationSchemaId}" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get notification schema",
+        "description" : "Returns a notification schema by notification schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getNotificationSchema",
+        "parameters" : [ {
+          "name" : "notificationSchemaId",
+          "in" : "path",
+          "description" : "A unique notification schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/NotificationSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A notification schema with the specified notificationSchemaId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/notificationSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get notification schemas",
+        "description" : "Returns notification schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. The Tenant ID value of the application must match the Tenant ID of the request submitter.",
+        "operationId" : "getNotificationSchemasByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/NotificationSchemaDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/notifyRevoked" : {
+      "post" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Notify the Kaa cluster about security credentials revocation",
+        "description" : "If an endpoint is already registered with the specified credentials, this API all launches an asynchronous process to terminate all active sessions of  the corresponding endpoint. Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "onCredentialsRevoked",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsId",
+          "in" : "query",
+          "description" : "A unique credentials identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "404" : {
+            "description" : "An endpoint group to be edited with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/profileFilter" : {
+      "post" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Create/edit profile filter",
+        "description" : "Creates or updates a profile filter. To create profile filter you do not need to specify the profile filter ID, createUsername field will be set to the name of the user who has created it. To edit the profile filter specify the profile filer ID, if a profile filter with the specified ID exists, the profile filter will be updated and its modifyUsername will be set to the user who has submitted the request. Only users with the  TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editProfileFilter",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "profileFilter",
+          "description" : "ProfileFilterDto body. Mandatory fields: applicationId, body, either endpointProfileSchemaId or serverProfileSchemaId or both of them",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ProfileFilterDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileFilterDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or existing profile filter with the specified profileFilterId not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/profileFilterRecord" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get profile filter record",
+        "description" : "Returns the profile filter record for the specified endpoint group and profile schema. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. You need to provide either endpointProfileSchemaId or serverProfileSchemaId parameter or use both of them with endpointGroupId parameter.",
+        "operationId" : "getProfileFilterRecord",
+        "parameters" : [ {
+          "name" : "endpointProfileSchemaId",
+          "in" : "query",
+          "description" : "The client-side endpoint profile schema ID",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "serverProfileSchemaId",
+          "in" : "query",
+          "description" : "The server-side endpoint profile schema ID",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileFilterRecordDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or endpoint group does not have the specified profile filter record"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/profileFilterRecords" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get profile filter records",
+        "description" : "Returns all profile filter records for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getProfileFilterRecordsByEndpointGroupId",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "includeDeprecated",
+          "in" : "query",
+          "description" : "[“true” or ”false”] if “true”, all profile filter records will be returned, including deprecated ones. If “false”, only active and inactive profile filter records will be returned",
+          "required" : true,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ProfileFilterRecordDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId/includeDeprecated supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/profileSchema/{profileSchemaId}" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get client-side endpoint profile schema",
+        "description" : "Returns the client-side endpoint profile schema by Profile Schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getProfileSchema",
+        "parameters" : [ {
+          "name" : "profileSchemaId",
+          "in" : "path",
+          "description" : "A unique client-side endpoint profile schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfileSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid profileSchemaId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The client-side endpoint profile schema with the specified profileSchemaId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/profileSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get client-side endpoint profile schemas",
+        "description" : "Returns the client-side endpoint profile schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. A users can only request schemas for applications associated with the same user.",
+        "operationId" : "getProfileSchemasByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EndpointProfileSchemaDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/provisionCredentials" : {
+      "post" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Provision security credentials",
+        "description" : " Using this credentials endpoint can interact with specified application. Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "provisionCredentials",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsBody",
+          "in" : "query",
+          "description" : "The public key hash of the endpoint in Base64 URL safe format",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/CredentialsDto"
+            }
+          },
+          "400" : {
+            "description" : "Parameter conditions \"applicationToken, credentialsBody\" not met for actual request parameters"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "404" : {
+            "description" : "The requested item was not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/provisionRegistration" : {
+      "post" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Bind specified endpoint profile to the credentials",
+        "description" : " Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "provisionRegistration",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsId",
+          "in" : "query",
+          "description" : "A unique credentials identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serverProfileVersion",
+          "in" : "query",
+          "description" : "The version number of server-side endpoint profile",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "serverProfileBody",
+          "in" : "query",
+          "description" : "The body of server-side endpoint profile",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/removeEndpointProfileByKeyHash" : {
+      "post" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Delete endpoint",
+        "description" : "Delete endpoint profile based on endpoint key hash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation",
+        "operationId" : "removeEndpointProfileByKeyHash",
+        "parameters" : [ {
+          "name" : "endpointProfileKeyHash",
+          "in" : "query",
+          "description" : "The key hash of the endpoint in Base64 URL safe format",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint profile to be deleted with the specified endpointProfileKeyHash does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/removeTopicFromEpGroup" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Remove topic from endpoint group",
+        "description" : "Removes the specified topic from the specified endpoint group. Only users with the  TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "removeTopicFromEndpointGroup",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "topicId",
+          "in" : "query",
+          "description" : "A unique topic identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A topic with the specified topicId or an endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/revokeCredentials" : {
+      "post" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Revoke security credentials from the corresponding credentials storage",
+        "description" : "Launches an asynchronous process to terminate all active sessions of the endpoint that uses these credentials. Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "revokeCredentials",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsId",
+          "in" : "query",
+          "description" : "A unique credentials identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/saveConfigurationSchema" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Create configuration schema",
+        "description" : "Uploads a configuration schema. A unique version number will be generated (incrementally) for the uploaded schema, and the createUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "saveConfigurationSchema",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "configurationSchema",
+          "description" : "ConfigurationSchemaDto body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ConfigurationSchemaDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ConfigurationSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "Specified configuration schema is not a valid avro schema"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/saveLogSchema" : {
+      "post" : {
+        "tags" : [ "Logging" ],
+        "summary" : "Create/Edit log schema",
+        "description" : "Creates or updates a log schema. If a log schema with the specified ID does not exist, then it will be created and its createUsername field of the schema will be set to the name of the user who has uploaded it, a unique version number will be generated (incrementally) for this schema. If a configuration with the specified ID exists, the configuration will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "saveLogSchema",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "logSchema",
+          "description" : "LogSchemaDto body.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/LogSchemaDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/LogSchemaDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/saveNotificationSchema" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Create/Edit notification schema",
+        "description" : "Creates or updates a notification schema. To create notification schema you do not need to specify the notification schema ID, createUsername field of the schema will be set to the name of the user who has uploaded it, a unique version number will be generated (incrementally) for this schema. To edit the notification schema specify the notification schema ID. If a notification schema with the specified ID exists, the configuration will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "saveNotificationSchema",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "notificationSchema",
+          "description" : "NotificationSchemaDto body.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/NotificationSchemaDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/NotificationSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "The specified notification schema is not a valid avro schema"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/saveProfileSchema" : {
+      "post" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Create client-side endpoint profile schema",
+        "description" : "Uploads a client-side endpoint profile schema. A unique version number will be generated (incrementally) for the uploaded schema, and the createdUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "saveProfileSchema",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "profileSchema",
+          "description" : "EndpointProfileSchemaDto body. Mandatory fields: applicationId, ctlSchemaId, name",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/EndpointProfileSchemaDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfileSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "Specified request body is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Application or referenced CT schema is not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/saveServerProfileSchema" : {
+      "post" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Create server-side endpoint profile schema",
+        "description" : "Uploads a server-side endpoint profile schema. A unique version number will be generated (incrementally) for the uploaded schema, and the createdUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "saveServerProfileSchema",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "serverProfileSchema",
+          "description" : "ServerProfileSchemaDto body. Mandatory fields: applicationId, ctlSchemaId, name",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ServerProfileSchemaDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ServerProfileSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "Specified request body is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Application or referenced CT schema is not found"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/sdk" : {
+      "post" : {
+        "tags" : [ "SDK profiles" ],
+        "summary" : "Generate endpoint SDK",
+        "description" : "Generates the endpoint SDK based on the SDK profile. (Requires TENANT_DEVELOPER or TENANT_USER to perform this operation). For android or java client file extension must be .jar, for other platforms extension must be .tar.gz.",
+        "operationId" : "getSdk",
+        "parameters" : [ {
+          "name" : "sdkProfileId",
+          "in" : "query",
+          "description" : "A unique SDK profile identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "targetPlatform",
+          "in" : "query",
+          "description" : "The target platform's name (either JAVA, ANDROID, CPP, C or OBJC)",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "An unknown target platform was specified"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The SDK profile with the given ID does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/sendNotification" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Send notification",
+        "description" : "Sends a notification with the notification body from the specified file. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "sendNotification",
+        "parameters" : [ {
+          "name" : "notification",
+          "in" : "formData",
+          "description" : "NotificationDto body. Mandatory fields: applicationId, schemaId, version, topicId, type",
+          "required" : true,
+          "type" : "ref"
+        }, {
+          "name" : "file",
+          "in" : "formData",
+          "description" : "Notification schema represented in json format",
+          "required" : true,
+          "type" : "file"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/NotificationDto"
+            }
+          },
+          "400" : {
+            "description" : "The specified notification is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A file with the notification body was not found in the form data or an application with the specified ID does not exist or a topic with the specified ID does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/sendUnicastNotification" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Send unicast notification",
+        "description" : "Sends a unicast notification with the notification body from the specified file to the client identified by endpointKeyHash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "sendUnicastNotification",
+        "parameters" : [ {
+          "name" : "notification",
+          "in" : "formData",
+          "description" : "NotificationDto body. Mandatory fields: applicationId, schemaId, version, topicId, type",
+          "required" : true,
+          "type" : "ref"
+        }, {
+          "name" : "endpointKeyHash",
+          "in" : "formData",
+          "description" : "The key hash of the endpoint in Base64 URL safe format",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "file",
+          "in" : "formData",
+          "description" : "Notification schema represented in json format",
+          "required" : true,
+          "type" : "file"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointNotificationDto"
+            }
+          },
+          "400" : {
+            "description" : "The specified notification is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A file with the notification body was not found in the form data or an application with the specified ID does not exist or a topic with the specified ID does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/serverProfileSchema/{serverProfileSchemaId}" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get server-side endpoint profile schema",
+        "description" : "Returns the server-side endpoint profile schema by Server Profile Schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getServerProfileSchema",
+        "parameters" : [ {
+          "name" : "serverProfileSchemaId",
+          "in" : "path",
+          "description" : "A unique server-side endpoint profile schema identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ServerProfileSchemaDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid serverProfileSchemaId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Server-side endpoint profile schema with the specified serverProfileSchemaId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/serverProfileSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Get server-side endpoint profile schemas",
+        "description" : "Returns the server-side endpoint profile schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. A users can only request schemas for applications associated with the same user.",
+        "operationId" : "getServerProfileSchemasByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ServerProfileSchemaDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "Application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/tenant" : {
+      "post" : {
+        "tags" : [ "Tenant" ],
+        "summary" : "Create/Edit tenant",
+        "description" : "Creates or edits a tenant. If a tenant with the specified ID does not exist, it will be created. If a tenant with the specified ID exists, it will be updated. Only users with the KAA_ADMIN role are allowed to submit this request.",
+        "operationId" : "editTenant",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/TenantDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TenantDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the  KAA_ADMIN role"
+          },
+          "404" : {
+            "description" : "A tenant with the specified user ID does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/tenant/{userId}" : {
+      "get" : {
+        "tags" : [ "Tenant" ],
+        "summary" : "Get tenant",
+        "description" : "Returns tenant by associated userId. Only users with the KAA_ADMIN role are allowed to submit this request.",
+        "operationId" : "getTenant",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "A unique user identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TenantDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid userId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the KAA_ADMIN role"
+          },
+          "404" : {
+            "description" : "A tenant with the specified userId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/tenants" : {
+      "get" : {
+        "tags" : [ "Tenant" ],
+        "summary" : "Get all tenants",
+        "description" : "Returns all tenants existing in the system. Only users with the KAA_ADMIN role are allowed to submit this request.",
+        "operationId" : "getTenants",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/TenantDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the KAA_ADMIN role"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/topic" : {
+      "post" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Create/Edit topic",
+        "description" : "Creates or edits a topic. To create topic you do not need to specify the topic ID. To edit the topic specify the topic ID. If a topic with the specified ID exists, it will be updated. Only users with theTENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editTopic",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "topic",
+          "description" : "TopicDto body. Mandatory fields: applicationId, name, type",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/TopicDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TopicDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A topic to be edited with the specified topicId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/topic/{topicId}" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get topic",
+        "description" : "Returns a topic by topic ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getTopic",
+        "parameters" : [ {
+          "name" : "topicId",
+          "in" : "path",
+          "description" : "A unique topic identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TopicDto"
+            }
+          },
+          "400" : {
+            "description" : "Invalid topicId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The topic with the specified topicId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/topics" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get endpoint group topics",
+        "description" : "Returns all topics for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getTopicsByEndpointGroupId",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "query",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/TopicDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group to with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/topics/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get topics",
+        "description" : "Returns all topics for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getTopicsByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/TopicDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/updateServerProfile" : {
+      "post" : {
+        "tags" : [ "Profiling" ],
+        "summary" : "Update server-side endpoint profile",
+        "description" : "Update a server-side endpoint profile. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "updateServerProfile",
+        "parameters" : [ {
+          "name" : "endpointProfileKey",
+          "in" : "query",
+          "description" : "The key hash of the endpoint in Base64 URL safe format",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "query",
+          "description" : "The version of the server-side endpoint profile schema",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "serverProfileBody",
+          "in" : "query",
+          "description" : "The server-side endpoint profile body",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/EndpointProfileDto"
+            }
+          },
+          "400" : {
+            "description" : "Specified server-side endpoint profile body is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER)"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/user" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Create/Edit user",
+        "description" : "Creates or edits a user. To create a user you do not need to specify the user ID, its Tenant ID will be set to the Tenant ID of the request submitter. A random password will be generated and presented in the success response in the tempPassword field. To edit user specify the user ID. If a user with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role can perform this operation.",
+        "operationId" : "editUser",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "user",
+          "description" : "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UserDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UserDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/user/{userId}" : {
+      "get" : {
+        "tags" : [ "User" ],
+        "summary" : "Get user",
+        "description" : " Returns a user. Only users with the TENANT_ADMIN role are allowed to submit this request. The Tenant ID of requested user must be identical to the Tenant ID of the submitter.",
+        "operationId" : "getUser",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "A unique user identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UserDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the requested user does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The user with the specified userId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/userNotificationSchemas/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get user notification schemas",
+        "description" : "Returns user notification schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getUserNotificationSchemasByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/VersionDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/userProfile" : {
+      "get" : {
+        "tags" : [ "User" ],
+        "summary" : "Get user profile",
+        "description" : "Returns the user profile of the current user. Only authorized users are allowed to perform this operation.",
+        "operationId" : "getUserProfile",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UserDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Edit user profile",
+        "description" : "Edits the user profile. Only authorized users are allowed to perform this operation.",
+        "operationId" : "editUserProfile",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "userProfileUpdateDto",
+          "description" : "UserProfileUpdateDto body.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UserProfileUpdateDto"
+          }
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/userVerifier" : {
+      "post" : {
+        "tags" : [ "Verifiers" ],
+        "summary" : "Create/edit owner verifier",
+        "description" : "Creates or edits an owner verifier. If the owner verifier with the specified ID does not exist, it will be created. If the owner verifier with the specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editUserVerifier",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "userVerifier",
+          "description" : "UserVerifierDto body. Mandatory fields: pluginClassName, pluginTypeName, applicationId, name, jsonConfiguration",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UserVerifierDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UserVerifierDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An owner verifier to be edited with the specified id does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/userVerifier/{userVerifierId}" : {
+      "get" : {
+        "tags" : [ "Verifiers" ],
+        "summary" : "Get verifier",
+        "description" : "Returns a verifier by it's ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getUserVerifier",
+        "parameters" : [ {
+          "name" : "userVerifierId",
+          "in" : "path",
+          "description" : "A unique owner verifier identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UserVerifierDto"
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An owner verifier with the specified userVerifierId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/userVerifiers/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Verifiers" ],
+        "summary" : "Get verifiers",
+        "description" : "Returns all verifiers for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getUserVerifiersByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/UserVerifierDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/users" : {
+      "get" : {
+        "tags" : [ "User" ],
+        "summary" : "Get all users",
+        "description" : "Returns a list of all users associated with the current authorized user: users whose Tenant ID values match the Tenant ID of the request submitter. Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "getUsers",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/UserDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/vacantConfigurationSchemas/{endpointGroupId}" : {
+      "get" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Get vacant configuration schemas",
+        "description" : "Returns all vacant (not being used by endpoint group configurations) configuration schemas for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getVacantConfigurationSchemasByEndpointGroupId",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "path",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/VersionDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group to be edited with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/vacantEventClassFamilies/{applicationToken}" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Get vacant event class families",
+        "description" : "Returns all vacant (not being used by application event family maps) event class families for the specified application. Only users with the  TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getVacantEventClassFamiliesByApplicationToken",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "path",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EcfInfoDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An application with the specified applicationToken does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/vacantProfileSchemas/{endpointGroupId}" : {
+      "get" : {
+        "tags" : [ "Grouping" ],
+        "summary" : "Get vacant profile schemas",
+        "description" : "Returns all vacant (not being used by endpoint group profile filters) profile schemas for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getVacantProfileSchemasByEndpointGroupId",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "path",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ProfileVersionPairDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid endpointGroupId supplied"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/vacantTopics/{endpointGroupId}" : {
+      "get" : {
+        "tags" : [ "Notifications" ],
+        "summary" : "Get vacant topics",
+        "description" : "Returns all vacant (not present in the endpoint group) topics for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.",
+        "operationId" : "getVacantTopicsByEndpointGroupId",
+        "parameters" : [ {
+          "name" : "endpointGroupId",
+          "in" : "path",
+          "description" : "A unique endpoint group identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/TopicDto"
+              }
+            }
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "ApplicationDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationToken" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "sequenceNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "credentialsServiceName" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ApplicationEventFamilyMapDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "ecfId" : {
+          "type" : "string"
+        },
+        "ecfName" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "eventMaps" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ApplicationEventMapDto"
+          }
+        }
+      }
+    },
+    "ApplicationEventMapDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "eventClassId" : {
+          "type" : "string"
+        },
+        "fqn" : {
+          "type" : "string"
+        },
+        "action" : {
+          "type" : "string",
+          "enum" : [ "SOURCE", "SINK", "BOTH" ]
+        }
+      }
+    },
+    "AuthResultDto" : {
+      "type" : "object",
+      "properties" : {
+        "username" : {
+          "type" : "string"
+        },
+        "displayName" : {
+          "type" : "string"
+        },
+        "authority" : {
+          "type" : "string",
+          "enum" : [ "KAA_ADMIN", "TENANT_ADMIN", "TENANT_DEVELOPER", "TENANT_USER" ]
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "authResult" : {
+          "type" : "string",
+          "enum" : [ "ERROR", "NOT_LOGGED_IN", "OK", "KAA_ADMIN_NOT_EXISTS" ]
+        }
+      }
+    },
+    "CTLSchemaDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "metaInfo" : {
+          "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "defaultRecord" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "dependencySet" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "$ref" : "#/definitions/CTLSchemaDto"
+          }
+        }
+      }
+    },
+    "CTLSchemaMetaInfoDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "fqn" : {
+          "type" : "string"
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "versions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      }
+    },
+    "ConfigurationDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "endpointGroupId" : {
+          "type" : "string"
+        },
+        "sequenceNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "lastModifyTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "activatedTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "deactivatedTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "modifiedUsername" : {
+          "type" : "string"
+        },
+        "activatedUsername" : {
+          "type" : "string"
+        },
+        "deactivatedUsername" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "enum" : [ "DEPRECATED", "ACTIVE", "INACTIVE" ]
+        },
+        "endpointCount" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "schemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "schemaId" : {
+          "type" : "string"
+        },
+        "protocolSchema" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ConfigurationRecordDto" : {
+      "type" : "object",
+      "properties" : {
+        "activeStructureDto" : {
+          "$ref" : "#/definitions/ConfigurationDto"
+        },
+        "inactiveStructureDto" : {
+          "$ref" : "#/definitions/ConfigurationDto"
+        }
+      }
+    },
+    "ConfigurationSchemaDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "ctlSchemaId" : {
+          "type" : "string"
+        },
+        "protocolSchema" : {
+          "type" : "string"
+        },
+        "baseSchema" : {
+          "type" : "string"
+        },
+        "overrideSchema" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "enum" : [ "DEPRECATED", "ACTIVE", "INACTIVE" ]
+        }
+      }
+    },
+    "CredentialsDto" : {
+      "type" : "object",
+      "properties" : {
+        "credentialsBody" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "status" : {
+          "type" : "string",
+          "enum" : [ "AVAILABLE", "IN_USE", "REVOKED" ]
+        },
+        "credentialsId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "EndpointGroupDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "sequenceNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "topics" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "EndpointGroupStateDto" : {
+      "type" : "object",
+      "properties" : {
+        "endpointGroupId" : {
+          "type" : "string"
+        },
+        "profileFilterId" : {
+          "type" : "string"
+        },
+        "configurationId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "EndpointNotificationDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "endpointKeyHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "notificationDto" : {
+          "$ref" : "#/definitions/NotificationDto"
+        }
+      }
+    },
+    "EndpointProfileBodyDto" : {
+      "type" : "object",
+      "properties" : {
+        "endpointKeyHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "clientSideProfile" : {
+          "type" : "string"
+        },
+        "serverSideProfile" : {
+          "type" : "string"
+        },
+        "clientSideProfileVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "serverSideProfileVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "EndpointProfileDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "endpointKey" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "endpointKeyHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "endpointUserId" : {
+          "type" : "string"
+        },
+        "accessToken" : {
+          "type" : "string"
+        },
+        "sequenceNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "groupState" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EndpointGroupStateDto"
+          }
+        },
+        "subscriptions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "simpleTopicHash" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "topicHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "clientProfileBody" : {
+          "type" : "string"
+        },
+        "serverProfileBody" : {
+          "type" : "string"
+        },
+        "profileHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "configurationHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "userConfigurationHash" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "clientProfileVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "serverProfileVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "configurationVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "notificationVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "systemNfVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "userNfVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "logSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "ecfVersionStates" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EventClassFamilyVersionStateDto"
+          }
+        },
+        "serverHash" : {
+          "type" : "string"
+        },
+        "sdkToken" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "useConfigurationRawSchema" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
+    "EndpointProfileSchemaDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "ctlSchemaId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "EndpointProfilesBodyDto" : {
+      "type" : "object",
+      "properties" : {
+        "next" : {
+          "type" : "string"
+        },
+        "endpointProfilesBody" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EndpointProfileBodyDto"
+          }
+        }
+      }
+    },
+    "EndpointProfilesPageDto" : {
+      "type" : "object",
+      "properties" : {
+        "next" : {
+          "type" : "string"
+        },
+        "endpointProfiles" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EndpointProfileDto"
+          }
+        }
+      }
+    },
+    "EventClassFamilyDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "namespace" : {
+          "type" : "string"
+        },
+        "className" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "schemas" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/EventSchemaVersionDto"
+          }
+        }
+      }
+    },
+    "EventClassFamilyVersionStateDto" : {
+      "type" : "object",
+      "properties" : {
+        "ecfId" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "EventSchemaVersionDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "schema" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      }
+    },
+    "LogAppenderDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "pluginTypeName" : {
+          "type" : "string"
+        },
+        "pluginClassName" : {
+          "type" : "string"
+        },
+        "jsonConfiguration" : {
+          "type" : "string"
+        },
+        "applicationToken" : {
+          "type" : "string"
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "minLogSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "maxLogSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "confirmDelivery" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "headerStructure" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "KEYHASH", "VERSION", "TIMESTAMP", "TOKEN", "LSVERSION" ]
+          }
+        }
+      }
+    },
+    "LogSchemaDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "ctlSchemaId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "NotificationDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "schemaId" : {
+          "type" : "string"
+        },
+        "topicId" : {
+          "type" : "string"
+        },
+        "nfVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "lastTimeModify" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "USER", "SYSTEM" ]
+        },
+        "body" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "expiredAt" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "secNum" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      }
+    },
+    "NotificationSchemaDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "ctlSchemaId" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "USER", "SYSTEM" ]
+        }
+      }
+    },
+    "ProfileFilterDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "endpointGroupId" : {
+          "type" : "string"
+        },
+        "sequenceNumber" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "lastModifyTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "activatedTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "deactivatedTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "modifiedUsername" : {
+          "type" : "string"
+        },
+        "activatedUsername" : {
+          "type" : "string"
+        },
+        "deactivatedUsername" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "enum" : [ "DEPRECATED", "ACTIVE", "INACTIVE" ]
+        },
+        "endpointCount" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "endpointProfileSchemaId" : {
+          "type" : "string"
+        },
+        "endpointProfileSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "serverProfileSchemaId" : {
+          "type" : "string"
+        },
+        "serverProfileSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ProfileFilterRecordDto" : {
+      "type" : "object",
+      "properties" : {
+        "activeStructureDto" : {
+          "$ref" : "#/definitions/ProfileFilterDto"
+        },
+        "inactiveStructureDto" : {
+          "$ref" : "#/definitions/ProfileFilterDto"
+        }
+      }
+    },
+    "SdkProfileDto" : {
+      "type" : "object",
+      "properties" : {
+        "configurationSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "profileSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "notificationSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "logSchemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "aefMapIds" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "defaultVerifierToken" : {
+          "type" : "string"
+        },
+        "applicationToken" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "token" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "endpointCount" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ServerProfileSchemaDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "ctlSchemaId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "TenantDto" : {
+      "type" : "object",
+      "required" : [ "name" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 255
+        }
+      }
+    },
+    "TopicDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "MANDATORY", "OPTIONAL" ]
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "secNum" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "UserDto" : {
+      "type" : "object",
+      "required" : [ "authority", "mail", "username" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "username" : {
+          "type" : "string"
+        },
+        "externalUid" : {
+          "type" : "string"
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "authority" : {
+          "type" : "string",
+          "enum" : [ "KAA_ADMIN", "TENANT_ADMIN", "TENANT_DEVELOPER", "TENANT_USER" ]
+        },
+        "firstName" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 35
+        },
+        "lastName" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 35
+        },
+        "mail" : {
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 225,
+          "pattern" : "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+        },
+        "tempPassword" : {
+          "type" : "string"
+        }
+      }
+    },
+    "UserProfileUpdateDto" : {
+      "type" : "object",
+      "properties" : {
+        "firstName" : {
+          "type" : "string"
+        },
+        "lastName" : {
+          "type" : "string"
+        },
+        "mail" : {
+          "type" : "string"
+        }
+      }
+    },
+    "UserVerifierDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "createdUsername" : {
+          "type" : "string"
+        },
+        "createdTime" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "pluginTypeName" : {
+          "type" : "string"
+        },
+        "pluginClassName" : {
+          "type" : "string"
+        },
+        "jsonConfiguration" : {
+          "type" : "string"
+        },
+        "verifierToken" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

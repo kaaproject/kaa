@@ -16,20 +16,47 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
+import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.data.DataSource;
+import org.kaaproject.kaa.server.admin.client.mvp.data.TenantAdminDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class TenantActivity extends
-        AbstractUserActivity<TenantUserDto, TenantView, TenantPlace> {
+        AbstractDetailsActivity<TenantDto, TenantView, TenantPlace> {
 
     public TenantActivity(TenantPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
+    }
+
+    private TenantAdminDataProvider usersDataProvider;
+
+    @Override
+    public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
+        super.start(containerWidget, eventBus);
+        if (!create) {
+            AbstractGrid<UserDto, String> tenantAdminsGrid = detailsView.getTenantAdminsGrid();
+            usersDataProvider = new TenantAdminDataProvider(tenantAdminsGrid, detailsView,entityId );
+        }
+    }
+
+    @Override
+    protected String getEntityId(TenantPlace place) {
+        return place.getTenantId();
     }
 
     @Override
@@ -42,37 +69,82 @@ public class TenantActivity extends
     }
 
     @Override
-    protected TenantUserDto newEntity() {
-        return new TenantUserDto();
+    protected TenantDto newEntity() {
+        return new TenantDto();
     }
 
       @Override
       protected void onEntityRetrieved() {
-          super.onEntityRetrieved();
           if (!create) {
-              detailsView.setTitle(entity.getTenantName());
+              detailsView.setTitle(entity.getName());
           }
-          detailsView.getTenantName().setValue(entity.getTenantName());
+          detailsView.getTenantName().setValue(entity.getName());
+          if (!create) {
+              usersDataProvider.setTenantId(entity.getId());
+              usersDataProvider.reload();
+          }
       }
 
       @Override
       protected void onSave() {
-          super.onSave();
-          entity.setTenantName(detailsView.getTenantName().getValue());
-          if (create) {
-              entity.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-          }
+          entity.setName(detailsView.getTenantName().getValue());
+
       }
 
       @Override
-      protected void getEntity(String id, AsyncCallback<TenantUserDto> callback) {
+      protected void getEntity(String id, AsyncCallback<TenantDto> callback) {
           KaaAdmin.getDataSource().getTenant(id, callback);
       }
 
       @Override
-      protected void editEntity(TenantUserDto entity,
-              AsyncCallback<TenantUserDto> callback) {
+      protected void editEntity(TenantDto entity,
+              AsyncCallback<TenantDto> callback) {
           KaaAdmin.getDataSource().editTenant(entity, callback);
       }
+
+
+
+    protected void bind(final EventBus eventBus) {
+        super.bind(eventBus);
+
+        registrations.add(detailsView.getAddTenantAdminButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                addTenantAdmin();
+            }
+        }));
+
+
+        registrations.add(detailsView.getTenantAdminsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
+            @Override
+            public void onRowAction(RowActionEvent<String> event) {
+                String id = event.getClickedId();
+                if (event.getAction()==RowActionEvent.CLICK) {
+                    UserPlace adminPlace = new UserPlace(id,entity.getId());
+                    adminPlace.setPreviousPlace(place);
+                    goTo(adminPlace);
+                }
+                else if (event.getAction()==RowActionEvent.DELETE) {
+                    KaaAdmin.getDataSource().deleteUser(id, new BusyAsyncCallback<Void>() {
+                        @Override
+                        public void onFailureImpl(Throwable throwable) {
+                            Utils.handleException(throwable,detailsView);
+                        }
+
+                        @Override
+                        public void onSuccessImpl(Void aVoid) {
+                            usersDataProvider.reload();
+                        }
+                    });
+                }
+            }
+        }));
+    }
+
+
+    private void addTenantAdmin() {
+        UserPlace adminPlace = new UserPlace("",entity.getId());
+        adminPlace.setPreviousPlace(place);
+        goTo(adminPlace);
+    }
 
 }

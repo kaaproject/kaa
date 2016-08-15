@@ -16,16 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
@@ -129,7 +121,7 @@ public class ClientFactoryImpl implements ClientFactory {
 
     private final BasePropertiesView mailPropertiesView = new MailPropertiesViewImpl();
 
-    private final BaseListView<TenantUserDto> tenantsView = new TenantsViewImpl();
+    private final BaseListView<TenantDto> tenantsView = new TenantsViewImpl();
     private final TenantView createTenantView = new TenantViewImpl(true);
     private final TenantView tenantView = new TenantViewImpl(false);
 
@@ -255,7 +247,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<TenantUserDto> getTenantsView() {
+    public BaseListView<TenantDto> getTenantsView() {
         return tenantsView;
     }
 

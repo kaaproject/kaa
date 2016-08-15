@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(kaa_demo C)
 
 # Add Kaa SDK directory
-add_subdirectory(libs/kaa)
+add_subdirectory(kaa)
 
 # Add source files
 add_library(kaa_demo_s STATIC user/user_main.c driver/uart.c src/kaa_demo.c)
