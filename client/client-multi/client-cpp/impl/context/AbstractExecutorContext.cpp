@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "kaa/logging/Log.hpp"
 #include "kaa/context/AbstractExecutorContext.hpp"
 
 namespace kaa {

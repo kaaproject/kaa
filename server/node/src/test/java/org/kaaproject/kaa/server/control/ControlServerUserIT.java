@@ -45,13 +45,107 @@ public class ControlServerUserIT extends AbstractTestControlServer {
     
     /**
      * Test create user.
+     * Kaa admin creates tenant admin user.
      *
      * @throws Exception the exception
      */
     @Test
-    public void testCreateUser() throws Exception {
+    public void testKaaAdminCreateTenantAdmin() throws Exception {
+        loginKaaAdmin();
+        UserDto user = new UserDto();
+        String username = generateString(USERNAME);
+        user.setUsername(username);
+        user.setMail(username + "@demoproject.org");
+        user.setFirstName(generateString("Test"));
+        user.setLastName(generateString("User"));
+        user.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        user.setTenantId(tenantAdminDto.getTenantId());
+        user = client.editUser(user);
+
+        UserDto storedUser = client.getUser(user.getId());
+        Assert.assertNotNull(storedUser);
+        Assert.assertEquals(storedUser.getAuthority(), KaaAuthorityDto.TENANT_ADMIN);
+        assertUsersEquals(user, storedUser);
+    }
+
+    /**
+     * Test create user.
+     * Kaa admin is not able to create users except of tenant admin.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testFailKaaAdminCreateOtherUser() throws Exception {
+        expectedException.expect(HttpClientErrorException.class);
+        expectedException.expectMessage("You do not have permission to perform this operation!");
+
+        loginKaaAdmin();
+        UserDto user = new UserDto();
+        String username = generateString(USERNAME);
+        user.setUsername(username);
+        user.setMail(username + "@demoproject.org");
+        user.setFirstName(generateString("Test"));
+        user.setLastName(generateString("User"));
+        user.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
+        user.setTenantId(tenantAdminDto.getTenantId());
+        client.editUser(user);
+    }
+
+    /**
+     * Test create user.
+     * Tenant admin create other users (neither kaa admin nor tenant admin).
+     * Tenant id should reflect.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testTenantAdminCreateOtherUser() throws Exception {
+        loginTenantAdmin(tenantAdminDto.getUsername());
         UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
-        Assert.assertFalse(strIsEmpty(user.getId()));
+
+        UserDto storedUser = client.getUser(user.getId());
+        Assert.assertEquals(storedUser.getAuthority(), KaaAuthorityDto.TENANT_DEVELOPER);
+        Assert.assertNotNull(storedUser);
+        assertUsersEquals(user, storedUser);
+        Assert.assertEquals(tenantAdminDto.getTenantId(), storedUser.getTenantId());
+    }
+
+    /**
+     * Test create user.
+     * Tenant admin is not able to create other users, which tenant id are not reflect.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testFailTenantAdminCreateOtherUser() throws Exception {
+        expectedException.expect(HttpClientErrorException.class);
+        expectedException.expectMessage("403 Forbidden");
+
+        loginTenantAdmin(tenantAdminDto.getUsername());
+        UserDto user = new UserDto();
+        String username = generateString(USERNAME);
+        user.setUsername(username);
+        user.setMail(username + "@demoproject.org");
+        user.setFirstName(generateString("Test"));
+        user.setLastName(generateString("User"));
+        user.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
+        user.setTenantId(tenantAdminDto.getTenantId() + 1);
+        client.editUser(user);
+    }
+
+    /**
+     * Test create user.
+     * Tenant admin is not able to create another tenant admin.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testFailTenantAdminCreateTenantAdmin() throws Exception {
+        expectedException.expect(HttpClientErrorException.class);
+        expectedException.expectMessage("You do not have permission to perform this operation!");
+
+        loginTenantAdmin(tenantAdminDto.getUsername());
+        UserDto user = createUser(KaaAuthorityDto.TENANT_ADMIN);
     }
     
     /**
@@ -112,8 +206,8 @@ public class ControlServerUserIT extends AbstractTestControlServer {
 
         user.setFirstName(generateString("NewFirst"));
         user.setLastName(generateString("NewLast"));
+
         UserDto updatedUser = client.editUser(user);
-        
         assertUsersEquals(updatedUser, user);
     }
 
@@ -125,7 +219,7 @@ public class ControlServerUserIT extends AbstractTestControlServer {
      * @throws Exception the exception
      */
     @Test
-    public void testFailUpdateUser() throws Exception {
+    public void testFailEditUser() throws Exception {
         expectedException.expect(HttpClientErrorException.class);
         expectedException.expectMessage("403 Forbidden");
 

@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
@@ -136,26 +135,19 @@ public class UserServiceImplTest extends AbstractTest {
     }
 
 
-    @Test
-    public void findAllTenantAdminsTest() {
-        TenantAdminDto tenantAdminDto = generateTenantAdminDto(null, null);
-        List<TenantAdminDto> admins = userService.findAllTenantAdmins();
-        Assert.assertEquals(1, admins.size());
-        Assert.assertEquals(tenantAdminDto, admins.get(0));
-    }
 
     @Test
     public void removeTenantAdminByIdTest() {
-        TenantAdminDto tenantAdminDto = generateTenantAdminDto(null, null);
+        UserDto tenantAdminDto = generateTenantAdmin(null, null);
         userService.removeTenantAdminById(tenantAdminDto.getId());
-        TenantAdminDto found = userService.findTenantAdminById(tenantAdminDto.getId());
+        UserDto found = userService.findUserById(tenantAdminDto.getId());
         Assert.assertNull(found);
     }
 
     @Test
     public void findTenantAdminByIdTest() {
-        TenantAdminDto tenantAdminDto = generateTenantAdminDto(null, null);
-        TenantAdminDto found = userService.findTenantAdminById(tenantAdminDto.getId());
+        UserDto tenantAdminDto = generateTenantAdmin(null, null);
+        UserDto found  = userService.findUserById(tenantAdminDto.getId());
         Assert.assertEquals(tenantAdminDto, found);
     }
 

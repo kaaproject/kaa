@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;

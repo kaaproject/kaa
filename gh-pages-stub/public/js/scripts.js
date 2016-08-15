@@ -1,3 +1,10 @@
+var VERSIONSELECT_ID = 'version-select';
+var SEARCHBOX_ID     = 'search-box';
+var SEARCHRESULTS_ID = 'search-results';
+var DEFAULT_URL      = '404.html';
+var DEFAULT_TITLE    = 'No title';
+var DEFAULT_TEXT     = '...';
+
 var DOM = (function () {
   var PAGE_TITLE='page-title';
   var MARKDOWN_TOC_ID='markdown-toc';
@@ -117,7 +124,7 @@ var COLLAPSING_CODE_BLOCS = (function () {
       $(CODE_BLOCK_SELECTOR).each(function(index) {
         var content = UTILS.splitByLines($(this).html());
         if(content.length > linesToShow) {
-          var SMALL_TEXT = content.slice(0, linesToShow - 1).join("\n");
+          var SMALL_TEXT = content.slice(0, linesToShow).join("\n");
           var FULL_TEXT = content.slice(linesToShow).join("\n");
           $(this).html(formatHTML(SMALL_TEXT, FULL_TEXT, index, moreButtonText));
         }

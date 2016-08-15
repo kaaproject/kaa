@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
@@ -84,7 +84,7 @@ public class TenantsPlace extends TreePlace {
 
         @Override
         public void onDataChanged(DataEvent event) {
-            if (event.checkClass(TenantUserDto.class)) {
+            if (event.checkClass(TenantDto.class)) {
                 refresh();
             }
         }
@@ -93,25 +93,25 @@ public class TenantsPlace extends TreePlace {
         protected void loadData(
                 final LoadCallback callback,
                 final HasData<TreePlace> display) {
-            KaaAdmin.getDataSource().loadTenants(new AsyncCallback<List<TenantUserDto>>() {
+            KaaAdmin.getDataSource().loadTenants(new AsyncCallback<List<TenantDto>>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     callback.onFailure(caught);
 
                 }
                 @Override
-                public void onSuccess(List<TenantUserDto> result) {
+                public void onSuccess(List<TenantDto> result) {
 
                     callback.onSuccess(toPlaces(result), display);
                 }
             });
         }
 
-        private List<TreePlace> toPlaces(List<TenantUserDto> tenants) {
+        private List<TreePlace> toPlaces(List<TenantDto> tenants) {
             List<TreePlace> result = new ArrayList<TreePlace>();
-            for (TenantUserDto tenant : tenants) {
+            for (TenantDto tenant : tenants) {
                 TenantPlace place = new TenantPlace(tenant.getId());
-                place.setTenantName(tenant.getTenantName());
+                place.setTenantName(tenant.getName());
                 result.add(place);
             }
             return result;

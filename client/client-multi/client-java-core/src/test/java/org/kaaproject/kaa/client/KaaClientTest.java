@@ -109,7 +109,7 @@ public class KaaClientTest {
 
     @Test(expected = KaaRuntimeException.class)
     public void initKaaClientDefaultKeyStrategy() {
-        KaaClient client = Kaa.newClient(platformContext, stateListener);
+        KaaClient client = Kaa.newClient(platformContext, stateListener, false);
     }
 
     @Test
