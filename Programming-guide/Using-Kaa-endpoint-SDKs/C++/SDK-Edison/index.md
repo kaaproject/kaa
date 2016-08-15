@@ -35,15 +35,16 @@ The following third-party components must be installed on the Intel Edison board
 To install these libraries, proceed as follows:
 
 1. Connect to the board either though the serial terminal or the ssh client.
-Refer to [the official Edison getting started guide](https://software.intel.com/en-us/intel-edison-board-getting-started-guide) for any help required.
+Refer to [the official Edison getting started guide](https://software.intel.com/en-us/iot/library/edison-getting-started) for any help required.
 
-2. Install coreutils.
+2. Install dependencies.
 
    ```
-   opkg install http://repo.opkg.net/edison/repo/core2-32/coreutils_8.22-r0_core2-32.ipk
+   opkg update
+   opkg install coreutils libssp-staticdev libssp-dev
    ```
 
-3. Install Boost (1.54 or higher).
+3. Install Boost.
 
    ```
    wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
@@ -56,10 +57,10 @@ Refer to [the official Edison getting started guide](https://software.intel.com/
 4. Install Avro (1.7.5--1.7.7).
 
    ```
-   wget http://apache.ip-connect.vn.ua/avro/avro-1.7.7/cpp/avro-cpp-1.7.7.tar.gz
-   tar -zxf avro-cpp-1.7.7.tar.gz
-   cd avro-cpp-1.7.7/
-   cmake -G "Unix Makefiles"
+   wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
+   tar -zxf avro-cpp-1.7.5.tar.gz
+   cd avro-cpp-1.7.5/
+   cmake .
    make install
    ```
 
@@ -74,14 +75,10 @@ Refer to [the official Edison getting started guide](https://software.intel.com/
    ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
    ```
 
-6. Install SQLite.
+6. Install SQLite (optionally).
 
    ```
-   wget https://www.sqlite.org/2015/sqlite-autoconf-3081002.tar.gz
-   tar -zxf sqlite-autoconf-3081002.tar.gz
-   cd sqlite-autoconf-3081002/
-   ./configure
-   make install
+   opkg install sqlite3
    ```
 
 ## Creating applications based on C++ SDK
