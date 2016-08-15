@@ -25,7 +25,7 @@ public class UserDto implements HasId, Serializable {
     private static final long serialVersionUID = 2052580632293959408L;
 
     private String id;
-    @Size(min = 2 , max = 35)
+    @Size(min = 1)
     @NotNull(message="username can't be null")
     private String username;
     private String externalUid;
