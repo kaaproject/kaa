@@ -110,7 +110,7 @@ Specify the max number of neighbor connections.
 #### ops_server_history_ttl
 Default: _3600_
 
-Default time to live in seconds for historical information about Operations service load.
+Time to live in seconds for historical information about Operations service load.
 
 #### worker_thread_pool
 Default: _8_
@@ -140,7 +140,7 @@ Path to Operations service public key.
 #### support_unencrypted_connection
 Default: _true_
 
-Specify if support unencrypted connection.
+Specify if support unencrypted connection from client to Kaa server.
 
 #### transport_bind_interface
 Default: _0.0.0.0_
@@ -155,7 +155,8 @@ Interface that will be reported by all transports.
 #### metrics_enabled
 Default: _true_
 
-Metrics collect enabled.
+Specify if metrics collections is enabled. See
+[performance monitoring]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/#performance-monitoring) for details.
 
 #### logs_root_dir
 Default: _/kaa_log_uploads_
@@ -165,12 +166,12 @@ Path to logs root directory.
 #### date_pattern
 Default: _'.'yyyy-MM-dd-HH-mm_
 
-Date pattern for file log appender.
+Date pattern for the [file log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).
 
 #### layout_pattern
 Default: _%m%n_
 
-Layout pattern for file log appender.
+Layout pattern for the [file log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).
 
 #### tmp_keys
 Default: _/home/kaa/tmp_keys_
@@ -180,7 +181,7 @@ Path to tmp keys directory.
 #### load_stats_update_frequency
 Default: _10000_
 
-Frequency of load status check in milliseconds.
+Frequency of load status check in milliseconds for the [load balancing]({{root_url}}Administration-guide/System-components-overview/#load-balancing-lb) feature.
 
 #### additional_plugins_scan_package
 Default: _empty_
