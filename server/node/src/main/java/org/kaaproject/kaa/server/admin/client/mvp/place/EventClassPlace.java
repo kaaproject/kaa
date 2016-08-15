@@ -58,7 +58,7 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
 
     @Override
     public String getName() {
-        return Utils.constants.schemas();
+        return Utils.constants.versions();
     }
 
     @Prefix(value = "eventClass")

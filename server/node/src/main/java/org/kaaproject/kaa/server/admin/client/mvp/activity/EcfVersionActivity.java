@@ -102,7 +102,7 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
         registrations.add(listView.getAddButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
 
-                KaaAdmin.getDataSource().saveEventClassFamilyVersion(place.getEcfId(), place.getEventClassDtoList(),
+                KaaAdmin.getDataSource().addEventClassFamilyVersionFromView(place.getEcfId(), place.getEventClassDtoList(),
                         new AsyncCallback<Void>() {
                             @Override
                             public void onFailure(Throwable caught) {

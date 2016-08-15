@@ -36,9 +36,9 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.admin.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -69,6 +69,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
@@ -233,7 +234,7 @@ public class DataSource {
     public void loadTenants(final AsyncCallback<List<TenantDto>> callback,
             boolean refresh) {
         if (tenants == null || refresh) {
-            tenants = new ArrayList<>();
+            tenants = new ArrayList<TenantDto>();
             tenantRpcService.getTenants(new DataCallback<List<TenantDto>>(callback) {
                 @Override
                 protected void onResult(List<TenantDto> result) {
@@ -490,7 +491,7 @@ public class DataSource {
 
     public void generateEcfVersionForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
-        rpcService.generateEcfSchemaForm(fileItemName,
+        eventRpcService.generateEcfSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
@@ -548,7 +549,7 @@ public class DataSource {
     }
 
     public void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback) {
-        rpcService.getEventClassView(eventClassId, new DataCallback<EventClassViewDto>(callback) {
+        eventRpcService.getEventClassView(eventClassId, new DataCallback<EventClassViewDto>(callback) {
             @Override
             protected void onResult(EventClassViewDto result) {
             }
@@ -557,7 +558,7 @@ public class DataSource {
     }
 
     public void getEventClassViewByCtlSchemaId(EventClassDto eventClassViewDto, final AsyncCallback<EventClassViewDto> callback) {
-        rpcService.getEventClassViewByCtlSchemaId(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
+        eventRpcService.getEventClassViewByCtlSchemaId(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
             @Override
             protected void onResult(EventClassViewDto result) {
             }
@@ -566,7 +567,7 @@ public class DataSource {
     }
 
     public void saveEventClassView(EventClassViewDto eventClassViewDto, final AsyncCallback<EventClassViewDto> callback) {
-        rpcService.saveEventClassView(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
+        eventRpcService.saveEventClassView(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
             @Override
             protected void onResult(EventClassViewDto result) {
             }
@@ -575,7 +576,7 @@ public class DataSource {
     }
 
     public void createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaFormDto, final AsyncCallback<EventClassViewDto> callback) {
-        rpcService.createEventClassFormCtlSchema(ctlSchemaFormDto , new DataCallback<EventClassViewDto>(callback) {
+        eventRpcService.createEventClassFormCtlSchema(ctlSchemaFormDto , new DataCallback<EventClassViewDto>(callback) {
             @Override
             protected void onResult(EventClassViewDto result) {
             }
@@ -584,7 +585,7 @@ public class DataSource {
     }
 
     public void getEventClassTypes(final AsyncCallback<List<String>> callback) {
-        rpcService.getEventClassTypes(new DataCallback<List<String>>(callback) {
+        eventRpcService.getEventClassTypes(new DataCallback<List<String>>(callback) {
             @Override
             protected void onResult(List<String> result) {
             }
@@ -593,7 +594,7 @@ public class DataSource {
     }
 
     public void getEventClassFamilyVersions(String eventClassFamilyId, final AsyncCallback<List<EventClassFamilyVersionDto>> callback) {
-        rpcService.getEventClassFamilyVersions(eventClassFamilyId, new DataCallback<List<EventClassFamilyVersionDto>>(callback) {
+        eventRpcService.getEventClassFamilyVersions(eventClassFamilyId, new DataCallback<List<EventClassFamilyVersionDto>>(callback) {
             @Override
             protected void onResult(List<EventClassFamilyVersionDto> result) {
             }
@@ -602,7 +603,7 @@ public class DataSource {
     }
 
     public void getLastCtlSchemaReferenceDto(String ctlSchemaId, final AsyncCallback<CtlSchemaReferenceDto> callback) {
-        rpcService.getLastCtlSchemaReferenceDto(ctlSchemaId, new DataCallback<CtlSchemaReferenceDto>(callback) {
+        ctlRpcService.getLastCtlSchemaReferenceDto(ctlSchemaId, new DataCallback<CtlSchemaReferenceDto>(callback) {
             @Override
             protected void onResult(CtlSchemaReferenceDto result) {
             }
@@ -610,19 +611,19 @@ public class DataSource {
 
     }
 
-    public void saveEventClassFamilyVersion(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto, final AsyncCallback<Void> callback) {
-        rpcService.saveEventClassFamilyVersion(eventClassFamilyId, eventClassViewDto,
+    public void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto, final AsyncCallback<Void> callback) {
+        eventRpcService.addEventClassFamilyVersionFromView(eventClassFamilyId, eventClassViewDto,
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
-                        eventBus.fireEvent(new DataEvent(EventSchemaVersionDto.class));
+                        eventBus.fireEvent(new DataEvent(EventClassFamilyVersionDto.class)); //: todo
                     }
                 });
     }
 
     public void getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type,
                                                         final AsyncCallback<List<EventClassDto>> callback) {
-        rpcService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type,
+        eventRpcService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type,
                 new DataCallback<List<EventClassDto>>(callback) {
                     @Override
                     protected void onResult(List<EventClassDto> result) {
@@ -632,7 +633,7 @@ public class DataSource {
 
     public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion,
                                                         final AsyncCallback<Void> callback) {
-        rpcService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion,
+        eventRpcService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion,
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
@@ -948,19 +949,19 @@ public class DataSource {
                 });
     }
 
-    public void getLastCreatedCTLSchemaByFqnAndVersion(String fqn, Integer version,
-             final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
-        rpcService.getLastCreatedCTLSchemaByFqnAndVersion(fqn, version,
-                new DataCallback<CTLSchemaMetaInfoDto>(callback) {
-                    @Override
-                    protected void onResult(CTLSchemaMetaInfoDto result) {
-                    }
-                });
-    }
+//    public void getLastCreatedCTLSchemaByFqnAndVersion(String fqn, Integer version,
+//             final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
+//        ctlRpcService.getLastCreatedCTLSchemaByFqnAndVersion(fqn, version,
+//                new DataCallback<CTLSchemaMetaInfoDto>(callback) {
+//                    @Override
+//                    protected void onResult(CTLSchemaMetaInfoDto result) {
+//                    }
+//                });
+//    }
 
     public void getCTLSchemaById(String ctlSchemaId,
              final AsyncCallback<CTLSchemaDto> callback) {
-        rpcService.getCTLSchemaById(ctlSchemaId,
+        ctlRpcService.getCTLSchemaById(ctlSchemaId,
                 new DataCallback<CTLSchemaDto>(callback) {
                     @Override
                     protected void onResult(CTLSchemaDto result) {

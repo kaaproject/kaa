@@ -84,4 +84,6 @@ public interface CtlService extends RemoteService {
 
     String getFlatSchemaByCtlSchemaId(String logSchemaId) throws KaaAdminServiceException;
 
+    CtlSchemaReferenceDto getLastCtlSchemaReferenceDto(String ctlSchemaId) throws KaaAdminServiceException;
+
 }

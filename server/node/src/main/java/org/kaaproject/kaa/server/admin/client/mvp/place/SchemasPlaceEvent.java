@@ -76,7 +76,7 @@ public class SchemasPlaceEvent extends TreePlace {
 
     @Override
     public String getName() {
-        return Utils.constants.schemas();
+        return Utils.constants.versions();
     }
 
     public static abstract class Tokenizer<P extends SchemasPlaceEvent> implements PlaceTokenizer<P>, PlaceConstants {
