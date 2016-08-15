@@ -18,9 +18,12 @@ package org.kaaproject.data_migration;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.lang.StringUtils;
 import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.Schema;
 import org.kaaproject.data_migration.utils.BaseSchemaIdCounter;
+import org.kaaproject.data_migration.utils.DataSources;
+import org.kaaproject.data_migration.utils.Options;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.kaaproject.data_migration.utils.DataSources.MARIADB;
 
 public class MigrateData {
 
@@ -40,9 +42,34 @@ public class MigrateData {
     private static Connection conn;
 
     public static void main(String[] args) {
+        Options options = new Options();
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.charAt(0) == '-') {
+                String option = arg.substring(1, arg.length()).trim();
+                switch (option) {
+                    case "u":
+                        options.setUsername(option);
+                        break;
+                    case "p":
+                        options.setPassword(option);
+                        break;
+                    case "h":
+                        options.setHost(option);
+                        break;
+                    case "db":
+                        options.setDbName(option);
+                        break;
+                    default:
+                        throw  new IllegalArgumentException("No such option: -" + option);
+                }
+            }
+        }
+
         try {
             List<Schema> schemas = new ArrayList<>();
-            conn = MARIADB.getDs().getConnection();
+            conn = DataSources.getMariaDB(options).getConnection();
             QueryRunner runner = new QueryRunner();
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
