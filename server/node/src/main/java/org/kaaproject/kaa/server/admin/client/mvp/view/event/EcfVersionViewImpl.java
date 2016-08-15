@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiField;
@@ -47,6 +48,12 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
         supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         supportPanel.setWidth("300px");
         supportPanel.add(addSchemaButton);
+//        grid.(new AttachEvent.Handler() {
+//            @Override
+//            public void onAttachOrDetach(AttachEvent event) {
+//                validateAddButton();
+//            }
+//        });
     }
 
     @Override

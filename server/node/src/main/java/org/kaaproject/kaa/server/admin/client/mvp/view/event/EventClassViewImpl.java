@@ -54,12 +54,12 @@ public class EventClassViewImpl extends BaseCtlSchemaViewImpl implements EventCl
 
     @Override
     protected String getCreateTitle() {
-        return "Add even class";
+        return "Add event class";
     }
 
     @Override
     protected String getViewTitle() {
-        return "Even class";
+        return "Event class";
     }
 
     @Override

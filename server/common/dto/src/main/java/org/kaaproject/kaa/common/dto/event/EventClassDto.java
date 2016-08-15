@@ -135,7 +135,7 @@ public class EventClassDto extends BaseSchemaDto {
         builder.append(id);
         builder.append(", tenantId=");
         builder.append(tenantId);
-        builder.append(", ecfId=");
+        builder.append(", ecfvId=");
         builder.append(ecfvId);
         builder.append(", fqn=");
         builder.append(fqn);

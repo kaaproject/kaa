@@ -217,7 +217,7 @@ public class EventClassServiceImpl implements EventClassService {
             LOG.debug("Find event classes by family id [{}] version [{}] and type [{}]", ecfId, version, type);
             EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
             EventClassFamilyVersion ecfv = ecf.getSchemas().stream().filter(s -> s.getVersion() == version).collect(Collectors.toList()).get(0);
-            eventClasses = convertDtoList(eventClassDao.findByEcfvIdVersionAndType(String.valueOf(ecfv.getId()), ecfv.getVersion(), type));
+            eventClasses = convertDtoList(ecfv.getRecords().stream().filter(ec -> type != null ? ec.getType() == type : true).collect(Collectors.toList()));
         } else {
             throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);
         }
