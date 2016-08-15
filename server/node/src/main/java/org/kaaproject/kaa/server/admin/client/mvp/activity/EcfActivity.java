@@ -165,7 +165,7 @@ public class EcfActivity
     }
 
     private void addEcfVersion() {
-        EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, "", -1);
+        EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, "", -1, null);
         ecfVersionPlace.setPreviousPlace(place);
         goTo(ecfVersionPlace);
     }

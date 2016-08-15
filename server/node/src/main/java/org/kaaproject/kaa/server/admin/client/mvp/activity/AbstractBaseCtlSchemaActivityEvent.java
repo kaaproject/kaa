@@ -71,7 +71,6 @@ public abstract class AbstractBaseCtlSchemaActivityEvent<S extends BaseSchemaDto
                     CtlSchemaPlace newCtlPlace = null;
 
                     newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.TENANT, place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
-                    newCtlPlace.setEventClassDtoList(place.getEventClassDtoList());
                     newCtlPlace.setSchemaType(getPlaceSchemaType());
                     newCtlPlace.setPreviousPlace(place);
                     canceled = true;

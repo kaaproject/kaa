@@ -29,37 +29,15 @@ import java.util.List;
 public class EventClassPlace extends AbstractSchemaPlaceEvent {
 
     private String ctlSchemaId;
-
-    public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
-        super(ecfId, ecfVersionId, ecfVersion, schemaId);
-    }
-
-    public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId, String ctlSchemaId, List<EventClassViewDto> eventClassDtoList) {
-        super(ecfId, ecfVersionId, ecfVersion, schemaId);
-        this.ctlSchemaId = ctlSchemaId;
-        this.eventClassDtoList = eventClassDtoList;
-
-    }
+    private String nameEC;
 
     public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId, List<EventClassViewDto> eventClassDtoList) {
         super(ecfId, ecfVersionId, ecfVersion, schemaId);
         this.eventClassDtoList = eventClassDtoList;
     }
 
-    public void addEventClassViewDto(EventClassViewDto eventClassViewDto) {
-        if (eventClassDtoList == null) {
-            this.eventClassDtoList = new ArrayList<>();
-        }
-        eventClassDtoList.add(eventClassViewDto);
-
-    }
-
-    public List<EventClassViewDto> getEventClassDtoList() {
-        return eventClassDtoList;
-    }
-
-    public void setEventClassDtoList(List<EventClassViewDto> eventClassDtoList) {
-        this.eventClassDtoList = eventClassDtoList;
+    public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+        super(ecfId, ecfVersionId, ecfVersion, schemaId);
     }
 
     public String getCtlSchemaId() {
@@ -68,6 +46,14 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
 
     public void setCtlSchemaId(String ctlSchemaId) {
         this.ctlSchemaId = ctlSchemaId;
+    }
+
+    public String getNameEC() {
+        return nameEC;
+    }
+
+    public void setNameEC(String nameEC) {
+        this.nameEC = nameEC;
     }
 
     @Override
@@ -87,7 +73,7 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new EcfVersionPlace(ecfId, ecfVersionId, ecfVersion,  eventClassDtoList);
+        return new EcfVersionPlace(ecfId, ecfVersionId, ecfVersion, eventClassDtoList);
     }
 
     @Override

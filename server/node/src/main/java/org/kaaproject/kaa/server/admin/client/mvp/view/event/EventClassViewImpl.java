@@ -71,4 +71,11 @@ public class EventClassViewImpl extends BaseCtlSchemaViewImpl implements EventCl
     public ValueListBox<String> getEventClassTypes() {
         return eventClassTypeName;
     }
+
+    @Override
+    protected boolean validate() {
+        boolean result = super.validate();
+        result &= eventClassTypeName.getValue().length() > 0;
+        return result;
+    }
 }

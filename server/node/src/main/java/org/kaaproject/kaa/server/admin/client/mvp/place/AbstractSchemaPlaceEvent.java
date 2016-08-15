@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.web.bindery.event.shared.EventBus;
-import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
 public abstract class AbstractSchemaPlaceEvent extends SchemasPlaceEvent {
 
@@ -47,6 +46,7 @@ public abstract class AbstractSchemaPlaceEvent extends SchemasPlaceEvent {
         public String getToken(P place) {
             PlaceParams.clear();
             PlaceParams.putParam(ECF_ID, place.getEcfId());
+            PlaceParams.putParam(ECF_VERSION, String.valueOf(place.getEcfVersion()));
             PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
             PlaceParams.putParam(SCHEMA_ID, String.valueOf(place.getSchemaId()));
             return PlaceParams.generateToken();

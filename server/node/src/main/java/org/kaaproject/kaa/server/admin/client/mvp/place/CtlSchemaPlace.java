@@ -40,7 +40,6 @@ public class CtlSchemaPlace extends TreePlace {
     private String ecfId;
     private int ecfVersion;
     private String ecfVersionId;
-    private List<EventClassViewDto> eventClassDtoList;
 
     public CtlSchemaPlace(String metaInfoId,
                           Integer version,
@@ -72,14 +71,6 @@ public class CtlSchemaPlace extends TreePlace {
         this.ecfVersion = ecfVersion;
         this.editable = editable;
         this.create = create;
-    }
-
-    public List<EventClassViewDto> getEventClassDtoList() {
-        return eventClassDtoList;
-    }
-
-    public void setEventClassDtoList(List<EventClassViewDto> eventClassDtoList) {
-        this.eventClassDtoList = eventClassDtoList;
     }
 
     public void setSchemaType(SchemaType schemaType) {

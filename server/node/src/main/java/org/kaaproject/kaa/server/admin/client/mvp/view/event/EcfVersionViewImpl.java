@@ -16,13 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
@@ -66,6 +71,12 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
     @Override
     public Button addButtonEventClass() {
         return addSchemaButton;
+    }
+
+    public void validateAddButton() {
+        if (grid.getDataGrid().getVisibleItems().isEmpty()) {
+            addButton.setEnabled(false);
+        }
     }
 
 }

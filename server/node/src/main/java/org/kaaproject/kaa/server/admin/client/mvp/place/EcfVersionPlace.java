@@ -32,10 +32,6 @@ public class EcfVersionPlace extends SchemasPlaceEvent {
         super(ecfId, ecfVersionId, ecfVersion, eventClassViewDtoList);
     }
 
-    public List<EventClassViewDto> getEventClassDtoList() {
-        return eventClassDtoList;
-    }
-
     public int getEcfVersion() {
         return ecfVersion;
     }

@@ -77,8 +77,7 @@ public class EventClassActivity
 
         List<EventClassViewDto> eventClassDtoList = place.getEventClassDtoList();
         if (eventClassDtoList != null && eventClassViewDto.getCtlSchemaForm() != null) {
-            int sizeArrays = eventClassDtoList.size();
-            for (int i = 0; i < sizeArrays; i++) {
+            for (int i = 0; i < eventClassDtoList.size(); i++) {
                 if (eventClassDtoList.get(i).getId() == eventClassViewDto.getId()) {
                     EventClassDto eventClassDto = eventClassDtoList.get(i).getSchema();
                     eventClassDto.setName(eventClassViewDto.getSchema().getName());
@@ -86,9 +85,9 @@ public class EventClassActivity
                     EventClassViewDto updatedECV = eventClassDtoList.get(i);
                     updatedECV.setSchema(eventClassDto);
                     eventClassDtoList.set(i, updatedECV);
-                    i = sizeArrays;
                 }
             }
+            place.setEventClassDtoList(eventClassDtoList);
         } else {
             place.addEventClassViewDto(eventClassViewDto);
         }
@@ -147,14 +146,6 @@ public class EventClassActivity
     }
 
     @Override
-    protected void bindDetailsView(boolean fireChanged) {
-        super.bindDetailsView(fireChanged);
-        if (entity.getSchema().getType() != null) {
-            detailsView.getEventClassTypes().setValue(entity.getSchema().getType().toString());
-        }
-    }
-
-    @Override
     protected void onEntityRetrieved() {
         super.onEntityRetrieved();
         ValueListBox<String> eventClassTypes = this.detailsView.getEventClassTypes();
@@ -184,6 +175,7 @@ public class EventClassActivity
                 @Override
                 public void onSuccess(CtlSchemaReferenceDto ctlSchemaReferenceDto) {
                     detailsView.getCtlSchemaReference().setValue(ctlSchemaReferenceDto);
+                    detailsView.getName().setValue(place.getNameEC());
                     place.setCtlSchemaId(null);
                 }
             });

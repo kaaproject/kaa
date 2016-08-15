@@ -31,7 +31,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EcfVersionPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EventClassPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
@@ -66,6 +65,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
 
     protected Integer version = null;
     private String ctlSchemaID;
+    private String nameEC;
 
     public CtlSchemaActivity(CtlSchemaPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
@@ -396,7 +396,10 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                             } else if (place.getSchemaType() == SchemaType.LOG_SCHEMA) {
                                 goTo(new LogSchemasPlace(place.getApplicationId()));
                             } else if (place.getSchemaType() == SchemaType.EVENT_CLASS && place.getPreviousPlace() != null) {
-                                goTo(new EventClassPlace(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), "", ctlSchemaID, place.getEventClassDtoList()));
+                                EventClassPlace eventClassPlace = new EventClassPlace(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), "");
+                                eventClassPlace.setCtlSchemaId(ctlSchemaID);
+                                eventClassPlace.setNameEC(nameEC);
+                                goTo(eventClassPlace);
                             }
                         } else if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
@@ -506,6 +509,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                             @Override
                             public void onSuccessImpl(EventClassViewDto eventClassViewDto) {
                                 ctlSchemaID = eventClassViewDto.getSchema().getCtlSchemaId();
+                                nameEC = eventClassViewDto.getSchema().getName();
                                 callback.onSuccess(null);
                             }
                         });
