@@ -127,6 +127,8 @@ public class UserController extends AbstractAdminController {
         ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
         if (resultCode == ResultCode.USER_NOT_FOUND) {
             throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));
+        } else if (resultCode == ResultCode.PERMISSION_DENIED) {
+            throw Utils.handleException(new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED));
         } else if (resultCode == ResultCode.OLD_PASSWORD_MISMATCH) {
             throw Utils.handleException(new IllegalArgumentException("Current password is invalid."));
         } else if (resultCode == ResultCode.BAD_PASSWORD_STRENGTH) {
