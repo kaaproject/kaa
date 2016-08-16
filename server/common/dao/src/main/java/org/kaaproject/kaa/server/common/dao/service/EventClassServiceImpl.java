@@ -159,7 +159,7 @@ public class EventClassServiceImpl implements EventClassService {
             for (EventClassDto eventClass : records) {
                 fqns.add(eventClass.getFqn());
             }
-            if (validateEventClassFamilyFqns(eventClassFamily, fqns)) {
+            if (validateEventClassFamilyFqns(eventClassFamily.getId(), fqns)) {
                 List<EventClassFamilyVersionDto> schemasDto = findEventClassFamilyVersionsById(eventClassFamilyId);
                 int version = 1;
                 if (schemasDto != null && !schemasDto.isEmpty()) {
@@ -206,12 +206,9 @@ public class EventClassServiceImpl implements EventClassService {
         ecfvList.forEach(ecfv -> ecfv.getRecords().forEach(ec -> ec.setEcfv(ecfv)));
     }
 
-    private boolean validateEventClassFamilyFqns(EventClassFamilyDto eventClassFamily, List<String> fqns) {
-        String ecfId = eventClassFamily.getId();
-        EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
-        List<String> storedFQNs = new ArrayList<>();
-        ecf.getSchemas().forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
-
+    @Override
+    public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
+        List<String> storedFQNs = getFqnListForECF(eventClassFamilyId);
         for (String storedFQN : storedFQNs) {
             long duplicatedFqnCount = fqns.stream().filter(fqn -> fqn.equals(storedFQN)).count();
             if (duplicatedFqnCount > 0) return false;
@@ -281,5 +278,18 @@ public class EventClassServiceImpl implements EventClassService {
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> getFqnListForECF(String eventClassId) {
+        if (isValidSqlId(eventClassId)) {
+            LOG.debug("Find event class by id [{}] ", eventClassId);
+            List<String> storedFQNs = new ArrayList<>();
+            EventClassFamily ecf = eventClassFamilyDao.findById(eventClassId);
+            ecf.getSchemas().forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
+            return storedFQNs;
+        } else {
+            throw new IncorrectParameterException("Incorrect event class id: " + eventClassId);
+        }
     }
 }

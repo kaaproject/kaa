@@ -169,7 +169,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         Label ecfVersionsLabel = new Label(Utils.constants.versions());
         ecfVersionsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
-        addEcfVersionButton = new Button(Utils.constants.addSchema());
+        addEcfVersionButton = new Button(Utils.constants.addFamilyVersion());
         addEcfVersionButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
         detailsTable.setWidget(6, 0, ecfVersionsLabel);

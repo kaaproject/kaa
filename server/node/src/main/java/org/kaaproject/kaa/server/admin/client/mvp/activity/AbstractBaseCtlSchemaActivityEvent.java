@@ -79,7 +79,7 @@ public abstract class AbstractBaseCtlSchemaActivityEvent<S extends BaseSchemaDto
                 }
             }));
 
-            KaaAdmin.getDataSource().getAvailableApplicationCTLSchemaReferences(null, new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
+            KaaAdmin.getDataSource().getTenantLevelCTLSchemaReferenceForECF(place.getEcfId(), place.getEventClassDtoList(), new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
                     @Override
                     public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, detailsView);

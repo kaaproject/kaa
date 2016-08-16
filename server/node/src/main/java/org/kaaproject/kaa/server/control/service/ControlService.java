@@ -1031,6 +1031,10 @@ public interface ControlService {
 
     EventClassDto getEventClassById(String eventClassId) throws ControlServiceException;
 
+    boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns);
+
+    List<String> getFqnListForECF(String eventClassId) throws ControlServiceException;
+
     void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException;
 
     /**

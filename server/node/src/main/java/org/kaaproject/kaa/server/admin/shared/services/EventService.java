@@ -77,8 +77,8 @@ public interface EventService extends RemoteService {
 
     EventClassViewDto createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
-    List<String> getEventClassTypes() throws KaaAdminServiceException;
-
     void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException;
+
+    void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws KaaAdminServiceException;
 
 }

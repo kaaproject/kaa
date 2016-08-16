@@ -16,44 +16,39 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ImageTextButton;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implements EcfVersionView {
 
     @UiField
-    public final ImageTextButton addSchemaButton;
+    public final ImageTextButton addECButton;
 
     public EcfVersionViewImpl(boolean editable) {
         super(true);
-        this.addSchemaButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
-        addSchemaButton.setVisible(editable);
+        this.addECButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
+        addECButton.setVisible(editable);
         addButton.setVisible(editable);
         supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         supportPanel.setWidth("300px");
-        supportPanel.add(addSchemaButton);
-//        grid.(new AttachEvent.Handler() {
-//            @Override
-//            public void onAttachOrDetach(AttachEvent event) {
-//                validateAddButton();
-//            }
-//        });
+        supportPanel.add(addECButton);
+        addButton.setEnabled(false);
+        addButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                validateAddECButton();
+            }
+        });
     }
 
     @Override
@@ -63,12 +58,12 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
 
     @Override
     protected String titleString() {
-        return Utils.constants.eventClasses();
+        return Utils.constants.familyVersion();
     }
 
     @Override
     protected String addButtonString() {
-        return "Save ECF version";
+        return Utils.constants.save();
     }
 
     private String addButtonEventClassString() {
@@ -77,12 +72,14 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
 
     @Override
     public Button addButtonEventClass() {
-        return addSchemaButton;
+        return addECButton;
     }
 
-    public void validateAddButton() {
-        if (grid.getDataGrid().getVisibleItems().isEmpty()) {
+    public void validateAddECButton() {
+        if (grid.getDataGrid().getDisplayedItems().isEmpty()) {
             addButton.setEnabled(false);
+        } else {
+            addButton.setEnabled(true);
         }
     }
 

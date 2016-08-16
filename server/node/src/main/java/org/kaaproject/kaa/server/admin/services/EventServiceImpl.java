@@ -311,15 +311,6 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
     }
 
     @Override
-    public List<String> getEventClassTypes() throws KaaAdminServiceException {
-        List<String> eventClassTypeList = new ArrayList<>(EventClassType.values().length);
-        for (EventClassType eventClassType : EventClassType.values()) {
-            eventClassTypeList.add(eventClassType.name());
-        }
-        return eventClassTypeList;
-    }
-
-    @Override
     public void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException {
         EventClassFamilyVersionDto eventClassFamilyVersionDto = new EventClassFamilyVersionDto();
         eventClassFamilyVersionDto.setCreatedTime(System.currentTimeMillis());
@@ -335,6 +326,15 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
         }
         eventClassFamilyVersionDto.setRecords(eventClassDtoList);
         addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersionDto);
+    }
+
+    @Override
+    public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws KaaAdminServiceException {
+        try {
+            controlService.validateECFListInSdkProfile(ecfList);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
     }
 
     @Override

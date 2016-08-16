@@ -152,6 +152,19 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
 
         List<String> aefMapIds = new ArrayList<>();
         List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
+
+        KaaAdmin.getDataSource().validateECFListInSdkProfile(aefMaps, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+            }
+
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        });
+
         if (aefMaps != null) {
             for (AefMapInfoDto aefMap : aefMaps) {
                 aefMapIds.add(aefMap.getAefMapId());

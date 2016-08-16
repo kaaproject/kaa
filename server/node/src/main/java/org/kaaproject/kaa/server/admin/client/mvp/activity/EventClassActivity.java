@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventClassActivity
@@ -61,13 +62,23 @@ public class EventClassActivity
 
     @Override
     protected void getEntity(String eventClassId,
-                             AsyncCallback<EventClassViewDto> callback) {
+                             final AsyncCallback<EventClassViewDto> callback) {
         if (place.getEventClassDtoList() != null) {
             EventClassDto eventClassDto = place.getEventClassDtoList().get(Integer.valueOf(eventClassId) - 1).getSchema();
             KaaAdmin.getDataSource().getEventClassViewByCtlSchemaId(eventClassDto, callback);
-            detailsView.getEventClassTypes().setValue(eventClassDto.getType().toString());
+            detailsView.getEventClassTypes().setValue(eventClassDto.getType().name());
         } else {
-            KaaAdmin.getDataSource().getEventClassView(eventClassId, callback);
+            KaaAdmin.getDataSource().getEventClassView(eventClassId, new AsyncCallback<EventClassViewDto>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    Utils.handleException(caught, EventClassActivity.this.detailsView);
+                }
+                @Override
+                public void onSuccess(EventClassViewDto eventClassViewDto) {
+                    detailsView.getEventClassTypes().setValue(eventClassViewDto.getSchema().getType().name());
+                    callback.onSuccess(eventClassViewDto);
+                }
+            });
         }
     }
 
@@ -150,18 +161,11 @@ public class EventClassActivity
         super.onEntityRetrieved();
         ValueListBox<String> eventClassTypes = this.detailsView.getEventClassTypes();
         if (eventClassTypes != null) {
-            KaaAdmin.getDataSource().getEventClassTypes(new AsyncCallback<List<String>>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    Utils.handleException(caught, EventClassActivity.this.detailsView);
-                }
-
-                @Override
-                public void onSuccess(List<String> result) {
-                    EventClassActivity.this.detailsView.getEventClassTypes().setAcceptableValues(result);
-                }
-            });
+            List<String> eventClassTypeList = new ArrayList<>();
+            for (EventClassType eventClassType : EventClassType.values()) {
+                eventClassTypeList.add(eventClassType.name());
+            }
+            EventClassActivity.this.detailsView.getEventClassTypes().setAcceptableValues(eventClassTypeList);
         }
 
         if (place.getCtlSchemaId() != null) {

@@ -1571,6 +1571,16 @@ public class DefaultControlService implements ControlService {
         return eventClassService.findEventClassById(eventClassId);
     }
 
+    @Override
+    public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
+        return eventClassService.validateEventClassFamilyFqns(eventClassFamilyId, fqns);
+    }
+
+    @Override
+    public List<String> getFqnListForECF(String eventClassId) {
+        return eventClassService.getFqnListForECF(eventClassId);
+    }
+
     /*
      * (non-Javadoc)
      *

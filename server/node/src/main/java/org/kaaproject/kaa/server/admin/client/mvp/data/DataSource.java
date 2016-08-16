@@ -584,15 +584,6 @@ public class DataSource {
 
     }
 
-    public void getEventClassTypes(final AsyncCallback<List<String>> callback) {
-        eventRpcService.getEventClassTypes(new DataCallback<List<String>>(callback) {
-            @Override
-            protected void onResult(List<String> result) {
-            }
-        });
-
-    }
-
     public void getEventClassFamilyVersions(String eventClassFamilyId, final AsyncCallback<List<EventClassFamilyVersionDto>> callback) {
         eventRpcService.getEventClassFamilyVersions(eventClassFamilyId, new DataCallback<List<EventClassFamilyVersionDto>>(callback) {
             @Override
@@ -616,7 +607,7 @@ public class DataSource {
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
-                        eventBus.fireEvent(new DataEvent(EventClassFamilyVersionDto.class)); //: todo
+
                     }
                 });
     }
@@ -639,6 +630,14 @@ public class DataSource {
                     protected void onResult(Void result) {
                     }
                 });
+    }
+
+    public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList, final AsyncCallback<Void> callback) {
+        eventRpcService.validateECFListInSdkProfile(ecfList, new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+            }
+        });
     }
 
     public void loadProfileSchemas(String applicationId,
@@ -781,6 +780,15 @@ public class DataSource {
     public void getAvailableApplicationCTLSchemaReferences(String applicationId,
                                                            final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
         ctlRpcService.getAvailableApplicationCTLSchemaReferences(applicationId,
+                new DataCallback<List<CtlSchemaReferenceDto>>(callback) {
+                    @Override
+                    protected void onResult(List<CtlSchemaReferenceDto> result) {
+                    }
+                });
+    }
+
+    public void getTenantLevelCTLSchemaReferenceForECF(String ecfId, List<EventClassViewDto> eventClassViewDtoList, final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
+        ctlRpcService.getTenantLevelCTLSchemaReferenceForECF(ecfId, eventClassViewDtoList,
                 new DataCallback<List<CtlSchemaReferenceDto>>(callback) {
                     @Override
                     protected void onResult(List<CtlSchemaReferenceDto> result) {
@@ -948,16 +956,6 @@ public class DataSource {
                     }
                 });
     }
-
-//    public void getLastCreatedCTLSchemaByFqnAndVersion(String fqn, Integer version,
-//             final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
-//        ctlRpcService.getLastCreatedCTLSchemaByFqnAndVersion(fqn, version,
-//                new DataCallback<CTLSchemaMetaInfoDto>(callback) {
-//                    @Override
-//                    protected void onResult(CTLSchemaMetaInfoDto result) {
-//                    }
-//                });
-//    }
 
     public void getCTLSchemaById(String ctlSchemaId,
              final AsyncCallback<CTLSchemaDto> callback) {

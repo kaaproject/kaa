@@ -26,6 +26,7 @@ import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
 import java.util.List;
 
@@ -61,6 +62,8 @@ public interface CtlService extends RemoteService {
     List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException;
 
     List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException;
+
+    List<CtlSchemaReferenceDto> getTenantLevelCTLSchemaReferenceForECF(String ecfId, List<EventClassViewDto> eventClassViewDtoList) throws KaaAdminServiceException;
 
     List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(String applicationToken) throws KaaAdminServiceException;
 

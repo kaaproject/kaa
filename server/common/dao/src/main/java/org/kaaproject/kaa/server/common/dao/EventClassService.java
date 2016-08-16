@@ -88,6 +88,8 @@ public interface EventClassService {
      */
     List<EventClassDto> findEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type);
 
+    boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns);
+
     /**
      * Find event class family by tenant id and name.
      *
@@ -132,4 +134,6 @@ public interface EventClassService {
      * @return the event class dto
      */
     boolean isValidECFListInSdkProfile(List<AefMapInfoDto> ecfList);
+
+    List<String> getFqnListForECF(String eventClassId);
 }
