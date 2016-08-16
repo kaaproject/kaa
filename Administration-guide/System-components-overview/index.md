@@ -5,8 +5,7 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -49,7 +48,7 @@ Kaa officially supports [Apache Cassandra](http://cassandra.apache.org/) and [Mo
 
 ## High availability (HA)
 
-In order to provide HA of Kaa services, one should deploy topology with at least two Kaa nodes. Each node should act as Control, Operations and Boostrap service simultaniously. 
+In order to provide HA of Kaa services, one should deploy topology with at least two Kaa nodes. Each node should act as Control, Operations and Bootstrap service simultaneously. 
 Apache Zookeeper should be deployed in cluster mode, since it is used for Kaa node coordination.
 
 >**NOTE:**
@@ -69,7 +68,7 @@ LB task can be decoupled into two subtasks based on originator of requests to Ka
 
 #### Kaa Endpoint SDK requests
 
-Kaa SDK choose Bootstrap and Operations service instances pseudo-randomly during session initiation.
+Kaa SDK chooses Bootstrap and Operations service instances pseudo-randomly during session initiation.
 However, under the conditions when the cluster is heavily loaded, random endpoints distribution may not be good enough.
 Further, as a node joins the cluster, there is a need to re-balance the load across the new cluster set up.
 Kaa server uses the active LB approach to instruct some of the endpoints to reconnect to a different Operations service, thus equalizing the load across the nodes.
