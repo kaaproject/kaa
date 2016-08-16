@@ -21,13 +21,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.commons.lang3.StringUtils;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
-import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,9 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.util.List;
-
-import static org.springframework.util.StringUtils.isEmpty;
 
 @Api(value = "Tenant", description = "Provides function for manage tenants", basePath = "/kaaAdmin/rest")
 @Controller
@@ -57,7 +52,7 @@ public class TenantController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "tenants", method = RequestMethod.GET)
     @ResponseBody
-    public List<TenantUserDto> getTenants() throws KaaAdminServiceException {
+    public List<TenantDto> getTenants() throws KaaAdminServiceException {
         return tenantService.getTenants();
     }
 
@@ -78,7 +73,7 @@ public class TenantController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "tenant/{userId}", method = RequestMethod.GET)
     @ResponseBody
-    public TenantUserDto getTenant(
+    public TenantDto getTenant(
             @ApiParam(name = "userId", value = "A unique user identifier", required = true)
             @PathVariable("userId") String userId) throws KaaAdminServiceException {
         return tenantService.getTenant(userId);
@@ -101,22 +96,10 @@ public class TenantController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "tenant", method = RequestMethod.POST)
     @ResponseBody
-    public TenantUserDto editTenant(
-            @ApiParam(name = "tenantUser", value = "TenantUserDto body. Mandatory fields: tenantName, username, firstName, lastName, mail, authority",
-                    required = true)
-            @RequestBody TenantUserDto tenantUser) throws KaaAdminServiceException {
-        try {
-            if (isEmpty(tenantUser.getAuthority())) {
-                tenantUser.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-            } else if (!KaaAuthorityDto.TENANT_ADMIN.equals(tenantUser.getAuthority())) {
-                throw new KaaAdminServiceException("Incorrect authority for tenant. Authority must be TENANT_ADMIN.", ServiceErrorCode.INVALID_ARGUMENTS);
-            }
-            CreateUserResult result = userFacade.saveUserDto(tenantUser, passwordEncoder);
-            tenantUser.setExternalUid(result.getUserId().toString());
-            TenantUserDto tenant = tenantService.editTenant(tenantUser);
-            if (StringUtils.isNotBlank(result.getPassword())) {
-                tenant.setTempPassword(result.getPassword());
-            }
+    public TenantDto editTenant(@Valid @RequestBody TenantDto tenantUser) throws KaaAdminServiceException {
+        try
+        {
+            TenantDto tenant = tenantService.editTenant(tenantUser);
             return tenant;
         } catch (Exception e) {
             throw Utils.handleException(e);

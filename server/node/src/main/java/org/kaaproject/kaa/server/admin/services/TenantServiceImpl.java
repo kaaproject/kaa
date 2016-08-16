@@ -17,10 +17,8 @@
 package org.kaaproject.kaa.server.admin.services;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -41,71 +39,49 @@ public class TenantServiceImpl extends AbstractAdminService implements TenantSer
     private static final Logger LOG = LoggerFactory.getLogger(TenantServiceImpl.class);
 
     @Override
-    public List<TenantUserDto> getTenants() throws KaaAdminServiceException {
+    public List<TenantDto> getTenants() throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.KAA_ADMIN);
         try {
-            List<TenantAdminDto> tenantAdmins = controlService.getTenantAdmins();
-            List<TenantUserDto> tenantUsers = new ArrayList<TenantUserDto>(tenantAdmins.size());
-            for (TenantAdminDto tenantAdmin : tenantAdmins) {
-                TenantUserDto tenantUser = toTenantUser(tenantAdmin);
-                if (tenantUser != null) {
-                    tenantUsers.add(tenantUser);
-                }
-            }
-            return tenantUsers;
+            List<TenantDto> tenants = controlService.getTenants();
+            Utils.checkNotNull(tenants);
+            return  tenants;
+
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public TenantUserDto getTenant(String userId) throws KaaAdminServiceException {
+    public TenantDto getTenant(String tenantId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.KAA_ADMIN);
         try {
-            UserDto user = controlService.getUser(userId);
-            Utils.checkNotNull(user);
-            TenantAdminDto tenantAdmin = controlService.getTenantAdmin(user.getTenantId());
-            return toTenantUser(tenantAdmin);
+            TenantDto tenantDto = controlService.getTenant(tenantId);
+            Utils.checkNotNull(tenantDto);
+            return tenantDto;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public TenantUserDto editTenant(TenantUserDto tenantUser) throws KaaAdminServiceException {
+    public TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.KAA_ADMIN);
         try {
-            Long userId = saveUser(tenantUser);
-            tenantUser.setExternalUid(userId.toString());
-            TenantAdminDto tenantAdmin = new TenantAdminDto();
-            TenantDto tenant = new TenantDto();
-            tenant.setId(tenantUser.getTenantId());
-            tenant.setName(tenantUser.getTenantName());
-            tenantAdmin.setTenant(tenant);
-            tenantAdmin.setUserId(tenantUser.getId());
-            tenantAdmin.setUsername(tenantUser.getUsername());
-            tenantAdmin.setExternalUid(userId.toString());
-            TenantAdminDto savedTenantAdmin = controlService.editTenantAdmin(tenantAdmin);
-            return toTenantUser(savedTenantAdmin);
+            return controlService.editTenant(tenantUser);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
-    private TenantUserDto toTenantUser(TenantAdminDto tenantAdmin) {
-        User user = userFacade.findById(Long.valueOf(tenantAdmin.getExternalUid()));
-        LOG.debug("Convert tenant admin to tenant user {}.", user);
-        TenantUserDto tenantUser = null;
-        if (user != null) {
-            tenantUser = new TenantUserDto(user.getId().toString(), user.getUsername(), user.getFirstName(), user.getLastName(),
-                    user.getMail(), KaaAuthorityDto.valueOf(user.getAuthorities().iterator().next().getAuthority()));
-            tenantUser.setId(tenantAdmin.getUserId());
-            tenantUser.setTenantId(tenantAdmin.getTenant().getId());
-            tenantUser.setTenantName(tenantAdmin.getTenant().getName());
-        } else {
-            LOG.debug("Can't find tenant user by external id {}.", tenantAdmin.getExternalUid());
+    @Override
+    public void deleteTenant(String tenantId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        try {
+            controlService.deleteTenant(tenantId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
         }
-        return tenantUser;
     }
+
 
 }

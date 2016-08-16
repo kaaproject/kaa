@@ -18,13 +18,18 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 
-public class TenantPlace extends UserPlace {
+import java.util.List;
+
+public class TenantPlace extends TreePlace {
 
     private String tenantName;
+    private String tenantId;
 
-    public TenantPlace(String userId) {
-        super(userId);
+
+    public TenantPlace(String tenantId) {
+        this.tenantId=tenantId;
     }
 
     public void setTenantName(String name) {
@@ -37,13 +42,13 @@ public class TenantPlace extends UserPlace {
         @Override
         public TenantPlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new TenantPlace(PlaceParams.getParam(USER_ID));
+            return new TenantPlace(PlaceParams.getParam(TENANT_ID));
         }
 
         @Override
         public String getToken(TenantPlace place) {
             PlaceParams.clear();
-            PlaceParams.putParam(USER_ID, place.getUserId());
+            PlaceParams.putParam(TENANT_ID, place.getTenantId());
             return PlaceParams.generateToken();
         }
     }
@@ -51,6 +56,14 @@ public class TenantPlace extends UserPlace {
     @Override
     public String getName() {
         return tenantName;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override

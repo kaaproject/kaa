@@ -127,6 +127,8 @@ public class UserController extends AbstractAdminController {
         ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
         if (resultCode == ResultCode.USER_NOT_FOUND) {
             throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));
+        } else if (resultCode == ResultCode.PERMISSION_DENIED) {
+            throw Utils.handleException(new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED));
         } else if (resultCode == ResultCode.OLD_PASSWORD_MISMATCH) {
             throw Utils.handleException(new IllegalArgumentException("Current password is invalid."));
         } else if (resultCode == ResultCode.BAD_PASSWORD_STRENGTH) {
@@ -271,4 +273,24 @@ public class UserController extends AbstractAdminController {
             @RequestParam(value = "userId") String userId) throws KaaAdminServiceException {
         userService.deleteUser(userId);
     }
+
+
+    @ApiOperation(value = "Get tenant admins based on tenant id",
+     notes="Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "The specified tenantId is not valid"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required KAA_ADMIN role"),
+            @ApiResponse(code = 404, message = "The user with the specified tenantId does not exist"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "admins/{tenantId}", method = RequestMethod.POST)
+    @ResponseBody
+    public List<UserDto> findAllTenantAdminsByTenantId(
+            @ApiParam(name = "tenantId", value = "A unique tenant identifier", required = true)
+            @PathVariable String tenantId) throws KaaAdminServiceException {
+       return  userService.findAllTenantAdminsByTenantId(tenantId);
+    }
+
+
+
 }

@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view;
+#include <boost/test/unit_test.hpp>
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.HasValue;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
+#include "kaa/ClientStatus.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClient.hpp"
+#include "kaa/Kaa.hpp"
 
-public interface TenantView extends BaseDetailsView {
+#include <string>
 
-    HasValue<String> getTenantName();
+namespace kaa {
 
-    AbstractGrid<UserDto, String> getTenantAdminsGrid();
+BOOST_AUTO_TEST_SUITE(KaaClientSuite)
 
-    HasClickHandlers getAddTenantAdminButton();
+BOOST_AUTO_TEST_CASE(endpointKeyHash)
+{
+    auto kaaClient = Kaa::newClient();
+
+    auto &status = kaaClient->getKaaClientContext().getStatus();
+
+    BOOST_CHECK_EQUAL(status.getEndpointKeyHash(), kaaClient->getEndpointKeyHash());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
 
 }

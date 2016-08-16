@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 public class TenantDto implements HasId, Serializable {
@@ -23,6 +25,8 @@ public class TenantDto implements HasId, Serializable {
     private static final long serialVersionUID = 330532156388681820L;
 
     private String id;
+    @Size(min = 2,max = 255)
+    @NotNull(message="tenant name can't be null")
     private String name;
 
     public String getId() {

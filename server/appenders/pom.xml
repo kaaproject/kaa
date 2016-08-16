@@ -41,12 +41,6 @@
     </modules>
     <profiles>
         <profile>
-            <id>cdap</id>
-            <modules>
-                <module>cdap-appender</module>
-            </modules>
-        </profile>
-        <profile>
             <id>oracle-nosql</id>
             <activation>
                 <property>
