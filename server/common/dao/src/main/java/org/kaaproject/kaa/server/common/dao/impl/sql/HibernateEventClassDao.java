@@ -141,7 +141,7 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
     }
 
     @Override
-    public boolean validateFqns(String tenantId, String ecfId, List<String> fqns) {
+    public boolean validateFqns(String tenantId, String ecfId, List<String> fqns) { //fixme: drop this as unused?
         List<EventClass> eventClasses = Collections.emptyList();
         if (isNotBlank(tenantId) && isNotBlank(ecfId) && fqns != null && !fqns.isEmpty()) {
             if (LOG.isTraceEnabled()) {
