@@ -23,9 +23,9 @@
 extern "C" {
 #endif
 
-uint64_t htonll(uint64_t hostlonglong);
+uint64_t kaa_htonll(uint64_t hostlonglong);
 
-uint64_t ntohll(uint64_t netlonglong);
+uint64_t kaa_ntohll(uint64_t netlonglong);
 
 #ifdef __cplusplus
 }
