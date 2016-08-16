@@ -156,10 +156,10 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
                 public void nodeChanged() throws Exception {
                     ChildData currentData = controlCache.getCurrentData();
                     if (currentData == null) {
-                        LOG.warn("Control server node died!");
+                        LOG.warn("Control service node died!");
                         onNoMaster();
                     } else {
-                        LOG.warn("Control server node changed!");
+                        LOG.warn("Control service node changed!");
                         onMasterChange(currentData);
                     }
                 }
@@ -277,7 +277,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     }
 
     /**
-     * Extract control server info.
+     * Extract control service info.
      *
      * @param currentData
      *            the current data
@@ -288,7 +288,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         try {
             controlServerInfo = controlNodeAvroConverter.get().fromByteArray(currentData.getData(), controlServerInfo);
         } catch (IOException e) {
-            LOG.error("error reading control server info", e);
+            LOG.error("error reading control service info", e);
         }
         return controlServerInfo;
     }

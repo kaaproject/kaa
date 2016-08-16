@@ -52,24 +52,24 @@ public interface EventService {
     void sendEvent(RemoteEndpointEvent event);
 
     /**
-     * Send RouteInfo to specified list of operations servers. null in
+     * Send RouteInfo to specified list of operations services. null in
      * serverIdList mean broadcast to all servers.
      * 
      * @param routeInfo
      *            RouteInfo
      * @param serverIdList
-     *            list of operations servers in thriftHost:thriftPort format.
+     *            list of operations services in thriftHost:thriftPort format.
      */
     void sendRouteInfo(RouteInfo routeInfo, String... serverIdList);
 
     /**
-     * Send collection of RouteInfos to specified list of operations servers.
+     * Send collection of RouteInfos to specified list of operations services.
      * null in serverIdList mean broadcast to all servers.
      * 
      * @param routeInfos
      *            Collection of type RouteInfo
      * @param serverIdList
-     *            list of operations servers in thriftHost:thriftPort format.
+     *            list of operations services in thriftHost:thriftPort format.
      */
     void sendRouteInfo(Collection<RouteInfo> routeInfos, String... serverIdList);
 

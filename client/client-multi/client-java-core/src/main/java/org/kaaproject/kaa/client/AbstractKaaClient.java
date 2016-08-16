@@ -190,7 +190,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
-            throw new RuntimeException("Unable to obtain list of bootstrap servers."); // NOSONAR
+            throw new RuntimeException("Unable to obtain list of bootstrap services."); // NOSONAR
         }
 
         for (Map.Entry<TransportProtocolId, List<TransportConnectionInfo>> cursor : bootstrapServers.entrySet()) {

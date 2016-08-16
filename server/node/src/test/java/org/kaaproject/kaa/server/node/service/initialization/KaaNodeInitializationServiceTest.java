@@ -123,9 +123,9 @@ public class KaaNodeInitializationServiceTest {
         KaaNodeServerConfig kaaNodeServerConfig = new KaaNodeServerConfig();
         kaaNodeServerConfig.setThriftHost("localhost");
         kaaNodeServerConfig.setThriftPort(10090);        
-        kaaNodeServerConfig.setControlServerEnabled(true);
-        kaaNodeServerConfig.setBootstrapServerEnabled(true);
-        kaaNodeServerConfig.setOperationsServerEnabled(true);
+        kaaNodeServerConfig.setControlServiceEnabled(true);
+        kaaNodeServerConfig.setBootstrapServiceEnabled(true);
+        kaaNodeServerConfig.setOperationsServiceEnabled(true);
         
         ReflectionTestUtils.setField(kaaNodeInitializationService, "kaaNodeServerConfig", kaaNodeServerConfig);
         

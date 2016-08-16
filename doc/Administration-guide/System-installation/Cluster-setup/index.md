@@ -140,20 +140,20 @@ Ensure the existing ```kaa-node``` service is stopped before starting configurat
 Kaa services (Bootstrap, Control or Operations) can be enabled or disabled on Kaa node by editing corresponding properties in ```/etc/kaa-node/conf/kaa-node.properties``` file.
 
 ```bash
-# Specifies if Control Server is enabled.
-control_server_enabled=true
+# Specifies if Control Service is enabled.
+control_service_enabled=true
 
-# Specifies if Bootstrap Server is enabled.
-bootstrap_server_enabled=true
+# Specifies if Bootstrap Service is enabled.
+bootstrap_service_enabled=true
 
-# Specifies if Operations Server is enabled.
-operations_server_enabled=true
+# Specifies if Operations Service is enabled.
+operations_service_enabled=true
 ```
 
 In kaa-node transport properties specify IP address (or host name) of current node.
 
 ```bash
- # The Control Server notifies every Operations/Bootstrap Server on most data updates via a Thrift-based protocol.
+ # The Control Service notifies every Operations/Bootstrap Service on most data updates via a Thrift-based protocol.
 
  # Thrift server host
  thrift_host=<ip_of_current_machine>
