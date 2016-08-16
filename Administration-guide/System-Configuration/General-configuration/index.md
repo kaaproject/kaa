@@ -173,11 +173,6 @@ Default: _%m%n_
 
 Layout pattern for the [file log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).
 
-#### tmp_keys
-Default: _/home/kaa/tmp_keys_
-
-Path to tmp keys directory.
-
 #### load_stats_update_frequency
 Default: _10000_
 
