@@ -1,4 +1,4 @@
-# ![KAA](https://github.com/kaaproject/kaa/blob/develop/gh-pages-stub/public/kaa-avatar.png?raw=true) Open-source IoT platform 
+# ![KAA](https://github.com/kaaproject/kaa/blob/master/gh-pages-stub/public/kaa-avatar.png?raw=true) Open-source IoT platform
 
 [![Build Status](https://jenkins.kaaproject.org:52001/buildStatus/icon?job=kaa_develop_daily)](https://jenkins.kaaproject.org:52001/job/kaa_develop_daily)
 
@@ -15,7 +15,7 @@ The Kaa IoT platform consists of the Kaa server, Kaa extensions and endpoint SDK
 * Endpoint SDK is a library which provides client-side APIs for the various Kaa platform features and handles communication, data marshalling, persistence, etc. Kaa SDKs are designed to facilitate the creation of client applications to be run on various connected devices - however, client applications that do not use Kaa endpoint SDK are also possible. Several implementations of the Endpoint SDK are available in different programming languages.
 Kaa cluster consists of Kaa server nodes that use Apache ZooKeeper for services coordination. Kaa cluster also requires NoSQL and SQL database instances to store endpoint data and metadata, accordingly.
 
-[Read more...](http://balldir.github.io/kaa/kaa/v0.10.2/Architecture-overview/)
+[Read more...](http://kaaproject.github.io/kaa/docs/v0.10.0/Architecture-overview/)
 
 # Getting started
 
@@ -25,11 +25,11 @@ You are also welcome to follow the below video tutorial that will walk you throu
 
 [![Getting started](http://img.youtube.com/vi/ynbxcRdgXFU/0.jpg)](https://youtu.be/ynbxcRdgXFU)
 
-[Read more...](http://balldir.github.io/kaa/kaa/v0.10.2/Getting-started/)
+[Read more...](http://kaaproject.github.io/kaa/docs/v0.10.0/Getting-started/)
 
 # Installation guide
 
-Kaa platform provides you several options for kaa-node server installation, for more detail on how to install your Kaa server please refer to [next guide](http://balldir.github.io/kaa/kaa/v0.10.2/Administration-guide/System-installation/).
+Kaa platform provides you several options for kaa-node server installation, for more detail on how to install your Kaa server please refer to [next guide](http://kaaproject.github.io/kaa/docs/v0.10.0/Administration-guide/System-installation/).
 
 # Need help ?
 
@@ -38,7 +38,7 @@ There is a nice [F.A.Q](http://docs.kaaproject.org/display/KAA/Frequently+asked+
 
 # Documentation
 
-Kaa documentation is a part of Kaa source code and is located in the [`doc/`](https://github.com/kaaproject/kaa/tree/develop/doc) folder. You can find the web version [here](http://balldir.github.io/kaa).
+Kaa documentation is a part of Kaa source code and is located in the [`doc/`](https://github.com/kaaproject/kaa/tree/master/doc) folder. You can find the web version [here](http://kaaproject.github.io/kaa).
 
 # How to contribute
 
@@ -46,7 +46,7 @@ We welcome you to join our rapidly growing community!
 
 As an open-source project, we thrive from contributions by people like you to create the best possible platform for developing IoT solutions. We would love to see you mastering Kaa’s source code, however, writing code is not the only way to contribute. There are many other options, such as providing ideas, suggestions and comments in Kaa forum discussions, testing features and new releases, and reviewing and improving the documentation.
 
-[Read more...](http://balldir.github.io/kaa/kaa/v0.10.2/Customization-guide/How-to-contribute/)
+[Read more...](http://kaaproject.github.io/kaa/docs/v0.10.0/Customization-guide/How-to-contribute/)
 
 # Report issue
 
