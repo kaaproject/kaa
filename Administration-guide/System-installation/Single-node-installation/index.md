@@ -5,10 +5,9 @@ permalink: /:path/
 sort_idx: 20
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
-* auto generated TOC:
+* TOC:
 {:toc}
 
 
@@ -19,26 +18,24 @@ sort_idx: 20
 > * CentOS 6.7 64-bit
 
 
-## Introduction
-
 This guide describes installation and configuration of Kaa components on a single Linux node. If this is the first time you use Kaa, we recommend that you start the evaluation using the [Kaa Sandbox]({{root_url}}Getting-started/#kaa-sandbox) instead of attempting manual installation described in this guide. The Kaa Sandbox emulates a single-node Kaa installation which comes already pre-configured so that you could instantly start developing applications. Additionally, the Kaa Sandbox provides a number of demo applications for you to play with and learn by example. 
 
 ## Kaa requirements and supported versions
 
 ### Supported OS
-Kaa supports the following operating system families and provides installation packages for each of them.
+Kaa supports the following operating system families and provides installation packages for each of them:
 
 * Ubuntu and Debian systems
 * Red Hat/CentOS/Oracle 5 or Red Hat 6 systems
 
 ### System requirements
-To use Kaa, your system must meet the following minimum system requirements.
+To use Kaa, your system must meet the following minimum system requirements:
 
 * 64-bit OS
 * 4 Gb RAM
 
 ### Third party components
-Kaa requires the following third party components to be installed and configured.
+Kaa requires the following third party components to be installed and configured:
 
 * [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Kaa has been tested on JDK 8.
 * [PostgreSQL 9.4](http://www.postgresql.org/download/)
@@ -232,7 +229,7 @@ Kaa requires the following third party components to be installed and configured
    $ netstat -ntlp | grep 2181
    ```
 
-5. Install No-SQL DB:
+5. Install NoSQL DB:
 
 > **Note:** Kaa requires one of possible options: MongoDB or Cassandra. MongoDB is the default choice.
 
@@ -733,7 +730,7 @@ cqlsh>
    ```
 
 
-5. Install No-SQL DB:
+5. Install NoSQL DB:
  
 > **Note:** Kaa requires one of possible options: MongoDB or Cassandra. MongoDB is the default choice.
 
@@ -906,7 +903,7 @@ To install Kaa you will need to [download](http://www.kaaproject.org/download-ka
 ### SQL database configuration
 
 You can choose which SQL database to use: MariaDB (used by default) or PostgreSQL.
-You can find SQL database configuration property file templates in ```/etc/kaa-node/conf/``` folder: ```maria-dao.properties.template```, ```mariadb-dao.properties.template``` files for MariaDB database and ```postgre-dao.properties.template```, ```postgresql-dao.properties.template``` files for PostgreSQL.
+You can find SQL database configuration property file templates in /etc/kaa-node/conf/ folder: maria-dao.properties.template, mariadb-dao.properties.template files for MariaDB database and postgre-dao.properties.template, postgresql-dao.properties.template files for PostgreSQL.
 
 <ul>
 <li style="list-style-type: none;">
@@ -1014,23 +1011,7 @@ transport_public_interface=localhost=YOUR_PUBLIC_INTERFACE
 </ul>
 
 <div class="tab-content">
-<div id="Ubuntu16__" class="tab-pane fade in active" markdown="1" >
-
-Open TCP ports for Admin UI (8080), Bootstrap server (9888, 9889), Operations server (9997, 9999).
-
-```bash
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 22 -j ACCEPT
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 9888 -j ACCEPT
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 9889 -j ACCEPT
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 9997 -j ACCEPT
-$ sudo iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT
-$ sudo apt-get install iptables-persistent
-$ sudo service netfilter-persistent start
-$ sudo netfilter-persistent save
-```
-
-</div><div id="Ubuntu14__" class="tab-pane fade" markdown="1" >
+<div id="Ubuntu14__" class="tab-pane fade in active" markdown="1" >
 
 Open TCP ports for Admin UI (8080), Bootstrap server (9888, 9889), Operations server (9997, 9999).
 
@@ -1044,6 +1025,22 @@ $ sudo iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT
 $ sudo apt-get install iptables-persistent
 $ sudo service iptables-persistent start
 $ sudo service iptables-persistent save
+```
+
+</div><div id="Ubuntu16__" class="tab-pane fade" markdown="1" >
+
+Open TCP ports for Admin UI (8080), Bootstrap server (9888, 9889), Operations server (9997, 9999).
+
+```bash
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9888 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9889 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9997 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT
+$ sudo apt-get install iptables-persistent
+$ sudo service netfilter-persistent start
+$ sudo netfilter-persistent save
 ```
 
 </div><div id="CentOS__" class="tab-pane fade" markdown="1" >
@@ -1073,8 +1070,7 @@ $ sudo service kaa-node start
 Check logs after the startup.
 
 ```bash
-$ cd /var/log/kaa
-$ cat * | grep ERROR
+$ cat /var/log/kaa/* | grep ERROR
 ```
 
 Open Admin UI in a web browser: [http://YOUR\_SERVER\_HOST:8080/kaaAdmin]. This will open a web page that will request to enter the Kaa administrator login and password information. This is one time operation.

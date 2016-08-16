@@ -8,8 +8,7 @@ sort_idx: 40
 * TOC
 {:toc}
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 This guide contains information about how to create custom owner verifiers and add them to existed. Please refer to [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership) for information about default owner verifiers
 and access token flow.
@@ -210,6 +209,6 @@ To provision your owner verifier, do the following:
 6. Restart kaa-node service:
 <br/>
 ``` $ sudo service kaa-node restart```
-7. Use [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#adding-user-verifiers) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) to create/update/delete your owner verifier instances.
+7. Use [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#adding-user-verifiers) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
 
 ---

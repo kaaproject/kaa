@@ -6,8 +6,7 @@ nav: /:path/Programming-guide/Key-platform-features/Data-collection/Couchbase-lo
 sort_idx: 30
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -39,7 +38,8 @@ To create a log appender of the Couchbase storage type, do the following:
 
 # Creating Couchbase log appender with Admin REST API
 
-It is also possible to create a Couchbase log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a Couchbase log appender for your application by using
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the Couchbase log appender via Admin REST API.
 
 ## Configuration
