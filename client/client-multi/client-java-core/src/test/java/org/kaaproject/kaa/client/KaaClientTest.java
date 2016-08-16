@@ -90,7 +90,7 @@ public class KaaClientTest {
         initStorageMock(storage);
 
         bsManagerMock = Mockito.mock(DefaultBootstrapManager.class);
-        client = new AbstractKaaClient(platformContext, stateListener) {
+        client = new AbstractKaaClient(platformContext, stateListener, true) {
             @Override
             protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties,
                                                                     KaaClientState kaaClientState,
@@ -105,6 +105,16 @@ public class KaaClientTest {
                 return new EmptyData();
             }
         });
+    }
+
+    @Test(expected = KaaRuntimeException.class)
+    public void initKaaClientDefaultKeyStrategy() {
+        KaaClient client = Kaa.newClient(platformContext, stateListener, false);
+    }
+
+    @Test
+    public void initKaaClientUserStrategy() {
+        KaaClient client = Kaa.newClient(platformContext, stateListener, true);
     }
 
     @Test

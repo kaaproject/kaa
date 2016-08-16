@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.log;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class LogSchemaViewImpl extends BaseSchemaViewImpl {
+public class LogSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
     public LogSchemaViewImpl(boolean create) {
         super(create);

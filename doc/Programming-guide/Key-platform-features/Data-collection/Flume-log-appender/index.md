@@ -6,8 +6,7 @@ nav: /:path/Programming-guide/Key-platform-features/Data-collection/Flume-log-ap
 sort_idx: 50
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -42,7 +41,8 @@ To create a log appender do the following:
 
 # Creating Flume log appender with Admin REST API
 
-It is also possible to create a Flume log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a Flume log appender for your application by using
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the Flume log appender via Admin REST API.
 
 ## Formats
@@ -65,8 +65,8 @@ The **recordHeader** field stores a set of log metadata fields.
 The **eventRecords** field stores an array of raw records. Each element of the array is a log record in the Avro binary format serialized by the log schema.
 
 The **schemaVersion** and **applicationToken** fields should be used as parameters of a
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO) call to Kaa in order to obtain the logs Avro schema for **eventRecords** and enable
-parsing of the binary data.
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/getLogSchemaByApplicationTokenAndVersion) call to Kaa in order to obtain the logs
+Avro schema for **eventRecords** and enable parsing of the binary data.
 
 ```json
 {
@@ -276,7 +276,8 @@ of the log records data schema and stores log data into HDFS as Avro Sequence fi
 ```
 
 ```${record_data_schema}``` - is a variable which is substituted at run time by Kaa HDFS Sink with the Avro schema of the actual logs. 
-This Avro schema is obtained via [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO) call to Kaa.
+This Avro schema is obtained via [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/getLogSchemaByApplicationTokenAndVersion) call
+to Kaa.
 
 ## Configuration
 

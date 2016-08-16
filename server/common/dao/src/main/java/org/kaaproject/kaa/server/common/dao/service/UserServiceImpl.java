@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -140,52 +139,6 @@ public class UserServiceImpl implements UserService {
         return convertDtoList(userDao.find());
     }
 
-    @Override
-    public List<TenantAdminDto> findAllTenantAdmins() {
-        LOG.debug("Try to find all admin tenants");
-        List<TenantDto> tenants = findAllTenants();
-        List<TenantAdminDto> tenantAdmins = new ArrayList<TenantAdminDto>(tenants.size());
-        for (TenantDto tenant : tenants) {
-            TenantAdminDto tenantAdmin = new TenantAdminDto();
-            tenantAdmin.setId(tenant.getId());
-            tenantAdmin.setName(tenant.getName());
-            List<User> users = userDao.findByTenantIdAndAuthority(tenant.getId(), KaaAuthorityDto.TENANT_ADMIN.name());
-            if (!users.isEmpty()) {
-                tenantAdmin.setUserId(users.get(0).getId().toString());
-                tenantAdmin.setUsername(users.get(0).getUsername());
-                tenantAdmin.setExternalUid(users.get(0).getExternalUid());
-            }
-            tenantAdmins.add(tenantAdmin);
-        }
-        return tenantAdmins;
-    }
-
-    @Override
-    public TenantAdminDto saveTenantAdmin(TenantAdminDto tenantAdminDto) {
-        TenantAdminDto tenantAdmin = new TenantAdminDto();
-        if (isValidSqlObject(tenantAdminDto)) {
-            TenantDto tenant = new TenantDto();
-            tenant.setId(tenantAdminDto.getId());
-            tenant.setName(tenantAdminDto.getName());
-            tenant = saveTenant(tenant);
-            tenantAdmin.setId(tenant.getId());
-            tenantAdmin.setName(tenant.getName());
-        }
-        if (StringUtils.isEmpty(tenantAdminDto.getUserId()) || isValidSqlId(tenantAdminDto.getUserId())) {
-            UserDto user = new UserDto();
-            user.setId(tenantAdminDto.getUserId());
-            user.setUsername(tenantAdminDto.getUsername());
-            user.setExternalUid(tenantAdminDto.getExternalUid());
-            user.setTenantId(tenantAdmin.getId());
-            user.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-            user = saveUser(user);
-            tenantAdmin.setUserId(user.getId());
-            tenantAdmin.setUsername(user.getUsername());
-            tenantAdmin.setExternalUid(user.getExternalUid());
-            tenantAdmin.setId(user.getTenantId());
-        }
-        return tenantAdmin;
-    }
 
     @Override
     public void removeTenantAdminById(String tenantId) {
@@ -196,23 +149,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TenantAdminDto findTenantAdminById(String id) {
-        TenantAdminDto tenantAdminDto = null;
+    public List<UserDto> findAllTenantAdminsByTenantId(String id) {
         if (isValidSqlId(id)) {
-            TenantDto tenantDto = getDto(tenantDao.findById(id));
-            if (tenantDto != null) {
-                tenantAdminDto = new TenantAdminDto();
-                tenantAdminDto.setId(tenantDto.getId());
-                tenantAdminDto.setName(tenantDto.getName());
-                List<User> users = userDao.findByTenantIdAndAuthority(id, KaaAuthorityDto.TENANT_ADMIN.name());
-                if (!users.isEmpty()) {
-                    tenantAdminDto.setUserId(users.get(0).getId().toString());
-                    tenantAdminDto.setUsername(users.get(0).getUsername());
-                    tenantAdminDto.setExternalUid(users.get(0).getExternalUid());
-                }
-            }
+           return convertDtoList(userDao.findByTenantIdAndAuthority(id, KaaAuthorityDto.TENANT_ADMIN.name()));
         }
-        return tenantAdminDto;
+        return null;
     }
 
     @Override

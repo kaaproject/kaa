@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS kaa.ep_nfs (
     body blob,
     expired_at timestamp,
     topic_id text,
-    opt_lock bigint,
     PRIMARY KEY (ep_key_hash, last_mod_time)
 ) WITH CLUSTERING ORDER BY (last_mod_time DESC);
 
@@ -39,7 +38,6 @@ CREATE TABLE IF NOT EXISTS kaa.notification (
     body blob,
     expired_at timestamp,
     seq_num int,
-    opt_lock bigint,
     PRIMARY KEY((topic_id, nf_type), nf_version, seq_num)
 ) WITH CLUSTERING ORDER BY (nf_version DESC, seq_num DESC);
 
@@ -88,6 +86,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     server_hash text,
     sdk_token text,
     srv_pf text,
+    use_raw_schema boolean,
     opt_lock bigint
 );
 
@@ -140,7 +139,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_registration (
 );
 
 CREATE TABLE IF NOT EXISTS kaa.creds_id_ep_registration (
-	ep_id text PRIMARY KEY,
+    ep_id text PRIMARY KEY,
     creds_id text
 );
 

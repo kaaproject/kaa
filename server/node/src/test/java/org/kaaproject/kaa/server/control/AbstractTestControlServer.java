@@ -31,24 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
@@ -70,6 +53,7 @@ import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.node.service.initialization.KaaNodeInitializationService;
 import org.slf4j.Logger;
@@ -81,7 +65,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -231,7 +214,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     protected static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
 
     /** The tenant admin dto. */
-    protected TenantUserDto tenantAdminDto;
+    protected org.kaaproject.kaa.common.dto.admin.UserDto tenantAdminDto;
 
     /** The tenant developer dto. */
     protected UserDto tenantDeveloperDto;
@@ -375,9 +358,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     private void createUsers() throws Exception {
         LOG.info("Creating users...");
         client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
-        loginKaaAdmin();
         if (createTenantAdminNeeded()) {
-            tenantAdminDto = createTenant(tenantAdminUser);
+            tenantAdminDto = createTenantAdmin(tenantAdminUser);
             loginTenantAdmin(tenantAdminUser);
             if (createTenantDeveloperNeeded()) {
                 tenantDeveloperDto = createTenantDeveloper(tenantDeveloperUser);
@@ -385,7 +367,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             }
         }
     }
-
+//
 //    /**
 //     * Generate string.
 //     *
@@ -503,14 +485,24 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
     }
 
+    protected TenantDto createTenant() throws Exception{
+        loginKaaAdmin();
+        TenantDto tenantDto = new TenantDto();
+        tenantDto.setName(generateString(TENANT_NAME));
+       tenantDto= client.editTenant(tenantDto);
+        return tenantDto;
+    }
+
+
+
     /**
      * Creates the tenant.
      *
      * @return the tenant user dto
      * @throws Exception the exception
      */
-    protected TenantUserDto createTenant() throws Exception {
-        return createTenant(null);
+    protected org.kaaproject.kaa.common.dto.admin.UserDto createTenantAdmin() throws Exception {
+        return createTenantAdmin(null);
     }
 
     /**
@@ -520,25 +512,40 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the tenant user dto
      * @throws Exception the exception
      */
-    protected TenantUserDto createTenant(String username) throws Exception {
+    protected org.kaaproject.kaa.common.dto.admin.UserDto createTenantAdmin(String username) throws Exception {
         loginKaaAdmin();
         if (username == null) {
             username = generateString(TENANT_ADMIN_USERNAME);
         }
-        TenantUserDto tenantUser = new TenantUserDto();
-        tenantUser.setTenantName(username);
-        tenantUser.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        tenantUser.setUsername(username);
-        tenantUser.setMail(username + "@demoproject.org");
-        tenantUser.setFirstName(username);
-        tenantUser.setLastName("Admin");
-        tenantUser = client.editTenant(tenantUser);
+            TenantDto tenantDto = new TenantDto();
+            if(client.getTenants().isEmpty()) {
+                tenantDto.setName(TENANT_NAME);
+                tenantDto = client.editTenant(tenantDto);
+            }else {
+              for(TenantDto t :client.getTenants()){
+                  if(t.getName().equals(TENANT_NAME))
+                      tenantDto=t;
+              }
+            }
 
-        if (StringUtils.isNotBlank(tenantUser.getTempPassword())) {
+        org.kaaproject.kaa.common.dto.admin.UserDto tenAdmin = new org.kaaproject.kaa.common.dto.admin.UserDto();
+        tenAdmin.setAuthority(KaaAuthorityDto.TENANT_ADMIN);
+
+        tenAdmin.setUsername(username);
+        tenAdmin.setMail(username + "@demoproject.org");
+        tenAdmin.setFirstName("Tenant");
+        tenAdmin.setLastName("Admin");
+        tenAdmin.setTenantId(tenantDto.getId());
+
+            tenAdmin = client.editUser(tenAdmin);
+
+        if (StringUtils.isNotBlank(tenAdmin.getTempPassword())) {
             client.clearCredentials();
-            client.changePassword(tenantUser.getUsername(), tenantUser.getTempPassword(), tenantAdminPassword);
+            client.changePassword(tenAdmin.getUsername(), tenAdmin.getTempPassword(), tenantAdminPassword);
         }
-        return tenantUser;
+
+
+        return tenAdmin;
     }
 
     /**
@@ -555,6 +562,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         tenantDeveloper.setMail(username + "@demoproject.org");
         tenantDeveloper.setFirstName("Tenant");
         tenantDeveloper.setLastName("Developer");
+        tenantDeveloper.setTenantId(tenantAdminDto.getTenantId());
         tenantDeveloper = client.editUser(tenantDeveloper);
 
         if (StringUtils.isNotBlank(tenantDeveloper.getTempPassword())) {
@@ -583,7 +591,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the user dto
      * @throws Exception the exception
      */
-    protected UserDto createUser(TenantUserDto tenant, KaaAuthorityDto authority) throws Exception {
+    protected UserDto createUser(org.kaaproject.kaa.common.dto.admin.UserDto tenant, KaaAuthorityDto authority) throws Exception {
         UserDto user = new UserDto();
         String username = generateString(USERNAME);
         user.setUsername(username);
@@ -592,8 +600,9 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         user.setLastName(generateString("User"));
         user.setAuthority(authority);
         if (tenant == null) {
-            tenant = createTenant();
+            tenant = createTenantAdmin();
         }
+        user.setTenantId(tenantAdminDto.getTenantId());
         loginTenantAdmin(tenant.getUsername());
         UserDto savedUser = client.editUser(user);
         return savedUser;
@@ -616,11 +625,11 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the application dto
      * @throws Exception the exception
      */
-    protected ApplicationDto createApplication(TenantUserDto tenant) throws Exception {
+    protected ApplicationDto createApplication(org.kaaproject.kaa.common.dto.admin.UserDto tenant) throws Exception {
         ApplicationDto application = new ApplicationDto();
         application.setName(generateString(APPLICATION));
         if (tenant == null) {
-            tenant = createTenant();
+            tenant = createTenantAdmin();
         }
         loginTenantAdmin(tenant.getUsername());
         ApplicationDto savedApplication = client
@@ -635,17 +644,18 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected ConfigurationSchemaDto createConfigurationSchema() throws Exception {
-        return createConfigurationSchema(null);
+        return createConfigurationSchema(null, null);
     }
 
     /**
      * Creates the configuration schema.
      *
      * @param applicationId the application id
+     * @param ctlSchemaId
      * @return the configuration schema dto
      * @throws Exception the exception
      */
-    protected ConfigurationSchemaDto createConfigurationSchema(String applicationId) throws Exception {
+    protected ConfigurationSchemaDto createConfigurationSchema(String applicationId, String ctlSchemaId) throws Exception {
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setStatus(UpdateStatus.ACTIVE);
         configurationSchema.setName(generateString("Test Schema"));
@@ -657,9 +667,16 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             configurationSchema.setApplicationId(applicationId);
         }
+
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+            configurationSchema.setCtlSchemaId(ctlSchema.getId());
+        } else {
+            configurationSchema.setCtlSchemaId(ctlSchemaId);
+        }
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        ConfigurationSchemaDto savedConfigurationSchema = client
-                .createConfigurationSchema(configurationSchema, TEST_CONFIG_SCHEMA);
+        ConfigurationSchemaDto savedConfigurationSchema = client.saveConfigurationSchema(configurationSchema);
         return savedConfigurationSchema;
     }
 
@@ -888,7 +905,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         ConfigurationSchemaDto configSchema = null;
         if (strIsEmpty(configurationSchemaId)) {
-            configSchema = createConfigurationSchema(applicationId);
+            configSchema = createConfigurationSchema(applicationId, null);
             configuration.setSchemaId(configSchema.getId());
         } else {
             loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -1012,8 +1029,12 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             logSchema.setApplicationId(applicationId);
         }
+
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+        logSchema.setCtlSchemaId(ctlSchema.getId());
+
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema, TEST_LOG_SCHEMA);
+        LogSchemaDto savedLogSchema = client.createLogSchema(logSchema);
         return savedLogSchema;
     }
 
@@ -1164,7 +1185,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
         eventClassFamily.setClassName(className);
         if (strIsEmpty(tenantId)) {
-            TenantUserDto tenant = createTenant(tenantAdminUser);
+            org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
             eventClassFamily.setTenantId(tenant.getId());
         }
         else {

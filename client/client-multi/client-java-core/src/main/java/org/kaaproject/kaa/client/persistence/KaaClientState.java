@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.client.persistence;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.Collection;
-import java.util.Map;
-
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Collection;
+import java.util.Map;
 
 public interface KaaClientState {
 
@@ -50,7 +50,7 @@ public interface KaaClientState {
     void addTopicSubscription(Long topicId);
     void removeTopicSubscription(Long topicId);
     boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
-    
+
     void setTopicListHash(Integer topicListHash);
     Integer getTopicListHash();
 

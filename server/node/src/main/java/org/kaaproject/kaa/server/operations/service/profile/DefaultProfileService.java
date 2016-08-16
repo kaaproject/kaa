@@ -44,6 +44,7 @@ import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,26 +57,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class DefaultProfileService implements ProfileService {
 
-    /** The LOG constant. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProfileService.class);
 
-    /** The endpoint service. */
     @Autowired
     private EndpointService endpointService;
     
     @Autowired
     private EndpointRegistrationService endpointRegistrationService;
 
-    /** The endpoint service. */
+
     @Autowired
     private CacheService cacheService;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
-     * getClientProfileBody (org.kaaproject.kaa.common.hash.EndpointObjectHash)
-     */
+
     @Override
     public EndpointProfileDto getProfile(EndpointObjectHash endpointKey) {
         return endpointService.findEndpointProfileByKeyHash(endpointKey.getData());
@@ -213,6 +207,27 @@ public class DefaultProfileService implements ProfileService {
         });
     }
 
+    @Override
+    public EndpointProfileDto updateProfile(ClientSyncMetaData metaData, EndpointObjectHash keyHash, boolean useConfigurationRawSchema) {
+        LOG.debug("Updating Profile for {}", keyHash);
+        EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
+        AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(metaData.getApplicationToken());
+        SdkProfileDto sdkProfile = cacheService.getSdkProfileBySdkToken(metaData.getSdkToken());
+
+        Function<EndpointProfileDto, EndpointProfileDto> updateFunction = profile -> {
+            populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
+            profile.setGroupState(new ArrayList<>());
+            profile.setUseConfigurationRawSchema(useConfigurationRawSchema);
+            profile.setSequenceNumber(0);
+            return profile;
+        };
+        return updateProfile(updateFunction.apply(dto), (storedProfile, newProfile) -> {
+            return updateFunction.apply(storedProfile);
+        });
+    }
+
+
+
     protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkProfileDto sdkProfile) {
         dto.setClientProfileVersion(sdkProfile.getProfileSchemaVersion());
         dto.setConfigurationVersion(sdkProfile.getConfigurationSchemaVersion());
@@ -236,17 +251,7 @@ public class DefaultProfileService implements ProfileService {
         }
     }
 
-    /**
-     * Decode profile.
-     *
-     * @param profileRaw
-     *            the profile raw
-     * @param appToken
-     *            the app id
-     * @param schemaVersion
-     *            the schema version
-     * @return the string
-     */
+
     private String decodeProfile(byte[] profileRaw, String appToken, int schemaVersion) {
         LOG.trace("Lookup profileSchema by appToken: {} and version: {}", appToken, schemaVersion);
 

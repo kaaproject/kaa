@@ -6,8 +6,7 @@ nav: /:path/Programming-guide/Key-platform-features/Data-collection/Rest-log-app
 sort_idx: 90
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 
 
@@ -32,7 +31,8 @@ To create a log appender, do the following:
 
 # Creating REST log appender with Admin REST API
 
-It is also possible to create a REST log appender instance by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a REST log appender instance by using
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the REST log appender via Admin REST API.
 
 ## Configuration

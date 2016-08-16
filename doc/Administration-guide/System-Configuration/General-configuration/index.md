@@ -12,15 +12,140 @@ sort_idx: 10
 
 # Server configuration
 
+## Kaa node configuration
+
+After [Kaa installation]({{root_url}}Administration-guide/System-installation/), configuration files for each Kaa component will be extracted into the
+/usr/lib/kaa-node/conf directory.
+
+The kaa-node.properties file is responsible for Kaa server configuration.
+
+>**NOTE:**
+> After changing properties in the kaa-node.properties file, you must restart the node for changes to take effect, by executing following command:
+>
+```bash
+$ sudo service kaa-node restart
+```
+
+The kaa-node.properties consist of the following parameters:
+
+* *control_service_enabled*
+<br> Default: _true_
+<br>Specifies if Control Service is enabled.
+* *bootstrap_service_enabled*
+<br> Default: _true_
+<br> Specifies if Bootstrap Service is enabled.
+* *operations_service_enabled*
+<br> Default: _true_
+<br> Specifies if Operations Service is enabled.
+* *thrift_host*
+<br> Default: _localhost_
+<br> Thrift service host address. This information is used for Thrift remote procedure calls between nodes in
+[Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
+* *thrift_port*
+<br> Default: _9090_
+<br> Thrift service port address. Thrift service host address. This information is used for Thrift remote procedure calls between nodes in
+[Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
+* *admin_port*
+<br> Default: _8080_
+<br> Kaa Administration Web UI port.
+* *zk_enabled*
+<br> Default: _true_
+<br> Specifies if need to use zookeeper service. This is property have to be always _true_. It is possible to change it for development or debug process.
+* *zk_host_port_list*
+<br> Default: _localhost:2181_
+<br> Comma-separated url list of Zookeeper nodes: hostname1:port1,hostname2:port2.
+* *zk_max_retry_time*
+<br> Default: _3000_
+<br> The max retry time in milliseconds that retries to start Zookeeper service.
+* *zk_sleep_time*
+<br> Default: _1000_
+<br> Time to sleep in milliseconds between searches for work.
+* *zk_ignore_errors*
+<br> Default: _true_
+<br> Specifies if need to throw runtime exception during registration control zookeeper node.
+* *loadmgmt_min_diff*
+<br> Default: _10000_
+<br> Minimum difference between amount of endpoints that need to be present in order to trigger rebalancing.
+* *loadmgmt_max_init_redirect_probability*
+<br> Default: _0.75_
+<br> Maximum redirect probability for new sessions.
+* *loadmgmt_max_session_redirect_probability*
+<br> Default: _0.0_
+<br> Maximum redirect probability for existing sessions.
+* *recalculation_period*
+<br> Default: _10_
+<br> Recalculate period in seconds for Operations service [load balancer]({{root_url}}Administration-guide/System-components-overview/#load-balancing-lb) process.
+* *user_hash_partitions*
+<br> Default: _10_
+<br> Specify consistent-hash partitions count for each server node.
+* *max_number_neighbor_connections*
+<br> Default: _3_
+<br> Specify the max number of neighbor connections.
+* *ops_server_history_ttl*
+<br> Default: _3600_
+<br> Time to live in seconds for historical information about Operations service load.
+* *worker_thread_pool*
+<br> Default: _8_
+<br> Message Handler thread pool executor size.
+* *bootstrap_keys_private_key_location*
+<br> Default: _keys/bootstrap/private.key_
+<br> Path to Bootstrap service private key.
+* *bootstrap_keys_public_key_location*
+<br> Default: _keys/bootstrap/public.key_
+<br> Path to Bootstrap service public key.
+* *operations_keys_private_key_location*
+<br> Default: _keys/operations/private.key_
+<br> Path to Operations service private key.
+* *operations_keys_public_key_location*
+<br> Default: _keys/operations/public.key_
+<br> Path to Operations service public key.
+* *support_unencrypted_connection*
+<br> Default: _true_
+<br> Specify if support unencrypted connection from client to Kaa server.
+* *transport_bind_interface*
+<br> Default: _0.0.0.0_
+<br> Interface that will be used by all transports.
+* *transport_public_interface*
+<br> Default: _localhost_
+<br> Interface that will be reported by all transports.
+* *metrics_enabled*
+<br> Default: _true_
+<br> Specify if metrics collections is enabled. See
+[performance monitoring]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/#performance-monitoring) for details.
+* *logs_root_dir*
+<br> Default: _/kaa_log_uploads_
+<br> Path to logs root directory.
+* *date_pattern*
+<br> Default: _'.'yyyy-MM-dd-HH-mm_
+<br> Date pattern for the [file log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).
+* *layout_pattern*
+<br> Default: _%m%n_
+<br> Layout pattern for the [file log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).
+* *load_stats_update_frequency*
+<br> Default: _10000_
+<br> Frequency of load status check in milliseconds for the [load balancing]({{root_url}}Administration-guide/System-components-overview/#load-balancing-lb) feature.
+* *additional_plugins_scan_package*
+<br> Default: _empty_
+<br> Specify additional package to scan kaa plugins configuration. For details look at
+[Log appender provisioning]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders#log-appender-provisioning) or
+[Owner verifier provisioning]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/#owner-verifier-provisioning).
+
 ## Public host/port configuration
 
-Kaa allows you to choose what host/port to use for internal and external communication with bootstrap and operations servers.
-There are few configuration files for this purpose: 
+Kaa server is going to be deployed in cloud service such as AWS, Google Cloud etc.
+After deployment it will have private and public IP address.
+Public IP will be available from the internet on particular port.
+Private IP will be available within virtual network in cloud service.
 
-* kaa-node.properties  
-* operations-http-transport.config 
-* operations-tcp-transport.config 
-* bootstrap-http-transport.config 
+Kaa allows you to specify what IP and host/port is used for public and private interface/port for communication with Bootstrap and Operations servers.
+This is useful because once public and private IPs retrieved you have ability to report public IP/port to the client in form of embedded configuration in generated SDK and specify private IP/port where netty binds and serves requests.
+
+There are few configuration files for this purpose:
+
+* kaa-node.properties
+* operations-http-transport.config
+* operations-tcp-transport.config
+* bootstrap-http-transport.config
 * bootstrap-tcp-transport.config
 
 Below is default state of file kaa-node.properties:
@@ -33,7 +158,7 @@ transport_bind_interface=0.0.0.0
 transport_public_interface=localhost
 ```
 
-Where *transport_bind_interface* reflects internal host for bootstrap and operations servers, and *transport_public_interface* - external accordingly.
+Where *transport_bind_interface* reflects private IP for Bootstrap and Operations servers, and *transport_public_interface* - public accordingly.
 Below are given default config files, which consume above host values from file kaa-node.properties.
 
 File operations-http-transport.config :
@@ -82,9 +207,11 @@ File bootstrap-tcp-transport.config :
 }
 ```
 
-### Typical usecases
+### Typical usecase
 
 Given a client, which should communicate with Kaa server. Client has restrictions, for example 80 and 8000 ports are open only.
-In this case client unable to commuticate with Kaa server, because default configuration pointed to listen on different ports.
+In this case client unable to communicate with Kaa server, because default configuration pointed to listen on different ports.
 The solution is, to change config file operations-tcp-transport.config , set *"publicPort":80* for communication with operations server via 80 port and in file bootstrap-tcp-transport.config , set *"publicPort":8000* for communication with bootstrap server via 8000 port.
+If you set up ports forwarding, in this case 80 to 9997 and 8000 to 9888, then there is no need to change bind port values, otherwise change bind ports accordingly.
 After these changes are applied client would be able to reach Kaa server properly.
+

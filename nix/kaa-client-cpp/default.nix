@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 
-{ stdenv, cmake, pkgconfig, boost, avro-cpp, botanUnstable, sqlite, python
+{ stdenv, cmake, pkgconfig, boost155, avro-cpp, botanUnstable, sqlite, python
 , which
 }:
 
@@ -24,7 +24,7 @@ stdenv.mkDerivation {
   buildInputs = [
     cmake
     pkgconfig
-    boost
+    boost155
     avro-cpp
     botanUnstable
     sqlite

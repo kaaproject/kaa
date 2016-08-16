@@ -54,9 +54,9 @@
 #
 #	- `cc32xx`
 #	- `esp8266`
-#	- `x86-64`
+#	- `posix`
 #
-#	Default: `x86-64`
+#	Default: `posix`
 #
 #	- `KAA_UNITETESTS_COMPILE` - compile unit tests.
 #
@@ -119,7 +119,7 @@ set(KAA_THIRDPARTY_LIBRARIES "")
 
 # Sets the default build platform to POSIX.
 if (NOT DEFINED KAA_PLATFORM)
-    set(KAA_PLATFORM "x86-64")
+    set(KAA_PLATFORM "posix")
 endif ()
 
 #
@@ -166,6 +166,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/avro_src/io.c
         ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
         ${KAA_SRC_FOLDER}/collections/kaa_list.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_aes_rsa.c
         ${KAA_SRC_FOLDER}/utilities/kaa_log.c
         ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
         ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
@@ -177,23 +178,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/aes.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/asn1parse.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/asn1write.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/bignum.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/ctr_drbg.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/entropy.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/entropy_poll.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/md.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/md_wrap.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/oid.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pk.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pkwrite.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pk_wrap.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/rsa.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/sha256.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/pkparse.c
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls/sha1.c
   )
 
 
@@ -215,8 +199,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/listfiles/UnitTest.cmake)
 add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
 target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
-
-add_dependencies(kaac kaa_rsa_keygen)
 
 message("BOOTSTRAP ENABLED")
 include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
@@ -278,7 +260,7 @@ endif()
 
 if(WITH_ENCRYPTION)
     message("ENCRYPTION ENABLED")
-
+    target_link_libraries(kaac PUBLIC rsa_keygen)
     add_definitions(-DKAA_ENCRYPTION)
 endif()
 
@@ -292,10 +274,23 @@ add_subdirectory(Modules/doxygen)
 
 add_subdirectory(Modules/cppcheck)
 
-externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
-                    INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
+#Set key pair generation parameter for posix platform
+#Use application for another platform
+if(${KAA_PLATFORM} STREQUAL "posix")
+    option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
+    if(${KAA_RUNTIME_KEY_GENERATION})
+        add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+    endif()
+    add_subdirectory(tools/kaa_encryption/rsa_key_gen)
+    target_link_libraries(kaac PUBLIC rsa_keygen)
+else()
+    add_dependencies(kaac kaa_rsa_keygen)
+    externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
+                        INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
+                        CMAKE_ARGS -DKAA_SDK_DIR=${KAA_SDK_DIR}
+                        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 
-externalproject_add_step(kaa_rsa_keygen "Copying generated files"
-                         COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
-                         "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
+    externalproject_add_step(kaa_rsa_keygen "Copying generated files"
+                             COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
+                             "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
+endif()

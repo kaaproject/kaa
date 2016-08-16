@@ -4,8 +4,7 @@ title: Linux
 permalink: /:path/
 sort_idx: 10
 ---
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -27,14 +26,13 @@ This section describes how to build C SDK on linux for the host.
 
 To build C SDK make sure that the following components are installed:
 
- - CMake (minimum required version is 2.8.12)
+ - CMake (minimum required version is 3.5.2)
  - C99 compatible compiler (e.g. GCC)
- - OpenSSL
 
 To install dependencies on Ubuntu execute the following command:
 
 ```
-sudo apt-get install cmake libssl-dev gcc
+sudo apt-get install cmake build-essential
 ```
 
 ### Build procedure
@@ -45,17 +43,17 @@ After you generated archive with C SDK, proceed as follows:
 
         tar -xvf c-sdk-archive-name.tar.gz
 
-2. Create the directory where SDK will be built:
+1. Create the directory where SDK will be built:
 
 
         mkdir build
         cd build
 
-3. Configure the build via CMake:
+1. Configure the build via CMake:
 
         cmake ..
 
-4. Perform build:
+1. Perform build:
 
         make
 
@@ -79,11 +77,11 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
             mkdir my-kaa-application/src
             cd my-kaa-application
 
-2. Generate C SDK and unpack it to `my-kaa-application/kaa` directory:
+1. Generate C SDK and unpack it to `my-kaa-application/kaa` directory:
 
         tar -xvf c-sdk-archive.tar.gz -C my-kaa-application/kaa
 
-3. Create the application code. Create `kaa-application.c` file in `my-kaa-application/src` directory:
+1. Create the application code. Create `kaa-application.c` file in `my-kaa-application/src` directory:
 
         touch src/kaa-application.c
 
@@ -121,7 +119,7 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
             return EXIT_SUCCESS;
         }
 
-4. Create `CMakeLists.txt` file in the `my-kaa-application` directory.
+1. Create `CMakeLists.txt` file in the `my-kaa-application` directory.
     It is a top-level cmake file which is responsible for the application build.
 
         touch CMakeLists.txt
@@ -131,10 +129,6 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
 
         cmake_minimum_required(VERSION 3.5.2)
         project(kaa-application C)
-
-    OpenSSL is required to build the application, so make sure that [it is installed](#dependencies).
-
-        find_package(OpenSSL REQUIRED)
 
     Some compilers flags are set, and C SDK project is included as a subproject to the kaa-application project.
     That is a clue. The parameter contains a path to the C SDK's `CMakeLists.txt`.
@@ -153,8 +147,6 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
         cmake_minimum_required(VERSION 3.5.2)
         project(kaa-application C)
 
-        find_package(OpenSSL REQUIRED)
-
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
 
         add_subdirectory(kaa)
@@ -162,7 +154,7 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
         add_executable(kaa-app src/kaa-application.c)
         target_link_libraries(kaa-app kaac crypto)
 
-5. Now your directory structure should look like this:
+1. Now your directory structure should look like this:
 
          - my-kaa-application
          - CMakeLists.txt
@@ -171,20 +163,24 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
            - src
              - kaa-application.c
 
-8. Finally, we can build the application.
+1. Finally, we can build the application.
     The procedure should have already become familiar to you.
     Firstly create the directory where the build is performed:
 
         mkdir build
         cd build
 
-6. Configure the build via CMake and run make.
+1. Configure the build via CMake and run make.
 
         cmake -DKAA_MAX_LOG_LEVEL=3 ..
         make
 
     `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
-    Now run your application. Output should be the following one:
+    Now run your application.
+
+        ./kaa-app
+
+    Output should be the following one:
 
         Hello, I am a Kaa Application!
 

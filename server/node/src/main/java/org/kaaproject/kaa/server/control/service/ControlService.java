@@ -22,32 +22,7 @@ import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
-import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -176,45 +151,14 @@ public interface ControlService {
     void deleteUser(String userId) throws ControlServiceException;
 
     /**
-     * Gets the tenant admins.
+     * Gets the tenant admins by tenant id.
      *
      * @return the tenant admins
      * @throws ControlServiceException
      *             the control service exception
      */
-    List<TenantAdminDto> getTenantAdmins() throws ControlServiceException;
+    List<UserDto> findAllTenantAdminsByTenantId(String tenantId) throws ControlServiceException;
 
-    /**
-     * Gets the tenant admin.
-     *
-     * @param tenantId
-     *            the tenant id
-     * @return the tenant admin
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-    TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException;
-
-    /**
-     * Edits the tenant admin.
-     *
-     * @param tenantAdmin
-     *            the tenant admin
-     * @return the tenant admin dto
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-    TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException;
-
-    /**
-     * Delete tenant admin.
-     *
-     * @param tenantId
-     *            the tenant id
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-    void deleteTenantAdmin(String tenantId) throws ControlServiceException;
 
     /**
      * Gets the application.
@@ -728,7 +672,7 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
+    NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
 
     /**
      * Gets the notification schema.
@@ -786,7 +730,18 @@ public interface ControlService {
      * @throws ControlServiceException
      *             the control service exception
      */
-    LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException;
+    LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException;
+
+    /**
+     * Get the log schema.
+     *
+     * @param schemaId
+     *            the log schema string
+     * @return the log schema dto
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    String getFlatSchemaByCtlSchemaId(String schemaId) throws ControlServiceException;
 
     /**
      * Gets the log schemas by application id.

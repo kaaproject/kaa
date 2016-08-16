@@ -31,7 +31,7 @@ public class LogEventPackTest {
     
     private static final String ENDPOINT_KEY = "endpoint key";
     private static final long DATE_CREATED = System.currentTimeMillis();  
-    private static final LogSchema LOG_SCHEMA = new LogSchema(new LogSchemaDto());
+    private static final LogSchema LOG_SCHEMA = new LogSchema(new LogSchemaDto(), "");
     private static final int VERSION = 3;
     private static final List<LogEvent> EVENTS = new ArrayList<>();
     private static final String userId = "123454567878";

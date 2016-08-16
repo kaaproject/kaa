@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -45,7 +46,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
@@ -67,7 +68,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
 
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -93,7 +94,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateAndroidSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
@@ -119,7 +120,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateCppSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
@@ -141,7 +142,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateCppSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
@@ -167,7 +168,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateCSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
@@ -192,7 +193,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateCSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
@@ -230,6 +231,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
      * @throws Exception the exception
      */
     @Test
+
     public void testGenerateJavaSdkWithInvalidProfileSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);
@@ -270,7 +272,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);
         final EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
-        final ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
+        final ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId(), null);
         checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {

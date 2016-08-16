@@ -43,7 +43,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select.Where;
 
 @Repository
-public class NotificationCassandraDao extends AbstractVersionableCassandraDao<CassandraNotification, String> implements NotificationDao<CassandraNotification> {
+public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNotification, String> implements NotificationDao<CassandraNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationCassandraDao.class);
 

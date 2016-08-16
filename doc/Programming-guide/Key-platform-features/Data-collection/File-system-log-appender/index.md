@@ -6,8 +6,7 @@ nav: /:path/Programming-guide/Key-platform-features/Data-collection/File-system-
 sort_idx: 40
 ---
 
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -35,7 +34,8 @@ To create a log appender of the file system storage type, do the following:
 
 # Creating file system log appender with Admin REST API
 
-It is also possible to create a file system log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+It is also possible to create a file system log appender for your application by using
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the file system log appender via Admin REST API.
 
 ## Configuration

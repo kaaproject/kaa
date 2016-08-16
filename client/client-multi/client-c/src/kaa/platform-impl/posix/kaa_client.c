@@ -298,8 +298,8 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
         if (kaa_client->external_process_fn) {
             if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
                 kaa_client->external_process_fn(kaa_client->external_process_context);
+                kaa_client->external_process_last_call = KAA_TIME();
             }
-            kaa_client->external_process_last_call = KAA_TIME();
         }
 
         //Check Kaa channel is ready to transmit something

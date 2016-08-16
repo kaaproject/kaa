@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -306,6 +305,17 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         CTLSchemaDto loaded = client.getCTLSchemaById(saved.getId());
         Assert.assertNotNull(loaded);
         Assert.assertEquals(saved, loaded);
+    }
+
+    @Test
+    public void getCTLFlatSchemaByIdTest() throws Exception {
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+        CTLSchemaDto loaded = client.getCTLSchemaById(saved.getId());
+        String savedFlatSchema = ctlService.flatExportAsString(saved);
+        String loadedFlatSchema = client.getFlatSchemaByCtlSchemaId(loaded.getId());
+        Assert.assertNotNull(loaded);
+        Assert.assertEquals(savedFlatSchema, loadedFlatSchema);
     }
 
     /**

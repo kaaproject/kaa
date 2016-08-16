@@ -4,8 +4,7 @@ title: Common Type Library (CTL)
 permalink: /:path/
 sort_idx: 20
 ---
-{% assign root_url = page.url | split: '/'%}
-{% capture root_url  %} /{{root_url[1]}}/{{root_url[2]}}/{% endcapture %}
+{% include variables.md %}
 
 * TOC
 {:toc}
@@ -74,22 +73,22 @@ Matching FQN in a different Application of the same Tenant | N/A | N/A | warning
 
 # CT management
 
-CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) or via Administration UI.
+CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Common_Type_Library) or via Administration UI.
 
 ## Get CTs list
 
-* As Kaa admin you can get list of available System CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or by opening **System CTL** window from Administration UI.
+* As Kaa admin you can get list of available System CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getSystemLevelCTLSchemas) call or by opening **System CTL** window from Administration UI.
 An example of **System CTL** window is shown below.
 ![System CTL](attach/system_ctl.png)
-* As Tenant admin you can get list of available Tenant CTs and System CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or by opening **Tenant CTL** window from Administration UI.
+* As Tenant admin you can get list of available Tenant CTs and System CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getTenantLevelCTLSchemas) call or by opening **Tenant CTL** window from Administration UI.
 The **Tenant CTL** window is similar to the System CTL window except it has ability to display/hide System CTs by checking/unchecking **Display higher scopes** checkbox.
 * As Tenant developer you can get list of available Tenant CTs and System CTs in the same way as Tenant admin.
-In addition Tenant developer can get list of available Application CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or by opening **Application CTL** window from Administration UI. 
+In addition Tenant developer can get list of available Application CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getApplicationLevelCTLSchemasByAppToken) call or by opening **Application CTL** window from Administration UI. 
 The **Application CTL** window is similar to the Tenant CTL window except it has ability to display/hide System and Tenant CTs by checking/unchecking **Display higher scopes** checkbox.
 
 ## Create new CT
 
-New CT can be created via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or by clicking **Add new type** in corresponding CTL window from Administration UI.
+New CT can be created via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call or by clicking **Add new type** in corresponding CTL window from Administration UI.
 
 > **NOTE:** The Kaa admin can add new System CTs.
 The Tenant admin can add new Tenant CTs.
@@ -102,7 +101,7 @@ There is also ability to create a new version of CT by clicking **Create new ver
 
 ## Get or view CT details
 
-CT details can be obtained via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or can be viewed in **CT details** window of Administration UI.
+CT details can be obtained via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getCTLSchemaById) call or can be viewed in **CT details** window of Administration UI.
 To open CT details click the row of the CTs list in corresponding CTL window.
 Below is shown an example of **CT details** window for Application CT.
 ![View Application CTL](attach/view_application_ctl.png)
@@ -110,7 +109,7 @@ To view another version of the CT, click on the version drop-down and select the
 
 ## Delete CT schema
 
-CT schema can be deleted via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or from **CT details** window of Administration UI.
+CT schema can be deleted via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken) call or from **CT details** window of Administration UI.
 To delete CT schema open **CT details** and click **Delete** button located in the top of the window.
 
 > **NOTE:** The Kaa admin can delete System CT schema.
@@ -122,14 +121,14 @@ The Tenant developer can delete Application CT schema.
 Users are able to promote the CT's scope from APPLICATION to TENANT, provided that there is no other CT with the identical FQN within the given tenant, and that they have a permission to do so.
 Otherwise an appropriate error will be returned.
 Promotion procedure updates scope of CT including all its versions.
-Promotion of CT can be performed in two ways: via [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call or by clicking **Promote** in the **Application CTL** window of Administration UI as shown below.
+Promotion of CT can be performed in two ways: via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/promoteScopeToTenant) call or by clicking **Promote** in the **Application CTL** window of Administration UI as shown below.
 ![Promote CTL](attach/application_ctl_promote.png)
 
 ## CT schema import and export
 
 The import of CT schema can be done in two ways: 
 
-* Perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call. 
+* Perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call. 
 * Add new CT in Administration UI and upload schema json file as shown below.
 ![CTL Import](attach/ctl_import.png)
 
@@ -142,7 +141,7 @@ There are four ways of CT schema export:
 This java library provides all necessary java structures according to CT schema including nested types. 
 For instance these java structures can be used in external application to serialize binary log records which was produced as a result of data collection.   
    
-To export CT schema either use [REST API]({{root_url}}Programming-guide/Server-REST-APIs#TODO) call by providing appropriate export method or use export functionality provided by Administration UI.
+To export CT schema either use [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/exportCTLSchemaByAppToken) call by providing appropriate export method or use export functionality provided by Administration UI.
 In **CT details** window click **Export** drop down and select desired export method as shown below.
 
 ![CTL export](attach/ctl_export.png)

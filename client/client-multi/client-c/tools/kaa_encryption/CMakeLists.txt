@@ -15,33 +15,14 @@
 #
 
 cmake_minimum_required(VERSION 2.8.12)
-project(kaa_rsa_keygen C)
+project(kaa_rsa_keygen_app C)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c99 -Wall -Wextra -pedantic -D_GNU_SOURCE")
 
-set(MBEDTLS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../../thirdparty/mbedtls")
+include_directories(rsa_key_gen)
 
-set(KAA_RSA_KEYGEN_SOURCE_FILES
-        ${MBEDTLS_DIRECTORY}/aes.c
-        ${MBEDTLS_DIRECTORY}/asn1parse.c
-        ${MBEDTLS_DIRECTORY}/asn1write.c
-        ${MBEDTLS_DIRECTORY}/bignum.c
-        ${MBEDTLS_DIRECTORY}/ctr_drbg.c
-        ${MBEDTLS_DIRECTORY}/entropy.c
-        ${MBEDTLS_DIRECTORY}/entropy_poll.c
-        ${MBEDTLS_DIRECTORY}/md.c
-        ${MBEDTLS_DIRECTORY}/md_wrap.c
-        ${MBEDTLS_DIRECTORY}/oid.c
-        ${MBEDTLS_DIRECTORY}/pk.c
-        ${MBEDTLS_DIRECTORY}/pkwrite.c
-        ${MBEDTLS_DIRECTORY}/pk_wrap.c
-        ${MBEDTLS_DIRECTORY}/rsa.c
-        ${MBEDTLS_DIRECTORY}/sha256.c
-        ${MBEDTLS_DIRECTORY}/pkparse.c
-        ${MBEDTLS_DIRECTORY}/sha1.c
-        ${MBEDTLS_DIRECTORY}/base64.c
-        ${CMAKE_CURRENT_LIST_DIR}/kaa_rsa_key_gen.c
-)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/rsa_key_gen)
 
-add_executable("generate_rsa_keys" ${KAA_RSA_KEYGEN_SOURCE_FILES})
-target_include_directories("generate_rsa_keys" PUBLIC ${MBEDTLS_DIRECTORY})
+add_executable(generate_rsa_keys kaa_rsa_key_gen_app.c)
+
+target_link_libraries(generate_rsa_keys rsa_keygen)

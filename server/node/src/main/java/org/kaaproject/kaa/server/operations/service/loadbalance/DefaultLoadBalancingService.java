@@ -97,7 +97,7 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
             operationsNode.updateNodeData(nodeInfo);
             LOG.info("Updated load info: {}", nodeInfo.getLoadInfo());
         } catch (Exception e) {
-            LOG.error("Failed to report status update to control server", e);
+            LOG.error("Failed to report status update to control service", e);
         }
     }
 }

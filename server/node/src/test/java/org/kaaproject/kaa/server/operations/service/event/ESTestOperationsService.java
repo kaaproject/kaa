@@ -44,11 +44,6 @@ public class ESTestOperationsService implements OperationsService {
         
     }
 
-    @Override
-    public SyncContext syncClientProfile(SyncContext context, ProfileClientSync request) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request) {
@@ -107,6 +102,16 @@ public class ESTestOperationsService implements OperationsService {
     @Override
     public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SyncContext syncUseConfigurationRawSchema(SyncContext context, boolean useConfigurationRawSchema) {
+        return null;
+    }
+
+    @Override
+    public SyncContext syncClientProfile(SyncContext context, ProfileClientSync request) {
         return null;
     }
 

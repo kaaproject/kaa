@@ -34,7 +34,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -106,23 +105,6 @@ public abstract class AbstractServiceImplTest {
         return users;
     }
 
-    protected TenantAdminDto generateTenantAdmin(TenantDto tenantDto, String userId) {
-        TenantAdminDto tenant = new TenantAdminDto();
-        tenant.setName(TENANT_NAME);
-        if (tenantDto == null) {
-            tenantDto = generateTenant();
-        }
-        tenant.setTenant(tenantDto);
-        if (isBlank(userId)) {
-            List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_ADMIN, 1);
-            tenant.setUserId(users.get(0).getId());
-        } else {
-            tenant.setUserId(userId);
-        }
-        tenant.setExternalUid(UUID.randomUUID().toString());
-        tenant = userService.saveTenantAdmin(tenant);
-        return tenant;
-    }
 
     protected String readSchemaFileAsString(String filePath) throws IOException {
         try {

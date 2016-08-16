@@ -10,17 +10,15 @@ permalink:        pretty
 title:            Kaa
 tagline:          'A Jekyll theme'
 description:      ''
-url:              
-baseurl:          /
+url:
+baseurl:          /kaa
 
 author:
-  name:           
-  url:            
+  name:
+  url:
 
-paginate:         5
 gems:
 - jekyll-gist
-- jekyll-paginate
 - jekyll-sitemap
 
 # Custom vars
