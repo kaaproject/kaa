@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.control.service;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
@@ -2296,5 +2298,14 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<String> getCredentialsServiceNames() throws ControlServiceException {
         return this.credentialsServiceRegistry.getCredentialsServiceNames();
+    }
+
+    @Override
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+            String externalUId,
+            String appToken,
+            Integer schemaVersion,
+            String tenantId) {
+        return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,tenantId);
     }
 }
