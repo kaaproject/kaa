@@ -22,7 +22,6 @@
 , doxygen ? null
 
 , clang ? null
-, openssl ? null
 
 , cmocka ? null
 , cppcheck ? null
@@ -36,7 +35,6 @@
 , cc3200-sdk ? null
 
 , raspberrypi-tools ? null
-, raspberrypi-openssl ? null
 
 , clangSupport ? true
 , posixSupport ? true
@@ -48,11 +46,10 @@
 , withWerror ? false
 }:
 
-assert clangSupport -> clang != null && openssl != null;
-assert posixSupport -> openssl != null;
+assert clangSupport -> clang != null;
 assert esp8266Support -> gcc-xtensa-lx106 != null && esp8266-rtos-sdk != null && jre != null;
 assert cc3200Support -> cc3200-sdk != null && gcc-arm-embedded != null && jre != null;
-assert raspberrypiSupport -> raspberrypi-tools != null && raspberrypi-openssl != null;
+assert raspberrypiSupport -> raspberrypi-tools != null;
 assert testSupport -> posixSupport != null && cmocka != null && cppcheck != null &&
                       valgrind != null && python != null;
 
@@ -95,7 +92,7 @@ let
       + target esp8266Support "esp8266"
               "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake -DESP8266_TOOLCHAIN_PATH='${gcc-xtensa-lx106}' -DESP8266_SDK_PATH='${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk'"
       + target raspberrypiSupport "rpi"
-              "-DCMAKE_PREFIX_PATH=${raspberrypi-openssl} -DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
+              "-DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
     };
 in stdenv.mkDerivation {
   name = "kaa-client-c";
@@ -108,9 +105,6 @@ in stdenv.mkDerivation {
     doxygen
   ] ++ lib.optional clangSupport [
     clang
-    openssl
-  ] ++ lib.optional posixSupport [
-    openssl
   ] ++ lib.optional testSupport [
     cmocka
     cppcheck
@@ -126,7 +120,6 @@ in stdenv.mkDerivation {
     jre
   ] ++ lib.optional raspberrypiSupport [
     raspberrypi-tools
-    raspberrypi-openssl
   ];
 
   shellHook = ''
