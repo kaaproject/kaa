@@ -22,7 +22,7 @@ The setup instructions are also available as a video tutorial below.
 </p>
 
 
-# Sandbox installation
+## Sandbox installation
 
 To run your Kaa Sandbox, you can use the VirtualBox environment or AWS Elastic Compute Cloud (EC2).
 Click the appropriate tab and follow the instructions.
@@ -135,7 +135,7 @@ Public DNS and IP of your instance are available from your instance description.
 
 </div></div>
 
-# Launching your first Kaa application
+## Launching your first Kaa application
 
 After you installed a Kaa Sandbox, you can test its features by using the [sample applications](https://github.com/kaaproject/sample-apps).
 By default, your Kaa Sandbox will listen to port 9080 to access the sample applications and some basic configuration data.
@@ -157,7 +157,7 @@ Follow the instructions in the Sandbox to download, run, and test the sample app
 
 ![First application page](attach/sandbox_first_app_view.png)
 
-# What's next?
+## What's next?
 
 Use the Sandbox to create your own Kaa applications.
 To do this, follow the instructions in [Your first Kaa application]({{root_url}}Programming-guide/Your-first-Kaa-application).
@@ -169,7 +169,7 @@ To do this, follow the instructions in [Your first Kaa application]({{root_url}}
 
 If you have problems during installation, see [Troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting/).
 
-## Administration UI
+### Administration UI
 
 The [Administration UI]({{root_url}}Glossary/#administration-ui) of the Sandbox is intended for managing Kaa applications, endpoints, schemas, etc.
 To access the Administration UI, click the **Administration** button on the Sandbox main page.
@@ -182,20 +182,20 @@ You can log in using the default pre-configured accounts as listed below:
 | Tenant developer      | devuser  | devuser123       |
 
 
-## Avro UI
+### Avro UI
 
 The Avro UI is an advanced tool for designing and modifying the data schemes and records used in Kaa.
 To access the Avro UI, click the **Avro UI** button on the Sandbox main page.
 
-## Advanced Sandbox configuration
+### Advanced Sandbox configuration
 
-### Outgoing email settings
+#### Outgoing email settings
 
 Kaa uses an outgoing email server to send notifications to the users.
 There are no default settings provided for the server.
 To configure the server settings, follow the instructions in [Configuring the outgoing email server settings]({{root_url}}Administration-guide/Tenants-and-applications-management#configuring-outgoing-mail-settings).
 
-### Networking
+#### Networking
 
 You can choose a host/IP that your endpoints will use to connect to the Sandbox.
 The specified host/IP will be used by Kaa endpoint SDK libraries to enable connection from the Kaa clients to your Sandbox.
@@ -234,7 +234,7 @@ Log in to the Sandbox VM terminal and run the following script.
 
 </div></div>
 
-# Further reading
+## Further reading
 
 Use the following guides and references to learn more about Kaa features.
 
