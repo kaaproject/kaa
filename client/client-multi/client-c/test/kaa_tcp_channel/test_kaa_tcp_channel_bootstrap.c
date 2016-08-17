@@ -730,13 +730,11 @@ kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_proto
 
 ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size)
 {
-    int result_memcmp;
-
     /* Only to avoid compiler's warning */
     (void)destination_size;
 
     if (fd == ACCESS_POINT_SOCKET_FD) {
-        result_memcmp = memcmp(destination->sa_data, DESTINATION_SOCKADDR.sa_data,
+        int result_memcmp = memcmp(destination->sa_data, DESTINATION_SOCKADDR.sa_data,
                 sizeof(DESTINATION_SOCKADDR.sa_data));
         if ((result_memcmp == 0) && (destination->sa_family == DESTINATION_SOCKADDR.sa_family)) {
             if (access_point_test_info.socket_connecting_error_scenario) {
