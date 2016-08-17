@@ -290,13 +290,14 @@ public class UserController extends AbstractAdminController {
 <<<<<<< a6ce168290e6472392c73a0b306d621272bd28eb
 =======
     @ApiOperation(value = "Get endpoint user configuration by external user id",
-            notes="Get endpoint user configuration by external user id. Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
+            notes="Get endpoint user configuration by external user id." +
+                    " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "The specified url   is not valid"),
+            @ApiResponse(code = 400, message = "The specified url is not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have neither TENANT_DEVELOPER nor TENANT_USER role"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "configuration/{appToken}/{userId}/{schemaVersion}", method = RequestMethod.GET)
+    @RequestMapping(value = "configuration/{userId}/{appToken}/{schemaVersion}", method = RequestMethod.GET)
     @ResponseBody
     public EndpointUserConfigurationDto findUserConfigurationByUserId(
             @PathVariable String userId,
@@ -305,11 +306,14 @@ public class UserController extends AbstractAdminController {
         return  configurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(userId,appToken,schemaVersion);
     }
 
+<<<<<<< 6bd5c3eaac6b27d681b123d3aca361c4e9da4b01
 
 
 
 
 
 
+>>>>>>> KAA-1337: Add REST API to retrieve a configuration of a specific user by its external id.
+=======
 >>>>>>> KAA-1337: Add REST API to retrieve a configuration of a specific user by its external id.
 }
