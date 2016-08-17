@@ -121,7 +121,18 @@ If you want to review the added Avro schema, open the corresponding **Client-sid
 
 ### REST API for Client-side endpoint profile
 
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) documentation page for detailed description of the REST API, 
+its purpose, interfaces and features supported.
+
+Admin REST API provides the following actions:
+
+* [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
+* [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
+* [Get endpoint profiles by owner ID]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfilesByUserExternalId)
+* [Get client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getProfileSchema)
+* [Get client-side endpoint profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getProfileSchemasByApplicationToken)
+* [Delete endpoint]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/removeEndpointProfileByKeyHash)
+* [Create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema)
 
 
 ### Client side endpoint profile SDK API ###
@@ -134,7 +145,9 @@ groups membership.
 Think about the client-side profile schema as of a structured data set of your endpoint application that will later be available to you in Kaa server and may change 
 due to your client application logic or device state.
 You can configure your own client-side profile schema using the 
-[Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
+[Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or Admin REST API.
+First of all you need to [create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
+after that [create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema) which will be contain a reference for this CT. 
 Client-side endpoint profile updates are reported to the endpoint SDK using a profile container. The profile related API varies depending on the target SDK platform, 
 however the general approach is the same.
 
@@ -290,8 +303,11 @@ profile->destroy(profile);
 ## Server-side endpoint profile ##
 
 The server-side endpoint profile is initially generated at the stage of a new endpoint registration. By default, server side profile record is auto-generated based on 
-the latest server-side profile schema of particular application. Both server-side endpoint profile schema and data can be updated at run time using 
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
+the latest server-side profile schema of particular application. 
+In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
+For creating server side endpoint profile by REST API first of all you need to 
+[create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
+after that [create server-side profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema) which will be contain a reference for this CT.
 
 <img src="endpoint-profile-generation/ServerSideEndpointProfileGeneration_0_8_0.png">
 
@@ -336,7 +352,7 @@ during manufacturing and should not be controlled by client application.
 
 Server-side endpoint profile is designed to be accessed and modified by various server-side applications through Kaa REST API integration layer. Server-side profile is 
 not accessible from endpoint SDK or other client application logic but you can configure your own server-side profile schema using the 
-[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
+[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/updateServerProfile). 
 For the purpose of this guide we will use a fairly abstract server-side profile schema shown below.
 
 ```json
@@ -357,9 +373,6 @@ For the purpose of this guide we will use a fairly abstract server-side profile 
 }
 ```
 
-Once this schema is configured, you are able to assign server-side endpoint profile body to certain endpoints based on their ids using 
-[Admin UI](#setting-server-side-endpoint-profile-schema-from-admin-ui) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
-
 ### Setting server-side endpoint profile schema from Admin UI
 
 The list of server-side endpoint profile schemas created by a tenant developer for the application is shown in the Server-side EP profile schemas window, which can be 
@@ -374,6 +387,7 @@ As a tenant developer, you can create new server-side EP schemas for the applica
 1. In the **Server-side EP profile schemas** window for the application, click **Add schema**.
 2. In the **Add profile schema** window enter the name of the schema.
 3. Then create a schema using one of the two options:
+
     1. Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
     
     <img src="admin-ui/Create server-side endpoint profile schema 1.png">
@@ -391,7 +405,20 @@ If you want to review the added Avro schema, open the corresponding **Server-sid
 
 ### REST API for Server-side endpoint profile
 
-Use this link [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) documentation page for detailed description of the REST API, 
+its purpose, interfaces and features supported.
+
+Admin REST API provides the following actions:
+
+* [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
+* [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
+* [Get endpoint profiles by owner ID]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfilesByUserExternalId)
+* [Delete endpoint]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/removeEndpointProfileByKeyHash)
+* [Create server-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema)
+* [Get server-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getServerProfileSchema)
+* [Get server-side endpoint profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getServerProfileSchemasByApplicationToken)
+* [Update server-side endpoint profile]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/updateServerProfile)
+
 
 ## System part of endpoint profile ##
 
