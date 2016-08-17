@@ -86,9 +86,11 @@ static uint8_t DISCONNECT_MESSAGE[] = {0xE0, 0x02, 0x00, 0x00};
 static uint8_t CONNECT_HEAD[] = {0x35, 0x46};
 static uint8_t CONNECT_PACK[] = {0x34, 0x45};
 
-static uint8_t DESTINATION_SOCKADDR[]   = {
-    0x02, 0x00, 0x26, 0xa0, 0xc0, 0xa8, 0x4d, 0x02,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+static kaa_sockaddr_t DESTINATION_SOCKADDR = {
+    .sa_family = 0x02,
+    .sa_data = { 0x26, (uint8_t)0xa0, (uint8_t)0xc0, (uint8_t)0xa8, 0x4d, 0x02,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    }
 };
 
 static uint8_t CONNECTION_DATA[]   = {
@@ -730,8 +732,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_soc
 {
 
     if (fd == ACCESS_POINT_SOCKET_FD) {
-        unsigned char *dst = (unsigned char*)destination;
-        if(!memcmp(dst,DESTINATION_SOCKADDR,destination_size)) {
+        if(memcmp(destination, &DESTINATION_SOCKADDR,destination_size) == 0) {
             if (access_point_test_info.socket_connecting_error_scenario) {
                 return KAA_TCP_SOCK_ERROR;
             } else {
@@ -796,9 +797,7 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd, const kaa_sockaddr_t *de
 {
     KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
 
-    unsigned char *dst = (unsigned char*)destination;
-
-    if(!memcmp(dst,DESTINATION_SOCKADDR,destination_size)) {
+    if(memcmp(destination, &DESTINATION_SOCKADDR,destination_size) == 0) {
         access_point_test_info.new_socket_created = true;
         *fd = ACCESS_POINT_SOCKET_FD;
         return KAA_ERR_NONE;
