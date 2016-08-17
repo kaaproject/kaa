@@ -1138,7 +1138,7 @@ public class DefaultControlService implements ControlService {
         }
         try {
             CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
-            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(getFlatSchemaByCtlSchemaId(logCtlSchema.getId()));
             String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
             return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
         } catch (Exception e) {
