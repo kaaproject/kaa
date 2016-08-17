@@ -47,21 +47,21 @@ public class MigrateData {
             String arg = args[i];
             if (arg.charAt(0) == '-') {
                 String option = arg.substring(1, arg.length()).trim();
-                if(i >= args.length - 1) {
+                if (i >= args.length - 1) {
                     throw new IllegalArgumentException("Not found value after option -" + option);
                 }
                 switch (option) {
                     case "u":
-                        options.setUsername(args[i+1]);
+                        options.setUsername(args[i + 1]);
                         break;
                     case "p":
-                        options.setPassword(args[i+1]);
+                        options.setPassword(args[i + 1]);
                         break;
                     case "h":
-                        options.setHost(args[i+1]);
+                        options.setHost(args[i + 1]);
                         break;
                     case "db":
-                        options.setDbName(args[i+1]);
+                        options.setDbName(args[i + 1]);
                         break;
                     default:
                         throw new IllegalArgumentException("No such option: -" + option);
