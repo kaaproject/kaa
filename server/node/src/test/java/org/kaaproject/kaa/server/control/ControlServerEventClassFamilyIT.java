@@ -180,6 +180,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
         Assert.assertNotNull(eventSchema);
         Assert.assertEquals(1, eventSchema.getVersion());
 
+        eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdmin.getTenantId());
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
         schemas = eventClassService.findEventClassFamilyVersionsById(eventClassFamily.getId());
         Assert.assertNotNull(schemas);
