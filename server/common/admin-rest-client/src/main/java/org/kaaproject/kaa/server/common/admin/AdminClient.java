@@ -59,6 +59,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 
@@ -1059,5 +1060,10 @@ public class AdminClient {
         parameters.add("applicationToken", applicationToken);
         parameters.add("credentialsId", credentialsId);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
+    }
+
+    public EndpointUserConfigurationDto findUserConfigurationByUserId(String externalUId, String appToken, Integer schemaVersion){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{externalUId}/{appToken}/{schemaVersion}",
+                EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
     }
 }
