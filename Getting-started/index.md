@@ -184,8 +184,9 @@ You can log in using the default pre-configured accounts as listed below:
 
 ### Avro UI
 
-The Avro UI is an advanced tool for designing and modifying the data schemes and records used in Kaa.
-To access the Avro UI, click the **Avro UI** button on the Sandbox main page.
+The [Avro UI]({{root_url}}Glossary/#avro-ui) is an online service that you can use to create schema structure templates.
+This is helpful when you want to reuse and modify your schemas used within the Kaa platform.
+To access Avro UI, click the **Avro UI** button on the Sandbox main page.
 
 ### Advanced Sandbox configuration
 
