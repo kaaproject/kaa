@@ -130,8 +130,7 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                 String appToken,
                 Integer schemaVersion,
                 String tenantId) {
-        return getDto(
-                endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
+        return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
                         endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId).getId(),
                         appToken,
                         schemaVersion));

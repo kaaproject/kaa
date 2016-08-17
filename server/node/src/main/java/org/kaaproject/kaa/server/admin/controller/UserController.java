@@ -287,6 +287,7 @@ public class UserController extends AbstractAdminController {
        return  userService.findAllTenantAdminsByTenantId(tenantId);
     }
 
+<<<<<<< 3305746c214319f87853c74a5a705df5cf4cd3b1
 <<<<<<< a6ce168290e6472392c73a0b306d621272bd28eb
 =======
     @ApiOperation(value = "Get endpoint user configuration by external user id",
@@ -313,6 +314,8 @@ public class UserController extends AbstractAdminController {
 
 
 
+>>>>>>> KAA-1337: Add REST API to retrieve a configuration of a specific user by its external id.
+=======
 >>>>>>> KAA-1337: Add REST API to retrieve a configuration of a specific user by its external id.
 =======
 >>>>>>> KAA-1337: Add REST API to retrieve a configuration of a specific user by its external id.
