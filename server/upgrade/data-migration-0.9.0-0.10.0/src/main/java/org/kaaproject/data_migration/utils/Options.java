@@ -60,4 +60,14 @@ final public class Options {
     public void setHost(String host) {
         this.host = host;
     }
+
+    @Override
+    public String toString() {
+        return "Options{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", dbName='" + dbName + '\'' +
+                ", host='" + host + '\'' +
+                '}';
+    }
 }

@@ -18,7 +18,6 @@ package org.kaaproject.data_migration;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.lang.StringUtils;
 import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.Schema;
 import org.kaaproject.data_migration.utils.BaseSchemaIdCounter;
@@ -48,24 +47,29 @@ public class MigrateData {
             String arg = args[i];
             if (arg.charAt(0) == '-') {
                 String option = arg.substring(1, arg.length()).trim();
+                if(i >= args.length - 1) {
+                    throw new IllegalArgumentException("Not found value after option -" + option);
+                }
                 switch (option) {
                     case "u":
-                        options.setUsername(option);
+                        options.setUsername(args[i+1]);
                         break;
                     case "p":
-                        options.setPassword(option);
+                        options.setPassword(args[i+1]);
                         break;
                     case "h":
-                        options.setHost(option);
+                        options.setHost(args[i+1]);
                         break;
                     case "db":
-                        options.setDbName(option);
+                        options.setDbName(args[i+1]);
                         break;
                     default:
-                        throw  new IllegalArgumentException("No such option: -" + option);
+                        throw new IllegalArgumentException("No such option: -" + option);
                 }
             }
         }
+
+        LOG.debug(options.toString());
 
         try {
             List<Schema> schemas = new ArrayList<>();
