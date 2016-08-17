@@ -30,8 +30,6 @@ let
 
     raspberrypi-tools = callPackage ./raspberrypi-tools { };
 
-    raspberrypi-openssl = callPackage ./raspberrypi-openssl { };
-
     # Currently, it causes compilation failure, so we use 4.7 for now.
     # gcc-arm-embedded = pkgs.gcc-arm-embedded-5_2;
     gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
