@@ -1718,4 +1718,8 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     List<String> getCredentialsServiceNames() throws ControlServiceException;
+
+
+    EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion,String tenantId);
+
 }
