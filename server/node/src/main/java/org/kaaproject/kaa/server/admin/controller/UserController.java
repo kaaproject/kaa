@@ -290,6 +290,4 @@ public class UserController extends AbstractAdminController {
        return  userService.findAllTenantAdminsByTenantId(tenantId);
     }
 
-
-
 }
