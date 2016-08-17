@@ -19,8 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.Window;
-import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
@@ -40,6 +38,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.event.shared.EventBus;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
 public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClassDto, EcfVersionPlace> {
 
@@ -47,18 +46,19 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
     private String ecfVersionId;
     private int ecfVersion;
     private EcfVersionView listView;
+    AbstractGrid<EventClassDto, String> dataGrid;
 
     public EcfVersionActivity(EcfVersionPlace place, ClientFactory clientFactory) {
         super(place, EventClassDto.class, clientFactory);
-        initListView( place);
-        this.listView.setPresenter(this);
         this.ecfId = place.getEcfId();
         this.ecfVersion = place.getEcfVersion();
         this.ecfVersionId = place.getEcfVersionId();
+        initListView();
+        this.listView.setPresenter(this);
     }
 
-    private void initListView(EcfVersionPlace place){
-        if(place.getEcfVersionId() == null || place.getEcfVersionId() == ""){
+    private void initListView() {
+        if (ecfVersionId == null || ecfVersionId == "") {
             this.listView = clientFactory.getCreateEcfVersionView();
         } else {
             this.listView = clientFactory.getEcfVersionView();
@@ -75,6 +75,7 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
 
     @Override
     protected AbstractDataProvider<EventClassDto, String> getDataProvider(AbstractGrid<EventClassDto, String> dataGrid) {
+        this.dataGrid = dataGrid;
         return new EcfVersionDataProvider(dataGrid, listView, ecfId, ecfVersion, place.getEventClassDtoList());
     }
 
@@ -111,6 +112,7 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
 
                             @Override
                             public void onSuccess(Void aVoid) {
+                                place.setEventClassDtoList(null);
                                 goTo(new EcfPlace(place.getEcfId()));
                             }
                         });
@@ -123,18 +125,6 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
                 String id = String.valueOf(event.getClickedId());
                 if (event.getAction() == RowActionEvent.CLICK) {
                     goTo(existingEntityPlace(id));
-                } else if (event.getAction() == RowActionEvent.DELETE) {
-                    deleteEntity(id, new BusyAsyncCallback<Void>() {
-                        @Override
-                        public void onFailureImpl(Throwable caught) {
-                            Utils.handleException(caught, listView);
-                        }
-
-                        @Override
-                        public void onSuccessImpl(Void result) {
-                            dataProvider.reload();
-                        }
-                    });
                 }
                 onCustomRowAction(event);
             }

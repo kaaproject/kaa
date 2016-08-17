@@ -64,22 +64,30 @@ public class EventClassActivity
     protected void getEntity(String eventClassId,
                              final AsyncCallback<EventClassViewDto> callback) {
         if (place.getEventClassDtoList() != null) {
-            EventClassDto eventClassDto = place.getEventClassDtoList().get(Integer.valueOf(eventClassId) - 1).getSchema();
-            KaaAdmin.getDataSource().getEventClassViewByCtlSchemaId(eventClassDto, callback);
-            detailsView.getEventClassTypes().setValue(eventClassDto.getType().name());
+            if (!place.getEventClassDtoList().isEmpty() && (Integer.valueOf(entityId) <= place.getEventClassDtoList().size())) {
+                EventClassDto eventClassDto = place.getEventClassDtoList().get(Integer.valueOf(eventClassId) - 1).getSchema();
+                detailsView.getEventClassTypes().setValue(eventClassDto.getType().name());
+                KaaAdmin.getDataSource().getEventClassViewByCtlSchemaId(eventClassDto, callback);
+            } else {
+                getEventClassView(eventClassId, callback);
+            }
         } else {
-            KaaAdmin.getDataSource().getEventClassView(eventClassId, new AsyncCallback<EventClassViewDto>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    Utils.handleException(caught, EventClassActivity.this.detailsView);
-                }
-                @Override
-                public void onSuccess(EventClassViewDto eventClassViewDto) {
-                    detailsView.getEventClassTypes().setValue(eventClassViewDto.getSchema().getType().name());
-                    callback.onSuccess(eventClassViewDto);
-                }
-            });
+            getEventClassView(eventClassId, callback);
         }
+    }
+
+    private void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback){
+        KaaAdmin.getDataSource().getEventClassView(eventClassId, new AsyncCallback<EventClassViewDto>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, EventClassActivity.this.detailsView);
+            }
+            @Override
+            public void onSuccess(EventClassViewDto eventClassViewDto) {
+                detailsView.getEventClassTypes().setValue(eventClassViewDto.getSchema().getType().name());
+                callback.onSuccess(eventClassViewDto);
+            }
+        });
     }
 
     @Override

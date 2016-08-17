@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -27,7 +26,6 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, String> {
@@ -61,27 +59,26 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
                             callback.onSuccess(result);
                         }
                     });
-        }
-        List<EventClassDto> eventClassDtoList = null;
-        if (eventClassViewDtoList != null) {
-            eventClassDtoList = new ArrayList<EventClassDto>();
-            int i = 1;
-            for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
-                if (eventClassViewDto.getSchema() != null) {
-                    CTLSchemaMetaInfoDto ctlSchemaMetaInfoDto = eventClassViewDto.getExistingMetaInfo().getMetaInfo();
-                    EventClassDto eventClassDto = eventClassViewDto.getSchema();
-                    eventClassDto.setCtlSchemaId(ctlSchemaMetaInfoDto.getId());
-                    eventClassDto.setCreatedTime(System.currentTimeMillis());
-                    eventClassDto.setId(String.valueOf(i++));
-                    eventClassDtoList.add(eventClassDto);
-                }
-            }
-            callback.onSuccess(eventClassDtoList);
         } else {
-            eventClassDtoList = Collections.emptyList();
-            callback.onSuccess(eventClassDtoList);
+            if (eventClassViewDtoList != null) {
+                List<EventClassDto> eventClassDtoList = new ArrayList<EventClassDto>();
+                int i = 1;
+                for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
+                    if (eventClassViewDto.getSchema() != null) {
+                        CTLSchemaMetaInfoDto ctlSchemaMetaInfoDto = eventClassViewDto.getExistingMetaInfo().getMetaInfo();
+                        EventClassDto eventClassDto = eventClassViewDto.getSchema();
+                        eventClassDto.setCtlSchemaId(ctlSchemaMetaInfoDto.getId());
+                        eventClassDto.setCreatedTime(System.currentTimeMillis());
+                        eventClassDto.setVersion(i);
+                        eventClassDto.setId(String.valueOf(i++));
+                        eventClassDtoList.add(eventClassDto);
+                    }
+                }
+                callback.onSuccess(eventClassDtoList);
+            } else {
+                callback.onSuccess(new ArrayList<EventClassDto>());
+            }
         }
-
     }
 
 }

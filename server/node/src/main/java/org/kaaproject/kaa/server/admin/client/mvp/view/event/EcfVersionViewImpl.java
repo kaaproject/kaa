@@ -16,10 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
@@ -42,13 +39,6 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
         supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         supportPanel.setWidth("300px");
         supportPanel.add(addECButton);
-        addButton.setEnabled(false);
-        addButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                validateAddECButton();
-            }
-        });
     }
 
     @Override
@@ -67,7 +57,7 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
     }
 
     private String addButtonEventClassString() {
-        return "Add event class";
+        return Utils.constants.addEventClass();
     }
 
     @Override
@@ -75,12 +65,9 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
         return addECButton;
     }
 
-    public void validateAddECButton() {
-        if (grid.getDataGrid().getDisplayedItems().isEmpty()) {
-            addButton.setEnabled(false);
-        } else {
-            addButton.setEnabled(true);
-        }
+    @Override
+    public Button addButton() {
+        return addButton;
     }
 
 }

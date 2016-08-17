@@ -109,6 +109,11 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
     }
 
     @Override
+    public void setAddButtonEnabled(boolean enabled) {
+        addButton.setEnabled(enabled);
+    }
+
+    @Override
     public MultiSelectionModel<T> getSelectionModel() {
         return grid.getSelectionModel();
     }

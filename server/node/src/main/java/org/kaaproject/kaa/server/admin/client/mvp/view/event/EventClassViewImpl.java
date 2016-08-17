@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EventClassView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EventClassViewImpl extends BaseCtlSchemaViewImpl implements EventClassView {
 
@@ -54,17 +55,17 @@ public class EventClassViewImpl extends BaseCtlSchemaViewImpl implements EventCl
 
     @Override
     protected String getCreateTitle() {
-        return "Add event class";
+        return Utils.constants.addEventClass();
     }
 
     @Override
     protected String getViewTitle() {
-        return "Event class";
+        return Utils.constants.eventClass();
     }
 
     @Override
     protected String getSubTitle() {
-        return "Event class details";
+        return Utils.constants.eventClassDetails();
     }
 
     @Override

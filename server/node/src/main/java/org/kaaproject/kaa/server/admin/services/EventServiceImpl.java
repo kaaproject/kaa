@@ -312,11 +312,14 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
 
     @Override
     public void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException {
+        if (eventClassViewDto.isEmpty()) {
+            throw Utils.handleException(new IllegalArgumentException("Event Class Family Version cannot be without Event Classes"));
+        }
         EventClassFamilyVersionDto eventClassFamilyVersionDto = new EventClassFamilyVersionDto();
         eventClassFamilyVersionDto.setCreatedTime(System.currentTimeMillis());
         eventClassFamilyVersionDto.setCreatedUsername(getCurrentUser().getUsername());
         List<EventClassDto> eventClassDtoList = new ArrayList<>();
-        for(EventClassViewDto classViewDto : eventClassViewDto){
+        for (EventClassViewDto classViewDto : eventClassViewDto) {
             EventClassDto eventClassDto = classViewDto.getSchema();
             eventClassDto.setId(null);
             eventClassDto.setFqn(classViewDto.getExistingMetaInfo().getMetaInfo().getFqn());

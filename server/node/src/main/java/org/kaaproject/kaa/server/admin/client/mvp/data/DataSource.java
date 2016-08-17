@@ -570,6 +570,7 @@ public class DataSource {
         eventRpcService.saveEventClassView(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
             @Override
             protected void onResult(EventClassViewDto result) {
+                eventBus.fireEvent(new DataEvent(EventClassViewDto.class));
             }
         });
 

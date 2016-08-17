@@ -6,5 +6,6 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 public interface EcfVersionView extends BaseListView<EventClassDto> {
 
     Button addButtonEventClass();
+    Button addButton();
 
 }
