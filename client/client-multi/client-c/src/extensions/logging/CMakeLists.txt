@@ -40,4 +40,4 @@ kaa_add_unit_test(NAME test_log
     ${KAA_SRC_FOLDER}/kaa_status.c
     ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
     DEPENDS
-    kaac extension_logging ${OPENSSL_LIBRARIES})
+    kaac extension_logging)

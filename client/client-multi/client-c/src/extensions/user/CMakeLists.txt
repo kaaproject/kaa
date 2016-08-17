@@ -29,4 +29,4 @@ kaa_add_unit_test(NAME test_user_extension
     ${CMAKE_CURRENT_LIST_DIR}/test/test_kaa_user.c
     test/kaa_test_external.c
     DEPENDS
-    kaac ${OPENSSL_LIBRARIES})
+    kaac)

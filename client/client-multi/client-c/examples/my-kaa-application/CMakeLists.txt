@@ -17,11 +17,9 @@
 cmake_minimum_required(VERSION 3.5.2)
 project(kaa-application C)
 
-find_package(OpenSSL REQUIRED)
-
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
 
 add_subdirectory(kaa)
 
 add_executable(kaa-app src/kaa-application.c)
-target_link_libraries(kaa-app kaac crypto)
+target_link_libraries(kaa-app kaac)
