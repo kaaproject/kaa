@@ -1074,8 +1074,7 @@ public class DefaultControlService implements ControlService {
                 List<EventClassFamilyVersionDto> ecfSchemas = eventClassService.findEventClassFamilyVersionsById(aefMap.getEcfId());
                 for (EventClassFamilyVersionDto ecfSchema : ecfSchemas) {
                     if (ecfSchema.getVersion() == efm.getVersion()) {
-                        List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecfSchema.getId(), ecfSchema.getVersion(), EventClassType.EVENT);
-                        records.addAll(eventClassService.findEventClassesByFamilyIdVersionAndType(ecfSchema.getId(), ecfSchema.getVersion(), EventClassType.OBJECT));
+                        List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecf.getId(), ecfSchema.getVersion(), null);
                         efm.setRecords(records);
 
                         List <CTLSchemaDto> ctlDtos = new ArrayList<>();
