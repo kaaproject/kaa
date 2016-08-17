@@ -28,7 +28,6 @@
 , valgrind ? null
 , python ? null
 , gcc-arm-embedded ? null
-, jre ? null
 
 , gcc-xtensa-lx106 ? null
 , esp8266-rtos-sdk ? null
@@ -47,8 +46,8 @@
 }:
 
 assert clangSupport -> clang != null;
-assert esp8266Support -> gcc-xtensa-lx106 != null && esp8266-rtos-sdk != null && jre != null;
-assert cc3200Support -> cc3200-sdk != null && gcc-arm-embedded != null && jre != null;
+assert esp8266Support -> gcc-xtensa-lx106 != null && esp8266-rtos-sdk != null;
+assert cc3200Support -> cc3200-sdk != null && gcc-arm-embedded != null;
 assert raspberrypiSupport -> raspberrypi-tools != null;
 assert testSupport -> posixSupport != null && cmocka != null && cppcheck != null &&
                       valgrind != null && python != null;
@@ -113,11 +112,9 @@ in stdenv.mkDerivation {
   ] ++ lib.optional esp8266Support [
     gcc-xtensa-lx106
     esp8266-rtos-sdk
-    jre
   ] ++ lib.optional cc3200Support [
     cc3200-sdk
     gcc-arm-embedded
-    jre
   ] ++ lib.optional raspberrypiSupport [
     raspberrypi-tools
   ];
