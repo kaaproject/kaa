@@ -153,7 +153,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
         mappedIterators.clear();
 
         if (operationsServerList == null || operationsServerList.isEmpty()) {
-            LOG.trace("Received empty operations server list");
+            LOG.trace("Received empty operations service list");
             resolveFailoverStatus(FailoverStatus.NO_OPERATION_SERVERS_RECEIVED);
             return;
         }
@@ -193,7 +193,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 break;
             case RETRY:
                 long retryPeriod = decision.getRetryPeriod();
-                LOG.warn("Attempt to receive operations server list will be made in {} ms, " +
+                LOG.warn("Attempt to receive operations service list will be made in {} ms, " +
                         "according to failover strategy decision", retryPeriod);
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
@@ -201,13 +201,13 @@ public class DefaultBootstrapManager implements BootstrapManager {
                         try {
                             receiveOperationsServerList();
                         } catch (TransportException e) {
-                            LOG.error("Error while receiving operations server list", e);
+                            LOG.error("Error while receiving operations service list", e);
                         }
                     }
                 }, retryPeriod, TimeUnit.MILLISECONDS);
                 break;
             case USE_NEXT_BOOTSTRAP:
-                LOG.warn("Trying to switch to the next bootstrap server according to failover strategy decision");
+                LOG.warn("Trying to switch to the next bootstrap service according to failover strategy decision");
                 retryPeriod = decision.getRetryPeriod();
                 failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP), status);
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
@@ -216,7 +216,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                         try {
                             receiveOperationsServerList();
                         } catch (TransportException e) {
-                            LOG.error("Error while receiving operations server list", e);
+                            LOG.error("Error while receiving operations service list", e);
                         }
                     }
                 }, retryPeriod, TimeUnit.MILLISECONDS);

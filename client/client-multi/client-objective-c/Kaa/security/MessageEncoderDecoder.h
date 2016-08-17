@@ -19,7 +19,7 @@
 
 /**
  * Class is responsible for encoding/decoding logic of
- * endpoint - operations server communication.
+ * endpoint - operations service communication.
  */
 @interface MessageEncoderDecoder : NSObject
 

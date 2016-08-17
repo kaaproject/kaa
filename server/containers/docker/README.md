@@ -15,9 +15,9 @@ Base image configuration is done using the following environment variables:
 
 | Variable name      | Sample values                    | Description                                                      |
 |--------------------|----------------------------------|------------------------------------------------------------------|
-| CONTROL_ENABLED    | true/false                       | Determines whether control server enabled on this node or not    |
-| BOOTSTRAP_ENABLED  | true/false                       | Determines whether bootstrap server enabled on this node or not  |
-| OPERATIONS_ENABLED | true/false                       | Determines whether operations server enabled on this node or not |
+| CONTROL_ENABLED    | true/false                       | Determines whether control service enabled on this node or not    |
+| BOOTSTRAP_ENABLED  | true/false                       | Determines whether bootstrap service enabled on this node or not  |
+| OPERATIONS_ENABLED | true/false                       | Determines whether operations service enabled on this node or not |
 | DATABASE           | cassandra/mongodb                | Determines whether Cassandra or MongoDB provider will be used    |
 | ZK_HOSTS           | localhost:2181, anotherhost:2181 | Comma-separated list of Zookeeper nodes hostname:port            |
 | CASSANDRA_HOSTS    | localhost:9042, ...              | Comma-separated list of Cassandra nodes hostname:port            |

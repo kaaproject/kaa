@@ -100,13 +100,13 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
             LOG.error("Interrupted while waiting for thrift to start...", e);
         }
 
-        if (getNodeConfig().isControlServerEnabled()) {
+        if (getNodeConfig().isControlServiceEnabled()) {
             controlInitializationService.start();
         }
-        if (getNodeConfig().isBootstrapServerEnabled()) {
+        if (getNodeConfig().isBootstrapServiceEnabled()) {
             bootstrapInitializationService.start();
         }
-        if (getNodeConfig().isOperationsServerEnabled()) {
+        if (getNodeConfig().isOperationsServiceEnabled()) {
             operationsInitializationService.start();
         }
         
@@ -127,13 +127,13 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
      */
     @Override
     public void stop() {
-        if (getNodeConfig().isControlServerEnabled()) {
+        if (getNodeConfig().isControlServiceEnabled()) {
             controlInitializationService.stop();
         }
-        if (getNodeConfig().isBootstrapServerEnabled()) {
+        if (getNodeConfig().isBootstrapServiceEnabled()) {
             bootstrapInitializationService.stop();
         }
-        if (getNodeConfig().isOperationsServerEnabled()) {
+        if (getNodeConfig().isOperationsServiceEnabled()) {
             operationsInitializationService.stop();
         }
         
@@ -167,13 +167,13 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
                             kaaNodeThriftService);
                     processor.registerProcessor(KaaThriftService.KAA_NODE_SERVICE.getServiceName(), kaaNodeProcessor);
 
-                    if (getNodeConfig().isBootstrapServerEnabled()) {
+                    if (getNodeConfig().isBootstrapServiceEnabled()) {
                         BootstrapThriftService.Processor<BootstrapThriftService.Iface> bootstrapProcessor = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(
                                 bootstrapThriftService);
                         processor.registerProcessor(KaaThriftService.BOOTSTRAP_SERVICE.getServiceName(), bootstrapProcessor);
                     }
 
-                    if (getNodeConfig().isOperationsServerEnabled()) {
+                    if (getNodeConfig().isOperationsServiceEnabled()) {
                         OperationsThriftService.Processor<OperationsThriftService.Iface> operationsProcessor = new OperationsThriftService.Processor<OperationsThriftService.Iface>(
                                 operationsThriftService);
                         processor.registerProcessor(KaaThriftService.OPERATIONS_SERVICE.getServiceName(), operationsProcessor);

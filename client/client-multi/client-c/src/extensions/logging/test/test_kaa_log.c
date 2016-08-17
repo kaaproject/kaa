@@ -619,7 +619,7 @@ void test_max_parallel_uploads_with_log_sync(void **state)
 
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
-    strategy.timeout = UINT32_MAX;
+    strategy.timeout = INT16_MAX;
     strategy.decision = UPLOAD;
 
     mock_storage_context_t *storage = create_mock_storage();
@@ -701,7 +701,7 @@ void test_max_parallel_uploads_with_sync_all(void **state)
 
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
-    strategy.timeout = UINT32_MAX;
+    strategy.timeout = INT16_MAX;
     strategy.decision = UPLOAD;
 
     mock_storage_context_t *storage = create_mock_storage();

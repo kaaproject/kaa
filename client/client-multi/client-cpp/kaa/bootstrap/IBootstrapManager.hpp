@@ -38,7 +38,7 @@ public:
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) = 0;
 
     /**
-     * Receives the latest list of servers from the bootstrap server.
+     * Receives the latest list of servers from the bootstrap service.
      */
     virtual void receiveOperationsServerList() = 0;
 

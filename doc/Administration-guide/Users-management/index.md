@@ -9,24 +9,31 @@ sort_idx: 50
 
 **Table of Contents**
 
+- [Managing tenants](#managing-tenants)
 - [Managing tenant admins](#managing-tenant-admins)
 - [Managing users](#managing-users)
 
 This guide explains how to manage users in Kaa Admin UI.
 
-This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the [Installation guide]({{root_url}}Programming-guide/Getting-started/#installation) for more info.
+This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the
+[Installation guide]({{root_url}}Programming-guide/Getting-started/#installation) for more info.
+
+## Managing tenants
+
+The **Tenants** window, which is the starting window for a Kaa admin, displays a list of tenants. The Kaa admin can add/edit/delete a tenant and add a tenant admin to it.
+
+<img src="attach/tenants.png" width="600" height="250">
 
 ## Managing tenant admins
 
-The **Tenants** window, which is the starting window for a Kaa admin, displays a list of tenant admins. A Kaa admin can edit a tenant admin's name/e-mail and delete tenant admins from the system.
+To view a tenant details, select the tenant either from the list or from the navigation panel on the left side.
 
-<img src="attach/image2015-3-5%2014-4-25.png" width="600" height="250">
+<img src="attach/tenant.png" width="600" height="250">
 
-To view a tenant admin's details, select the tenant admin either from the list or from the navigation panel on the left side.
 
-To create a new tenant admin, click **Add tenant** and then fill in all the required fields. Click **Add** to apply the changes.
+To create a new tenant admin, click **Add user** and then fill in all the required fields. Click **Add** to apply the changes.
 
-<img src="attach/image2015-3-5%2014-6-33.png" width="600" height="350">
+<img src="attach/tenant_admin.png" width="600" height="350">
 
 The newly created tenant admin will receive an e-mail with his or her login to Kaa web UI credentials window.
 
