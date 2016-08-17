@@ -127,13 +127,14 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
     @Override
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
             String externalUid,
-            String appToken,
-            Integer schemaVersion,
-            String tenantId) {
-         EndpointUser endpointUser =  endpointUserDao.findByExternalIdAndTenantId(externalUid,tenantId);
-        EndpointUserConfiguration endpointUserConfiguration =
-                endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(endpointUser.getId(),appToken,schemaVersion);
-        return getDto(endpointUserConfiguration);
+                String appToken,
+                Integer schemaVersion,
+                String tenantId) {
+        return getDto(
+                endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
+                        endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId).getId(),
+                        appToken,
+                        schemaVersion));
     }
 
 
