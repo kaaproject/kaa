@@ -42,7 +42,7 @@ public class SchemasPlaceApplication extends TreePlace {
 
     @Override
     public String getName() {
-        return Utils.constants.versions();
+        return Utils.constants.schemas();
     }
 
     public static abstract class Tokenizer<P extends SchemasPlaceApplication> implements PlaceTokenizer<P>, PlaceConstants {
