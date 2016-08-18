@@ -167,24 +167,21 @@ The following code block illustrates a simple desktop application that sends vir
 
 Before you start with C application code, some preparation is required.
 
-1. Install dependencies: CMake and OpenSSL. On Ubuntu, you can install it using following commands.
+1. Install dependencies: CMake. On Ubuntu, you can install it using following commands.
 
         sudo apt-get install cmake
-        sudo apt-get install libssl-dev
 1. Create `kaa` directory and unpack C SDK
 1. Create `CMakeLists.txt` in the application directory with following contents.
 
         cmake_minimum_required(VERSION 2.8.8)
         project(kaa-application C)
 
-        find_package(OpenSSL REQUIRED)
-
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
 
         add_subdirectory(kaa)
 
         add_executable(kaa-app main.c)
-        target_link_libraries(kaa-app kaac crypto)
+        target_link_libraries(kaa-app kaac)
 1. Create source file `main.c` with empty main routine (for now).
 
         int main(void)

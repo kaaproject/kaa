@@ -29,4 +29,4 @@ target_link_libraries(extension_bootstrap PUBLIC kaac)
 #        SOURCES
 #        ${CMAKE_CURRENT_LIST_DIR}/test/test_kaa_bootstrap_manager.c
 #        DEPENDS
-#        kaac ${OPENSSL_LIBRARIES})
+#        kaac)

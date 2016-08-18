@@ -137,10 +137,10 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
 
         add_subdirectory(kaa)
 
-    Compile executable named `kaa-app` using `src/kaa-application.c`, and link it with `kaac` and `crypto`.
+    Compile executable named `kaa-app` using `src/kaa-application.c`, and link it with `kaac`.
 
         add_executable(kaa-app src/kaa-application.c)
-        target_link_libraries(kaa-app kaac crypto)
+        target_link_libraries(kaa-app kaac)
 
     Full `CMakeLists.txt` code:
 
@@ -152,7 +152,7 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
         add_subdirectory(kaa)
 
         add_executable(kaa-app src/kaa-application.c)
-        target_link_libraries(kaa-app kaac crypto)
+        target_link_libraries(kaa-app kaac)
 
 1. Now your directory structure should look like this:
 

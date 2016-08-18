@@ -16,11 +16,11 @@
 
 if(KAA_UNITTESTS_COMPILE)
     find_package(cmocka REQUIRED)
-    find_package(OpenSSL REQUIRED)
     find_program(MEMORYCHECK_COMMAND valgrind)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-reachable=yes --trace-children=yes -v")
 
     include(CTest)
+    include(CMakeParseArguments)
 endif()
 
 ################################################################################
@@ -89,7 +89,7 @@ if(WITH_EXTENSION_LOGGING)
         test/platform-impl/test_ext_log_storage_memory.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES}
+        kaac
         INC_DIRS
         test)
 
@@ -98,7 +98,7 @@ if(WITH_EXTENSION_LOGGING)
         test/platform-impl/test_ext_log_upload_strategies.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES}
+        kaac
         INC_DIRS
         test)
 
@@ -106,7 +106,7 @@ if(WITH_EXTENSION_LOGGING)
         SOURCES
         test/test_platform_protocol.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 endif()
 
 kaa_add_unit_test(NAME test_meta_extension
@@ -114,34 +114,34 @@ kaa_add_unit_test(NAME test_meta_extension
         test/test_meta_extension.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 
 kaa_add_unit_test(NAME test_platform_utils
         SOURCES
         test/test_platform_utils.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 
 kaa_add_unit_test(NAME test_context
         SOURCES
         test/test_kaa_context.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 
 kaa_add_unit_test(NAME test_status
         SOURCES
         test/test_kaa_status.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 
 kaa_add_unit_test(NAME test_common
         SOURCES
         test/test_kaa_common.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 
 kaa_add_unit_test(NAME test_list
         SOURCES
@@ -155,7 +155,7 @@ kaa_add_unit_test(NAME test_kaatcp_parser
         test/kaatcp/kaatcp_parser_test.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES}
+        kaac
         INC_DIRS
         test)
 
@@ -164,7 +164,7 @@ kaa_add_unit_test(NAME test_kaatcp_request
         test/kaatcp/kaatcp_request_test.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES}
+        kaac
         INC_DIRS
         test)
 
@@ -173,7 +173,7 @@ kaa_add_unit_test(NAME test_kaa_tcp_channel_bootstrap
         test/kaa_tcp_channel/test_kaa_tcp_channel_bootstrap.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES}
+        kaac
         INC_DIRS
         test)
 
@@ -182,13 +182,13 @@ kaa_add_unit_test(NAME test_kaa_common_schema
         test/test_kaa_common_schema.c
         test/kaa_test_external.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
 
 kaa_add_unit_test(NAME test_kaa_reallocation
         SOURCES
         test/utilities/test_kaa_reallocation.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES}
+        kaac
         INC_DIRS
         test)
 
@@ -210,7 +210,7 @@ kaa_add_unit_test(NAME test_kaa_extension_private
 #        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
 #        test/kaa_test_external.c
 #        DEPENDS
-#        kaac ${OPENSSL_LIBRARIES}
+#        kaac
 #        INC_DIRS
 #        test)
 
@@ -218,4 +218,4 @@ kaa_add_unit_test(NAME test_kaa_channel_manager
         SOURCES
         test/test_kaa_channel_manager.c
         DEPENDS
-        kaac ${OPENSSL_LIBRARIES})
+        kaac)
