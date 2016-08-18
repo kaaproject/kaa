@@ -29,7 +29,11 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity

@@ -1071,7 +1071,7 @@ public class DefaultControlService implements ControlService {
                 efm.setEcfName(ecf.getName());
                 efm.setEcfNamespace(ecf.getNamespace());
                 efm.setEcfClassName(ecf.getClassName());
-                List<EventClassFamilyVersionDto> ecfSchemas = eventClassService.findEventClassFamilyVersionsById(aefMap.getEcfId());
+                List<EventClassFamilyVersionDto> ecfSchemas = eventClassService.findEventClassFamilyVersionsByEcfId(aefMap.getEcfId());
                 for (EventClassFamilyVersionDto ecfSchema : ecfSchemas) {
                     if (ecfSchema.getVersion() == efm.getVersion()) {
                         List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecf.getId(), ecfSchema.getVersion(), null);
@@ -1529,7 +1529,7 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException {
-        return eventClassService.findEventClassFamilyVersionsById(eventClassFamilyId);
+        return eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamilyId);
     }
 
     /*
@@ -1571,13 +1571,13 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
-        return eventClassService.validateEventClassFamilyFqns(eventClassFamilyId, fqns);
+    public boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns) {
+        return eventClassService.validateEventClassFamilyFqns(ecfId, fqns);
     }
 
     @Override
-    public List<String> getFqnListForECF(String eventClassId) {
-        return eventClassService.getFqnListForECF(eventClassId);
+    public List<String> getFqnListForECF(String ecfId) {
+        return eventClassService.getFqnListForECF(ecfId);
     }
 
     /*

@@ -99,7 +99,7 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     @Override
-    public EventClassFamilyDto findEventClassFamilyByECFVersionId(String id) {
+    public EventClassFamilyDto findEventClassFamilyByEcfvId(String id) {
         validateSqlId(id, "Event class family version id is incorrect. Can't find event class family by ECF version id " + id);
 
         EventClassFamily eventClassFamily = eventClassFamilyDao.find().stream().
@@ -110,9 +110,9 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     @Override
-    public List<EventClassFamilyVersionDto> findEventClassFamilyVersionsById(String id) {
-        validateSqlId(id, "Event class family id is incorrect. Can't find event class family by id " + id);
-        EventClassFamily ecf = eventClassFamilyDao.findById(id);
+    public List<EventClassFamilyVersionDto> findEventClassFamilyVersionsByEcfId(String ecfId) {
+        validateSqlId(ecfId, "Event class family id is incorrect. Can't find event class family by id " + ecfId);
+        EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
         return convertDtoList(ecf.getSchemas());
     }
 
@@ -160,7 +160,7 @@ public class EventClassServiceImpl implements EventClassService {
                 fqns.add(eventClass.getFqn());
             }
             if (validateEventClassFamilyFqns(eventClassFamily.getId(), fqns)) {
-                List<EventClassFamilyVersionDto> schemasDto = findEventClassFamilyVersionsById(eventClassFamilyId);
+                List<EventClassFamilyVersionDto> schemasDto = findEventClassFamilyVersionsByEcfId(eventClassFamilyId);
                 int version = 1;
                 if (schemasDto != null && !schemasDto.isEmpty()) {
                     Collections.sort(schemasDto, new Comparator<EventClassFamilyVersionDto>() {
@@ -281,15 +281,15 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     @Override
-    public List<String> getFqnListForECF(String eventClassId) {
-        if (isValidSqlId(eventClassId)) {
-            LOG.debug("Find event class by id [{}] ", eventClassId);
+    public List<String> getFqnListForECF(String ecfId) {
+        if (isValidSqlId(ecfId)) {
+            LOG.debug("Get fqn list for event class family by id [{}] ", ecfId);
             List<String> storedFQNs = new ArrayList<>();
-            EventClassFamily ecf = eventClassFamilyDao.findById(eventClassId);
+            EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
             ecf.getSchemas().forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
             return storedFQNs;
         } else {
-            throw new IncorrectParameterException("Incorrect event class id: " + eventClassId);
+            throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);
         }
     }
 }

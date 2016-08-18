@@ -338,7 +338,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             }
         });
 
-        when(eventClassService.findEventClassFamilyByECFVersionId(EVENT_CLASS_FAMILY_VERSION_ID)).then(new Answer<EventClassFamilyDto>() {
+        when(eventClassService.findEventClassFamilyByEcfvId(EVENT_CLASS_FAMILY_VERSION_ID)).then(new Answer<EventClassFamilyDto>() {
             @Override
             public EventClassFamilyDto answer(InvocationOnMock invocation) throws Throwable {
                 sleepABit();

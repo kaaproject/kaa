@@ -173,7 +173,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
         EventClassFamilyDto eventClassFamily = createEventClassFamily(tenantAdmin.getTenantId());
         EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdmin.getTenantId());
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
-        List<EventClassFamilyVersionDto> schemas = eventClassService.findEventClassFamilyVersionsById(eventClassFamily.getId());
+        List<EventClassFamilyVersionDto> schemas = eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamily.getId());
         Assert.assertNotNull(schemas);
         Assert.assertEquals(1, schemas.size());
         EventClassFamilyVersionDto eventSchema = schemas.get(0);
@@ -182,7 +182,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
 
         eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdmin.getTenantId());
         client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
-        schemas = eventClassService.findEventClassFamilyVersionsById(eventClassFamily.getId());
+        schemas = eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamily.getId());
         Assert.assertNotNull(schemas);
         Assert.assertEquals(2, schemas.size());
         eventSchema = schemas.get(1);

@@ -139,27 +139,5 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
         }
         return eventClass;
     }
-
-    @Override
-    public boolean validateFqns(String tenantId, String ecfId, List<String> fqns) { //fixme: drop this as unused?
-        List<EventClass> eventClasses = Collections.emptyList();
-        if (isNotBlank(tenantId) && isNotBlank(ecfId) && fqns != null && !fqns.isEmpty()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Validating FQNs by tenant id [{}], ecf id [{}] and FQNs [{}]", tenantId, ecfId, Arrays.toString(fqns.toArray()));
-            } else {
-                LOG.debug("Validating FQNs by tenant id [{}], ecf id [{}] and FQNs [{}]", tenantId, ecfId, fqns.size());
-            }
-            Criteria criteria = getCriteria();
-            criteria.createAlias(TENANT_PROPERTY, TENANT_ALIAS);
-            criteria.createAlias(ECFV_PROPERTY, ECFV_ALIAS);
-            criteria.add(Restrictions.and(
-                    Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)),
-                    Restrictions.ne(ECFV_REFERENCE, Long.valueOf(ecfId)),
-                    Restrictions.in(FQN_PROPERTY, fqns)));
-            eventClasses = findListByCriteria(criteria);
-        }
-        boolean result = eventClasses == null || eventClasses.isEmpty();
-        LOG.debug("[{},{}] Validating result: {}.", tenantId, ecfId, result);
-        return result;
-    }
+    
 }

@@ -51,15 +51,15 @@ public interface EventClassService {
      * @param id the string id of event class family version
      * @return the event class family dto object
      */
-    EventClassFamilyDto findEventClassFamilyByECFVersionId(String id);
+    EventClassFamilyDto findEventClassFamilyByEcfvId(String id);
 
     /**
      * Find event class family versions by id.
      *
-     * @param id the string id of event class family
+     * @param ecfId the string id of event class family
      * @return the event class family dto object
      */
-    List<EventClassFamilyVersionDto> findEventClassFamilyVersionsById(String id);
+    List<EventClassFamilyVersionDto> findEventClassFamilyVersionsByEcfId(String ecfId);
 
     /**
      * Save event class family.
@@ -88,7 +88,15 @@ public interface EventClassService {
      */
     List<EventClassDto> findEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type);
 
-    boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns);
+    /**
+     * Check passed FQNs if they are present in event class family.
+     * FQNs in scope of event class family should be unique.
+     *
+     * @param ecfId the string id of event class family
+     * @param fqns list of fqns to check against family fqns
+     * @return true is fqns are unique
+     */
+    boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns);
 
     /**
      * Find event class family by tenant id and name.
@@ -135,5 +143,11 @@ public interface EventClassService {
      */
     boolean isValidECFListInSdkProfile(List<AefMapInfoDto> ecfList);
 
-    List<String> getFqnListForECF(String eventClassId);
+    /**
+     * Get list of all events class FQNs in event class family.
+     *
+     * @param ecfId string of the event class family id
+     * @return list of all FQNs
+     */
+    List<String> getFqnListForECF(String ecfId);
 }

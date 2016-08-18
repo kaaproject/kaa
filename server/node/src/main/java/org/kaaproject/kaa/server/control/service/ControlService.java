@@ -1029,12 +1029,43 @@ public interface ControlService {
     List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
             throws ControlServiceException;
 
+    /**
+     * Gets the event class by id.
+     *
+     * @param eventClassId
+     *            the event class id
+     * @return the event class dto
+     * @throws ControlServiceException
+     *             the control service exception
+     */
     EventClassDto getEventClassById(String eventClassId) throws ControlServiceException;
 
-    boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns);
+    /**
+     * Check passed FQNs if they are present in event class family.
+     * FQNs in scope of event class family should be unique.
+     *
+     * @param ecfId the string id of event class family
+     * @param fqns list of fqns to check against family fqns
+     * @return true is fqns are unique
+     */
+    boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns);
 
-    List<String> getFqnListForECF(String eventClassId) throws ControlServiceException;
+    /**
+     * Get list of all events class FQNs in event class family.
+     *
+     * @param ecfId string of the event class family id
+     * @return list of all FQNs
+     */
+    List<String> getFqnListForECF(String ecfId) throws ControlServiceException;
 
+    /**
+     * Check passed event class family mappings for Sdk profile.
+     * There must not be same FNQs between chosen event class family versions.
+     *
+     * @param ecfList list of event class family mappings chosen for Sdk profile
+     * @throws ControlServiceException
+     *             the control service exception
+     */
     void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException;
 
     /**

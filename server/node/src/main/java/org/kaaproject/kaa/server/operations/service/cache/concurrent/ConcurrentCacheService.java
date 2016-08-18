@@ -694,7 +694,7 @@ public class ConcurrentCacheService implements CacheService {
                 List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(key.getTenantId(), key.getFqn());
                 if (eventClasses != null && !eventClasses.isEmpty()) {
                     String ecfvId = eventClasses.get(0).getEcfvId();
-                    return eventClassService.findEventClassFamilyByECFVersionId(ecfvId).getId();
+                    return eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
                 } else {
                     LOG.warn("Fetching result for getEcfvId using key {} Failed!", key);
                     return null;
@@ -717,7 +717,7 @@ public class ConcurrentCacheService implements CacheService {
                         key.getVersion());
 
                 String ecfvId = eventClass.getEcfvId();
-                String ecfId = eventClassService.findEventClassFamilyByECFVersionId(ecfvId).getId();
+                String ecfId = eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
 
                 List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(ecfId,
                         key.getVersion());

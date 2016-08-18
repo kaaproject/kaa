@@ -62,16 +62,6 @@ public interface EventClassDao<T> extends SqlDao<T> {
     List<T> findByTenantIdAndFqn(String tenantId, String fqn);
 
     /**
-     * Validate list of FQNs for uniqueness within the tenant.
-     *
-     * @param tenantId the tenant id
-     * @param ecfId    the event class family id
-     * @param fqns     the list of FQNs
-     * @return true if FQNs are unique otherwise false
-     */
-    boolean validateFqns(String tenantId, String ecfId, List<String> fqns);
-
-    /**
      * @param tenantId the tenant id
      * @param fqn      the FQN
      * @param version  the version
