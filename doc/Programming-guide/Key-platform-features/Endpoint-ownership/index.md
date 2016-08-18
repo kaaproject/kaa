@@ -36,15 +36,16 @@ The owner verification is handled by specific server components called owner ver
 There are several default owner verifier implementations that are available out of the box for each Kaa installation. 
 This section contains general information about the architecture, configuration and administration of the default owner verifiers. 
 It is also possible to plug in [custom verifier implementations](#custom-owner-verifier). Each Kaa application can support multiple owner verifiers.
-You can add new verifier from Administration UI or with using [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+You can add new verifier from Administration UI or with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
 The following image example illustrates how to add new verifier from Administration UI.
 
 ![new verifier](Admin-ui/adding-new-verifier.png "new verifier")
  
 ## Trustful owner verifier ##
 This owner verifier implementation is created for the test and debug purposes and always accepts provided owner id and access token. 
-It is recommended that you do not use this verifier in production because it may cause security issues. There is no specific configuration for this verifier, because its schema is empty.
-To create a trustful owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO). 
+It is recommended that you do not use this verifier in production because it may cause security issues. 
+There is no specific configuration for this verifier, because its schema is empty.
+To create a trustful owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier). 
 The following image example illustrates how to create a trustful owner verifier from Administration UI.
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
@@ -94,7 +95,7 @@ The following configuration example matches the previous schema.
 
 
 ### Administration ###
-To create a Facebook owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+To create a Facebook owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
 The following image example illustrates how to create a Facebook owner verifier from Administration UI.
 
 ![facebook verifier](Admin-ui/verifier-facebook.png "facebook verifier")
@@ -131,7 +132,7 @@ The configuration should match the following Avro schema.
 ```
 
 ### Administration ###
-To create a Google+ owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+To create a Google+ owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
 The following image example illustrates how to create a Google+ owner verifier from Administration UI.
 
 ![google verifier](Admin-ui/verifier-google.png "google verifier")
@@ -168,7 +169,7 @@ The configuration should match the following Avro schema.
 ```
 
 ### Administration ###
-To create a Twitter owner verifier, use either Administration UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+To create a Twitter owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
 The following image example illustrates how to create a Twitter owner verifier from Administration UI.
                                    
 ![twitter verifier](Admin-ui/verifier-twitter.png "twitter verifier")
@@ -180,7 +181,7 @@ It is possible to implement and plug-in custom owner verifiers. You can find cor
 
 # Endpoint access token flow #
 In the *endpoint access token flow*, new endpoints are attached to the owner with the help of the endpoint which was attached to the owner beforehand.
-The following steps illustrate this flow with the endpoint A, which is already attached to the owner, and the endpoint B, which is due to be attached.
+The following steps illustrate this flow with the endpoint A, which is already attached to the owner, and the endpoint B, which is due to be attached:
 
    1. The endpoint B periodically generates and sends its access token to the Kaa cluster.
    2. The endpoint B displays its access token as a QR code on the screen (TV) or on the webpage (e.g., a router or other device with an embedded server).

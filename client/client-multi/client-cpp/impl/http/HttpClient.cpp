@@ -38,7 +38,7 @@ void HttpClient::checkError(const boost::system::error_code& code)
         return;
     }
 
-    KAA_LOG_WARN(boost::format("Unexpected transport error: %s") % code.message());
+    KAA_LOG_WARN(boost::format("Transport error occurred: %s") % code.message());
 
     doSocketClose();
 
@@ -51,9 +51,9 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
     KAA_MUTEX_UNIQUE_DECLARE(httpClientGuardLock, httpClientGuard_);
     KAA_MUTEX_LOCKED("httpClientGuard_");
 
-    KAA_LOG_INFO(boost::format("Sending request to the server %1%:%2%")
-                                                            % request.getHost()
-                                                            % request.getPort());
+    KAA_LOG_TRACE(boost::format("Sending request to %s:%d")
+                                                % request.getHost()
+                                                % request.getPort());
 
     boost::system::error_code errorCode;
 
@@ -79,9 +79,9 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
 
     checkError(errorCode);
 
-    KAA_LOG_INFO(boost::format("Response from server %1%:%2% successfully received")
-                                                                    % request.getHost()
-                                                                    % request.getPort());
+    KAA_LOG_INFO(boost::format("Received response from server %s:%d")
+                                                        % request.getHost()
+                                                        % request.getPort());
 
     doSocketClose();
 
@@ -110,7 +110,7 @@ void HttpClient::doSocketClose()
     boost::system::error_code closingErrorCode;
     sock_.close(closingErrorCode);
 
-    KAA_LOG_INFO(boost::format("Socket closed: shutdown status '%d', closing status '%s'")
+    KAA_LOG_DEBUG(boost::format("Socket closed: shutdown status '%d', closing status '%s'")
                                                                     % shutdownErrorCode.message()
                                                                     % closingErrorCode.message());
 }

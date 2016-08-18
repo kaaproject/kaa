@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.admin.shared.services.TenantService;
 import org.kaaproject.kaa.server.admin.shared.services.UserService;
 import org.kaaproject.kaa.server.admin.shared.services.VerifierService;
+import org.kaaproject.kaa.server.control.service.ControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,6 +157,11 @@ public abstract class AbstractAdminController {
      */
     @Autowired
     UserFacade userFacade;
+    /**
+     * The control service.
+     */
+    @Autowired
+    ControlService controlService;
 
     /**
      * The password encoder.

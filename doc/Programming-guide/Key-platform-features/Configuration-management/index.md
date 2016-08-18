@@ -74,10 +74,9 @@ updating fields selectively, leaving some of them without any change if necessar
 
 ## User-specific configuration management
 
-The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editConfiguration) allows 
-updating configuration data for the specific user under the application. The user-specific
-configuration management implements the same approach as in [Group-specific configuration](#group-specific-configuration-management) management,
-based on the override schema and override algorithm.
+The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editUserConfiguration)
+allows updating configuration data for the specific user under the application. The user-specific configuration management implements the same approach as in
+[Group-specific configuration](#group-specific-configuration-management) management, based on the override schema and override algorithm.
 
 >**NOTE:**
 > Since each endpoint belongs to only one user at a time, the override algorithm does not support data set merges as in the group-specific
