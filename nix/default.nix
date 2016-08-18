@@ -44,9 +44,9 @@ let
       patches = [ ./astyle/max_indent.patch ];
     });
 
-    kaa-client-c = callPackage ./kaa-client-c { };
+    kaa-client-c = callPackage ./kaa-client-c { cmake = pkgs.cmake-2_8; };
 
-    kaa-client-cpp = callPackage ./kaa-client-cpp { };
+    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = pkgs.cmake-2_8; };
 
     kaa-docs = callPackage ./kaa-docs { };
   };
