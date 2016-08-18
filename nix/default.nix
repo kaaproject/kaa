@@ -14,8 +14,19 @@
 #  limitations under the License.
 #
 
-{ system ? builtins.currentSystem
-, pkgs ? import <nixpkgs> { inherit system; }
+let
+  nixpkgs-bootstrap = import <nixpkgs> { };
+
+  nixpkgs-16_03 = import (nixpkgs-bootstrap.fetchFromGitHub {
+    owner = "NixOS";
+    repo = "nixpkgs-channels";
+    rev = "baf46b99e33005348fdbd083366c330be4b373f3";
+    sha256 = "19wq2ayn9l5qd2s6s07sjh49kc6qlpadyy098zzayxj6nprvwzmb";
+  }) { };
+
+in
+
+{ pkgs ? nixpkgs-16_03
 }:
 
 let
