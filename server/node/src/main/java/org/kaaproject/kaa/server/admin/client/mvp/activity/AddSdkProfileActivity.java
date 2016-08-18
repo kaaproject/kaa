@@ -189,11 +189,11 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
                     sdkProfileDto.setDefaultVerifierToken(detailsView.getDefaultUserVerifier()
                             .getValue().getVerifierToken());
                 }
-
-                if (!entity.getAefMapIds().isEmpty() && entity.getDefaultVerifierToken() == null) {
+                entity = sdkProfileDto;
+                if (!sdkProfileDto.getAefMapIds().isEmpty() && sdkProfileDto.getDefaultVerifierToken() == null) {
                     detailsView.setErrorMessage(Utils.constants.specifyVerifier());
                 } else {
-                    KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<SdkProfileDto>() {
+                    KaaAdmin.getDataSource().addSdkProfile(sdkProfileDto, new BusyAsyncCallback<SdkProfileDto>() {
                         @Override
                         public void onSuccessImpl(SdkProfileDto result) {
                             detailsView.reset();
@@ -208,9 +208,6 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
                 }
             }
         });
-
-        entity = sdkProfileDto;
-
     }
 
     @Override
