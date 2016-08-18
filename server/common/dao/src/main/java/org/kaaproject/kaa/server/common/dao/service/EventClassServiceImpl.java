@@ -206,7 +206,7 @@ public class EventClassServiceImpl implements EventClassService {
 
     @Override
     public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
-        Set<String> storedFQNs = getFqnListForECF(eventClassFamilyId);
+        Set<String> storedFQNs = getFqnSetForECF(eventClassFamilyId);
         for (String fqn : fqns) {
             if (storedFQNs.contains(fqn)) return false;
         }
@@ -287,7 +287,7 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     @Override
-    public Set<String> getFqnListForECF(String ecfId) {
+    public Set<String> getFqnSetForECF(String ecfId) {
         if (isValidSqlId(ecfId)) {
             LOG.debug("Get fqn list for event class family by id [{}] ", ecfId);
             Set<String> storedFQNs = new HashSet<>();

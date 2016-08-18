@@ -29,8 +29,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CLASS_NAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_ID;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
 
 @Repository
 public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClassFamily> implements EventClassFamilyDao<EventClassFamily> {

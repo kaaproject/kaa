@@ -150,5 +150,5 @@ public interface EventClassService {
      * @param ecfId string of the event class family id
      * @return list of all FQNs
      */
-    Set<String> getFqnListForECF(String ecfId);
+    Set<String> getFqnSetForECF(String ecfId);
 }
