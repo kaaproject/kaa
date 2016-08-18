@@ -279,9 +279,20 @@ public class EventController extends AbstractAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
+    @ApiOperation(value = "Gets the event class family versions",
+            notes = "Returns all event class family versions for the specified family. Only users with the " +
+                    "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
+                    "of the event class family does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "An event class family with the specified id does not exist"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "eventClassFamilyVersions/{eventClassFamilyId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(@PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(
+            @ApiParam(name = "eventClassFamilyId", value = "An id of event class family", required = true)
+            @PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
         return eventService.getEventClassFamilyVersions(eventClassFamilyId);
     }
 
