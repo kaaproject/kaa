@@ -5172,7 +5172,9 @@
           "type" : "string"
         },
         "username" : {
-          "type" : "string"
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2147483647
         },
         "externalUid" : {
           "type" : "string"
@@ -5186,13 +5188,13 @@
         },
         "firstName" : {
           "type" : "string",
-          "minLength" : 2,
-          "maxLength" : 35
+          "minLength" : 1,
+          "maxLength" : 2147483647
         },
         "lastName" : {
           "type" : "string",
-          "minLength" : 2,
-          "maxLength" : 35
+          "minLength" : 1,
+          "maxLength" : 2147483647
         },
         "mail" : {
           "type" : "string",

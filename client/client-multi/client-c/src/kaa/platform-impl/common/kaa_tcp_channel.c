@@ -1469,10 +1469,8 @@ static uint32_t get_uint32_t(const uint8_t *buffer)
         return 0;
     }
 
-    uint32_t value = ((uint32_t)buffer[3] << 24)
-            + ((uint32_t)buffer[2] << 16)
-            + ((uint32_t)buffer[1] << 8)
-            + ((uint32_t)buffer[0]);
+    uint32_t value = 0;
+    memcpy(&value, buffer, sizeof(value));
     return KAA_NTOHL(value);
 }
 

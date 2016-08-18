@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -128,6 +129,8 @@ public class UserController extends AbstractAdminController {
         ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
         if (resultCode == ResultCode.USER_NOT_FOUND) {
             throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));
+        } else if (resultCode == ResultCode.PERMISSION_DENIED) {
+            throw Utils.handleException(new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED));
         } else if (resultCode == ResultCode.OLD_PASSWORD_MISMATCH) {
             throw Utils.handleException(new IllegalArgumentException("Current password is invalid."));
         } else if (resultCode == ResultCode.BAD_PASSWORD_STRENGTH) {
@@ -236,7 +239,7 @@ public class UserController extends AbstractAdminController {
     @ResponseBody
     public UserDto editUser(
             @ApiParam(name = "user", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
-            @RequestBody UserDto user) throws KaaAdminServiceException {
+           @Valid @RequestBody UserDto user) throws KaaAdminServiceException {
         try {
             CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
             user.setExternalUid(result.getUserId().toString());

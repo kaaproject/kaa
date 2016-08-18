@@ -42,9 +42,9 @@
         location="classpath:/control/control-server-test.properties" />
 
     <bean id="kaaNodeServerConfig" class="org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig">
-        <property name="controlServerEnabled" value="#{properties[control_server_enabled]}" />
-        <property name="bootstrapServerEnabled" value="#{properties[bootstrap_server_enabled]}" />
-        <property name="operationsServerEnabled" value="#{properties[operations_server_enabled]}" />
+        <property name="controlServiceEnabled" value="#{properties[control_service_enabled]}" />
+        <property name="bootstrapServiceEnabled" value="#{properties[bootstrap_service_enabled]}" />
+        <property name="operationsServiceEnabled" value="#{properties[operations_service_enabled]}" />
         <property name="thriftHost" value="#{properties[thrift_host]}" />
         <property name="thriftPort" value="#{properties[thrift_port]}" />
         <property name="zkEnabled" value="#{properties[zk_enabled]}" />

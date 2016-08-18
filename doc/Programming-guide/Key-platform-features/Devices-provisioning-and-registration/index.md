@@ -15,7 +15,7 @@ This article contains brief description of endpoint authentication mechanism and
 
 ## Endpoint Authentication
 
-Kaa uses hybrid encryption system that is based on RSA with 2048-bit keypair and AES with 256(512)-bit key. 
+Kaa uses hybrid encryption system that is based on RSA with 2048-bit key pair and AES with 256(512)-bit key. 
 During the start of new session, endpoint delivers encrypted session key and the digital signature of this key.
 Session key is a randomly generated AES key that is also encrypted with public key of the kaa node which serves this session or request. 
 Session key signature is based on the private key of the endpoint.
