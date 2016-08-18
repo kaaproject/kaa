@@ -4,7 +4,7 @@ title: Using Kaa endpoint SDKs
 permalink: /:path/
 sort_idx: 40
 ---
-Using Kaa endpoint SDKs
+
 
 {% include variables.md %}
 
