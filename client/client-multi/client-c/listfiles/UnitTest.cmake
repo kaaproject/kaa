@@ -20,6 +20,7 @@ if(KAA_UNITTESTS_COMPILE)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-reachable=yes --trace-children=yes -v")
 
     include(CTest)
+    include(CMakeParseArguments)
 endif()
 
 ################################################################################
