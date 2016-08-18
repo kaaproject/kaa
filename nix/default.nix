@@ -33,6 +33,8 @@ let
   callPackage = pkgs.lib.callPackageWith (pkgs // self);
 
   self = rec {
+    avro-cpp = callPackage ./avro-c++ { };
+
     gcc-xtensa-lx106 = callPackage ./gcc-xtensa-lx106 { };
 
     esp8266-rtos-sdk = callPackage ./esp8266-rtos-sdk { };

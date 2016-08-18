@@ -592,8 +592,12 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>**/security.policy</exclude>
                         <exclude>doc/</exclude>
 
-                        <exclude>nix/astyle/max_indent.patch</exclude>
                         <exclude>gh-pages-stub/</exclude>
+
+                        <exclude>nix/astyle/max_indent.patch</exclude>
+                        <!-- backported from nixpkgs -->
+                        <exclude>nix/avro-c++/</exclude>
+
                         <!-- Auto-generated -->
                         <exclude>nix/kaa-docs/Gemfile.lock</exclude>
                         <exclude>nix/kaa-docs/gemset.nix</exclude>
