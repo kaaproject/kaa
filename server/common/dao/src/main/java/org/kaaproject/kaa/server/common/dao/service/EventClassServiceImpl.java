@@ -25,7 +25,10 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSql
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -101,12 +104,7 @@ public class EventClassServiceImpl implements EventClassService {
     @Override
     public EventClassFamilyDto findEventClassFamilyByEcfvId(String id) {
         validateSqlId(id, "Event class family version id is incorrect. Can't find event class family by ECF version id " + id);
-
-        EventClassFamily eventClassFamily = eventClassFamilyDao.find().stream().
-                filter(ecf -> ecf.getSchemas().stream()
-                        .filter(ecfv -> ecfv.getStringId().equals(id)).count() > 0)
-                .findFirst().get();
-        return getDto(eventClassFamily);
+        return getDto(eventClassFamilyDao.findByEcfvId(id));
     }
 
     @Override
@@ -208,23 +206,31 @@ public class EventClassServiceImpl implements EventClassService {
 
     @Override
     public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
-        List<String> storedFQNs = getFqnListForECF(eventClassFamilyId);
-        for (String storedFQN : storedFQNs) {
-            long duplicatedFqnCount = fqns.stream().filter(fqn -> fqn.equals(storedFQN)).count();
-            if (duplicatedFqnCount > 0) return false;
+        Set<String> storedFQNs = getFqnListForECF(eventClassFamilyId);
+        for (String fqn : fqns) {
+            if (storedFQNs.contains(fqn)) return false;
         }
-
         return true;
     }
 
     @Override
     public List<EventClassDto> findEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type) {
-        List<EventClassDto> eventClasses;
+        List<EventClassDto> eventClasses = new ArrayList<>();
         if (isValidSqlId(ecfId)) {
             LOG.debug("Find event classes by family id [{}] version [{}] and type [{}]", ecfId, version, type);
             EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
-            EventClassFamilyVersion ecfv = ecf.getSchemas().stream().filter(s -> s.getVersion() == version).collect(Collectors.toList()).get(0);
-            eventClasses = convertDtoList(ecfv.getRecords().stream().filter(ec -> type != null ? ec.getType() == type : true).collect(Collectors.toList()));
+            Optional<EventClassFamilyVersion> ecfv = ecf.getSchemas().stream().filter(s -> s.getVersion() == version).findFirst();
+
+            if (type == null) {
+                ecfv.ifPresent(
+                        e -> eventClasses.addAll(convertDtoList(e.getRecords())));
+            }
+            else {
+                ecfv.ifPresent(
+                        e -> eventClasses.addAll(convertDtoList(e.getRecords().stream()
+                                .filter(ec -> ec.getType() == type)
+                                .collect(Collectors.toList()))));
+            }
         } else {
             throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);
         }
@@ -263,28 +269,28 @@ public class EventClassServiceImpl implements EventClassService {
     }
 
     @Override
-    public boolean isValidECFListInSdkProfile(List<AefMapInfoDto> ecfList) {
-        List<EventClass> ecList = new ArrayList<>();
-        for (AefMapInfoDto ecfMap : ecfList) {
-            EventClassFamily ecf = eventClassFamilyDao.findById(ecfMap.getEcfId());
-            ecf.getSchemas().forEach(ecfv -> ecList.addAll(ecfv.getRecords()));
-        }
+    public boolean isValidECFListInSdkProfile(List<AefMapInfoDto> aefList) {
+        Set<EventClass> ecList = new HashSet<>();
+        for (AefMapInfoDto aef : aefList) {
+            EventClassFamily ecf = eventClassFamilyDao.findById(aef.getEcfId());
 
-        for (EventClass ec : ecList) {
-            long fqnMatches = ecList.stream().filter(ec2 -> ec2.getFqn().equals(ec.getFqn())).count();
-            if (fqnMatches > 1) {
-                return false;
+            Optional<EventClassFamilyVersion> optEcfv = ecf.getSchemas().stream()
+                    .filter(ecfv -> ecfv.getVersion() == aef.getVersion())
+                    .findFirst();
+            if (optEcfv.isPresent()) {
+                for (EventClass ec : optEcfv.get().getRecords()) {
+                    if (!ecList.add(ec)) return false;
+                }
             }
         }
-
         return true;
     }
 
     @Override
-    public List<String> getFqnListForECF(String ecfId) {
+    public Set<String> getFqnListForECF(String ecfId) {
         if (isValidSqlId(ecfId)) {
             LOG.debug("Get fqn list for event class family by id [{}] ", ecfId);
-            List<String> storedFQNs = new ArrayList<>();
+            Set<String> storedFQNs = new HashSet<>();
             EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
             ecf.getSchemas().forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
             return storedFQNs;

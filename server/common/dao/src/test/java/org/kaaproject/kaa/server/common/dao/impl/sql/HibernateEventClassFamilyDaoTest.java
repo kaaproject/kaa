@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -82,5 +83,19 @@ public class HibernateEventClassFamilyDaoTest extends HibernateAbstractTest {
         EventClassFamily eventClassFamily = eventClassFamilyDao.findByTenantIdAndName(dto.getTenant().getStringId(), dto.getName());
         Assert.assertNotNull(eventClassFamily);
         Assert.assertEquals(dto, eventClassFamily);
+    }
+
+    @Test
+    public void findByEcfvIdTest() {
+        List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 1);
+        EventClassFamily ecf = eventClassFamilies.get(0);
+        List<EventClassFamilyVersion> ecfvList = generateEventClassFamilyVersion(ecf, 1, 1);
+        ecf.setSchemas(ecfvList);
+        ecf = eventClassFamilyDao.save(ecf);
+
+        EventClassFamilyVersion ecfv = ecfvList.get(0);
+        EventClassFamily ecfByEcfv = eventClassFamilyDao.findByEcfvId(ecfv.getStringId());
+        Assert.assertNotNull(ecfByEcfv);
+        Assert.assertEquals(ecf, ecfByEcfv);
     }
 }

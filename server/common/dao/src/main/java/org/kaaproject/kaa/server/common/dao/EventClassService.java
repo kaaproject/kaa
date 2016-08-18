@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
@@ -149,5 +150,5 @@ public interface EventClassService {
      * @param ecfId string of the event class family id
      * @return list of all FQNs
      */
-    List<String> getFqnListForECF(String ecfId);
+    Set<String> getFqnListForECF(String ecfId);
 }

@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -408,12 +408,10 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             for (int j = 0; j < ecCount; j++) {
                 EventClass ec = new EventClass();
                 ec.setTenant(eventClassFamily.getTenant());
-                Integer version;
-                try {
-                    version = ctlSchemaDao.find().stream().max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion())).get().getVersion()+1;
-                } catch (NoSuchElementException e) {
-                    version = 1;
-                }
+
+                Optional<CTLSchema> ctlMaxVersion = ctlSchemaDao.find().stream()
+                        .max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion()));
+                int version = ctlMaxVersion.isPresent() ? (ctlMaxVersion.get().getVersion() + 1) : 1;
 
                 ec.setCtlSchema(generateCTLSchema(DEFAULT_FQN, version, eventClassFamily.getTenant(), CTLSchemaScopeDto.TENANT));
                 ec.setEcfv(ecfv);
