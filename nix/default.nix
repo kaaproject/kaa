@@ -27,10 +27,19 @@ let
 in
 
 { pkgs ? nixpkgs-16_03
+, pkgs-tools ? nixpkgs-bootstrap
 }:
 
 let
-  callPackage = pkgs.lib.callPackageWith (pkgs // self);
+  # We want to use latest versions of tools we have available
+  # (more checks, less false positives)
+  tools = {
+    doxygen = pkgs-tools.doxygen;
+    valgrind = pkgs-tools.valgrind;
+    cppcheck = pkgs-tools.cppcheck;
+  };
+
+  callPackage = pkgs.lib.callPackageWith (pkgs // tools // self);
 
   self = rec {
     avro-cpp = callPackage ./avro-c++ { };
