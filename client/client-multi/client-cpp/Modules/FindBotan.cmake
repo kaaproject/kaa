@@ -16,11 +16,14 @@
 # -*- mode: cmake; -*-
 # - Try to find libbotan include dirs and libraries
 # Usage of this module as follows:
+# * find_package(Botan)
 # This file defines:
 # * BOTAN_FOUND if protoc was found
 # * BOTAN_LIBRARY The lib to link to (currently only a static unix lib, not
 # portable)
 # * BOTAN_INCLUDE_DIR The include directories for libbotan.
+
+message("\nLooking for Botan C++ headers and libraries")
 
 if(NOT WIN32)
     include(FindPkgConfig)
@@ -30,37 +33,46 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 # find the include files
-find_path(BOTAN_INCLUDE_DIR botan/version.h
+find_path(BOTAN_INCLUDE_DIR
+    botan/version.h
     HINTS
     ${CMAKE_FIND_ROOT_PATH}/include
-    ${BOTAN_INCLUDE_DIRS})
+    ${BOTAN_INCLUDE_DIRS}
+    ${CMAKE_INCLUDE_PATH})
 
 # locate the library
 if(WIN32)
-    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.lib botan.lib)
+    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan)
 else(WIN32)
-    if(Botan_USE_STATIC_LIBS)
-        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.a libbotan-1.11.a)
-    else(Botan_USE_STATIC_LIBS)
-        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.so libbotan-1.11.so)
-    endif(Botan_USE_STATIC_LIBS)
+    if(BOTHAN_USE_STATIC_LIBS)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
+    else(BOTHAN_USE_STATIC_LIBS)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
+    endif(BOTHAN_USE_STATIC_LIBS)
 endif(WIN32)
 
-find_library(BOTAN_LIBRARY NAMES ${BOTAN_LIBRARY_NAMES}
-    HINTS
+find_library(BOTAN_LIBRARY
+    NAMES
+    ${BOTAN_LIBRARY_NAMES}
+    PATHS
     ${CMAKE_FIND_ROOT_PATH}/lib
     ${BOTAN_LIBRARY_DIRS})
 
-# if the include and the program are found then we have it
-if(BOTAN_INCLUDE_DIR AND BOTAN_LIBRARY)
-    set(BOTAN_FOUND "YES")
-endif(BOTAN_INCLUDE_DIR AND BOTAN_LIBRARY)
+include(FindPackageHandleStandardArgs)
+
+# handle the QUIETLY and REQUIRED arguments and set BOTAN_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(Botan
+    DEFAULT_MSG
+    BOTAN_LIBRARY
+    BOTAN_INCLUDE_DIR
+)
 
 if(NOT WIN32 AND NOT APPLE)
     list(APPEND BOTAN_LIBRARY "-lrt")
 endif(NOT WIN32 AND NOT APPLE)
 
-MARK_AS_ADVANCED(BOTAN_FOUND
+mark_as_advanced(BOTAN_FOUND
     BOTAN_LIBRARY
     BOTAN_INCLUDE_DIR)
 
