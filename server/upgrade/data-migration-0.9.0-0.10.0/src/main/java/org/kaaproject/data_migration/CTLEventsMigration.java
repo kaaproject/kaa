@@ -86,14 +86,12 @@ public class CTLEventsMigration extends AbstractCTLMigration {
         List<EventSchemaVersion> oldESVs = runner.query(connection,
                 "SELECT id, schems, created_time, created_username FROM " + EVENT_SCHEMA_VERSION_TABLE_NAME,
                 new BeanListHandler<EventSchemaVersion>(EventSchemaVersion.class));
+        List<EventClass> oldECs = runner.query(connection, "SELECT id, schems, version FROM " + EVENT_CLASS_TABLE_NAME +
+                " WHERE schems not like '{\"type\":\"enum\"%'", new BeanListHandler<EventClass>(EventClass.class));
 
         runner.update(connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " DROP COLUMN schems");
         runner.update(connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " RENAME " + EVENT_CLASS_FAMILY_VERSION_TABLE_NAME);
         runner.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " CHANGE events_class_family_id events_class_family_versions_id bigint(20)");
-
-        List<EventClass> oldECs = runner.query(connection, "SELECT id, schems, version FROM " + EVENT_CLASS_TABLE_NAME +
-                " WHERE type='OBJECT' and schems not like '%\"type\":\"enum\"%'", new BeanListHandler<EventClass>(EventClass.class));
-
         runner.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " DROP COLUMN schems");
         runner.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " DROP COLUMN version");
 
