@@ -166,7 +166,6 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/avro_src/io.c
         ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
         ${KAA_SRC_FOLDER}/collections/kaa_list.c
-        ${KAA_SRC_FOLDER}/utilities/kaa_aes_rsa.c
         ${KAA_SRC_FOLDER}/utilities/kaa_log.c
         ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
         ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
@@ -178,7 +177,14 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
-  )
+)
+
+if(WITH_ENCRYPTION)
+    set(KAA_SOURCE_FILES
+        ${KAA_SOURCE_FILES}
+        ${KAA_SRC_FOLDER}/utilities/kaa_aes_rsa.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/encryption_utils.c)
+endif(WITH_ENCRYPTION)
 
 
 # Includes auto-generated Cmake's scripts.
@@ -186,19 +192,23 @@ include(${CMAKE_CURRENT_LIST_DIR}/listfiles/CMakeGen.cmake)
 
 # Kaa include directories
 set(KAA_INCLUDE_DIRS
-        ${KAA_INCLUDE_PATHS}         # Provided by platform cmake
+        ${KAA_INCLUDE_PATHS}
         ${CMAKE_CURRENT_LIST_DIR}/src
-        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
 
 # Build unit tests.
 include(${CMAKE_CURRENT_LIST_DIR}/listfiles/UnitTest.cmake)
 
+include_directories(SYSTEM ${KAA_INCLUDE_PATHS})
+
+# This already includes mbedtls
+add_subdirectory(tools/kaa_encryption/rsa_key_gen)
+
 # Build Kaa libraries.
 add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
-target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
+target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES} mbedtls)
 
 message("BOOTSTRAP ENABLED")
 include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
@@ -281,7 +291,6 @@ if(${KAA_PLATFORM} STREQUAL "posix")
     if(${KAA_RUNTIME_KEY_GENERATION})
         add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
     endif()
-    add_subdirectory(tools/kaa_encryption/rsa_key_gen)
     target_link_libraries(kaac PUBLIC rsa_keygen)
 else()
     add_dependencies(kaac kaa_rsa_keygen)
