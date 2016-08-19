@@ -45,7 +45,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -304,17 +303,15 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
 
     @Override
     public List<CtlSchemaReferenceDto> getTenantLevelCTLSchemaReferenceForECF(String ecfId, List<EventClassViewDto> eventClassViewDtoList) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             AuthUserDto currentUser = getCurrentUser();
             List<CTLSchemaMetaInfoDto> ctlSchemaReferenceDtoListForTenant = controlService.getAvailableCTLSchemasMetaInfoForTenant(currentUser.getTenantId());
-            List<String> fqnListOfCurrentECF = controlService.getFqnListForECF(ecfId);
+            Set<String> fqnListOfCurrentECF = controlService.getFqnSetForECF(ecfId);
             if (eventClassViewDtoList != null) {
                 for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
                     String fqn = eventClassViewDto.getExistingMetaInfo().getMetaInfo().getFqn();
-                    if (!fqnListOfCurrentECF.contains(fqn)) {
-                        fqnListOfCurrentECF.add(fqn);
-                    }
+                    fqnListOfCurrentECF.add(fqn);
                 }
             }
             List<CtlSchemaReferenceDto> availableCtlSchemaReferenceForECF = new ArrayList<>();

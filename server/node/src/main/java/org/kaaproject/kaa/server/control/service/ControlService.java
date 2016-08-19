@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
@@ -1051,12 +1052,12 @@ public interface ControlService {
     boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns);
 
     /**
-     * Get list of all events class FQNs in event class family.
+     * Get set of all events class FQNs in event class family.
      *
      * @param ecfId string of the event class family id
      * @return list of all FQNs
      */
-    List<String> getFqnListForECF(String ecfId) throws ControlServiceException;
+    Set<String> getFqnSetForECF(String ecfId) throws ControlServiceException;
 
     /**
      * Check passed event class family mappings for Sdk profile.

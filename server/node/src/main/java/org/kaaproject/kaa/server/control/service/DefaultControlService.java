@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
@@ -1576,8 +1577,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public List<String> getFqnListForECF(String ecfId) {
-        return eventClassService.getFqnListForECF(ecfId);
+    public Set<String> getFqnSetForECF(String ecfId) {
+        return eventClassService.getFqnSetForECF(ecfId);
     }
 
     /*
