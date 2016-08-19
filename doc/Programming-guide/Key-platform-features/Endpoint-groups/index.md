@@ -13,7 +13,7 @@ sort_idx: 30
 Kaa provides a mechanism for endpoints aggregation within the application that is based on groups. Grouping endpoints enables you to activate specific configuration parameters, 
 control access to notification topics, etc.
 This guide will familiarize you with the basic concepts of designing endpoint groups. It is assumed that you have either set up a Kaa Sandbox, or a fully-blown Kaa cluster 
-already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) or 
+already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or 
 [Admin UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins)). 
 It is strongly recommended to get familiar with Endpoint profiles before you proceed.
 
@@ -196,7 +196,7 @@ Also group has:
 
 The associated profile filter is automatically set equal to 'true' for each profile 
 schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
-[Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO).
+[Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
 
 **NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
 
@@ -321,7 +321,26 @@ To add a profile filter to the endpoint group, do the following:
 
 ## REST API ##
 
-Use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) for getting more information.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Grouping) documentation page for detailed description of the REST API, 
+its purpose, interfaces and features supported.
+
+Admin REST API provides the following actions:
+
+* [Activate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/activateProfileFilter)
+* [Deactivate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deactivateProfileFilter)
+* [Delete endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteEndpointGroup)
+* [Delete profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteProfileFilterRecord)
+* [Create/Edit endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup)
+* [Get endpoint group based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroup)
+* [Get endpoint groups based on application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroupsByApplicationToken)
+* [Get endpoint profiles bodies based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileBodyByEndpointGroupId)
+* [Get endpoint profiles based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileByEndpointGroupId)
+* [Create/edit profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editProfileFilter)
+* [Get profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecord)
+* [Get profile filter records]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecordsByEndpointGroupId)
+* [Get vacant profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getVacantProfileSchemasByEndpointGroupId)
+
+
 
 ## Further reading ##
 
