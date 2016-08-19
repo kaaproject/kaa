@@ -144,7 +144,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
     subscriptions_.clear();
     if (!response.notifications.is_null()) {
 
-        KAA_LOG_INFO(boost::format("Received notifications array: %1%") % LoggingUtils::NotificationToString(response.notifications));
+        KAA_LOG_INFO(boost::format("Received notifications array: %1%") % LoggingUtils::toString(response.notifications));
 
         const auto& notifications = response.notifications.get_array();
 
@@ -166,7 +166,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
 
         for (const auto& n : multicast) {
             KAA_LOG_DEBUG(boost::format("Notification: %1%, Stored sequence number: %2%")
-                    % LoggingUtils::SingleNotificationToString(n)
+                    % LoggingUtils::toString(n)
                     % topicStates[n.topicId]);
             auto& currentSequenceNumber = topicStates[n.topicId];
             std::int32_t notificationSequenceNumber = (n.seqNumber.is_null()) ? 0 : n.seqNumber.get_int();

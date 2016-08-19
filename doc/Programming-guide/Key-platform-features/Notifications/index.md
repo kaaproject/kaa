@@ -62,7 +62,7 @@ The list of notification schemas created by a tenant developer for the applicati
 As a tenant developer, you can create new notification schemas for the application as follows:
 
 1. In the **Notification schemas** window for the application, click **Add schema**.
-2. In the **Add notification schema** window, create a notification schema either by using the [schema form](#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+2. In the **Add notification schema** window, create a notification schema either by using the [schema form]({{root_url}}Administration-guide/Tenants-and-applications-management/#schema-form) or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 
 ![Add Notification Schema 2](images/add_notification_schema_2.png)
 3. Click **Add** to save the schema.
@@ -157,7 +157,7 @@ To send a notification, you can issue the [REST API]({{root_url}}Programming-gui
 Do the following steps to send a notification:
 
 1. In the **Notification topics**, click the mail icon next to the appropriate notification topic.
-2. In the **Send notification** window, create a notification either by using the **Notification body** [record form](#record-form) or by uploading the data in the JSON format from a file.
+2. In the **Send notification** window, create a notification either by using the **Notification body** [record form]({{root_url}}Administration-guide/Tenants-and-applications-management/#record-form) or by uploading the data in the JSON format from a file.
 
 > **NOTE:** The contents of the file should match the corresponding notification schema. And if **Endpoint KeyHash** field is empty will be sent a broadcast notification.
 

@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.avro.Schema;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
@@ -83,8 +82,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testGetEventClassFamiliesByTenantId() throws Exception {
-        List<EventClassFamilyDto> eventClassFamilies  = new ArrayList<EventClassFamilyDto>(10);
-        TenantUserDto tenant = createTenant(tenantAdminUser);
+        List<EventClassFamilyDto> eventClassFamilies  = new ArrayList<>(10);
+        org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         for (int i=0;i<10;i++) {
             EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId(), ""+i);
@@ -147,7 +146,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyName() throws Exception {
-        TenantUserDto tenant = createTenant(tenantAdminUser);
+        org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
         final EventClassFamilyDto secondEventClassFamily = createEventClassFamily(tenant.getId(), "test");
@@ -156,7 +155,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
             @Override
             public void executeRestCall() throws Exception {
                 client.editEventClassFamily(secondEventClassFamily);
-                
+
             }
         });
     }
@@ -200,7 +199,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyFqns() throws Exception {
-        TenantUserDto tenant = createTenant(tenantAdminUser);
+        org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
         client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
@@ -212,7 +211,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
             }
         });
     }
-    
+
     /**
      * Assert event class families equals.
      *

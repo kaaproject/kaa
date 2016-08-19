@@ -1,5 +1,7 @@
 require 'yaml'
 
+DOCS_ROOT = YAML.load_file("_data/config.yml")["docs_root"]
+
 if not (Array.new).methods.include?(:to_h)
   class Array
     def to_h
@@ -18,13 +20,13 @@ class GlobalMenu
     @root ||= {}
     @versions ||= {}
     @keys ||= []
-    @keys_kaa = getKeys("kaa",["m"])
+    @keys_kaa = getKeys("#{DOCS_ROOT}",["m"])
     @keys.concat @keys_kaa
-    @keys.concat getKeys("kaa/m",[])
+    @keys.concat getKeys("#{DOCS_ROOT}/m",[])
   end
-  
+
   ##
-  # Process 
+  # Process
   ##
   def process()
     @keys.each do |key|
@@ -47,7 +49,7 @@ class GlobalMenu
         puts "caught exception #{e}! for key : #{key}."
       end
     end
-    File.open("_data/versions.yml", 'w') { |f| YAML.dump(@versions, f) }    
+    File.open("_data/versions.yml", 'w') { |f| YAML.dump(@versions, f) }
 #     puts @root.to_yaml
   end
 
@@ -79,9 +81,9 @@ class GlobalMenu
     return node
   end
 
-  ##  
+  ##
   # Load all markdown files and parce yaml headers to extract nav information
-  ##   
+  ##
   def loadDoc(key)
     Dir.glob("#{key}/**/index.md") do |md_file|
       dirname = File.dirname(md_file)
@@ -135,7 +137,7 @@ class GlobalMenu
   ##
   def createPath(path)
     subitems = @root
-    node={}  
+    node={}
     deep = 0
     path.each do |k|
       node['level'] = deep

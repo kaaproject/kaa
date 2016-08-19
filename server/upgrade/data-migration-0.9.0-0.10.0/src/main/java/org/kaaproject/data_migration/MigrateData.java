@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.data_migration;
 
 import org.apache.commons.dbutils.DbUtils;
@@ -5,7 +21,11 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.kaaproject.data_migration.model.Ctl;
 import org.kaaproject.data_migration.model.Schema;
 import org.kaaproject.data_migration.utils.BaseSchemaIdCounter;
+import org.kaaproject.data_migration.utils.DataSources;
+import org.kaaproject.data_migration.utils.Options;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,23 +34,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.kaaproject.data_migration.utils.DataSources.MARIADB;
 
 public class MigrateData {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MigrateData.class);
     private static Connection conn;
 
     public static void main(String[] args) {
+        Options options = new Options();
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.charAt(0) == '-') {
+                String option = arg.substring(1, arg.length()).trim();
+                if (i >= args.length - 1) {
+                    throw new IllegalArgumentException("Not found value after option -" + option);
+                }
+                switch (option) {
+                    case "u":
+                        options.setUsername(args[i + 1]);
+                        break;
+                    case "p":
+                        options.setPassword(args[i + 1]);
+                        break;
+                    case "h":
+                        options.setHost(args[i + 1]);
+                        break;
+                    case "db":
+                        options.setDbName(args[i + 1]);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("No such option: -" + option);
+                }
+            }
+        }
+
+        LOG.debug(options.toString());
+
         try {
             List<Schema> schemas = new ArrayList<>();
-            conn = MARIADB.getDs().getConnection();
+            conn = DataSources.getMariaDB(options).getConnection();
             QueryRunner runner = new QueryRunner();
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
             UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn);
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
-            migrationList.add(new CTLEventsMigration(conn));
+//            migrationList.add(new CTLEventsMigration(conn));
+            migrationList.add(new CTLNotificationMigration(conn));
+            migrationList.add(new CTLLogMigration(conn));
 
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
@@ -60,11 +112,12 @@ public class MigrateData {
                 m.afterTransform();
             }
 
-
+            conn.commit();
         } catch (SQLException | IOException | ConfigurationGenerationException e) {
+            LOG.error("Error: " + e.getMessage(), e);
             DbUtils.rollbackAndCloseQuietly(conn);
         } finally {
-            DbUtils.closeQuietly(conn);
+            DbUtils.rollbackAndCloseQuietly(conn);
         }
     }
 }

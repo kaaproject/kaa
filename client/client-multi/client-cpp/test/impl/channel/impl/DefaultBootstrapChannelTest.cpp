@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(DetectConnectionFailureToFakeServer)
 
     auto keyPair = KaaTestUtils::generateKeyPair();
 
-    DefaultBootstrapChannel channel(&mockChannelManager, keyPair, clientContext);
+    DefaultBootstrapChannel channel(mockChannelManager, keyPair, clientContext);
 
     auto connectionInfo = KaaTestUtils::serializeConnectionInfo("fake.server.com",
                                                                 80,
