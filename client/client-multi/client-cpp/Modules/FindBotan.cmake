@@ -16,7 +16,7 @@
 # -*- mode: cmake; -*-
 # - Try to find libbotan include dirs and libraries
 # Usage of this module as follows:
-# * find_package(Botan)
+#   find_package(Botan)
 # This file defines:
 # * BOTAN_FOUND if protoc was found
 # * BOTAN_LIBRARY The lib to link to (currently only a static unix lib, not
@@ -37,15 +37,14 @@ find_path(BOTAN_INCLUDE_DIR
     botan/version.h
     HINTS
     ${CMAKE_FIND_ROOT_PATH}/include
-    ${BOTAN_INCLUDE_DIRS}
-    ${CMAKE_INCLUDE_PATH})
+    ${BOTAN_INCLUDE_DIRS})
 
 # locate the library
 if(WIN32)
     set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan)
 else(WIN32)
     if(Botan_USE_STATIC_LIBS)
-        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.a libbotan-1.11.a)
     else(Botan_USE_STATIC_LIBS)
         set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
     endif(Botan_USE_STATIC_LIBS)

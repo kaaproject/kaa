@@ -40,8 +40,7 @@ find_path(AVRO_INCLUDE_DIR
      HINTS
      ${CMAKE_FIND_ROOT_PATH}/include
      ${PC_AVRO_INCLUDEDIR}
-     ${PC_AVRO_INCLUDE_DIRS}
-     ${CMAKE_INCLUDE_PATH})
+     ${PC_AVRO_INCLUDE_DIRS})
 
 if(Avro_USE_STATIC_LIBS)
     set(AVRO_LOOK_FOR_LIB_NAMES avrocpp_s)
