@@ -97,5 +97,12 @@ public class HibernateEventClassFamilyDaoTest extends HibernateAbstractTest {
         EventClassFamily ecfByEcfv = eventClassFamilyDao.findByEcfvId(ecfv.getStringId());
         Assert.assertNotNull(ecfByEcfv);
         Assert.assertEquals(ecf, ecfByEcfv);
+        Assert.assertEquals(ecfByEcfv.getSchemas().size(), 1);
+        if (ecfByEcfv.getSchemas().size() == 1) {
+            Assert.assertEquals(ecfByEcfv.getSchemas().get(0).getRecords().size(), 1);
+        }
+        else {
+            throw new AssertionError("There should be 1 ecfv in fetched ecf, but got: " + ecfByEcfv.getSchemas().size());
+        }
     }
 }
