@@ -9,23 +9,24 @@ sort_idx: 20
 * TOC
 {:toc}
 
-The *Common Type Library (CTL)* is a repository of reusable data type schemas that can be referenced and reused as the user creates specific schema definitions for Kaa modules.
-The *Common Type (CT)* is a unit of CTL which represents set of *data type schema versions (CT schemas)*.
-This capability unifies management of all schemas in a Kaa server instance.
+The [Common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl) is a repository of data type schemas used for [endpoint profiling]({{root_url}}Glossary/#endpoint-profile).
+As more schema types and versions are created, they are recorded in the CTL for future use.
 
-# CT types definitions and FQNs
+[Common type (CT)]({{root_url}}Glossary/#common-type-ct) is a CTL unit representing a set of data type schema versions.
+Using CTL allows for consistent schema management within a [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).
 
-CT is identified by FQN (Fully Qualified Name).
-FQN is combination of namespace and name attributes defined in root avro record of CT schema according to [Names in Avro  Schema Declaration](http://avro.apache.org/docs/current/spec.html#names).
-Each CT contains set of CT schemas with the same FQN and different versions.
-CT schema is identified by FQN and version which is unique across the CT.
-CT schema becomes unmodifiable after creation and only can be deleted.
+# CT definitions and FQNs
+
+Every CT is identified by **Fully qualified name (FQN)**.
+FQN is combination of namespace and name attributes defined in the root Avro record of a CT schema in compliance with [Apache Avro specification](http://avro.apache.org/docs/current/spec.html#names).
+Each CT contains a set of CT schemas with the same FQN and different versions.
+A CT schema ID is the combination of the schema FQN and version.
+Any CT schema ID is unique across the CT.
+After a CT schema is created, it becomes unmodifiable and can only be deleted.
 
 # CT schema versioning and dependencies
 
-The version must be explicitly defined in the CT schema as shown below. 
-An attempt to load a CT schema with no version will result in an error. 
-Similarly, an attempt to load CT schema with the already used version will result in an error. 
+A CT schema version must be explicitly defined in the CT schema as shown below.
 
 ```json
 {
@@ -45,21 +46,25 @@ Similarly, an attempt to load CT schema with the already used version will resul
 }
 ```
 
-The CTL user interface automatically suggests the next available version (max loaded + 1) for a given FQN when creating a new CT schema.
-CT schema can have dependencies on other CT schemas.
-CT schema dependencies defined as an array of FQN-version combinations (identifiers of referenced CT schemas, see org.kaaproject.sample.ReferencedCT in the example above).
-Deleting CT schema is only permitted if its FQN-version combination is not referenced in any other CT schemas.
+Attempting to load a CT schema with no version or with a used version will result in an error.
+A CT schema can have dependencies on other CT schemas.
+CT schema dependencies are defined as an array of the CT schema IDs (for example, see org.kaaproject.sample.ReferencedCT schema in the code snippet above).
+Deleting a CT schema is only permitted if its ID is not referenced in any other CT schema.
 Cyclic dependencies are not permitted.
-(Thus, CT schemas are nodes in a directed acyclic graph of dependencies.)
+Thus, CT schemas are nodes in a directed acyclic graph of dependencies.
 
 # CT scopes and visibility
 
-CTs can be defined within *scopes*: SYSTEM, TENANT, and APPLICATION.
-Scopes impact the visibility of CTs: for example, a CT defined with the application scope in App A is not visible for App B.
-FQNs cannot conflict in any given scope.
-An attempt to create a new CT with a conflicting FQN will result in an error.
-Creating different CTs with matching FQNs within different applications of the same tenant is permitted, even though not advised.
-Prior to creating such a CT, a warning message will be displayed to the user in the Administration UI.
+CTs can be defined within **scopes**: System, Tenant, and Application.
+Scopes impact the visibility of CTs.
+For example, a CT defined within the Application scope in Application A is not visible for Application B.
+Any FQN is unique within its scope.
+Attempting to create a CT with an FQN that already exists in the scope will result in an error.
+
+>**IMPORTANT:** You can create a CT with an FQN that already exists in other scope, but this is not recommended.
+>Attempting to do so will result in a warning message.
+{:.important}
+
 The expected outcomes of an attempt to create a CT with a non-unique FQN are summarized in the following table.
 
 
@@ -73,7 +78,7 @@ Matching FQN in a different Application of the same Tenant | N/A | N/A | warning
 
 # CT management
 
-CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Common_Type_Library) or via Administration UI.
+You can manage CTs using the [Server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Common_Type_Library) or the [Administration UI]({{root_url}}Glossary/#administration-ui).
 
 ## Get CTs list
 
