@@ -80,7 +80,7 @@ public class MigrateData {
             UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn);
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
-            migrationList.add(new CTLEventsMigration(conn));
+//            migrationList.add(new CTLEventsMigration(conn));
             migrationList.add(new CTLNotificationMigration(conn));
             migrationList.add(new CTLLogMigration(conn));
 

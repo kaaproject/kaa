@@ -20,6 +20,7 @@ public class Ctl {
     private final Long id;
     private final CtlMetaInfo metaInfo;
     private final String defaultRecord;
+    private boolean existInDb;
 
     public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
         this.id = id;
@@ -56,5 +57,13 @@ public class Ctl {
 
     public String getDefaultRecord() {
         return defaultRecord;
+    }
+
+    public boolean isExistInDb() {
+        return existInDb;
+    }
+
+    public void setExistInDb(boolean existInDb) {
+        this.existInDb = existInDb;
     }
 }
