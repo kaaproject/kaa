@@ -15,7 +15,7 @@ This section discusses the process of endpoint authentication and the functional
 
 ## Endpoint authentication
 
-Kaa uses hybrid encryption system that is based on RSA with 2048-bit key pair and AES with 256(512)-bit key.
+In the default implementation, Kaa platform uses hybrid encryption system that is based on RSA with 2048-bit key pair and AES with 256(512)-bit key.
 During the start of a new session, every endpoint sends an encrypted and digitally signed session key.
 Session key is a randomly generated AES key that is also encrypted with public key of the Kaa node that handles this session or request.
 The digital signature of a session key is based on the private key of the endpoint.
@@ -27,13 +27,13 @@ Although other authentication strategies are possible, they are out of scope of 
 
 To function within a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster), every endpoint must be registered using the security credentials and the endpoint profile.
 During the registration process, the endpoint first communicates with one or multiple [Bootstrap services]({{root_url}}Glossary/#bootstrap-service) to obtain a list of available [Operations services]({{root_url}}Glossary/#operations-service).
-Then it communicates with the Operations service to submit the endpoint data and complete the registration.
+Then it communicates with the Operations service to submit the endpoint data (credentials ID and the endpoint profile) and complete the registration.
 
 The endpoint registration process is illustrated in the picture below.
 
 ![Endpoint Registration](attach/registration.png)
 
-### Operations services list
+### List of Operations services
 
 For security and load-balancing reasons, Kaa endpoint SDKs do not include any information about Operations services.
 Instead, a [Control service]({{root_url}}Glossary/#control-service) embeds a list of available Bootstrap services into the SDK during the SDK generation process.
@@ -45,20 +45,20 @@ The endpoint verifies the signature of the response using the Bootstrap public k
 
 ### Endpoint authorization
 
-Endpoint authorization is done by validating the endpoint credentials using the corresponding credentials service.
-Credentials service can be configured for each Kaa client individually.
+Endpoint authorization is done by validating the endpoint credentials using the corresponding Credentials service.
+Credentials service can be configured for each Kaa application individually.
 To do this, you can use the [Administration UI]({{root_url}}Glossary/#administration-ui) or the corresponding [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Application/editApplication).
 
 ![credential](attach/credentials-for-apps.png)
 
-The endpoint credentials ID is generated based on the RSA key pair hash of the endpoint.
-When a new session starts, the Operations service challenges the Credentials service to retrieve credentials status.
+The endpoint credentials ID is generated based on the public RSA key hash of the endpoint.
+When a new session starts, the Operations service queries the Credentials service for credentials status.
 If the credentials are not valid or in use by other endpoint, Kaa node will reject the session.
 
 ### Endpoint registration data
 
-Kaa platform user can use the endpoint credentials data to provision server-side profiles for new endpoints.
-This server-side profile will be used for endpoint registration.
+Prior to the actual endpoint registration, Kaa platform user can use the endpoint credentials data to provision server-side profiles for new endpoints.
+This server-side profile will be used during endpoint registration.
 This can be useful when, for example, an endpoint manufacturer wants to provision sensitive information to the server-side endpoint profile based on the security keys that are only available during manufacturing process.
 For more information, see [Administration REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionCredentials).
 
@@ -67,6 +67,7 @@ For more information, see [Administration REST API]({{root_url}}Programming-guid
 Kaa provides two Credentials service implementations out of the box:
 
 - Trustful credentials service: default implementation that allows any endpoint to register and connect to Kaa cluster.
+This service will accept credentials from any endpoint.
 
 - Internal credentials service: allows connection to Kaa cluster only to specified list of endpoints whose credentials were previously provisioned to Kaa server.
 For more information, see [Administration REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Device_management/provisionCredentials).
@@ -77,7 +78,7 @@ Here is an example of a custom implementation of Credentials service:
 
 <ol start="1">
 <li markdown="1">
-Create a class that implements all methods of [CredentialsService interface](https://github.com/kaaproject/kaa/blob/1d429a30bb4b5206376b740bb21483929a881ace/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java).
+Create a class that implements all methods of [CredentialsService interface](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java).
 
 ```java
 
