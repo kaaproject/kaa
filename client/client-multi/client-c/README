@@ -24,9 +24,6 @@ are installed:
 1. C compiler supporting the C99 standard
 2. cmake 2.8.8 or later
 
-To build the Kaa SDK for the x86-64 platform, ensure that OpenSSL libraries
-(ssl and crypto) are installed.
-
 ************************************
 INSTALL
 ************************************
@@ -123,8 +120,7 @@ for a platform other than x86-64, do the following:
     KAA_INCLUDE_PATHS        - full path(s) to folder(s) containing additional 
                                header files
     KAA_SOURCE_FILES         - full path(s) to additional source files
-    KAA_THIRDPARTY_LIBRARIES - third-party libraries (the name of the library,
-                               for example, ssl, crypto)
+    KAA_THIRDPARTY_LIBRARIES - third-party libraries
 
     In the CMakeLists.txt file:
 

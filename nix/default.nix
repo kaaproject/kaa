@@ -30,8 +30,6 @@ let
 
     raspberrypi-tools = callPackage ./raspberrypi-tools { };
 
-    raspberrypi-openssl = callPackage ./raspberrypi-openssl { };
-
     # Currently, it causes compilation failure, so we use 4.7 for now.
     # gcc-arm-embedded = pkgs.gcc-arm-embedded-5_2;
     gcc-arm-embedded = pkgs.gcc-arm-embedded-4_7;
@@ -46,9 +44,9 @@ let
       patches = [ ./astyle/max_indent.patch ];
     });
 
-    kaa-client-c = callPackage ./kaa-client-c { };
+    kaa-client-c = callPackage ./kaa-client-c { cmake = pkgs.cmake-2_8; };
 
-    kaa-client-cpp = callPackage ./kaa-client-cpp { };
+    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = pkgs.cmake-2_8; };
 
     kaa-docs = callPackage ./kaa-docs { };
   };

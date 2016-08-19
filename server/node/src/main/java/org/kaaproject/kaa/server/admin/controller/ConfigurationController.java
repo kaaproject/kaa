@@ -359,4 +359,28 @@ public class ConfigurationController extends AbstractAdminController {
         configurationService.deleteConfigurationRecord(schemaId, endpointGroupId);
     }
 
+    /**
+     * Get configuration of specific endpoint user bu externalUId
+     *
+     * @param appToken        the application token
+     * @param schemaVersion   the schema version
+     * @param externalUId     the external user id
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @ApiOperation(value = "Get endpoint user configuration by external user id",
+            notes="Get endpoint user configuration by external user id." +
+                    " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "The specified url is not valid"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have neither TENANT_DEVELOPER nor TENANT_USER role"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "configuration/{externalUId}/{appToken}/{schemaVersion}", method = RequestMethod.GET)
+    @ResponseBody
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+            @PathVariable String externalUId,
+            @PathVariable String appToken,
+            @PathVariable Integer schemaVersion) throws KaaAdminServiceException {
+        return  configurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion);
+    }
 }

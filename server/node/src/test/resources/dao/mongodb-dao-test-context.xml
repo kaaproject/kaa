@@ -74,5 +74,6 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
+        <property name="endpointUserDao" ref="endpointUserDao"/>
     </bean>
 </beans>

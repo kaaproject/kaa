@@ -159,6 +159,13 @@ public abstract class AbstractAdminService implements InitializingBean {
         }
     }
 
+    void checkUserId(String userId) throws KaaAdminServiceException {
+        AuthUserDto authUser = getCurrentUser();
+        if (authUser.getExternalUid() == null || !authUser.getExternalUid().equals(userId)) {
+            throw new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED);
+        }
+    }
+
     void checkTenantId(String tenantId) throws KaaAdminServiceException {
         AuthUserDto authUser = getCurrentUser();
         if (authUser.getTenantId() == null || !authUser.getTenantId().equals(tenantId)) {

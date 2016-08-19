@@ -123,7 +123,7 @@ The macros in ~test/kaa_test.h~ are not intended to be used; they were part of t
           test/test_meta_extension.c
           test/kaa_test_external.c
           DEPENDS
-          kaac ${OPENSSL_LIBRARIES})
+          kaac)
   #+end_src
 
   Note that we include ~test/kaa_test_external.c~; that's an implementation of the platform layer for testing. (It does almost nothing, however.)
