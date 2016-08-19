@@ -378,8 +378,11 @@ public class ConfigurationController extends AbstractAdminController {
     @RequestMapping(value = "configuration/{externalUId}/{appToken}/{schemaVersion}", method = RequestMethod.GET)
     @ResponseBody
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+            @ApiParam(name = "externalUId", value = "the external user id", required = true)
             @PathVariable String externalUId,
+            @ApiParam(name = "appToken", value = "A unique application identifier", required = true)
             @PathVariable String appToken,
+            @ApiParam(name = "schemaVersion", value = "The schema version", required = true)
             @PathVariable Integer schemaVersion) throws KaaAdminServiceException {
         return  configurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion);
     }
