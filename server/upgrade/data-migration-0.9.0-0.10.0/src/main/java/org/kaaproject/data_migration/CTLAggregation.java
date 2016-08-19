@@ -40,6 +40,7 @@ import java.util.*;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 //TODO simplify logic of aggregation and add promotion
 public class CTLAggregation {
@@ -151,22 +152,18 @@ public class CTLAggregation {
 
 
     private Ctl sameFqn(Set<Ctl> set, Ctl ctl) {
-        for (Ctl ctl1 : set) {
-            if (ctl1.getMetaInfo().getFqn().equals(ctl.getMetaInfo().getFqn())) {
-                return ctl1;
-            }
-        }
-        return null;
+        return set.stream()
+                .filter( c -> c.getMetaInfo().getFqn().equals(ctl.getMetaInfo().getFqn()))
+                .collect(toList())
+                .get(0);
     }
 
 
     private Ctl sameBody(Set<Ctl> set, Ctl ctl) {
-        for (Ctl ctl1 : set) {
-            if (ctl1.getMetaInfo().getFqn().equals(ctl.getMetaInfo().getFqn())) {
-                return ctl1;
-            }
-        }
-        return null;
+        return set.stream()
+                .filter( c -> c.getDefaultRecord().equals(ctl.getDefaultRecord()))
+                .collect(toList())
+                .get(0);
     }
 
     private boolean bothAppIdNull(Ctl c1, Ctl c2) {
