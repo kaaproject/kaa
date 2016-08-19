@@ -1720,4 +1720,6 @@ public interface ControlService {
     List<String> getCredentialsServiceNames() throws ControlServiceException;
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion,String tenantId);
+
+    EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash);
 }

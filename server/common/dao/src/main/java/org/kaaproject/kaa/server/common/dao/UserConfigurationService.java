@@ -58,4 +58,6 @@ public interface UserConfigurationService {
 
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion,String tenantId);
+
+    EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash);
 }

@@ -2308,4 +2308,10 @@ public class DefaultControlService implements ControlService {
             String tenantId) {
         return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,tenantId);
     }
+
+    @Override
+    public EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) {
+        
+        return userConfigurationService.findUserEndConfigurationByEndpointKeyHash(endpointKeyHash);
+    }
 }

@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.text.ParseException;
 import org.apache.avro.generic.GenericRecord;
+import org.kaaproject.avro.ui.shared.Base64Utils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.server.common.core.algorithms.validator.DefaultUuidValidator;
 import org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
@@ -31,8 +31,10 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.slf4j.Logger;
@@ -61,6 +63,8 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
     private EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
 
     private EndpointUserDao<EndpointUser> endpointUserDao;
+
+    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Override
     public EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto userConfig) {
@@ -134,6 +138,22 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                         endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId).getId(),
                         appToken,
                         schemaVersion));
+    }
+
+    @Override
+    public EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) {
+        EndpointProfileDto endpointProfileDto = null;
+        try {
+            endpointProfileDto = endpointProfileDao.findByKeyHash(Base64Utils.fromBase64(endpointKeyHash)).toDto();
+        } catch (ParseException e) {
+            LOG.error("Could not parse enpointKeyhash:", e);
+            return null;
+        }
+
+
+//        EndpointUserConfigurationDto endpointUserConfigurationDto =  endpointProfileDto.getConfigurationHash();
+
+        return null;
     }
 
 
