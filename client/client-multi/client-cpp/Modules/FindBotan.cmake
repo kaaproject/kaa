@@ -44,11 +44,11 @@ find_path(BOTAN_INCLUDE_DIR
 if(WIN32)
     set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan)
 else(WIN32)
-    if(BOTHAN_USE_STATIC_LIBS)
+    if(Botan_USE_STATIC_LIBS)
         set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
-    else(BOTHAN_USE_STATIC_LIBS)
+    else(Botan_USE_STATIC_LIBS)
         set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
-    endif(BOTHAN_USE_STATIC_LIBS)
+    endif(Botan_USE_STATIC_LIBS)
 endif(WIN32)
 
 find_library(BOTAN_LIBRARY
