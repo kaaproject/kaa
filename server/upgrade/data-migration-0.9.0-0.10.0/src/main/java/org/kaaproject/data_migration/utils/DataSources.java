@@ -30,6 +30,7 @@ final public class DataSources {
         bds.setUrl("jdbc:postgresql://" + opt.getHost() + ":5432/" + opt.getDbName());
         bds.setUsername(opt.getUsername());
         bds.setPassword(opt.getPassword());
+        bds.setDefaultAutoCommit(false);
         return bds;
     }
 
@@ -40,6 +41,7 @@ final public class DataSources {
         bds.setUrl("jdbc:mysql://" + opt.getHost() + ":3306/" + opt.getDbName());
         bds.setUsername(opt.getUsername());
         bds.setPassword(opt.getPassword());
+        bds.setDefaultAutoCommit(false);
         return bds;
     }
 }

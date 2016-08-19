@@ -112,12 +112,12 @@ public class MigrateData {
                 m.afterTransform();
             }
 
-
+            conn.commit();
         } catch (SQLException | IOException | ConfigurationGenerationException e) {
             LOG.error("Error: " + e.getMessage(), e);
             DbUtils.rollbackAndCloseQuietly(conn);
         } finally {
-            DbUtils.closeQuietly(conn);
+            DbUtils.rollbackAndCloseQuietly(conn);
         }
     }
 }

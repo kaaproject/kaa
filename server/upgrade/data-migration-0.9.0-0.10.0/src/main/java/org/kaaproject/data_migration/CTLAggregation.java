@@ -133,7 +133,6 @@ public class CTLAggregation {
 
         // add CTLs to database
         for (Ctl ctl : ctls) {
-
             if(ctl.isExistInDb()) {
                 continue;
             }
