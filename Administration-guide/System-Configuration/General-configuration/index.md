@@ -159,6 +159,11 @@ transport_public_interface=localhost
 ```
 
 Where *transport_bind_interface* reflects private IP for Bootstrap and Operations servers, and *transport_public_interface* - public accordingly.
+
+>**NOTE:**
+> If *transport_public_interface* is set to *localhost* - SDK will send request to localhost, so only applications that are launched on the same host will work.
+>
+
 Below are given default config files, which consume above host values from file kaa-node.properties.
 
 File operations-http-transport.config :
