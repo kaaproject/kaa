@@ -150,20 +150,23 @@ public class CTLAggregation {
 
     }
 
-
     private Ctl sameFqn(Set<Ctl> set, Ctl ctl) {
-        return set.stream()
-                .filter( c -> c.getMetaInfo().getFqn().equals(ctl.getMetaInfo().getFqn()))
-                .collect(toList())
-                .get(0);
+        for (Ctl ctl1 : set) {
+            if (ctl1.getMetaInfo().getFqn().equals(ctl.getMetaInfo().getFqn())) {
+                return ctl1;
+            }
+        }
+        return null;
     }
 
 
     private Ctl sameBody(Set<Ctl> set, Ctl ctl) {
-        return set.stream()
-                .filter( c -> c.getDefaultRecord().equals(ctl.getDefaultRecord()))
-                .collect(toList())
-                .get(0);
+        for (Ctl ctl1 : set) {
+            if (ctl1.getDefaultRecord().equals(ctl.getDefaultRecord())) {
+                return ctl1;
+            }
+        }
+        return null;
     }
 
     private boolean bothAppIdNull(Ctl c1, Ctl c2) {
