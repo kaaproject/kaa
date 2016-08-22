@@ -561,9 +561,8 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
             goto cleanup;
         }
     }
-
-    return error;
 #endif
+    return error;
 
 cleanup:
     KAA_FREE(channel->access_point.public_key);
