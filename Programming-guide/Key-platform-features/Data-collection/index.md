@@ -26,7 +26,7 @@ The following diagram illustrates basic entities and data flows in scope of the 
 created by the developer for the application
 * Log appenders submit the logs received by the server to a particular storage or analytics system
 
-![Basic data collection management](attach/basic-data-collection-management.png) <br/>
+![Basic data collection management](attach/basic-data-collection-management.png)
 
 The Kaa Data collection subsystem provides the following features:
 
@@ -36,6 +36,18 @@ The Kaa Data collection subsystem provides the following features:
 * Storing log contents by means of the log appenders configured for the application
 
 The application developer is responsible for designing the log schema and invoking the endpoint logging API from the client application.
+
+# Log record
+
+Log record consists of:
+
+* Log events
+* Log record header
+* Client/server-side endpoint profile.
+
+Log events and record header data match to the corresponding [log schema](#log-schema) and [log record header schema](#log-record-header-schema) respectively.
+To add client/server-side endpoint profile data to the log record follow to the corresponding
+[log appender documentation](#existing-log-appender-implementations).
 
 # Log schema
 
@@ -96,6 +108,7 @@ The following examples illustrate basic log schemas.
 ## Adding log schema
 
 The default log schema installed for Kaa applications is empty. You can configure your own log schema using the Admin UI or
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
 [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Logging).
 For the purpose of this guide, we will use schema that is very close to the common log structure:
 
@@ -139,14 +152,98 @@ For the purpose of this guide, we will use schema that is very close to the comm
 In Admin UI as a tenant developer, you can create new log schemas for the application as follows:
 
 1. In the Log schemas window for the application, click **Add schema**.
-2. In the Add log schema window, create a log schema either by using the [schema form]({{root_url}}LINK_TO_AVRO_UI_FORMS_AVRO_UI_SCHEMA_FORM#TODO) or
-by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+2. In the Add log schema window, create a log schema either by using the
+[schema form]({{root_url}}Administration-guide/Tenants-and-applications-management/#schema-form) or by uploading a schema in the
+[Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
 ![Add log schema](attach/add-log-schema.png)
 3. Click **Add** to save the schema.
 
 If you want to review the added Avro schema, open the **Log schema details** window by clicking the schema in the **Log schemas** window.
 
 ![Log schema details](attach/log_schema_details.png)
+
+# Log record header schema
+
+The log record header schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas). The log record header
+schema defines structure of the log record header that will be automatically added to the [log record](#log-record) in Kaa.
+
+The log record header schema described below:
+
+```json
+{
+    "name":"recordHeader",
+    "type":[
+        {
+            "type":"record",
+            "name":"RecordHeader",
+            "namespace":"org.kaaproject.kaa.server.common.log.shared.avro.gen",
+            "fields":[
+                {
+                    "name":"endpointKeyHash",
+                    "type":[
+                        {
+                            "type":"string",
+                            "avro.java.string":"String"
+                        },
+                        "null"
+                    ]
+                },
+                {
+                    "name":"applicationToken",
+                    "type":[
+                        {
+                            "type":"string",
+                            "avro.java.string":"String"
+                        },
+                        "null"
+                    ]
+                },
+                {
+                    "name":"headerVersion",
+                    "type":[
+                        "int",
+                        "null"
+                    ]
+                },
+                {
+                    "name":"timestamp",
+                    "type":[
+                        "long",
+                        "null"
+                    ]
+                },
+                {
+                    "name":"logSchemaVersion",
+                    "type":[
+                        "int",
+                        "null"
+                    ]
+                }
+            ]
+        },
+        "null"
+    ]
+}
+```
+
+## Adding log record header
+
+It is possible to configure the log record header data in the log appender:
+
+  * In the Admin UI by selecting necessary **Log metadata** fields.
+![Add log record header](attach/add-log-record-header.png)
+  * By the [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) call to create log appender. Here you need to add
+  corresponding fields to the **headerStructure** list.
+
+Available record header fields described below:
+
+|Name       |Description                                                            |
+|-----------|-----------------------------------------------------------------------|
+|KEYHASH    |A key hash identifying the endpoint which produced the log record      |
+|VERSION    |The header version                                                     |
+|TIMESTAMP  |The timestamp in milliseconds when logs were uploaded to the Kaa server|
+|TOKEN      |The [application token]({{root_url}}Glossary)                          |
+|LSVERSION  |The log schema version                                                 |
 
 # Log appenders
 

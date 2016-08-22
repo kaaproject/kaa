@@ -37,9 +37,9 @@ Click the **Src** tab in the table below to see the source code used to generate
 
 <ul>
 <li style="list-style-type: none;">
-<ul class="nav nav-tabs"> 
-  <li class="active"><a data-toggle="tab" href="#Preview">Preview</a></li> 
-  <li><a data-toggle="tab" href="#Src">Src</a></li> 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#Preview">Preview</a></li>
+  <li><a data-toggle="tab" href="#Src">Src</a></li>
 </ul>
 
 <div class="tab-content">
@@ -130,45 +130,45 @@ E.g.: "Administrative UI" is not equal to "Admin UI" unless defined so, "tenant 
 * Give preference to present tense over past and future tenses.
 * Give preference to simple verb forms over perfect and continuous forms.
 * Use call-to-action approach instead of simple statements to help user find the information.
-  
-  **_Good example_**  
+
+  **_Good example_**
     Click the **Src** tab below to see the source code used to generate the table.
-  
-  **_Bad example_**  
+
+  **_Bad example_**
     Below is the **Src** tab that contains the source code used to generate the table.
 * Avoid using multiple-word verbs, use one-word verbs when you can.
 * Always provide a direct object after a transitive verb, otherwise use an intransitive verb.
-  
-  **_Good example_**  
-    Your application cannot connect to the server.  
+
+  **_Good example_**
+    Your application cannot connect to the server.
     Installation process will stop.
-  
-  **_Bad example_**  
-    Your application cannot connect.  
+
+  **_Bad example_**
+    Your application cannot connect.
     Installation process will stop running.
 * Avoid using neutral verbs such as _do_, _make_, _have_, etc. when you can use a preciser verb to denote the action.
-  
-  **_Good example_**  
-    Connect to the cloud service.  
+
+  **_Good example_**
+    Connect to the cloud service.
     Update the application regularly.
-  
-  **_Bad example_**  
-    Make a connection to the cloud service.  
+
+  **_Bad example_**
+    Make a connection to the cloud service.
     Do regular application updates.
 * Use imperative mood for procedures, formulate your instructions as giving commands to the user.
-  
-  **_Example_**  
+
+  **_Example_**
     Click the **Management** button, enter a new IP in the **Kaa host/IP** block and click **Update**.
 * Use indicative mood to provide facts, questions, assertions, or explanations.
-  
-  **_Example_**  
+
+  **_Example_**
     Kaa endpoint connects to your Kaa Sandbox by using the address built into the SDK.
 * Do not use adverbs that do not contribute to the meaning of a sentence.
-  
-  **_Good example_**  
+
+  **_Good example_**
     The server sends a request.
-  
-  **_Bad example_**  
+
+  **_Bad example_**
     The server quickly sends a request.
 * Reduce ambiguity be providing the right context.
 Some verbs and nouns look the same in writing, for example _access_, _click_, _process_, etc., which can be ambiguous to the user.
@@ -177,13 +177,13 @@ Make sure such words appear in the context that gives them specific meaning.
 * Use first person in special cases only.
 For example, when you write from the user's point of view.
 * Avoid using more than 3 nouns in a noun string as it may be confusing or ambiguous even for native English speakers.
-  
-  **_Good example_**  
-    This application demonstrates functionality of the Kaa Configuration extension.  
+
+  **_Good example_**
+    This application demonstrates functionality of the Kaa Configuration extension.
     Configuration service for client application.
-  
-  **_Bad example_**  
-    This application demonstrates Kaa Configuration extension functionality.  
+
+  **_Bad example_**
+    This application demonstrates Kaa Configuration extension functionality.
     Client application configuration service.
 
 ## Text formatting
@@ -249,9 +249,9 @@ Click the **Src** tab to see the source code used to highlight the code example.
 
 <ul>
 <li style="list-style-type: none;">
-<ul class="nav nav-tabs"> 
-  <li class="active"><a data-toggle="tab" href="#Preview1">Preview</a></li> 
-  <li><a data-toggle="tab" href="#Src1">Src</a></li> 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#Preview1">Preview</a></li>
+  <li><a data-toggle="tab" href="#Src1">Src</a></li>
 </ul>
 
 <div class="tab-content">
@@ -308,6 +308,16 @@ permalink: /:path/
 {% include variables.md %}
 ```
 {% endraw %}
+
+* Align code blocks in a list to the first character in a list item to force proper rendering.
+Separate the code block from the list item with an empty line.
+
+        1. List item
+
+           ```c
+           /* Some code */
+           void foo(void);
+           ```
 
 * Refer to another page using `root_url`, e.g.,  [Glossary]({{root_url}}Glossary).
 
@@ -409,7 +419,6 @@ Key differences between contributing source code and documentation are:
   * [Jekyll](https://jekyllrb.com/)
   * [Jekyll-sitemap](https://github.com/jekyll/jekyll-sitemap)
   * [Jekyll-gist](https://github.com/jekyll/jekyll-gist)
-  * [Jekyll-paginate](https://github.com/jekyll/jekyll-paginate)
   * [Rouge](https://github.com/jneen/rouge)
 
    See the detailed installation instructions in the table below.
@@ -429,7 +438,7 @@ Key differences between contributing source code and documentation are:
 ```bash
 sudo apt-get update
 sudo apt-get install -y git ruby2.0 ruby2.0-dev build-essential
-sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
+sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap rouge
 ```
 
 </div><div id="Platform2" class="tab-pane fade" markdown="1" >
@@ -437,7 +446,7 @@ sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
 ```bash
 sudo apt-get update
 sudo apt-get install -y git build-essential ruby ruby-dev ruby-ffi
-sudo gem install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
+sudo gem install -N jekyll jekyll-gist jekyll-sitemap rouge
 ```
 
 </div><div id="Platform3" class="tab-pane fade" markdown="1" >
@@ -445,7 +454,7 @@ sudo gem install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
 ```bash
 sudo yum install -y ruby git ruby-devel
 sudo yum groupinstall -y 'Development Tools'
-sudo gem install -N jekyll jekyll-gist jekyll-sitemap jekyll-paginate rouge
+sudo gem install -N jekyll jekyll-gist jekyll-sitemap rouge
 ```
 
 </div><div id="Platform4" class="tab-pane fade" markdown="1" >

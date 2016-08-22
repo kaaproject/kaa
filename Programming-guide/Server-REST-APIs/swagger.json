@@ -639,6 +639,46 @@
         }
       }
     },
+    "/api/admins/{tenantId}" : {
+      "post" : {
+        "tags" : [ "User" ],
+        "summary" : "Select tenant admins by tenant id",
+        "description" : "",
+        "operationId" : "findAllTenantAdminsByTenantId",
+        "parameters" : [ {
+          "name" : "",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/UserDto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "The specified tenantId is not valid"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "The user with the specified tenantId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
     "/api/application" : {
       "post" : {
         "tags" : [ "Application" ],
@@ -1214,6 +1254,51 @@
           },
           "403" : {
             "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/credentialsStatus" : {
+      "get" : {
+        "tags" : [ "Device management" ],
+        "summary" : "Provides the status of given credentials",
+        "description" : " Only users with the TENANT_ADMIN role are allowed to submit this request.",
+        "operationId" : "getCredentialsStatus",
+        "parameters" : [ {
+          "name" : "applicationToken",
+          "in" : "query",
+          "description" : "A unique auto-generated application identifier",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "credentialsId",
+          "in" : "query",
+          "description" : "A unique credentials identifier",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string",
+              "enum" : [ "AVAILABLE", "IN_USE", "REVOKED" ]
+            }
+          },
+          "400" : {
+            "description" : "Parameter conditions \"applicationToken, credentialsId\" not met for actual request parameters"
+          },
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_ADMIN)"
+          },
+          "404" : {
+            "description" : "The requested item was not found"
           },
           "500" : {
             "description" : "An unexpected error occurred on the server side"
@@ -3233,18 +3318,17 @@
         "operationId" : "editTenant",
         "parameters" : [ {
           "in" : "body",
-          "name" : "tenantUser",
-          "description" : "TenantUserDto body. Mandatory fields: tenantName, username, firstName, lastName, mail, authority",
-          "required" : true,
+          "name" : "body",
+          "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/TenantUserDto"
+            "$ref" : "#/definitions/TenantDto"
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/TenantUserDto"
+              "$ref" : "#/definitions/TenantDto"
             }
           },
           "401" : {
@@ -3279,7 +3363,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/TenantUserDto"
+              "$ref" : "#/definitions/TenantDto"
             }
           },
           "400" : {
@@ -3312,7 +3396,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/TenantUserDto"
+                "$ref" : "#/definitions/TenantDto"
               }
             }
           },
@@ -4988,39 +5072,17 @@
         }
       }
     },
-    "TenantUserDto" : {
+    "TenantDto" : {
       "type" : "object",
+      "required" : [ "name" ],
       "properties" : {
         "id" : {
           "type" : "string"
         },
-        "username" : {
-          "type" : "string"
-        },
-        "externalUid" : {
-          "type" : "string"
-        },
-        "tenantId" : {
-          "type" : "string"
-        },
-        "authority" : {
+        "name" : {
           "type" : "string",
-          "enum" : [ "KAA_ADMIN", "TENANT_ADMIN", "TENANT_DEVELOPER", "TENANT_USER" ]
-        },
-        "firstName" : {
-          "type" : "string"
-        },
-        "lastName" : {
-          "type" : "string"
-        },
-        "mail" : {
-          "type" : "string"
-        },
-        "tempPassword" : {
-          "type" : "string"
-        },
-        "tenantName" : {
-          "type" : "string"
+          "minLength" : 2,
+          "maxLength" : 255
         }
       }
     },
@@ -5058,6 +5120,7 @@
     },
     "UserDto" : {
       "type" : "object",
+      "required" : [ "authority", "mail", "username" ],
       "properties" : {
         "id" : {
           "type" : "string"
@@ -5076,13 +5139,20 @@
           "enum" : [ "KAA_ADMIN", "TENANT_ADMIN", "TENANT_DEVELOPER", "TENANT_USER" ]
         },
         "firstName" : {
-          "type" : "string"
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 35
         },
         "lastName" : {
-          "type" : "string"
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 35
         },
         "mail" : {
-          "type" : "string"
+          "type" : "string",
+          "minLength" : 2,
+          "maxLength" : 225,
+          "pattern" : "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
         },
         "tempPassword" : {
           "type" : "string"
