@@ -50,7 +50,7 @@ public:
         configurationProcessor_ = processor;
     }
 
-    virtual ~ConfigurationTransport() noexcept {};
+    virtual ~ConfigurationTransport() noexcept {}
 
 private:
     IConfigurationProcessor        *configurationProcessor_;
