@@ -29,6 +29,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FQN;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TENANT_ID;
@@ -48,6 +49,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
     private Tenant tenant;
 
     @ManyToOne
+    @JoinColumn(name = EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private EventClassFamilyVersion ecfv;
 
@@ -74,6 +76,19 @@ public class EventClass extends BaseSchema<EventClassDto> {
         }
         this.fqn = dto.getFqn();
         this.type = dto.getType();
+        Long ecfvId = getLongId(dto.getEcfvId());
+        if (ecfvId != null) {
+            this.ecfv = new EventClassFamilyVersion(ecfvId);
+        }
+        this.version = dto.getVersion();
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.createdUsername = dto.getCreatedUsername();
+        this.createdTime = dto.getCreatedTime();
+        Long ctlId = getLongId(dto.getCtlSchemaId());
+        if (ctlId != null) {
+            this.setCtlSchema(new CTLSchema(ctlId));
+        }
     }
 
 
