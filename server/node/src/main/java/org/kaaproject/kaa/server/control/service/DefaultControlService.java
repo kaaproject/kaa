@@ -35,6 +35,8 @@ import javax.annotation.PreDestroy;
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.*;
@@ -61,6 +63,7 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.Version;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
@@ -363,52 +366,15 @@ public class DefaultControlService implements ControlService {
         userService.removeUserById(userId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmins
-     * ()
-     */
+
+
     @Override
-    public List<TenantAdminDto> getTenantAdmins() throws ControlServiceException {
-        return userService.findAllTenantAdmins();
+    public List<UserDto> findAllTenantAdminsByTenantId(String tenantId) throws ControlServiceException {
+        return userService.findAllTenantAdminsByTenantId(tenantId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmin
-     * (java.lang.String)
-     */
-    @Override
-    public TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException {
-        return userService.findTenantAdminById(tenantId);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editTenantAdmin
-     * (org.kaaproject.kaa.common.dto.TenantAdminDto)
-     */
-    @Override
-    public TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException {
-        return userService.saveTenantAdmin(tenantAdmin);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * deleteTenantAdmin (java.lang.String)
-     */
-    @Override
-    public void deleteTenantAdmin(String tenantId) throws ControlServiceException {
-        userService.removeTenantAdminById(tenantId);
-    }
 
     /*
      * (non-Javadoc)
@@ -453,6 +419,11 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException {
+        ApplicationDto storedApplication = applicationService.findAppByApplicationToken(application.getApplicationToken());
+        if (storedApplication != null) {
+            application.setId(storedApplication.getId());
+        }
+
         boolean update = !isEmpty(application.getId());
         ApplicationDto appDto = applicationService.saveApp(application);
         if (update) {
@@ -1077,9 +1048,17 @@ public class DefaultControlService implements ControlService {
         String profileSchemaBody = profileDataSchema.getRawSchema();
         String confSchemaBody = confDataSchema.getRawSchema();
 
+        JsonNode json;
+        try {
+            json = new ObjectMapper().readTree(defaultConfiguration.getBody());
+        } catch (IOException e) {
+            LOG.error("Unable to convert default configuration data to json", e);
+            throw new ControlServiceException(e);
+        }
+        AvroUtils.removeUuids(json);
 
-        byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
-                configurationSchema.getBaseSchema());
+        byte[] defaultConfigurationData = GenericAvroConverter.toRawData(json.toString(), confSchemaBody);
+
 
         List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
         if (sdkProfile.getAefMapIds() != null) {

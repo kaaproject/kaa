@@ -100,12 +100,11 @@ public class ControlServerUserIT extends AbstractTestControlServer {
     @Test
     public void testUpdateUser() throws Exception {
         UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
-        
+
         user.setFirstName(generateString("NewFirst"));
         user.setLastName(generateString("NewLast"));
-        
+
         UserDto updatedUser = client.editUser(user);
-        
         assertUsersEquals(updatedUser, user);
     }
     

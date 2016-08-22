@@ -288,9 +288,11 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         context.setRequestHash(request.hashCode());
         context.setMetaData(request.getClientSyncMetaData());
 
+
         LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
 
         context = operationsService.syncClientProfile(context, request.getProfileSync());
+        context = operationsService.syncUseConfigurationRawSchema(context, request.isUseConfigurationRawSchema());
 
         if (context.getStatus() != SyncStatus.SUCCESS) {
             return context;
@@ -324,6 +326,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
             ClientSync newRequest = new ClientSync();
             newRequest.setRequestId(originalRequest.getRequestId());
             newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
+            newRequest.setUseConfigurationRawSchema(originalRequest.isUseConfigurationRawSchema());
             if (cfUpdate && originalRequest.getConfigurationSync() != null) {
                 newRequest.setForceConfigurationSync(true);
                 newRequest.setConfigurationSync(originalRequest.getConfigurationSync());

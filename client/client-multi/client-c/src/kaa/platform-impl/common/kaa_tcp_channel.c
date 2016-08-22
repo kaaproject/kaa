@@ -1169,7 +1169,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     }
 
 #ifdef KAA_ENCRYPTION
-    /* TODO: Rework the solution to cipher without additional allocations */
+    /* TODO(KAA-1246): Rework the solution to cipher without additional allocations */
     error_code = kaa_tcp_channel_encrypt(self, (uint8_t **)&sync_buffer, &sync_size);
     if (error_code) {
         KAA_FREE(sync_buffer);
@@ -1576,7 +1576,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self,
     }
 
 #ifdef KAA_ENCRYPTION
-    /* TODO: Rework the solution to cipher without additional allocations */
+    /* TODO(KAA-1246): Rework the solution to cipher without additional allocations */
     bool encrypted = true;
     error_code = kaa_tcp_channel_encrypt(self,(uint8_t **) &sync_buffer, &sync_size);
     if (error_code) {
