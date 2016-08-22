@@ -642,12 +642,13 @@
     "/api/admins/{tenantId}" : {
       "post" : {
         "tags" : [ "User" ],
-        "summary" : "Select tenant admins by tenant id",
-        "description" : "",
+        "summary" : "Get tenant admins based on tenant id",
+        "description" : "Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.",
         "operationId" : "findAllTenantAdminsByTenantId",
         "parameters" : [ {
-          "name" : "",
+          "name" : "tenantId",
           "in" : "path",
+          "description" : "A unique tenant identifier",
           "required" : true,
           "type" : "string"
         } ],
@@ -668,7 +669,7 @@
             "description" : "The user is not authenticated or invalid credentials were provided"
           },
           "403" : {
-            "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
+            "description" : "The authenticated user does not have the required KAA_ADMIN role"
           },
           "404" : {
             "description" : "The user with the specified tenantId does not exist"
@@ -1099,7 +1100,7 @@
             "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
           },
           "404" : {
-            "description" : "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the requested configuration record\n"
+            "description" : "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the requested configuration record"
           },
           "500" : {
             "description" : "An unexpected error occurred on the server side"
@@ -3144,18 +3145,18 @@
       "post" : {
         "tags" : [ "Notifications" ],
         "summary" : "Send notification",
-        "description" : "Sends a notification with the notification body from the specified file. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "description" : "Sends a notification with the notification body from the specified file. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation. If you want to set notification time to leave, you must set expiredAt field in the parameter notification. If your notification schema contains one field \"message\" with Union type, notification body from the specified file looks like below: ```{  \"message\" : {    \"string\" : \"Hello world!\"  }}```. And for primitive string type of the field \"message\" notification body from the specified file looks like below: ```{  \"message\" : \"Hello world!\"}```",
         "operationId" : "sendNotification",
         "parameters" : [ {
           "name" : "notification",
           "in" : "formData",
-          "description" : "NotificationDto body. Mandatory fields: applicationId, schemaId, version, topicId, type",
+          "description" : "NotificationDto body. Mandatory fields: applicationId, schemaId, topicId, type",
           "required" : true,
           "type" : "ref"
         }, {
           "name" : "file",
           "in" : "formData",
-          "description" : "Notification schema represented in json format",
+          "description" : "A file with notification body according to the specified notification schema represented in json format",
           "required" : true,
           "type" : "file"
         } ],
@@ -3188,12 +3189,12 @@
       "post" : {
         "tags" : [ "Notifications" ],
         "summary" : "Send unicast notification",
-        "description" : "Sends a unicast notification with the notification body from the specified file to the client identified by endpointKeyHash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "description" : "Sends a unicast notification with the notification body from the specified file to the client identified by endpointKeyHash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation. If you want to set notification time to leave, you must set expiredAt field in the parameter notification. If your notification schema contains one field \"message\" with Union type, notification body from the specified file looks like below: ```{  \"message\" : {    \"string\" : \"Hello world!\"  }}```. And for primitive string type of the field \"message\" notification body from the specified file looks like below: ```{  \"message\" : \"Hello world!\"}```",
         "operationId" : "sendUnicastNotification",
         "parameters" : [ {
           "name" : "notification",
           "in" : "formData",
-          "description" : "NotificationDto body. Mandatory fields: applicationId, schemaId, version, topicId, type",
+          "description" : "NotificationDto body. Mandatory fields: applicationId, schemaId, topicId, type",
           "required" : true,
           "type" : "ref"
         }, {
@@ -3205,7 +3206,7 @@
         }, {
           "name" : "file",
           "in" : "formData",
-          "description" : "Notification schema represented in json format",
+          "description" : "A file with notification body according to the specified notification schema represented in json format",
           "required" : true,
           "type" : "file"
         } ],
@@ -3673,6 +3674,37 @@
           },
           "404" : {
             "description" : "The user with the specified userId does not exist"
+          },
+          "500" : {
+            "description" : "An unexpected error occurred on the server side"
+          }
+        }
+      }
+    },
+    "/api/userConfiguration" : {
+      "post" : {
+        "tags" : [ "Configuration" ],
+        "summary" : "Create/Edit user configuration",
+        "description" : "Creates or updates a configuration for the specific user under the application. TIf a configuration with the specified user ID does not exist, then it will be created. If a configuration with the specified user ID exists, the configuration will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "operationId" : "editUserConfiguration",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "endpointUserConfiguration",
+          "description" : "EndpointUserConfigurationDto body. Mandatory fields: userId, appToken, schemaVersion, body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/EndpointUserConfigurationDto"
+          }
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "The user is not authenticated or invalid credentials were provided"
+          },
+          "403" : {
+            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+          },
+          "404" : {
+            "description" : "A user with the specified userId or application with the specified appToken does not exists"
           },
           "500" : {
             "description" : "An unexpected error occurred on the server side"
@@ -4654,6 +4686,24 @@
         }
       }
     },
+    "EndpointUserConfigurationDto" : {
+      "type" : "object",
+      "properties" : {
+        "userId" : {
+          "type" : "string"
+        },
+        "appToken" : {
+          "type" : "string"
+        },
+        "schemaVersion" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "body" : {
+          "type" : "string"
+        }
+      }
+    },
     "EventClassFamilyDto" : {
       "type" : "object",
       "properties" : {
@@ -4854,10 +4904,6 @@
         "secNum" : {
           "type" : "integer",
           "format" : "int32"
-        },
-        "version" : {
-          "type" : "integer",
-          "format" : "int64"
         }
       }
     },
@@ -5126,7 +5172,9 @@
           "type" : "string"
         },
         "username" : {
-          "type" : "string"
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 2147483647
         },
         "externalUid" : {
           "type" : "string"
@@ -5140,13 +5188,13 @@
         },
         "firstName" : {
           "type" : "string",
-          "minLength" : 2,
-          "maxLength" : 35
+          "minLength" : 1,
+          "maxLength" : 2147483647
         },
         "lastName" : {
           "type" : "string",
-          "minLength" : 2,
-          "maxLength" : 35
+          "minLength" : 1,
+          "maxLength" : 2147483647
         },
         "mail" : {
           "type" : "string",

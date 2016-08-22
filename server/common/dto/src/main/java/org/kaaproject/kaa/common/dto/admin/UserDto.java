@@ -26,9 +26,9 @@ public class UserDto extends org.kaaproject.kaa.common.dto.UserDto {
 
     private static final long serialVersionUID = 8016875668519720555L;
 
-    @Size(min = 2 , max = 35)
+    @Size(min = 1)
     private String firstName;
-    @Size(min = 2 , max = 35)
+    @Size(min = 1)
     private String lastName;
     @Size(min = 2 , max = 225)
     @NotNull(message="email can't be null")

@@ -1096,4 +1096,9 @@ public class AdminClient {
         parameters.add("credentialsId", credentialsId);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
     }
+
+    public EndpointUserConfigurationDto findUserConfigurationByUserId(String externalUId, String appToken, Integer schemaVersion){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{externalUId}/{appToken}/{schemaVersion}",
+                EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
+    }
 }
