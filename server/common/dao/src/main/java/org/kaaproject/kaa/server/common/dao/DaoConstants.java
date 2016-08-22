@@ -92,7 +92,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_ID = "configuration_id";
     public static final String PROFILE_FILTER_ID = "profile_filter_id";
     public static final String EVENT_CLASS_FAMILY_ID = "events_class_family_id";
-    public static final String EVENT_CLASS_FAMILY_VERSION_ID = "event_class_family_versions_id";
+    public static final String EVENT_CLASS_FAMILY_VERSION_ID = "events_class_family_versions_id";
     public static final String FQN = "fqn";
     public static final String VERSION = "version";
 
@@ -265,7 +265,7 @@ public class DaoConstants {
     /**
      * Event class family version constants.
      */
-    public static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME = "event_class_family_versions";
+    public static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME = "events_class_family_versions";
     public static final String EVENT_CLASS_FAMILY_VERSION_VERSION = VERSION;
     public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME = CREATED_USERNAME;
     public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_TIME = CREATED_TIME;
