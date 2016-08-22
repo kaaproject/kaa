@@ -48,8 +48,6 @@ To build Kaa node Debian/RPM packages, execute the following command.
 
 > **NOTE:**  The Debian build will work correctly on both Linux and Windows operation systems, while the RPM build will work only on Linux operated machines with the RPM tool installed.
 
-> **NOTE:**  For the mvn command, the build number and git commit variables are set to emulate Jenkins build variables that are substituted automatically on the build machine.
-
 > **NOTE:**  If you want to enable execution of tests than remove "-DskipTests" suffix in mvn command.
 
 
