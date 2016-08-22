@@ -513,11 +513,11 @@ public class FirstKaaDemo {
     }
 
     /*
-    * Method, that emulate getting temperature from real sensor.
-    * Retrieves random temperature.
-    */
+     * Method, that emulate getting temperature from real sensor.
+     * Retrieves random temperature.
+     */
     private static int getTemperatureRand() {
-        return new Random().nextInt(10) + 31;
+        return new Random().nextInt(10) + 25;
     }
 
     private static void onKaaStarted(long time) {
@@ -555,7 +555,7 @@ public class FirstKaaDemo {
 
                         LOG.info("Sampled Temperature: {}", temperature);
                     }
-                }, DEFAULT_START_DELAY, time, TimeUnit.MILLISECONDS);
+                }, 0, time, TimeUnit.MILLISECONDS);
     }
 
     private static class FirstKaaClientStateListener extends SimpleKaaClientStateListener {
