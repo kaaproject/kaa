@@ -34,13 +34,13 @@ To build Kaa node Debian/RPM packages, execute the following command.
 <div id="Debian" class="tab-pane fade in active" markdown="1" ><br/>  
           
 ```bash
- $ mvn clean install -P jenkins,compile-gwt,mariadb-dao,mongo-dao -Dappenders -Dverifiers
+ $ mvn clean install -P jenkins,compile-gwt,mariadb-dao,mongo-dao -Dappenders -Dverifiers -DskipTests
 ```
 
 </div><div id="RPM" class="tab-pane fade" markdown="1" ><br/>
       
 ```bash
- $ mvn clean install -P jenkins,compile-gwt,mariadb-dao,mongo-dao,build-rpm -Dappenders -Dverifiers
+ $ mvn clean install -P jenkins,compile-gwt,mariadb-dao,mongo-dao,build-rpm -Dappenders -Dverifiers -DskipTests
 ```
 
 </div></div><br/>
@@ -50,7 +50,7 @@ To build Kaa node Debian/RPM packages, execute the following command.
 
 > **NOTE:**  For the mvn command, the build number and git commit variables are set to emulate Jenkins build variables that are substituted automatically on the build machine.
 
-> **NOTE:**  Please add "-DskipTests" suffix to the mvn command in order to skip execution of tests and speed up build process.
+> **NOTE:**  If you want to enable execution of tests than remove "-DskipTests" suffix in mvn command.
 
 
 ## Available maven profiles
@@ -59,21 +59,20 @@ To build Kaa node Debian/RPM packages, execute the following command.
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |build-rpm              |	As implied in the profile name, it will force to generate .rpm packages. This is useful if you are going to install Kaa on .rpm based Linux distribution (Red Hat Linux, Oracle Linux, etc.)|											
 |compile-gwt            |	Compiles administration user interface. Can be skipped during regular builds.											                                                                    |
-|compile-client-c       |	Compiles [C endpoint SDK](http://docs.kaaproject.org/display/KAA/Linux#Linux-CendpointSDK) and executes tests.											                                                                                                        |
-|compile-client-cpp     |   Compiles [C++ endpoint SDK](http://docs.kaaproject.org/display/KAA/Linux#Linux-C++endpointSDK) and executes tests.											                                                                                                    |
-|cassandra	            |   Compiles [Cassandra](http://cassandra.apache.org/) log appender.											                                                                                                                |
-|cdap	                |   Compiles [CDAP](http://cdap.io/) log appender.											                                                                                                                        |
-|couchbase              |	Compiles [Couchbase](http://www.couchbase.com/) log appender.											                                                                                                                |
-|kafka                  |	Compiles [Kafka](http://kafka.apache.org/) log appender.											                                                                                                                    |
-|compile-client-objc	|   Compiles [Objective-C endpoint SDK](http://docs.kaaproject.org/display/KAA/iOS) and executes tests. Compiling only possible on OS X and CentOS operation systems.											                                |
-|oracle-nosql	        |   Compiles [Oracle NoSQL](http://www.oracle.com/us/products/database/nosql/overview/index.html) log appender.											                                                                                                                |
+|compile-client-c       |	Compiles [C endpoint SDK](http://docs.kaaproject.org/display/KAA/Linux#Linux-CendpointSDK) and executes tests.											                                    |
+|compile-client-cpp     |   Compiles [C++ endpoint SDK](http://docs.kaaproject.org/display/KAA/Linux#Linux-C++endpointSDK) and executes tests.											                                |
+|cassandra	            |   Compiles [Cassandra](http://cassandra.apache.org/) log appender.											                                                                                |
+|couchbase              |	Compiles [Couchbase](http://www.couchbase.com/) log appender.											                                                                                    |
+|kafka                  |	Compiles [Kafka](http://kafka.apache.org/) log appender.											                                                                                        |
+|compile-client-objc	|   Compiles [Objective-C endpoint SDK](http://docs.kaaproject.org/display/KAA/iOS) and executes tests. Compiling only possible on OS X and CentOS operation systems.							|
+|oracle-nosql	        |   Compiles [Oracle NoSQL](http://www.oracle.com/us/products/database/nosql/overview/index.html) log appender.											                                        |
 |jenkins	            |   Forces Kaa to execute integration tests.											                                                                                                        |
-|cassandra-dao          |   Forces Kaa to use [Cassandra](http://cassandra.apache.org/) NoSQL storage. If none is set MongoDB used by default.											                                                                |
-|mariadb-dao	        |   Forces Kaa to use [MariaDB](https://mariadb.org/) SQL storage. Enabled by default.											                                                                                        |
-|license	            |   Forces Kaa to use [Maven License](http://code.mycila.com/license-maven-plugin/) plugin.											                                                                                                            |
-|postgresql-dao	        |   Forces Kaa to use [PostgreSQL](http://www.postgresql.org/) SQL storage. If none is set MariaDB used by default.											                                                                |
-|mongo-dao	            |   Forces Kaa to use [MongoDB](https://www.mongodb.org/) NoSQL storage. Enabled by default.											                                                                                    |
-|compile-thrift	        |   Forces [Thrift](https://thrift.apache.org/) compiler to generate code from thrift files.											                                                                                        |
+|cassandra-dao          |   Forces Kaa to use [Cassandra](http://cassandra.apache.org/) NoSQL storage. If none is set MongoDB used by default.											                                |
+|mariadb-dao	        |   Forces Kaa to use [MariaDB](https://mariadb.org/) SQL storage. Enabled by default.											                                                                |
+|license	            |   Forces Kaa to use [Maven License](http://code.mycila.com/license-maven-plugin/) plugin.											                                                            |
+|postgresql-dao	        |   Forces Kaa to use [PostgreSQL](http://www.postgresql.org/) SQL storage. If none is set MariaDB used by default.											                                    |
+|mongo-dao	            |   Forces Kaa to use [MongoDB](https://www.mongodb.org/) NoSQL storage. Enabled by default.											                                                        |
+|compile-thrift	        |   Forces [Thrift](https://thrift.apache.org/) compiler to generate code from thrift files.											                                                        |
 
 
 
