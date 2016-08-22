@@ -14,14 +14,9 @@
 #  limitations under the License.
 #
 
-language: python
-python: "3.4"
-sudo: required
-dist: trusty
+language: nix
+sudo: false
 install:
-  - ./scripts/setup_nix.sh
-  - . $HOME/.nix-profile/etc/profile.d/nix.sh
-
   - cd client/client-multi/client-c/ && travis_retry nix-shell -Q --pure --run true --arg cc3200Support false && cd ../../..
   - cd client/client-multi/client-cpp/ && travis_retry nix-shell -Q --pure --run true && cd ../../..
   - travis_retry nix-shell -Q --packages pkgs.maven --pure --run true
