@@ -24,6 +24,7 @@
 #define TRANSPORT_POLL_UNIT     @"1"
 #define STATE_FILE_LOCATION     @"state.properties"
 #define SDK_TOKEN               @"%s"
+#define APPLICATION_ID			@"%s"
 #define CONFIG_DATA_DEFAULT     @"%s"
 
 static NSString *CONFIG_SCHEMA_DEFAULT = @"%s";

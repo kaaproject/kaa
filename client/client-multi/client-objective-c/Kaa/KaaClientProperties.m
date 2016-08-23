@@ -62,6 +62,7 @@
         [digest updateWithString:[self.properties objectForKey:CONFIG_DATA_DEFAULT_KEY]];
         [digest updateWithString:[self.properties objectForKey:CONFIG_SCHEMA_DEFAULT_KEY]];
         [digest updateWithString:[self.properties objectForKey:SDK_TOKEN_KEY]];
+        [digest updateWithString:[self.properties objectForKey:APPLICATION_ID_KEY]];
         self.cachedPropertiesHash = [NSMutableData dataWithBytes:[digest final] length:[digest size]];
     }
     return self.cachedPropertiesHash;
@@ -83,7 +84,8 @@
        CONFIG_DATA_DEFAULT_KEY   : CONFIG_DATA_DEFAULT,
        CONFIG_SCHEMA_DEFAULT_KEY : [[NSString alloc] initWithData:schemaBytes encoding:NSUTF8StringEncoding],
        STATE_FILE_LOCATION_KEY   : STATE_FILE_LOCATION,
-       SDK_TOKEN_KEY             : SDK_TOKEN
+       SDK_TOKEN_KEY             : SDK_TOKEN,
+       APPLICATION_ID_KEY        : APPLICATION_ID
     };
 }
 
@@ -126,6 +128,10 @@
 
 - (NSString *)sdkToken {
     return [self.properties stringForKey:SDK_TOKEN_KEY];
+}
+
+- (NSString *)applicationId {
+    return [self.properties stringForKey:APPLICATION_ID_KEY];
 }
 
 - (int32_t)pollDelay {

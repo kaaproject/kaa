@@ -28,6 +28,7 @@
 #define CONFIG_SCHEMA_DEFAULT_KEY   @"config.schema.default"
 #define STATE_FILE_LOCATION_KEY     @"state.file.location"
 #define SDK_TOKEN_KEY               @"sdk_token"
+#define APPLICATION_ID_KEY          @"application_id"
 
 /**
  * Class is used to access various client properties.<br>
@@ -46,6 +47,8 @@
 - (NSString *)commitHash;
 
 - (NSString *)sdkToken;
+
+- (NSString *)applicationId;
 
 - (int32_t)pollDelay;
 
