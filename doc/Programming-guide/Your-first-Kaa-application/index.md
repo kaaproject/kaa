@@ -14,7 +14,7 @@ This section discusses the basics of creating Kaa-based applications using the [
 Main principles of the Kaa platform operation are examplified by a practical case of collecting data from sensor devices.  
 To learn more about Kaa features, see [Further reading](#further-reading).
 
-# Prerequisites
+## Prerequisites
 
 To register a new [application]({{root_url}}Glossary/#kaa-application) within a fresh [Kaa server]({{root_url}}Glossary/#kaa-server) installation, you need to create users with the [tenant administrator]({{root_url}}Administration-guide/Tenants-and-applications-management/#tenant-admin) and [tenant developer]({{root_url}}Administration-guide/Tenants-and-applications-management/#tenant-developer) roles.
 Tenant administrator creates new applications in Kaa.
@@ -22,7 +22,7 @@ Tenant developer configures and generates SDKs for those applications.
 We recommend that you use the Kaa Sandbox that already includes a tenant administrator and a tenant developer.  
 To learn how to install the Kaa Sandbox, see [Getting started]({{root_url}}Getting-started/).
 
-# Application description
+## Application description
 
 To demonstrate the process of creating a Kaa-based application, we will create an application where sensor devices transmit temperature data to the server.
 To make our application more efficient, we will configure it so that the data transmissions occur at various sampling periods set by the user.
@@ -35,7 +35,7 @@ In our example, this feature will be used to transmit temperature values at a co
 - **Configuration** feature allows broadcasting configuration parameters from the Kaa server to Kaa endpoints.
 In our example, this feature will be used to send the sampling period values from Kaa server to the temperature sensors.
 
-# Adding an application
+## Adding an application
 
 To add an application:
 
@@ -45,9 +45,9 @@ To add an application:
 
 3. On the **Application details** page, enter a title for your new application, select a credentials service and click **Add**.
 
- ![Administration page](attach/new_app.png)
+	![Administration page](attach/new_app.png)
 
-# Creating schemas
+## Creating schemas
 
 The application you just created already includes default versions of the profile, configuration, notification, and log schemas ready for use.
 However, we will create custom data collection and configuration schemas for our example case.
@@ -90,7 +90,7 @@ The `by_default` parameter defines the default sampling period value which is se
 
 5. On the **Add log schema** page, enter a name and description of the new data collection schema.
 
- ![Data collection schema](attach/new_data_schema.png)
+	![Data collection schema](attach/new_data_schema.png)
 
 6. Scroll down and use the **Upload from file** function to find the previously created data-schema.json file and click **Upload**.
 
@@ -101,25 +101,25 @@ The `by_default` parameter defines the default sampling period value which is se
 
 Repeat the same procedure for the configuration-schema.json file.
 
- ![Data collection schema](attach/new_config_schema.png)
+![Data collection schema](attach/new_config_schema.png)
 
 As a result, your configuration and data collection schemas will appear in the list.
 Note that every time you add a new schema, Kaa assigns a new version number to it.
 In our example, the log and configuration schemas are version 2.
 Your version numbers may differ from this example.
 
- ![Data collection schema complete](attach/log_schema_list.png)
- ![Configuraion schema complete](attach/config_schema_list.png)
+![Data collection schema complete](attach/log_schema_list.png)
+![Configuraion schema complete](attach/config_schema_list.png)
 
 The version number will be required later to generate an SDK.
 
-# Setting up a log appender
+## Setting up a log appender
 
 To use the data collection feature, you need to set up a **Log appender**.
 In this example, we use MongoDB log appender.
 For more information, see [MongoDB log appender]({{root_url}}Administration-guide/Tenants-and-applications-management/#mongodb-log-appender).
 
-# Generating an SDK
+## Generating an SDK
 
 To generate an SDK for your new application:
 
@@ -157,12 +157,12 @@ In the **Generate SDK** window, select the target platform for your SDK and clic
 >If necessary, you can overwrite them using the [Administration UI]({{root_url}}Administration-guide/Tenants-and-applications-management/).
 {: .note}
 
-# Sample client application
+## Sample client application
 
 Once you downloaded the SDK, you can use it in your sample project.
 The following section will illustrate a simple desktop application that sends temperature data from Kaa endpoint to Kaa server at a sampling period set by the user.
 
-## Preparation
+### Preparation
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#prep-c">C SDK</a></li>
@@ -237,7 +237,7 @@ To do this, run the following commands in the terminal.
 </div>
 
 
-## Application code
+### Application code
 
 Click the appropriate tab to see a code example for the application that sends temperature data at a configured sampling period.
 
@@ -420,7 +420,7 @@ int main(void)
 
 </div>
 
-## Launching the application
+### Launching the application
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#run-c">C SDK</a></li>
@@ -462,7 +462,7 @@ This will clean up the mess that can occur when debug logs are enabled.
 </div>
 
 
-## Expected output
+### Expected output
 
 After your application starts, the following meassages will appear in the console.
 
@@ -478,7 +478,7 @@ Sampled temperature: 28
 The temperature value is sampled once per second as specified in the configuration schema.
 If you do not get the expected output, see [Troubleshooting](#troubleshooting).
 
-## Retrieving collected data
+### Retrieving collected data
 
 To obtain the temperature data stored on the server:
 
@@ -497,7 +497,7 @@ For the Sandbox, use the default **kaa** username and **kaa123** password.
 
         db.logs_$your_application_token$.find()
 
-## Changing the sampling period
+### Changing the sampling period
 
 Change the sampling period value on the server to see what happens on the endpoint.
 
@@ -537,7 +537,7 @@ Your client application console will display the follownig messages.
     This means that the sampling period has been successfully modified.
 
 
-# Further reading
+## Further reading
 
 To create a more complex IoT solutions, you can add more features to your application.
 
