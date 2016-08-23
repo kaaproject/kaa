@@ -26,8 +26,12 @@ IDE: MS Visual Studio 2013,MS Visual Studio 2015
 
         **NOTE:** Make sure that you chose one  "Add CMake to system path..." for all users or for current user on the "Install options" step.
 
-    1. [Python 2.7(amd64)](https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi) or [Python 2.7(i386)](https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi) depending on your system architecture.
-    1. [Boost 1.60](https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download).
+    1. Python 2.7 [32-bit](https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi) depending on your system architecture or [64-bit](https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi).
+    1. Boost 1.60 [32-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download)
+    or [64-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-64.exe/download).
+    1. 7-Zip from http://www.7-zip.org/ . Add the directory you installed 7-Zip into to your `PATH`.
+    1. `libbz2.dll` [32-bit](https://github.com/philr/bzip2-windows/releases/download/v1.0.6/bzip2-dll-1.0.6-win-x86.zip) or [64-bit](https://github.com/philr/bzip2-windows/releases/download/v1.0.6/bzip2-dll-1.0.6-win-x64.zip).
+    Unzip and add the directory whre the unzipped `libbz2.dll` is stored to your `PATH`.
 1. Download and untar an appropriate C++ SDK tar.gz archive into some directory (further in text `KAA_BUILD_DIR`).
 1. Configure installation by editing the `env.bat` file:
 
