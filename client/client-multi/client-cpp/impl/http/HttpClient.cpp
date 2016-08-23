@@ -66,6 +66,10 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
     sock_.connect(ep, errorCode);
     checkError(errorCode);
 
+    /* Check whether ip has been changed */
+    context_.getClientStateListener()->onConnectionEstablished(sock_.local_endpoint().address().to_string(),
+        ep.address().to_string());
+
     const auto& data = request.getRequestData();
     boost::asio::write(sock_, boost::asio::buffer(data.data(), data.size()), errorCode);
     checkError(errorCode);

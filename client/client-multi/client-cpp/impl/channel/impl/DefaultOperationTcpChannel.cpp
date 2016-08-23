@@ -252,6 +252,10 @@ void DefaultOperationTcpChannel::openConnection()
         return;
     }
 
+    /* Check whether ip has been changed */
+    context_.getClientStateListener()->onConnectionEstablished(sock_->local_endpoint().address().to_string(),
+        ep.address().to_string());
+
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_LOCK(channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");

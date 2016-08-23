@@ -60,8 +60,9 @@ public:
      *
      * @return New instance of Kaa client.
      */
-    static std::shared_ptr<IKaaClient> newClient(IKaaClientPlatformContextPtr context = std::make_shared<KaaClientPlatformContext>()
-                                               , IKaaClientStateListenerPtr listener = IKaaClientStateListenerPtr());
+    static std::shared_ptr<IKaaClient> newClient(
+        IKaaClientPlatformContextPtr context = std::make_shared<KaaClientPlatformContext>(),
+        IKaaClientStateListenerPtr listener = std::make_shared<IKaaClientStateListener>());
 
 private:
     static Botan::LibraryInitializer     botanInit_;

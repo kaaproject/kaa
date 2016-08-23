@@ -36,58 +36,68 @@ public:
      * @brief On successful start of Kaa client. Kaa client is successfully connected to Kaa cluster and is ready for
      * usage.
      */
-    virtual void onStarted() = 0;
+    virtual void onStarted() {}
 
     /**
      * @brief On failure during Kaa client startup. Typically failure is related to network issues.
      *
-     * @param exception - cause of failure
+     * @param exception cause of failure
      */
-    virtual void onStartFailure(const KaaException& exception) = 0;
+    virtual void onStartFailure(const KaaException& exception) {}
 
     /**
      * @brief On successful pause of Kaa client. Kaa client is successfully paused and does not consume any resources
      * now.
      */
-    virtual void onPaused() = 0;
+    virtual void onPaused() {}
 
     /**
      * @brief On failure during Kaa client pause. Typically related to failure to free some resources.
      *
-     * @param exception - cause of failure
+     * @param exception cause of failure
      */
-    virtual void onPauseFailure(const KaaException& exception) = 0;
+    virtual void onPauseFailure(const KaaException& exception) {}
 
     /**
      * @brief On successful resume of Kaa client. Kaa client is successfully connected to Kaa cluster and is ready
      * for usage.
      */
-    virtual void onResumed() = 0;
+    virtual void onResumed() {}
 
     /**
      * @brief On failure during Kaa client resume. Typically failure is related to network issues.
      *
-     * @param exception - cause of failure
+     * @param exception cause of failure
      */
-    virtual void onResumeFailure(const KaaException& exception) = 0;
+    virtual void onResumeFailure(const KaaException& exception) {}
 
     /**
      * @brief On successful stop of Kaa client. Kaa client is successfully stopped and does not consume any resources
      * now.
      */
-    virtual void onStopped() = 0;
+    virtual void onStopped() {}
 
     /**
      * @brief On failure during Kaa client stop. Typically related to failure to free some resources.
      *
-     * @param exception - cause of failure
+     * @param exception cause of failure
      */
-    virtual void onStopFailure(const KaaException& exception) = 0;
+    virtual void onStopFailure(const KaaException& exception) {}
+
+    /**
+     *
+     * On connection established. The method is called as soon as the connection with either bootstrap
+     * or operation server is established.
+     *
+     * @param[in] endpointIp The internet address of endpoint which is currently in use.
+     * @param[in] serverIp   The server ip address the endpoint is connected to.
+     */
+    virtual void onConnectionEstablished(const std::string& endpointIp, const std::string& serverIp) {}
 
     virtual ~IKaaClientStateListener() = default;
 };
 
-typedef std::shared_ptr<IKaaClientStateListener> IKaaClientStateListenerPtr;
+using IKaaClientStateListenerPtr = std::shared_ptr<IKaaClientStateListener>;
 
 } /* namespace kaa */
 

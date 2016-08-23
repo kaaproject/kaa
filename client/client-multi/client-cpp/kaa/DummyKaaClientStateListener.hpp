@@ -21,20 +21,8 @@
 
 namespace kaa {
 
-class DummyKaaClientStateListener: public IKaaClientStateListener {
-public:
-    virtual void onStarted() {}
-    virtual void onStartFailure(const KaaException& exception) {}
-
-    virtual void onPaused() {}
-    virtual void onPauseFailure(const KaaException& exception) {}
-
-    virtual void onResumed() {}
-    virtual void onResumeFailure(const KaaException& exception) {}
-
-    virtual void onStopped() {}
-    virtual void onStopFailure(const KaaException& exception) {}
-};
+/** @deprecated Use IKaaClientStateListener */
+class DummyKaaClientStateListener: public IKaaClientStateListener { };
 
 } /* namespace kaa */
 
