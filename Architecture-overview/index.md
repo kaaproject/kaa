@@ -10,16 +10,20 @@ sort_idx: 15
 * TOC
 {:toc}
 
-First things first, let us take a look at some fundamental concepts necessary for understanding the Kaa architecture and the logical design.
+This section discusses fundamental concepts behind Kaa architecture and logical design.
 
-The Kaa IoT platform consists of the *Kaa server*, *Kaa extensions*, and *endpoint SDKs*.
+[Kaa IoT platform]({{root_url}}Glossary/#kaa-platform) consists of [Kaa server]({{root_url}}Glossary/#kaa-server), [Kaa extensions]({{root_url}}Glossary/#kaa-extensions), and the [endpoint SDKs]({{root_url}}Glossary/#endpoint-sdk).
 
-* The Kaa server implements the back-end part of the platform, performs tenants, applications, users, and devices management, exposes integration interfaces,
-and offers administrative capabilities.
-* Kaa extensions are independent software modules that improve the platform functionality. (In this version of the documentation you will notice some
-extensions actually managed within the core platform code base. Those are planned to be fully decoupled in future Kaa releases.)
-* Endpoint SDK is a library which provides client-side APIs for the various [Kaa platform features]({{root_url}}Programming-guide/Key-platform-features/) and
-handles communication, data marshalling, persistence, etc.
+* Kaa server is the back-end part of the platform.
+It is used to manage tenants, applications, users and devices.
+Kaa server exposes integration interfaces and offers administrative capabilities.
+* Kaa extensions are independent software modules that improve the platform functionality.
+
+	>**NOTE:** In this version of the documentation, you will notice that some extensions are actually managed within the core of the platform.
+	>Those are planned to be fully decoupled in future Kaa releases.
+	{:.note}
+
+* Endpoint SDK is a library that provides client-side APIs for various [Kaa platform features]({{root_url}}Programming-guide/Key-platform-features/) and handles communication, data marshalling, persistence, etc.
 Kaa SDKs are designed to facilitate the creation of client applications to be run on various connected devices - however, client applications that do not use
 Kaa endpoint SDK are also possible.
 Several implementations of the [Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/) are available in different programming languages.
