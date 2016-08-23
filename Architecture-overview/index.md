@@ -28,8 +28,6 @@ Kaa SDKs are designed to facilitate the creation of client [applications]({{root
 However, client applications that do not use Kaa endpoint SDK are also possible.
 There are several endpoint [SDK types]({{root_url}}Glossary/#sdk-type) available in different programming languages.
 
-
-
 ## Kaa cluster
 
 Kaa server nodes use [Apache ZooKeeper](https://zookeeper.apache.org/) to coordinate services.
