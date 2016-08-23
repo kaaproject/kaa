@@ -307,13 +307,14 @@ public class ObjCSdkGenerator extends SdkGenerator {
                                              byte[] defaultConfigurationData,
                                              SdkProfileDto profileDto) {
         LOG.debug("Generating kaa defaults");
-        final int PROPERTIES_COUNT = 6;
+        final int PROPERTIES_COUNT = 7;
         List<String> properties = new ArrayList<>(PROPERTIES_COUNT);
         properties.add(Version.PROJECT_VERSION);
         properties.add(Version.COMMIT_HASH);
         properties.add(sdkToken);
         properties.add(profileDto.getApplicationId());
         properties.add(Base64.encodeBase64String(defaultConfigurationData));
+
         properties.add(Base64.encodeBase64String(configurationProtocolSchemaBody.getBytes()));
         properties.add(CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
         String source = String.format(template, properties.toArray(new Object[PROPERTIES_COUNT]));

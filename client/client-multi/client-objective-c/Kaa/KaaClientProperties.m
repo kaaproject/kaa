@@ -21,7 +21,6 @@
 #import "GenericTransportInfo.h"
 #import "TransportCommon.h"
 #import "SHAMessageDigest.h"
-#import "KaaDefaults.h"
 
 @interface KaaClientProperties ()
 
