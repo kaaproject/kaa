@@ -196,12 +196,12 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 }
 
 + (NSData *)privateKeyTag {
-    privateKeyTag = privateKeyTag.length > 0 ? privateKeyTag : [NSString stringWithFormat:@"org.kaaproject.kaa.%@.%@.publickey", APPLICATION_ID, SDK_TOKEN];
+    privateKeyTag = privateKeyTag.length > 0 ? privateKeyTag : [NSString stringWithFormat:@"org.kaaproject.kaa.%@.%@.privatekey", APPLICATION_ID, SDK_TOKEN];
     return [privateKeyTag dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 + (NSData *)publicKeyTag {
-    publicKeyTag = publicKeyTag ? publicKeyTag : [NSString stringWithFormat:@"org.kaaproject.kaa.%@.%@.privatekey", APPLICATION_ID, SDK_TOKEN];
+    publicKeyTag = publicKeyTag.length > 0 ? publicKeyTag : [NSString stringWithFormat:@"org.kaaproject.kaa.%@.%@.publickey", APPLICATION_ID, SDK_TOKEN];
     return [publicKeyTag dataUsingEncoding:NSUTF8StringEncoding];
 }
 
