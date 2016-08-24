@@ -25,7 +25,7 @@
 #define SDK_TOKEN               @"%s"
 #define APPLICATION_ID			@"%s"
 #define CONFIG_DATA_DEFAULT     @"%s"
-#define APP_UNIQUE_PREFIX       APPLICATION_ID@"."SDK_TOKEN
+#define APP_PREFIX       APPLICATION_ID@"."SDK_TOKEN
 #define STATE_FILE_LOCATION     APP_UNIQUE_PREFIX@".state.properties"
 
 static NSString *CONFIG_SCHEMA_DEFAULT = @"%s";
