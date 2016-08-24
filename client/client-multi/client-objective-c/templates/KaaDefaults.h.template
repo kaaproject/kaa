@@ -26,7 +26,7 @@
 #define APPLICATION_ID			@"%s"
 #define CONFIG_DATA_DEFAULT     @"%s"
 #define APP_PREFIX       APPLICATION_ID@"."SDK_TOKEN
-#define STATE_FILE_LOCATION     APP_UNIQUE_PREFIX@".state.properties"
+#define STATE_FILE_LOCATION     APP_PREFIX@".state.properties"
 
 static NSString *CONFIG_SCHEMA_DEFAULT = @"%s";
 static NSString *BOOTSTRAP_SERVERS = @"%s";
