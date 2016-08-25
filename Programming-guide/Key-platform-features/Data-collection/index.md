@@ -109,6 +109,7 @@ The following examples illustrate basic log schemas.
 
 The default log schema installed for Kaa applications is empty. You can configure your own log schema using the Admin UI or
 [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
+[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Logging).
 For the purpose of this guide, we will use schema that is very close to the common log structure:
 
 * log level
