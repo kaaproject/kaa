@@ -52,13 +52,12 @@ If you have not found interested target, or you want to know more about working 
 
 # Build environment
 
-During compilation, C SDK and derived applications requires:
+During compilation, C SDK and derived applications might require:
 
  - Compiler for given target, such as `arm-none-eabi` for bare metal ARM targets.
  - Vendor SDK, e.g. TI SDK for the CC3200 processor.
- - java, to generate keypairs during build procedure.
 
-[Nix is the prefferable way]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Environment-setup/) to deploy build environment.
+[Nix is the fastest way]({{root_url}}/Customization-guide/Endpoint-SDKs/C-SDK/Environment-setup/Nix-guide) to prepare build environment.
 
 Manual installation of the required packages varies between targets.
 [Use links from the previous section](#target-support-and-portability) to find how to build and use SDK for the desired platform.
