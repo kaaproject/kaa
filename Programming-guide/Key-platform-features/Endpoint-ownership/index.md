@@ -325,7 +325,7 @@ error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_
 <div id="Objective-C" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <UserAttachDelegate>
  
@@ -334,6 +334,7 @@ error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_
 - (void)prepareUserForMessaging {
     [self.kaaClient attachUserWithId:@"userExternalId" accessToken:@"userAccessToken" delegate:self];
 }
+ 
 - (void)onAttachResult:(UserAttachResponse *)response {
     NSLog(@"Attach response: %i", response.result);
 }
@@ -450,15 +451,16 @@ error_code = kaa_user_manager_attach_endpoint(kaa_client_get_context(kaa_client)
 <div id="Objective-C-1" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <OnAttachEndpointOperationDelegate>
  
 ...
+ 
 - (void)prepareEndpointForMessaging {
     [self.kaaClient attachEndpointWithAccessToken:@"userExternalId" delegate:self];
 }
-
+ 
 - (void)onAttachResult:(SyncResponseResultType)result withEndpointKeyHash:(EndpointKeyHash *)endpointKeyHash{
     NSLog(@"Attach response: %i", result);
 }
@@ -571,17 +573,18 @@ error_code = kaa_user_manager_detach_endpoint(kaa_client_get_context(kaa_client)
 <div id="Objective-C-2" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <DetachEndpointFromUserDelegate>
  
 ...
+ 
 - (void)prepareEndpointForMessaging {
     [self.kaaClient detachEndpointWithKeyHash:@"endpointAccessToken" delegate:self];
 }
-
+ 
 - (void)onDetachResult:(SyncResponseResultType)result{
-    NSLog(@"Detache response : %i", result);
+    NSLog(@"Detach response : %i", result);
 }
 ```
 
