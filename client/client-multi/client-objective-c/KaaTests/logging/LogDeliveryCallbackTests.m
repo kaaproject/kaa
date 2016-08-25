@@ -27,7 +27,7 @@
 
 @interface LogDeliveryDelegateImpl : NSObject <LogDeliveryDelegate>
 
-@property (nonatomic) double scheduledBucketTimestamp;
+@property (nonatomic) double scheduledBucketRunnerTimestamp;
 @property (nonatomic) double bucketDeliveryDuration;
 
 @end
@@ -35,7 +35,7 @@
 @implementation LogDeliveryDelegateImpl
 
 - (void)onLogDeliverySuccessWithBucketInfo:(BucketInfo *)bucketInfo {
-    self.scheduledBucketTimestamp = bucketInfo.scheduledBucketTimestamp;
+    self.scheduledBucketRunnerTimestamp = bucketInfo.scheduledBucketRunnerTimestamp;
     self.bucketDeliveryDuration = bucketInfo.bucketDeliveryDuration;
 }
 
@@ -145,7 +145,7 @@
     
     [self.logCollector onLogResponse:response];
     
-    XCTAssertNotEqual(delegate.scheduledBucketTimestamp, 0);
+    XCTAssertNotEqual(delegate.scheduledBucketRunnerTimestamp, 0);
     XCTAssertNotEqual(delegate.bucketDeliveryDuration, 0);
 }
 

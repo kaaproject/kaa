@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "BucketRunner.h"
 #import "BlockingQueue.h"
-#import <QuartzCore/QuartzCore.h>
 #import "KaaExceptions.h"
 #import "KaaLogging.h"
+#import "NSDate+Timestamp.h"
 
 #define TAG @"BucketRunner >>>"
 
@@ -46,7 +48,7 @@ static int32_t gBucketIdCounter = 0;
         _queue = [[BlockingQueue alloc] init];
         _state = BUCKET_RUNNER_STATE_WAITING;
         _runnerId = gBucketIdCounter++;
-        _executionStartTimestamp = CACurrentMediaTime() * 1000;
+        _executionStartTimestamp = [NSDate currentTimeInMilliseconds];
     }
     return self;
 }
@@ -57,8 +59,8 @@ static int32_t gBucketIdCounter = 0;
 
 - (void)setValue:(BucketInfo *)value {
     @try {
-        value.scheduledBucketTimestamp = self.executionStartTimestamp;
-        value.bucketDeliveryDuration = CACurrentMediaTime() * 1000 - self.executionStartTimestamp;
+        value.scheduledBucketRunnerTimestamp = self.executionStartTimestamp;
+        value.bucketDeliveryDuration = value.receivedResponseTime - value.scheduledBucketRunnerTimestamp;
         [self.queue offer:value];
     }
     @catch (NSException *ex) {
