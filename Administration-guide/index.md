@@ -22,3 +22,4 @@ view. Helps with planning your deployment, provides an overview of
 [Upgrading your instance]({{root_url}}Administration-guide/Upgrading-your-instance/) helps migrate to the new Kaa platform version.
 [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting/) explains how to resolve some common issues while using Kaa as well as how to report issues
 to the Kaa Crew for getting help.
+

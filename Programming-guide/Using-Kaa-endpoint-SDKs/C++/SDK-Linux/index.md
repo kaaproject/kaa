@@ -191,34 +191,19 @@ Finally, the Endpoint access token is printed to `stdout` and Kaa client stops i
 
 ```c++
 #include <iostream>
-
 #include <kaa/Kaa.hpp>
 #include <kaa/IKaaClient.hpp>
 
-using namespace kaa;
-
 int main()
 {
-    /*
-     * Initialize the Kaa endpoint.
-     */
-    auto kaaClient = Kaa::newClient();
-
-    /*
-     * Run the Kaa endpoint.
-     */
+    //Initialize the Kaa endpoint.
+    auto kaaClient = kaa::Kaa::newClient();
+    // Run the Kaa endpoint.
     kaaClient->start();
-
-    /*
-     * Print access token
-     */
+    //Print access token
     std::cout << "Endpoint access token: " << kaaClient->getEndpointAccessToken() << std::endl;
-
-    /*
-     * Stop the Kaa endpoint.
-     */
+    // Stop the Kaa endpoint.
     kaaClient->stop();
-
     return 0;
 }
 ```
