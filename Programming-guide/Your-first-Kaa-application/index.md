@@ -156,7 +156,7 @@ The following code block illustrates a simple desktop application that sends vir
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#prep-c">C SDK</a></li>
-  <li><a data-toggle="tab" href="#prep-c++">C++ SDK</a></li>
+  <li><a data-toggle="tab" href="#prep-cpp">C++ SDK</a></li>
   <li><a data-toggle="tab" href="#prep-java">Java SDK</a></li>
   <li><a data-toggle="tab" href="#prep-obj-c">Objective-C</a></li>
 </ul>
@@ -165,15 +165,15 @@ The following code block illustrates a simple desktop application that sends vir
 
 <div id="prep-c" class="tab-pane fade in active" markdown="1" >
 
-Before you start with C application code, some preparation is required.
+Before you start with C application code, some preparation is required:
 
-1. Install dependencies: CMake. On Ubuntu, you can install it using following commands.
+1. Install dependencies: CMake. On Ubuntu, you can install it using following command:
 
         sudo apt-get install cmake
 1. Create `kaa` directory and unpack C SDK
-1. Create `CMakeLists.txt` in the application directory with following contents.
+1. Create `CMakeLists.txt` in the application directory with following contents:
 
-        cmake_minimum_required(VERSION 2.8.8)
+        cmake_minimum_required(VERSION 2.8.12)
         project(kaa-application C)
 
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
@@ -182,27 +182,56 @@ Before you start with C application code, some preparation is required.
 
         add_executable(kaa-app main.c)
         target_link_libraries(kaa-app kaac)
-1. Create source file `main.c` with empty main routine (for now).
+1. Create source file `main.c` with empty main routine (for now):
 
         int main(void)
         {
-
+            return 0;
         }
-1. Validate that build system works as expected by triggering a build.
+5. Validate that build system works as expected by triggering a build:
 
         mkdir build
         cd build
         cmake ..
         make
-1. Check that demo application executable is present in the build directory.
+6. Check that demo application executable is present in the build directory:
 
         $ ls -l kaa-app
         -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
 
 </div>
 
-<div id="prep-c++" class="tab-pane fade" markdown="1" >
+<div id="prep-cpp" class="tab-pane fade" markdown="1" >
 
+Before you start with C++ application code, some preparation is required:
+
+1. Need to install the next libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites)
+
+2. Create `kaa` directory and unpack C++ SDK
+3. Create `CMakeLists.txt` in the application directory with following contents:
+
+        cmake_minimum_required(VERSION 2.8.12)
+        project(Cpp-SDK-your-first-Kaa-application CXX)
+        
+        add_subdirectory(kaa)
+        add_executable(kaa-app main.cpp)
+        target_link_libraries(kaa-app kaacpp)
+4. Create source file `main.cpp` with empty main routine (for now):
+
+        int main()
+        {
+            return 0;
+        }
+5. Validate that build system works as expected by triggering a build:
+
+        mkdir build
+        cd build
+        cmake ..
+        make
+6. Check that demo application executable is present in the build directory:
+
+        $ ls -l kaa-app
+        -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
 </div>
 
 <div id="prep-java" class="tab-pane fade" markdown="1" >
@@ -223,7 +252,7 @@ Now it is time to write application code that will send temperature data with th
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#app-c">C SDK</a></li>
-  <li><a data-toggle="tab" href="#app-c++">C++ SDK</a></li>
+  <li><a data-toggle="tab" href="#app-cpp">C++ SDK</a></li>
   <li><a data-toggle="tab" href="#app-java">Java SDK</a></li>
   <li><a data-toggle="tab" href="#app-obj-c">Objective-C</a></li>
 </ul>
@@ -236,7 +265,6 @@ Now it is time to write application code that will send temperature data with th
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-
 #include <kaa/kaa.h>
 #include <platform/kaa_client.h>
 #include <platform-impl/common/ext_log_upload_strategies.h>
@@ -378,13 +406,119 @@ int main(void)
 
     return EXIT_SUCCESS;
 }
-
 ```
 
 </div>
+ 
+<div id="app-cpp" class="tab-pane fade" markdown="1" >
+```c++
+#include <boost/asio.hpp>
+#include <kaa/Kaa.hpp>
+#include <kaa/IKaaClient.hpp>
+#include <kaa/configuration/manager/IConfigurationReceiver.hpp>
+#include <kaa/configuration/storage/FileConfigurationStorage.hpp>
+#include <kaa/log/strategies/RecordCountLogUploadStrategy.hpp>
+#include <memory>
+#include <string>
+#include <cstdint>
 
-<div id="app-c++" class="tab-pane fade" markdown="1" >
+class ConfigurationCollection : public kaa::IConfigurationReceiver {
+public:
+    ConfigurationCollection()
+        : kaaClient_(kaa::Kaa::newClient())
+        , interval_(samplePeriod_ = 0)
+        , timer_(service_, interval_) 
+    {
+        // Set a custom strategy for uploading logs.
+        kaaClient_->setLogUploadStrategy(
+            std::make_shared<kaa::RecordCountLogUploadStrategy>(1, kaaClient_->getKaaClientContext()));
+        // Set up a configuration subsystem.
+        kaa::IConfigurationStoragePtr storage(
+            std::make_shared<kaa::FileConfigurationStorage>(std::string(savedConfig_)));
+        kaaClient_->setConfigurationStorage(storage);
+        kaaClient_->addConfigurationListener(*this);
+        auto handlerUpdate = [this](const boost::system::error_code& err) 
+        {
+            this->update();
+        };
+        timer_.async_wait(handlerUpdate);
+    }
+    
+    ~ConfigurationCollection() 
+    {
+        // Stop the Kaa endpoint.
+        kaaClient_->stop();
+        std::cout << "Simple client demo stopped" << std::endl;
+    }
+    
+    void run() 
+    {
+        // Run the Kaa endpoint.
+        kaaClient_->start();
+        service_.run();
+    }
+    
+private:
+    static constexpr auto savedConfig_ = "saved_config.cfg";
+    std::shared_ptr<kaa::IKaaClient> kaaClient_;
+    int32_t samplePeriod_;
+    boost::asio::io_service service_;
+    boost::posix_time::seconds interval_;
+    boost::asio::deadline_timer timer_;
+    
+    int32_t getTemperature() 
+    {
+        // For sake of example random data is used
+        return rand() % 10 + 25;
+    }
+    
+    void update() 
+    {
+        kaa::KaaUserLogRecord logRecord;
+        logRecord.temperature = getTemperature();
+        // Send value of temperature
+        kaaClient_->addLogRecord(logRecord);
+        // Show log
+        std::cout << "Sampled temperature: " << logRecord.temperature << std::endl;
+        // Set a new  period of the send data
+        timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(samplePeriod_));
+        // Posts the timer event
+        auto handlerUpdate = [this](const boost::system::error_code& err) 
+        {
+            this->update();
+        };
+        timer_.async_wait(handlerUpdate);
+    }
+    
+    void updateConfiguration(const kaa::KaaRootConfiguration &configuration) 
+    {
+        std::cout << "Received configuration data. New sample period: "
+            << configuration.samplePeriod << " seconds" << std::endl;
+        samplePeriod_ = configuration.samplePeriod;
+    }
+    
+    void onConfigurationUpdated(const kaa::KaaRootConfiguration &configuration) 
+    {
+        updateConfiguration(configuration);
+    }
+};
 
+int main() 
+{
+    ConfigurationCollection configurationCollection;
+    
+    try {
+        // It does control of the transmit and receive data
+        configurationCollection.run();
+    } catch (std::exception& e) {
+        std::cout << "Exception: " << e.what();
+    }
+    return 0;
+}
+```
+
+> **NOTE:** There are links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
+  
 </div>
 
 <div id="app-java" class="tab-pane fade" markdown="1" >
@@ -546,12 +680,15 @@ public class FirstKaaDemo {
     }
 }
 ```
+</div>
+
+</div>
 
 ## Launching application
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#run-c">C SDK</a></li>
-  <li><a data-toggle="tab" href="#run-c++">C++ SDK</a></li>
+  <li><a data-toggle="tab" href="#run-cpp">C++ SDK</a></li>
   <li><a data-toggle="tab" href="#run-java">Java SDK</a></li>
   <li><a data-toggle="tab" href="#run-obj-c">Objective-C</a></li>
 </ul>
@@ -559,22 +696,33 @@ public class FirstKaaDemo {
 <div class="tab-content">
 <div id="run-c" class="tab-pane fade in active" markdown="1" >
 
-To launch C application next steps should be performed.
+To launch C application, next steps should be performed:
 
-1. Rebuild application with decreased log level. That reduces a mess that can appear when debug logs are enabled.
+1. Rebuild application with decreased log level. That reduces a mess that can appear when debug logs are enabled:
 
         cd build
         cmake -DKAA_MAX_LOG_LEVEL=3 ..
         make
 
-2. Launch the executable file.
+2. Launch the executable file:
 
         ./kaa-app
-
+        
 </div>
 
-<div id="run-c++" class="tab-pane fade" markdown="1" >
+<div id="run-cpp" class="tab-pane fade" markdown="1" >
+To launch C++ application, next steps should be performed:
 
+1. Rebuild application with decreased log level. That reduces a mess that can appear when debug logs are enabled:
+
+        cd build
+        cmake -DKAA_MAX_LOG_LEVEL=3 ..
+        make
+
+2. Launch the executable file:
+
+        ./kaa-app
+        
 </div>
 
 <div id="run-java" class="tab-pane fade" markdown="1" >
@@ -675,4 +823,4 @@ Follow the links below to grasp the scope of Kaa capabilities as well as get fam
 
  - [Contribute to Kaa]({{root_url}}/Customization-guide/How-to-contribute/)
 
-    Learn how to contribute to the Kaa project.
+    Learn how to contribute to the Kaa project. 
