@@ -10,17 +10,24 @@ sort_idx: 20
 * TOC
 {:toc}
 
-The structure of both client-side and server-side endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint. Endpoint profiles are used to classify endpoints into 
-endpoint groups and are comprised of the client-side, server-side and system part. The structure of both client-side and server-side of endpoint profile is defined by 
-application developer using the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) format. Application developer may reuse and share certain data 
-structures using CTL.  
-Client-side structure is used during SDK generation. Thus, change to the client-side structure requires re-generation of the SDK 
-(for more details see [Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)). Application developer is able to define and 
-change server-side structure of endpoint profile at any time. The structure of the system part is identical across the applications and is used by Kaa internally for its 
-functions. Both client-side and server-side profile schemas are maintained within the corresponding application, with its own version that distinguishes it from the previous 
-schemas. Multiple schema versions and corresponding endpoint profiles created upon those schemas can coexist within a single application.
-  
-## Client-side endpoint profile ##
+[Endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side)) is a structured set of data that describes specific characteristics of an [endpoint]({{root_url}}Glossary/#endpoint-ep).
+
+The structure of both client-side and server-side endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint.
+The profiles are used to attribute endpoints to [endpoint groups]({{root_url}}Glossary/#endpoint-group).
+Every endpoint profile comprises the _client-side_, _server-side_ and _system_ parts.
+
+The structure of both client-side and server-side parts of an endpoint profile are defined by [application]({{root_url}}Glossary/#kaa-application) developer using the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) format.
+Application developer can reuse and share certain data structures using the [common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl).
+
+The client-side structure is used during the SDK generation.
+Therefore, if you make changes to the client-side structure, you need to re-generate your SDK.
+For more information, see [Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)).
+
+The structure of the system part is identical across the applications and is used by [Kaa platform]({{root_url}}Glossary/#kaa-platform) to perform internal functions.
+Both client-side and server-side profile schemas are maintained within the corresponding application, with its own version that distinguishes it from the previous schemas.
+Multiple schema versions and the corresponding endpoint profiles can coexist within a single application.
+
+## Client-side endpoint profile
 
 The client-side endpoint profile is initially generated at the stage of a new endpoint registration. Prior to that, the client-side endpoint profile values should be 
 specified by the client developer using the Kaa endpoint SDK. The client-side endpoint profile can be also updated at run time using SDK API call. In this case, SDK executes 
@@ -32,7 +39,7 @@ it detects profile data changes and submits the new data to the Kaa cluster as a
 
 <img src="endpoint-profile-generation/ClientSideEndpointProfileGeneration_0_8_0.png">
 
-### Client-side endpoint profile example ###
+### Client-side endpoint profile example
 
 For the purpose of this guide we will use a fairly abstract client-side profile schema shown below.
 
