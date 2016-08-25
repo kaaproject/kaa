@@ -744,45 +744,36 @@ private static void printConfiguration(SampleConfiguration sampleConfiguration) 
 ```c++
 #include <iostream>
 #include <cstdlib>
- 
 #include <kaa/Kaa.hpp>
 #include <kaa/IKaaClient.hpp>
 #include <kaa/configuration/manager/IConfigurationReceiver.hpp>
 #include <kaa/configuration/storage/FileConfigurationStorage.hpp>
  
-using namespace kaa;
-
 const char savedConfig[] = "saved_config.cfg";
 
-class UserConfigurationReceiver : public IConfigurationReceiver {
+class UserConfigurationReceiver : public kaa::IConfigurationReceiver {
 public:
-    virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
+    virtual void onConfigurationUpdated(const kaa::KaaRootConfiguration &configuration)
     {
         // Add your code here.
     }
 };
-
+ 
 int main()
 {
     // Initialize the Kaa endpoint.
-    auto kaaClient = Kaa::newClient();
-
+    auto kaaClient = kaa::Kaa::newClient();
     // Set up a configuration subsystem.
-    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>(savedConfig));
+    kaa::IConfigurationStoragePtr storage(std::make_shared<kaa::FileConfigurationStorage>(savedConfig));
     kaaClient->setConfigurationStorage(storage);
-
     // Set configuration update receiver.
     UserConfigurationReceiver receiver;
     kaaClient->addConfigurationListener(receiver);
-
     // Run the Kaa endpoint.
     kaaClient->start();
-
     std::cout << "Press Enter to stop" << std::endl;
-
     // Wait for the Enter key before exiting.
     std::cin.get();
-
     return EXIT_SUCCESS;
 }
 

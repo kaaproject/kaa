@@ -216,7 +216,7 @@ The process flows as follows:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus">C++</a></li>
+  <li><a data-toggle="tab" href="#Cpp">C++</a></li>
   <li><a data-toggle="tab" href="#C">C</a></li>
   <li><a data-toggle="tab" href="#Objective-C">Objective-C</a></li>
 </ul>
@@ -257,25 +257,22 @@ kaaClient.attachUser("userVerifierToken", "userExternalId", "userAccessToken", n
 ```
 
 </div>
-<div id="C_plus_plus" class="tab-pane fade" markdown="1" >
+<div id="Cpp" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <memory>
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+#include <kaa/event/registration/IUserAttachCallback.hpp>
  
-using namespace kaa;
- 
-class SimpleUserAttachCallback : public IUserAttachCallback {
+class SimpleUserAttachCallback : public kaa::IUserAttachCallback {
 public:
     virtual void onAttachSuccess()
     {
         std::cout << "Endpoint is attached to a user" << std::endl;
     }
  
-    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    virtual void onAttachFailed(kaa::UserAttachErrorCode errorCode, const std::string& reason)
     {
         std::cout << "Failed to attach endpoint to a user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
     }
@@ -284,13 +281,12 @@ public:
 ...
   
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
- 
+auto kaaClient = kaa::Kaa::newClient();
 // Start an endpoint
 kaaClient->start();
- 
 // Try to attach an endpoint to a user
 kaaClient->attachUser("userExternalId", "userAccessToken", std::make_shared<SimpleUserAttachCallback>());
+
 ```
 
 </div>
@@ -369,7 +365,7 @@ Below are examples of assisted attachment.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus-1">C++</a></li>
+  <li><a data-toggle="tab" href="#Cpp-1">C++</a></li>
   <li><a data-toggle="tab" href="#C-1">C</a></li>
   <li><a data-toggle="tab" href="#Objective-C-1">Objective-C</a></li>
 </ul>
@@ -446,38 +442,33 @@ public class AssistedAttachment {
 ```
 
 </div>
-<div id="C_plus_plus-1" class="tab-pane fade" markdown="1" >
+<div id="Cpp-1" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <memory>
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+#include <kaa/event/registration/IAttachEndpointCallback.hpp>
  
-using namespace kaa;
- 
-class SimpleEndpointAttachCallback : public IAttachEndpointCallback {
+class SimpleEndpointAttachCallback : public kaa::IAttachEndpointCallback {
 public:
-    virtual void onAttachSuccess()
+    virtual void onAttachSuccess(const std::string& endpointKeyHash)
     {
-        std::cout << "Endpoint is attached to a user" << std::endl;
+        std::cout << "Endpoint is attached to a user, key hash:" << endpointKeyHash << std::endl;
     }
- 
-    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    
+    virtual void onAttachFailed()
     {
-        std::cout << "Failed to attach endpoint to a user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
+        std::cout << "Failed to attach endpoint to a user" << std::endl;
     }
 };
  
 ...
   
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
- 
+auto kaaClient = kaa::Kaa::newClient();
 // Start an endpoint
 kaaClient->start();
- 
 // Try to attach an endpoint to a user
 kaaClient->attachEndpoint("endpointAccessToken", std::make_shared<SimpleEndpointAttachCallback>());
 ```
@@ -540,7 +531,7 @@ Below are examples of assisted detachment.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-2">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus-2">C++</a></li>
+  <li><a data-toggle="tab" href="#Cpp-2">C++</a></li>
   <li><a data-toggle="tab" href="#C-2">C</a></li>
   <li><a data-toggle="tab" href="#Objective-C-2">Objective-C</a></li>
 </ul>
@@ -571,39 +562,35 @@ kaaClient.detachEndpoint("endpointKeyHash", new OnDetachEndpointOperationCallbac
 ```
 
 </div>
-<div id="C_plus_plus-2" class="tab-pane fade" markdown="1" >
+<div id="Cpp-2" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <memory>
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
- 
-using namespace kaa;
- 
-class SimpleEndpointDetachCallback : public IDetachEndpointCallback {
+#include <kaa/event/registration/IDetachEndpointCallback.hpp>
+
+class SimpleEndpointDetachCallback : public kaa::IDetachEndpointCallback {
 public:
     virtual void onDetachSuccess()
     {
         std::cout << "Endpoint is attached to a user" << std::endl;
     }
  
-    virtual void onDetachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    virtual void onDetachFailed()
     {
-        std::cout << "Failed to detach endpoint from user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
+        std::cout << "Failed to detach endpoint from user" << std::endl;
     }
 };
  
 ...
-  
+ 
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
+auto kaaClient = kaa::Kaa::newClient();
  
-// Start an endpoint
-kaaClient->start();
+...
  
-// Try to attach an endpoint to a user
+// Try to detach an endpoint from a user 
 kaaClient->detachEndpoint("endpointKeyHash", std::make_shared<SimpleEndpointDetachCallback>());
 ```
 
