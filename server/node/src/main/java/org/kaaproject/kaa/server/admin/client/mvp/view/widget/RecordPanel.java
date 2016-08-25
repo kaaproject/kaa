@@ -88,7 +88,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         } else {
             table.setWidget(0, 0, recordFieldWidget);
         }
-        
+
         Label uploadLabel = new Label(Utils.constants.uploadFromFile());
         recordFileUpload = new FileUploadForm();
         recordFileUpload.addSubmitCompleteHandler(new SubmitCompleteHandler() {

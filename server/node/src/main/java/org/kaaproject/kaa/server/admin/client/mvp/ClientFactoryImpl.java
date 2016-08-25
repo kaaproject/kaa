@@ -31,15 +31,15 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EventClassView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -71,9 +71,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfiles
 import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.UpdateUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfVersionViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EventClassViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.header.HeaderViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemasViewImpl;
@@ -187,8 +188,11 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EcfView ecfView = new EcfViewImpl(false);
     private final EcfView createEcfView = new EcfViewImpl(true);
 
-    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl(false);
-    private final EcfSchemaView createEcfSchemaView = new EcfSchemaViewImpl(true);
+    private final EventClassView eventClassView = new EventClassViewImpl(false);
+    private final EventClassView createEventClassView = new EventClassViewImpl(true);
+
+    private final EcfVersionView createEcfVersionView = new EcfVersionViewImpl(true);
+    private final EcfVersionView versionView = new EcfVersionViewImpl(false);
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
@@ -458,13 +462,23 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public EcfSchemaView getEcfSchemaView() {
-        return ecfSchemaView;
+    public EventClassView getEventClassView() {
+        return eventClassView;
     }
 
     @Override
-    public EcfSchemaView getCreateEcfSchemaView() {
-        return createEcfSchemaView;
+    public EventClassView getCreateEventClassView() {
+        return createEventClassView;
+    }
+
+    @Override
+    public EcfVersionView  getCreateEcfVersionView() {
+        return createEcfVersionView;
+    }
+
+    @Override
+    public EcfVersionView getEcfVersionView() {
+        return versionView;
     }
 
     @Override

@@ -22,27 +22,27 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-public class EcfSchemasDataProvider extends AbstractDataProvider<EventSchemaVersionDto, Integer>{
+public class EcfVersionsDataProvider extends AbstractDataProvider<EventClassFamilyVersionDto, Integer>{
 
-    private List<EventSchemaVersionDto> schemas = new ArrayList<>();
+    private List<EventClassFamilyVersionDto> schemas = new ArrayList<>();
 
-    public EcfSchemasDataProvider(AbstractGrid<EventSchemaVersionDto, Integer> dataGrid,
-                                  HasErrorMessage hasErrorMessage) {
+    public EcfVersionsDataProvider(AbstractGrid<EventClassFamilyVersionDto, Integer> dataGrid,
+                                   HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }
 
-    public void setSchemas(List<EventSchemaVersionDto> schemas) {
+    public void setSchemas(List<EventClassFamilyVersionDto> schemas) {
         this.schemas.clear();
         if (schemas != null) {
             this.schemas.addAll(schemas);
-            Collections.sort(schemas, new Comparator<EventSchemaVersionDto>() {
+            Collections.sort(schemas, new Comparator<EventClassFamilyVersionDto>() {
                 @Override
-                public int compare(EventSchemaVersionDto o1,
-                        EventSchemaVersionDto o2) {
+                public int compare(EventClassFamilyVersionDto o1,
+                        EventClassFamilyVersionDto o2) {
                     return o1.getVersion() - o2.getVersion();
                 }
             });

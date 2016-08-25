@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
@@ -55,8 +56,8 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -89,7 +90,6 @@ import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceExceptio
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
-import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1074,10 +1074,18 @@ public class DefaultControlService implements ControlService {
                 efm.setEcfName(ecf.getName());
                 efm.setEcfNamespace(ecf.getNamespace());
                 efm.setEcfClassName(ecf.getClassName());
-                List<EventSchemaVersionDto> ecfSchemas = ecf.getSchemas();
-                for (EventSchemaVersionDto ecfSchema : ecfSchemas) {
+                List<EventClassFamilyVersionDto> ecfSchemas = eventClassService.findEventClassFamilyVersionsByEcfId(aefMap.getEcfId());
+                for (EventClassFamilyVersionDto ecfSchema : ecfSchemas) {
                     if (ecfSchema.getVersion() == efm.getVersion()) {
-                        efm.setEcfSchema(ecfSchema.getSchema());
+                        List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecf.getId(), ecfSchema.getVersion(), null);
+                        efm.setRecords(records);
+
+                        List <CTLSchemaDto> ctlDtos = new ArrayList<>();
+                        List <String> flatEventClassCtlSchemas = new ArrayList<>();
+                        records.forEach(rec -> ctlDtos.add(ctlService.findCTLSchemaById(rec.getCtlSchemaId())));
+                        ctlDtos.forEach(ctlDto -> flatEventClassCtlSchemas.add(new DataSchema(ctlService.flatExportAsString(ctlDto)).getRawSchema()));
+                        efm.setRawCtlsSchemas(flatEventClassCtlSchemas);
+
                         break;
                     }
                 }
@@ -1484,10 +1492,10 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editEventClassFamily
-     * (org.kaaproject.kaa.common.dto.event.EventClassFamilyDto)
+     * (org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto)
      */
     @Override
     public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException {
@@ -1518,20 +1526,31 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * addEventClassFamilySchema(java.lang.String, java.lang.String,
-     * java.lang.String)
+     * getEventClassFamilyVersions (java.lang.String)
      */
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException {
+        return eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamilyId);
+    }
+
+    /*
+         * (non-Javadoc)
+         *
+         * @see org.kaaproject.kaa.server.control.service.ControlService#
+         * addEventClassFamilyVersion(java.lang.String, java.lang.String,
+         * java.lang.String)
+         */
+    @Override
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
             throws ControlServiceException {
-        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
+        eventClassService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion, createdUsername);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getEventClassesByFamilyIdVersionAndType(java.lang.String, int,
      * org.kaaproject.kaa.common.dto.event.EventClassType)
@@ -1540,6 +1559,41 @@ public class DefaultControlService implements ControlService {
     public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
             throws ControlServiceException {
         return eventClassService.findEventClassesByFamilyIdVersionAndType(ecfId, version, type);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getEventClassesByFamilyIdVersionAndType(java.lang.String, int,
+     * org.kaaproject.kaa.common.dto.event.EventClassType)
+     */
+    @Override
+    public EventClassDto getEventClassById(String eventClassId) throws ControlServiceException {
+        return eventClassService.findEventClassById(eventClassId);
+    }
+
+    @Override
+    public boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns) {
+        return eventClassService.validateEventClassFamilyFqns(ecfId, fqns);
+    }
+
+    @Override
+    public Set<String> getFqnSetForECF(String ecfId) {
+        return eventClassService.getFqnSetForECF(ecfId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * validateECFListInSdkProfile(List<org.kaaproject.kaa.common.dto.event.AefMapInfoDto> ecfList)
+     */
+    @Override
+    public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException {
+        if (!eventClassService.isValidECFListInSdkProfile(ecfList)) {
+            throw new ControlServiceException("You have chosen event class families, where event classes have the same FQNs.");
+        }
     }
 
     /*

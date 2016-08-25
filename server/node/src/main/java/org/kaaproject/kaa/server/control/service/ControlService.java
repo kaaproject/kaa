@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
@@ -34,6 +35,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -987,18 +989,29 @@ public interface ControlService {
     EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException;
 
     /**
-     * Adds the event class family schema.
+     * Gets the list of event class family versions.
      *
      * @param eventClassFamilyId
      *            the event class family id
-     * @param eventClassFamilySchema
-     *            the event class family schema
+     * @return the list of event class family versions
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException;
+
+    /**
+     * Adds the event class family version to existing ECF.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @param eventClassFamilyVersion
+     *            the event class family version dto
      * @param createdUsername
      *            the created username
      * @throws ControlServiceException
      *             the control service exception
      */
-    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+    void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
             throws ControlServiceException;
 
     /**
@@ -1016,6 +1029,45 @@ public interface ControlService {
      */
     List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
             throws ControlServiceException;
+
+    /**
+     * Gets the event class by id.
+     *
+     * @param eventClassId
+     *            the event class id
+     * @return the event class dto
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    EventClassDto getEventClassById(String eventClassId) throws ControlServiceException;
+
+    /**
+     * Check passed FQNs if they are present in event class family.
+     * FQNs in scope of event class family should be unique.
+     *
+     * @param ecfId the string id of event class family
+     * @param fqns list of fqns to check against family fqns
+     * @return true is fqns are unique
+     */
+    boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns);
+
+    /**
+     * Get set of all events class FQNs in event class family.
+     *
+     * @param ecfId string of the event class family id
+     * @return list of all FQNs
+     */
+    Set<String> getFqnSetForECF(String ecfId) throws ControlServiceException;
+
+    /**
+     * Check passed event class family mappings for Sdk profile.
+     * There must not be same FNQs between chosen event class family versions.
+     *
+     * @param ecfList list of event class family mappings chosen for Sdk profile
+     * @throws ControlServiceException
+     *             the control service exception
+     */
+    void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException;
 
     /**
      * Edits the application event family map.

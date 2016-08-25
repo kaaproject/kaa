@@ -37,15 +37,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateEventClassDaoTest extends HibernateAbstractTest {
 
     @Test
-    public void removeByEcfId() {
+    public void removeByEcfvId() {
         List<EventClass> eventClasses = generateEventClass(null, null, 2);
         String id = eventClasses.get(0).getStringId();
         EventClass dto = eventClassDao.findById(id);
         Assert.assertNotNull(dto);
-        String ecfId = dto.getEcf().getStringId();
-        Assert.assertNotNull(ecfId);
+        String ecfvId = dto.getEcfv().getStringId();
+        Assert.assertNotNull(ecfvId);
 
-        eventClassDao.removeByEcfId(ecfId);
+        eventClassDao.removeByEcfvId(ecfvId);
         dto = eventClassDao.findById(id);
         Assert.assertNull(dto);
     }
@@ -67,7 +67,7 @@ public class HibernateEventClassDaoTest extends HibernateAbstractTest {
         List<EventClass> eventClasses = generateEventClass(null, null, 2);
         EventClass dto = eventClassDao.findById(eventClasses.get(0).getStringId());
         Assert.assertNotNull(dto);
-        List<EventClass> eventClassesList = eventClassDao.findByEcfId(dto.getEcf().getStringId());
+        List<EventClass> eventClassesList = eventClassDao.findByEcfvId(dto.getEcfv().getStringId());
         EventClass eventClass = null;
         for (EventClass found : eventClassesList) {
             if (dto.getId().equals(found.getId())) {
@@ -94,12 +94,9 @@ public class HibernateEventClassDaoTest extends HibernateAbstractTest {
         Tenant tenant = classFamily.getTenant();
         List<EventClass> events = generateEventClass(tenant, classFamily, 1);
         EventClass ec = events.get(0);
-        EventClassDto dto = ec.toDto();
-        dto.setVersion(2);
-        EventClass converted  = new EventClass(dto);
-        eventClassDao.save(converted);
-        EventClass found = eventClassDao.findByTenantIdAndFqnAndVersion(tenant.getId().toString(), ec.getFqn(), converted.getVersion());
-        Assert.assertEquals(converted.getFqn(), found.getFqn());
-        Assert.assertEquals(converted.getVersion(), found.getVersion());
+
+        EventClass found = eventClassDao.findByTenantIdAndFqnAndVersion(tenant.getId().toString(), ec.getFqn(), ec.getVersion());
+        Assert.assertEquals(ec.getFqn(), found.getFqn());
+        Assert.assertEquals(ec.getVersion(), found.getVersion());
     }
 }

@@ -55,6 +55,9 @@
                             </gwt:cell>
                         </gwt:HorizontalPanel>
                     </gwt:cell>
+                    <gwt:cell>
+                        <gwt:HorizontalPanel ui:field="supportPanel" height="100%" verticalAlignment="ALIGN_MIDDLE"/>
+                    </gwt:cell>
                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
                         <avroUi:AlertPanel ui:field="errorPanel"/>
                     </gwt:cell>

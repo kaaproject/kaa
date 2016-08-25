@@ -35,6 +35,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.CtlService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -44,7 +45,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -302,6 +302,33 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     }
 
     @Override
+    public List<CtlSchemaReferenceDto> getTenantLevelCTLSchemaReferenceForECF(String ecfId, List<EventClassViewDto> eventClassViewDtoList) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+        try {
+            AuthUserDto currentUser = getCurrentUser();
+            List<CTLSchemaMetaInfoDto> ctlSchemaReferenceDtoListForTenant = controlService.getAvailableCTLSchemasMetaInfoForTenant(currentUser.getTenantId());
+            Set<String> fqnListOfCurrentECF = controlService.getFqnSetForECF(ecfId);
+            if (eventClassViewDtoList != null) {
+                for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
+                    String fqn = eventClassViewDto.getExistingMetaInfo().getMetaInfo().getFqn();
+                    fqnListOfCurrentECF.add(fqn);
+                }
+            }
+            List<CtlSchemaReferenceDto> availableCtlSchemaReferenceForECF = new ArrayList<>();
+            for (CTLSchemaMetaInfoDto metaInfo : ctlSchemaReferenceDtoListForTenant) {
+                if (!fqnListOfCurrentECF.contains(metaInfo.getFqn())) {
+                    for (int version : metaInfo.getVersions()) {
+                        availableCtlSchemaReferenceForECF.add(new CtlSchemaReferenceDto(metaInfo, version));
+                    }
+                }
+            }
+            return availableCtlSchemaReferenceForECF;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
     public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(String applicationToken) throws KaaAdminServiceException {
         return getApplicationLevelCTLSchemas(checkApplicationToken(applicationToken));
     }
@@ -412,9 +439,8 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     @Override
     public List<CtlSchemaReferenceDto> getAvailableApplicationCTLSchemaReferences(String applicationId)
             throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER, KaaAuthorityDto.TENANT_ADMIN);
         try {
-            this.checkApplicationId(applicationId);
             AuthUserDto currentUser = getCurrentUser();
             List<CtlSchemaReferenceDto> result = new ArrayList<>();
             List<CTLSchemaMetaInfoDto> availableMetaInfo = controlService.getAvailableCTLSchemasMetaInfoForApplication(currentUser.getTenantId(), applicationId);
@@ -653,6 +679,21 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
             }
         }
         return message.toString();
+    }
+
+    @Override
+    public CtlSchemaReferenceDto getLastCtlSchemaReferenceDto(String ctlSchemaId) throws KaaAdminServiceException {
+        try {
+            if (!isEmpty(ctlSchemaId)) {
+                CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(ctlSchemaId);
+                CtlSchemaReferenceDto ctlSchemaReference = getAvailableApplicationCTLSchemaReferences(null).stream().
+                        filter(ctlSchemaReferenceDto -> ctlSchemaReferenceDto.getMetaInfo().getId().equals(ctlSchemaDto.getMetaInfo().getId())).findFirst().get();
+                return ctlSchemaReference;
+            }
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+        return null;
     }
 
 }

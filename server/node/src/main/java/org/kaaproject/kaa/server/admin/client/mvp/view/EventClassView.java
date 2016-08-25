@@ -16,18 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
-import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 
-public interface EcfSchemaView extends BaseDetailsView {
+public interface EventClassView extends BaseCtlSchemaView {
 
-    public HasValue<String> getVersion();
-
-    public HasValue<String> getCreatedUsername();
-
-    public HasValue<String> getCreatedDateTime();
-    
-    public RecordPanel getEcfSchemaForm();
+    ValueListBox<String> getEventClassTypes();
 
 }

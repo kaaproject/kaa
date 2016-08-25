@@ -111,15 +111,15 @@ public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implemen
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 80);
         Label descriptionLabel = new Label(Utils.constants.description());
-        detailsTable.setWidget(4, 0, descriptionLabel);
-        detailsTable.setWidget(4, 1, description);
+        detailsTable.setWidget(5, 0, descriptionLabel);
+        detailsTable.setWidget(5, 1, description);
         description.addInputHandler(this);
 
-        detailsTable.getCellFormatter().setVerticalAlignment(4, 0, HasVerticalAlignment.ALIGN_TOP);
+        detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
         
         HorizontalPanel ctlSwitchPanel = new HorizontalPanel();
-        detailsTable.setWidget(5, 0, ctlSwitchPanel);
-        detailsTable.getFlexCellFormatter().setColSpan(5, 0, 2);
+        detailsTable.setWidget(6, 0, ctlSwitchPanel);
+        detailsTable.getFlexCellFormatter().setColSpan(6, 0, 2);
         ctlSwitchPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
         ctlSwitchPanel.getElement().getStyle().setPaddingBottom(10, Unit.PX);
         existingCtlButton = new ToggleButton(Utils.constants.selectExistingType());        
@@ -128,7 +128,7 @@ public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implemen
         existingCtlButton.setValue(true);
         ctlSwitchPanel.add(existingCtlButton);
         ctlSwitchPanel.add(newCtlButton);
-        
+
         ctlSwitchPanel.setVisible(create);
         
         final LayoutPanel rootPanel = new LayoutPanel();

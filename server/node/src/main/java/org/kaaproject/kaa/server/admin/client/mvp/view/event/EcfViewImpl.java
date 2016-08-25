@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
@@ -42,8 +42,8 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
     private SizedTextArea description;
     private SizedTextBox createdUsername;
     private SizedTextBox createdDateTime;
-    private EcfSchemasGrid ecfSchemasGrid;
-    private Button addEcfSchemaButton;
+    private EcfVersionsGrid ecfVersionsGrid;
+    private Button addEcfVersionButton;
 
     public EcfViewImpl(boolean create) {
         super(create);
@@ -79,14 +79,13 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         return createdDateTime;
     }
 
-    @Override
-    public AbstractGrid<EventSchemaVersionDto, Integer> getEcfSchemasGrid() {
-        return ecfSchemasGrid;
+    public AbstractGrid<EventClassFamilyVersionDto, Integer> getEcfVersionsGrid() {
+        return ecfVersionsGrid;
     }
 
     @Override
-    public HasClickHandlers getAddEcfSchemaButton() {
-        return addEcfSchemaButton;
+    public HasClickHandlers getAddEcfVersionButton() {
+        return addEcfVersionButton;
     }
 
     @Override
@@ -106,7 +105,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
     @Override
     protected void initDetailsTable() {
-        
+
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new KaaAdminSizedTextBox(-1, false);
         createdUsername.setWidth("100%");
@@ -124,7 +123,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
         dateTimeCreatedLabel.setVisible(!create);
         createdDateTime.setVisible(!create);
-        
+
         Label nameLabel = new Label(Utils.constants.name());
         nameLabel.addStyleName(REQUIRED);
         name = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
@@ -135,7 +134,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
         Label namespaceLabel = new Label(Utils.constants.namespace());
         Label classNameLabel = new Label(Utils.constants.className());
-        if (create) {  
+        if (create) {
             namespaceLabel.addStyleName(REQUIRED);
             classNameLabel.addStyleName(REQUIRED);
             namespace = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
@@ -148,7 +147,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         }
         namespace.setWidth("100%");
         className.setWidth("100%");
-        
+
         detailsTable.setWidget(3, 0, namespaceLabel);
         detailsTable.setWidget(3, 1, namespace);
 
@@ -164,28 +163,28 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
         description.addInputHandler(this);
 
         detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
-        
-        ecfSchemasGrid = new EcfSchemasGrid();
-        ecfSchemasGrid.setSize("700px", "200px");
-        Label ecfSchemasLabel = new Label(Utils.constants.schemas());
-        ecfSchemasLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
-        addEcfSchemaButton = new Button(Utils.constants.addSchema());
-        addEcfSchemaButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
+        ecfVersionsGrid = new EcfVersionsGrid();
+        ecfVersionsGrid.setSize("700px", "200px");
+        Label ecfVersionsLabel = new Label(Utils.constants.versions());
+        ecfVersionsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
-        detailsTable.setWidget(6, 0, ecfSchemasLabel);
-        ecfSchemasLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        addEcfVersionButton = new Button(Utils.constants.addFamilyVersion());
+        addEcfVersionButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
-        detailsTable.setWidget(7, 0, ecfSchemasGrid);
+        detailsTable.setWidget(6, 0, ecfVersionsLabel);
+        ecfVersionsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+
+        detailsTable.setWidget(7, 0, ecfVersionsGrid);
         detailsTable.getFlexCellFormatter().setColSpan(7, 0, 3);
 
-        detailsTable.setWidget(8, 2, addEcfSchemaButton);
-        addEcfSchemaButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
+        detailsTable.setWidget(8, 2, addEcfVersionButton);
+        addEcfVersionButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
         detailsTable.getCellFormatter().setHorizontalAlignment(8, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-        
-        ecfSchemasLabel.setVisible(!create);
-        ecfSchemasGrid.setVisible(!create);
-        addEcfSchemaButton.setVisible(!create);
+
+        ecfVersionsLabel.setVisible(!create);
+        ecfVersionsGrid.setVisible(!create);
+        addEcfVersionButton.setVisible(!create);
         
         name.setFocus(true);
     }

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -116,6 +117,7 @@ public class ControlServerUserIT extends AbstractTestControlServer {
      *
      * @throws Exception the exception
      */
+    @Ignore("Tenant id got from current user, so no way to set wrong tenant id")
     @Test
     public void testFailTenantAdminCreateOtherUser() throws Exception {
         expectedException.expect(HttpClientErrorException.class);
