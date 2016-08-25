@@ -23,20 +23,20 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
  - **Host OS:** **Ubuntu 16.04 64-bit LTS**
  - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3.
 
-1. Download the [cross compile tools](https://downloadcenter.intel.com/download/24472/Cross-Compiler-Toolchain-for-Intel-Edison-Maker-Board) for your platform, 32 or 64 bit. Untar the downloded file (don't forget to change the file name to proper one).
+1. Download the [cross compile tools](https://downloadcenter.intel.com/download/24472/Cross-Compiler-Toolchain-for-Intel-Edison-Maker-Board) for your platform, 32 or 64 bit. Untar the downloaded file (don't forget to change the file name to proper one).
 
         tar -xvf edison-toolchain-20150120-linux64.tar.bz2
 
-1. Install toolchain.
+2. Install toolchain.
 
         cd i686
         ./install_script.sh
 
-You may experience `find: invalid mode '+111'` error message while running the installation script. In this case you should replace `+111` entries of `install_script.sh` with `/111`: 
+    You may experience `find: invalid mode '+111'` error message while running the installation script. The script can be fixed with this command:
 
-        executable_files=$($SUDO_EXEC find "$native_sysroot" -type f -perm /111 -exec printf "\"%s\" " {} \; )
+        sed -i 's/+111/\/111/' install_script.sh
 
-The cross compilation toolchain is installed to `/opt/poky-edison/1.6.1/` directory by default. On some configurations the script installs the toolchain only to its working directory.
+    The cross compilation toolchain is installed to `/opt/poky-edison/1.6.1/` directory by default. On some configurations the script installs the toolchain only to its working directory.
 
 # Create application
 
