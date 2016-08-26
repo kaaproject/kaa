@@ -305,7 +305,7 @@ Endpoint groups are created based on the profile filters.
 
 To add a new endpoint group:
 
-1. Open the **Endpoint groups** window by clicking **Endpoint groups** under the application menu on the navigation panel and then click **Add endpoint group**.
+1. Under the **Schemas** section of the application, click **Endpoint groups** window by clicking **Endpoint groups** under the application menu on the navigation panel and then click **Add endpoint group**.
 
 ![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
 
