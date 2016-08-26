@@ -414,7 +414,7 @@ As a tenant developer, you can create new server-side EP schemas for your applic
 
 ### REST API for server-side EP profile
 
-Admin REST API provides the following actions:
+Use the server REST API to perform the following actions:
 
 * [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
 * [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
