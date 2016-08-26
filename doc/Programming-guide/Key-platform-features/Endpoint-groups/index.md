@@ -196,8 +196,14 @@ When you incorporated all the above schemas, the following filters will return *
 
 ## Using endpoint groups
 
-Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. Weight of group responsible for her priority. Group with the biggest weight is the most priority.   
-Also group has:
+Every Kaa application, when created, becomes a member of the default group [all]({{root_url}}Glossary/#group-all).
+This default group is created for every application and cannot be edited by users.
+
+Every group has a *weight* that represents the group priority.
+Hihger weight number corresponds to higher priority.
+The weight of the group *all* is *0*, which is the lowest priority. 
+
+The group *all* also has the following attributes:
 
 * Name
 * Weight
@@ -206,15 +212,18 @@ Also group has:
 * [Configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#configuration-schema)
 * [Notification topics]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#notification-topics)
 
-The associated profile filter is automatically set equal to 'true' for each profile 
-schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
-[Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
+The associated profile filter is automatically set equal to **true** for each profile schema version in the system.
+Therefore, the group *all* contains every endpoint registered in the application.
+You can create your custom endpoint groups using the [Administration UI](#adding-endpoint-groups) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
 
-**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
+>**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
+{:.note}
 
-Each group can be associated with multiple profile filters, each specific to a separate client-side and server-side profile schema version combination. 
-Only one profile filter can be defined for a profile schema version combination. However, you may also define profile filters that are agnostic to either 
-client-side or server-side profile part. In this case, either client-side profile or server-side profile will not be accessible in the filter. 
+You can assign multiple filters to a group.
+Every profile filter is specific to one combination of client-side and server-side profile schema version.
+Only one profile filter can be defined for a profile schema version combination.
+However, you can also define profile filters that are agnostic to neither client-side nor server-side profile part.
+In this case, either client-side profile or server-side profile will not be accessible in the filter.
 This is useful in case you want to specify an endpoint group that is based on certain client-side profile property and is not affected by server-side profile updates and vice-versa. 
  
 Client-side Endpoint Profile A
