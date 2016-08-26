@@ -113,7 +113,7 @@ For more information about the schema export methods, see [CT schema export supp
 
 As a tenant developer, you can create new client-side EP schemas for your application as follows:
 
-1. Under the **Schemas** section of the application, click **Client-side EP profile schemas** window for the application, then click the **Add schema** button.
+1. Under the **Schemas** section of the application, click **Client-side EP profile schemas**, then click the **Add schema** button.
 
 2. On the **Add profile schema** page, enter your schema name and description (optional).	
 
@@ -393,7 +393,7 @@ See [CT schema export support]({{root_url}}Programming-guide/Key-platform-featur
 
 As a tenant developer, you can create new server-side EP schemas for your application as follows:
 
-1. Under the **Schemas** section of the application, click **Server-side EP profile schemas** window for the application, then click the **Add schema** button.
+1. Under the **Schemas** section of the application, click **Server-side EP profile schemas**, then click the **Add schema** button.
 
 2. On the **Add profile schema** page, enter your schema name and description (optional).
 
