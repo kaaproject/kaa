@@ -305,15 +305,15 @@ Endpoint groups are created based on the profile filters.
 
 To add a new endpoint group:
 
-1. Under the **Schemas** section of the application, click **Endpoint groups** window by clicking **Endpoint groups** under the application menu on the navigation panel and then click **Add endpoint group**.
+1. Under the **Schemas** section of the application, click **Endpoint groups**, then click **Add endpoint group**.
 
 ![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
 
-2. In the **Add endpoint group** window, fill in the required fields and then click **Add**.
+2. On the **Add endpoint group** page, fill in the required fields and click **Add**.
 
 ![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
 
-3. In the **Endpoint group** window, add profile filters, configurations, and notifications topics to the group, if necessary (see the following paragraphs for instructions).
+3. On the **Endpoint group** page, add profile filters, configurations, and notifications topics to the group, if necessary (see the following paragraphs for instructions).
 
 ![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
 
@@ -368,7 +368,6 @@ Admin REST API provides the following actions:
 ## Further reading ##
 
 * [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html)
-
 * [Avro](http://avro.apache.org/)
 
 
