@@ -263,7 +263,7 @@ Server-side Endpoint Profile B
 }
 ```
 
-Client-side Endpoint Profile C 
+Client-side Endpoint Profile C
 
 ```json
 { 
@@ -308,15 +308,15 @@ To add a new endpoint group:
 
 1. Under the **Schemas** section of the application, click **Endpoint groups**, then click **Add endpoint group**.
 
-![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
+	![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
 
 2. On the **Add endpoint group** page, fill in the required fields and click **Add**.
 
-![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
+	![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
 
 3. On the **Endpoint group** page, add profile filters, configurations, and notification topics to the group, if necessary.
 
-![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
+	![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
 
 ### Adding profile filters
 
@@ -347,7 +347,7 @@ To add a profile filter for an endpoint group:
 6. Click **Activate** to activate the profile filter.
    The profile filter information you entered is now visible in the **Active** tab.
 
-## Using REST API ##
+## Using REST API
 
 Use the server REST API to perform the following actions:
 
@@ -355,7 +355,7 @@ Use the server REST API to perform the following actions:
 * [Deactivate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deactivateProfileFilter)
 * [Delete endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteEndpointGroup)
 * [Delete profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteProfileFilterRecord)
-* [Create/Edit endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup)
+* [Create/edit endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup)
 * [Get endpoint group based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroup)
 * [Get endpoint groups based on application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroupsByApplicationToken)
 * [Get endpoint profiles bodies based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileBodyByEndpointGroupId)
@@ -367,7 +367,7 @@ Use the server REST API to perform the following actions:
 
 For detailed description of the REST API, its purpose, interface, and features, see [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) its purpose, interfaces and features supported.
 
-## Further reading ##
+## Further reading
 
 * [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html)
 * [Avro](http://avro.apache.org/)
