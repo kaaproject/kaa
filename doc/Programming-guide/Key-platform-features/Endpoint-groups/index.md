@@ -10,34 +10,40 @@ sort_idx: 30
 * TOC
 {:toc}
 
-Kaa provides a mechanism for endpoints aggregation within the application that is based on groups. Grouping endpoints enables you to activate specific configuration parameters, 
-control access to notification topics, etc.
-This guide will familiarize you with the basic concepts of designing endpoint groups. It is assumed that you have either set up a Kaa Sandbox, or a fully-blown Kaa cluster 
-already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or 
-[Admin UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins)). 
-It is strongly recommended to get familiar with Endpoint profiles before you proceed.
+In this section, you can learn how to create [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 
-[Endpoint profile]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/) is a virtual identity or "passport" of the endpoint. 
-Kaa allows for aggregating endpoints related to the same application into endpoint groups this is achieved by filtering the data in the profiles.
-The _endpoint group_ represents an independent managed entity which is defined by the profile filters assigned to the group. 
-Those endpoints whose profiles match the profile filters of the specific endpoint group become automatically 
-registered as members of this group. There is no restriction for endpoints on having membership in a number of groups at a time.
+Endpoint grouping is a Kaa feature that allows you to aggregate your [endpoints]({{root_url}}Glossary/#endpoint-ep) into endpoint groups within an [application]({{root_url}}Glossary/#kaa-application).
+The membership of an endpoint in a group is based on matching the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) to the [profile filter]({{root_url}}Glossary/#profile filter) assigned to that group.
+This means that those endpoints whose profiles match the profile filters of a specific endpoint group become automatically registered as members of that group.
+Endpoint group is an independently managed entity defined by the profile filter assigned to it.
 
-Endpoint group profile filters are predicate expressions which define characteristics of group members (endpoints). These filters are executed against the endpoint 
-profile to figure out whether or not the endpoint belongs to the group.
+Profile filters are predicate expressions that define characteristics of group members (endpoints).
+These filters are executed against the endpoint profile to figure out whether or not the endpoint belongs to the group.
 
-**NOTE**: Different profile schema versions may require separate profile filters due to the schema structural differences. 
-In case a group has no filter assigned for a specific profile schema version, the group does not apply to the endpoints that use the profile of this schema version.
+You can create unlimited number of groups.
+Any endpoint can be a member of unlimited number of groups at the same time.
 
-## Profile filters ##
+## Prerequisites
 
-Profile filters in Kaa are based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) (SpEL). 
-All filters must be specified as predicates (statements which may be either true or false). 
-Profile filters are evaluated using following context variables: 
+To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
+After that, you need to create a tenant and an application.
+To do this, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
 
-* "cp" - Client-side endpoint profile
-* "sp" - Server-side endpoint profile
-* "ekh" - Endpoint key hash
+It is strongly recommended that you first read the [Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) section before you proceed.
+
+## Profile filters
+
+Profile filters in Kaa are based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) (SpEL).
+All filters must be specified as predicates (statements that may be either true or false).
+Profile filters are evaluated using the following context variables:
+
+* cp --- Client-side endpoint profile
+* sp --- Server-side endpoint profile
+* ekh ---Endpoint key hash
+
+>**NOTE**: Different profile schema versions may require separate profile filters due to the schema structural differences.
+>In case a group has no filter assigned for a specific profile schema version, the group will not apply to the endpoints that use the profile of this schema version.
+{:.note}
 
 ### Profile filter examples ###
 
