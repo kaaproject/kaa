@@ -76,13 +76,13 @@ As a tenant developer, you can create new notification schemas for the applicati
     2. Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the 
     schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
     
-        ![Add Notification Schema 2](images/add_notification_schema_3.png)
+        ![Add Notification Schema 3](images/add_notification_schema_3.png)
 
 4. Click **Add** at the top of the window to save the schema.
 
 If you want to review the added Avro schema, open the corresponding **Notification schema** window by clicking the schema in the **Notification schemas** window.
 
-![Add Notification Schema 3](images/add_notification_schema_4.png)
+![Add Notification Schema 4](images/add_notification_schema_4.png)
    
 
 #### Notification topics
