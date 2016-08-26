@@ -35,6 +35,7 @@ It is strongly recommended that you first read the [Endpoint profiles]({{root_ur
 
 Profile filters in Kaa are based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) (SpEL).
 All filters must be specified as predicates (statements that may be either true or false).
+
 Profile filters are evaluated using the following context variables:
 
 * cp --- Client-side endpoint profile
@@ -200,8 +201,8 @@ Every Kaa application, when created, becomes a member of the default group [all]
 This default group is created for every application and cannot be edited by users.
 
 Every group has a *weight* that represents the group priority.
-Hihger weight number corresponds to higher priority.
-The weight of the group *all* is *0*, which is the lowest priority. 
+Higher weight number corresponds to higher priority.
+The weight of the group *all* is *0*, which is the lowest priority.
 
 The group *all* also has the following attributes:
 
