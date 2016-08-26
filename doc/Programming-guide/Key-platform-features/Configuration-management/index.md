@@ -23,9 +23,24 @@ application, Kaa provides a number of very useful features, such as:
 
 The structure of the configuration data is determined by the customizable configuration schema. 
 It is the responsibility of the Kaa developer to construct the configuration schema and make the client application interpret the data supplied by the endpoint SDK.
-Kaa developer can provision the configuration schema using Administration UI (see image below) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema).
+Kaa developer can provision the configuration schema via REST API -- first [create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
+and after that [create configuration schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema) which contains a reference to the created before CT or use Administration UI as shown below:
 
-![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
+1. In the **Configuration schemas** window for the application, click **Add schema**.
+2. In the **Add Configuration schema** window enter the name of the schema.
+3. Then create a schema using one of the two options:
+
+    1. Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
+    
+        ![Add Configuration Schema 1](attach/admin-ui/add_configuration_schema_1.png)
+    
+    2. Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the 
+    schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+    
+        ![Add Configuration Schema 2](attach/admin-ui/add_configuration_schema_2.png)
+
+4. Click **Add** at the top of the window to save the schema.
+
 
 Once a new configuration schema is provisioned, Kaa 
 generates corresponding derivative schemas (a [base schema](#base-schema) and [override schema](#override-schema)),
