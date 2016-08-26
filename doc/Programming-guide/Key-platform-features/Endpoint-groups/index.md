@@ -49,7 +49,9 @@ Profile filters are evaluated using the following context variables:
 
 The following example illustrates the general idea of profile filters.
 
-1. Let's assume we have the following client-side profile schema.
+<ol>
+<li markdown="1">
+Let's assume we have the following client-side profile schema.
 
 ```json
 [  
@@ -106,8 +108,9 @@ The following example illustrates the general idea of profile filters.
    }
 ]
 ```
-
-2. Let's assume we have the following server-side profile schema.
+</li>
+<li markdown="1">
+Let's assume we have the following server-side profile schema.
 For the sake of example, we will make it a fairly simple schema.
 
 ```json
@@ -132,8 +135,9 @@ For the sake of example, we will make it a fairly simple schema.
    }
 ]
 ```
-
-3. Let's have the following client-side endpoint profile to complement our client-side schema.
+</li>
+<li markdown="1">
+Let's have the following client-side endpoint profile to complement our client-side schema.
 
 ```json
 {  
@@ -159,8 +163,9 @@ For the sake of example, we will make it a fairly simple schema.
    "nullableRecordField":null
 }
 ```
-
-4. Let's have the following server-side endpoint profile to complement our server-side schema.
+</li>
+<li markdown="1">
+Let's have the following server-side endpoint profile to complement our server-side schema.
 
 ```json
 {  
@@ -171,8 +176,10 @@ For the sake of example, we will make it a fairly simple schema.
    ]
 }
 ```
+</li>
+</ol>
 
-The following filters will return **true** when applied to the given endpoint.
+When you incorporated all the above schemas, the following filters will return **true** when applied to the given endpoint.
 
 | Filter |Description| 
 |-------------------------------------------------------------------------------------------------------------|
