@@ -20,7 +20,25 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -28,6 +46,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -36,7 +55,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -50,6 +69,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
@@ -214,7 +234,7 @@ public class DataSource {
     public void loadTenants(final AsyncCallback<List<TenantDto>> callback,
             boolean refresh) {
         if (tenants == null || refresh) {
-            tenants = new ArrayList<>();
+            tenants = new ArrayList<TenantDto>();
             tenantRpcService.getTenants(new DataCallback<List<TenantDto>>(callback) {
                 @Override
                 protected void onResult(List<TenantDto> result) {
@@ -469,8 +489,8 @@ public class DataSource {
                 });
     }
 
-    public void generateEcfSchemaForm(String fileItemName,
-                                      final AsyncCallback<RecordField> callback) {
+    public void generateEcfVersionForm(String fileItemName,
+            final AsyncCallback<RecordField> callback) {
         eventRpcService.generateEcfSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
@@ -528,25 +548,97 @@ public class DataSource {
                 });
     }
 
-    public void addEcfSchema(String ecfId, RecordField schemaForm,
-                             final AsyncCallback<Void> callback) {
-        eventRpcService.addEventClassFamilySchemaForm(ecfId, schemaForm,
+    public void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback) {
+        eventRpcService.getEventClassView(eventClassId, new DataCallback<EventClassViewDto>(callback) {
+            @Override
+            protected void onResult(EventClassViewDto result) {
+            }
+        });
+
+    }
+
+    public void getEventClassViewByCtlSchemaId(EventClassDto eventClassViewDto, final AsyncCallback<EventClassViewDto> callback) {
+        eventRpcService.getEventClassViewByCtlSchemaId(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
+            @Override
+            protected void onResult(EventClassViewDto result) {
+            }
+        });
+
+    }
+
+    public void saveEventClassView(EventClassViewDto eventClassViewDto, final AsyncCallback<EventClassViewDto> callback) {
+        eventRpcService.saveEventClassView(eventClassViewDto, new DataCallback<EventClassViewDto>(callback) {
+            @Override
+            protected void onResult(EventClassViewDto result) {
+                eventBus.fireEvent(new DataEvent(EventClassViewDto.class));
+            }
+        });
+
+    }
+
+    public void createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaFormDto, final AsyncCallback<EventClassViewDto> callback) {
+        eventRpcService.createEventClassFormCtlSchema(ctlSchemaFormDto , new DataCallback<EventClassViewDto>(callback) {
+            @Override
+            protected void onResult(EventClassViewDto result) {
+            }
+        });
+
+    }
+
+    public void getEventClassFamilyVersions(String eventClassFamilyId, final AsyncCallback<List<EventClassFamilyVersionDto>> callback) {
+        eventRpcService.getEventClassFamilyVersions(eventClassFamilyId, new DataCallback<List<EventClassFamilyVersionDto>>(callback) {
+            @Override
+            protected void onResult(List<EventClassFamilyVersionDto> result) {
+            }
+        });
+
+    }
+
+    public void getLastCtlSchemaReferenceDto(String ctlSchemaId, final AsyncCallback<CtlSchemaReferenceDto> callback) {
+        ctlRpcService.getLastCtlSchemaReferenceDto(ctlSchemaId, new DataCallback<CtlSchemaReferenceDto>(callback) {
+            @Override
+            protected void onResult(CtlSchemaReferenceDto result) {
+            }
+        });
+
+    }
+
+    public void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto, final AsyncCallback<Void> callback) {
+        eventRpcService.addEventClassFamilyVersionFromView(eventClassFamilyId, eventClassViewDto,
                 new DataCallback<Void>(callback) {
                     @Override
                     protected void onResult(Void result) {
-                        eventBus.fireEvent(new DataEvent(EventSchemaVersionDto.class));
+
                     }
                 });
     }
 
-    public void getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type,
+    public void getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type,
                                                         final AsyncCallback<List<EventClassDto>> callback) {
-        eventRpcService.getEventClassesByFamilyIdVersionAndType(ecfId, version, type,
+        eventRpcService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type,
                 new DataCallback<List<EventClassDto>>(callback) {
                     @Override
                     protected void onResult(List<EventClassDto> result) {
                     }
                 });
+    }
+
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion,
+                                                        final AsyncCallback<Void> callback) {
+        eventRpcService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                    }
+                });
+    }
+
+    public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList, final AsyncCallback<Void> callback) {
+        eventRpcService.validateECFListInSdkProfile(ecfList, new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+            }
+        });
     }
 
     public void loadProfileSchemas(String applicationId,
@@ -689,6 +781,15 @@ public class DataSource {
     public void getAvailableApplicationCTLSchemaReferences(String applicationId,
                                                            final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
         ctlRpcService.getAvailableApplicationCTLSchemaReferences(applicationId,
+                new DataCallback<List<CtlSchemaReferenceDto>>(callback) {
+                    @Override
+                    protected void onResult(List<CtlSchemaReferenceDto> result) {
+                    }
+                });
+    }
+
+    public void getTenantLevelCTLSchemaReferenceForECF(String ecfId, List<EventClassViewDto> eventClassViewDtoList, final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
+        ctlRpcService.getTenantLevelCTLSchemaReferenceForECF(ecfId, eventClassViewDtoList,
                 new DataCallback<List<CtlSchemaReferenceDto>>(callback) {
                     @Override
                     protected void onResult(List<CtlSchemaReferenceDto> result) {
@@ -853,6 +954,16 @@ public class DataSource {
                 new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
                     @Override
                     protected void onResult(List<CTLSchemaMetaInfoDto> result) {
+                    }
+                });
+    }
+
+    public void getCTLSchemaById(String ctlSchemaId,
+             final AsyncCallback<CTLSchemaDto> callback) {
+        ctlRpcService.getCTLSchemaById(ctlSchemaId,
+                new DataCallback<CTLSchemaDto>(callback) {
+                    @Override
+                    protected void onResult(CTLSchemaDto result) {
                     }
                 });
     }

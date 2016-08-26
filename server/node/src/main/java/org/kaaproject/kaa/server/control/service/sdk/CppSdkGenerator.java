@@ -126,7 +126,7 @@ public class CppSdkGenerator extends SdkGenerator {
      */
     @Override
     public FileData generateSdk(String buildVersion,
-            List<BootstrapNodeInfo> bootstrapNodes, 
+            List<BootstrapNodeInfo> bootstrapNodes,
             SdkProfileDto sdkProfile,
             String profileSchemaBody,
             String notificationSchemaBody,

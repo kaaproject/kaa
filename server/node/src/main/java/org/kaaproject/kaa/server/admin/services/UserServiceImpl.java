@@ -126,7 +126,7 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
                 }
             } else {
                 if(!getCurrentUser().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)) {
-                    checkTenantId(user.getTenantId());
+                    checkTenantId(getTenantId());
                 }
             }
             Long userId = saveUser(user);
@@ -134,7 +134,11 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setExternalUid(userId.toString());
-            userDto.setTenantId(user.getTenantId());
+            if (!isEmpty(getTenantId())) {
+                userDto.setTenantId(getTenantId());
+            } else {
+                userDto.setTenantId(user.getTenantId());
+            }
             userDto.setAuthority(user.getAuthority());
             org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(userDto);
 

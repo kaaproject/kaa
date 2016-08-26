@@ -33,7 +33,7 @@ public interface EventClassDao<T> extends SqlDao<T> {
      * @param id the user id
      * @return the list of users
      */
-    List<T> findByEcfId(String id);
+    List<T> findByEcfvId(String id);
 
     /**
      * Find all Event Classes by Event Class Family id, version and type.
@@ -43,14 +43,14 @@ public interface EventClassDao<T> extends SqlDao<T> {
      * @param type    the type
      * @return the list of event classes
      */
-    List<T> findByEcfIdVersionAndType(String ecfId, int version, EventClassType type);
+    List<T> findByEcfvIdVersionAndType(String ecfId, int version, EventClassType type);
 
     /**
      * Remove all Event Classes by Event Class Family id.
      *
      * @param tenantId the tenant id
      */
-    void removeByEcfId(String tenantId);
+    void removeByEcfvId(String tenantId);
 
     /**
      * Find Event Class by Tenant id and FQN.
@@ -60,16 +60,6 @@ public interface EventClassDao<T> extends SqlDao<T> {
      * @return the list of found event classes
      */
     List<T> findByTenantIdAndFqn(String tenantId, String fqn);
-
-    /**
-     * Validate list of FQNs for uniqueness within the tenant.
-     *
-     * @param tenantId the tenant id
-     * @param ecfId    the event class family id
-     * @param fqns     the list of FQNs
-     * @return true if FQNs are unique otherwise false
-     */
-    boolean validateFqns(String tenantId, String ecfId, List<String> fqns);
 
     /**
      * @param tenantId the tenant id

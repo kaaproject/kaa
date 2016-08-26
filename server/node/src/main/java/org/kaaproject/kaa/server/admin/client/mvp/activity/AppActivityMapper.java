@@ -27,12 +27,13 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EcfVersionPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EventClassPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
@@ -109,8 +110,10 @@ public class AppActivityMapper implements ActivityMapper {
                 return new EcfsActivity((EcfsPlace) place, clientFactory);
             } else if (clazz ==  EcfPlace.class) {
                 return new EcfActivity((EcfPlace) place, clientFactory);
-            } else if (clazz ==  EcfSchemaPlace.class) {
-                return new EcfSchemaActivity((EcfSchemaPlace) place, clientFactory);
+            } else if (clazz ==  EcfVersionPlace.class) {
+                return new EcfVersionActivity((EcfVersionPlace) place, clientFactory);
+            } else if (clazz ==  EventClassPlace.class) {
+                return new EventClassActivity((EventClassPlace) place, clientFactory);
             } else if (clazz == ProfileSchemasPlace.class) {
                 return new ProfileSchemasActivity((ProfileSchemasPlace) place, clientFactory);
             } else if (clazz == ServerProfileSchemasPlace.class) {

@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
@@ -36,8 +36,8 @@ public interface EcfView extends BaseDetailsView {
 
     public HasValue<String> getCreatedDateTime();
 
-    public AbstractGrid<EventSchemaVersionDto, Integer> getEcfSchemasGrid();
+    public AbstractGrid<EventClassFamilyVersionDto, Integer> getEcfVersionsGrid();
     
-    public HasClickHandlers getAddEcfSchemaButton();
+    public HasClickHandlers getAddEcfVersionButton();
 
 }

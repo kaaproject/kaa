@@ -19,19 +19,20 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.view.client.HasData;
 
-public class SchemasPlace extends TreePlace {
+public class SchemasPlaceApplication extends TreePlace {
 
     protected String applicationId;
 
     private SchemasPlaceDataProvider dataProvider;
 
-    public SchemasPlace(String applicationId) {
+    public SchemasPlaceApplication(String applicationId) {
         this.applicationId = applicationId;
     }
 
@@ -44,7 +45,7 @@ public class SchemasPlace extends TreePlace {
         return Utils.constants.schemas();
     }
 
-    public static abstract class Tokenizer<P extends SchemasPlace> implements PlaceTokenizer<P>, PlaceConstants {
+    public static abstract class Tokenizer<P extends SchemasPlaceApplication> implements PlaceTokenizer<P>, PlaceConstants {
 
         @Override
         public P getPlace(String token) {
@@ -73,7 +74,7 @@ public class SchemasPlace extends TreePlace {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        SchemasPlace other = (SchemasPlace) obj;
+        SchemasPlaceApplication other = (SchemasPlaceApplication) obj;
         if (applicationId == null) {
             if (other.applicationId != null) {
                 return false;
@@ -101,7 +102,7 @@ public class SchemasPlace extends TreePlace {
 
         @Override
         protected void loadData(LoadCallback callback,
-                HasData<TreePlace> display) {
+                                HasData<TreePlace> display) {
             List<TreePlace> result = new ArrayList<TreePlace>();
             result.add(new ProfileSchemasPlace(applicationId));
             result.add(new ServerProfileSchemasPlace(applicationId));

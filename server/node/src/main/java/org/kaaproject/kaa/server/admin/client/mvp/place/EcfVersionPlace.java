@@ -18,39 +18,39 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
-public class EcfSchemaPlace extends TreePlace {
+import java.util.List;
 
-    private String ecfId;
-    private int version;
+public class EcfVersionPlace extends SchemasPlaceEvent {
 
-    public EcfSchemaPlace(String ecfId, int version) {
-        this.ecfId = ecfId;
-        this.version = version;
+    public EcfVersionPlace(String ecfId, String ecfVersionId, int ecfVersion) {
+        super(ecfId, ecfVersionId, ecfVersion);
     }
 
-    public String getEcfId() {
-        return ecfId;
+    public EcfVersionPlace(String ecfId, String ecfVersionId, int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
+        super(ecfId, ecfVersionId, ecfVersion, eventClassViewDtoList);
     }
 
-    public int getVersion() {
-        return version;
+    public int getEcfVersion() {
+        return ecfVersion;
     }
 
-    @Prefix(value = "ecfSchema")
-    public static class Tokenizer implements PlaceTokenizer<EcfSchemaPlace>, PlaceConstants {
+    @Prefix(value = "ecfVersion")
+    public static class Tokenizer implements PlaceTokenizer<EcfVersionPlace>, PlaceConstants {
 
         @Override
-        public EcfSchemaPlace getPlace(String token) {
+        public EcfVersionPlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new EcfSchemaPlace(PlaceParams.getParam(ECF_ID), PlaceParams.getIntParam(VERSION));
+            return new EcfVersionPlace(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID), PlaceParams.getIntParam(ECF_VERSION));
         }
 
         @Override
-        public String getToken(EcfSchemaPlace place) {
+        public String getToken(EcfVersionPlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(ECF_ID, place.getEcfId());
-            PlaceParams.putIntParam(VERSION, place.getVersion());
+            PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
+            PlaceParams.putIntParam(ECF_VERSION, place.getEcfVersion());
             return PlaceParams.generateToken();
         }
     }
@@ -66,7 +66,7 @@ public class EcfSchemaPlace extends TreePlace {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        EcfSchemaPlace other = (EcfSchemaPlace) obj;
+        EcfVersionPlace other = (EcfVersionPlace) obj;
         if (ecfId == null) {
             if (other.ecfId != null) {
                 return false;
@@ -74,7 +74,7 @@ public class EcfSchemaPlace extends TreePlace {
         } else if (!ecfId.equals(other.ecfId)) {
             return false;
         }
-        if (version != other.version) {
+        if (ecfVersion != other.ecfVersion) {
             return false;
         }
         return true;
