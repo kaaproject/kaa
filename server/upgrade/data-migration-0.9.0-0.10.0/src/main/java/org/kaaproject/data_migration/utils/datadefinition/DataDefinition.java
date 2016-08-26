@@ -44,7 +44,11 @@ public class DataDefinition {
         QueryRunner runner = new QueryRunner();
         String query = String.format(QUERY_FIND_FK_NAME, tableName, referencedTableName);
         String fkName = runner.query(connection, query, rs -> rs.next() ? rs.getString(1) : null);
-        runner.update(connection, "ALTER TABLE " + tableName + " DROP FOREIGN KEY " + fkName);
+        if(fkName != null) {
+            runner.update(connection, "ALTER TABLE " + tableName + " DROP FOREIGN KEY " + fkName);
+        } else {
+            System.err.println("FK name not found");
+        }
     }
 
     public class AlterBuilder {

@@ -63,6 +63,9 @@ public class MigrateData {
                     case "db":
                         options.setDbName(args[i + 1]);
                         break;
+                    case "nosql":
+                        options.setNoSQL(args[i + 1]);
+                        break;
                     default:
                         throw new IllegalArgumentException("No such option: -" + option);
                 }
@@ -81,7 +84,7 @@ public class MigrateData {
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
 //            migrationList.add(new CTLEventsMigration(conn));
-            migrationList.add(new CTLNotificationMigration(conn));
+            migrationList.add(new CTLNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSQL()));
             migrationList.add(new CTLLogMigration(conn));
 
             CTLAggregation aggregation = new CTLAggregation(conn);

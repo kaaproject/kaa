@@ -16,6 +16,7 @@
 
 package org.kaaproject.data_migration;
 
+import com.mongodb.MongoClient;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.kaaproject.data_migration.model.Schema;
@@ -34,6 +35,7 @@ public abstract class AbstractCTLMigration {
     protected Connection connection;
     protected QueryRunner runner;
     protected DataDefinition dd;
+    protected Long idShift;
 
     public AbstractCTLMigration(Connection connection) {
         this.connection = connection;
@@ -60,7 +62,7 @@ public abstract class AbstractCTLMigration {
 
         // shift ids in order to avoid PK constraint violation during adding record to base_schema
         Long shift = runner.query(connection, "select max(id) as max_id from "+ getPrefixTableName() + "_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
-        Long idShift = BaseSchemaIdCounter.getInstance().getAndShift(shift);
+        idShift = BaseSchemaIdCounter.getInstance().getAndShift(shift);
         runner.update(connection, "update " + getPrefixTableName() + "_schems set id = id + " + idShift + " order by id desc");
         schemas.forEach(s -> s.setId(s.getId() + idShift));
 

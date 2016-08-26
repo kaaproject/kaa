@@ -21,12 +21,14 @@ final public class Options {
     public static final String DEFAULT_USER_NAME = "sqladmin";
     public static final String DEFAULT_PASSWORD = "admin";
     public static final String DEFAULT_DB_NAME = "kaa";
-    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_HOST = "10.2.1.130";
+    public static final String DEFAULT_NO_SQL = "mongo";
 
     private String username = DEFAULT_USER_NAME;
     private String password = DEFAULT_PASSWORD;
     private String dbName = DEFAULT_DB_NAME;
     private String host = DEFAULT_HOST;
+    private String noSQL = DEFAULT_NO_SQL;
 
 
     public String getUsername() {
@@ -59,6 +61,14 @@ final public class Options {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getNoSQL() {
+        return noSQL;
+    }
+
+    public void setNoSQL(String noSQL) {
+        this.noSQL = noSQL;
     }
 
     @Override
