@@ -16,7 +16,6 @@
 
 package org.kaaproject.data_migration;
 
-import com.mongodb.MongoClient;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.kaaproject.data_migration.model.Schema;
@@ -58,7 +57,10 @@ public abstract class AbstractCTLMigration {
 
         // delete the fetched ids from schema table
         String toDelete = schemas.stream().map(s -> s.getId().toString()).collect(joining(", "));
-        runner.update(connection, "delete from schems where id in (" + toDelete + ")");
+        String NOT_EMPTY_ID_SET = "^[\\s]*([0-9]+(\\,\\s)?)+";
+        if (toDelete.matches(NOT_EMPTY_ID_SET)) {
+            runner.update(connection, "delete from schems where id in (" + toDelete + ")");
+        }
 
         // shift ids in order to avoid PK constraint violation during adding record to base_schema
         Long shift = runner.query(connection, "select max(id) as max_id from "+ getPrefixTableName() + "_schems", rs -> rs.next() ? rs.getLong("max_id") : null);

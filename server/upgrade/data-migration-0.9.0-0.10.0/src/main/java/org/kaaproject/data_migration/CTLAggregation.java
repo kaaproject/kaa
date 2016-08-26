@@ -88,7 +88,12 @@ public class CTLAggregation {
             RawSchema rawSchema = new RawSchema(schemaBody.toString());
             DefaultRecordGenerationAlgorithm<RawData> algotithm = new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
             String defaultRecord = algotithm.getRootData().getRawData();
-            Long tenantId = runner.query(connection, "select tenant_id from application where id = " + schema.getAppId(), rs -> rs.next() ? rs.getLong("tenant_id") : null);
+            Long tenantId = null;
+            if (schema.getAppId() != null) {
+                tenantId = runner.query(connection, "select tenant_id from application where id = " + schema.getAppId(), rs -> rs.next() ? rs.getLong("tenant_id") : null);
+            } else {
+                tenantId = runner.query(connection, "select tenant_id from events_class where id = " + schema.getId() , rs -> rs.next() ? rs.getLong("tenant_id") : null);
+            }
 
             Ctl ctl = new Ctl(currentCtlId, new CtlMetaInfo(currentCTLMetaId, fqn, schema.getAppId(), tenantId), defaultRecord);
 
