@@ -76,7 +76,7 @@ For more information, see [Administration REST API]({{root_url}}Programming-guid
 
 Here is an example of a custom implementation of Credentials service:
 
-<ol start="1">
+<ol>
 <li markdown="1">
 Create a class that implements all methods of [CredentialsService interface](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java).
 
@@ -122,9 +122,6 @@ public class CustomCredentialsService implements CredentialsService {
 
 ```
 </li>
-</ol>
-
-<ol start="2">
 <li markdown="1">
 Register CredentialsServiceLocator in the /usr/lib/kaa-node/conf/kaaNodeContext.xml file for your new credential service.
 
@@ -147,9 +144,6 @@ The key value you added will be displayed in the **Administration UI**.
 ![credential](attach/credential.png)
 
 </li>
-</ol>
-
-<ol start="3">
 <li markdown="1">
 Edit the /usr/lib/kaa-node/conf/common-dao-context.xml file.
 
