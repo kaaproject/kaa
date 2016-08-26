@@ -45,13 +45,11 @@ Profile filters are evaluated using the following context variables:
 >In case a group has no filter assigned for a specific profile schema version, the group will not apply to the endpoints that use the profile of this schema version.
 {:.note}
 
-### Profile filter examples ###
+### Profile filter examples
 
 The following example illustrates the general idea of profile filters.
 
-About which filters we can use, see the table below. 
-
-1. Let's assume the following client-side profile schema.
+1. Let's assume we have the following client-side profile schema.
 
 ```json
 [  
@@ -109,7 +107,8 @@ About which filters we can use, see the table below.
 ]
 ```
 
-2. Let's assume the following server-side profile schema. Please note that this schema is less complex only for demonstration purposes. 
+2. Let's assume we have the following server-side profile schema.
+For the sake of example, we will make it a fairly simple schema.
 
 ```json
 [  
@@ -134,7 +133,7 @@ About which filters we can use, see the table below.
 ]
 ```
 
-3. Second, let's assume the following client-side endpoint profile, which corresponds to the schema.
+3. Let's have the following client-side endpoint profile to complement our client-side schema.
 
 ```json
 {  
@@ -161,7 +160,7 @@ About which filters we can use, see the table below.
 }
 ```
 
-4. Let's assume the following server-side endpoint profile, which corresponds to the schema.
+4. Let's have the following server-side endpoint profile to complement our server-side schema.
 
 ```json
 {  
@@ -173,22 +172,22 @@ About which filters we can use, see the table below.
 }
 ```
 
-At last, the following filters will yield true when applied to the given endpoint.
+The following filters will return **true** when applied to the given endpoint.
 
-| Filter |Explanation| 
+| Filter |Description| 
 |-------------------------------------------------------------------------------------------------------------|
-|#cp.simpleField=='CLIENT_SIDE_SIMPLE_FIELD' | The client-side endpoint profile contains simpleField with the value 'SIMPLE_FIELD'. |
-|#sp.arraySimpleField[1]=='SERVER_SIDE_VALUE_2' | The server-side endpoint profile contains arraySimpleField, which is an array containing the element 'VALUE2' in the position 
-|{'AAAAABBBBCCCDDD='}.contains(#ekh) | The endpoint key hash is AAAAABBBBCCCDDD= |
-|#cp.arraySimpleField.size()==2 | The client-side endpoint profile contains arraySimpleField, which is a collection containing two elements. |
-|#cp.recordField.otherSimpleField==123 | The client-side endpoint profile contains recordField, which is a record containing otherSimpleField set to '123'. |
-|#cp.recordField.otherMapSimpleField.size()==2 | The client-side endpoint profile contains recordField, which is a record containing otherMapSimpleField, which is a collection containing two entries. |
-|#cp.arrayRecordField[1].otherSimpleField==789 |The client-side endpoint profile contains arrayRecordField, which is an array. This array contains an element in the position 1, which is a record containing otherSimpleField set to '789'.|
-|#cp.nullableRecordField==null |An example of how to check a field for the null value.|
+|#cp.simpleField=='CLIENT_SIDE_SIMPLE_FIELD' | The client-side endpoint profile contains <code>simpleField</code> whith the **SIMPLE_FIELD** value. |
+|#sp.arraySimpleField[1]=='SERVER_SIDE_VALUE_2' | The server-side endpoint profile contains the <code>arraySimpleField</code> array that stores the **VALUE2** at index **1**.
+|{'AAAAABBBBCCCDDD='}.contains(#ekh) | The endpoint key hash is **AAAAABBBBCCCDDD=** |
+|#cp.arraySimpleField.size()==2 | The client-side endpoint profile contains the <code>arraySimpleField</code> array that stores two elements. |
+|#cp.recordField.otherSimpleField==123 | The client-side endpoint profile contains the <code>recordField</code> record where <code>otherSimpleField</code> is set to **123**. |
+|#cp.recordField.otherMapSimpleField.size()==2 | The client-side endpoint profile contains the <code>recordField</code> record in which the <code>otherMapSimpleField</code> collection contains two entries. |
+|#cp.arrayRecordField[1].otherSimpleField==789 |The client-side endpoint profile contains the <code>arrayRecordField</code> array. This array stores an element at index **1** which is a record containing <code>otherSimpleField</code> set to **789**.|
+|#cp.nullableRecordField==null |An example of how to check a field for the **null** value.|
 |#cp.arraySimpleField[0]=='CLIENT_SIDE_VALUE_1' and # sp.arraySimpleField[0]=='SERVER_SIDE_VALUE_1'|An example of how to combine several conditions in a query.|
-|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The arrayRecordField field is an array of records. It contains at least one element that contains otherSimpleField with the value.| 
+|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The <code>arrayRecordField</code> field is an array of records. It stores at least one element that contains <code>otherSimpleField</code> set to a value.| 
 
-## Using endpoint groups ##
+## Using endpoint groups
 
 Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. Weight of group responsible for her priority. Group with the biggest weight is the most priority.   
 Also group has:
