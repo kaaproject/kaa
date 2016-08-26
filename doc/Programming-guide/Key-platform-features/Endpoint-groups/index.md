@@ -222,9 +222,9 @@ You can create your custom endpoint groups using the [Administration UI](#adding
 You can assign multiple filters to a group.
 Every profile filter is specific to one combination of client-side and server-side profile schema version.
 Only one profile filter can be defined for a profile schema version combination.
-However, you can also define profile filters that are agnostic to neither client-side nor server-side profile part.
-In this case, either client-side profile or server-side profile will not be accessible in the filter.
-This is useful in case you want to specify an endpoint group that is based on certain client-side profile property and is not affected by server-side profile updates and vice-versa. 
+However, you can also define profile filters that are not specific to neither client-side nor server-side profile part.
+In this case, either client-side profile or server-side profile part will not be accessible in the filter.
+This is useful in case you want to specify an endpoint group that is based on certain client-side profile properties and is not affected by the server-side profile updates and the other way around.
  
 Client-side Endpoint Profile A
 
@@ -282,16 +282,17 @@ Server-side Endpoint Profile C
 }
 ```
 
-**NOTE**: Once a profile filter is created, you need to activate it. Filters that are not activated do not impact endpoint groups and do not affect the endpoints. 
+>**NOTE**: Once a profile filter is created, you need to activate it.
+>Filters that are not activated do not affect any endpoint groups or endpoints.
 
 ## Custom endpoint groups
 
-The table below demonstrates the use of profile filters and results of filtering for sample profiles.
+The table below demonstrates the use of profile filters and filtering results for sample profiles.
 
 | Group name                                |Filter                                       | result for profile A   | result for profile B   | result for profile C |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |Android Froyo                              | endpoints	#cp.os.toString().equals("Android") and #cp.os_version.toString().startsWith("2.2")	|true    |false	|false |
-| Android endpoints                         |#cp.os.toString().equals("Android")                                                            |true    |true	|false |
+|Android endpoints                          |#cp.os.toString().equals("Android")                                                            |true    |true	|false |
 |iOS 8 endpoints	                        | #cp.os.toString().equals("iOS") and #cp.os_version.toString().startsWith("8")                 |false	 |false	|true  |
 |iOS 8 endpoints	                        | #cp.os.toString().equals("iOS") and #cp.os_version.toString().startsWith("8")                 |false	 |false	|true  |
 |3.0 RC1 QA group endpoints                 |#cp.build.toString().equals("3.0 RC1")                                                         |false	 |true	|true  |
@@ -300,20 +301,19 @@ The table below demonstrates the use of profile filters and results of filtering
 
 ## Adding endpoint groups ##
 
-Endpoint groups are created based on the profile filter.
-To add a new endpoint group, do the following:
+Endpoint groups are created based on the profile filters.
+
+To add a new endpoint group:
 
 1. Open the **Endpoint groups** window by clicking **Endpoint groups** under the application menu on the navigation panel and then click **Add endpoint group**.
 
 ![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
 
-
 2. In the **Add endpoint group** window, fill in the required fields and then click **Add**.
 
 ![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
 
-3. In the **Endpoint group** window, add profile filters, configurations, and notifications topics to the group, 
-    if necessary (see the following paragraphs for instructions).
+3. In the **Endpoint group** window, add profile filters, configurations, and notifications topics to the group, if necessary (see the following paragraphs for instructions).
 
 ![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
 
@@ -322,7 +322,9 @@ To add a new endpoint group, do the following:
 To add a profile filter to the endpoint group, do the following:
 
 1. In the **Endpoint group** window, click **Add profile filter**.
+
 2. In the **Profile filter** window, select the schema version.
+
 3. On the **Draft** tab, enter the description and [filter body](#profile-filters).
 
     ![profile-filter-details](admin-ui/profile-filter-details.png "profile-filter-details.png")
