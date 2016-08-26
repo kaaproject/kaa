@@ -284,6 +284,7 @@ Server-side Endpoint Profile C
 
 >**NOTE**: Once a profile filter is created, you need to activate it.
 >Filters that are not activated do not affect any endpoint groups or endpoints.
+>See [Adding profile filters](#adding-profile-filters).
 
 ## Custom endpoint groups
 
@@ -299,7 +300,7 @@ The table below demonstrates the use of profile filters and filtering results fo
 |Deactivated devices                        | # sp.activationFlag == false                                                                  |false	 |true  |false |
 |iOS devices with premium subscription plan | #cp.os.toString().equals("iOS") and #sp.subscriptionPlan.toString().equals("Premium")         |false	 |false |true  |
 
-## Adding endpoint groups ##
+## Adding endpoint groups
 
 Endpoint groups are created based on the profile filters.
 
@@ -313,41 +314,42 @@ To add a new endpoint group:
 
 ![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
 
-3. On the **Endpoint group** page, add profile filters, configurations, and notifications topics to the group, if necessary (see the following paragraphs for instructions).
+3. On the **Endpoint group** page, add profile filters, configurations, and notification topics to the group, if necessary.
 
 ![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
 
-### Add profile filter to endpoint group ###
+### Adding profile filters
 
-To add a profile filter to the endpoint group, do the following:
+To add a profile filter for an endpoint group:
 
-1. In the **Endpoint group** window, click **Add profile filter**.
+1. Under the **Schemas** section of the application, click **Endpoint groups**, then select the required group by clicking on the corresponding row in the list.
 
-2. In the **Profile filter** window, select the schema version.
+2. On the **Endpoint group** page, click **Add profile filter**.
 
-3. On the **Draft** tab, enter the description and [filter body](#profile-filters).
+3. On the **Profile filter** page, select the schema version.
+
+4. Switch to the **Draft** tab, enter a description (optional) and a [filter body](#profile-filters).
 
     ![profile-filter-details](admin-ui/profile-filter-details.png "profile-filter-details.png")
 
-    **NOTE**: In order to test profile filter click Test filter. Afterwards the Test profile filter window will be displayed. 
-    Complete the endpoint and/or server profile forms and then click Test filter.
-
+    >**TIP**: To test profile filter, click **Test filter**.
+    >The **Test profile filter** menu will open.
+    >Complete the endpoint and/or server profile forms and click **Test filter**.
+    {:.tip}
+    
     ![test-profile-filter](admin-ui/test-profile-filter.png "test-profile-filter.png")
     
-4. Click **Save** to save the profile filter.
-   
-    **NOTE**: You can save the data on the **Draft** tab and return to update it later as many times as needed until you click **Activate**.
-   
-5. Click **Activate** to activate the profile filter.
-   
-   All the specified information will be displayed on the **Active** tab.
+5. Click **Save** to save the profile filter.
 
-## REST API ##
+	>**TIP**: You can save your data on the **Draft** tab and return to update it later as many times as needed until you click **Activate**.
+	{:.tip}
+	
+6. Click **Activate** to activate the profile filter.
+   The profile filter information you entered is now visible in the **Active** tab.
 
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Grouping) documentation page for detailed description of the REST API, 
-its purpose, interfaces and features supported.
+## Using REST API ##
 
-Admin REST API provides the following actions:
+Use the server REST API to perform the following actions:
 
 * [Activate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/activateProfileFilter)
 * [Deactivate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deactivateProfileFilter)
@@ -363,7 +365,7 @@ Admin REST API provides the following actions:
 * [Get profile filter records]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecordsByEndpointGroupId)
 * [Get vacant profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getVacantProfileSchemasByEndpointGroupId)
 
-
+For detailed description of the REST API, its purpose, interface, and features, see [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) its purpose, interfaces and features supported.
 
 ## Further reading ##
 
