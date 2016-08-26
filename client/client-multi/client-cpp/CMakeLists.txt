@@ -205,8 +205,10 @@ if(NOT MSVC)
 endif()
 
 # "no-unused-private-field" is added since in most of cases it is false positive
-list(APPEND KAA_COMPILE_OPTIONS
-                -Wno-unused-private-field)
+if(NOT MSVC)
+    list(APPEND KAA_COMPILE_OPTIONS
+                    -Wno-unused-private-field)
+endif()
 
 #Compiler specific flags
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
