@@ -107,8 +107,9 @@ The following examples illustrate basic log schemas.
 
 ## Adding log schema
 
-The default log schema installed for Kaa applications is empty. You can configure your own log schema using the Admin UI or
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
+The default log schema installed for Kaa applications is empty. You can configure your own log schema via REST API -- first [create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
+and after that [create log schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema) which contains a reference to the created before CT or use Administration UI as shown below.
+
 For the purpose of this guide, we will use schema that is very close to the common log structure:
 
 * log level
@@ -150,12 +151,20 @@ For the purpose of this guide, we will use schema that is very close to the comm
 
 In Admin UI as a tenant developer, you can create new log schemas for the application as follows:
 
-1. In the Log schemas window for the application, click **Add schema**.
-2. In the Add log schema window, create a log schema either by using the
-[schema form]({{root_url}}Administration-guide/Tenants-and-applications-management/#schema-form) or by uploading a schema in the
-[Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
-![Add log schema](attach/add-log-schema.png)
-3. Click **Add** to save the schema.
+1. In the **Log schemas** window for the application, click **Add schema**.
+2. In the **Add Log schema** window enter the name of the schema.
+3. Then create a schema using one of the two options:
+
+    1. Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
+    
+        ![Add Log Schema 1](attach/add_log_schema_1.png)
+    
+    2. Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the 
+    schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
+    
+        ![Add Log Schema 2](attach/add_log_schema_2.png)
+        
+4. Click **Add** to save the schema.
 
 If you want to review the added Avro schema, open the **Log schema details** window by clicking the schema in the **Log schemas** window.
 
