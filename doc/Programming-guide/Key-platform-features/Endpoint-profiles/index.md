@@ -14,7 +14,7 @@ sort_idx: 20
 
 The structure of both client-side and server-side endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint.
 The profiles are used to attribute endpoints to [endpoint groups]({{root_url}}Glossary/#endpoint-group).
-Every endpoint profile comprises the _client-side_, _server-side_ and _system_ parts.
+Every endpoint profile comprises the *client-side*, *server-side* and *system* parts.
 
 The structure of both client-side and server-side parts of an endpoint profile are defined by [application]({{root_url}}Glossary/#kaa-application) developer using the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) format.
 Application developer can reuse and share certain data structures using the [common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl).
