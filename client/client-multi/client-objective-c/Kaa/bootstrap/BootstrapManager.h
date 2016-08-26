@@ -31,12 +31,12 @@
 @protocol BootstrapManager
 
 /**
- * Receives the latest list of servers from the bootstrap server.
+ * Receives the latest list of servers from the bootstrap service.
  */
 - (void)receiveOperationsServerList;
 
 /**
- * Force switch to the next operations server that support given <TransportProtocolId>
+ * Force switch to the next operations service that support given <TransportProtocolId>
  *
  * @param transportId id of the transport protocol.
  * @param status failovers status that causes using of the next operation server.

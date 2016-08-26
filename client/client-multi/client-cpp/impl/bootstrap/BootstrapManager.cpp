@@ -65,7 +65,7 @@ void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& proto
     auto serverIt = operationServers_.find(protocolId);
 
     if (lastServerIt == lastOperationsServers_.end() || serverIt == operationServers_.end()) {
-        throw KaaException("There are no available servers at the time");
+        throw KaaException("There are no available services at the time");
     }
 
     FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
@@ -77,7 +77,7 @@ void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& proto
         {
             std::size_t period = decision.getRetryPeriod();
 
-            KAA_LOG_WARN(boost::format("Attempt to reconnect to current Operations server will be made in %1% seconds") % period);
+            KAA_LOG_WARN(boost::format("Attempt to reconnect to current Operations service will be made in %1% seconds") % period);
 
             auto currentOperationsServer = *(lastServerIt->second);
 
@@ -93,7 +93,7 @@ void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& proto
         {
             OperationsServers::iterator nextOperationIterator = (lastServerIt->second) + 1;
             if (nextOperationIterator != serverIt->second.end()) {
-                KAA_LOG_INFO(boost::format("New Operations server [%1%] will be used for %2%")
+                KAA_LOG_INFO(boost::format("New Operations service [%1%] will be used for %2%")
                                            % (*nextOperationIterator)->getAccessPointId()
                                            % LoggingUtils::toString(protocolId));
 
@@ -101,7 +101,7 @@ void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& proto
 
                 channelManager_->onTransportConnectionInfoUpdated(*nextOperationIterator);
             } else {
-                KAA_LOG_WARN(boost::format("No Operations servers are accessible for %1%.")
+                KAA_LOG_WARN(boost::format("No Operations services are accessible for %1%.")
                                                          % LoggingUtils::toString(protocolId));
 
                 onCurrentBootstrapServerFailed(KaaFailoverReason::ALL_OPERATIONS_SERVERS_NA);
@@ -124,7 +124,7 @@ void BootstrapManager::useNextOperationsServerByAccessPointId(std::int32_t id)
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
-    KAA_LOG_DEBUG(boost::format("Going to use new operations server: access_point=0x%X") % id);
+    KAA_LOG_DEBUG(boost::format("Going to use new operations service: access_point=0x%X") % id);
 
     auto servers = getOPSByAccessPointId(id);
     if (servers.size() > 0) {
@@ -164,14 +164,14 @@ void BootstrapManager::onCurrentBootstrapServerFailed(KaaFailoverReason reason)
 void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers)
 {
     if (operationsServers.empty()) {
-        KAA_LOG_WARN("Received empty operations server list");
+        KAA_LOG_WARN("Received empty operations service list");
         onCurrentBootstrapServerFailed(KaaFailoverReason::NO_OPERATIONS_SERVERS_RECEIVED);
         return;
     }
 
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
-    KAA_LOG_INFO(boost::format("Received %1% new operations servers") % operationsServers.size());
+    KAA_LOG_INFO(boost::format("Received %1% new operations services") % operationsServers.size());
 
     lastOperationsServers_.clear();
     operationServers_.clear();

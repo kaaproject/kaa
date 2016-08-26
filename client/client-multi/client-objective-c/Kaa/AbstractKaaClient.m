@@ -78,7 +78,7 @@
         
         NSDictionary *bootstrapServers = [self.properties bootstrapServers];
         if ([bootstrapServers count] == 0) {
-            [NSException raise:NSInternalInconsistencyException format:@"Unable to obtain list of bootstrap servers"];
+            [NSException raise:NSInternalInconsistencyException format:@"Unable to obtain list of bootstrap services"];
         }
         
         for (NSMutableArray *serverList in bootstrapServers.allValues) {

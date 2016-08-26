@@ -59,8 +59,9 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mthumb -mcpu=cortex-m4 -ffunction-sections \
- -fdata-sections -MD -O0 " CACHE STRING "C flags" FORCE)
+set(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS} -mthumb -mcpu=cortex-m4 -ffunction-sections -fdata-sections -MD -O0 "
+        CACHE STRING "C flags" FORCE)
 
 set(CC32XX_SDK "${CC32XX_SDK}" CACHE STRING "CC32XX SDK location" FORCE)
 

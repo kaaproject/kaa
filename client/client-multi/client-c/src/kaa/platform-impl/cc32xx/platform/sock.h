@@ -79,10 +79,10 @@ typedef socklen_t kaa_socklen_t;
 
 #define KAA_HTONS(hostshort)     htons((hostshort))
 #define KAA_HTONL(hostlong)      htonl((hostlong))
-#define KAA_HTONLL(hostlonglong) htonll((hostlonglong))
+#define KAA_HTONLL(hostlonglong) kaa_htonll((hostlonglong))
 
 #define KAA_NTOHS(netshort)      ntohs((netshort))
 #define KAA_NTOHL(netlong)       ntohl((netlong))
-#define KAA_NTOHLL(netlonglong)  ntohll((netlonglong))
+#define KAA_NTOHLL(netlonglong)  kaa_ntohll((netlonglong))
 
 #endif /* CC32XX_SOCK_H_ */

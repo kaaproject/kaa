@@ -20,8 +20,8 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
  * Kaatcp messgage type enum:
  * 1. CONNECT - use to authenticate new created tcp/ip session
  * 2. CONNACK - use to acknowledge CONNECT message
- * 3. PINGREQ - use to ping request operations server
- * 4. PINGRESP - use to ping response from operations server to endpoint
+ * 3. PINGREQ - use to ping request operations service
+ * 4. PINGRESP - use to ping response from operations service to endpoint
  * 5. DISCONNECT - use to notify other side that tcp/ip session terminates.
  * 6. KAASYNC - use to transmit Avro synchronizations objects. 
  * @author Andrey Panasenko

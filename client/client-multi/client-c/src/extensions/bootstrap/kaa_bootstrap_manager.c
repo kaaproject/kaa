@@ -400,7 +400,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
     } else {
         kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, 0, &index, &execute_failover);
         if (error_code) {
-            KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap servers's been found. Please regenerate SDK.");
+            KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap services been found. Please regenerate SDK.");
             return NULL;
         }
 
@@ -425,7 +425,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     (void)extension_length;
 
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received bootstrap server sync: options %u, payload size %u", extension_options, extension_length);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received bootstrap service sync: options %u, payload size %u", extension_options, extension_length);
 
     kaa_list_clear(self->operations_access_points, destroy_operations_access_points);
 
@@ -555,7 +555,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
         kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, index_from, &next_index, &execute_failover);
 
         if (error_code) {
-            KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap servers's been found. Please regenerate SDK.");
+            KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap services been found. Please regenerate SDK.");
             return KAA_ERR_SDK_STOP;
         }
 

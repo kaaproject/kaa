@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The Class MessageEncoderDecoder is responsible for encoding/decoding logic of
- * endpoint - operations server communication.
+ * endpoint - operations service communication.
  * 
  * @author Andrew Shvayka
  */
