@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class Utils {
 
     /**
@@ -72,6 +75,14 @@ public class Utils {
             throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
         }
         return reference;
+    }
+
+    public static void checkEmailUniquieness(String email, Set<String> storedEmails) throws KaaAdminServiceException {
+        checkNotNull(email);
+        boolean isAdded = storedEmails.add(email);
+        if (!isAdded) {
+            throw new KaaAdminServiceException("Entered email is already used by another user!", ServiceErrorCode.INVALID_ARGUMENTS);
+        }
     }
 
     public static AuthUserDto getCurrentUser() throws KaaAdminServiceException {

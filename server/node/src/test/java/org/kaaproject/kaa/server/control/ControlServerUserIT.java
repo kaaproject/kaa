@@ -149,6 +149,40 @@ public class ControlServerUserIT extends AbstractTestControlServer {
         loginTenantAdmin(tenantAdminDto.getUsername());
         UserDto user = createUser(KaaAuthorityDto.TENANT_ADMIN);
     }
+
+    /**
+     * Test create user.
+     * Users unable to have the same email addresses.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testFailCreateUserOnDuplicatedEmail() throws Exception {
+        expectedException.expect(HttpClientErrorException.class);
+        expectedException.expectMessage("Entered email is already used by another user!");
+
+        loginTenantAdmin(tenantAdminDto.getUsername());
+
+        UserDto user = new UserDto();
+        String username = generateString(USERNAME);
+        user.setUsername(username);
+        String email = username + "@demoproject.org";
+        user.setMail(email);
+        user.setFirstName(generateString("Test"));
+        user.setLastName(generateString("User"));
+        user.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
+
+        UserDto userWithSameEmail = new UserDto();
+        String username2 = generateString(USERNAME);
+        userWithSameEmail.setUsername(username2);
+        userWithSameEmail.setMail(email);
+        userWithSameEmail.setFirstName(generateString("Test"));
+        userWithSameEmail.setLastName(generateString("User"));
+        userWithSameEmail.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
+
+        client.editUser(user);
+        client.editUser(userWithSameEmail);
+    }
     
     /**
      * Test get user.

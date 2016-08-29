@@ -29,7 +29,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkEmailUniquieness;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkNotNull;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
@@ -116,6 +120,11 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
                     }
                 }
 
+                checkEmailUniquieness(
+                        user.getMail(),
+                        userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet())
+                );
+                
                 CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
                 user.setExternalUid(result.getUserId().toString());
                 tempPassword = result.getPassword();
