@@ -56,6 +56,31 @@ The script is placed in `client/client-multi/client-c/scripts/srcformat.sh`.
   int *x;
   ```
 
+- Don't add space after a cast. (Because cast binds tighter than binary operators, it's less ambiguous.)
+
+  ```cpp
+  // Good
+  int x = (int)y + z;
+
+  // Bad
+  int x = (int) y + z;
+  ```
+
+- Use void cast to indicate variable is not used.
+
+  ```cpp
+  // Good
+  void f(void *x)
+  {
+      (void)x;
+  }
+
+  // Bad: __attribute__ is not standard.
+  void f(void *x __attribute__((unused)))
+  {
+  }
+  ```
+
 - Labels must be indented one level less than the normal indentation (except for case labels).
 
   ```cpp
@@ -112,18 +137,16 @@ The script is placed in `client/client-multi/client-c/scripts/srcformat.sh`.
 
   // Bad
   void function_with_many_params_and_long_name(param a
-                                              , param b
-                                              , param c);
+                                             , param b
+                                             , param c);
   ```
 
 - Commented out code is not allowed without great reason and notes.
 
-- Do not use `_t` suffix for type names.
-It is reserved by the compiler.
+- Do not use `_t` suffix for type names. It is reserved by a compiler.
 
 
-- Use TODO wisely.
-Valid cases include:
+- Use TODO wisely. Valid cases include:
 
   - You don't know how to solve the issue yet.
   - Support for a feature is needed.
@@ -152,7 +175,7 @@ Valid cases include:
   int b; // Bad
   ```
 
-- Initiailize structures with members declaration.
+- Initialize structures with designated initializers.
 
   ```c
   struct st {
@@ -202,4 +225,3 @@ See Dir 4.6 from MISRA C guidelines for details.
 # Style and semantics in C++
 
 C++ SDK conforms [the Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
-
