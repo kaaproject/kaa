@@ -29,7 +29,6 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 
 
 public class CTLNotificationMigration extends AbstractCTLMigration {
-
     private MongoClient client;
     private Cluster cluster;
     private String dbName;
