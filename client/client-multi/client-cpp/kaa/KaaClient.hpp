@@ -37,7 +37,7 @@
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 #include "kaa/log/LogCollector.hpp"
 #include "kaa/context/IExecutorContext.hpp"
-#include "kaa/IKaaClientStateListener.hpp"
+#include "kaa/KaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientProperties.hpp"
 #include "kaa/KaaClientContext.hpp"
@@ -47,7 +47,7 @@ namespace kaa {
 class KaaClient : public IKaaClient,
                   public std::enable_shared_from_this<KaaClient> {
 public:
-    KaaClient(IKaaClientPlatformContextPtr platformContext, IKaaClientStateListenerPtr listener);
+    KaaClient(IKaaClientPlatformContextPtr platformContext, KaaClientStateListenerPtr listener);
 
     virtual void start();
     virtual void stop();

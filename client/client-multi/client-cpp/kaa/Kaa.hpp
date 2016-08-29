@@ -23,7 +23,7 @@
 #include <botan/init.h>
 
 #include "kaa/IKaaClient.hpp"
-#include "kaa/IKaaClientStateListener.hpp"
+#include "kaa/KaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientPlatformContext.hpp"
 
@@ -31,7 +31,7 @@ namespace kaa {
 
 /**
  * @brief Creates a new Kaa client based on @link IKaaClientPlatformContext @endlink and optional
- * @link IKaaClientStateListener @endlink.
+ * @link KaaClientStateListener @endlink.
  *
  */
 class Kaa
@@ -62,7 +62,7 @@ public:
      */
     static std::shared_ptr<IKaaClient> newClient(
         IKaaClientPlatformContextPtr context = std::make_shared<KaaClientPlatformContext>(),
-        IKaaClientStateListenerPtr listener = std::make_shared<IKaaClientStateListener>());
+        KaaClientStateListenerPtr listener = std::make_shared<KaaClientStateListener>());
 
 private:
     static Botan::LibraryInitializer     botanInit_;

@@ -18,22 +18,21 @@
 #define IKAACLIENTCONTEXT
 
 #include <kaa/IKaaClientStateStorage.hpp>
-#include <kaa/IKaaClientStateListener.hpp>
+#include <kaa/KaaClientStateListener.hpp>
 
 namespace kaa {
 
 class KaaClientProperties;
 class ILogger;
 class IExecutorContext;
-class NetworkAddrChangeDetector;
 
 class IKaaClientContext {
 public:
-    virtual KaaClientProperties       &getProperties() = 0;
-    virtual ILogger                   &getLogger() = 0;
-    virtual IKaaClientStateStorage    &getStatus() = 0;
-    virtual IExecutorContext          &getExecutorContext() = 0;
-    virtual IKaaClientStateListenerPtr getClientStateListener() = 0;
+    virtual KaaClientProperties    &getProperties() = 0;
+    virtual ILogger                &getLogger() = 0;
+    virtual IKaaClientStateStorage &getStatus() = 0;
+    virtual IExecutorContext       &getExecutorContext() = 0;
+    virtual KaaClientStateListener &getClientStateListener() = 0;
 
     virtual ~IKaaClientContext() = default;
 };

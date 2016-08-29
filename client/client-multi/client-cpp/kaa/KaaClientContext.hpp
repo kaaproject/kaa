@@ -31,9 +31,11 @@ namespace kaa {
 class KaaClientContext : public IKaaClientContext
 {
 public:
-    KaaClientContext(KaaClientProperties &properties, ILogger &logger, IExecutorContext &executorContext,
+    KaaClientContext(KaaClientProperties &properties,
+        ILogger &logger,
+        IExecutorContext &executorContext,
         IKaaClientStateStoragePtr state = nullptr,
-        IKaaClientStateListenerPtr stateListener = std::make_shared<IKaaClientStateListener>())
+        KaaClientStateListenerPtr stateListener = std::make_shared<KaaClientStateListener>())
         : properties_(properties),
           logger_(logger),
           executorContext_(executorContext),
@@ -44,7 +46,7 @@ public:
     virtual ILogger                     &getLogger() { return logger_; }
     virtual IKaaClientStateStorage      &getStatus() { return *state_; }
     virtual IExecutorContext            &getExecutorContext() { return executorContext_; }
-    virtual IKaaClientStateListenerPtr   getClientStateListener() { return stateListener_; }
+    virtual KaaClientStateListener      &getClientStateListener() { return *stateListener_; }
     void  setStatus(IKaaClientStateStoragePtr status) { state_ = status; }
 
 private:
@@ -52,7 +54,7 @@ private:
     ILogger                   &logger_;
     IExecutorContext          &executorContext_;
     IKaaClientStateStoragePtr  state_;
-    IKaaClientStateListenerPtr stateListener_;
+    KaaClientStateListenerPtr stateListener_;
 };
 
 }

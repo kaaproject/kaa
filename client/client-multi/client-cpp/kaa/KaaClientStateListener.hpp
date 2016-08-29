@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef IKAACLIENTSTATELISTENER_HPP_
-#define IKAACLIENTSTATELISTENER_HPP_
+#ifndef KAACLIENTSTATELISTENER_HPP_
+#define KAACLIENTSTATELISTENER_HPP_
 
 #include <memory>
+
+#include <kaa/EndpointConnectionInfo.hpp>
 
 namespace kaa {
 
@@ -29,7 +31,7 @@ class KaaException;
  * @author Denis Kimcherenko
  *
  */
-class IKaaClientStateListener {
+class KaaClientStateListener {
 public:
 
     /**
@@ -89,16 +91,15 @@ public:
      * On connection established. The method is called as soon as the connection with either bootstrap
      * or operation server is established.
      *
-     * @param[in] endpointIp The internet address of endpoint which is currently in use.
-     * @param[in] serverIp   The server ip address the endpoint is connected to.
+     * @param[in] connection The connection metadata, see @c EndpointConnectionInfo.
      */
-    virtual void onConnectionEstablished(const std::string& endpointIp, const std::string& serverIp) {}
+    virtual void onConnectionEstablished(const EndpointConnectionInfo& connection) {}
 
-    virtual ~IKaaClientStateListener() = default;
+    virtual ~KaaClientStateListener() = default;
 };
 
-using IKaaClientStateListenerPtr = std::shared_ptr<IKaaClientStateListener>;
+using KaaClientStateListenerPtr = std::shared_ptr<KaaClientStateListener>;
 
 } /* namespace kaa */
 
-#endif /* IKAACLIENTSTATELISTENER_HPP_ */
+#endif /* KAACLIENTSTATELISTENER_HPP_ */

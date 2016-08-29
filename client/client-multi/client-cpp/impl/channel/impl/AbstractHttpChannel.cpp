@@ -54,7 +54,9 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
 
     try {
         // Sending http request
-        auto response = httpClient_.sendRequest(*postRequest);
+        EndpointConnectionInfo connection("", "", getServerType());
+        auto response = httpClient_.sendRequest(*postRequest, &connection);
+        channelManager_.onConnected(connection);
 
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);

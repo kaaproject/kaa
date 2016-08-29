@@ -45,7 +45,7 @@ void HttpClient::checkError(const boost::system::error_code& code)
     throw TransportException(code);
 }
 
-std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& request)
+std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& request, EndpointConnectionInfo* connection)
 {
     KAA_MUTEX_LOCKING("httpClientGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(httpClientGuardLock, httpClientGuard_);
@@ -66,9 +66,10 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
     sock_.connect(ep, errorCode);
     checkError(errorCode);
 
-    /* Check whether ip has been changed */
-    context_.getClientStateListener()->onConnectionEstablished(sock_.local_endpoint().address().to_string(),
-        ep.address().to_string());
+    if (connection != nullptr) {
+        connection->endpointIp_ = sock_.local_endpoint().address().to_string();
+        connection->serverIp_ = ep.address().to_string();
+    }
 
     const auto& data = request.getRequestData();
     boost::asio::write(sock_, boost::asio::buffer(data.data(), data.size()), errorCode);
