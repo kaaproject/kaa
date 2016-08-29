@@ -14,14 +14,14 @@ The guide provides information on how to **cross-compile** C SDK for Intel Ediso
 Alternatively, you can build the Kaa C endpoint SDK right on the Edison board.
 Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for further details.
 
-# Install dependencies
-
-**The further instructions must be executed on the host machine.**
-
 **Verified against:**
 
  - **Host OS:** **Ubuntu 16.04 64-bit LTS**
  - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3.
+
+# Install dependencies
+
+**The further instructions must be executed on the host machine.**
 
 1. Download the [cross compile tools](https://downloadcenter.intel.com/download/24472/Cross-Compiler-Toolchain-for-Intel-Edison-Maker-Board) for your platform, 32 or 64 bit. Untar the downloaded file (don't forget to change the file name to proper one).
 
