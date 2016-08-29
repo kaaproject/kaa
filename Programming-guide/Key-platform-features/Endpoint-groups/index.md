@@ -226,8 +226,10 @@ Only one profile filter can be defined for a profile schema version combination.
 However, you can also define profile filters that are not specific to neither client-side nor server-side profile part.
 In this case, either client-side profile or server-side profile part will not be accessible in the filter.
 This is useful in case you want to specify an endpoint group that is based on certain client-side profile properties and is not affected by the server-side profile updates and the other way around.
- 
-Client-side Endpoint Profile A
+
+Below are examples of client-server schema combinations.
+
+Client-side endpoint profile A.
 
 ```json
 { 
@@ -237,7 +239,7 @@ Client-side Endpoint Profile A
     "build":"2.0.1"
 }
 ```
-Server-side Endpoint Profile A
+Server-side endpoint profile A.
 
 ```json
 { 
@@ -245,7 +247,7 @@ Server-side Endpoint Profile A
     "activationFlag": "true"
 }
 ```
-Client-side Endpoint Profile B
+Client-side endpoint profile B.
 
 ```json
 { 
@@ -255,7 +257,7 @@ Client-side Endpoint Profile B
     "build":"3.0 RC1"
 }
 ```
-Server-side Endpoint Profile B
+Server-side endpoint profile B.
 
 ```json
 { 
@@ -264,7 +266,7 @@ Server-side Endpoint Profile B
 }
 ```
 
-Client-side Endpoint Profile C
+Client-side endpoint profile C.
 
 ```json
 { 
@@ -274,7 +276,7 @@ Client-side Endpoint Profile C
     "build":"3.0 RC1"
 }
 ```
-Server-side Endpoint Profile C
+Server-side endpoint profile C.
 
 ```json
 { 
