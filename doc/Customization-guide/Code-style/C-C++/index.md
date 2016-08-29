@@ -165,6 +165,33 @@ The script is placed in `client/client-multi/client-c/scripts/srcformat.sh`.
   // TODO: add error handling
   ```
 
+- Documentation should have non-zero entropy. (i.e., it should carry at least some additional information.)
+
+  ```c
+  // Bad (all information can be easily deduced from the function
+  // signature, 0 bytes of usefulness):
+  /**
+   * Set connection listener.
+   *
+   * @param[in] listener the listener
+   */
+  void set_connection_listener(const connection_listener listener);
+
+  // Better (no documentation):
+  void set_connection_listener(const connection_listener listener);
+
+  // Good:
+  /**
+   * Sets a connection listener that will be called in case connection
+   * status changes.
+   *
+   * This includes next events:
+   * - client connects to the server
+   * - connection is broken
+   */
+  void set_connection_listener(const connection_listener listener);
+  ```
+
 # Semantics
 
 - Initialize all variables.
