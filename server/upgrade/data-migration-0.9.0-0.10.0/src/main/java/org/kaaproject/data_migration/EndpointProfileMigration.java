@@ -29,19 +29,18 @@ public class EndpointProfileMigration {
      * Add field use_raw_configuration_schema to endpointProfile that used to support devices using SDK version 0.9.0
      * */
     public void transform() {
-        Cluster cluster = Cluster.builder().addContactPoint(host).build();
-        MongoClient client = new MongoClient(host);
-
         //mongo
+        MongoClient client = new MongoClient(host);
         MongoDatabase database = client.getDatabase(dbName);
         MongoCollection<Document> endpointProfile = database.getCollection("endpoint_profile");
         endpointProfile.updateMany(new Document(), eq("$set", eq("use_raw_schema", false)));
 
         //cassandra
-//        Session session = cluster.connect(dbName);
-//        session.execute("");
-//        session.close();
-//        cluster.close();
+        Cluster cluster = Cluster.builder().addContactPoint(host).build();
+        Session session = cluster.connect(dbName);
+        session.execute("ALTER TABLE ep_profile ADD use_raw_schema boolean");
+        session.close();
+        cluster.close();
 
     }
 }
