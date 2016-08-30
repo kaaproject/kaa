@@ -10,46 +10,42 @@ sort_idx: 50
 * TOC
 {:toc}
 
-The Kaa data collection subsystem is designed to collect records (logs) of pre-configured structure on the endpoints, periodically transferring these records
-from endpoints to Operations service, and, finally, either persisting them on the server for further processing or submitting them to immediate stream
-analysis. The log structure in Kaa is determined for each application by a configurable log schema. On the Operations service side, there are log appenders
-which are responsible for writing logs received by the Operations service into the specific storage. It is possible to add several log appenders to work
-simultaneously.
+The data collection subsystem in Kaa is designed to collect records (logs) of pre-configured structure, store them in the endpoint, transfer them from the endpoint to Operations service, persist them on server for further processing, and submit them to the immediate stream analysis.
+The log structure in Kaa is determined by a configurable schema for each application individually.
+Log appenders on the Operations service side write the log received by the Operations service to a specific storage place.
+You can have several log appenders working simultaneously.
 
-From this guide you will learn how to use the Kaa data collection subsystem.
+This section explains how you can use the data collection feature in Kaa.
 
-# Basic architecture
+## Basic architecture
 
-The following diagram illustrates basic entities and data flows in scope of the data collection management:
-
-* The data from the endpoints (logs) is collected and transferred to the server in the format as defined by the [log schema](#log-schema) 
-created by the developer for the application
-* Log appenders submit the logs received by the server to a particular storage or analytics system
+The logs are collected from the endpoints and transferred to the server in the format defined in the [log schema](#log-schema) created by developer for the application.
+Log appenders submit the logs received by the server to to the analytics system.
+See the picture below.
 
 ![Basic data collection management](attach/basic-data-collection-management.png)
 
-The Kaa Data collection subsystem provides the following features:
+The data collection subsystem provides the following features:
 
-* Generation of the logging model and related API calls in the endpoint SDK
-* Enforcement of data integrity and validity
-* Efficient delivery of logs to Operations services
-* Storing log contents by means of the log appenders configured for the application
+* Generation of the logging model and related API calls in the endpoint SDK.
+* Enforcement of data integrity and validity.
+* Efficient delivery of logs to Operations services.
+* Storing log contents using the log appenders configured for the application.
 
-The application developer is responsible for designing the log schema and invoking the endpoint logging API from the client application.
+The application developer is responsible for designing the log schema and enabling the endpoint logging API from the client application.
 
-# Log record
+## Log record
 
-Log record consists of:
+A log record consists of:
 
-* Log events
-* Log record header
+* Log events.
+* Log record header.
 * Client/server-side endpoint profile.
 
-Log events and record header data match to the corresponding [log schema](#log-schema) and [log record header schema](#log-record-header-schema) respectively.
-To add client/server-side endpoint profile data to the log record follow to the corresponding
-[log appender documentation](#existing-log-appender-implementations).
+Log events and record header data match the corresponding [log schema](#log-schema) and [log record header schema](#log-record-header-schema) respectively.
+To add client/server-side endpoint profile data to the log record, follow to the corresponding [log appender documentation](#existing-log-appender-implementations).
 
-# Log schema
+## Log schema
 
 The log schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas). There is one log schema defined 
 by default for each Kaa application. This schema supports versioning, therefore, whenever a new log schema is configured on the Kaa service for the application,
@@ -105,7 +101,7 @@ The following examples illustrate basic log schemas.
 }
 ```
 
-## Adding log schema
+### Adding log schema
 
 The default log schema installed for Kaa applications is empty. You can configure your own log schema using the Admin UI or
 [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
@@ -162,7 +158,7 @@ If you want to review the added Avro schema, open the **Log schema details** win
 
 ![Log schema details](attach/log_schema_details.png)
 
-# Log record header schema
+## Log record header schema
 
 The log record header schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas). The log record header
 schema defines structure of the log record header that will be automatically added to the [log record](#log-record) in Kaa.
@@ -226,7 +222,7 @@ The log record header schema described below:
 }
 ```
 
-## Adding log record header
+### Adding log record header
 
 It is possible to configure the log record header data in the log appender:
 
@@ -245,14 +241,14 @@ Available record header fields described below:
 |TOKEN      |The [application token]({{root_url}}Glossary)                          |
 |LSVERSION  |The log schema version                                                 |
 
-# Log appenders
+## Log appenders
 
 A log appender is a service utility which reside on the Operations service side. This utility is responsible for writing logs (received by the Operations
 service from endpoints) to a single specific storage, as defined by the log appender's type. It is possible to have several log appenders which can work
 simultaneously. Kaa provides several default implementations of log appenders but it is also possible to develop and integrate
 [custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
 
-## Confirm delivery option
+### Confirm delivery option
 
 By design every Kaa client stores logs in a log storage before sending them to the Kaa node. By default, upon receiving the logs, the corresponding
 log appender on the Kaa node sends the delivery confirmation back to the Kaa client. If the delivery was successful, the Kaa client deletes the log copies
@@ -280,7 +276,7 @@ To summarize, the confirm delivery option allows you to have the guaranteed deli
 Also, it is worth noting that by default an inmemory log storage is used on the Kaa client. This means that you can lose your undelivered data in case of
 an endpoint reset. To avoid this, use a persistent log storage to store all the data that was not yet confirmed as delivered.
 
-## Existing log appender implementations
+### Existing log appender implementations
 
 There are several default log appender implementations that are available out of the box for each Kaa installation. A Kaa developer is able to add, update
 and delete log appenders using Admin UI or Admin REST API. After adding log appender ensure the data collection feature is
@@ -336,14 +332,14 @@ log appender.
 The REST log appender is responsible for transferring logs from Operations service to your custom service. You can configure host, port, relative URI path,
 method type and [other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configuration) parameters for this log appender.
 
-## Custom log appender implementations
+### Custom log appender implementations
 
 Refer to the [Custom log appender]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders) page to learn how to develop and integrate
 custom log appender.
 
-# Data Collection SDK API
+## Data Collection SDK API
 
-## Log delivery
+### Log delivery
 
 The logging subsystem API varies depending on the target SDK platform. However, the general approach is the same.
 
@@ -522,7 +518,7 @@ BucketRunner *runner = [kaaClient addLogRecord:logRecord];
 </div>
 </div>
 
-## Log storage
+### Log storage
 
 By default, the Kaa SDK uses an in-memory log storage. Normally, this storage does not persist data when the client is restarted. If this is a concern, 
 Java/Objective-C/C++ SDKs provide a persistent log storage based on SQLite database.
@@ -634,7 +630,7 @@ int maxRecordCount = 256;
 </div>
 </div>
 
-## Log upload strategies
+### Log upload strategies
 
 A log upload strategy determines under what conditions Kaa endpoints must send log data to the server. Kaa provides several built-in strategies, namely:
 
@@ -1264,7 +1260,7 @@ uploadStrategy.maxParallelUploads = 1;
 </div>
 </div>
 
-## Data collection demo
+### Data collection demo
 
 An [example application](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) for collecting log data from endpoints can be found
 in the official Kaa repository.
