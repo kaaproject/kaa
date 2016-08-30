@@ -22,6 +22,15 @@ public class EndpointUserConfigurationDto implements Serializable {
 
     private static final long serialVersionUID = -1463982688020241482L;
 
+    public EndpointUserConfigurationDto() {}
+
+    public EndpointUserConfigurationDto(String userId, Integer schemaVersion, String appToken, String body) {
+        this.userId = userId;
+        this.schemaVersion = schemaVersion;
+        this.appToken = appToken;
+        this.body = body;
+    }
+
     private String userId;
     private String appToken;
     private Integer schemaVersion;

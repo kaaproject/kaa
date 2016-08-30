@@ -141,19 +141,16 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
     }
 
     @Override
-    public EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) {
-        EndpointProfileDto endpointProfileDto = null;
+    public EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash) {
+        byte[] hash;
         try {
-            endpointProfileDto = endpointProfileDao.findByKeyHash(Base64Utils.fromBase64(endpointKeyHash)).toDto();
+            hash = Base64Utils.fromBase64(endpointKeyHash);
         } catch (ParseException e) {
-            LOG.error("Could not parse enpointKeyhash:", e);
+            LOG.error("Could not parse endpointKeyHash:", e);
             return null;
         }
-
-
-//        EndpointUserConfigurationDto endpointUserConfigurationDto =  endpointProfileDto.getConfigurationHash();
-
-        return null;
+        EndpointProfileDto endpointProfileDto = endpointProfileDao.findByKeyHash(hash).toDto();
+        return endpointProfileDto;
     }
 
 
@@ -163,5 +160,9 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
 
     public void setEndpointUserDao(EndpointUserDao<EndpointUser> endpointUserDao) {
         this.endpointUserDao = endpointUserDao;
+    }
+
+    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao){
+        this.endpointProfileDao=endpointProfileDao;
     }
 }

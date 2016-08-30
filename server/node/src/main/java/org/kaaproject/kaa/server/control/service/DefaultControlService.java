@@ -115,6 +115,8 @@ import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceRegistry;
 import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
+import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
 import org.kaaproject.kaa.server.thrift.Neighbors;
@@ -161,6 +163,9 @@ public class DefaultControlService implements ControlService {
     /** The user service. */
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DeltaService deltaService;
 
     /** The application service. */
     @Autowired
@@ -2311,7 +2316,29 @@ public class DefaultControlService implements ControlService {
 
     @Override
     public EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) {
-        
-        return userConfigurationService.findUserEndConfigurationByEndpointKeyHash(endpointKeyHash);
+
+        EndpointProfileDto endpointProfileDto = userConfigurationService.findEndpointProfileByEndpointKeyHash(endpointKeyHash);
+
+        ConfigurationDto configuration = configurationService.findConfigurationByAppIdAndVersion(endpointProfileDto.getApplicationId()
+                        ,endpointProfileDto.getConfigurationVersion());
+
+        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(configuration.getSchemaId());
+        Schema schema = ctlService.flatExportAsSchema(ctlSchemaDto);
+        String endConf = null;
+        String appToken = null;
+        try {
+            appToken = applicationService
+                    .findAppById(endpointProfileDto.getApplicationId())
+                    .getApplicationToken();
+            byte[] config = deltaService
+                    .getConfiguration(appToken,
+                            Base64Util.encode(endpointProfileDto.getEndpointKeyHash()),
+                            endpointProfileDto)
+                    .getConfiguration();
+            endConf = GenericAvroConverter.toJson(config, schema.toString());
+        } catch (GetDeltaException e) {
+            e.printStackTrace();
+        }
+        return new EndpointUserConfigurationDto(endpointProfileDto.getId(),endpointProfileDto.getConfigurationVersion(),appToken,endConf);
     }
 }
