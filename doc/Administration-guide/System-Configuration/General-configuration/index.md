@@ -15,7 +15,7 @@ sort_idx: 10
 ## Kaa node configuration
 
 After [Kaa installation]({{root_url}}Administration-guide/System-installation/), configuration files for each Kaa component will be extracted into the
-/usr/lib/kaa-node/conf directory.
+/etc/kaa-node/conf directory.
 
 The kaa-node.properties file is responsible for Kaa server configuration.
 
@@ -30,27 +30,28 @@ The kaa-node.properties consist of the following parameters:
 
 * *control_service_enabled*
 <br> Default: _true_
-<br>Specifies if Control Service is enabled.
+<br>Specifies if [Control Service]({{root_url}}Architecture-overview/#control-service) is enabled.
 * *bootstrap_service_enabled*
 <br> Default: _true_
-<br> Specifies if Bootstrap Service is enabled.
+<br> Specifies if [Bootstrap Service]({{root_url}}Architecture-overview/#bootstrap-service) is enabled.
 * *operations_service_enabled*
 <br> Default: _true_
-<br> Specifies if Operations Service is enabled.
+<br> Specifies if [Operations Service]({{root_url}}Architecture-overview/#operations-service) is enabled.
 * *thrift_host*
 <br> Default: _localhost_
 <br> Thrift service host address. This information is used for Thrift remote procedure calls between nodes in
 [Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
 * *thrift_port*
 <br> Default: _9090_
-<br> Thrift service port address. Thrift service host address. This information is used for Thrift remote procedure calls between nodes in
+<br> Thrift service port address. This information is used for Thrift remote procedure calls between nodes in
 [Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
 * *admin_port*
 <br> Default: _8080_
 <br> Kaa Administration Web UI port.
 * *zk_enabled*
 <br> Default: _true_
-<br> Specifies if need to use zookeeper service. This is property have to be always _true_. It is possible to change it for development or debug process.
+<br> Specifies if need to use [Zookeeper service]({{root_url}}Architecture-overview/#zookeeper). This property has to be always _true_. It is possible
+to change it for development or debug process.
 * *zk_host_port_list*
 <br> Default: _localhost:2181_
 <br> Comma-separated url list of Zookeeper nodes: hostname1:port1,hostname2:port2.
@@ -62,7 +63,7 @@ The kaa-node.properties consist of the following parameters:
 <br> Time to sleep in milliseconds between searches for work.
 * *zk_ignore_errors*
 <br> Default: _true_
-<br> Specifies if need to throw runtime exception during registration control zookeeper node.
+<br> Specifies if need to throw runtime exception during registration control Zookeeper node.
 * *loadmgmt_min_diff*
 <br> Default: _10000_
 <br> Minimum difference between amount of endpoints that need to be present in order to trigger rebalancing.
@@ -110,7 +111,7 @@ The kaa-node.properties consist of the following parameters:
 <br> Interface that will be reported by all transports.
 * *metrics_enabled*
 <br> Default: _true_
-<br> Specify if metrics collections is enabled. See
+<br> Specify if metrics collections are enabled. See
 [performance monitoring]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/#performance-monitoring) for details.
 * *logs_root_dir*
 <br> Default: _/kaa_log_uploads_
