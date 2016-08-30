@@ -388,13 +388,13 @@ public class ConfigurationController extends AbstractAdminController {
     }
 
     /**
-     * Get configuration of specific endpoint user bu externalUId
+     * Get configuration of specific endpoint by endpointKeyHash
      *
      * @param endpointKeyHash        the endpoint key hash
      * @throws KaaAdminServiceException the kaa admin service exception
      */
-    @ApiOperation(value = "Get endpoint user configuration by external user id",
-            notes="Get endpoint user configuration by external user id." +
+    @ApiOperation(value = "Get configuration of specific endpoint by endpointKeyHash",
+            notes="Get configuration of specific endpoint by endpointKeyHash." +
                     " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified url is not valid"),
@@ -408,7 +408,5 @@ public class ConfigurationController extends AbstractAdminController {
             @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
         return  configurationService.findUserEndConfigurationByEndpointKeyHash(endpointKeyHash);
     }
-
-
 
 }
