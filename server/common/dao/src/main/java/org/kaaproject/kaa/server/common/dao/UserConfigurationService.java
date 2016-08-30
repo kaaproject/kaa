@@ -15,8 +15,6 @@
  */
 
 package org.kaaproject.kaa.server.common.dao;
-
-import java.util.function.Function;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 
