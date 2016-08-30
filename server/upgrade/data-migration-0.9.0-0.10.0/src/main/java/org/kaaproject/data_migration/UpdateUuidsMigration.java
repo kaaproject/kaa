@@ -16,41 +16,76 @@
 
 package org.kaaproject.data_migration;
 
+import com.datastax.driver.core.Cluster;
+import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.bson.Document;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.data_migration.model.Configuration;
+import org.kaaproject.data_migration.utils.Options;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.kaaproject.data_migration.utils.Utils.encodeUuids;
 
 public class UpdateUuidsMigration {
     private Connection connection;
+    private MongoClient client;
+    private Cluster cluster;
+    private String dbName;
+    private String nosql;
 
-    public UpdateUuidsMigration(Connection connection) {
+    public UpdateUuidsMigration(Connection connection, String host, String db, String nosql) {
         this.connection = connection;
+        client = new MongoClient(host);
+        cluster = Cluster.builder()
+                .addContactPoint(host)
+                .build();
+        dbName = db;
+        this.nosql = nosql;
     }
 
     public void transform() throws IOException, SQLException {
-            QueryRunner run = new QueryRunner();
-            ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<Configuration>(Configuration.class);
-            List<Configuration> configs = run.query(connection, "SELECT * FROM configuration", rsHandler);
-            for (Configuration config : configs) {
-                JsonNode json = new ObjectMapper().readTree(config.getConfiguration_body());
-                JsonNode jsonEncoded = encodeUuids(json);
-                byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
+        QueryRunner run = new QueryRunner();
+        ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<Configuration>(Configuration.class);
+        List<Configuration> configs = run.query(connection, "SELECT * FROM configuration", rsHandler);
+        for (Configuration config : configs) {
+            JsonNode json = new ObjectMapper().readTree(config.getConfiguration_body());
+            JsonNode jsonEncoded = encodeUuids(json);
+            byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
 
-                int updates = run.update(connection, "UPDATE configuration SET configuration_body=? WHERE id=?", encodedConfigurationBody, config.getId());
-                if (updates != 1) {
-                    System.err.println("Error: failed to update configuration: " + config);
-                }
+            int updates = run.update(connection, "UPDATE configuration SET configuration_body=? WHERE id=?", encodedConfigurationBody, config.getId());
+            if (updates != 1) {
+                System.err.println("Error: failed to update configuration: " + config);
             }
+        }
+
+        if (nosql.equals(Options.DEFAULT_NO_SQL)) {
+            MongoDatabase database = client.getDatabase(dbName);
+            MongoCollection<Document> userConfiguration = database.getCollection("user_configuration");
+            FindIterable<Document> documents = userConfiguration.find();
+            for (Document d : documents) {
+                String body = (String) d.get("body");
+                JsonNode json = new ObjectMapper().readTree(body);
+                JsonNode jsonEncoded = encodeUuids(json);
+                userConfiguration.updateOne(Filters.eq("_id", d.get("_id")), Filters.eq("$set", Filters.eq("body", jsonEncoded)));
+            }
+
+        } else {
+            //TODO
+        }
+
     }
 
 }
