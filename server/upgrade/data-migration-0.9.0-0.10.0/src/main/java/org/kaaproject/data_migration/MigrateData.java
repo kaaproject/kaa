@@ -84,7 +84,7 @@ public class MigrateData {
             EndpointProfileMigration endpointProfileMigration = new EndpointProfileMigration(options.getHost(), options.getDbName(), options.getNoSQL());
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
-//            migrationList.add(new CTLEventsMigration(conn));
+            migrationList.add(new CTLEventsMigration(conn));
             migrationList.add(new CTLNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSQL()));
             migrationList.add(new CTLLogMigration(conn));
 
