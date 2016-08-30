@@ -476,7 +476,7 @@ Sampled temperature: 28
 Sampled temperature: 28
 ```
 The temperature value is sampled once per second as specified in the configuration schema.
-If you do not get the expected output, see [Troubleshooting](#troubleshooting).
+If you do not get the expected output, see [Debugging and troubleshooting]({{root_url}}Programming-guide/Debugging-and-troubleshooting).
 
 ### Retrieving collected data
 
