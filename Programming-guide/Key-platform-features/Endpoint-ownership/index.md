@@ -10,8 +10,8 @@ sort_idx: 40
 * TOC
 {:toc}
 
-To enable exchanging events between your endpoints, you need to have those endpoints attachend to the same owner.
-Depending on the application, owners can be persons, groups of people, or organizations.
+To enable exchanging events between your [endpoints]({{root_url}}Glossary/#endpoint-ep), you need to have those endpoints attached to the same owner.
+Depending on the [application]({{root_url}}Glossary/#kaa-application), owners can be persons, groups of people, or organizations.
 Some devices have single persons as owners, for example, mobile phones or smart watches.
 Some devices have groups of owners.
 
@@ -19,57 +19,52 @@ For example, if you have a smart TV in your house, all your family members are t
 In this case, your family is the group of people (owner) that own the smart TV, and the smart TV is the endpoint attached to this group.
 You can use the necessary APIs to attach/detach endpoints to/from owners.
 
-To do this, you can use either [Owner access token](#owner-access-token-flow), or [Endpoint access token](#endpoint-access-token-flow).
+To do this, you can use either [owner access token](#using-the-owner-access-token), or [endpoint access token](#using-the-endpoint-access-token).
 
+## Using the owner access token
 
-
-To exchange events between several endpoints, it is required that those endpoints were attached to the same owner.
-Depending on the application, owners may be person, groups of people, or organizations. 
-As an example we can take your mobile phone or smart watch. 
-These devices are your possessions (attached to you) and you are owner of these devices. 
-Another example is smart TV located in your house and all your family members are users of this device. 
-In this case your family is group of people (owner) that own this smart TV and smart TV is endpoint attached to this group.
-Kaa provides necessary APIs to attach/detach endpoints to/from owners through one of the following two flows:
-
-* [Owner access token flow](#owner-access-token-flow)
-* [Endpoint access token flow](#endpoint-access-token-flow)
-
-
-# Owner access token flow #
-In the *owner access token flow*, the owner authenticates himself in an external authentication system and obtains the *access token*. 
-The owner performs this authentication from the endpoint which is due to be registered with him in the Kaa instance. 
-Then, Kaa SDK transfers this token to the Kaa cluster over a secure channel. The Kaa cluster verifies the access token and attaches the endpoint to the owner.
-
+As an owner, you can authenticate using an external authentication system and obtain your _access token_.
+You need to perform this authentication from the endpoint that is duly registered in the [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).
+Your [endpoint SDK]({{root_url}}Glossary/#endpoint-sdk) sends this token to the [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) over a secure channel.
+The Kaa cluster verifies the access token and attaches the endpoint to the owner.
 
 ![Owner access token flow](owner_attach_2.png "Owner access token flow")
 
+### Owner verifiers
 
-## Owner verifiers ##
-The owner verification is handled by specific server components called owner verifiers. 
-There are several default owner verifier implementations that are available out of the box for each Kaa installation. 
-This section contains general information about the architecture, configuration and administration of the default owner verifiers. 
-It is also possible to plug in [custom verifier implementations](#custom-owner-verifier). Each Kaa application can support multiple owner verifiers.
-You can add new verifier from Administration UI or with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-The following image example illustrates how to add new verifier from Administration UI.
+The owner verification is handled by specific server components called _owner verifiers_.
+There are several default implementations of the owner verifier available out of the box for each Kaa installation.
+This section contains general information about the architecture, configuration, and administration of the default owner verifiers.
+You can also plug in [custom verifier implementations](#custom-owner-verifier).
+One [Kaa application]({{root_url}}Glossary/#kaa-application) can support multiple owner verifiers.
+You can add a new verifier using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
+
+You can add user verifiers using the **User verifier** page of your application.
 
 ![new verifier](Admin-ui/adding-new-verifier.png "new verifier")
- 
-## Trustful owner verifier ##
-This owner verifier implementation is created for the test and debug purposes and always accepts provided owner id and access token. 
-It is recommended that you do not use this verifier in production because it may cause security issues. 
+
+### Trustful owner verifier
+
+This owner verifier implementation always accepts any owner ID and access token and is created for testing and debugging purposes.
 There is no specific configuration for this verifier, because its schema is empty.
-To create a trustful owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier). 
-The following image example illustrates how to create a trustful owner verifier from Administration UI.
+You can add a trustful verifier using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
+If you want to use the Administration UI, choose the **trustful verifier** type from the drop-down list on the **Add user verifier details** page.
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
 
-## Facebook owner verifier ## 
-This owner verifier implementation is created for verification of Facebook accounts. It is especially useful for applications that are already integrated with Facebook.
+>**CAUTION:** Do not use this owner verifier in production because it may cause security issues.
+{:.caution}
+
+### Facebook owner verifier
+
+This owner verifier implementation is created to verify Facebook accounts.
+It is especially useful for applications that are already integrated with Facebook.
 
 
-### Configuration ###
-The configuration should match the following Avro schema. Note that you need to create a [facebook application](https://developers.facebook.com/products/login/) 
-and specify its application id and [secret](https://developers.facebook.com/docs/graph-api/securing-requests) in the configuration.
+#### Configuration ###
+
+The configuration should match the following Avro schema.
+First, create a [facebook application](https://developers.facebook.com/products/login/), then specify its application ID and [secret](https://developers.facebook.com/docs/graph-api/securing-requests) in the configuration.
 
 ```json
 {
@@ -107,16 +102,20 @@ The following configuration example matches the previous schema.
 ```
 
 
-### Administration ###
-To create a Facebook owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-The following image example illustrates how to create a Facebook owner verifier from Administration UI.
+#### Administration
+
+To create a Facebook owner verifier, use the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
+If you want to use the Administration UI, choose the **Facebook verifier** type from the drop-down list on the **Add user verifier details** page.
 
 ![facebook verifier](Admin-ui/verifier-facebook.png "facebook verifier")
 
-## Google+ owner verifier ##
-This owner verifier implementation is created for verification of Google+ accounts. It is especially useful for applications that are already integrated with Google+.
+### Google+ owner verifier
 
-### Configuration ###
+This owner verifier implementation is created to verify Google+ accounts.
+It is especially useful for applications that are already integrated with Google+.
+
+#### Configuration
+
 The configuration should match the following Avro schema.
 
 ```json
@@ -144,16 +143,20 @@ The configuration should match the following Avro schema.
 }
 ```
 
-### Administration ###
-To create a Google+ owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-The following image example illustrates how to create a Google+ owner verifier from Administration UI.
+#### Administration
+
+To create a Google+ owner verifier, use the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
+If you want to use the Administration UI, choose the **Google+ verifier** type from the drop-down list on the **Add user verifier details** page.
 
 ![google verifier](Admin-ui/verifier-google.png "google verifier")
 
-## Twitter owner verifier ##
-This owner verifier implementation is created for verification of Twitter accounts. It is especially useful for applications that are already integrated with Twitter.
+### Twitter owner verifier
 
-### Configuration ###
+This owner verifier implementation is created to verify Twitter accounts.
+It is especially useful for applications that are already integrated with Twitter.
+
+#### Configuration
+
 The configuration should match the following Avro schema.
 
 ```json 
@@ -181,36 +184,41 @@ The configuration should match the following Avro schema.
 }
 ```
 
-### Administration ###
-To create a Twitter owner verifier, use either Administration UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-The following image example illustrates how to create a Twitter owner verifier from Administration UI.
-                                   
+#### Administration
+
+To create a Twitter owner verifier, use  [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
+If you want to use the Administration UI, choose the **Twitter verifier** type from the drop-down list on the **Add user verifier details** page.
+
 ![twitter verifier](Admin-ui/verifier-twitter.png "twitter verifier")
 
-## Custom owner verifier ##
-It is possible to implement and plug-in custom owner verifiers. You can find corresponding instructions on the 
-[Creating custom owner verifier]({{root_url}}Customization-guide/Kaa-Server/Development-environment-setup/#creating-custom-user-verifier) page.
+### Custom owner verifier
+
+You can implement plug in your custom verifiers.
+To do this, follow the instructions in [Creating custom owner verifier]({{root_url}}Customization-guide/Kaa-Server/Development-environment-setup/#creating-custom-user-verifier).
 
 
-# Endpoint access token flow #
-In the *endpoint access token flow*, new endpoints are attached to the owner with the help of the endpoint which was attached to the owner beforehand.
-The following steps illustrate this flow with the endpoint A, which is already attached to the owner, and the endpoint B, which is due to be attached:
+## Using the endpoint access token
 
-   1. The endpoint B periodically generates and sends its access token to the Kaa cluster.
-   2. The endpoint B displays its access token as a QR code on the screen (TV) or on the webpage (e.g., a router or other device with an embedded server).
-   3. The endpoint A retrieves this token by scanning QR code or in any other suitable way and sends it in the endpoint attach request to the Kaa cluster.
-   4. The Kaa cluster verifies the access code and attaches the endpoint B to the owner of the endpoint A.
+You can attach new endpoints to an owner using the endpoint that was previously attached to that owner.
+Assume we have a new endpoint B that we want to attach to the owner using the previously attached endpoint A.
+
+The process flows as follows:
+
+1. The endpoint B periodically generates and sends its access token to the Kaa cluster.
+
+2. The endpoint B displays its access token as a QR code on the screen (TV) or on the webpage (e.g., a router or other device with an embedded server).
+
+3. The endpoint A retrieves this token by scanning QR code or in any other suitable way and sends it in the endpoint attach request to the Kaa cluster.
+
+4. The Kaa cluster verifies the access code and attaches the endpoint B to the owner of the endpoint A.
 
 
 ![Owner access token flow](endpoint_attach_2.png "Owner access token flow")
 
 
-## Attach endpoint to owner ##
+### Attach endpoint to owner
 
-To enable sending/receiving events to/from endpoints, at first the client should attach the endpoint to the owner as shown in the following examples for different platforms SDK.
-
-> Please refer to [Glossary]({{root_url}}Glossary/) for more details about **userExternalId**, **userAccessToken**, **userVerifierToken** 
->and other parameters which are used by KaaClient methods.
+To enable sending/receiving events to/from endpoints, [Kaa client]({{root_url}}Glossary/#kaa-client) first attaches the endpoint to the owner as shown in the following examples for different [SDK types]({{root_url}}Glossary/#sdk-type).
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
@@ -357,10 +365,13 @@ error_code = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_
 </div>
 
 
-## Assisted attach ##
+### Assisted attachment
 
-Specific endpoint may not be able to attach itself independently. E.g. in case if endpoint doesn't have an owner access token. 
-Another endpoint that already attached can assist in attachment process of the new endpoint. Below are examples of assisted attachment.
+Some endpoints may not be able to attach themselves independently.
+For example, when an endpoint does not have an owner access token.
+In this case, another endpoint that is already attached can assist in the attachment process of the new endpoint.
+
+Below are examples of assisted attachment.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>
@@ -380,7 +391,7 @@ import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCal
 /**
 * Updates with new endpoint attach request
 *
-* @param   endpointAccessToken Access token of the attaching endpoint
+* @param   endpointAccessToken Access token of the endpoint being attached
 * @param   resultListener      Listener to notify about result of the endpoint attaching
 *
 */
@@ -482,9 +493,11 @@ error_code = kaa_user_manager_attach_endpoint(kaa_client_get_context(kaa_client)
 </div>
 </div>
 
-## Detach endpoint from owner ##
+### Detach endpoint from owner
 
-Another endpoint that already attached can assist in detachment process for another endpoint which attached too. Below are examples of assisted detachment.
+An attached endpoint can assist in detachment process of another attached endpoint.
+
+Below are examples of assisted detachment.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-2">Java</a></li>
@@ -504,7 +517,7 @@ import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCal
 /**
 * Updates with new endpoint detach request
 *
-* @param   endpointKeyHash Key hash of the detaching endpoint
+* @param   endpointKeyHash Key hash of the endpoint being detached
 * @param   resultListener Listener to notify about result of the enpoint attaching
 *
 */
