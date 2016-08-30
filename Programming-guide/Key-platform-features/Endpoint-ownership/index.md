@@ -10,6 +10,19 @@ sort_idx: 40
 * TOC
 {:toc}
 
+To enable exchanging events between your endpoints, you need to have those endpoints attachend to the same owner.
+Depending on the application, owners can be persons, groups of people, or organizations.
+Some devices have single persons as owners, for example, mobile phones or smart watches.
+Some devices have groups of owners.
+
+For example, if you have a smart TV in your house, all your family members are the users of the smart TV endpoint.
+In this case, your family is the group of people (owner) that own the smart TV, and the smart TV is the endpoint attached to this group.
+You can use the necessary APIs to attach/detach endpoints to/from owners.
+
+To do this, you can use either [Owner access token](#owner-access-token-flow), or [Endpoint access token](#endpoint-access-token-flow).
+
+
+
 To exchange events between several endpoints, it is required that those endpoints were attached to the same owner.
 Depending on the application, owners may be person, groups of people, or organizations. 
 As an example we can take your mobile phone or smart watch. 
