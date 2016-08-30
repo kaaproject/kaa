@@ -16,7 +16,11 @@
 
 package org.kaaproject.data_migration;
 
+import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -36,7 +40,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 import static org.kaaproject.data_migration.utils.Utils.encodeUuids;
 
 public class UpdateUuidsMigration {
@@ -83,7 +90,31 @@ public class UpdateUuidsMigration {
             }
 
         } else {
-            //TODO
+            Session session = cluster.connect(dbName);
+            BatchStatement batchStatement = new BatchStatement();
+
+            String tableName = "user_conf";
+            ResultSet results = session.execute(select().from(tableName));
+            for (Row row : results) {
+                String userId = row.getString("user_id");
+                String appToken = row.getString("app_token");
+                int schemaVersion = row.getInt("schema_version");
+
+                String body = row.getString("body");
+                String bodyEncoded = encodeUuids(new ObjectMapper().readTree(body)).toString();
+
+                batchStatement.add(
+                        update(tableName)
+                                .with(set("body", bodyEncoded))
+                                .where(eq("user_id", userId))
+                                .and(eq("app_token", appToken))
+                                .and(eq("schema_version", schemaVersion))
+                );
+            }
+
+            session.execute(batchStatement);
+            session.close();
+            cluster.close();
         }
 
     }

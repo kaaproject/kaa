@@ -80,7 +80,7 @@ public class MigrateData {
             QueryRunner runner = new QueryRunner();
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
-            UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn);
+            UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn, options.getHost(), options.getDbName(), options.getNoSQL());
             EndpointProfileMigration endpointProfileMigration = new EndpointProfileMigration(options.getHost(), options.getDbName(), options.getNoSQL());
             List<AbstractCTLMigration> migrationList = new ArrayList<>();
             migrationList.add(new CTLConfigurationMigration(conn));
