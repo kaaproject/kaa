@@ -26,6 +26,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.springframework.http.HttpStatus;
@@ -111,36 +112,6 @@ public class EventController extends AbstractAdminController {
             @ApiParam(name = "eventClassFamily", value = "EventClassFamilyDto body. Mandatory fields: name, className, namespace", required = true)
             @RequestBody EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
         return eventService.editEventClassFamily(eventClassFamily);
-    }
-
-    /**
-     * Adds the event class family schema to the event class family with
-     * specific id. Current user will be marked as creator of schema.
-     *
-     * @param eventClassFamilyId the event class family id
-     * @param file               the file
-     * @throws KaaAdminServiceException the kaa admin service exception
-     */
-    @ApiOperation(value = "Add event class family schema",
-            notes = "Adds the event class family schema to the event class family with the specified ID. The current user will be marked as the creator of " +
-                    "schema. Only users with the TENANT_ADMIN role are allowed to perform this operation.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "The specified event class family schema is not a valid avro schema"),
-            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the specified " +
-                    "event class family does not match the Tenant ID of the authenticated user"),
-            @ApiResponse(code = 404, message = "A file with the event class family schema was not found in the form data or an event class family with the " +
-                    "specified ID does not exist"),
-            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "addEventClassFamilySchema", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
-    @ResponseStatus(value = HttpStatus.OK)
-    public void addEventClassFamilySchema(
-            @ApiParam(name = "eventClassFamilyId", value = "A unique event class family identifier", required = true)
-            @RequestPart(value = "eventClassFamilyId") String eventClassFamilyId,
-            @ApiParam(name = "file", value = "Event class family schema represented in json format", required = true)
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        eventService.addEventClassFamilySchema(eventClassFamilyId, data);
     }
 
     /**
@@ -297,6 +268,64 @@ public class EventController extends AbstractAdminController {
             @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
             @PathVariable String applicationToken) throws KaaAdminServiceException {
         return eventService.getEventClassFamiliesByApplicationToken(applicationToken);
+    }
+
+    /**
+     * Gets the event class family versions by its id.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @return the list of event class family version dto
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @ApiOperation(value = "Gets the event class family versions",
+            notes = "Returns all event class family versions for the specified family. Only users with the " +
+                    "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
+                    "of the event class family does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "An event class family with the specified id does not exist"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "eventClassFamilyVersions/{eventClassFamilyId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(
+            @ApiParam(name = "eventClassFamilyId", value = "An id of event class family", required = true)
+            @PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
+        return eventService.getEventClassFamilyVersions(eventClassFamilyId);
+    }
+
+    /**
+     * Adds the event class family version to existing event class family with
+     * specific id. Current user will be marked as creator of schema.
+     *
+     * @param eventClassFamilyId
+     *            the event class family id
+     * @param eventClassFamilyVersion
+     *            the version of event class family
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @ApiOperation(value = "Add event class family schema",
+            notes = "Adds the event class family schema to the event class family with the specified ID. The current user will be marked as the creator of " +
+                    "schema. Only users with the TENANT_ADMIN role are allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "The specified event class family schema is not a valid avro schema"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the specified " +
+                    "event class family does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "A file with the event class family schema was not found in the form data or an event class family with the " +
+                    "specified ID does not exist"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "addEventClassFamilyVersion", method = RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @ResponseStatus(value = HttpStatus.OK)
+    public void addEventClassFamilyVersion(
+            @ApiParam(name = "eventClassFamilyId", value = "A unique event class family identifier", required = true)
+            @RequestPart(value = "eventClassFamilyId") String eventClassFamilyId,
+            @ApiParam(name = "eventClassFamilyVersion", value = "Version of ECF", required = true)
+            @RequestPart(value = "eventClassFamilyVersion") EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
+        eventService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion);
     }
 
 }

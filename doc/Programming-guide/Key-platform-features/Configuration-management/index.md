@@ -74,10 +74,9 @@ updating fields selectively, leaving some of them without any change if necessar
 
 ## User-specific configuration management
 
-The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editConfiguration) allows 
-updating configuration data for the specific user under the application. The user-specific
-configuration management implements the same approach as in [Group-specific configuration](#group-specific-configuration-management) management,
-based on the override schema and override algorithm.
+The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editUserConfiguration)
+allows updating configuration data for the specific user under the application. The user-specific configuration management implements the same approach as in
+[Group-specific configuration](#group-specific-configuration-management) management, based on the override schema and override algorithm.
 
 >**NOTE:**
 > Since each endpoint belongs to only one user at a time, the override algorithm does not support data set merges as in the group-specific
@@ -687,7 +686,7 @@ Data consistency is ensured by the configuration hash comparison between the end
 
 The configuration management API varies depending on the target SDK platform. However, the general approach is the same.
 
-The Kaa client application should use the following code.
+The Kaa client application examples are provided below.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>
@@ -748,11 +747,13 @@ private static void printConfiguration(SampleConfiguration sampleConfiguration) 
 <div id="C_plus_plus-1" class="tab-pane fade" markdown="1" >
 
 ```c++
-#include <memory>
 #include <iostream>
+#include <cstdlib>
  
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+#include <kaa/IKaaClient.hpp>
+#include <kaa/configuration/manager/IConfigurationReceiver.hpp>
+#include <kaa/configuration/storage/FileConfigurationStorage.hpp>
  
 using namespace kaa;
 
@@ -760,13 +761,9 @@ const char savedConfig[] = "saved_config.cfg";
 
 class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
-    void printConfiguration(const KaaRootConfiguration &configuration)
-    {
-        std::cout << "Current configuration: " << configuration << std::endl;
-    }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        printConfiguration(configuration);
+        // Add your code here.
     }
 };
 
@@ -786,9 +783,12 @@ int main()
     // Run the Kaa endpoint.
     kaaClient->start();
 
+    std::cout << "Press Enter to stop" << std::endl;
+
     // Wait for the Enter key before exiting.
     std::cin.get();
-    
+
+    return EXIT_SUCCESS;
 }
 
 ```
@@ -798,64 +798,62 @@ int main()
 
 
 ```c
-#include <target.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <kaa/kaa_error.h>
 #include <kaa/kaa_context.h>
 #include <kaa/platform/kaa_client.h>
-#include <kaa/utilities/kaa_log.h>
 #include <kaa_configuration_manager.h>
  
 static kaa_client_t *kaa_client = NULL;
 
-void print_configuration(
-        const kaa_root_configuration_t *configuration) {
-        printf("Current configuration: " configuration);
-}
-
 kaa_error_t kaa_demo_configuration_receiver(void *context,
                                             const kaa_root_configuration_t *configuration) {
     (void) context;
-    printf("Received configuration data\r\n");
-    print_configuration(configuration);
+    printf("Received configuration data\n");
+
+    // Add your code here.
+
     kaa_client_stop(kaa_client);
     return KAA_ERR_NONE;
 }
 
-int main(/*int argc, char *argv[]*/) {
+int main(void) {
 
-    //Initialize Kaa client.
+    // Initialize Kaa client.
     kaa_error_t error_code = kaa_client_create(&kaa_client, NULL);
     if (error_code) {
-        printf("Failed create Kaa client\r\n");
-        return 2;
+        printf("Failed create Kaa client\n");
+        return EXIT_FAILURE;
     }
 
     kaa_configuration_root_receiver_t receiver = {
-            NULL,
-            &kaa_demo_configuration_receiver
+            .context = NULL,
+            .on_configuration_updated = &kaa_demo_configuration_receiver
     };
 
+    // Set the handler for configuration updates
     error_code = kaa_configuration_manager_set_root_receiver(
             kaa_client_get_context(kaa_client)->configuration_manager,
             &receiver);
 
     if (error_code) {
-        printf("Failed to add configuration receiver\r\n");
-        return 3;
+        printf("Failed to add configuration receiver\n");
+        return EXIT_FAILURE;
     }
 
-    print_configuration(
-            kaa_configuration_manager_get_configuration(
-                    kaa_client_get_context(kaa_client)->configuration_manager));
-
-    //Start Kaa client main loop.
+    // Start Kaa client main loop.
     error_code = kaa_client_start(kaa_client, NULL, NULL, 0);
-    if(error_code) {
-        printf("Failed to start Kaa main loop\r\n");
-        return 4;
+    if (error_code) {
+        printf("Failed to start Kaa main loop\n");
+        return EXIT_FAILURE;
     }
 
+    // Cleanup.
+    kaa_client_destroy(kaa_client);
+
+    return EXIT_SUCCESS;
 }
 
 ```
@@ -864,26 +862,22 @@ int main(/*int argc, char *argv[]*/) {
 <div id="Objective-C-1" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
- 
 #import "ViewController.h"
 
 @import Kaa;
-
+ 
 @interface ViewController () <KaaClientStateDelegate, ConfigurationDelegate, ProfileContainer>
-
+ 
 @property (nonatomic, weak) IBOutlet UITextView *logTextView;
-
+ 
 @property (nonatomic, strong) id<KaaClient> kaaClient;
-
+ 
 @end
-
+ 
 @implementation ViewController
-
+ 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [self addLogWithText:@"ConfigurationDemo started"];
 
     // Create a Kaa client and add a listener which displays the Kaa client configuration
     // as soon as the Kaa client is started.
@@ -903,12 +897,12 @@ int main(/*int argc, char *argv[]*/) {
     // Start the Kaa client and connect it to the Kaa server.
     [self.kaaClient start];
 }
-
+ 
 - (void)onConfigurationUpdate:(KAASampleConfiguration *)configuration {
-    [self addLogWithText:@"Configuration was updated"];
+    NSLog(@"Configuration was updated");
     [self printConfiguration];
 }
-
+ 
 - (void)printConfiguration {
     KAASampleConfiguration *configuration = [self.kaaClient getConfiguration];
     NSArray *links = [configuration AddressList].data;
@@ -916,8 +910,7 @@ int main(/*int argc, char *argv[]*/) {
     for (KAALink *link in links) {
         [confBody appendString:[NSString stringWithFormat:@"%@ - %@\n", link.label, link.url]];
     }
-    [self addLogWithText:@"Current configuration:"];
-    [self addLogWithText:confBody];
+    NSLog(@"Current configuration: %@", confBody);
 }
 
 ```

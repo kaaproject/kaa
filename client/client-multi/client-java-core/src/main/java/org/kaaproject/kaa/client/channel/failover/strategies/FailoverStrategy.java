@@ -51,7 +51,7 @@ public interface FailoverStrategy {
     /**
      * Use the {@link #getTimeUnit()} method to get current time unit.
      *
-     * @return period of time after which will be made attempt to tweak bootstrap server.
+     * @return period of time after which will be made attempt to tweak bootstrap service.
      */
     long getBootstrapServersRetryPeriod();
 

@@ -204,6 +204,12 @@ if(NOT MSVC)
    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
 endif()
 
+# "no-unused-private-field" is added since in most of cases it is false positive
+if(NOT MSVC)
+    list(APPEND KAA_COMPILE_OPTIONS
+                    -Wno-unused-private-field)
+endif()
+
 #Compiler specific flags
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     list(APPEND KAA_COMPILE_OPTIONS 
@@ -456,6 +462,7 @@ set(KAA_SOURCE_FILES
         impl/KaaClient.cpp
         impl/logging/Log.cpp
         impl/logging/DefaultLogger.cpp
+        impl/logging/LoggingUtils.cpp
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp

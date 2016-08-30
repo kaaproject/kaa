@@ -359,13 +359,13 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
         try {
             endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
         } catch (IOException e) {
-            LOG.error("error reading control server info", e);
+            LOG.error("error reading control service info", e);
         }
         return endpointServerInfo;
     }
 
     /**
-     * Extract bootstrap server info.
+     * Extract bootstrap service info.
      *
      * @param currentData
      *            the current data
@@ -376,7 +376,7 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
         try {
             bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
         } catch (IOException e) {
-            LOG.error("error reading control server info", e);
+            LOG.error("error reading control service info", e);
         }
         return bootstrapServerInfo;
     }

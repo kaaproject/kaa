@@ -22,10 +22,17 @@ import com.google.gwt.place.shared.Prefix;
 public class EcfPlace extends TreePlace {
 
     private String ecfId;
+    private String ecfVersionId;
     private String name;
 
     public EcfPlace(String ecfId) {
         this.ecfId = ecfId;
+        this.ecfVersionId = "";
+    }
+
+    public EcfPlace(String ecfId, String ecfVersionId) {
+        this.ecfId = ecfId;
+        this.ecfVersionId = ecfVersionId;
     }
 
     public void setName(String name) {
@@ -36,19 +43,24 @@ public class EcfPlace extends TreePlace {
         return ecfId;
     }
 
+    public String getEcfVersionId() {
+        return ecfVersionId;
+    }
+
     @Prefix(value = "ecf")
     public static class Tokenizer implements PlaceTokenizer<EcfPlace>, PlaceConstants {
 
         @Override
         public EcfPlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new EcfPlace(PlaceParams.getParam(ECF_ID));
+            return new EcfPlace(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID));
         }
 
         @Override
         public String getToken(EcfPlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(ECF_ID, place.getEcfId());
+            PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
             return PlaceParams.generateToken();
         }
     }

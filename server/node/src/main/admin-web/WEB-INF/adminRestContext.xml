@@ -18,17 +18,30 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:mvc="http://www.springframework.org/schema/mvc"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
   http://www.springframework.org/schema/mvc    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
-  http://www.springframework.org/schema/context    http://www.springframework.org/schema/context/spring-context-3.2.xsd">
- 
-  <context:component-scan base-package="org.kaaproject.kaa.server.admin.controller" /> 
-  <mvc:annotation-driven />
- 
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-  </bean>
- 
+  http://www.springframework.org/schema/context    http://www.springframework.org/schema/context/spring-context-3.2.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:component-scan base-package="org.kaaproject.kaa.server.admin.controller" />
+
+    <bean id="objectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+        <property name="failOnUnknownProperties" value="true"/>
+        <property name="indentOutput" value="true"/>
+        <property name="serializationInclusion" value="NON_NULL"/>
+    </bean>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" ref="objectMapper" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    </bean>
+
 </beans>

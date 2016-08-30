@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.regexp.shared.RegExp;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
@@ -111,8 +113,14 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
         });
 
         List<KaaAuthorityDto> possibleAuthorities = new ArrayList<KaaAuthorityDto>();
-        possibleAuthorities.add(KaaAuthorityDto.TENANT_DEVELOPER);
-        possibleAuthorities.add(KaaAuthorityDto.TENANT_USER);
+
+        if(KaaAdmin.getAuthInfo().getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+            possibleAuthorities.add(KaaAuthorityDto.TENANT_DEVELOPER);
+            possibleAuthorities.add(KaaAuthorityDto.TENANT_USER);
+        }
+        if(KaaAdmin.getAuthInfo().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)){
+            possibleAuthorities.add(KaaAuthorityDto.TENANT_ADMIN);
+        }
 
         authority.setAcceptableValues(possibleAuthorities);
 
@@ -133,10 +141,9 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
     @Override
     protected boolean validate() {
-        boolean result = userName.getValue().length()>0;
-        result &= email.getValue().length()>0;
-        result &= authority.getValue() != null;
-        return result;
+        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        RegExp regExp=RegExp.compile(pattern);
+        return userName.getValue().length()>1 &&  authority.getValue() != null && regExp.test(email.getValue());
     }
 
     @Override

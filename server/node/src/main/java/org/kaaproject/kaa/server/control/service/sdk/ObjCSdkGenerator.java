@@ -255,7 +255,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
 
         String kaaDefaultsTemplate = readResource(SDK_TEMPLATE_DIR + KAA_DEFAULTS + TEMPLATE_SUFFIX);
         objcSources.add(generateKaaDefaults(kaaDefaultsTemplate, bootstrapNodes, sdkToken,
-                configurationProtocolSchemaBody, defaultConfigurationData));
+                configurationProtocolSchemaBody, defaultConfigurationData, sdkProperties));
 
         for (TarEntryData entryData : objcSources) {
             replacementData.put(entryData.getEntry().getName(), entryData);
@@ -304,14 +304,17 @@ public class ObjCSdkGenerator extends SdkGenerator {
                                              List<BootstrapNodeInfo> bootstrapNodes,
                                              String sdkToken,
                                              String configurationProtocolSchemaBody,
-                                             byte[] defaultConfigurationData) {
+                                             byte[] defaultConfigurationData,
+                                             SdkProfileDto profileDto) {
         LOG.debug("Generating kaa defaults");
-        final int PROPERTIES_COUNT = 6;
+        final int PROPERTIES_COUNT = 7;
         List<String> properties = new ArrayList<>(PROPERTIES_COUNT);
         properties.add(Version.PROJECT_VERSION);
         properties.add(Version.COMMIT_HASH);
         properties.add(sdkToken);
+        properties.add(profileDto.getApplicationId());
         properties.add(Base64.encodeBase64String(defaultConfigurationData));
+
         properties.add(Base64.encodeBase64String(configurationProtocolSchemaBody.getBytes()));
         properties.add(CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
         String source = String.format(template, properties.toArray(new Object[PROPERTIES_COUNT]));

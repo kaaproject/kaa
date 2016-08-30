@@ -1,3 +1,10 @@
+var VERSIONSELECT_ID = 'version-select';
+var SEARCHBOX_ID     = 'search-box';
+var SEARCHRESULTS_ID = 'search-results';
+var DEFAULT_URL      = '404.html';
+var DEFAULT_TITLE    = 'No title';
+var DEFAULT_TEXT     = '...';
+
 var DOM = (function () {
   var PAGE_TITLE='page-title';
   var MARKDOWN_TOC_ID='markdown-toc';

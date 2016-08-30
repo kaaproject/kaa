@@ -35,7 +35,7 @@ To install QNX *Software Development Platform (SDP)*, proceed as follows:
 
 1. Install build dependencies.
 
-        sudo apt-get install cmake build-essentials
+        sudo apt-get install cmake build-essential
 
 1. Set the path to the root directory of SDP.
 

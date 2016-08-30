@@ -88,7 +88,10 @@ public class ApplicationController extends AbstractAdminController {
      */
     @ApiOperation(value = "Create/Edit application",
             notes = "Creates or edits an application. To create an application you do not need to specify the application ID. To edit the application " +
-                    "specify the application ID. If the application with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role " +
+                    "specify the application ID. If the application with the specified ID exists, it will be updated. " +
+                    "By default for ever new application used credentials service \"Trustful\", " +
+                    "if you want to use \"Internal\" or some custom credentials service you should specify it. " +
+                    "Only users with the TENANT_ADMIN role " +
                     "are allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),

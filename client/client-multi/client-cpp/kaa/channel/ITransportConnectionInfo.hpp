@@ -18,9 +18,8 @@
 #define I_TRANSPORT_CONNECTION_INFO_HPP_
 
 #include <cstdint>
+#include <memory>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include "kaa/channel/ServerType.hpp"
 #include "kaa/channel/TransportProtocolId.hpp"
@@ -43,14 +42,14 @@ public:
      * @see ServerType
      *
      */
-    virtual ServerType getServerType() = 0;
+    virtual ServerType getServerType() const = 0;
 
     /**
-     * Retrieves the access point id (operations/bootstrap server id).
+     * Retrieves the access point id (operations/bootstrap service id).
      *
      * @return The access point id.
      */
-    virtual std::int32_t getAccessPointId() = 0;
+    virtual std::int32_t getAccessPointId() const = 0;
 
     /**
      * Retrieves the @link TransportProtocolId @endlink.
@@ -59,7 +58,7 @@ public:
      * @see TransportProtocolId
      *
      */
-    virtual TransportProtocolId getTransportId() = 0;
+    virtual TransportProtocolId getTransportId() const = 0;
 
     /**
      * Retrieves serialized connection data.
@@ -68,9 +67,9 @@ public:
      *
      * @return The serialized connection data.
      */
-    virtual const std::vector<std::uint8_t>& getConnectionInfo() = 0;
+    virtual const std::vector<std::uint8_t>& getConnectionInfo() const = 0;
 
-    virtual bool isFailedState() = 0;
+    virtual bool isFailedState() const = 0;
 
     virtual void setFailedState() = 0;
 

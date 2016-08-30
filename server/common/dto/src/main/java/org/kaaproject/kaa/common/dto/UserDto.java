@@ -16,16 +16,21 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import javax.validation.constraints.Size;
 
 public class UserDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 2052580632293959408L;
 
     private String id;
+    @Size(min = 1)
+    @NotNull(message="username can't be null")
     private String username;
     private String externalUid;
     private String tenantId;
+    @NotNull(message="authority can't be null")
     private KaaAuthorityDto authority;
 
     public String getId() {

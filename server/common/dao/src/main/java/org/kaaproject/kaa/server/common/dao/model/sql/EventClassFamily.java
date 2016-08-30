@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,7 +39,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMI
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_NAMESPACE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_EVENT_CLASS_FAMILY_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
@@ -72,8 +72,8 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
     protected long createdTime;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = EVENT_SCHEMA_VERSION_EVENT_CLASS_FAMILY_ID, nullable = false)
-    private List<EventSchemaVersion> schemas;
+    @JoinColumn(name = EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID, nullable = false)
+    private List<EventClassFamilyVersion> schemas;
 
     public EventClassFamily() {
     }
@@ -94,12 +94,6 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         this.description = dto.getDescription();
         this.createdUsername = dto.getCreatedUsername();
         this.createdTime = dto.getCreatedTime();
-        if (dto.getSchemas() != null) {
-            this.schemas = new ArrayList<>(dto.getSchemas().size());
-            for (EventSchemaVersionDto schema : dto.getSchemas()) {
-                this.schemas.add(new EventSchemaVersion(schema));
-            }
-        }
     }
 
     public Tenant getTenant() {
@@ -118,11 +112,11 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         this.name = name;
     }
 
-    public List<EventSchemaVersion> getSchemas() {
+    public List<EventClassFamilyVersion> getSchemas() {
         return schemas;
     }
 
-    public void setSchemas(List<EventSchemaVersion> schemas) {
+    public void setSchemas(List<EventClassFamilyVersion> schemas) {
         this.schemas = schemas;
     }
 
@@ -182,6 +176,7 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         result = prime * result
                 + ((namespace == null) ? 0 : namespace.hashCode());
         result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
+        result = prime * result + ((schemas == null) ? 0 : schemas.hashCode());
         return result;
     }
 
@@ -249,6 +244,13 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         } else if (!tenant.equals(other.tenant)) {
             return false;
         }
+        if (schemas == null) {
+            if (other.schemas != null) {
+                return false;
+            }
+        } else if (!schemas.equals(other.schemas)) {
+            return false;
+        }
         return true;
     }
 
@@ -275,13 +277,6 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
         dto.setDescription(description);
         dto.setCreatedUsername(createdUsername);
         dto.setCreatedTime(createdTime);
-        if (schemas != null) {
-            List<EventSchemaVersionDto> schemasDto = new ArrayList<>(schemas.size());
-            for (EventSchemaVersion schema : schemas) {
-                schemasDto.add(schema.toDto());
-            }
-            dto.setSchemas(schemasDto);
-        }
         return dto;
     }
 

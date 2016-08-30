@@ -55,4 +55,7 @@ public interface UserConfigurationService {
      * @param schemaVersion the schema version
      */
     void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
+
+
+    EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion,String tenantId);
 }

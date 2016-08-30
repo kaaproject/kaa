@@ -20,14 +20,14 @@ import com.google.gwt.place.shared.Prefix;
 import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemasPlace extends SchemasPlace {
+public class ServerProfileSchemasPlace extends SchemasPlaceApplication {
 
     public ServerProfileSchemasPlace(String applicationId) {
         super(applicationId);
     }
 
     @Prefix(value = "serverProfSchemas")
-    public static class Tokenizer extends SchemasPlace.Tokenizer<ServerProfileSchemasPlace> {
+    public static class Tokenizer extends SchemasPlaceApplication.Tokenizer<ServerProfileSchemasPlace> {
 
         @Override
         protected ServerProfileSchemasPlace getPlaceImpl(String applicationId) {

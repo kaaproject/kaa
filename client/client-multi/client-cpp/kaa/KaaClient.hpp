@@ -45,7 +45,7 @@
 namespace kaa {
 
 class KaaClient : public IKaaClient,
-                  public std::enable_shared_from_this<IKaaClient> {
+                  public std::enable_shared_from_this<KaaClient> {
 public:
     KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener);
 
@@ -59,7 +59,8 @@ public:
     virtual const KeyPair&                      getClientKeyPair();
     virtual void                                setEndpointAccessToken(const std::string& token);
     virtual std::string                         refreshEndpointAccessToken();
-    virtual std::string                         getEndpointAccessToken();
+    virtual std::string                         getEndpointAccessToken() const;
+    virtual std::string                         getEndpointKeyHash() const;
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
@@ -142,16 +143,12 @@ private:
     std::unique_ptr<DefaultOperationLongPollChannel> opsLongPollChannel_;
 #endif
 
-    IKaaClientPlatformContextPtr                     platformContext_;
-    IKaaClientStateListenerPtr                       stateListener_;
-
     std::unique_ptr<IBootstrapManager>               bootstrapManager_;
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;
     IFailoverStrategyPtr                             failoverStrategy_;
 
     std::unique_ptr<KeyPair>                         clientKeys_;
-    std::string                                      publicKeyHash_;
     std::unique_ptr<ProfileManager>                  profileManager_;
 #ifdef KAA_USE_NOTIFICATIONS
     std::unique_ptr<NotificationManager>             notificationManager_;
@@ -167,6 +164,9 @@ private:
 #ifdef KAA_USE_LOGGING
     std::unique_ptr<LogCollector>                    logCollector_;
 #endif
+
+    IKaaClientStateListenerPtr                       stateListener_;
+    IKaaClientPlatformContextPtr                     platformContext_;
 };
 
 }

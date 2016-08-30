@@ -24,10 +24,7 @@ import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
@@ -35,6 +32,7 @@ import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
+import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
 import org.kaaproject.kaa.server.admin.services.schema.CTLSchemaParser;
 import org.kaaproject.kaa.server.admin.services.schema.ConfigurationSchemaFormAvroConverter;
@@ -158,6 +156,13 @@ public abstract class AbstractAdminService implements InitializingBean {
         }
         if (!matched) {
             throw new KaaAdminServiceException("You do not have permission to perform this operation!", ServiceErrorCode.PERMISSION_DENIED);
+        }
+    }
+
+    void checkUserId(String userId) throws KaaAdminServiceException {
+        AuthUserDto authUser = getCurrentUser();
+        if (authUser.getExternalUid() == null || !authUser.getExternalUid().equals(userId)) {
+            throw new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED);
         }
     }
 
@@ -440,6 +445,20 @@ public abstract class AbstractAdminService implements InitializingBean {
         GenericRecord record = converter.decodeBinary(rawConfiguration);
         RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
         plugin.setFieldConfiguration(formData);
+    }
+
+    protected org.kaaproject.kaa.common.dto.admin.UserDto toUser(UserDto tenantUser) {
+        User user = userFacade.findById(Long.valueOf(tenantUser.getExternalUid()));
+        org.kaaproject.kaa.common.dto.admin.UserDto result = new org.kaaproject.kaa.common.dto.admin.UserDto(
+                user.getId().toString(),
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getMail(),
+                KaaAuthorityDto.valueOf(user.getAuthorities().iterator().next().getAuthority()));
+        result.setId(tenantUser.getId());
+        result.setTenantId(tenantUser.getTenantId());
+        return result;
     }
 
 }

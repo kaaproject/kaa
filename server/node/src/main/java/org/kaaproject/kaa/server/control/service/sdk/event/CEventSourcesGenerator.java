@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avro.Schema;
-import org.apache.avro.Schema.Type;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -32,6 +31,7 @@ import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
 import org.kaaproject.kaa.avro.avrogen.StyleUtils;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,15 +87,11 @@ public class CEventSourcesGenerator {
             context.put("event_family_name", name);
             context.put("EVENT_FAMILY_NAME", NAME);
             context.put("namespacePrefix", NAME_PREFIX_TEMPLATE.replace("{name}", name));
-            Schema eventFamilySchema = new Schema.Parser().parse(eventFamily.getEcfSchema());
-
-            List<Schema> schemas = eventFamilySchema.getTypes();
+            List<EventClassDto> records = eventFamily.getRecords();
             List<String> emptyRecords = new ArrayList<>();
-            if (schemas != null) {
-                for (Schema recordS : schemas) {
-                    if (recordS.getType() == Type.RECORD && recordS.getFields() != null && recordS.getFields().size() == 0) {
-                        emptyRecords.add(recordS.getFullName());
-                    }
+            if (records != null) {
+                for (EventClassDto record : records) {
+                        emptyRecords.add(record.getFqn());
                 }
             }
             context.put("emptyRecords", emptyRecords);
@@ -157,9 +153,14 @@ public class CEventSourcesGenerator {
                 OutputStream hdrStream = new ByteArrayOutputStream();
                 OutputStream srcStream = new ByteArrayOutputStream();) {
                 String fileName = EVENT_FAMILY_DEFINITION_PATTERN.replace("{name}", name);
-                Compiler compiler = new CCompiler(eventFamilySchema, fileName, hdrStream, srcStream);
-                compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
-                compiler.generate();
+
+                List<Schema> eventCtlSchemas = new ArrayList<>();
+                eventFamily.getRawCtlsSchemas().forEach(rawCtl -> new Schema.Parser().parse(rawCtl));
+                for (Schema ctlSchema : eventCtlSchemas) {
+                    Compiler compiler = new CCompiler(ctlSchema, fileName, hdrStream, srcStream);
+                    compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
+                    compiler.generate();
+                }
 
                 String eventData = hdrStream.toString();
 

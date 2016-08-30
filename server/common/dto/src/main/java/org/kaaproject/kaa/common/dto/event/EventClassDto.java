@@ -16,32 +16,17 @@
 
 package org.kaaproject.kaa.common.dto.event;
 
-import java.io.Serializable;
-
-import org.kaaproject.kaa.common.dto.HasId;
+import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 
 //TODO: Unique Key should be {tenantId, FQN, version}
-public class EventClassDto implements HasId, Serializable {
+public class EventClassDto extends BaseSchemaDto {
 
     private static final long serialVersionUID = 2052580632293959408L;
 
-    private String id;
     private String tenantId;
-    private String ecfId;
+    private String ecfvId;
     private String fqn;
     private EventClassType type;
-    private String schema;
-    private int version;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getTenantId() {
         return tenantId;
@@ -51,12 +36,12 @@ public class EventClassDto implements HasId, Serializable {
         this.tenantId = tenantId;
     }
 
-    public String getEcfId() {
-        return ecfId;
+    public String getEcfvId() {
+        return ecfvId;
     }
 
-    public void setEcfId(String ecfId) {
-        this.ecfId = ecfId;
+    public void setEcfvId(String ecfvId) {
+        this.ecfvId = ecfvId;
     }
 
     public String getFqn() {
@@ -75,34 +60,18 @@ public class EventClassDto implements HasId, Serializable {
         this.type = type;
     }
     
-    public String getSchema() {
-        return schema;
-    }
-
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
      @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
+        result = prime * result + ((ecfvId == null) ? 0 : ecfvId.hashCode());
         result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         result = prime * result
                 + ((tenantId == null) ? 0 : tenantId.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + version;
+        result = prime * result + ((ctlSchemaId == null) ? 0 : ctlSchemaId.hashCode());
         return result;
     }
 
@@ -118,11 +87,11 @@ public class EventClassDto implements HasId, Serializable {
             return false;
         }
         EventClassDto other = (EventClassDto) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
+        if (ecfvId == null) {
+            if (other.ecfvId != null) {
                 return false;
             }
-        } else if (!ecfId.equals(other.ecfId)) {
+        } else if (!ecfvId.equals(other.ecfvId)) {
             return false;
         }
         if (fqn == null) {
@@ -139,13 +108,6 @@ public class EventClassDto implements HasId, Serializable {
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
-            return false;
-        }
         if (tenantId == null) {
             if (other.tenantId != null) {
                 return false;
@@ -159,6 +121,10 @@ public class EventClassDto implements HasId, Serializable {
         if (version != other.version) {
             return false;
         }
+        if (ctlSchemaId != other.ctlSchemaId) {
+            return false;
+        }
+
         return true;
     }
 
@@ -169,16 +135,16 @@ public class EventClassDto implements HasId, Serializable {
         builder.append(id);
         builder.append(", tenantId=");
         builder.append(tenantId);
-        builder.append(", ecfId=");
-        builder.append(ecfId);
+        builder.append(", ecfvId=");
+        builder.append(ecfvId);
         builder.append(", fqn=");
         builder.append(fqn);
         builder.append(", type=");
         builder.append(type);
-        builder.append(", schema=");
-        builder.append(schema);
         builder.append(", version=");
         builder.append(version);
+        builder.append(", ctlSchemaId=");
+        builder.append(ctlSchemaId);
         builder.append("]");
         return builder.toString();
     }

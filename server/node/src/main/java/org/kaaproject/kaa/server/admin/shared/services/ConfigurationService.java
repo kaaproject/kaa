@@ -100,4 +100,6 @@ public interface ConfigurationService extends RemoteService {
 
     ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
+    EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion) throws KaaAdminServiceException;
+
 }

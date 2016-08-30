@@ -60,3 +60,4 @@ xcuserdata
 Tests/Pods
 **/.toDelete
 /test-gh-pages-current/
+doc/Programming-guide/Server-REST-APIs/swagger.json

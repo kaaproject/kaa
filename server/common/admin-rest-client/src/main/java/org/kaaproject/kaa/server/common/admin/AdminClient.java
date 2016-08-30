@@ -39,6 +39,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
@@ -47,10 +48,10 @@ import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -59,6 +60,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -190,19 +192,26 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "auth/changePassword", params, ResultCode.class);
     }
 
-    public TenantUserDto editTenant(TenantUserDto tenant) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "tenant", tenant, TenantUserDto.class);
+    public TenantDto editTenant(TenantDto tenant) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "tenant", tenant, TenantDto.class);
     }
 
-    public List<TenantUserDto> getTenants() throws Exception {
-        ParameterizedTypeReference<List<TenantUserDto>> typeRef = new ParameterizedTypeReference<List<TenantUserDto>>() {
+    public List<TenantDto> getTenants() throws Exception {
+        ParameterizedTypeReference<List<TenantDto>> typeRef = new ParameterizedTypeReference<List<TenantDto>>() {
         };
-        ResponseEntity<List<TenantUserDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "tenants", HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<TenantDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "tenants", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
-    public TenantUserDto getTenant(String userId) throws Exception {
-        return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantUserDto.class);
+    public List<UserDto> getAllTenantAdminsBytenantId(String tenantId){
+        ParameterizedTypeReference<List<UserDto>> typeRef = new ParameterizedTypeReference<List<UserDto>>() {
+        };
+        ResponseEntity<List<UserDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "admins/" + tenantId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public TenantDto getTenant(String userId) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "tenant/" + userId, TenantDto.class);
     }
 
     public ApplicationDto editApplication(ApplicationDto application) throws Exception {
@@ -609,6 +618,13 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "eventClassFamily/" + ecfId, EventClassFamilyDto.class);
     }
 
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersionsById(String ecfId) {
+        ParameterizedTypeReference<List<EventClassFamilyVersionDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyVersionDto>>() {
+        };
+        ResponseEntity<List<EventClassFamilyVersionDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "eventClassFamilyVersions/" + ecfId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public EventClassFamilyDto getEventClassFamily(String familyName) {
         ParameterizedTypeReference<List<EventClassFamilyDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyDto>>() {
         };
@@ -629,11 +645,11 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public void addEventClassFamilySchema(String eventClassFamilyId, String schemaResource) throws Exception {
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("eventClassFamilyId", eventClassFamilyId);
-        params.add("file", getFileResource(schemaResource));
-        restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilySchema", params);
+        params.add("eventClassFamilyVersion", eventClassFamilyVersion);
+        restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilyVersion", params);
     }
 
     public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type)
@@ -1060,6 +1076,13 @@ public class AdminClient {
         this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistration", parameters);
     }
 
+    public CredentialsStatus getCredentialsStatus(String applicationToken, String credentialsId) {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("applicationToken", applicationToken);
+        parameters.add("credentialsId", credentialsId);
+        return this.restTemplate.getForObject(restTemplate.getUrl() + "credentialsStatus", CredentialsStatus.class, parameters);
+    }
+
     public void revokeCredentials(String applicationToken, String credentialsId) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationToken", applicationToken);
@@ -1072,5 +1095,10 @@ public class AdminClient {
         parameters.add("applicationToken", applicationToken);
         parameters.add("credentialsId", credentialsId);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
+    }
+
+    public EndpointUserConfigurationDto findUserConfigurationByUserId(String externalUId, String appToken, Integer schemaVersion){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{externalUId}/{appToken}/{schemaVersion}",
+                EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
     }
 }

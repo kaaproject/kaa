@@ -26,7 +26,8 @@ public enum ResultCode {
     USER_OR_EMAIL_NOT_FOUND("userOrEmailNotFound"),
     USER_EMAIL_NOT_DEFINED("userEmailNotDefined"),
     OLD_PASSWORD_MISMATCH("oldPasswordMismatch"),
-    BAD_PASSWORD_STRENGTH("badPasswordStrength");
+    BAD_PASSWORD_STRENGTH("badPasswordStrength"),
+    PERMISSION_DENIED("permissionDenied");
 
     String key;
 

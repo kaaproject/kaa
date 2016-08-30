@@ -89,6 +89,8 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     private static final int EVENT_CLASS_FAMILY_VERSION = 42;
 
     private static final String EVENT_CLASS_ID = "EVENT_CLASS_ID";
+    private static final String EVENT_CLASS_FAMILY_VERSION_ID = "EVENT_CLASS_FAMILY_VERSION_ID";
+
 
     private static final String EVENT_CLASS_FAMILY_ID = "EVENT_CLASS_FAMILY_ID";
     private static final String ECF_NAME = "ECF_NAME";
@@ -336,9 +338,17 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             }
         });
 
+        when(eventClassService.findEventClassFamilyByEcfvId(EVENT_CLASS_FAMILY_VERSION_ID)).then(new Answer<EventClassFamilyDto>() {
+            @Override
+            public EventClassFamilyDto answer(InvocationOnMock invocation) throws Throwable {
+                sleepABit();
+                return ecfDto;
+            }
+        });
+
         final EventClassDto ecDto = new EventClassDto();
         ecDto.setId(EVENT_CLASS_ID);
-        ecDto.setEcfId(EVENT_CLASS_FAMILY_ID);
+        ecDto.setEcfvId(EVENT_CLASS_FAMILY_VERSION_ID);
 
         final List<EventClassDto> eventClassDtos = new ArrayList<>();
         eventClassDtos.add(ecDto);
@@ -353,7 +363,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
         final EventClassDto evcDto = new EventClassDto();
         evcDto.setId(EVENT_CLASS_ID);
-        evcDto.setEcfId(EVENT_CLASS_FAMILY_ID);
+        evcDto.setEcfvId(EVENT_CLASS_FAMILY_VERSION_ID);
         evcDto.setVersion(EVENT_CLASS_FAMILY_VERSION);
 
         when(eventClassService.findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)).then(

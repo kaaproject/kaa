@@ -31,7 +31,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 
 public class ConfigurationSchemaActivity extends
-        AbstractBaseCtlSchemaActivity<ConfigurationSchemaDto, ConfigurationSchemaViewDto, BaseCtlSchemaView, ConfigurationSchemaPlace> {
+        AbstractBaseCtlSchemaActivityApplication<ConfigurationSchemaDto, ConfigurationSchemaViewDto, BaseCtlSchemaView, ConfigurationSchemaPlace> {
 
     public ConfigurationSchemaActivity(ConfigurationSchemaPlace place,
             ClientFactory clientFactory) {

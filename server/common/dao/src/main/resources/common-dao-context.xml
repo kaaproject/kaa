@@ -80,6 +80,7 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
+        <property name="endpointUserDao" ref="endpointUserDao"/>
     </bean>
 
     <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl">
@@ -95,9 +96,7 @@
     <bean id="internalCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.InternalCredentialsService">
         <property name="credentialsDao" ref="credentialsDao"/>
     </bean>
-    <alias name="internalCredentialsService" alias="Internal Credentials Service"/>
 
     <bean id="trustfulCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService"/>
-    <alias name="trustfulCredentialsService" alias="Trustful Credentials Service"/>
 
 </beans>

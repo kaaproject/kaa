@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.control.service;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
@@ -54,13 +56,14 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
@@ -87,7 +90,6 @@ import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceExceptio
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
-import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -366,52 +368,15 @@ public class DefaultControlService implements ControlService {
         userService.removeUserById(userId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmins
-     * ()
-     */
+
+
     @Override
-    public List<TenantAdminDto> getTenantAdmins() throws ControlServiceException {
-        return userService.findAllTenantAdmins();
+    public List<UserDto> findAllTenantAdminsByTenantId(String tenantId) throws ControlServiceException {
+        return userService.findAllTenantAdminsByTenantId(tenantId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmin
-     * (java.lang.String)
-     */
-    @Override
-    public TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException {
-        return userService.findTenantAdminById(tenantId);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editTenantAdmin
-     * (org.kaaproject.kaa.common.dto.TenantAdminDto)
-     */
-    @Override
-    public TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException {
-        return userService.saveTenantAdmin(tenantAdmin);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * deleteTenantAdmin (java.lang.String)
-     */
-    @Override
-    public void deleteTenantAdmin(String tenantId) throws ControlServiceException {
-        userService.removeTenantAdminById(tenantId);
-    }
 
     /*
      * (non-Javadoc)
@@ -1109,10 +1074,18 @@ public class DefaultControlService implements ControlService {
                 efm.setEcfName(ecf.getName());
                 efm.setEcfNamespace(ecf.getNamespace());
                 efm.setEcfClassName(ecf.getClassName());
-                List<EventSchemaVersionDto> ecfSchemas = ecf.getSchemas();
-                for (EventSchemaVersionDto ecfSchema : ecfSchemas) {
+                List<EventClassFamilyVersionDto> ecfSchemas = eventClassService.findEventClassFamilyVersionsByEcfId(aefMap.getEcfId());
+                for (EventClassFamilyVersionDto ecfSchema : ecfSchemas) {
                     if (ecfSchema.getVersion() == efm.getVersion()) {
-                        efm.setEcfSchema(ecfSchema.getSchema());
+                        List<EventClassDto> records = eventClassService.findEventClassesByFamilyIdVersionAndType(ecf.getId(), ecfSchema.getVersion(), null);
+                        efm.setRecords(records);
+
+                        List <CTLSchemaDto> ctlDtos = new ArrayList<>();
+                        List <String> flatEventClassCtlSchemas = new ArrayList<>();
+                        records.forEach(rec -> ctlDtos.add(ctlService.findCTLSchemaById(rec.getCtlSchemaId())));
+                        ctlDtos.forEach(ctlDto -> flatEventClassCtlSchemas.add(new DataSchema(ctlService.flatExportAsString(ctlDto)).getRawSchema()));
+                        efm.setRawCtlsSchemas(flatEventClassCtlSchemas);
+
                         break;
                     }
                 }
@@ -1154,7 +1127,7 @@ public class DefaultControlService implements ControlService {
         }
         try {
             CTLSchemaDto logCtlSchema = getCTLSchemaById(logSchema.getCtlSchemaId());
-            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logCtlSchema.getBody());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(getFlatSchemaByCtlSchemaId(logCtlSchema.getId()));
             String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
             return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
         } catch (Exception e) {
@@ -1519,10 +1492,10 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editEventClassFamily
-     * (org.kaaproject.kaa.common.dto.event.EventClassFamilyDto)
+     * (org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto)
      */
     @Override
     public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException {
@@ -1553,20 +1526,31 @@ public class DefaultControlService implements ControlService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * addEventClassFamilySchema(java.lang.String, java.lang.String,
-     * java.lang.String)
+     * getEventClassFamilyVersions (java.lang.String)
      */
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException {
+        return eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamilyId);
+    }
+
+    /*
+         * (non-Javadoc)
+         *
+         * @see org.kaaproject.kaa.server.control.service.ControlService#
+         * addEventClassFamilyVersion(java.lang.String, java.lang.String,
+         * java.lang.String)
+         */
+    @Override
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
             throws ControlServiceException {
-        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
+        eventClassService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion, createdUsername);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.control.service.ControlService#
      * getEventClassesByFamilyIdVersionAndType(java.lang.String, int,
      * org.kaaproject.kaa.common.dto.event.EventClassType)
@@ -1575,6 +1559,41 @@ public class DefaultControlService implements ControlService {
     public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
             throws ControlServiceException {
         return eventClassService.findEventClassesByFamilyIdVersionAndType(ecfId, version, type);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getEventClassesByFamilyIdVersionAndType(java.lang.String, int,
+     * org.kaaproject.kaa.common.dto.event.EventClassType)
+     */
+    @Override
+    public EventClassDto getEventClassById(String eventClassId) throws ControlServiceException {
+        return eventClassService.findEventClassById(eventClassId);
+    }
+
+    @Override
+    public boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns) {
+        return eventClassService.validateEventClassFamilyFqns(ecfId, fqns);
+    }
+
+    @Override
+    public Set<String> getFqnSetForECF(String ecfId) {
+        return eventClassService.getFqnSetForECF(ecfId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * validateECFListInSdkProfile(List<org.kaaproject.kaa.common.dto.event.AefMapInfoDto> ecfList)
+     */
+    @Override
+    public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException {
+        if (!eventClassService.isValidECFListInSdkProfile(ecfList)) {
+            throw new ControlServiceException("You have chosen event class families, where event classes have the same FQNs.");
+        }
     }
 
     /*
@@ -2333,5 +2352,14 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<String> getCredentialsServiceNames() throws ControlServiceException {
         return this.credentialsServiceRegistry.getCredentialsServiceNames();
+    }
+
+    @Override
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+            String externalUId,
+            String appToken,
+            Integer schemaVersion,
+            String tenantId) {
+        return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,tenantId);
     }
 }

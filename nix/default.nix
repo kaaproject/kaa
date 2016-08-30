@@ -14,14 +14,36 @@
 #  limitations under the License.
 #
 
-{ system ? builtins.currentSystem
-, pkgs ? import <nixpkgs> { inherit system; }
+let
+  nixpkgs-bootstrap = import <nixpkgs> { };
+
+  nixpkgs-16_03 = import (nixpkgs-bootstrap.fetchFromGitHub {
+    owner = "NixOS";
+    repo = "nixpkgs-channels";
+    rev = "baf46b99e33005348fdbd083366c330be4b373f3";
+    sha256 = "19wq2ayn9l5qd2s6s07sjh49kc6qlpadyy098zzayxj6nprvwzmb";
+  }) { };
+
+in
+
+{ pkgs ? nixpkgs-16_03
+, pkgs-tools ? nixpkgs-bootstrap
 }:
 
 let
-  callPackage = pkgs.lib.callPackageWith (pkgs // self);
+  # We want to use latest versions of tools we have available
+  # (more checks, less false positives)
+  tools = {
+    doxygen = pkgs-tools.doxygen;
+    valgrind = pkgs-tools.valgrind;
+    cppcheck = pkgs-tools.cppcheck;
+  };
+
+  callPackage = pkgs.lib.callPackageWith (pkgs // tools // self);
 
   self = rec {
+    avro-cpp = callPackage ./avro-c++ { };
+
     gcc-xtensa-lx106 = callPackage ./gcc-xtensa-lx106 { };
 
     esp8266-rtos-sdk = callPackage ./esp8266-rtos-sdk { };
@@ -29,8 +51,6 @@ let
     cc3200-sdk = callPackage ./cc3200-sdk { };
 
     raspberrypi-tools = callPackage ./raspberrypi-tools { };
-
-    raspberrypi-openssl = callPackage ./raspberrypi-openssl { };
 
     # Currently, it causes compilation failure, so we use 4.7 for now.
     # gcc-arm-embedded = pkgs.gcc-arm-embedded-5_2;
@@ -46,9 +66,9 @@ let
       patches = [ ./astyle/max_indent.patch ];
     });
 
-    kaa-client-c = callPackage ./kaa-client-c { };
+    kaa-client-c = callPackage ./kaa-client-c { cmake = pkgs.cmake-2_8; };
 
-    kaa-client-cpp = callPackage ./kaa-client-cpp { };
+    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = pkgs.cmake-2_8; };
 
     kaa-docs = callPackage ./kaa-docs { };
   };
