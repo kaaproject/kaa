@@ -430,7 +430,7 @@ int main(void)
 
 static const NSInteger defaultSamplePeriod = 1;
 static const NSInteger upperTemperatureLimit = 35;
-static const NSInteger lowerTemperatureLimit = 20;
+static const NSInteger lowerTemperatureLimit = 25;
 
 @implementation ViewController
 
