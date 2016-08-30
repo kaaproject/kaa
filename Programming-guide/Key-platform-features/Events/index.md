@@ -248,7 +248,7 @@ EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
 </div><div id="objc1" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -287,7 +287,7 @@ ThermoEventClassFamily& tecf = eventFamilyFactory.getThermoEventClassFamily();
 </div><div id="objc2" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import<Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -400,7 +400,7 @@ kaa_error_t error_code = kaa_event_manager_find_event_listeners(kaa_client_get_c
 </div><div id="objc3" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <FindEventListenersDelegate>
  
@@ -471,7 +471,7 @@ thermo_request->destroy(thermo_request);
 </div><div id="objc4" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -538,7 +538,7 @@ change_command->destroy(change_command);
 </div><div id="objc5" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import<Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -663,7 +663,7 @@ change_command->destroy(change_command);
 </div><div id="objc6" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
 // Get instance of EventFamilyFactory
@@ -680,7 +680,6 @@ TransactionId *trxId = [eventFamilyFactory startEventsBlock];
 ChangeDegreeRequest *request = [[ChangeDegreeRequest alloc] init];
 request.degree = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(-30)];
 [tecf addChangeDegreeRequestToBlock:request withTransactionId:trxId target:@"home_thermostat"];
- 
  
 // Send an event batch
 [eventFamilyFactory submitEventsBlockWithTransactionId:trxId];
@@ -769,13 +768,16 @@ kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_cha
 </div><div id="objc7" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <ThermostatEventClassFamilyDelegate>
  
 ...
  
 [self.tecf addDelegate:self];
+ 
+...
+ 
 - (void)onThermostatInfoRequest:(ThermostatInfoRequest *)event fromSource:(NSString *)source {
     // Some code
 }
