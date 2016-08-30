@@ -29,6 +29,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
@@ -80,7 +81,10 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
     
     @Autowired @Lazy
     private InitializationService operationsInitializationService;
-    
+
+    @Autowired
+    private CuratorFramework zkClient;
+
     /*
      * (non-Javadoc)
      *
@@ -99,6 +103,8 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         } catch (InterruptedException e) {
             LOG.error("Interrupted while waiting for thrift to start...", e);
         }
+
+        waitZkConnection();
 
         if (getNodeConfig().isControlServiceEnabled()) {
             controlInitializationService.start();
@@ -120,6 +126,18 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
 
     }
 
+    private void waitZkConnection() {
+        if (!zkClient.isStarted()) {
+            zkClient.start();
+        }
+        try {
+            LOG.info("Waiting connection to Zookeeper at ", getNodeConfig().getZkHostPortList());
+            zkClient.blockUntilConnected();
+        } catch (InterruptedException e) {
+            LOG.error("Zookeeper client was interrupted while waiting for connection! ", getNodeConfig().getZkHostPortList(), e);
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -136,6 +154,7 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         if (getNodeConfig().isOperationsServiceEnabled()) {
             operationsInitializationService.stop();
         }
+        zkClient.close();
         
         server.stop();
         ThriftExecutor.shutdown();
@@ -282,5 +301,5 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         args.executorService = executorService;
         return new TThreadPoolServer(args);
     }
-    
+
 }
