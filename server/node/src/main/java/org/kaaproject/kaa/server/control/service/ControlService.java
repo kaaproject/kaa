@@ -1721,5 +1721,5 @@ public interface ControlService {
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion,String tenantId);
 
-    EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash);
+    String findUserConfigurationByEndpointKeyHash(String endpointKeyHash);
 }

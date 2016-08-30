@@ -103,5 +103,5 @@ public interface ConfigurationService extends RemoteService {
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion) throws KaaAdminServiceException;
 
-    EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+    String findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
 }

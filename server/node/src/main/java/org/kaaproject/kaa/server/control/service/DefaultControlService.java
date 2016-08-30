@@ -2315,9 +2315,9 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) {
+    public String findUserConfigurationByEndpointKeyHash(String endpointKeyHash) {
 
-        EndpointProfileDto endpointProfileDto = userConfigurationService.findEndpointProfileByEndpointKeyHash(endpointKeyHash);
+        EndpointProfileDto endpointProfileDto = profileService.findEndpointProfileByEndpointKeyHash(endpointKeyHash);
 
         ConfigurationDto configuration = configurationService.findConfigurationByAppIdAndVersion(endpointProfileDto.getApplicationId()
                         ,endpointProfileDto.getConfigurationVersion());
@@ -2325,7 +2325,7 @@ public class DefaultControlService implements ControlService {
         CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(configuration.getSchemaId());
         Schema schema = ctlService.flatExportAsSchema(ctlSchemaDto);
         String endConf = null;
-        String appToken = null;
+        String appToken;
         try {
             appToken = applicationService
                     .findAppById(endpointProfileDto.getApplicationId())
@@ -2337,8 +2337,8 @@ public class DefaultControlService implements ControlService {
                     .getConfiguration();
             endConf = GenericAvroConverter.toJson(config, schema.toString());
         } catch (GetDeltaException e) {
-            e.printStackTrace();
+            LOG.error("could not retrieve configuration!");
         }
-        return new EndpointUserConfigurationDto(endpointProfileDto.getId(),endpointProfileDto.getConfigurationVersion(),appToken,endConf);
+        return endConf;
     }
 }

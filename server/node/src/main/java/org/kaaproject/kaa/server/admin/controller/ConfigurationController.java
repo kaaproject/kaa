@@ -403,7 +403,7 @@ public class ConfigurationController extends AbstractAdminController {
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "configuration/{endpointKeyHash}", method = RequestMethod.GET)
     @ResponseBody
-    public EndpointUserConfigurationDto findUserEndConfigurationByEndpointKeyHash(
+    public String findEndpointConfigurationByEndpointKeyHash(
             @ApiParam(name = "endpointKeyHash", value = "A unique identifier of the endpoint", required = true)
             @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
         return  configurationService.findUserEndConfigurationByEndpointKeyHash(endpointKeyHash);

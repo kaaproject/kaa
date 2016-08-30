@@ -16,19 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.text.ParseException;
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ChangeDto;
-import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
-import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
-import org.kaaproject.kaa.common.dto.ChangeType;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.avro.ui.shared.Base64Utils;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
@@ -37,8 +28,10 @@ import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterExceptio
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
@@ -80,6 +73,8 @@ public class ProfileServiceImpl implements ProfileService {
     private HistoryService historyService;
     @Autowired
     private ServerProfileService serverProfileService;
+    @Autowired
+    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Override
     public List<EndpointProfileSchemaDto> findProfileSchemasByAppId(String applicationId) {
@@ -428,6 +423,19 @@ public class ProfileServiceImpl implements ProfileService {
         validateFilterSchemaIds(endpointProfileSchemaId, serverProfileSchemaId);
         validateId(groupId, "Can't find profile filter. Invalid group id: " + groupId);
         return getDto(profileFilterDao.findLatestFilter(endpointProfileSchemaId, serverProfileSchemaId, groupId));
+    }
+
+    @Override
+    public EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash) {
+        byte[] hash;
+        try {
+            hash = Base64Utils.fromBase64(endpointKeyHash);
+        } catch (ParseException e) {
+            LOG.error("Could not parse endpointKeyHash:", e);
+            return null;
+        }
+        EndpointProfileDto endpointProfileDto = endpointProfileDao.findByKeyHash(hash).toDto();
+        return endpointProfileDto;
     }
 
     private HistoryDto addHistory(ProfileFilterDto dto, ChangeType type) {

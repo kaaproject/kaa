@@ -64,8 +64,6 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
 
     private EndpointUserDao<EndpointUser> endpointUserDao;
 
-    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
-
     @Override
     public EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto userConfig) {
         EndpointUserConfigurationDto userConfigurationDto = null;
@@ -140,19 +138,6 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                         schemaVersion));
     }
 
-    @Override
-    public EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash) {
-        byte[] hash;
-        try {
-            hash = Base64Utils.fromBase64(endpointKeyHash);
-        } catch (ParseException e) {
-            LOG.error("Could not parse endpointKeyHash:", e);
-            return null;
-        }
-        EndpointProfileDto endpointProfileDto = endpointProfileDao.findByKeyHash(hash).toDto();
-        return endpointProfileDto;
-    }
-
 
     public void setEndpointUserConfigurationDao(EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao) {
         this.endpointUserConfigurationDao = endpointUserConfigurationDao;
@@ -162,7 +147,4 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
         this.endpointUserDao = endpointUserDao;
     }
 
-    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao){
-        this.endpointProfileDao=endpointProfileDao;
-    }
 }
