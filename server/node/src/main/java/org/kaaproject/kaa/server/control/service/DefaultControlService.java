@@ -63,6 +63,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
@@ -2315,7 +2316,7 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public String findUserConfigurationByEndpointKeyHash(String endpointKeyHash) {
+    public String findUserConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
 
         EndpointProfileDto endpointProfileDto = profileService.findEndpointProfileByEndpointKeyHash(endpointKeyHash);
 
@@ -2337,7 +2338,8 @@ public class DefaultControlService implements ControlService {
                     .getConfiguration();
             endConf = GenericAvroConverter.toJson(config, schema.toString());
         } catch (GetDeltaException e) {
-            LOG.error("could not retrieve configuration!");
+            LOG.error("Could not retrieve configuration!");
+            throw new KaaAdminServiceException("Could not retrieve configuration!!", ServiceErrorCode.INVALID_SCHEMA);
         }
         return endConf;
     }

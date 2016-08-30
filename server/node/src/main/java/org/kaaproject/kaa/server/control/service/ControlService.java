@@ -39,6 +39,7 @@ import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 
 /**
@@ -1721,5 +1722,5 @@ public interface ControlService {
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion,String tenantId);
 
-    String findUserConfigurationByEndpointKeyHash(String endpointKeyHash);
+    String findUserConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
 }
