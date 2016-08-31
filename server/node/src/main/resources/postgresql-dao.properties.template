@@ -24,7 +24,7 @@ hibernate_format_sql=false
 hibernate_show_sql=false
 
 # specify hibernate hbm2ddl strategy
-hibernate_hbm2ddl_auto=none
+hibernate_hbm2ddl_auto=update
 
 # specify jdbc driver class
 jdbc_driver_className=org.postgresql.Driver
