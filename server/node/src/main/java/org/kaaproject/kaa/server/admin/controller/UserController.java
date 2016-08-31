@@ -21,7 +21,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -237,15 +239,9 @@ public class UserController extends AbstractAdminController {
     @ResponseBody
     public UserDto editUser(
             @ApiParam(name = "user", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
-            @RequestBody UserDto user) throws KaaAdminServiceException {
+           @Valid @RequestBody UserDto user) throws KaaAdminServiceException {
         try {
-            CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
-            user.setExternalUid(result.getUserId().toString());
-            UserDto userDto = userService.editUser(user);
-            if (StringUtils.isNotBlank(result.getPassword())) {
-                userDto.setTempPassword(result.getPassword());
-            }
-            return userDto;
+            return userService.editUser(user);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -290,7 +286,5 @@ public class UserController extends AbstractAdminController {
             @PathVariable String tenantId) throws KaaAdminServiceException {
        return  userService.findAllTenantAdminsByTenantId(tenantId);
     }
-
-
 
 }

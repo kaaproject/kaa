@@ -226,21 +226,21 @@ $initstring {
     #elseif ($TypeConverter.isAvroBytes($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBytes:) andParam:nil target:nil];
     #elseif ($TypeConverter.isAvroFixed($array_element_schema))
-        NSNumber *size = @($field_schema.getFixedSize());
+        NSNumber *size = @($array_element_schema.getFixedSize());
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFixed:size:) andParam:size target:nil];
     #elseif ($TypeConverter.isAvroString($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeString:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroEnum($field_schema))
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeEnum:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroBoolean($field_schema))
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBoolean:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroInt($field_schema))
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeInt:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroLong($field_schema))
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeLong:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroFloat($field_schema))
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFloat:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroDouble($field_schema))
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeDouble:) andParam:nil target:nil];
     #end
 #end
