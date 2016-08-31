@@ -10,8 +10,8 @@ sort_idx: 50
 * TOC
 {:toc}
 
-The data collection subsystem in Kaa is designed to collect records (logs) of pre-configured structure, store them in the endpoint, transfer them from the endpoint to Operations service, persist them on server for further processing, and submit them to the immediate stream analysis.
-The log structure in Kaa is determined by a configurable schema for each application individually.
+The data collection subsystem in Kaa is designed to collect records (logs) of pre-configured structure, store them in the [endpoint]({{root_url}}Glossary/#endpoint-ep), transfer them from the endpoint to [Operations service]({{root_url}}Glossary/#operations-service), persist them on server for further processing, and submit them to the immediate stream analysis.
+The log structure in Kaa is determined by a configurable schema for each [application]({{root_url}}Glossary/#kaa-application) individually.
 Log appenders on the Operations service side write the log received by the Operations service to a specific storage place.
 You can have several log appenders working simultaneously.
 
@@ -27,7 +27,7 @@ See the picture below.
 
 The data collection subsystem provides the following features:
 
-* Generation of the logging model and related API calls in the endpoint SDK.
+* Generation of the logging model and related API calls in the [endpoint SDK]({{root_url}}Glossary/#endpoint-sdk).
 * Enforcement of data integrity and validity.
 * Efficient delivery of logs to Operations services.
 * Storing log contents using the log appenders configured for the application.
@@ -47,14 +47,14 @@ To add client/server-side endpoint profile data to the log record, follow to the
 
 ## Log schema
 
-The log schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas). There is one log schema defined 
-by default for each Kaa application. This schema supports versioning, therefore, whenever a new log schema is configured on the Kaa service for the application,
-this new schema gets a new sequence version assigned. The Kaa service maintains compatibility with the older versions of the log schema to ensure proper
-functioning of the clients that for some reason are not yet upgraded to the latest schema version.
+The log schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas).
+There is one log schema defined by default for each Kaa application.
+This schema supports versioning, therefore, whenever a new log schema is configured on the Kaa service for the application, this new schema gets a new sequence version assigned.
+The Kaa service maintains compatibility with the older versions of the log schema to ensure proper functioning of the clients that for some reason are not yet upgraded to the latest schema version.
 
-The following examples illustrate basic log schemas.
+Below are basic log schema examples.
 
-* The simplest definition of a log record with no data fields (mostly useless):
+A simple definition of a log record with no data fields.
 
 ```json
 {  
@@ -66,7 +66,7 @@ The following examples illustrate basic log schemas.
 }
 ```
 
-* A simple log schema with the log level, tag, and message:
+A simple log schema with the log level, tag, and message.
 
 ```json
 {
@@ -103,10 +103,11 @@ The following examples illustrate basic log schemas.
 
 ### Adding log schema
 
-The default log schema installed for Kaa applications is empty. You can configure your own log schema using the Admin UI or
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Logging).
-For the purpose of this guide, we will use schema that is very close to the common log structure:
+The default log schema installed for Kaa applications is empty.
+You can configure your own log schema using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
+See also this [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Logging).
+
+For the purpose of this guide, we will use a schema that is very close to the common log structure:
 
 * log level
 * tag
