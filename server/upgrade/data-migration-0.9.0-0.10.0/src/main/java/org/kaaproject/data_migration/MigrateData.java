@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class MigrateData {
 
     private static final Logger LOG = LoggerFactory.getLogger(MigrateData.class);
@@ -66,6 +65,12 @@ public class MigrateData {
                     case "nosql":
                         options.setNoSQL(args[i + 1]);
                         break;
+                    case "driver":
+                        options.setDriverClassName(args[i + 1]);
+                        break;
+                    case "url":
+                        options.setJdbcUrl(args[i + 1]);
+                        break;
                     default:
                         throw new IllegalArgumentException("No such option: -" + option);
                 }
@@ -76,7 +81,7 @@ public class MigrateData {
 
         try {
             List<Schema> schemas = new ArrayList<>();
-            conn = DataSources.getMariaDB(options).getConnection();
+            conn = DataSources.getDataSource(options).getConnection();
             QueryRunner runner = new QueryRunner();
             Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
             BaseSchemaIdCounter.setInitValue(maxId);
@@ -110,7 +115,6 @@ public class MigrateData {
 
             //base schema records creation phase
             recordsCreation.create(ctlToSchemas);
-
 
             //after phase
             for (AbstractCTLMigration m : migrationList) {
