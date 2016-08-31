@@ -23,13 +23,16 @@ final public class Options {
     public static final String DEFAULT_DB_NAME = "kaa";
     public static final String DEFAULT_HOST = "10.2.1.130";
     public static final String DEFAULT_NO_SQL = "mongo";
+    public static final String DEFAULT_DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+    public static final String DEFAULT_JDBC_URL = "jdbc:mysql:failover://localhost:3333/kaa";
 
     private String username = DEFAULT_USER_NAME;
     private String password = DEFAULT_PASSWORD;
     private String dbName = DEFAULT_DB_NAME;
     private String host = DEFAULT_HOST;
     private String noSQL = DEFAULT_NO_SQL;
-
+    private String driverClassName = DEFAULT_DRIVER_CLASS_NAME;
+    private String jdbcUrl = DEFAULT_JDBC_URL;
 
     public String getUsername() {
         return username;
@@ -71,6 +74,22 @@ final public class Options {
         this.noSQL = noSQL;
     }
 
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        this.driverClassName = driverClassName;
+    }
+
+    public String getJdbcUrl() {
+        return jdbcUrl;
+    }
+
+    public void setJdbcUrl(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
+    }
+
     @Override
     public String toString() {
         return "Options{" +
@@ -78,6 +97,8 @@ final public class Options {
                 ", password='" + password + '\'' +
                 ", dbName='" + dbName + '\'' +
                 ", host='" + host + '\'' +
+                ", driverClassName='" + driverClassName + '\'' +
+                ", jdbcUrl='" + jdbcUrl + '\'' +
                 '}';
     }
 }

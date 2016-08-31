@@ -20,28 +20,16 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
 
-
-
 final public class DataSources {
 
-    public static DataSource getPostgreSQL(Options opt) {
+    public static DataSource getDataSource(Options opt) {
         BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName("org.postgresql.Driver");
-        bds.setUrl("jdbc:postgresql://" + opt.getHost() + ":5432/" + opt.getDbName());
+        bds.setDriverClassName(opt.getDriverClassName());
+        bds.setUrl(opt.getJdbcUrl());
         bds.setUsername(opt.getUsername());
         bds.setPassword(opt.getPassword());
         bds.setDefaultAutoCommit(false);
         return bds;
     }
 
-
-    public static DataSource getMariaDB(Options opt) {
-        BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName("org.mariadb.jdbc.Driver");
-        bds.setUrl("jdbc:mysql://" + opt.getHost() + ":3306/" + opt.getDbName());
-        bds.setUsername(opt.getUsername());
-        bds.setPassword(opt.getPassword());
-        bds.setDefaultAutoCommit(false);
-        return bds;
-    }
 }
