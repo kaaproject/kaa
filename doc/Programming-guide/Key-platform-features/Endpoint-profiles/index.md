@@ -95,7 +95,7 @@ The following client-side profile is based on the rules set in the schema.
 }
 ```
 
-The schema structure from this example allows filtering the endpoints by the operation system of device (for example, to show only Android devices), OS version (for example, to push some notifications only for the specified os version).
+The schema structure from this example allows filtering the endpoints by the operation system of device (for example, to show only Android devices), OS version (for example, to push some notifications only for the specified OS version).
 You can create complex filters by combining as many filtering conditions as needed.
 
 ### Setting client-side EP profile schema
@@ -139,7 +139,7 @@ As a tenant developer, you can create new client-side EP schemas for your applic
 
 The endpoint SDK checks for profile changes by comparing the new profile hash against the previously persisted one.
 When SDK detects a profile change, the endpoint profile management module sends this information to the Operations service.
-The Operations sevice then updates the endpoint profile information in the database and revises the endpoint group membership.
+The Operations service then updates the endpoint profile information in the database and revises the endpoint group membership.
 
 Client-side endpoint profile updates are reported to the endpoint SDK using a profile container.
 The profile-related API varies depending on the target SDK platform, however the general approach is the same.
