@@ -12,7 +12,7 @@ sort_idx: 50
 
 The data collection subsystem in Kaa is designed to collect records (logs) of pre-configured structure, store them in the [endpoint]({{root_url}}Glossary/#endpoint-ep), transfer them from the endpoint to [Operations service]({{root_url}}Glossary/#operations-service), persist them on server for further processing, and submit them to the immediate stream analysis.
 The log structure in Kaa is determined by a configurable schema for each [application]({{root_url}}Glossary/#kaa-application) individually.
-Log appenders on the Operations service side write the log received by the Operations service to a specific storage place.
+Log appenders on the Operations service side write the logs received by the Operations service to a specific storage place.
 You can have several log appenders working simultaneously.
 
 This section explains how you can use the data collection feature in Kaa.
@@ -240,7 +240,7 @@ On the **Log appender details** page, edit the **Log metadata** field.
 OR
 	
 * Use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) call to create a log appender.
-To do this, add the corresponding fields to the **headerStructure** list.
+To do this, add the corresponding fields to the <code>headerStructure</code> list.
 
 Below is the list of available record header fields:
 
@@ -331,7 +331,7 @@ To transfer logs to the Kaa Operations service, the Kaa client application uses 
 <div class="tab-content">
 <div id="Java" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the log delivery listener
 kaaClient.setLogDeliveryListener(new LogDeliveryListener() {
     @Override
@@ -352,7 +352,7 @@ RecordInfo logDeliveryReport = logDeliveryStatus.get();
 </div>
 <div id="Cpp" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 #include <iostream>
 #include <exception>
  
@@ -388,7 +388,7 @@ try {
 </div>
 <div id="C" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/gen/kaa_logging_gen.h>
@@ -472,7 +472,7 @@ log_record->destroy(log_record);
 </div>
 <div id="Objective-C" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create a log entity (according to the org.kaaproject.sample.LogData sample schema above)
 LogData *logRecord = [[LogData alloc] initWithLevel:LEVEL_INFO tag:@"tag" message:@"message"];
  
@@ -499,7 +499,7 @@ BucketRunner *runner = [kaaClient addLogRecord:logRecord];
 By default, the Kaa SDK uses an in-memory log storage. Normally, this storage does not persist data when the client is restarted. If this is a concern, 
 Java/Objective-C/C++ SDKs provide a persistent log storage based on SQLite database.
 
-Here is an example how to use SQLite log storage for Java/Objective-C/C++ SDKs and a custom implementation for C SDK:
+Below is an example of using SQLite log storage for Java/Objective-C/C++ SDKs and a custom implementation for C SDK:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java2">Java</a></li>
@@ -512,7 +512,7 @@ Here is an example how to use SQLite log storage for Java/Objective-C/C++ SDKs a
 <div class="tab-content">
 <div id="Java2" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Default SQLite database name
 String databaseName = "kaa_logs";
 // Default maximum bucket size in bytes
@@ -526,7 +526,7 @@ kaaClient.setLogStorage(new DesktopSQLiteDBLogStorage(databaseName, maxBucketSiz
 </div>
 <div id="Android2" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Setting SQLite log storage implementation
 kaaClient.setLogStorage(new AndroidSQLiteDBLogStorage(/*Android context*/, "kaa_logs"/* default value */, 16 * 1024/* default value */, 256/* default value */)));
 ```
@@ -534,7 +534,7 @@ kaaClient.setLogStorage(new AndroidSQLiteDBLogStorage(/*Android context*/, "kaa_
 </div>
 <div id="Cpp2" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 #include <memory>
  
 #include <kaa/log/SQLiteDBLogStorage.hpp>
@@ -551,7 +551,7 @@ kaaClient->setStorage(persistentStorage);
 </div>
 <div id="C2" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -594,7 +594,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C2" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Default maximum bucket size in bytes
 int maxBucketSize = 16 * 1024;
 // Default maximum amount of log records in a bucket
@@ -608,9 +608,11 @@ int maxRecordCount = 256;
 
 ### Log upload strategies
 
-A log upload strategy determines under what conditions Kaa endpoints must send log data to the server. Kaa provides several built-in strategies, namely:
+A log upload strategy defines under what conditions Kaa endpoints must send log data to the server.
 
-* **Periodic strategy** to upload logs after at least the given amount of time passes since the last upload:
+Kaa provides the following built-in strategies.
+
+**Periodic** strategy uploads the logs after the set period of time passes since the last upload.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java3">Java</a></li>
@@ -622,7 +624,7 @@ A log upload strategy determines under what conditions Kaa endpoints must send l
 <div class="tab-content">
 <div id="Java3" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the strategy to upload no less than a hour worth of logs
 kaaClient.setLogUploadStrategy(new PeriodicLogUploadStrategy(60, TimeUnit.MINUTES));
 ```
@@ -630,7 +632,7 @@ kaaClient.setLogUploadStrategy(new PeriodicLogUploadStrategy(60, TimeUnit.MINUTE
 </div>
 <div id="Cpp3" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy to upload logs each 60 seconds
 kaaClient->setLogUploadStrategy(std::make_shared<kaa::PeriodicLogUploadStrategy>(60, kaaClient->getKaaClientContext()));
 ```
@@ -638,7 +640,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::PeriodicLogUploadStrategy>
 </div>
 <div id="C3" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -683,7 +685,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C3" class="tab-pane fade" markdown="1" >
 
-```
+```c
 // Create log upload strategy, which will upload logs every 20 seconds
 PeriodicLogUploadStrategy *uploadStrategy = [[PeriodicLogUploadStrategy alloc] initWithTimeLimit:20 timeUnit:TIME_UNIT_SECONDS];
 // Configure client to use our newly created strategy
@@ -693,11 +695,11 @@ PeriodicLogUploadStrategy *uploadStrategy = [[PeriodicLogUploadStrategy alloc] i
 </div>
 </div>
 
->**NOTE:**  
-> The decision of whether to upload the logs collected is taken each time a new log record is added. That being said, the next log record added after 
-the time specified passes will trigger a log upload.
+>**NOTE:** The decision on whether to upload the collected logs is taken each time a new log record is added.
+>This means that a log uplod will be triggered by the next log record added after the specified period of time.
+{:.note}
 
-* **Log count strategy** to upload logs after the threshold of log records generated is reached:
+**Log count** strategy uploads the logs upon reaching the set limit of log records number.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java4">Java</a></li>
@@ -709,7 +711,7 @@ the time specified passes will trigger a log upload.
 <div class="tab-content">
 <div id="Java4" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the strategy to upload logs every fifth log record added
 kaaClient.setLogUploadStrategy(new RecordCountLogUploadStrategy(5));
 // Configure the strategy to upload logs immediately
@@ -719,7 +721,7 @@ kaaClient.setLogUploadStrategy(new RecordCountLogUploadStrategy(1));
 </div>
 <div id="Cpp4" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy to upload logs immediately after the 5th log record is added
 kaaClient->setLogUploadStrategy(std::make_shared<kaa::RecordCountLogUploadStrategy>(5, kaaClient->getKaaClientContext()));
 ```
@@ -727,7 +729,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::RecordCountLogUploadStrate
 </div>
 <div id="C4" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -771,7 +773,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C4" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create log upload strategy based on number of log records
 RecordCountLogUploadStrategy *uploadStrategy = [[RecordCountLogUploadStrategy alloc] initWithCountThreshold:10];
 // Configure client to use our newly created strategy
@@ -781,7 +783,7 @@ RecordCountLogUploadStrategy *uploadStrategy = [[RecordCountLogUploadStrategy al
 </div>
 </div>
 
-* **Storage size strategy** to upload logs after the threshold of local log storage space occupied is reached:
+**Storage size** strategy uploads the logs upon reaching the set limit of local space to store the log records.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java5">Java</a></li>
@@ -793,7 +795,7 @@ RecordCountLogUploadStrategy *uploadStrategy = [[RecordCountLogUploadStrategy al
 <div class="tab-content">
 <div id="Java5" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the strategy to upload logs every 64 KB of data collected
 kaaClient.setLogUploadStrategy(new StorageSizeLogUploadStrategy(64 * 1024));
 ```
@@ -801,7 +803,7 @@ kaaClient.setLogUploadStrategy(new StorageSizeLogUploadStrategy(64 * 1024));
 </div>
 <div id="Cpp5" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy to upload logs immediately after the volume of collected logs exceeds 100 bytes
 kaaClient->setLogUploadStrategy(std::make_shared<kaa::StorageSizeLogUploadStrategy>(100, kaaClient->getKaaClientContext()));
 ```
@@ -809,7 +811,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::StorageSizeLogUploadStrate
 </div>
 <div id="C5" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -854,7 +856,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C5" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create log upload strategy based on log records size (in bytes). In this case threshold will be set to 1 KB.
 StorageSizeLogUploadStrategy *uploadStrategy = [[StorageSizeLogUploadStrategy alloc] initWithVolumeThreshold:1024];
 // Configure client to use our newly created strategy
@@ -864,7 +866,7 @@ StorageSizeLogUploadStrategy *uploadStrategy = [[StorageSizeLogUploadStrategy al
 </div>
 </div>
 
-* Combined **periodic and log count strategy**:
+A combination of the **periodic** and **log count** strategies.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java6">Java</a></li>
@@ -876,7 +878,7 @@ StorageSizeLogUploadStrategy *uploadStrategy = [[StorageSizeLogUploadStrategy al
 <div class="tab-content">
 <div id="Java6" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the strategy to upload logs every fifth log record added ...
 // .. OR the next log record added after 60 seconds pass since the last upload
 kaaClient.setLogUploadStrategy(new RecordCountWithTimeLimitLogUploadStrategy(5, 60, TimeUnit.SECONDS));
@@ -885,7 +887,7 @@ kaaClient.setLogUploadStrategy(new RecordCountWithTimeLimitLogUploadStrategy(5, 
 </div>
 <div id="Cpp6" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy to upload logs immediately after the 5th log record is added or each 60 seconds
 kaaClient->setLogUploadStrategy(std::make_shared<kaa::RecordCountWithTimeLimitLogUploadStrategy>(5, 60, kaaClient->getKaaClientContext()));
 ```
@@ -893,7 +895,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::RecordCountWithTimeLimitLo
 </div>
 <div id="C6" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -942,7 +944,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C6" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create log upload strategy, which will upload logs when either log count threshold or time limit is reached
 RecordCountWithTimeLimitLogUploadStrategy *uploadStrategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:10 timeLimit:20 timeUnit:TIME_UNIT_SECONDS];
 // Configure client to use our newly created strategy
@@ -952,7 +954,7 @@ RecordCountWithTimeLimitLogUploadStrategy *uploadStrategy = [[RecordCountWithTim
 </div>
 </div>
 
-* Combined **periodic and storage size strategy**:
+A combination of the **periodic** and **storage size** strategies.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java7">Java</a></li>
@@ -964,7 +966,7 @@ RecordCountWithTimeLimitLogUploadStrategy *uploadStrategy = [[RecordCountWithTim
 <div class="tab-content">
 <div id="Java7" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the strategy to upload logs every 8 KB of data collected ...
 // .. OR the next log record added after 10 seconds pass since the last upload
 kaaClient.setLogUploadStrategy(new StorageSizeWithTimeLimitLogUploadStrategy(8 * 1024, 10, TimeUnit.SECONDS));
@@ -973,7 +975,7 @@ kaaClient.setLogUploadStrategy(new StorageSizeWithTimeLimitLogUploadStrategy(8 *
 </div>
 <div id="Cpp7" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy to upload logs immediately after the volume of collected logs exceeds 100 bytes or each 60 seconds
 kaaClient->setLogUploadStrategy(std::make_shared<kaa::StorageSizeWithTimeLimitLogUploadStrategy>(100, 60, kaaClient->getKaaClientContext()));
 ```
@@ -981,7 +983,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::StorageSizeWithTimeLimitLo
 </div>
 <div id="C7" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -1031,7 +1033,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C7" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create log upload strategy, which will upload log records when either volume threshold (in bytes) or time limit is reached.
 StorageSizeWithTimeLimitLogUploadStrategy *uploadStrategy = [[StorageSizeWithTimeLimitLogUploadStrategy alloc] initWithThresholdVolume:1024 timeLimit:20 timeUnit:TIME_UNIT_SECONDS];
 // Configure client to use our newly created strategy
@@ -1041,7 +1043,7 @@ StorageSizeWithTimeLimitLogUploadStrategy *uploadStrategy = [[StorageSizeWithTim
 </div>
 </div>
 
-* Combined **log count and storage size strategy**:
+A combination of the **log count** and **storage size** strategies.
 
 
 
@@ -1055,7 +1057,7 @@ StorageSizeWithTimeLimitLogUploadStrategy *uploadStrategy = [[StorageSizeWithTim
 <div class="tab-content">
 <div id="Java8" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Create an instance of the default log upload strategy
 DefaultLogUploadStrategy customizedStrategy = new DefaultLogUploadStrategy();
 // Configure it to upload logs every fifteen log records ...
@@ -1068,7 +1070,7 @@ kaaClient.setLogUploadStrategy(customizedStrategy);
 </div>
 <div id="Cpp8" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy to upload logs immediately after the 5th log record is added or the volume of collected logs exceeds 100 bytes
 auto logUploadStrategy = std::make_shared<kaa::DefaultLogUploadStrategy>(kaaClient->getKaaClientContext());
 logUploadStrategy->setCountThreshold(5);
@@ -1079,7 +1081,7 @@ kaaClient->setLogUploadStrategy(logUploadStrategy);
 </div>
 <div id="C8" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -1128,7 +1130,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C8" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create log upload strategy, which will upload log records when either volume threshold or log count threshold is reached.
 DefaultLogUploadStrategy *uploadStrategy = [[DefaultLogUploadStrategy alloc] initWithDefaults];
 // Set volume threshold (in bytes) for our strategy
@@ -1142,10 +1144,10 @@ uploadStrategy.countThreshold = 10;
 </div>
 </div>
 
->**NOTE:**  
-> This is the default behavior with log record count threshold of 64 and local storage threshold of 8 KB.
+>**NOTE:** This is the default behavior with the maximum number of log records set to **64** and the maximum local storage space set to **8 KB**.
+{:.note}
 
-* **Max parallel upload strategy** to limit the number of log batches sent without receiving a response from the server:
+**Max parallel upload** strategy limits the number of log batches sent without receiving a response from the server.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java9">Java</a></li>
@@ -1157,7 +1159,7 @@ uploadStrategy.countThreshold = 10;
 <div class="tab-content">
 <div id="Java9" class="tab-pane fade in active" markdown="1" >
 
-```
+```java
 // Configure the strategy to preserve the exact order of log uploads
 DefaultLogUploadStrategy customizedStrategy = new DefaultLogUploadStrategy();
 strategy.setMaxParallelUploads(1);
@@ -1167,7 +1169,7 @@ kaaClient.setLogUploadStrategy(customizedStrategy);
 </div>
 <div id="Cpp9" class="tab-pane fade" markdown="1" >
 
-```
+```cpp
 // Configure the strategy not to upload logs until a previous upload is successfully performed
 auto logUploadStrategy = std::make_shared<kaa::DefaultLogUploadStrategy>(kaaClient->getKaaClientContext());
 logUploadStrategy->setMaxParallelUploads(1);
@@ -1177,7 +1179,7 @@ kaaClient->setLogUploadStrategy(logUploadStrategy);
 </div>
 <div id="C9" class="tab-pane fade" markdown="1" >
 
-```
+```c
 #include <stdint.h>
 #include <kaa/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
@@ -1224,7 +1226,7 @@ error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
 </div>
 <div id="Objective-C9" class="tab-pane fade" markdown="1" >
 
-```
+```objc
 // Create default log upload strategy
 DefaultLogUploadStrategy *uploadStrategy = [[DefaultLogUploadStrategy alloc] initWithDefaults];
 // Limit the maximum number of parallel log uploads
@@ -1235,8 +1237,3 @@ uploadStrategy.maxParallelUploads = 1;
 
 </div>
 </div>
-
-### Data collection demo
-
-An [example application](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) for collecting log data from endpoints can be found
-in the official Kaa repository.
