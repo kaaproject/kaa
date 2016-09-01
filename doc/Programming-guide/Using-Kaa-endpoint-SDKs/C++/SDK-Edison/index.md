@@ -102,7 +102,7 @@ Install the cross compilation environment in the same way as described in [C end
 The 3rd party conponents listed above have to be cross-compiled before building your Kaa application. This way we get object files `.o` and shared object files `.so` that are required for building and running the application.
 
 1. Compile Boost.
-    Boost uses its own build system so it have to be compiled for you host machine first.
+    Boost uses its own build system so it have to be compiled for host machine first.
 
         wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
         tar -zxf boost_1_58_0.tar.gz
