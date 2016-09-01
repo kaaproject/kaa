@@ -12,31 +12,27 @@ sort_idx: 20
 
 [Endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) (EP profile) is a structured set of data that describes specific characteristics of an [endpoint]({{root_url}}Glossary/#endpoint-ep).
 
-The structure of both client-side and server-side endpoint profile is a customizable structured data set that describes specific characteristics of the endpoint.
 The profiles are used to attribute endpoints to [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 Every endpoint profile comprises the *client-side*, *server-side* and *system* parts.
 
-The structure of both client-side and server-side parts of an endpoint profile are defined by [application]({{root_url}}Glossary/#kaa-application) developer using the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) format.
-Application developer can reuse and share certain data structures using the [common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl).
+To select an endpoint profile schema, [application]({{root_url}}Glossary/#kaa-application) developer uses the [common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl).
 
-The client-side structure is used during the SDK generation.
-Therefore, if you make changes to the client-side structure, you need to re-generate your SDK.
+The client-side profile schema is used during the SDK generation.
+Therefore, if you make changes to the client-side schema, you need to re-generate your SDK for the changes to take effect.
 For more information, see [Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs).
 
 The structure of the system part is identical across the applications and is used by [Kaa platform]({{root_url}}Glossary/#kaa-platform) to perform internal functions.
-Both client-side and server-side profile schemas are maintained within the corresponding application, with its own version that distinguishes it from the previous schemas.
-Multiple schema versions and the corresponding endpoint profiles can coexist within a single application.
 
 ## Client-side EP profile
 
-Initial values for the client-side part are specified by the the client developer using data schemas for the endpoint SDK.
-Then, the client-side endpoint profile is generated during registration of a new endpoint.
+Client developer uses CTL to select a schema for the client-side EP profile.
+Then, the client-side endpoint profile is generated during [registration of a new endpoint]({{root_url}}Programming-guide/Key-platform-features/Devices-provisioning-and-registration/#endpoint-registration).
 
 The client-side endpoint profile can be updated at run time using an SDK API call.
-After the SDK requested a profile update, the group membership of the endpoint is re-evaluated and updated to match the new endpoint profile.
-Think about the client-side profile schema as of a structured data set of your endpoint application that will later be available to you in Kaa server and may change due to your client application logic or device state.
-The client-side endpoint profile is unidirectionally synchronized, and thus should not be considered as a means to temporarily store endpoint data in the [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
-When your client application logic or device state changes, the new client profile schema will then be available on [Kaa sever]({{root_url}}Glossary/#kaa-server).
+After the SDK requested a profile update, the new profile is checked against the [profile filters]({{root_url}}Glossary/#profile filter) on the server side.
+Based on the checking results, the group membership of the endpoint is re-evaluated and updated to match the new EP profile.
+The client-side EP profile can change due to your client application logic or device state.
+Since the client-side EP profile is unidirectionally synchronized, it should not be considered as a means to temporarily store endpoint data in the [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
 Endpoints cannot retrieve the profile information back from the Kaa cluster.
 The endpoint SDK does not persist the profile information over the endpoint reboots.
 However, it detects profile data changes and submits the new data to the Kaa cluster as a profile update.
@@ -99,17 +95,21 @@ The following client-side profile is based on the rules set in the schema.
 }
 ```
 
-The schema structure from our example allows filtering the endpoints by the operation system of device (for example, to show only Android devices), os_version (for example, to push some notifications only for the specified os version).
-You can create complex filtering conditions by combining as many filtering conditions as needed.
+The schema structure from this example allows filtering the endpoints by the operation system of device (for example, to show only Android devices), OS version (for example, to push some notifications only for the specified os version).
+You can create complex filters by combining as many filtering conditions as needed.
 
-### Setting client-side EP profile schema from Administration UI
+### Setting client-side EP profile schema
 
-To view the list of client-side endpoint profile schemas created by a [tenant developer]({{root_url}}Glossary/#tenant-developer), open the the **Client-side EP profile** page under the **Schemas** section of the application.
+To view the list of CT schemas used for the client-side endpoint profile, log in to [Administration UI]({{root_url}}Glossary/#administration-ui) and click **Tenant CTL**.
 
-<img src="admin-ui/Client-side endpoint profile schema.png">
+To export a CT schema:
 
-To export a client-side EP profile schema, click the corresponding **Export** button and choose the export method from the drop-down list.
-For more information about the schema export methods, see [CT schema export support]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export-support).
+1. Log in to the Administration UI as a tenant developer using the default **devuser** username and **devuser123** password.
+
+2. Click **Tenant CTL** and slect the CT schema from the list by clicking the corresponding row.
+
+3. On the **Common type details** page, click the **Export** button and choose the export method from the drop-down list.
+For more information about the schema export methods, see [CT import and export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-import-and-export).
 
 As a tenant developer, you can create new client-side EP schemas for your application as follows:
 
@@ -132,31 +132,15 @@ As a tenant developer, you can create new client-side EP schemas for your applic
 
 4. Click **Add** to save your schema.
 
-### REST API for client-side EP profile
-
-Admin REST API provides the following actions:
-
-* [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
-* [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
-* [Get endpoint profiles by owner ID]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfilesByUserExternalId)
-* [Get client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getProfileSchema)
-* [Get client-side endpoint profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getProfileSchemasByApplicationToken)
-* [Delete endpoint]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/removeEndpointProfileByKeyHash)
-* [Create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema)
-
-For detailed description of the REST API, its purpose, interface, and features, see [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) its purpose, interfaces and features supported.
+>**NOTE:** Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) to set up your EP profile.
+{:.note}
 
 ### SDK API for client-side EP profile
 
-Endpoint profile information changes as a result of the client operation or user's actions.
-The client updates the profile via the endpoint SDK API calls.
 The endpoint SDK checks for profile changes by comparing the new profile hash against the previously persisted one.
 When SDK detects a profile change, the endpoint profile management module sends this information to the Operations service.
 The Operations sevice then updates the endpoint profile information in the database and revises the endpoint group membership.
 
-You can configure your client-side profile schema using the [Administration UI](#setting-client-side-ep-profile-schema-from-administration-ui) or server REST API.
-First, you need to [create a new CT]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken).
-Then, [create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema) containing a reference to this CT.
 Client-side endpoint profile updates are reported to the endpoint SDK using a profile container.
 The profile-related API varies depending on the target SDK platform, however the general approach is the same.
 
@@ -309,13 +293,18 @@ profile->destroy(profile);
 </div>
 </div>
 
-## Server-side endpoint profile
+## Server-side EP profile
+
+Server-side profile schema is a set of your endpoint properties the are controlled by your server-side applications.
+For example, client subscription plan, device activation flag, etc.
+You can also use server-side endpoint profile to store properties that are set during device manufacturing and should not be controlled by client application.
 
 The server-side endpoint profile is initially generated at the stage of a new endpoint registration.
-By default, server-side profile record is auto-generated based on the latest server-side profile schema of a particular application.
-In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
-To create a server-side endpoint profile using a REST API, you need to [create new CT]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken).
-Then, [create server-side profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema) containing a reference to this CT.
+By default, server-side profile record is [auto-generated]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#records-auto-generation) based on the latest server-side profile schema of a particular application.
+Endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
+
+Server-side endpoint profile can be accessed and modified by various server-side applications through Kaa REST API integration layer.
+Server-side profile is not accessible from endpoint SDK or other client application logic, but you can configure your own server-side profile schema using the [Administration UI](#setting-server-side-ep-profile-schema-from-administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/updateServerProfile).
 
 <img src="endpoint-profile-generation/ServerSideEndpointProfileGeneration_0_8_0.png">
 
@@ -349,38 +338,7 @@ The following server-side profile is compatible with our schema example.
 }
 ```
 
-The schema structure from our example allows filtering the endpoints by serial number (SN) and customer ID.
-For example, you can remotely turn on/off features for certain customers or deactivate a device with certain SN.
-You can create complex filtering conditions by combining as many filtering conditions as needed.
-
-### Updating server-side EP profile
-
-Server-side profile schema is a set of your endpoint properties the are controlled by your server-side applications.
-For example, client subscription plan, device activation flag, etc.
-You can also use server-side endpoint profile to store properties that are set during device manufacturing and should not be controlled by client application.
-
-Server-side endpoint profile is designed to be accessed and modified by various server-side applications through Kaa REST API integration layer.
-Server-side profile is not accessible from endpoint SDK or other client application logic, but you can configure your own server-side profile schema using the [Administration UI](#setting-server-side-ep-profile-schema-from-administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/updateServerProfile).
-
-For the purpose of this guide, we will use a fairly abstract server-side profile schema example.
-
-```json
-{  
-   "type":"record",
-   "name":"ServerProfile",
-   "namespace":"org.kaaproject.kaa.schema.sample.profile",
-   "fields":[  
-      {  
-         "name":"subscriptionPlan",
-         "type":"string"
-      },
-      {  
-         "name":"activationFlag",
-         "type":"boolean"
-      }
-   ]
-}
-```
+The schema structure from this example allows filtering the endpoints by subscription plan and the activation flag.
 
 ### Setting server-side EP profile schema from Administration UI
 
@@ -409,23 +367,11 @@ As a tenant developer, you can create new server-side EP schemas for your applic
     Here you can create a schema either by using the schema form or by uploading a file containing the schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format.
     
     <img src="admin-ui/Create server-side endpoint profile schema 2.png">
-    
+
 4. Click **Add** to save your schema.
 
-### REST API for server-side EP profile
-
-Use the server REST API to perform the following actions:
-
-* [Get profile based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileByKeyHash)
-* [Get client- and server-side endpoint profile bodies based on endpoint key]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfileBodyByKeyHash)
-* [Get endpoint profiles by owner ID]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getEndpointProfilesByUserExternalId)
-* [Delete endpoint]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/removeEndpointProfileByKeyHash)
-* [Create server-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema)
-* [Get server-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getServerProfileSchema)
-* [Get server-side endpoint profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/getServerProfileSchemasByApplicationToken)
-* [Update server-side endpoint profile]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/updateServerProfile)
-
-For detailed description of the REST API, its purpose, interface, and features, see [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) its purpose, interfaces and features supported.
+>**NOTE:** Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) to set up your EP profile.
+{:.note}
 
 ## System part of EP profile
 
@@ -440,11 +386,3 @@ Below is the list of system part properties.
 |Endpoint public key      | Public key used for security purposes to validate endpoint requests.              |
 |Endpoint group state     | List of endpoint groups that contain current endpoint.                            |
 |Client-side profile hash | Client-side profile hash used to validate integrity of endpoint profile state.    |
-
-## Further reading
-
-* [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups)
-* [Configuration]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/)
-* [Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/)
-* [Data-collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection)
-* [Common Type Library (CTL)]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library)
