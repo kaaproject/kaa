@@ -107,7 +107,7 @@ The default log schema installed for Kaa applications is empty.
 You can configure your own log schema using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
 See also this [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Logging).
 
-For the purpose of this guide, we will use a schema that is very close to the common log structure:
+For the purpose of this guide, we will use a typical log schema structure:
 
 * log level
 * tag
@@ -146,25 +146,28 @@ For the purpose of this guide, we will use a schema that is very close to the co
 }
 ```
 
-In Admin UI as a tenant developer, you can create new log schemas for the application as follows:
+To create a new log schema for your application:
 
-1. In the Log schemas window for the application, click **Add schema**.
-2. In the Add log schema window, create a log schema either by using the
-[schema form]({{root_url}}Administration-guide/Tenants-and-applications-management/#schema-form) or by uploading a schema in the
-[Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
-![Add log schema](attach/add-log-schema.png)
-3. Click **Add** to save the schema.
+1. Log in to the **Administration** page as a Tenant Developer using the default **devuser** username and **devuser123** password.
 
-If you want to review the added Avro schema, open the **Log schema details** window by clicking the schema in the **Log schemas** window.
+2. Under the **Schemas** section of the application, click **Log**, then click **Add schema**.
 
-![Log schema details](attach/log_schema_details.png)
+3. On the **Add log schema** page, enter the name and description (optional) for your schema.
+Use the **Schema** section to compose your schema.
+For more details, see [schema form]({{root_url}}Administration-guide/Tenants-and-applications-management/#schema-form).
 
-## Log record header schema
+	Alternatively, click **Browse...**, select your schema file in the [Avro](http://avro.apache.org/docs/current/spec.html) format and click **Upload**.
 
-The log record header schema is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas). The log record header
-schema defines structure of the log record header that will be automatically added to the [log record](#log-record) in Kaa.
+	![Add log schema](attach/add-log-schema.png)
 
-The log record header schema described below:
+4. Click **Add** to save the schema.
+
+## Schema for log record header
+
+The schema of a log record header is fully compatible with the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas).
+This schema defines the structure of the log record header that will be automatically added to the [log record](#log-record) in Kaa.
+
+The schema for the log record header is defined below:
 
 ```json
 {
@@ -225,126 +228,98 @@ The log record header schema described below:
 
 ### Adding log record header
 
-It is possible to configure the log record header data in the log appender:
+You can use a log appender to configure the log header data.
 
-  * In the Admin UI by selecting necessary **Log metadata** fields.
-![Add log record header](attach/add-log-record-header.png)
-  * By the [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) call to create log appender. Here you need to add
-  corresponding fields to the **headerStructure** list.
+To do this:
 
-Available record header fields described below:
+* Under the **Schemas** section of the application, click **Log appenders**, then click **Add log appender**.
+On the **Log appender details** page, edit the **Log metadata** field.
 
-|Name       |Description                                                            |
-|-----------|-----------------------------------------------------------------------|
-|KEYHASH    |A key hash identifying the endpoint which produced the log record      |
-|VERSION    |The header version                                                     |
-|TIMESTAMP  |The timestamp in milliseconds when logs were uploaded to the Kaa server|
-|TOKEN      |The [application token]({{root_url}}Glossary)                          |
-|LSVERSION  |The log schema version                                                 |
+	![Add log record header](attach/add-log-record-header.png)
+
+OR
+	
+* Use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) call to create a log appender.
+To do this, add the corresponding fields to the **headerStructure** list.
+
+Below is the list of available record header fields:
+
+|Name       |Description                                                             |
+|-----------|------------------------------------------------------------------------|
+|KEYHASH    |A key hash identifying the endpoint which produced the log record.      |
+|VERSION    |Version of the header.                                                  |
+|TIMESTAMP  |Timestamp in milliseconds when logs were uploaded to the Kaa server.    |
+|TOKEN      |[Application token]({{root_url}}Glossary/#application token).           |
+|LSVERSION  |Version of the log schema.                                              |
 
 ## Log appenders
 
-A log appender is a service utility which reside on the Operations service side. This utility is responsible for writing logs (received by the Operations
-service from endpoints) to a single specific storage, as defined by the log appender's type. It is possible to have several log appenders which can work
-simultaneously. Kaa provides several default implementations of log appenders but it is also possible to develop and integrate
-[custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+Log appender is a service utility that operates on the [Operations service]({{root_url}}Glossary/#operations-service) side.
+The logs received by the Operations service from the endpoints are recorded by the log appender in the specific storage place depending on the log appender type.
+You can have several log appenders working simultaneously.
+Kaa provides several default implementations of log appenders but you can also develop and integrate [custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
 
 ### Confirm delivery option
 
-By design every Kaa client stores logs in a log storage before sending them to the Kaa node. By default, upon receiving the logs, the corresponding
-log appender on the Kaa node sends the delivery confirmation back to the Kaa client. If the delivery was successful, the Kaa client deletes the log copies
-from its local storage, otherwise - it receives an appropriate error code and either restarts the operation of log delivery or attempts to deliver
-the same data to a different Kaa node.
+Every [Kaa client]({{root_url}}Glossary/#kaa-client) stores logs in a special log storage before sending them to the [Kaa server]({{root_url}}/Glossary/#kaa-server) node.
+By default, when a log appender on the Kaa server side receives a log from the Kaa client, it will send a delivery confirmation back to the Kaa client.
+In case of a successful delivery, the Kaa client deletes the log copies from its local storage.
+In case of a delivery error, Kaa client receives the error code and either sends the log to the same server node again or sends it to a different node.
+The delivery confirmation option makes the log appender verify that the received log has been recorded in the log storage prior to sending the confirmation.
 
-The confirm delivery option adds to a log appender the capability to verify whether received logs have been written into actual storage
-before sending the confirmation to the Kaa client.
+The following scenario illustrates how the delivery confirmation works:
 
-To illustrate, let’s consider the following scenarios:
+1. You set up a log appender with the **Confirm delivery** option enabled.
+The Kaa client will receive a message about successful logs delivery only after the Kaa node successfully receives and writes the logs to external storage.
+If the Kaa node fails to write the logs to the storage, the Kaa client will send the logs again.
+If there are more than one log appender with the **Confirm delivery** option enabled, the Kaa client will receive a message about successful logs delivery only after each log appender successfully writes its logs to the storage.
 
-1. Log appender A has been configured with the confirm delivery option enabled. The Kaa client will receive a message about successful logs delivery
-only after the Kaa node successfully receives and writes the logs into an external storage. If the Kaa node fails to write the logs into the storage,
-the Kaa client will send the logs again. If there are more than one log appender with the enabled confirm delivery option then the Kaa client will receive
-a message about successful logs delivery only after each log appender successfully writes its logs into the storage.
-2. Log appender A has been configured with the confirm delivery option disabled. The Kaa client will receive a message about successful logs delivery
-to the Kaa node but if the Kaa node fails to write the logs into an external storage system, the Kaa client will not be informed about the failure and
-will not attempt sending the logs again. As a result, the logs will be lost.
-3. Log appender A has been configured with the confirm delivery option enabled and log appender B with the disabled one. The Kaa client will receive
-a message about successful logs delivery as soon as log appender A confirms delivery. Any errors that might happen when log appender B writes its logs into
-the storage will not be taken into account.
+2. You set up a log appender with the **Confirm delivery** option disabled.
+The Kaa client will receive a message about successful logs delivery but if the Kaa node fails to write the logs to the external storage, the Kaa client will not be informed about the failure and will not try to send the logs again.
+As a result, the logs will be lost.
 
-To summarize, the confirm delivery option allows you to have the guaranteed delivery of every log record to the external storage.
+3. You set up a log appender A with the **Confirm delivery** option enabled, and a log appender B with that option disabled.
+The Kaa client will receive a message about successful logs delivery as soon as log appender A confirms the delivery.
+Any errors that might happen while log appender B writes its logs to the storage will not be taken into account.
 
-Also, it is worth noting that by default an inmemory log storage is used on the Kaa client. This means that you can lose your undelivered data in case of
-an endpoint reset. To avoid this, use a persistent log storage to store all the data that was not yet confirmed as delivered.
+To summarize, the delivery confirmation option allows you to have the guaranteed delivery of every log record to the external storage.
+
+>**NOTE:** By default, Kaa client uses its internal memory to temporarily store the logs before sending them to the server.
+>This means that if you reset your endpoint before the client delivers the logs, those logs will be lost.
+>To avoid this, use a persistent log storage to store the data that is not yet confirmed as delivered.
 
 ### Existing log appender implementations
 
-There are several default log appender implementations that are available out of the box for each Kaa installation. A Kaa developer is able to add, update
-and delete log appenders using Admin UI or Admin REST API. After adding log appender ensure the data collection feature is
-[configured appropriately](#data-collection-sdk-api). For sample purposes [data collection demo](#data-collection-demo) application can be used as well.
-For more information about architecture, configuration and administration refer to the corresponding log appender:
+There are several default log appender implementations that are available out of the box for each Kaa installation.
+A Kaa developer can add, update, and delete log appenders using the Administration UI or server REST APIs.
+After you added a log appender, make sure you have correctly [configured the data collection feature](#data-collection-api).
 
-* ### [Cassandra log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender)
+See also [data collection demo](#data-collection-demo).
 
-The Cassandra log appender is responsible for transferring logs from the Operations service to the [Cassandra](http://cassandra.apache.org/) database.
-You can flexibly configure Cassandra storage (Cassandra nodes, authentication credentials, keyspace name, table name, column mapping, clustering, see
-[configuration]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/#configuration) section).
+For more information about architecture, configuration and administration of a particular log appender, use the following sections of Kaa documentation.
 
-* ### [Couchbase log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender)
-
-The Couchbase log appender is responsible for transferring logs from the Operations service to the [Couchbase](http://www.couchbase.com/) database. You can
-configure Couchbase servers list, bucket name and password.
-
-* ### [File system log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender)
-
-The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
-or in pair with tools like Flume and others. You can configure logs root path, rolling file name pattern, rolling max history, trigger max file size and
-[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/#configuration) parameters for this log appender.
-
-* ### [Flume log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender)
-
-The Flume log appender encapsulates received logs into Flume events and sends these events to external Flume sources via Avro RPC. You can configure
-flume event format, hosts balancing type, include client-side and/or server-side profile data and
-[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender/#configuration) parameters for this log appender.
-
-* ### [Kafka log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender)
-
-The Kafka log appender is responsible for transferring logs from the Operations service to the [Apache Kafka](http://kafka.apache.org/) service. The logs are
-stored in the specified topic. You can configure Kafka bootstrap servers list, topic name, compression type and
-[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/#configuration) parameters for this log appender.
-
-* ### [MongoDB log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender)
-
-The MongoDB log appender is responsible for transferring logs from the Operations service to the [MongoDB](https://www.mongodb.com/) database. You can
-configure MongoDB nodes list, authentication credentials, MongoDB database name and
-[other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/#configuration) parameters for this log appender.
-The logs are stored in the table named __logs_$[applicationToken]({{root_url}}Glossary)_, where _$[applicationToken]({{root_url}}Glossary)_ matches the token
-of the current application.
-
-* ### [Oracle NoSQL log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender)
-
-The Oracle NoSQL log appender is responsible for transferring logs from the Operations service to the
-[Oracle NoSQL](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/overview/index.html) key/value storage. You can configure KVStore name,
-KVStore nodes and [other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender/#configuration) parameters for this
-log appender.
-
-* ### [Rest log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender)
-
-The REST log appender is responsible for transferring logs from Operations service to your custom service. You can configure host, port, relative URI path,
-method type and [other]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configuration) parameters for this log appender.
+|Log appender|Description|
+|------------------------|
+|[Cassandra log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender)|Transfers logs from the Operations service to the [Cassandra](http://cassandra.apache.org/) database. You can flexibly configure Cassandra storage (Cassandra nodes, authentication credentials, keyspace name, table name, column mapping, clustering). See [configuration]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/#configuration).|
+|[Couchbase log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender)|Transfers logs from the Operations service to the [Couchbase](http://www.couchbase.com/) database. You can configure Couchbase servers list, bucket name and password.|
+|[File system log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender)|Stores the received logs in the local file system of the Operations service. This log appender can be used for test purposes or in conjunction with tools like Flume and others. You can configure logs root path, file name pattern, maximum number of records in a file, maximum file size and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/#configuration).|
+|[Flume log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender)|Encapsulates the received logs into Flume events and sends these events to external Flume sources via Avro RPC. You can configure Flume event format, hosts balancing type, include client-side and/or server-side profile data and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender/#configuration).|
+|[Kafka log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender)|Transfers logs from the Operations service to the [Apache Kafka](http://kafka.apache.org/) service. The logs are stored within the specified topic. You can configure Kafka bootstrap servers list, topic name, compression type and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/#configuration).|
+|[MongoDB log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender)|Transfers logs from the Operations service to the [MongoDB](https://www.mongodb.com/) database. You can configure MongoDB nodes list, authentication credentials, MongoDB database name and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/#configuration). The logs are stored in the table named **logs_$applicationToken**, where **$applicationToken** matches the token of the current application.|
+|[Oracle NoSQL log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender)|Transfers logs from the Operations service to the [Oracle NoSQL](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/overview/index.html) key/value storage. You can configure KVStore name, KVStore nodes and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender/#configuration).|
+|[Rest log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender)|Transfers logs from Operations service to your custom service. You can configure host, port, relative URI path, method type and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configuration).|
 
 ### Custom log appender implementations
 
-Refer to the [Custom log appender]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders) page to learn how to develop and integrate
-custom log appender.
+To learn how to create and integrate custom log appenders, see [Log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
 
-## Data Collection SDK API
+## Data collection API
 
 ### Log delivery
 
-The logging subsystem API varies depending on the target SDK platform. However, the general approach is the same.
+The logging subsystem API varies depending on the [SDK type]({{root_url}}Glossary/#sdk-type). However, the general approach is the same.
 
-To transfer logs to the Kaa Operations service, the Kaa client application should use the following code.
+To transfer logs to the Kaa Operations service, the Kaa client application uses the following code.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
