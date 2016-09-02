@@ -42,6 +42,11 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
     }
 
     @Override
+    protected void initAddButton() {
+        addButton = new ImageTextButton(null, addButtonString());
+    }
+
+    @Override
     protected AbstractGrid<EventClassDto, String> createGrid() {
         return new EcfVersionGrid();
     }
