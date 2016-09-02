@@ -248,11 +248,14 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
     @Override
     public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException {
         try {
-            CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+            CTLSchemaDto ctlSchemaDto = null;
+            if (eventClassDto.getVersion() == 0) {
+                ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+            } else {
+                ctlSchemaDto = controlService.getCTLSchemaByMetaInfoIdAndVer(eventClassDto.getCtlSchemaId(), eventClassDto.getVersion());
+            }
+            eventClassDto.setCtlSchemaId(ctlSchemaDto.getId());
             EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
-            eventClassDto.setCreatedTime(System.currentTimeMillis());
-            eventClassDto.setFqn(ctlSchemaDto.getMetaInfo().getFqn());
-            eventClassDto.setTenantId(getCurrentUser().getTenantId());
             return eventClassViewDto;
         } catch (ControlServiceException e) {
             throw Utils.handleException(e);
@@ -325,6 +328,8 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
             eventClassDto.setFqn(classViewDto.getExistingMetaInfo().getMetaInfo().getFqn());
             eventClassDto.setCreatedUsername(getCurrentUser().getUsername());
             eventClassDto.setCreatedTime(System.currentTimeMillis());
+            eventClassDto.setVersion(classViewDto.getSchema().getVersion());
+            eventClassDto.setCtlSchemaId(controlService.getCTLSchemaByMetaInfoIdAndVer(eventClassDto.getCtlSchemaId(), eventClassDto.getVersion()).getId());
             eventClassDtoList.add(eventClassDto);
         }
         eventClassFamilyVersionDto.setRecords(eventClassDtoList);

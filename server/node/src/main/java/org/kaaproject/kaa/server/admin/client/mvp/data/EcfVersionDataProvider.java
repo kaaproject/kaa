@@ -69,7 +69,7 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
                         EventClassDto eventClassDto = eventClassViewDto.getSchema();
                         eventClassDto.setCtlSchemaId(ctlSchemaMetaInfoDto.getId());
                         eventClassDto.setCreatedTime(System.currentTimeMillis());
-                        eventClassDto.setVersion(ctlSchemaMetaInfoDto.getVersions().get(ctlSchemaMetaInfoDto.getVersions().size()-1));
+                        eventClassDto.setVersion(eventClassViewDto.getExistingMetaInfo().getVersion());
                         eventClassDto.setId(String.valueOf(i++));
                         eventClassDtoList.add(eventClassDto);
                     }
