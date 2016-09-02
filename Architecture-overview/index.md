@@ -112,7 +112,7 @@ For more details, see [System components overview]({{root_url}}Administration-gu
 
 ## Endpoint SDK
 
-Kaa endpoint SDK is a library that provides communication, data marshalling, persistence, and other functions available in Kaa for specific type of an [endpoint type]({{root_url}}Glossary/#endpoint-type).
+Kaa endpoint SDK is a library that provides communication, data marshalling, persistence, and other functions available in Kaa depending on the [SDK type]({{root_url}}Glossary/#sdk-type).
 The client SDK abstracts the communication protocol, data persistence, and other implementation details that may be specific for any concrete solution based on Kaa.
 
 Endpoint SDK helps save time on development routine and allows you to concentrate on your business logic.
@@ -122,7 +122,7 @@ Endpoint SDK helps save time on development routine and allows you to concentrat
 [Kaa instance (Kaa deployment)]({{root_url}}Glossary/#kaa-instance-kaa-deployment) is a particular installation of the Kaa platform, either as
 a [single node]({{root_url}}Administration-guide/System-installation/Single-node-installation/), or a [clustered deployment]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
 
-An *application* in Kaa defines a set of data models, types of communication between between the endpoints and Kaa server, and processing rules.
+An *application* in Kaa defines a set of data models, types of communication between the endpoints and Kaa server, and processing rules.
 Kaa applications are not specific to the target platform, operating system, or the client software implementation.
 For example, two firmware implementations for a pressure sensor will differ between Arduino and STM32 platforms, yet will be considered the same application in Kaa as long as they report identically structured telemetry data.
 
@@ -138,13 +138,13 @@ on board multiple sensors that report data) may be a more appropriate entity to 
 
 ![Logical concepts](attach/logical-concepts.png)
 
-To distinguish endpoints by different parameters and properties, rather than use one ID, Kaa uses [endpoint profiles]({{root_url}}Glossary/#endpoint-profile-client-side-server-side).
+To distinguish endpoints by different properties, rather than use one ID, Kaa uses [endpoint profiles]({{root_url}}Glossary/#endpoint-profile-client-side-server-side).
 
 Endpoint profile is a custom structured data set that describes characteristics of a specific endpoint within an application.
 Every endpoint profile comprises the *client-side*, *server-side*, and *system* parts.
 Initial values for the client-side part are specified by the the client developer using data schemas for the [endpoint SDK]({{root_url}}Glossary/#endpoint-sdk).
 Then, the client-side endpoint profile is generated during registration of a new endpoint.
-The server-side and system parts of the profile contain data about the endpoint properties that are controlled by your server-side applications.
+The server-side and system parts of the endpoint profile data are managed by the Kaa server.
 
 See also [Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/).
 
@@ -161,6 +161,6 @@ Use the following guides and references to learn more about Kaa features.
 
 | Guide                                                          | What it is for                                                                                                                                                                                           |
 |----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **[Key system features]({{root_url}}Programming-guide/Key-system-features/)**     | Learn about Kaa key features, such as [endpoint profiling]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), [configuration management]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), and others. |
+| **[Key platform features]({{root_url}}Programming-guide/Key-platform-features/)**     | Learn about Kaa key features, such as [endpoint profiling]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), [configuration management]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), and others. |
 | **[Installation guide]({{root_url}}Administration-guide/System-installation)**    | Install and configure Kaa platform on a single Linux node or in a cluster environment.                                                                                                    |
 | **[Contribute to Kaa]({{root_url}}Customization-guide/How-to-contribute/)**       | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to.                                                                                                   |
