@@ -197,7 +197,6 @@ public class EventClassServiceImpl implements EventClassService {
 
     private void setEventClassProperties(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass) {
         eventClass.setTenantId(eventClassFamilyDto.getTenantId());
-        eventClass.setVersion(ctlSchemaDao.findById(eventClass.getCtlSchemaId()).getVersion());
     }
 
     private void setBackreference(List<EventClassFamilyVersion> ecfvList) {

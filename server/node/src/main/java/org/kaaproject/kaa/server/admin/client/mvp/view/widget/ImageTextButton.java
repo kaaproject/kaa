@@ -50,7 +50,9 @@ public class ImageTextButton extends Button {
                   spacing = 16;
           }
 
-          updateImageElementFromImageResource(imageSpan, imageResource, spacing);
+          if(imageResource != null) {
+            updateImageElementFromImageResource(imageSpan, imageResource, spacing);
+          }
           DOM.insertBefore(getElement(), imageSpan, DOM.getFirstChild(getElement()));
          }
 
