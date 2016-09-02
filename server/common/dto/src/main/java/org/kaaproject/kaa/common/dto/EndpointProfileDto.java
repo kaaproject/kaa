@@ -289,8 +289,8 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
         return useConfigurationRawSchema;
     }
 
-    public void setUseConfigurationRawSchema(boolean useConfigurationRawSchema) {
-        this.useConfigurationRawSchema = useConfigurationRawSchema;
+    public void setUseConfigurationRawSchema(Boolean useConfigurationRawSchema) {
+        this.useConfigurationRawSchema = useConfigurationRawSchema != null ? useConfigurationRawSchema : false;
     }
 
     @Override

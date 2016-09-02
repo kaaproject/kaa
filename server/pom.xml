@@ -40,6 +40,7 @@
         <module>appenders</module>
         <module>transports</module>
         <module>verifiers</module>
+        <module>upgrade/data-migration-0.9.0-0.10.0</module>
     </modules>
 
     <profiles>
