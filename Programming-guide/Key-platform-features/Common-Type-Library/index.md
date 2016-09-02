@@ -9,7 +9,7 @@ sort_idx: 20
 * TOC
 {:toc}
 
-The [Common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl) is a repository of data type schemas used for [endpoint profiling]({{root_url}}Glossary/#endpoint-profile).
+The [Common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl) is a repository of data type schemas used for all Kaa modules.
 As more schema types and versions are created, they are recorded in the CTL for future use.
 
 [Common type (CT)]({{root_url}}Glossary/#common-type-ct) is a CTL unit representing a set of data type schema versions.
