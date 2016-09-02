@@ -263,8 +263,9 @@ profile->destroy(profile);
 <div id="Objective-C" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
 #import "ViewController.h"
+ 
+@import Kaa;
  
 @interface ViewController () <ProfileContainer>
  
@@ -277,13 +278,13 @@ profile->destroy(profile);
     // Create instance of Kaa client
     id<KaaClient> client = [Kaa client];
     // Sample profile that is an auto-generated class based on user defined schema.
-    _profile = [[KAAProfile alloc] initWithId:@"id" os:OS_LINUX code:@"3.17" build:@"0.0.1-SNAPSHOT"];
+    self.profile = [[KAAProfile alloc] initWithId:@"id" os:OS_LINUX code:@"3.17" build:@"0.0.1-SNAPSHOT"];
     // Simple implementation of ProfileContainer interface that is provided by the SDK
     [client setProfileContainer:self];
     // Starts Kaa
     [client start];
     // Update to profile variable
-    _profile.build = @"0.0.1-SNAPSHOT";
+    self.profile.build = @"0.0.1-SNAPSHOT";
     // Report update to Kaa SDK. Force delivery of updated profile to server.
     [client updateProfile];
 }

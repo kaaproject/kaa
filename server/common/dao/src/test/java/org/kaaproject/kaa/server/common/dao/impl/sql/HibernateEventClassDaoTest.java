@@ -94,12 +94,9 @@ public class HibernateEventClassDaoTest extends HibernateAbstractTest {
         Tenant tenant = classFamily.getTenant();
         List<EventClass> events = generateEventClass(tenant, classFamily, 1);
         EventClass ec = events.get(0);
-        EventClassDto dto = ec.toDto();
-        dto.setVersion(2);
-        EventClass converted  = new EventClass(dto);
-        eventClassDao.save(converted);
-        EventClass found = eventClassDao.findByTenantIdAndFqnAndVersion(tenant.getId().toString(), ec.getFqn(), converted.getVersion());
-        Assert.assertEquals(converted.getFqn(), found.getFqn());
-        Assert.assertEquals(converted.getVersion(), found.getVersion());
+
+        EventClass found = eventClassDao.findByTenantIdAndFqnAndVersion(tenant.getId().toString(), ec.getFqn(), ec.getVersion());
+        Assert.assertEquals(ec.getFqn(), found.getFqn());
+        Assert.assertEquals(ec.getVersion(), found.getVersion());
     }
 }

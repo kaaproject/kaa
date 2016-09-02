@@ -22,9 +22,11 @@
 #define TRANSPORT_POLL_DELAY    @"0"
 #define TRANSPORT_POLL_PERIOD   @"10"
 #define TRANSPORT_POLL_UNIT     @"1"
-#define STATE_FILE_LOCATION     @"state.properties"
 #define SDK_TOKEN               @"%s"
+#define APPLICATION_ID			@"%s"
 #define CONFIG_DATA_DEFAULT     @"%s"
+#define APP_PREFIX              APPLICATION_ID@"."SDK_TOKEN
+#define STATE_FILE_LOCATION     @"state.properties"
 
 static NSString *CONFIG_SCHEMA_DEFAULT = @"%s";
 static NSString *BOOTSTRAP_SERVERS = @"%s";

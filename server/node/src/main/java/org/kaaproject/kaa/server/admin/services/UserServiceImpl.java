@@ -101,46 +101,56 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
-        User stored = userFacade.findByUserName(user.getUsername());
-        boolean createNewUser = (stored == null);
-
-        if (createNewUser)  {
-            if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
-                checkAuthority(KaaAuthorityDto.KAA_ADMIN);
-            } else {
-                checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-            }
-        } else {
-            checkUserId(String.valueOf(stored.getId()));
-        }
-
         try {
-            CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
-            user.setExternalUid(result.getUserId().toString());
+            User stored = userFacade.findByUserName(user.getUsername());
+            boolean createNewUser = (stored == null);
 
-            if (!isEmpty(user.getId())) {
+            String tempPassword = null;
+            if (createNewUser)  {
+                if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+                    checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+                } else {
+                    checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+                    if (!isEmpty(user.getTenantId())) {
+                        checkTenantId(user.getTenantId());
+                    }
+                }
+
+                CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
+                user.setExternalUid(result.getUserId().toString());
+                tempPassword = result.getPassword();
+            } else {
+                if (isEmpty(user.getId())) {
+                    controlService.getUsers().stream()
+                            .filter(u -> u.getUsername().equals(user.getUsername())).findFirst()
+                            .ifPresent(u -> user.setId(u.getId()));
+                }
+                user.setExternalUid(String.valueOf(stored.getId()));
+                checkUserId(user.getId());
+
                 UserDto storedUser = controlService.getUser(user.getId());
                 Utils.checkNotNull(storedUser);
                 if(!getCurrentUser().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)) {
                     checkTenantId(storedUser.getTenantId());
                 }
-            } else {
-                if(!getCurrentUser().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)) {
-                    checkTenantId(user.getTenantId());
-                }
             }
+
             Long userId = saveUser(user);
             org.kaaproject.kaa.common.dto.admin.UserDto userDto = new org.kaaproject.kaa.common.dto.admin.UserDto();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setExternalUid(userId.toString());
-            userDto.setTenantId(user.getTenantId());
+            if (!isEmpty(getTenantId())) {
+                userDto.setTenantId(getTenantId());
+            } else {
+                userDto.setTenantId(user.getTenantId());
+            }
             userDto.setAuthority(user.getAuthority());
             org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(userDto);
 
             org.kaaproject.kaa.common.dto.admin.UserDto editedUser = toUser(savedUser);
-            if (StringUtils.isNotBlank(result.getPassword())) {
-                editedUser.setTempPassword(result.getPassword());
+            if (StringUtils.isNotBlank(tempPassword)) {
+                editedUser.setTempPassword(tempPassword);
             }
             return editedUser;
 

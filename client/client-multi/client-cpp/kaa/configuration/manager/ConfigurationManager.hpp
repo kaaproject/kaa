@@ -70,6 +70,8 @@ public:
         return configurationHash_;
     }
 
+    virtual ~ConfigurationManager() noexcept {}
+
 private:
     void updateConfiguration(const std::uint8_t* data, const std::uint32_t dataSize);
     void loadConfiguration();

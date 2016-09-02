@@ -21,13 +21,14 @@
 #import "NSData+Conversion.h"
 #import "KaaLogging.h"
 #import "KaaExceptions.h"
+#import "KaaDefaults.h"
 
 #define TAG @"KeyUtil >>>"
 
 #define KEY_PAIR_SIZE   2048
 
-static const uint8_t publicKeyIdentifier[]  = "org.kaaproject.kaa.publickey";
-static const uint8_t privateKeyIdentifier[] = "org.kaaproject.kaa.privatekey";
+static NSString *publicKeyTag = @"";
+static NSString *privateKeyTag = @"";
 
 static const unsigned char _encodedRSAEncryptionOID[15] = {
     
@@ -39,8 +40,8 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 
 @interface KeyUtils ()
 
-+ (NSData *)defaultPublicKeyTag;
-+ (NSData *)defaultPrivateKeyTag;
++ (NSData *)publicKeyTag;
++ (NSData *)privateKeyTag;
 
 + (NSData *)getPlainPublicKey;
 + (NSData *)getPlainPublicKeyByTag:(NSData *)tag;
@@ -54,7 +55,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 @implementation KeyUtils
 
 + (KeyPair *)generateKeyPair {
-    return [self generateKeyPairWithPrivateTag:[self defaultPrivateKeyTag] publicTag:[self defaultPublicKeyTag]];
+    return [self generateKeyPairWithPrivateTag:[self privateKeyTag] publicTag:[self publicKeyTag]];
 }
 
 + (KeyPair *)generateKeyPairWithPrivateTag:(NSData *)privateTag publicTag:(NSData *)publicTag {
@@ -96,11 +97,11 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 }
 
 + (SecKeyRef)getPublicKeyRef {
-    return [self getKeyRefByTag:[self defaultPublicKeyTag]];
+    return [self getKeyRefByTag:[self publicKeyTag]];
 }
 
 + (SecKeyRef)getPrivateKeyRef {
-    return [self getKeyRefByTag:[self defaultPrivateKeyTag]];
+    return [self getKeyRefByTag:[self privateKeyTag]];
 }
 
 + (SecKeyRef)getKeyRefByTag:(NSData *)tag {
@@ -125,7 +126,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 }
 
 + (NSData *)getPlainPublicKey {
-    return [self getPublicKeyByTag:[self defaultPublicKeyTag]];
+    return [self getPublicKeyByTag:[self publicKeyTag]];
 }
 
 + (NSData *)getPlainPublicKeyByTag:(NSData *)tag {
@@ -151,7 +152,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 }
 
 + (NSData *)getPublicKey {
-    return [self getPublicKeyByTag:[self defaultPublicKeyTag]];
+    return [self getPublicKeyByTag:[self publicKeyTag]];
 }
 
 + (NSData *)getPublicKeyByTag:(NSData *)tag {
@@ -194,12 +195,14 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     return encKey;
 }
 
-+ (NSData *)defaultPrivateKeyTag {
-    return [[NSData alloc] initWithBytes:privateKeyIdentifier length:sizeof(privateKeyIdentifier)];
++ (NSData *)privateKeyTag {
+    privateKeyTag = privateKeyTag.length > 0 ? privateKeyTag : [NSString stringWithFormat:@"org.kaaproject.kaa.%@.privatekey", APP_PREFIX];
+    return [privateKeyTag dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-+ (NSData *)defaultPublicKeyTag {
-    return [[NSData alloc] initWithBytes:publicKeyIdentifier length:sizeof(publicKeyIdentifier)];
++ (NSData *)publicKeyTag {
+    publicKeyTag = publicKeyTag.length > 0 ? publicKeyTag : [NSString stringWithFormat:@"org.kaaproject.kaa.%@.publickey", APP_PREFIX];
+    return [publicKeyTag dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 + (SecKeyRef)storePublicKey:(NSData *)publicKey withTag:(NSData *)tag {
@@ -260,10 +263,10 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 
 + (void)deleteExistingKeyPair {
     DDLogDebug(@"%@ Goint to remove default private key", TAG);
-    [self removeKeyByTag:[self defaultPrivateKeyTag]];
+    [self removeKeyByTag:[self privateKeyTag]];
     
     DDLogDebug(@"%@ Goint to remove default public key", TAG);
-    [self removeKeyByTag:[self defaultPublicKeyTag]];
+    [self removeKeyByTag:[self publicKeyTag]];
 }
 
 + (SecKeyRef)getKeyRefWithPersistentKeyRef:(CFTypeRef)persistentRef {

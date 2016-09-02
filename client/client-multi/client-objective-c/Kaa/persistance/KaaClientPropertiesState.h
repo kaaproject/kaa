@@ -18,6 +18,7 @@
 #import "KaaClientState.h"
 #import "KAABase64.h"
 #import "KaaClientProperties.h"
+#import "KaaDefaults.h"
 
 #define STATE_FILE_DEFAULT  @"state.properties"
 

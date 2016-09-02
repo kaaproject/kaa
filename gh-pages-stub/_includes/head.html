@@ -30,6 +30,64 @@
   <script src="//cdn.rawgit.com/noelboss/featherlight/1.4.1/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
   <script>
   $(document).ready(function(){
+          var max = 320;
+	  var min = 120;
+	  var winWidth = window.innerWidth;
+	  
+	  function supports_html5_storage() {
+		try {
+		  return 'localStorage' in window && window['localStorage'] !== null;
+		} catch(e) {
+		  return false;
+		}
+	  }
+	  
+	  function saveSplitState(x) {
+	    if (supports_html5_storage()){
+		  localStorage.setItem("splitBar", x);
+		}
+	  }
+	  
+	  function setSplitBarWidth(x) {
+		if (x < max) {
+		  if (x < min) {
+		  $('#sidebar').css("width", 0);
+		  $('#search').css("width", 0);
+		  $('#main').css("width", 100 + '%');
+		  } else {
+		  $('#sidebar').css("width", (x/winWidth * 100) + "%");
+		  $('#search').css("width", (x/winWidth * 100) + "%");
+		  $('#main').css("width", ((winWidth - x)/winWidth * 100) + "%");
+		  }
+		} else {
+		  $('#sidebar').css("width", (max/winWidth * 100) + "%");
+		  $('#search').css("width", (max/winWidth * 100) + "%");
+		  $('#main').css("width", ((winWidth - max)/winWidth * 100) + "%");
+		}	    
+	  }
+	  
+	  if (localStorage["splitBar"]) {
+		setSplitBarWidth(localStorage["splitBar"]);
+	  }
+	  
+	  $(window).resize(function() {
+		winWidth = window.innerWidth;
+	  });
+
+	  $('#split-bar').mousedown(function (e) {
+		e.preventDefault();
+		$(document).mousemove(function (e) {
+			e.preventDefault();
+			var x = e.pageX - $('#sidebar').offset().left;
+			setSplitBarWidth(x);
+			saveSplitState(x);
+		});
+	  });
+	  
+	  $(document).mouseup(function (e) {
+		$(document).unbind('mousemove');
+	  });
+	  
 	  $('.content img').click(function(){
 		var content = $(this).attr('src');
 		$.featherlight(content);

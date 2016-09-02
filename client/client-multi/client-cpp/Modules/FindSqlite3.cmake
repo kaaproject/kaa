@@ -13,6 +13,9 @@
 
 # try to use framework on mac
 # want clean framework path, not unix compatibility path
+
+message("\nLooking for SQLite3 C++ headers and libraries")
+
 IF (APPLE)
   IF (CMAKE_FIND_FRAMEWORK MATCHES "FIRST"
       OR CMAKE_FRAMEWORK_PATH MATCHES "ONLY"

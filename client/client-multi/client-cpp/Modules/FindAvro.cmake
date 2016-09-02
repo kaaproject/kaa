@@ -28,50 +28,46 @@
 message("\nLooking for Avro C++ headers and libraries")
 
 if(NOT WIN32)
-  include(FindPkgConfig)
-  if(PKG_CONFIG_FOUND)
-
-	pkg_check_modules(PC_AVRO avro-cpp)
-	set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
-
-  endif(PKG_CONFIG_FOUND)
+    include(FindPkgConfig)
+    if(PKG_CONFIG_FOUND)
+	    pkg_check_modules(PC_AVRO avro-cpp)
+	    set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
+    endif(PKG_CONFIG_FOUND)
 endif(NOT WIN32)
 
-find_path(AVRO_INCLUDE_DIR 
+find_path(AVRO_INCLUDE_DIR
      avro/Encoder.hh
      HINTS
      ${CMAKE_FIND_ROOT_PATH}/include
      ${PC_AVRO_INCLUDEDIR}
-     ${PC_AVRO_INCLUDE_DIRS}
-     ${CMAKE_INCLUDE_PATH}
-)
+     ${PC_AVRO_INCLUDE_DIRS})
 
 if(Avro_USE_STATIC_LIBS)
     set(AVRO_LOOK_FOR_LIB_NAMES avrocpp_s)
-else()
+else(Avro_USE_STATIC_LIBS)
     set(AVRO_LOOK_FOR_LIB_NAMES avrocpp)
-endif()
-        
+endif(Avro_USE_STATIC_LIBS)
+
 find_library(AVRO_LIBRARY
     NAMES
     ${AVRO_LOOK_FOR_LIB_NAMES}
     PATHS
     ${CMAKE_FIND_ROOT_PATH}/lib
     ${PC_AVRO_LIBDIR}
-    ${PC_AVRO_LIBRARY_DIRS}
-)
+    ${PC_AVRO_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 
-# handle the QUIETLY and REQUIRED arguments and set Avro_FOUND to TRUE
+# handle the QUIETLY and REQUIRED arguments and set AVRO_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(Avro
     DEFAULT_MSG
     AVRO_LIBRARY
-    AVRO_INCLUDE_DIR
-)
+    AVRO_INCLUDE_DIR)
 
-mark_as_advanced(AVRO_INCLUDE_DIR AVRO_LIBRARY)
+mark_as_advanced(AVRO_FOUND
+    AVRO_INCLUDE_DIR
+    AVRO_LIBRARY)
 
 if(AVRO_FOUND)
     set(AVRO_LIBRARIES ${AVRO_LIBRARY})
@@ -84,4 +80,4 @@ if(AVRO_FOUND)
 
     message(STATUS "Include directories: ${AVRO_INCLUDE_DIRS}")
     message(STATUS "Libraries: ${AVRO_LIBRARIES}")
-endif()
+endif(AVRO_FOUND)

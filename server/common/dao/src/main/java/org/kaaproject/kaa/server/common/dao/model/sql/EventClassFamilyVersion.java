@@ -22,7 +22,6 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_TIME;
@@ -42,8 +40,7 @@ public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersio
 
     private static final long serialVersionUID = -7490111487256831990L;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID, nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecfv")
     private List<EventClass> records;
 
     @Column(name = EVENT_CLASS_FAMILY_VERSION_VERSION)
