@@ -18,11 +18,11 @@ package org.kaaproject.kaa.server.transport;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
- * Converts a range expression ("1-3, 2-7, 15") into a sequence of numbers from that range
+ * Converts a range expression ("1-3") into a sequence of numbers from that range ([1, 2, 3]).
+ * If ranges overlap it returns only unique numbers. E.g: "1-3, 2-5" => (1, 2, 3, 4, 5).
  *
  * @author Oleg Klishch
  * 
@@ -42,7 +42,7 @@ public final class RangeExpressionParser {
         List<Integer> numbersFromRanges = new ArrayList<>();
         List<Range> ranges = parseRanges(expression);
         for (Range range : mergeRanges(ranges)) {
-            for (int i = range.getFrom(); i <= range.getTo(); i++) {
+            for (int i = range.from; i <= range.to; i++) {
                 numbersFromRanges.add(i);
             }
         }
@@ -76,11 +76,11 @@ public final class RangeExpressionParser {
         }
 
         List<Range> mergedRanges = new ArrayList<>();
-        Collections.sort(ranges, new RangeComparator());
+        Collections.sort(ranges);
         Range currentRange = ranges.get(0);
         for (int i = 1; i < ranges.size(); i++) {
-            if (currentRange.getTo() >= ranges.get(i).getFrom()) {
-                currentRange.setTo(Math.max(currentRange.getTo(), ranges.get(i).getTo()));
+            if (currentRange.to >= ranges.get(i).from) {
+                currentRange.to = Math.max(currentRange.to, ranges.get(i).to);
             } else {
                 mergedRanges.add(currentRange);
                 currentRange = ranges.get(i);
@@ -90,42 +90,23 @@ public final class RangeExpressionParser {
         return mergedRanges;
     }
 
-    private static class Range {
+    private static class Range implements Comparable<Range> {
 
-        private int from;
-        private int to;
+        public int from;
+        public int to;
 
         private Range(int from, int to) {
             this.from = from;
             this.to = to;
         }
         
-        public int getFrom() {
-            return from;
-        }
-
-        public void setFrom(int from) {
-            this.from = from;
-        }
-
-        public int getTo() {
-            return to;
-        }
-
-        public void setTo(int to) {
-            this.to = to;
-        }
-    }
-
-    private static class RangeComparator implements Comparator<Range> {
-
         @Override
-        public int compare(Range first, Range second) {
-            int cmp = Integer.compare(first.getFrom(), second.getFrom());
+        public int compareTo(Range other) {
+            int cmp = Integer.compare(from, other.from);
             if (cmp != 0) {
                 return cmp;
             }
-            return Integer.compare(second.getTo(), second.getTo());
+            return Integer.compare(to, other.to);
         }
     }
 }
