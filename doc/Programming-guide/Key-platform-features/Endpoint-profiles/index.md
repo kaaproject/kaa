@@ -25,7 +25,7 @@ The structure of the system part is identical across the applications and is use
 
 ## Client-side EP profile
 
-Client developer uses CTL to select a schema for the client-side EP profile.
+Client developer uses CTL to select a schema as the structure for the initial client-side EP profile data.
 Then, the client-side endpoint profile is generated during [registration of a new endpoint]({{root_url}}Programming-guide/Key-platform-features/Devices-provisioning-and-registration/#endpoint-registration).
 
 The client-side endpoint profile can be updated at run time using an SDK API call.
@@ -100,16 +100,13 @@ You can create complex filters by combining as many filtering conditions as need
 
 ### Setting client-side EP profile schema
 
-To view the list of CT schemas used for the client-side endpoint profile, log in to [Administration UI]({{root_url}}Glossary/#administration-ui) and click **Tenant CTL**.
+To view the list of all CT schemas available for a tenant, log in to [Administration UI]({{root_url}}Glossary/#administration-ui) and click **Tenant CTL**.
 
-To export a CT schema:
+To view the list of CT schema references for a particular application, open the the **Client-side EP profile** page under the **Schemas** section of the application.
 
-1. Log in to the Administration UI as a tenant developer using the default **devuser** username and **devuser123** password.
+<img src="admin-ui/Client-side endpoint profile schema.png">
 
-2. Click **Tenant CTL** and slect the CT schema from the list by clicking the corresponding row.
-
-3. On the **Common type details** page, click the **Export** button and choose the export method from the drop-down list.
-For more information about the schema export methods, see [CT import and export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-import-and-export).
+To set your client-side EP profile schema, you can export an existing CT schema or create a new one.
 
 As a tenant developer, you can create new client-side EP schemas for your application as follows:
 
