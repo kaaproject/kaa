@@ -77,7 +77,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>org.kaaproject.data_migration.MigrateData</mainClass>
+                            <mainClass>org.kaaproject.datamigration.MigrateData</mainClass>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>
@@ -91,7 +91,6 @@
                 <version>3.0.2</version>
                 <configuration>
                     <excludes>
-                        <exclude>doc/**</exclude>
                         <exclude>script/**</exclude>
                     </excludes>
                 </configuration>
