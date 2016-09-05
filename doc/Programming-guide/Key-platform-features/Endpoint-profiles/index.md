@@ -297,7 +297,7 @@ profile->destroy(profile);
 
 Server-side profile schema is a set of your endpoint properties the are controlled by your server-side applications.
 For example, client subscription plan, device activation flag, etc.
-You can also use server-side endpoint profile to store properties that are set during device manufacturing and should not be controlled by client application.
+You can also use server-side endpoint profile to store properties that may be set during device manufacturing and should not be controlled by client application.
 
 The server-side endpoint profile is initially generated at the stage of a new endpoint registration.
 By default, server-side profile record is [auto-generated]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#records-auto-generation) based on the latest server-side profile schema of a particular application.
