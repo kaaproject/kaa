@@ -17,8 +17,9 @@ Using CTL allows for consistent schema management within a [Kaa instance]({{root
 
 ## CT definitions and FQNs
 
+Schemas used in Kaa are based on the [Apache Avro](http://avro.apache.org) format.
 Every CT is identified by **Fully qualified name (FQN)**.
-FQN is a combination of namespace and name attributes defined in the root Avro record of a CT schema in compliance with [Apache Avro specification](http://avro.apache.org/docs/current/spec.html#names).
+FQN is a combination of namespace and name attributes defined in the root Avro record of a CT schema.
 Each CT contains a set of CT schemas with the same FQN and different versions.
 A CT schema ID is the combination of the schema FQN and version.
 Any CT schema ID is unique across the CT.
@@ -58,8 +59,8 @@ Thus, CT schemas are nodes in a directed acyclic graph of dependencies.
 CTs can be defined within these scopes: **system**, **tenant**, and **application**.
 Scopes impact the visibility of CTs.
 For example, a CT defined for [application]({{root_url}}Glossary/#kaa-application) A is not visible for application B.
-Any FQN is unique within its scope.
-Attempting to create a CT with an FQN that already exists in the scope will result in an error.
+Any FQN is unique within its CT scope.
+Attempting to create a CT with an FQN that already exists in the same scope will result in an error.
 
 >**IMPORTANT:** You can create a CT with an FQN that already exists in other scope, but this is not recommended.
 >Attempting to do so will result in a warning message.
@@ -93,25 +94,6 @@ As [Tenant developer]({{root_url}}Glossary/#tenant-developer), you can get the l
 In addition, Tenant developer can get the list of available application CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getApplicationLevelCTLSchemasByAppToken) call or by clicking **Application CTL** on the **Administration UI** page.
 Use the **Display higher scopes** checkbox to toggle visibility of the system and tenant CTs.
 
-### Create a new CT
-
-To create a new CT:
-
-- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call.
-
-OR
-
-- Open the **Administration UI** page, select the corresponding CTL and click the **Add new type** button.
-
->**NOTE:** Kaa administrator creates new system CTs.
->Tenant administrator creates new tenant CTs.
->Tenant developer creates new application CTs.
-{:.note}
-
-In the **Add new type** window, fill in all the required fields and click **Add**.
-
-![Create Tenant CTL](attach/create_tenant_ctl.png)
-
 ### View CT details
 
 To view the CT details:
@@ -127,6 +109,29 @@ The **Common type details** page will open.
 
 To view another version of the CT, select it form the **Version** drop-down list.
 To create a new version of the CT, click **Create new version**.
+
+### Create a new CT
+
+To create a new CT:
+
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call.
+
+OR
+
+- Open the **Administration UI** page, select the corresponding CTL and click the **Add new type** button.
+
+If you want to import a schema file, click **Browse**, select a .json file containing your schema, click **Upload**, then click **Add**
+
+![CTL Import](attach/ctl_import.png)
+
+>**NOTE:** Kaa administrator creates new system CTs.
+>Tenant administrator creates new tenant CTs.
+>Tenant developer creates new application CTs.
+{:.note}
+
+In the **Add new type** window, fill in all the required fields and click **Add**.
+
+![Create Tenant CTL](attach/create_tenant_ctl.png)
 
 ### Delete CT schemas
 
@@ -158,20 +163,10 @@ To do this, you can use the [REST API]({{root_url}}Programming-guide/Server-REST
 
 The CT (including all its versions) is now available in the **Tenant** scope.
 
->**NOTE:** You cannot promote a CT from the **Application** scope if there is a CT in the **Tenant** scope with the same FQN.
+>**NOTE:** You cannot promote a CT from the **Application** scope if there is a CT in the **Tenant** scope with the same FQN, or if the CT in question has dependencies on other CTs in the **Application** scope.
 {:.note}
 
-### CT schema import and export
-
-To import a CT schema:
-
-- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call.
-
-OR
-
-- Create a new CT using the **Administration UI** (see [Create a new CT](#create-a-new-ct)).
-On the **Add new type** page, click **Browse**, select a .json file containing your schema, click **Upload**, then click **Add**.
-![CTL Import](attach/ctl_import.png)
+### CT schema export
 
 To export a CT schema:
 
@@ -190,10 +185,9 @@ There are four options for CT schema export:
 * **flat**: exports the CT schema file and a file with all referenced CTs inline.
 * **library**: exports .jar archive containing the CT schema and all referenced CTs as compiled java classes.
 
->**NOTE:** The java library provides all necessary java structures, including the nested types, in compliance with the CT schema.
->You can use these java classes in external applications.
->For example, you can serialize binary log records generated by data collection process.
-{:.note}
+The java library provides all necessary java structures, including the nested types, in compliance with the CT schema.
+You can use these java classes in external applications.
+For example, you can serialize binary log records generated by data collection process.
 
 ## Further reading
 * [Apache Avro](http://avro.apache.org)
