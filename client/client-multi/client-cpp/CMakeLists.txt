@@ -221,7 +221,7 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
     list(APPEND KAA_COMPILE_OPTIONS 
                     -Wall
-                    -std=c++11) 
+                    -std=gnu++11) 
 endif()
 
 #
@@ -448,10 +448,10 @@ if(WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
             dbghelp)
 endif()
 
-if(NOT WIN32)
+if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
     set(KAA_THIRDPARTY_LIBRARIES
             ${KAA_THIRDPARTY_LIBRARIES}
-            pthread)
+            socket)
 endif()
 
 set(KAA_SOURCE_FILES
