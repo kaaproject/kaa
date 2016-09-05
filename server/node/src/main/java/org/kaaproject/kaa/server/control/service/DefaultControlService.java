@@ -64,6 +64,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
@@ -115,6 +116,8 @@ import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceRegistry;
 import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
+import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
 import org.kaaproject.kaa.server.thrift.Neighbors;
@@ -157,6 +160,9 @@ public class DefaultControlService implements ControlService {
      * @see #exportCTLSchemaFlatAsLibrary(CTLSchemaDto)
      */
     private static final String CTL_LIBRARY_EXPORT_TEMPLATE = "{0}.v{1}";
+
+    @Autowired
+    private DeltaService deltaService;
 
     /** The user service. */
     @Autowired
@@ -2361,5 +2367,34 @@ public class DefaultControlService implements ControlService {
             Integer schemaVersion,
             String tenantId) {
         return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,tenantId);
+    }
+
+    @Override
+    public String findUserConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+        EndpointProfileDto endpointProfileDto = profileService.findEndpointProfileByEndpointKeyHash(endpointKeyHash);
+
+                       ConfigurationDto configuration = configurationService.findConfigurationByAppIdAndVersion(endpointProfileDto.getApplicationId()
+                                       ,endpointProfileDto.getConfigurationVersion());
+
+                        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(configuration.getSchemaId());
+               Schema schema = ctlService.flatExportAsSchema(ctlSchemaDto);
+                String endConf = null;
+               String appToken;
+               try {
+                        appToken = applicationService
+                                        .findAppById(endpointProfileDto.getApplicationId())
+                                        .getApplicationToken();
+                        byte[] config = deltaService
+                                        .getConfiguration(appToken,
+                                              Base64Util.encode(endpointProfileDto.getEndpointKeyHash()),
+                                                endpointProfileDto)
+                                       .getConfiguration();
+                       endConf = GenericAvroConverter.toJson(config, schema.toString());
+               } catch (GetDeltaException e) {
+                        LOG.error("Could not retrieve configuration!");
+                        throw new KaaAdminServiceException("Could not retrieve configuration!!", ServiceErrorCode.INVALID_SCHEMA);
+                   }
+               return endConf;
+
     }
 }

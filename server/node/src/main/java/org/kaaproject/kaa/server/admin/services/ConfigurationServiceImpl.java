@@ -423,6 +423,13 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     }
 
     @Override
+    public String findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+              checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+               return controlService.findUserConfigurationByEndpointKeyHash(endpointKeyHash);
+            }
+
+
+    @Override
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUserId, String appToken, Integer schemaVersion) throws KaaAdminServiceException {
        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         return controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
