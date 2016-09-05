@@ -105,7 +105,7 @@ A simple log schema with the log level, tag, and message.
 
 The default log schema installed for Kaa applications is empty.
 You can configure your own log schema using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
-See also this [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Logging).
+See also this [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Logging).
 
 For the purpose of this guide, we will use a typical log schema structure:
 
@@ -148,7 +148,7 @@ For the purpose of this guide, we will use a typical log schema structure:
 
 To create a new log schema for your application:
 
-1. Log in to the **Administration** page as a Tenant Developer using the default **devuser** username and **devuser123** password.
+1. Log in to the **Administration** page as a tenant developer.
 
 2. Under the **Schemas** section of the application, click **Log**, then click **Add schema**.
 
@@ -228,7 +228,7 @@ The schema for the log record header is defined below:
 
 ### Adding log record header
 
-You can use a log appender to configure the log header data.
+You can use a log appender to configure the header data of a log record.
 
 To do this:
 
@@ -249,7 +249,7 @@ Below is the list of available record header fields:
 |KEYHASH    |A key hash identifying the endpoint which produced the log record.      |
 |VERSION    |Version of the header.                                                  |
 |TIMESTAMP  |Timestamp in milliseconds when logs were uploaded to the Kaa server.    |
-|TOKEN      |[Application token]({{root_url}}Glossary/#application token).           |
+|TOKEN      |[Application token]({{root_url}}Glossary/#application-token).           |
 |LSVERSION  |Version of the log schema.                                              |
 
 ## Log appenders
@@ -275,7 +275,7 @@ If the Kaa node fails to write the logs to the storage, the Kaa client will send
 If there are more than one log appender with the **Confirm delivery** option enabled, the Kaa client will receive a message about successful logs delivery only after each log appender successfully writes its logs to the storage.
 
 2. You set up a log appender with the **Confirm delivery** option disabled.
-The Kaa client will receive a message about successful logs delivery but if the Kaa node fails to write the logs to the external storage, the Kaa client will not be informed about the failure and will not try to send the logs again.
+The Kaa client will receive a message about successful logs delivery to the Kaa node, but if the Kaa node fails to write the logs to the external storage, the Kaa client will not be informed about the failure and will not try to send the logs again.
 As a result, the logs will be lost.
 
 3. You set up a log appender A with the **Confirm delivery** option enabled, and a log appender B with that option disabled.
@@ -293,8 +293,6 @@ To summarize, the delivery confirmation option allows you to have the guaranteed
 There are several default log appender implementations that are available out of the box for each Kaa installation.
 A Kaa developer can add, update, and delete log appenders using the Administration UI or server REST APIs.
 After you added a log appender, make sure you have correctly [configured the data collection feature](#data-collection-api).
-
-See also [data collection demo](#data-collection-demo).
 
 For more information about architecture, configuration and administration of a particular log appender, use the following sections of Kaa documentation.
 
