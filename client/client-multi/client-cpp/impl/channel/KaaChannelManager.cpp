@@ -67,6 +67,11 @@ void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
     }
 }
 
+void KaaChannelManager::onConnected(const EndpointConnectionInfo& connection)
+{
+    context_.getClientStateListener().onConnectionEstablished(connection);
+}
+
 void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
 
     if (isShutdown_) {

@@ -38,23 +38,18 @@
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/context/SimpleExecutorContext.hpp"
-#include "kaa/DummyKaaClientStateListener.hpp"
 #include "kaa/KaaClientProperties.hpp"
 #include "kaa/logging/DefaultLogger.hpp"
 
 namespace kaa {
 
-KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener)
-    : logger_(new DefaultLogger(context->getProperties().getClientId(), context->getProperties().getLogFileName())),
-      context_(context->getProperties(), *logger_, context->getExecutorContext()),
+KaaClient::KaaClient(IKaaClientPlatformContextPtr platformContext, KaaClientStateListenerPtr listener)
+    : logger_(new DefaultLogger(platformContext->getProperties().getClientId(), platformContext->getProperties().getLogFileName())),
+      context_(platformContext->getProperties(), *logger_, platformContext->getExecutorContext(), nullptr,
+               (listener == nullptr) ? std::make_shared<KaaClientStateListener>() : listener),
       status_(new ClientStatus(context_)),
-      stateListener_(listener),
-      platformContext_(context)
+      platformContext_(platformContext)
 {
-    if (!stateListener_) {
-        stateListener_ = std::make_shared<DummyKaaClientStateListener>();
-    }
-
     init();
 }
 
@@ -118,12 +113,12 @@ void KaaClient::start()
                 configurationManager_->init();
 #endif
                 bootstrapManager_->receiveOperationsServerList();
-                stateListener_->onStarted();
+                context_.getClientStateListener().onStarted();
 
                 KAA_LOG_INFO("Kaa client started");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on start: %s") % e.what());
-                stateListener_->onStartFailure(KaaException(e));
+                context_.getClientStateListener().onStartFailure(KaaException(e));
             }
         });
 
@@ -147,12 +142,12 @@ void KaaClient::stop()
             try {
                 channelManager_->shutdown();
                 status_->save();
-                stateListener_->onStopped();
+                context_.getClientStateListener().onStopped();
 
                 KAA_LOG_INFO("Kaa client stopped");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on stop: %s") % e.what());
-                stateListener_->onStopFailure(KaaException(e));
+                context_.getClientStateListener().onStopFailure(KaaException(e));
             }
         });
 
@@ -171,12 +166,12 @@ void KaaClient::pause()
             try {
                 status_->save();
                 channelManager_->pause();
-                stateListener_->onPaused();
+                context_.getClientStateListener().onPaused();
 
                 KAA_LOG_INFO("Kaa client paused");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on pause: %s") % e.what());
-                stateListener_->onPauseFailure(KaaException(e));
+                context_.getClientStateListener().onPauseFailure(KaaException(e));
             }
         });
 
@@ -193,12 +188,12 @@ void KaaClient::resume()
         {
             try {
                 channelManager_->resume();
-                stateListener_->onResumed();
+                context_.getClientStateListener().onResumed();
 
                 KAA_LOG_INFO("Kaa client resumed");
             } catch (std::exception& e) {
                 KAA_LOG_ERROR(boost::format("Caught exception on resume: %s") % e.what());
-                stateListener_->onResumeFailure(KaaException(e));
+                context_.getClientStateListener().onResumeFailure(KaaException(e));
             }
         });
 
