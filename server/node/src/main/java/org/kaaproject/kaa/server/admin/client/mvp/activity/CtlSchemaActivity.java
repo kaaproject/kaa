@@ -248,7 +248,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(), place.getApplicationId(), true, true);
                     } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
                         newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(),
-                                place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, false);
+                                place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
                     }
                     newPlace.setPreviousPlace(place);
                     goTo(newPlace);
