@@ -35,15 +35,16 @@ The following third-party components must be installed on the Intel Edison board
 To install these libraries, proceed as follows:
 
 1. Connect to the board either though the serial terminal or the ssh client.
-Refer to [the official Edison getting started guide](https://software.intel.com/en-us/intel-edison-board-getting-started-guide) for any help required.
+Refer to [the official Edison getting started guide](https://software.intel.com/en-us/iot/library/edison-getting-started) for any help required.
 
-2. Install coreutils.
+2. Install dependencies.
 
    ```
-   opkg install http://repo.opkg.net/edison/repo/core2-32/coreutils_8.22-r0_core2-32.ipk
+   opkg update
+   opkg install coreutils libssp-staticdev libssp-dev
    ```
 
-3. Install Boost (1.54 or higher).
+3. Install Boost.
 
    ```
    wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
@@ -56,10 +57,10 @@ Refer to [the official Edison getting started guide](https://software.intel.com/
 4. Install Avro (1.7.5--1.7.7).
 
    ```
-   wget http://apache.ip-connect.vn.ua/avro/avro-1.7.7/cpp/avro-cpp-1.7.7.tar.gz
-   tar -zxf avro-cpp-1.7.7.tar.gz
-   cd avro-cpp-1.7.7/
-   cmake -G "Unix Makefiles"
+   wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
+   tar -zxf avro-cpp-1.7.5.tar.gz
+   cd avro-cpp-1.7.5/
+   cmake .
    make install
    ```
 
@@ -74,14 +75,10 @@ Refer to [the official Edison getting started guide](https://software.intel.com/
    ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
    ```
 
-6. Install SQLite.
+6. Install SQLite (optionally).
 
    ```
-   wget https://www.sqlite.org/2015/sqlite-autoconf-3081002.tar.gz
-   tar -zxf sqlite-autoconf-3081002.tar.gz
-   cd sqlite-autoconf-3081002/
-   ./configure
-   make install
+   opkg install sqlite3
    ```
 
 ## Creating applications based on C++ SDK
@@ -94,6 +91,7 @@ You can follow [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoin
 On some Edison boards, the build crashes due to the lack of system resources (out of memory).
 If you experience this issue, reduce the number of workers used by the `make`.  
 As example: replace the `make -j4` for `make`.
+
 
 ## Cross compiling applications based on C++ SDK
 
@@ -115,7 +113,7 @@ The 3rd party conponents listed above have to be cross-compiled before building 
         sed -r 's/(using\s+gcc)(\s+;)/\1: : i586-poky-linux-g++ : <compileflags>-m32 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -mstackrealign -fno-omit-frame-pointer --sysroot=$SDKTARGETSYSROOT\2/g' -i project-config.jam
         ./b2 install --prefix=$SDKTARGETSYSROOT/usr/local
 
-    Copy `$SDKTARGETSYSROOT/usr/local/lib/libboost_*` object files to Edison's `/usr/local/lib` directory (e.g. using SSH, SCP, etc.).
+    Copy `${SDKTARGETSYSROOT}/usr/local/lib/libboost_*` object files to Edison's `/usr/local/lib` directory (e.g. using SSH, SCP, etc.).
 
 2. Install Avro for host and target. Also Avro depends on some Boost components. So they need to be installed too.
 
@@ -145,6 +143,8 @@ The 3rd party conponents listed above have to be cross-compiled before building 
         cmake -DCMAKE_INSTALL_PREFIX=$SDKTARGETSYSROOT -DCMAKE_TOOLCHAIN_FILE=../edison.cmake -DEDISON_SDK_ROOT=/opt/poky-edison/1.6.1 ..
         make && make install
         
+    Copy Avro objects files `${SDKTARGETSYSROOT}/usr/lib/libavrocpp*` to `/usr/lib` directory of Edison board.
+        
 6. Build Botan.
 
         source /opt/poky-edison/1.6.1/environment-setup-core2-32-poky-linux
@@ -154,6 +154,8 @@ The 3rd party conponents listed above have to be cross-compiled before building 
         python configure.py --cpu=x86_32 --cc-bin=${CROSS_COMPILE}g++ --prefix=${SDKTARGETSYSROOT}/usr
         make && make install
         ln -rs ${SDKTARGETSYSROOT}/usr/include/botan-1.11/botan ${SDKTARGETSYSROOT}/usr/include/botan
+        
+    Copy Botan object files `${SDKTARGETSYSROOT}/usr/lib/libbotan*` to `/usr/lib` directory of Edison board.
 
 7. [Generate C++ SDK]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk).
 8. Compile C++ SDK.
