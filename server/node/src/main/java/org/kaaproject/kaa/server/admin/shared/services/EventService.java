@@ -27,7 +27,6 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
 import java.util.List;

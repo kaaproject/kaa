@@ -76,7 +76,7 @@ public class EventClassActivity
         }
     }
 
-    private void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback){
+    private void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback) {
         KaaAdmin.getDataSource().getEventClassView(eventClassId, new AsyncCallback<EventClassViewDto>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -91,26 +91,20 @@ public class EventClassActivity
     }
 
     @Override
-    protected void editEntity(EventClassViewDto eventClassViewDto,
-                              AsyncCallback<EventClassViewDto> callback) {
-
-        List<EventClassViewDto> eventClassDtoList = place.getEventClassDtoList();
-        if (eventClassDtoList != null && eventClassViewDto.getCtlSchemaForm() != null) {
-            for (int i = 0; i < eventClassDtoList.size(); i++) {
-                if (eventClassDtoList.get(i).getId() == eventClassViewDto.getId()) {
-                    EventClassDto eventClassDto = eventClassDtoList.get(i).getSchema();
-                    eventClassDto.setName(eventClassViewDto.getSchema().getName());
-                    eventClassDtoList.get(i).setSchema(eventClassDto);
-                    EventClassViewDto updatedECV = eventClassDtoList.get(i);
-                    updatedECV.setSchema(eventClassDto);
-                    eventClassDtoList.set(i, updatedECV);
-                }
+    protected void editEntity(final EventClassViewDto eventClassViewDto,
+                              final AsyncCallback<EventClassViewDto> callback) {
+        KaaAdmin.getDataSource().saveEventClassView(eventClassViewDto, new AsyncCallback<EventClassViewDto>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, EventClassActivity.this.detailsView);
             }
-            place.setEventClassDtoList(eventClassDtoList);
-        } else {
-            place.addEventClassViewDto(eventClassViewDto);
-        }
-        KaaAdmin.getDataSource().saveEventClassView(eventClassViewDto, callback);
+
+            @Override
+            public void onSuccess(EventClassViewDto eventClassViewDto) {
+                place.addEventClassViewDto(eventClassViewDto);
+                callback.onSuccess(eventClassViewDto);
+            }
+        });
     }
 
     @Override

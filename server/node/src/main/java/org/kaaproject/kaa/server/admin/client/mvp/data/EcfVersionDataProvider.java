@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -65,11 +64,10 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
                 int i = 1;
                 for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
                     if (eventClassViewDto.getSchema() != null) {
-                        CTLSchemaMetaInfoDto ctlSchemaMetaInfoDto = eventClassViewDto.getExistingMetaInfo().getMetaInfo();
                         EventClassDto eventClassDto = eventClassViewDto.getSchema();
-                        eventClassDto.setCtlSchemaId(ctlSchemaMetaInfoDto.getId());
                         eventClassDto.setCreatedTime(System.currentTimeMillis());
-                        eventClassDto.setVersion(eventClassViewDto.getExistingMetaInfo().getVersion());
+                        eventClassDto.setFqn(eventClassViewDto.getCtlSchemaForm().getMetaInfo().getFqn());
+                        eventClassDto.setVersion(eventClassViewDto.getCtlSchemaForm().getVersion());
                         eventClassDto.setId(String.valueOf(i++));
                         eventClassDtoList.add(eventClassDto);
                     }
