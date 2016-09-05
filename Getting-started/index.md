@@ -131,8 +131,6 @@ The **Launch Status** page will open.
 11. After launching Kaa Sandbox instance, go to _public domain name of your instance_:9080/sandbox or _public IP of your instance_:9080/sandbox URL.
 Public DNS and IP of your instance are available from your instance description.
 
-<br>
-
 If your Kaa Sandbox interface does not start due to an error, you can see the error details in the Sandbox log records.
 
 The log records are stored in the **/var/log/kaa** directory.
@@ -144,7 +142,7 @@ The log writing system is as follows:
 3. Kaa node writes its logs to the kaa-node.log file.
 This is the most important log file as it contains the most of the information required for an analysis.
 
-Also, there a log file generated per each initialization and each shutdown of a Kaa node and Kaa Sandbox.
+Also, one log file generated per each initialization and each shutdown of a Kaa node and Kaa Sandbox.
 
 </div></div>
 
