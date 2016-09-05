@@ -167,8 +167,9 @@ public abstract class AbstractTransportService implements TransportService {
             md.setMaxSupportedVersion(source.getMaxSupportedVersion());
             List<VersionConnectionInfoPair> connectionInfoList = new ArrayList<VersionConnectionInfoPair>();
             for (int i = md.getMinSupportedVersion(); i <= md.getMaxSupportedVersion(); i++) {
-                connectionInfoList.add(new VersionConnectionInfoPair(i, ByteBuffer.wrap(source.getConnectionInfo(i))));
-
+                for (byte[] connectionInfo : source.getConnectionInfoList(i)) {
+                    connectionInfoList.add(new VersionConnectionInfoPair(i, ByteBuffer.wrap(connectionInfo)));
+                }
             }
             md.setConnectionInfo(connectionInfoList);
             mdList.add(md);
