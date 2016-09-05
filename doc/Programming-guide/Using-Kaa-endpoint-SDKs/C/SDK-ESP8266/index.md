@@ -117,7 +117,7 @@ You are free to set it to whatever you like.
 ## Writing applications
 
 After successful installation of requirements, you can proceed to application development.
-This section shows how to setup minimal Kaa application for ESP8266. You can find the example code on [github]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/).
+This section shows how to setup minimal Kaa application for ESP8266. You can find an example code on [GitHub]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/).
 
 ### Directory structure
 
