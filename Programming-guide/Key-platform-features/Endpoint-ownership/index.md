@@ -10,16 +10,12 @@ sort_idx: 40
 * TOC
 {:toc}
 
-To enable exchanging events between your [endpoints]({{root_url}}Glossary/#endpoint-ep), you need to have those endpoints attached to the same owner.
+In Kaa, users can associate [endpoints]({{root_url}}Glossary/#endpoint-ep) to owners.
 Depending on the [application]({{root_url}}Glossary/#kaa-application), owners can be persons, groups of people, or organizations.
-Some devices have single persons as owners, for example, mobile phones or smart watches.
-Some devices have groups of owners.
 
 For example, if you have a smart TV in your house, all your family members are the users of the smart TV endpoint.
 In this case, your family is the group of people (owner) that own the smart TV, and the smart TV is the endpoint attached to this group.
-You can use the necessary APIs to attach/detach endpoints to/from owners.
-
-To do this, you can use either [owner access token](#using-the-owner-access-token), or [endpoint access token](#using-the-endpoint-access-token).
+To attach/detach endpoints to/from owners, you can use either [owner access token](#using-the-owner-access-token), or [endpoint access token](#using-the-endpoint-access-token).
 
 ## Using the owner access token
 
@@ -37,18 +33,17 @@ There are several default implementations of the owner verifier available out of
 This section contains general information about the architecture, configuration, and administration of the default owner verifiers.
 You can also plug in [custom verifier implementations](#custom-owner-verifier).
 One [Kaa application]({{root_url}}Glossary/#kaa-application) can support multiple owner verifiers.
-You can add a new verifier using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
 
-You can add user verifiers using the **User verifier** page of your application.
+To add a new verifier, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) or open the **User verifier** page of your application.
 
 ![new verifier](Admin-ui/adding-new-verifier.png "new verifier")
 
 ### Trustful owner verifier
 
 This owner verifier implementation always accepts any owner ID and access token and is created for testing and debugging purposes.
-There is no specific configuration for this verifier, because its schema is empty.
-You can add a trustful verifier using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-If you want to use the Administration UI, choose the **trustful verifier** type from the drop-down list on the **Add user verifier details** page.
+Since the verifier schema is empty, there is no specific configuration for this verifier.
+
+To add a trustful verifier, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) or choose the **trustful verifier** type from the drop-down list on the **Add user verifier details** page.
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
 
@@ -63,8 +58,9 @@ It is especially useful for applications that are already integrated with Facebo
 
 #### Configuration ###
 
-The configuration should match the following Avro schema.
 First, create a [facebook application](https://developers.facebook.com/products/login/), then specify its application ID and [secret](https://developers.facebook.com/docs/graph-api/securing-requests) in the configuration.
+
+The following Avro schema defines the configuration.
 
 ```json
 {
@@ -116,7 +112,7 @@ It is especially useful for applications that are already integrated with Google
 
 #### Configuration
 
-The configuration should match the following Avro schema.
+The following Avro schema defines the configuration.
 
 ```json
 {
@@ -145,8 +141,7 @@ The configuration should match the following Avro schema.
 
 #### Administration
 
-To create a Google+ owner verifier, use the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-If you want to use the Administration UI, choose the **Google+ verifier** type from the drop-down list on the **Add user verifier details** page.
+To create a Google+ owner verifier, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) or choose the **Google+ verifier** type from the drop-down list on the **Add user verifier details** page.
 
 ![google verifier](Admin-ui/verifier-google.png "google verifier")
 
@@ -157,7 +152,7 @@ It is especially useful for applications that are already integrated with Twitte
 
 #### Configuration
 
-The configuration should match the following Avro schema.
+The following Avro schema defines the configuration.
 
 ```json 
 {
@@ -177,7 +172,7 @@ The configuration should match the following Avro schema.
         },
         {
             "name": "max_parallel_connections",
-            "displayName": "Maximal number of allowed connections per verifier",
+            "displayName": "Maximum number of allowed connections per verifier",
             "type": "int", "by_default": "5"
         }
     ]
@@ -186,21 +181,20 @@ The configuration should match the following Avro schema.
 
 #### Administration
 
-To create a Twitter owner verifier, use  [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier).
-If you want to use the Administration UI, choose the **Twitter verifier** type from the drop-down list on the **Add user verifier details** page.
+To create a Twitter owner verifier, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) or choose the **Twitter verifier** type from the drop-down list on the **Add user verifier details** page.
 
 ![twitter verifier](Admin-ui/verifier-twitter.png "twitter verifier")
 
 ### Custom owner verifier
 
-You can implement plug in your custom verifiers.
+You can implement a custom plug-in verifier.
 To do this, follow the instructions in [Creating custom owner verifier]({{root_url}}Customization-guide/Kaa-Server/Development-environment-setup/#creating-custom-user-verifier).
 
 
 ## Using the endpoint access token
 
-You can attach new endpoints to an owner using the endpoint that was previously attached to that owner.
-Assume we have a new endpoint B that we want to attach to the owner using the previously attached endpoint A.
+You can use an owner's endpoint to attach new endpoints to that owner.
+Assume you have a new endpoint B that you want to attach to the owner using the previously attached endpoint A.
 
 The process flows as follows:
 
@@ -218,7 +212,7 @@ The process flows as follows:
 
 ### Attach endpoint to owner
 
-To enable sending/receiving events to/from endpoints, [Kaa client]({{root_url}}Glossary/#kaa-client) first attaches the endpoint to the owner as shown in the following examples for different [SDK types]({{root_url}}Glossary/#sdk-type).
+[Kaa client]({{root_url}}Glossary/#kaa-client) attaches the endpoint to the owner as shown in the following examples for different [SDK types]({{root_url}}Glossary/#sdk-type).
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
