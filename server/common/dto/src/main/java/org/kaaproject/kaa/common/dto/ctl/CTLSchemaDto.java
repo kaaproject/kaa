@@ -127,21 +127,31 @@ public class CTLSchemaDto implements HasId, Serializable {
         if (getClass() != obj.getClass())
             return false;
         CTLSchemaDto other = (CTLSchemaDto) obj;
+
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+
         if (dependencySet == null) {
             if (other.dependencySet != null)
                 return false;
         } else if (!dependencySet.equals(other.dependencySet))
             return false;
+
         if (metaInfo == null) {
             if (other.metaInfo != null)
                 return false;
         } else if (!metaInfo.equals(other.metaInfo))
             return false;
+
         if (version == null) {
             if (other.version != null)
                 return false;
         } else if (!version.equals(other.version))
             return false;
+
         return true;
     }
 
