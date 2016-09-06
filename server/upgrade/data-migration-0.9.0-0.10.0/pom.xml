@@ -95,6 +95,7 @@
                     <execution>
                         <configuration>
                             <mainClass>org.kaaproject.kaa.server.datamigration.MigrateData</mainClass>
+                            <filename>data-migration_0.9.0-0.10.0.jar</filename>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>
@@ -108,7 +109,7 @@
                 <version>3.0.2</version>
                 <configuration>
                     <excludes>
-                        <exclude>script/**</exclude>
+                        <exclude>scripts/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
