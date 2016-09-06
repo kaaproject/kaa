@@ -39,6 +39,7 @@ import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
+import org.kaaproject.kaa.server.common.thrift.cli.client.BaseCliThriftClient;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.node.KaaNodeThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
@@ -104,20 +105,23 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
             LOG.error("Interrupted while waiting for thrift to start...", e);
         }
 
-        waitZkConnection();
+        if (waitZkConnection()) {
+            if (getNodeConfig().isControlServiceEnabled()) {
+                controlInitializationService.start();
+            }
+            if (getNodeConfig().isBootstrapServiceEnabled()) {
+                bootstrapInitializationService.start();
+            }
+            if (getNodeConfig().isOperationsServiceEnabled()) {
+                operationsInitializationService.start();
+            }
 
-        if (getNodeConfig().isControlServiceEnabled()) {
-            controlInitializationService.start();
+            LOG.info("Kaa Node Server Started.");
+        } else {
+            LOG.error("Failed to connect to Zookeeper within {} minutes. Kaa Node Server will be stopped.", getNodeConfig().getZkWaitConnectionTime());
+            stopThrift();
         }
-        if (getNodeConfig().isBootstrapServiceEnabled()) {
-            bootstrapInitializationService.start();
-        }
-        if (getNodeConfig().isOperationsServiceEnabled()) {
-            operationsInitializationService.start();
-        }
-        
-        LOG.info("Kaa Node Server Started.");
-        
+
         try {
             thriftShutdownLatch.await();
         } catch (InterruptedException e) {
@@ -126,15 +130,16 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
 
     }
 
-    private void waitZkConnection() {
+    private boolean waitZkConnection() {
         if (!zkClient.isStarted()) {
             zkClient.start();
         }
         try {
             LOG.info("Waiting connection to Zookeeper at ", getNodeConfig().getZkHostPortList());
-            zkClient.blockUntilConnected();
+            return zkClient.blockUntilConnected(getNodeConfig().getZkWaitConnectionTime(), TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             LOG.error("Zookeeper client was interrupted while waiting for connection! ", getNodeConfig().getZkHostPortList(), e);
+            return false;
         }
     }
 
@@ -159,6 +164,22 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         server.stop();
         ThriftExecutor.shutdown();
         
+        LOG.info("Kaa Node Server Stopped.");
+    }
+
+    /**
+     * Stop thrift.
+     *
+     */
+    public void stopThrift() {
+        if (zkClient!=null) {
+            zkClient.close();
+        }
+        if (server!=null) {
+            server.stop();
+        }
+        ThriftExecutor.shutdown();
+
         LOG.info("Kaa Node Server Stopped.");
     }
 

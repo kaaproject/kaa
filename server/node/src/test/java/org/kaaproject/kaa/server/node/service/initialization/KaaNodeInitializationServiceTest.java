@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.node.service.initialization;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stubVoid;
+import static org.mockito.Mockito.when;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.thrift.TMultiplexedProcessor;
@@ -30,8 +33,11 @@ import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftServ
 import org.kaaproject.kaa.server.common.thrift.gen.node.KaaNodeThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.concurrent.TimeUnit;
 
 public class KaaNodeInitializationServiceTest {
 
@@ -129,6 +135,7 @@ public class KaaNodeInitializationServiceTest {
         kaaNodeServerConfig.setControlServiceEnabled(true);
         kaaNodeServerConfig.setBootstrapServiceEnabled(true);
         kaaNodeServerConfig.setOperationsServiceEnabled(true);
+        kaaNodeServerConfig.setZkWaitConnectionTime(5);
 
         ReflectionTestUtils.setField(kaaNodeInitializationService, "kaaNodeServerConfig", kaaNodeServerConfig);
         
@@ -145,8 +152,9 @@ public class KaaNodeInitializationServiceTest {
         bootstrapInitializationService = mock(InitializationService.class);
         operationsInitializationService = mock(InitializationService.class);
         zkClient = mock(CuratorFramework.class);
-        stubVoid(zkClient).toReturn().on().start();
-        stubVoid(zkClient).toReturn().on().blockUntilConnected();
+        doNothing().when(zkClient).start();
+        doNothing().when(zkClient).blockUntilConnected();
+        when(zkClient.blockUntilConnected(anyInt(), any(TimeUnit.class))).thenReturn(true);
 
         ReflectionTestUtils.setField(kaaNodeInitializationService, "controlInitializationService", controlInitializationService);
 
