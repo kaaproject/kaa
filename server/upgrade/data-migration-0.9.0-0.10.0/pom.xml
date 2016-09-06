@@ -4,7 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.kaaproject</groupId>
+
+    <groupId>org.kaaproject.kaa.server</groupId>
     <artifactId>data-migration</artifactId>
     <packaging>jar</packaging>
 
@@ -77,7 +78,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>org.kaaproject.datamigration.MigrateData</mainClass>
+                            <mainClass>org.kaaproject.kaa.server.datamigration.MigrateData</mainClass>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>
