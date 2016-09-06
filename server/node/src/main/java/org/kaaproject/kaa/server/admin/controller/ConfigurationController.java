@@ -400,7 +400,8 @@ public class ConfigurationController extends AbstractAdminController {
                        @ApiResponse(code = 400, message = "The specified url is not valid"),
                        @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
                        @ApiResponse(code = 403, message = "The authenticated user does not have neither TENANT_DEVELOPER nor TENANT_USER role"),
-                       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")}) @RequestMapping(value = "configuration/{endpointKeyHash}", method = RequestMethod.GET)
+                       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "configuration/{endpointKeyHash}", method = RequestMethod.GET)
     @ResponseBody
     public String findEndpointConfigurationByEndpointKeyHash(
         @ApiParam(name = "endpointKeyHash", value = "A unique identifier of the endpoint", required = true)

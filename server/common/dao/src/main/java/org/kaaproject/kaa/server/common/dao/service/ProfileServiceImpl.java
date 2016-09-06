@@ -73,9 +73,12 @@ public class ProfileServiceImpl implements ProfileService {
     private HistoryService historyService;
     @Autowired
     private ServerProfileService serverProfileService;
-    @Autowired
+
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
+    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
+        this.endpointProfileDao = endpointProfileDao;
+    }
 
     @Override
     public List<EndpointProfileSchemaDto> findProfileSchemasByAppId(String applicationId) {

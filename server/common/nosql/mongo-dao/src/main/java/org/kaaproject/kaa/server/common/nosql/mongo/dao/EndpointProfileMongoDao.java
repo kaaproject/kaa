@@ -44,7 +44,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
 
-@Repository
+@Repository("endpointProfileDao")
 public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDao.class);
