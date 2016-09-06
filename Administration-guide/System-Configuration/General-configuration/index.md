@@ -131,15 +131,17 @@ to change it for development or debug process.
 [Log appender provisioning]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders#log-appender-provisioning) or
 [Owner verifier provisioning]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/#owner-verifier-provisioning).
 
-## Public host/port configuration
+## Public host/ports configuration
 
 Kaa server is going to be deployed in cloud service such as AWS, Google Cloud etc.
 After deployment it will have private and public IP address.
-Public IP will be available from the internet on particular port.
+Public IP will be available from the internet on particular ports.
+Kaa allows to specify several public ports or port ranges. E.g: *"publicPorts":"8000-8080, 9090"*.
+It is useful in case when clients have a limited list of ports to which they can connect.
 Private IP will be available within virtual network in cloud service.
 
-Kaa allows you to specify what IP and host/port is used for public and private interface/port for communication with Bootstrap and Operations servers.
-This is useful because once public and private IPs retrieved you have ability to report public IP/port to the client in form of embedded configuration in generated SDK and specify private IP/port where netty binds and serves requests.
+Kaa allows you to specify what IP and host/ports are used for public and private interface/port for communication with Bootstrap and Operations servers.
+This is useful because once public and private IPs retrieved you have ability to report public IP/ports to the client in form of embedded configuration in generated SDK and specify private IP/port where netty binds and serves requests.
 
 There are few configuration files for this purpose:
 
@@ -174,7 +176,7 @@ File operations-http-transport.config :
 "bindInterface":"${transport_bind_interface}",
 "bindPort":9999,
 "publicInterface":"${transport_public_interface}",
-"publicPort":9999,
+"publicPorts":"9999",
 "maxBodySize":524288
 }
 ```
@@ -186,7 +188,7 @@ File operations-tcp-transport.config :
 "bindInterface":"${transport_bind_interface}",
 "bindPort":9997,
 "publicInterface":"${transport_public_interface}",
-"publicPort":9997
+"publicPorts":"9997"
 }
 ```
 
@@ -197,7 +199,7 @@ File bootstrap-http-transport.config :
 "bindInterface":"${transport_bind_interface}",
 "bindPort":9889,
 "publicInterface":"${transport_public_interface}",
-"publicPort":9889,
+"publicPorts":"9889",
 "maxBodySize":524288
 }
 ```
@@ -209,15 +211,15 @@ File bootstrap-tcp-transport.config :
 "bindInterface":"${transport_bind_interface}",
 "bindPort":9888,
 "publicInterface":"${transport_public_interface}",
-"publicPort":9888
+"publicPorts":"9888"
 }
 ```
 
 ### Typical usecase
 
-Given a client, which should communicate with Kaa server. Client has restrictions, for example 80 and 8000 ports are open only.
-In this case client unable to communicate with Kaa server, because default configuration pointed to listen on different ports.
-The solution is, to change config file operations-tcp-transport.config , set *"publicPort":80* for communication with operations server via 80 port and in file bootstrap-tcp-transport.config , set *"publicPort":8000* for communication with bootstrap server via 8000 port.
-If you set up ports forwarding, in this case 80 to 9997 and 8000 to 9888, then there is no need to change bind port values, otherwise change bind ports accordingly.
-After these changes are applied client would be able to reach Kaa server properly.
+Given two clients, which should communicate with Kaa server.
+They have restrictions, for example the first client can connect to 80 and 8000 port and the second client can connect to 80 and 8001 port.
+In this case clients unable to communicate with Kaa server, because default configuration pointed to listen on different ports.
+The solution is, to change config file operations-tcp-transport.config, set *"publicPorts":"80"* for communication with operations server via 80 port and in file bootstrap-tcp-transport.config, set *"publicPorts":"8000-8001"* for communication with bootstrap server via 8000 and 8001 port.
+If you set up ports forwarding, in this case 80 to 9997, 8000 to 9888 and 8001 to 9888, then clients would be able to reach Kaa server properly.
 
