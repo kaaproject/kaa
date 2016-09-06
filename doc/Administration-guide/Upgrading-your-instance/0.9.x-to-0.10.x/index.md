@@ -34,7 +34,7 @@ sort_idx: 10
  In order to update your Kaa server from 0.9.x to 0.10.x follow next steps:
  
  1. Download the Kaa 0.10.0 debian package at [Download Kaa](http://www.kaaproject.org/download-kaa/) page.
- 2. Download the [upgradeKaa090to0100.sh](https://github.com/kaaproject/kaa/blob/v0.10.0/server/upgrade/data-migration-0.9.0-0.10.0/upgradeKaa090to0100.sh) and [data-migration.jar](http://repository.kaaproject.org/repository/releases/org/kaaproject/kaa/server/upgrade/data-migration/0.10.0/db-migration.one-jar.jar) in order to upgrade databases.
+ 2. Download the [upgradeKaa090to0100.sh](https://github.com/kaaproject/kaa/blob/v0.10.0/server/upgrade/data-migration-0.9.0-0.10.0/src/main/resources/scripts/upgradeKaa090to0100.sh) and [data-migration.jar](http://repository.kaaproject.org/repository/releases/org/kaaproject/kaa/server/upgrade/data-migration/0.10.0/data-migration_0.9.0-0.10.0.jar) in order to upgrade databases.
  3. Put all downloaded files to the same directory on the Kaa server.
  4. Execute the command below:
 
