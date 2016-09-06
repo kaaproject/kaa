@@ -74,6 +74,7 @@ public class ObjCEventClassesGenerator {
     private static final String EVENT_FAMILY_FACTORY_IMPORTS_VAR = "\\{event_family_factory_imports\\}";
     private static final String EVENT_FAMILY_FACTORY_PROPERTIES_VAR = "\\{event_family_factory_properties\\}";
     private static final String EVENT_FAMILY_FACTORY_METHODS_VAR = "\\{event_family_factory_methods\\}";
+    public static final String EVENT_CLASS = "EventClass";
 
     private static String eventFamilyHeader;
     private static String eventFamilySource;
@@ -235,6 +236,6 @@ public class ObjCEventClassesGenerator {
         if (fqn == null || fqn.isEmpty()) {
             throw new RuntimeException("Failed to get class name from fqn: " + fqn);
         }
-        return fqn.substring(fqn.lastIndexOf('.') + 1);
+        return EVENT_CLASS + fqn.substring(fqn.lastIndexOf('.') + 1);
     }
 }
