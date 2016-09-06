@@ -428,6 +428,12 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         return controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
     }
 
+    @Override
+    public String findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        return controlService.findUserConfigurationByEndpointKeyHash(endpointKeyHash);
+    }
+
     private void checkSchemaId(String schemaId) throws IllegalArgumentException {
         if (isEmpty(schemaId)) {
             throw new IllegalArgumentException("The schemaId parameter is empty.");

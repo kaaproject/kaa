@@ -386,4 +386,27 @@ public class ConfigurationController extends AbstractAdminController {
             @PathVariable Integer schemaVersion) throws KaaAdminServiceException {
         return  configurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion);
     }
+
+    /**
+     * Get configuration of specific endpoint by endpointKeyHash
+     *
+     * @param endpointKeyHash        the endpoint key hash
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @ApiOperation(value = "Get configuration of specific endpoint by endpointKeyHash",
+            notes="Get configuration of specific endpoint by endpointKeyHash." +
+                    " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "The specified url is not valid"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have neither TENANT_DEVELOPER nor TENANT_USER role"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "configuration/{endpointKeyHash}", method = RequestMethod.GET)
+    @ResponseBody
+    public String findEndpointConfigurationByEndpointKeyHash(
+            @ApiParam(name = "endpointKeyHash", value = "A unique identifier of the endpoint", required = true)
+            @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
+        return  configurationService.findUserEndConfigurationByEndpointKeyHash(endpointKeyHash);
+    }
+
 }

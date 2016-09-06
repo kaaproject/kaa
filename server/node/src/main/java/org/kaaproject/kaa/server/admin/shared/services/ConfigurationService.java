@@ -32,6 +32,7 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -102,4 +103,5 @@ public interface ConfigurationService extends RemoteService {
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion) throws KaaAdminServiceException;
 
+    String findUserEndConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
 }

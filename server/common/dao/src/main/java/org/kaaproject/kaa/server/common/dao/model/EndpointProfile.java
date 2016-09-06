@@ -33,4 +33,6 @@ public interface EndpointProfile extends ToDto<EndpointProfileDto>, HasVersion {
 
     List<String> getSubscriptions();
 
+
+
 }

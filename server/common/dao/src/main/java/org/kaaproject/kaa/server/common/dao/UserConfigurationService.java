@@ -15,7 +15,7 @@
  */
 
 package org.kaaproject.kaa.server.common.dao;
-
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 
 import java.util.List;
@@ -58,4 +58,5 @@ public interface UserConfigurationService {
 
 
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion,String tenantId);
+
 }
