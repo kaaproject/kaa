@@ -13,6 +13,7 @@
         <groupId>org.kaaproject.kaa</groupId>
         <version>0.10.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <dependencies>
