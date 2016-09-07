@@ -10,33 +10,43 @@ sort_idx: 70
 {:toc}
 
 
-The Kaa **Notification subsystem** enables delivery of messages from the Kaa cluster to endpoints (EP). Unlike configuration data that represents the desired EP state, notifications can be thought of as calls for a dynamic EP action. 
-For example, a notification may cause a client application to display a message on the UI (a user notification).
+The Kaa **Notification subsystem** is used to deliver messages from [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) to [endpoints]({{root_url}}Glossary/#endpoint-ep).
+Unlike configuration data that represents the desired endpoint state, notifications are used as calls for a dynamic endpoint action.
+For example, a notification can cause a [Kaa client]({{root_url}}/#kaa-client) to display a UI message (for example, a user notification).
 
-This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox](http://www.kaaproject.org/download-kaa) or a [full-blown Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/) and that you have created at least one [tenant]({{root_url}}Administration-guide/Tenants-and-applications-management/#TODO) and one [application]({{root_url}}Administration-guide/Tenants-and-applications-management/#managing-applications) in Kaa. 
-We also recommend that you review [collecting endpoint profiles guide]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) before you proceed with this guide.
+## Prerequisites
 
-### Basic architecture
+To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
+After that, you need to create a tenant and an application.
+To do this, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
 
-The following diagram illustrates basic entities and data flows in scope of the notification management:
+It is strongly recommended that you first read the [Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) sections before you proceed.
 
-* Notifications are generated based on the [notification schema](#notification-schema) created by the developer for the application 
-* The user or admin sends a notification via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) call or using Administration UI (see [Sending notifications](#sending-notifications)). 
+## Notification management
+
+The following diagram illustrates the basic entities and data flows in scope of the notification management:
+
+* Notifications are generated based on the [notification schema](#notification-schema) configured by the application developer.
+* The user or administrator sends a notification using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) call or the Administration UI (see [Sending notifications](#sending-notifications)). 
 
 ![](images/basic_architecture_notification.png)
 
-### Configuring Kaa
-This section provides guidance on how to configure notifications in Kaa.
+### Notification schema
 
-#### Notification schema
+The Kaa notifications functionality allows transferring any data to endpoints.
+The structure of the notification data is defined by the notification schema selected and configured on the Kaa server.
+The notification schema is defined similarly to the [endpoint profile]({{root_url}}/Programming-guide/Key-platform-features/Endpoint-profiles) schema.
+For mor information about using schemas in Kaa, see [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library).
 
-The Kaa notifications functionality allows transferring any data to endpoints. The structure of the data that is carried by notifications is defined by the notification schema configured on the Kaa server and built into Kaa endpoints. The notification schema is defined similarly to the endpoint profile schema. 
-In addition to the user-defined schema and its version, notifications are characterized by their type that can be either system or user. System notifications are processed by the prepackaged endpoint functions, while user notifications are handed over to the client code via the endpoint API.
+In addition to the [common type]({{root_url}}Glossary/#common-type-ct) schema and its version, notifications are characterized by type that can be either **system** or **user**.
+System notifications are processed by the prepackaged endpoint functions, while user notifications are sent to the Kaa client using the the endpoint API.
 
-Since the data structure requirements may evolve throughout the Kaa-based system lifetime, the Kaa server can be configured to simultaneously handle notification schemas of multiple versions. 
+Since the data structure requirements may evolve throughout the Kaa-based system lifetime, the Kaa server can be configured to simultaneously handle notification schemas of multiple versions.
 In this case, a notification will have multiple schema versions associated with it, as well as multiple sets of notification data so that each schema version is covered. To deliver such a notification to an endpoint, the server chooses the schema version supported by the endpoint.
 
-The default notification schema installed for Kaa applications is empty. For the purpose of this guide, we will use a simple notification schema shown in the following code block.
+The default notification schema installed for Kaa applications is empty.
+
+For the purpose of this guide, we will use a simple notification schema shown in the following code block.
 
 ```json
 { 
@@ -71,7 +81,7 @@ If you want to review the added Avro schema, open the corresponding **Notificati
 
 ![Add Notification Schema 3](images/add_notification_schema_3.png)
 
-#### Notification topics
+### Notification topics
 
 Notifications in Kaa are organized into topics. Each topic may be associated with one or more endpoint groups. To subscribe to a specific notification, endpoints must belong to one or more endpoint groups that are associated with the corresponding notification topic.
 
@@ -101,7 +111,7 @@ To add a new notification topic to the application, do the following:
 this endpoint via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/editTopic) or using [Administration UI](#add-notification-topic-to-endpoint-group).
 
 
-#### Add notification topic to endpoint group
+### Add notification topic to endpoint group
 
 To add a notification topic to the endpoint group, do the following:
 
@@ -151,7 +161,7 @@ Assuming that you have created custom endpoint groups from the [Using endpoint g
     </tr>
 </table>
 
-#### Sending notifications
+### Sending notifications
 To send a notification, you can issue the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) request or Administration UI as described below.
 
 Do the following steps to send a notification:
@@ -170,7 +180,7 @@ The file with the following contents will match the default sandbox notification
 {"message": "Hello from Kaa!"}
 ```
 
-#### Notification pipelines
+### Notification pipelines
 
 Notification pipelines manage individual notifications within a topic. A notification remains queued in the pipeline until its time-to-live (TTL) expires, after which the notification is dropped. The notification pipeline type specifies the scope of notifications delivery. 
 It can be either multicast (targeted to an unbounded number of endpoints) or unicast (targeted to a single specific endpoint).
@@ -184,10 +194,10 @@ Whenever a notification is sent to a topic, it gets added to the corresponding p
 Whenever a notification is sent to a topic, it gets added to the corresponding pipeline with a unique ID. Endpoints independently maintain their pipeline by reporting all received notification IDs. The server removes the notification from the pipeline once it receives a receipt confirmation from the endpoint. 
 Sending a unicast notification requires specifying the endpoint and topic IDs. The endpoint must be subscribed to the specified topic, otherwise an error will be returned.
 
-### Using Notifications SDK API
+## Using Notifications SDK API
 This section provides code samples which illustrate practical usage of notifications in Kaa.
 
-#### Get available topics
+### Get available topics
 To get a list of available topics, do the following:
 
 
@@ -286,7 +296,7 @@ on_topic_list_uploaded(NULL, topics_list);
 
 </div></div>
 
-#### Subscribe to optional topics
+### Subscribe to optional topics
 To receive notifications on some optional topic, at first subscribe to that topic as shown in the following code block:
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-14">Java</a></li>
@@ -430,7 +440,7 @@ error_code = kaa_unsubscribe_from_topics(kaa_client_get_context(kaa_client)->not
 </div></div>
 
 
-#### Subscribe to updates on available topics
+### Subscribe to updates on available topics
 To receive updates for the available topics list, add at least one listener as shown in the following code block (the number of listeners is not limited):
 
 <ul class="nav nav-tabs">
@@ -618,8 +628,7 @@ error_code = kaa_sync_topic_subscriptions(kaa_client_get_context(kaa_client)->no
 
 </div></div>
 
-
-#### Default notification listener
+### Default notification listener
 There are two types of topic notification listeners: the default and topic specific. To receive notifications, add at least one default listener (the number of default listeners is not limited) as shown in the following code block. 
 As a result, the listener will receive notifications from all topics (mandatory topics, as well as optional topics having been subscribed to). 
 
@@ -727,8 +736,7 @@ error_code = kaa_remove_notification_listener(kaa_context_->notification_manager
 
 </div></div>
 
-
-#### Topic specific notification listener
+### Topic specific notification listener
 To receive notifications on some specific topic (either mandatory or optional), you can use topic specific listeners (the number of listeners per topic is not limited) instead of the default listener. 
 To create a topic specific listener, do the following: 
 
