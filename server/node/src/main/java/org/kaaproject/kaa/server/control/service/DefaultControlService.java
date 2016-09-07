@@ -2376,25 +2376,24 @@ public class DefaultControlService implements ControlService {
                        ConfigurationDto configuration = configurationService.findConfigurationByAppIdAndVersion(endpointProfileDto.getApplicationId()
                                        ,endpointProfileDto.getConfigurationVersion());
 
-                        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(configuration.getSchemaId());
-               Schema schema = ctlService.flatExportAsSchema(ctlSchemaDto);
-                String endConf = null;
-               String appToken;
-               try {
-                        appToken = applicationService
-                                        .findAppById(endpointProfileDto.getApplicationId())
-                                        .getApplicationToken();
-                        byte[] config = deltaService
-                                        .getConfiguration(appToken,
+        CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(configuration.getSchemaId());
+        Schema schema = ctlService.flatExportAsSchema(ctlSchemaDto);
+        String endConf = null;
+        String appToken;
+        try {
+            appToken = applicationService
+                                .findAppById(endpointProfileDto.getApplicationId())
+                                .getApplicationToken();
+            byte[] config = deltaService
+                            .getConfiguration(appToken,
                                               Base64Util.encode(endpointProfileDto.getEndpointKeyHash()),
                                                 endpointProfileDto)
                                        .getConfiguration();
-                       endConf = GenericAvroConverter.toJson(config, schema.toString());
-               } catch (GetDeltaException e) {
-                        LOG.error("Could not retrieve configuration!");
-                        throw new KaaAdminServiceException("Could not retrieve configuration!!", ServiceErrorCode.INVALID_SCHEMA);
-                   }
-               return endConf;
-
+            endConf = GenericAvroConverter.toJson(config, schema.toString());
+        } catch (GetDeltaException e) {
+            LOG.error("Could not retrieve configuration!");
+            throw new KaaAdminServiceException("Could not retrieve configuration!!", ServiceErrorCode.INVALID_SCHEMA);
+        }
+        return endConf;
     }
 }
