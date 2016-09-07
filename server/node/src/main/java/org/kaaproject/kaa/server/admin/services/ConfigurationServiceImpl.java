@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
+import static org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode.ITEM_NOT_FOUND;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("configurationService")
@@ -425,7 +426,10 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     @Override
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUserId, String appToken, Integer schemaVersion) throws KaaAdminServiceException {
        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        return controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+
+        EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+        if (userConfigurationDto == null) throw new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND);
+        return userConfigurationDto;
     }
 
     private void checkSchemaId(String schemaId) throws IllegalArgumentException {
