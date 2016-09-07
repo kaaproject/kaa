@@ -19,8 +19,8 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.kaaproject.kaa.common.dto.*;
+
 
 /**
  * The interface Profile service.

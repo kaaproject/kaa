@@ -2370,7 +2370,7 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public String findUserConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+    public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
         EndpointProfileDto endpointProfileDto = profileService.findEndpointProfileByEndpointKeyHash(endpointKeyHash);
 
                        ConfigurationDto configuration = configurationService.findConfigurationByAppIdAndVersion(endpointProfileDto.getApplicationId()

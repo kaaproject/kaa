@@ -406,7 +406,7 @@ public class ConfigurationController extends AbstractAdminController {
     public String findEndpointConfigurationByEndpointKeyHash(
         @ApiParam(name = "endpointKeyHash", value = "A unique identifier of the endpoint", required = true)
         @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
-                return  configurationService.findUserEndConfigurationByEndpointKeyHash(endpointKeyHash);
+                return  configurationService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash);
     }
 
         }
