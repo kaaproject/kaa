@@ -1,0 +1,53 @@
+# Run Kaa IoT using MariaDB and MongoDB
+
+version: '2'
+services:
+  sql:
+    image: mariadb:5.5
+    networks:
+      - back-tier
+    volumes:
+      - sql-data:/var/lib/mysql
+    env_file: mariadb-example.env
+  zookeeper:
+    image: jplock/zookeeper:3.4.8
+    networks:
+      - back-tier
+    volumes:
+      - zookeeper-data:/tmp/zookeeper
+  nosql:
+    image: mongo:3.2
+    networks:
+      - back-tier
+    volumes:
+      - nosql-data:/data/db
+  kaa:
+    image: cburr25/kaa:0.9.0
+    # build: .
+    env_file: ../kaa-example.env
+    environment:
+      - SQL_PROVIDER_NAME=mariadb
+      - NOSQL_PROVIDER_NAME=mongodb # (optional, default: mongodb)
+      - SERVICES_WAIT_TIMEOUT=-1 # Wait forever for Zookeeper and SQL
+    depends_on:
+      - sql
+      - nosql
+      - zookeeper
+    networks:
+      - back-tier
+      - front-tier
+    ports:
+      - "8080:8080"
+      - "9888:9888"
+      - "9889:9889"
+      - "9997:9997"
+      - "9999:9999"
+networks:
+  back-tier:
+    driver: bridge # overlay for Swarm (unreleased update)
+  front-tier:
+    driver: bridge # overlay for Swarm (unreleased update)
+volumes:
+  sql-data:
+  nosql-data:
+  zookeeper-data:

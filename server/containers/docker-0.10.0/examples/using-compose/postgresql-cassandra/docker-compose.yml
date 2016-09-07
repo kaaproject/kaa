@@ -1,0 +1,53 @@
+# Run Kaa IoT using PostgreSQL and MongoDB
+
+version: '2'
+services:
+  sql:
+    image: postgres:9.4
+    networks:
+      - back-tier
+    volumes:
+      - sql-data:/var/lib/postgresql/data/kaa-pgdata
+    env_file: postgres-example.env
+  zookeeper:
+    image: jplock/zookeeper:3.4.8
+    networks:
+      - back-tier
+    volumes:
+      - zookeeper-data:/tmp/zookeeper
+  nosql:
+    image: cassandra:3.0
+    networks:
+      - back-tier
+    volumes:
+      - nosql-data:/data/db
+  kaa:
+    image: cburr25/kaa:0.9.0
+    # build: .
+    env_file: ../kaa-example.env
+    environment:
+      - SQL_PROVIDER_NAME=postgresql
+      - NOSQL_PROVIDER_NAME=cassandra
+      - SERVICES_WAIT_TIMEOUT=-1 # Wait forever for Zookeeper and SQL
+    depends_on:
+      - sql
+      - nosql
+      - zookeeper
+    networks:
+      - back-tier
+      - front-tier
+    ports:
+      - "8080:8080"
+      - "9888:9888"
+      - "9889:9889"
+      - "9997:9997"
+      - "9999:9999"
+networks:
+  back-tier:
+    driver: bridge # overlay for Swarm (unreleased update)
+  front-tier:
+    driver: bridge # overlay for Swarm (unreleased update)
+volumes:
+  sql-data:
+  nosql-data:
+  zookeeper-data:
