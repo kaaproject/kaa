@@ -10,7 +10,7 @@ sort_idx: 70
 {:toc}
 
 
-The Kaa Notification subsystem enables delivery of messages from the Kaa cluster to endpoints (EP). Unlike configuration data that represents the desired EP state, notifications can be thought of as calls for a dynamic EP action. 
+The Kaa **Notification subsystem** enables delivery of messages from the Kaa cluster to endpoints (EP). Unlike configuration data that represents the desired EP state, notifications can be thought of as calls for a dynamic EP action. 
 For example, a notification may cause a client application to display a message on the UI (a user notification).
 
 This guide will familiarize you with the basic concepts of Kaa notifications and programming of the Kaa notification subsystem. It is assumed that you have already set up either a [Kaa Sandbox](http://www.kaaproject.org/download-kaa) or a [full-blown Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/) and that you have created at least one [tenant]({{root_url}}Administration-guide/Tenants-and-applications-management/#TODO) and one [application]({{root_url}}Administration-guide/Tenants-and-applications-management/#managing-applications) in Kaa. 
