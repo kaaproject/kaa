@@ -24,7 +24,6 @@
 #import "KAAUnion.h"
 
 
-
 @interface TopicState : AvroBased
 
 @property(nonatomic) int64_t topicId;

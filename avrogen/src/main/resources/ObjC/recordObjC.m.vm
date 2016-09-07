@@ -69,7 +69,8 @@ $initstring {
 #set ($field_name = $StyleUtils.fixCamelHumps($field.name()))
 #set ($field_schema = $field.schema())
 #if ($TypeConverter.isAvroBoolean($field_schema)) 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %hhd \n", @"$field_name", self.$field.name()]];
+    NSString *fieldBoolVal = ($field_name == true) ? @"true" : @"false";
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@ \n", @"$field_name", fieldBoolVal]];
 #elseif ($TypeConverter.isAvroInt($field_schema))
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"$field_name", self.$field.name()]];
 #elseif ($TypeConverter.isAvroLong($field_schema))
@@ -78,7 +79,7 @@ $initstring {
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %f \n", @"$field_name", self.$field.name()]];
 #elseif ($TypeConverter.isAvroDouble($field_schema))
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %f \n", @"$field_name", self.$field.name()]];
-#elseif ("$field_schema.getType()" == "ENUM")
+#elseif ($TypeConverter.isAvroEnum($field_schema))
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"$field_name", self.$field.name()]];
 #else
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"$field_name", self.$field.name()]];
