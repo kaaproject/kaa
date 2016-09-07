@@ -21,6 +21,7 @@ import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.server.control.service.sdk.CommonSdkUtil;
+import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.slf4j.Logger;
@@ -125,6 +126,7 @@ public class ObjCEventClassesGenerator {
             LOG.debug("Generating schemas for event family {}", efm.getEcfName());
             List<Schema> eventCtlSchemas = new ArrayList<>();
             efm.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
+            leftUniqueEventClassesSchemas(eventCtlSchemas);
             for (Schema ctlSchema : eventCtlSchemas) {
                 try (
                         OutputStream hdrStream = new ByteArrayOutputStream();
@@ -132,6 +134,7 @@ public class ObjCEventClassesGenerator {
                 ) {
 
                     Compiler compiler = new ObjectiveCCompiler(ctlSchema, EVENT_GEN, hdrStream, srcStream);
+                    compiler.setNamespacePrefix(EVENT_CLASS);
                     compiler.generate();
 
                     eventGenHeaderBuilder.append(hdrStream.toString()).append("\n");
@@ -231,6 +234,28 @@ public class ObjCEventClassesGenerator {
 
         return eventSources;
     }
+
+
+    /*
+    * Check each event class on existence of dependencies on other event class.
+    * If such are found than remove them from list to avoid duplication during source generation.
+    * */
+    private static void leftUniqueEventClassesSchemas(List<Schema> eventCtlSchemas) {
+        List<Schema> childSchemas = new ArrayList<>();
+        for (Schema eventCtlSchema : eventCtlSchemas) {
+            List<Schema> schemas = SchemaUtil.getChildSchemas(eventCtlSchema);
+            schemas.remove(eventCtlSchema); // remove parent from list
+            childSchemas.addAll(schemas);
+        }
+        for (Schema childSchema : childSchemas) {
+            for (int i = 0; i < eventCtlSchemas.size(); i++) {
+                if(eventCtlSchemas.get(i).getFullName().equals(childSchema.getFullName()) ) {
+                    eventCtlSchemas.remove(i);
+                }
+            }
+        }
+    }
+
 
     private static String eventFqnToClassName(String fqn) {
         if (fqn == null || fqn.isEmpty()) {
