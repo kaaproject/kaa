@@ -8,7 +8,7 @@ sort_idx: 10
 * TOC
 {:toc}
 
-We follow [Google Java Style](https://google.github.io/styleguide/javaguide.html) in Kaa Java SDK.<br>
+We follow [Google Java Style](https://google.github.io/styleguide/javaguide.html) in Kaa Java SDK.  
 This guide describes tools which we use to check and format a code.
 
 # IntelliJ IDEA plugin
@@ -35,8 +35,8 @@ Use the next [tutorial](http://eclipse-cs.sourceforge.net/#!/install) to install
 We use [check style plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/usage.html) with [configuration for the Google coding conventions](https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml).
 
 # Automatic code formatter
-We use IntelliJ IDEA to reformat Java source code to comply with Google Java Style.<br> 
+We use IntelliJ IDEA to reformat Java source code to comply with Google Java Style.   
 Installing the coding style settings:
 1. Download [intellij java google style](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml).
-2. Go to File>Settings>Editor>Code Style.
+2. Go to *File>Settings>Editor>Code Style*.
 3. Press *Manage* button and import `intellij-java-google-style.xml`.
