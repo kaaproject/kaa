@@ -43,6 +43,7 @@
 , testSupport ? true
 , withTooling ? true
 , withWerror ? false
+, withValgrind ? true
 }:
 
 assert clangSupport -> clang != null;
@@ -107,8 +108,9 @@ in stdenv.mkDerivation {
   ] ++ lib.optional testSupport [
     cmocka
     cppcheck
-    valgrind
     python
+  ] ++ lib.optional withValgrind [
+    valgrind
   ] ++ lib.optional esp8266Support [
     gcc-xtensa-lx106
     esp8266-rtos-sdk
