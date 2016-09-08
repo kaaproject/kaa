@@ -46,13 +46,9 @@ public class ControlNode extends WorkerNodeTracker {
      *
      * @param currentNodeInfo
      *            the current node info
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param retryPolicy
-     *            the retry policy
      */
-    public ControlNode(ControlNodeInfo currentNodeInfo, String zkHostPortList, RetryPolicy retryPolicy) {
-        super(zkHostPortList, retryPolicy);
+    public ControlNode(ControlNodeInfo currentNodeInfo) {
+        super();
         this.currentNodeInfo = currentNodeInfo;
     }
 
@@ -61,17 +57,10 @@ public class ControlNode extends WorkerNodeTracker {
      *
      * @param currentNodeInfo
      *            the current node info
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param sessionTimeoutMs
-     *            session timeout
-     * @param connectionTimeoutMs
-     *            connection timeout
-     * @param retryPolicy
-     *            the retry policy
+     * @param zkClient Zookeeper client
      */
-    public ControlNode(ControlNodeInfo currentNodeInfo, String zkHostPortList, int sessionTimeoutMs, int connectionTimeoutMs, RetryPolicy retryPolicy) {
-        super(zkHostPortList, sessionTimeoutMs, connectionTimeoutMs, retryPolicy);
+    public ControlNode(ControlNodeInfo currentNodeInfo, CuratorFramework zkClient) {
+        super(zkClient);
         this.currentNodeInfo = currentNodeInfo;
     }
 
@@ -127,7 +116,7 @@ public class ControlNode extends WorkerNodeTracker {
     @Override
     public boolean createZkNode() throws IOException {
         try {
-            nodePath = client.create().withMode(CreateMode.EPHEMERAL)
+            nodePath = zkClient.create().withMode(CreateMode.EPHEMERAL)
                     .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
             LOG.info("Created node with path: " + nodePath);
         } catch (NodeExistsException e) {

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -52,6 +52,9 @@ public class ControlZkService {
     @Autowired
     private KaaNodeServerConfig kaaNodeServerConfig;
 
+    @Autowired
+    private CuratorFramework zkClient;
+
     /** The control Zookeeper node. */
     private ControlNode controlZKNode;
 
@@ -73,8 +76,7 @@ public class ControlZkService {
             ControlNodeInfo nodeInfo = new ControlNodeInfo();
             ConnectionInfo connectionInfo = new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), null);
             nodeInfo.setConnectionInfo(connectionInfo);
-            controlZKNode = new ControlNode(nodeInfo, getNodeConfig().getZkHostPortList(), 60 * 1000, 3 * 1000, new RetryUntilElapsed(
-                    getNodeConfig().getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
+            controlZKNode = new ControlNode(nodeInfo, zkClient);
             try {
                 controlZKNode.start();
             } catch (Exception e) {

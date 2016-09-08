@@ -29,9 +29,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.test.Timing;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
@@ -49,86 +53,100 @@ public class BootstrapNodeIT {
     static final int HTTP_ID = 42;
     private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
     private static final String CONTROL_NODE_HOST = "192.168.0.1";
+    private CuratorFramework zkClient;
+    private TestingCluster cluster;
+
+    @Before
+    public void beforeTest() {
+        try {
+            cluster = new TestingCluster(3);
+            cluster.start();
+            zkClient = CuratorFrameworkFactory.newClient(cluster.getConnectString(), buildDefaultRetryPolicy());
+            zkClient.start();
+        } catch (Exception e) {
+            System.err.println("Unable to initialize cluster before test! " + e);
+        }
+    }
+
+    @After
+    public void afterTest() {
+        try {
+            zkClient.close();
+            cluster.close();
+        } catch (Exception e) {
+            System.err.println("Unable to shutdown cluster after test! " + e);
+        }
+    }
 
     @Test
     public void boostrapListenerTest() throws Exception {
         Timing timing = new Timing();
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
-            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
-            controlNode.addListener(mockListener);
-            controlNode.start();
+        ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+        BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            bootstrapNode.start();
-            timing.sleepABit();
+        ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
+        BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
+        controlNode.addListener(mockListener);
+        controlNode.start();
 
-            verify(mockListener).onNodeAdded(bootstrapNodeInfo);
+        BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
+        bootstrapNode.start();
+        timing.sleepABit();
 
-            List<TransportMetaData> transports = bootstrapNodeInfo.getTransports();
-            transports.remove(getHttpTransportMD());
-            bootstrapNode.updateNodeData(bootstrapNodeInfo);
-            timing.sleepABit();
+        verify(mockListener).onNodeAdded(bootstrapNodeInfo);
 
-            verify(mockListener).onNodeUpdated(bootstrapNodeInfo);
+        List<TransportMetaData> transports = bootstrapNodeInfo.getTransports();
+        transports.remove(getHttpTransportMD());
+        bootstrapNode.updateNodeData(bootstrapNodeInfo);
+        timing.sleepABit();
 
-            bootstrapNode.close();
-            timing.sleepABit();
+        verify(mockListener).onNodeUpdated(bootstrapNodeInfo);
 
-            verify(mockListener).onNodeRemoved(bootstrapNodeInfo);
-            bootstrapNode.close();
+        bootstrapNode.close();
+        timing.sleepABit();
 
-            assertTrue(controlNode.removeListener(mockListener));
-            assertFalse(controlNode.removeListener(mockListener));
-            controlNode.close();
-        } finally {
-            cluster.close();
-        }
+        verify(mockListener).onNodeRemoved(bootstrapNodeInfo);
+        bootstrapNode.close();
+
+        assertTrue(controlNode.removeListener(mockListener));
+        assertFalse(controlNode.removeListener(mockListener));
+        controlNode.close();
     }
 
     @Test
     public void outdatedRemovalTest() throws Exception {
         Timing timing = new Timing();
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
-            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
-            controlNode.addListener(mockListener);
-            controlNode.start();
+        ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+        BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            bootstrapNode.start();
-            timing.sleepABit();
+        ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
+        BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
+        controlNode.addListener(mockListener);
+        controlNode.start();
 
-            verify(mockListener).onNodeAdded(bootstrapNodeInfo);
+        BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
+        bootstrapNode.start();
+        timing.sleepABit();
 
-            BootstrapNodeInfo bootstrapNodeInfoWithGreaterTimeStarted = buildBootstrapNodeInfo();
-            BootstrapNode bootstrapNodeWithGreaterTimeStarted = new BootstrapNode(bootstrapNodeInfoWithGreaterTimeStarted, cluster.getConnectString(), buildDefaultRetryPolicy());
+        verify(mockListener).onNodeAdded(bootstrapNodeInfo);
 
-            bootstrapNodeWithGreaterTimeStarted.start();
-            timing.sleepABit();
-            
-            bootstrapNode.close();
-            timing.sleepABit();
-            verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
-            
-            bootstrapNodeWithGreaterTimeStarted.close();
-            timing.sleepABit();
-            verify(mockListener).onNodeRemoved(bootstrapNodeInfoWithGreaterTimeStarted);
+        BootstrapNodeInfo bootstrapNodeInfoWithGreaterTimeStarted = buildBootstrapNodeInfo();
+        BootstrapNode bootstrapNodeWithGreaterTimeStarted = new BootstrapNode(bootstrapNodeInfoWithGreaterTimeStarted, zkClient);
 
-            controlNode.close();
-        } finally {
-            cluster.close();
-        }
+        bootstrapNodeWithGreaterTimeStarted.start();
+        timing.sleepABit();
+
+        bootstrapNode.close();
+        timing.sleepABit();
+        verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
+
+        bootstrapNodeWithGreaterTimeStarted.close();
+        timing.sleepABit();
+        verify(mockListener).onNodeRemoved(bootstrapNodeInfoWithGreaterTimeStarted);
+
+        controlNode.close();
     }
 
     private RetryPolicy buildDefaultRetryPolicy() {

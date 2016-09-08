@@ -42,6 +42,21 @@
     <context:component-scan base-package="org.kaaproject.kaa.server.operations.service.cache.concurrent" />
 
     <util:properties id="properties" location="classpath:/operations/operations-server-test.properties" />
+
+    <!--Zookeeper client configuration-->
+
+    <bean id="zkRetryPolicy" class="org.apache.curator.retry.RetryUntilElapsed">
+        <constructor-arg name="maxElapsedTimeMs" value="#{properties[zk_max_retry_time]}"/>
+        <constructor-arg name="sleepMsBetweenRetries" value="#{properties[zk_sleep_time]}"/>
+    </bean>
+
+    <bean id="zkClient" class="org.apache.curator.framework.CuratorFrameworkFactory" factory-method="newClient">
+        <constructor-arg name="connectString" value="#{properties[zk_host_port_list]}"/>
+        <constructor-arg name="sessionTimeoutMs" value="60000"/>
+        <constructor-arg name="connectionTimeoutMs" value="3000"/>
+        <constructor-arg name="retryPolicy" ref="zkRetryPolicy"/>
+    </bean>
+
     <bean id="cacheService" class="org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService"/>
 
     <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml"/>

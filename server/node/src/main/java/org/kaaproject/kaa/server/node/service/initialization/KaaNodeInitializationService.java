@@ -29,6 +29,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
@@ -38,6 +39,7 @@ import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
+import org.kaaproject.kaa.server.common.thrift.cli.client.BaseCliThriftClient;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.node.KaaNodeThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
@@ -80,7 +82,10 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
     
     @Autowired @Lazy
     private InitializationService operationsInitializationService;
-    
+
+    @Autowired
+    private CuratorFramework zkClient;
+
     /*
      * (non-Javadoc)
      *
@@ -100,24 +105,42 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
             LOG.error("Interrupted while waiting for thrift to start...", e);
         }
 
-        if (getNodeConfig().isControlServiceEnabled()) {
-            controlInitializationService.start();
+        if (waitZkConnection()) {
+            if (getNodeConfig().isControlServiceEnabled()) {
+                controlInitializationService.start();
+            }
+            if (getNodeConfig().isBootstrapServiceEnabled()) {
+                bootstrapInitializationService.start();
+            }
+            if (getNodeConfig().isOperationsServiceEnabled()) {
+                operationsInitializationService.start();
+            }
+
+            LOG.info("Kaa Node Server Started.");
+        } else {
+            LOG.error("Failed to connect to Zookeeper within {} minutes. Kaa Node Server will be stopped.", getNodeConfig().getZkWaitConnectionTime());
+            stopThrift();
         }
-        if (getNodeConfig().isBootstrapServiceEnabled()) {
-            bootstrapInitializationService.start();
-        }
-        if (getNodeConfig().isOperationsServiceEnabled()) {
-            operationsInitializationService.start();
-        }
-        
-        LOG.info("Kaa Node Server Started.");
-        
+
         try {
             thriftShutdownLatch.await();
         } catch (InterruptedException e) {
             LOG.error("Interrupted while waiting for thrift to stop...", e);
         }
 
+    }
+
+    private boolean waitZkConnection() {
+        if (!zkClient.isStarted()) {
+            zkClient.start();
+        }
+        try {
+            LOG.info("Waiting connection to Zookeeper at ", getNodeConfig().getZkHostPortList());
+            return zkClient.blockUntilConnected(getNodeConfig().getZkWaitConnectionTime(), TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            LOG.error("Zookeeper client was interrupted while waiting for connection! ", getNodeConfig().getZkHostPortList(), e);
+            return false;
+        }
     }
 
     /*
@@ -136,10 +159,27 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         if (getNodeConfig().isOperationsServiceEnabled()) {
             operationsInitializationService.stop();
         }
+        zkClient.close();
         
         server.stop();
         ThriftExecutor.shutdown();
         
+        LOG.info("Kaa Node Server Stopped.");
+    }
+
+    /**
+     * Stop thrift.
+     *
+     */
+    public void stopThrift() {
+        if (zkClient!=null) {
+            zkClient.close();
+        }
+        if (server!=null) {
+            server.stop();
+        }
+        ThriftExecutor.shutdown();
+
         LOG.info("Kaa Node Server Stopped.");
     }
 
@@ -282,5 +322,5 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         args.executorService = executorService;
         return new TThreadPoolServer(args);
     }
-    
+
 }
