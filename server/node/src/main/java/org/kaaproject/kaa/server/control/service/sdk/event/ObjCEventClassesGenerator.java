@@ -126,23 +126,22 @@ public class ObjCEventClassesGenerator {
             LOG.debug("Generating schemas for event family {}", efm.getEcfName());
             List<Schema> eventCtlSchemas = new ArrayList<>();
             efm.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
-            leftUniqueEventClassesSchemas(eventCtlSchemas);
-            for (Schema ctlSchema : eventCtlSchemas) {
+
                 try (
                         OutputStream hdrStream = new ByteArrayOutputStream();
                         OutputStream srcStream = new ByteArrayOutputStream()
                 ) {
 
-                    Compiler compiler = new ObjectiveCCompiler(ctlSchema, EVENT_GEN, hdrStream, srcStream);
-                    compiler.setNamespacePrefix(EVENT_CLASS);
+                    Compiler compiler = new ObjectiveCCompiler(eventCtlSchemas, EVENT_GEN, hdrStream, srcStream);
+                    compiler.setNamespacePrefix(efm.getEcfClassName());
                     compiler.generate();
 
                     eventGenHeaderBuilder.append(hdrStream.toString()).append("\n");
                     eventGenSourceBuilder.append(srcStream.toString()).append("\n");
                 } catch (Exception e) {
-                    LOG.error("Got exception while generating object from schema: " + ctlSchema, e);
+                    LOG.error("Got exception while generating event classes for event family: " + efm.getEcfName(), e);
                 }
-            }
+
 
             LOG.error("Processing {}", efm.getEcfName());
             eventFamilyFactoryImports += "#import \"" + efm.getEcfClassName() + ".h\"\n";
@@ -169,7 +168,7 @@ public class ObjCEventClassesGenerator {
             String eventFamilyListenerMethods = "";
 
             for (ApplicationEventMapDto eventMap : efm.getEventMaps()) {
-                String eventClassName = eventFqnToClassName(eventMap.getFqn());
+                String eventClassName = efm.getEcfClassName() + eventFqnToClassName(eventMap.getFqn());
                 if (eventMap.getAction() == ApplicationEventAction.SINK ||
                         eventMap.getAction() == ApplicationEventAction.BOTH) {
                     addSupportedEventClassFqns += eventFamilyAddSupportedFqn
@@ -196,6 +195,7 @@ public class ObjCEventClassesGenerator {
                             .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
                 }
             }
+
             String resultFamilyHeader = eventFamilyHeader
                     .replaceAll(EVENT_FAMILY_NAMESPACE_VAR, efm.getEcfNamespace())
                     .replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName())
@@ -236,31 +236,10 @@ public class ObjCEventClassesGenerator {
     }
 
 
-    /*
-    * Check each event class on existence of dependencies on other event class.
-    * If such are found than remove them from list to avoid duplication during source generation.
-    * */
-    private static void leftUniqueEventClassesSchemas(List<Schema> eventCtlSchemas) {
-        List<Schema> childSchemas = new ArrayList<>();
-        for (Schema eventCtlSchema : eventCtlSchemas) {
-            List<Schema> schemas = SchemaUtil.getChildSchemas(eventCtlSchema);
-            schemas.remove(eventCtlSchema); // remove parent from list
-            childSchemas.addAll(schemas);
-        }
-        for (Schema childSchema : childSchemas) {
-            for (int i = 0; i < eventCtlSchemas.size(); i++) {
-                if(eventCtlSchemas.get(i).getFullName().equals(childSchema.getFullName()) ) {
-                    eventCtlSchemas.remove(i);
-                }
-            }
-        }
-    }
-
-
     private static String eventFqnToClassName(String fqn) {
         if (fqn == null || fqn.isEmpty()) {
             throw new RuntimeException("Failed to get class name from fqn: " + fqn);
         }
-        return EVENT_CLASS + fqn.substring(fqn.lastIndexOf('.') + 1);
+        return fqn.substring(fqn.lastIndexOf('.') + 1);
     }
 }
