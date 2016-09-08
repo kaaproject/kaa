@@ -65,12 +65,9 @@ let
 
     # Submitted patch upstream:
     # https://sourceforge.net/p/astyle/bugs/396/
-    astyle = pkgs.astyle.overrideDerivation (self: {
-      sourceRoot = "astyle";
-      preBuild = ''
-        cd build/${if self.stdenv.cc.isClang then "clang" else "gcc"}
-      '';
+    astyle = pkgs-tools.astyle.overrideDerivation (self: {
       patches = [ ./astyle/max_indent.patch ];
+      patchFlags = "--directory=../.. -p1";
     });
 
     cmocka = pkgs.cmocka.overrideDerivation (oldAttrs: {
