@@ -17,52 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationCtlSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EcfVersionPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EventClassPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.MailPropertiesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilePlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.SystemCtlSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantCtlSchemasPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UpdateUserConfigPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifiersPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.*;
 
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
@@ -174,6 +129,8 @@ public class AppActivityMapper implements ActivityMapper {
                 return new ApplicationCtlSchemasActivity((ApplicationCtlSchemasPlace) place, clientFactory);
             } else if (clazz == CtlSchemaPlace.class) {
                 return new CtlSchemaActivity((CtlSchemaPlace) place, clientFactory);
+            }   else if(clazz == GetUserConfigPlace.class){
+                return new GetUserConfigActivity((GetUserConfigPlace) place,clientFactory);
             }
         }
 

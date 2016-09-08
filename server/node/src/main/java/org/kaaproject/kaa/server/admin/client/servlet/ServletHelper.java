@@ -28,6 +28,15 @@ import com.google.gwt.user.client.Window;
 
 public class ServletHelper implements ServletParams {
 
+    public static void downloadUserConfiguration(String externalUId, String schemaVersion,String appId) {
+        String getUrl = composeURL(KAA_USER_CONFIGURATION_SERVLET_PATH,
+                APPLICATION_ID_PARAMETER + "=" + URL.encodeQueryString(appId),
+                USER_EXTERNAL_ID_PARAMETER + "=" + URL.encodeQueryString(externalUId),
+                CONFIGURATION_SCHEMA_ID + "=" + URL.encodeQueryString(schemaVersion));
+        String url = GWT.getModuleBaseURL() + getUrl;
+        Window.open( url, "_self", "enabled");
+    }
+
     public static void downloadSdk(String key) {
         String getUrl = composeURL(KAA_SDK_SERVLET_PATH,
         SDK_KEY_PARAMETER+"="+URL.encodeQueryString(key));

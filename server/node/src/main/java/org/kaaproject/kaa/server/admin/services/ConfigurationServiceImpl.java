@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import java.text.MessageFormat;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.codehaus.jackson.JsonNode;
@@ -36,6 +37,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
@@ -49,6 +51,8 @@ import org.kaaproject.kaa.server.admin.shared.services.CtlService;
 import org.kaaproject.kaa.server.admin.shared.services.GroupService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
+import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -426,10 +430,30 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     @Override
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUserId, String appToken, Integer schemaVersion) throws KaaAdminServiceException {
        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+            if (userConfigurationDto == null) {
+                throw Utils.handleException(new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND));
+            }
+            return userConfigurationDto;
+        } catch (Exception e){
+            throw Utils.handleException(e);
+        }
+    }
 
-        EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
-        if (userConfigurationDto == null) throw new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND);
-        return userConfigurationDto;
+    @Override
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            String appToken = controlService.getApplication(appId).getApplicationToken();
+            EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,getTenantId());
+            if (userConfigurationDto == null) {
+                throw Utils.handleException(new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND));
+            }
+            return userConfigurationDto;
+        } catch (Exception e){
+            throw Utils.handleException(e);
+        }
     }
 
     private void checkSchemaId(String schemaId) throws IllegalArgumentException {

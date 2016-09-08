@@ -27,7 +27,7 @@ public interface UpdateUserConfigView extends BaseDetailsView {
     HasValue<String> getUserId();
     
     ValueListBox<SchemaInfoDto> getConfigurationSchemaInfo();
-    
+
     HasValue<RecordField> getConfigurationData();
     
 }
