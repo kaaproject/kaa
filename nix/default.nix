@@ -79,9 +79,12 @@ let
       ];
     });
 
-    kaa-client-c = callPackage ./kaa-client-c { cmake = pkgs.cmake-2_8; };
+    # cmake-2.8 doesn't work on Darwin
+    test-cmake = if pkgs.stdenv.isDarwin then pkgs.cmake else pkgs.cmake-2_8;
 
-    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = pkgs.cmake-2_8; };
+    kaa-client-c = callPackage ./kaa-client-c { cmake = test-cmake; };
+
+    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = test-cmake; };
 
     kaa-docs = callPackage ./kaa-docs { };
   };
