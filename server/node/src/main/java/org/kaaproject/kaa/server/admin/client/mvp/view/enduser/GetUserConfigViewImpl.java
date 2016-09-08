@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.server.admin.client.mvp.view.enduser;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -16,9 +31,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaInfoListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-/**
- * Created by pyshankov on 07.09.16.
- */
+
 public class GetUserConfigViewImpl extends BaseDetailsViewImpl implements GetUserConfigView {
 
     private SizedTextBox externalUserId;
