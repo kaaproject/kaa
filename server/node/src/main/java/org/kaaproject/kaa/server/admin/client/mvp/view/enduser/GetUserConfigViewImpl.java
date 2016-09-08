@@ -105,18 +105,18 @@ public class GetUserConfigViewImpl extends BaseDetailsViewImpl implements GetUse
     }
 
     private void updateConfigurationData(SchemaInfoDto value) {
-//        configurationData.setValue(value != null ? value.getSchemaForm() : null);
         fireChanged();
+        configurationSchemaInfo.setValue(value);
     }
 
     @Override
     protected void fireChanged() {
         boolean valid = true;
         valid &= validate();
-        updateDownloadButton(valid, !valid);
+        updateDownloadButton(!valid);
     }
 
-    protected void updateDownloadButton(boolean enabled, boolean invalid) {
+    protected void updateDownloadButton(boolean invalid) {
         if(invalid){
             downloadUserCongigurationButton.setEnabled(false);
         }else {

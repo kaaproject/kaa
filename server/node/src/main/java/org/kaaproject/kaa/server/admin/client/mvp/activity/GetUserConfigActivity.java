@@ -16,9 +16,7 @@ import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-/**
- * Created by pyshankov on 07.09.16.
- */
+
 public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserConfigurationDto, GetUserConfigView, GetUserConfigPlace> {
 
     private String applicationId;
@@ -82,11 +80,9 @@ public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserC
                                 Utils.handleException(caught, detailsView);
                             }
                         });
-
             }
         }));
     }
-
     @Override
     protected void onSave() {
     }
@@ -98,10 +94,8 @@ public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserC
     @Override
     protected void editEntity(EndpointUserConfigurationDto entity, AsyncCallback<EndpointUserConfigurationDto> callback) {
     }
-
     @Override
     protected void bind(EventBus eventBus) {
         super.bind(eventBus);
-
     }
 }
