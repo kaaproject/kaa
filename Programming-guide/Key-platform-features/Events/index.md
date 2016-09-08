@@ -11,7 +11,7 @@ sort_idx: 80
 * TOC
 {:toc}
 
-The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same user (potentially, across different applications). The Kaa event structure is determined by a configurable [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
+The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same owner (potentially, across different applications). The Kaa event structure is determined by a configurable [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
 
 The Kaa Event subsystem provides the following features.
 
@@ -200,16 +200,16 @@ By default, the application is mapped to each event of the ECF as both the sourc
 
 ## Event routing
 
-Events can be sent to a single endpoint (unicast traffic) or to all the event sink endpoints of the given user (multicast traffic).
+Events can be sent to a single endpoint (unicast traffic) or to all the event sink endpoints of the given owner (multicast traffic).
 
-In case of a multicast event, the Kaa server relays the event to all endpoints registered as the corresponding EC sinks during the ECF mapping. If the user's endpoints are distributed over multiple Operation servers, the event is sent to all these Operation servers. Until being expired, thew event remains deliverable for the endpoints that were offline at the moment of the event generation.
+In case of a multicast event, the Kaa server relays the event to all endpoints registered as the corresponding EC sinks during the ECF mapping. If the owner's endpoints are distributed over multiple Operation servers, the event is sent to all these Operation servers. Until being expired, thew event remains deliverable for the endpoints that were offline at the moment of the event generation.
 
-In case of a unicast event, the Kaa server delivers the event to the target endpoint only if the endpoint was registered as the corresponding EC sink during the ECF mapping. The EP SDK supplies API to query the list of endpoints currently registered as the EC sinks under the given user.
+In case of a unicast event, the Kaa server delivers the event to the target endpoint only if the endpoint was registered as the corresponding EC sink during the ECF mapping. The EP SDK supplies API to query the list of endpoints currently registered as the EC sinks under the given owner.
 
 
 ## Event exchange scope
 
-To use events between several endpoints, it is required that those endpoints were attached to the same user (in other words, registered with the same user). Kaa provides necessary APIs to attach/detach endpoints to/from users. To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
+To use events between several endpoints, it is required that those endpoints were attached to the same owner (in other words, registered with the same user). Kaa provides necessary APIs to attach/detach endpoints to/from owners. To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
 
 
 ## Event sequence number
