@@ -36,4 +36,4 @@ jdbc_username=sqladmin
 jdbc_password=admin
 
 # specify jdbc database url
-jdbc_url=jdbc:mysql:failover://10.2.1.118:3306/kaa
+jdbc_url=jdbc:mysql:failover://localhost:3306/kaa
