@@ -71,7 +71,7 @@ The detailed installation instructions can be found below.
 
 1. Prerequisites
 
-        sudo apt-get install autoconf libtool libtool-bin bison build-essential gawk git gperf flex texinfo libtool libncurses5-dev libc6-dev-amd64 python-serial libexpat-dev python-setuptools
+        sudo apt-get install autoconf libtool libtool-bin bison build-essential gawk git gperf flex texinfo libncurses5-dev libc6-dev-amd64 python-serial libexpat-dev python-setuptools
 
 2. Set the `ESPRESSIF_HOME` variable.
 This variable will be used throughout the installation process, and denotes a directory where ESP8266 SDK and toolchain will be placed.
@@ -117,7 +117,7 @@ You are free to set it to whatever you like.
 ## Writing applications
 
 After successful installation of requirements, you can proceed to application development.
-This section shows how to setup minimal Kaa application for ESP8266.
+This section shows how to setup minimal Kaa application for ESP8266. You can find an example code on [GitHub]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/).
 
 ### Directory structure
 
@@ -141,15 +141,16 @@ src/
 
 Some notes:
 
-* `CMakeLists.txt` is a CMake script (see below).
-* `driver/uart.c` and `driver/uart.h` files implement driver for ESP8266 UART interface.
-* The `ld/` directory contains two linker scripts required for ESP8266 applications.
-* You should put generated Kaa C SDK tarball into `kaa/` directory and unpack it:
+* [`CMakeLists.txt`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/CMakeLists.txt) is a CMake script (see below).
+* [`driver/uart.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/driver/uart.c) and [`driver/uart.h`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/driver/uart.h) files implement driver for ESP8266 UART interface.
+* The [`ld/`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/ld) directory contains two linker scripts required for ESP8266 applications.
+* You should create `kaa/` directory, put generated Kaa C SDK tarball into it and unpack the tarball:
 
+        mkdir kaa
         cd kaa && tar zxf kaa-c*.tar.gz
-* `user/user_main.c` contains ESP8266 application entry ponit (`user_init()` function)
+* [`user/user_main.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/user/user_main.c) contains ESP8266 application entry ponit (`user_init()` function)
 and performs ESP8266-specific initizalizations (e.g. initialize UART).
-* `src/kaa_demo.c` is a platofrm-independent source file with minimal Kaa code.
+* [`src/kaa_demo.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/src/kaa_demo.c) is a platofrm-independent source file with minimal Kaa code.
 
 ### Minimal code
 
@@ -191,7 +192,7 @@ static void main_task(void *pvParameters)
 }
 ```
 
-The `main()` function is defined in `src/kaa_demo.c` and starts minimal Kaa client using Kaa C SDK:
+The `main()` function is defined in [`src/kaa_demo.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/src/kaa_demo.c) and starts minimal Kaa client using Kaa C SDK:
 
 ```c
 #include <stddef.h>
@@ -286,7 +287,7 @@ target_include_directories(kaa_demo_s PUBLIC
 
 Next, we should tell CMake what libraries we would like to link with.
 Here the required libraries from ESP8266 RTOS SDK, linker script, and Kaa SDK are specified.
-We also add `ld/` directory to linker search paths to use linker scripts.
+We also add [`ld/`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/ld/) directory to linker search paths to use linker scripts.
 
 ```CMake
 exec_program(xtensa-lx106-elf-gcc .
