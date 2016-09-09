@@ -22,6 +22,7 @@ import org.kaaproject.kaa.avro.avrogen.KaaGeneratorException;
 
 import java.io.OutputStream;
 import java.lang.*;
+import java.util.List;
 import java.util.Map;
 
 public class ObjectiveCCompiler extends Compiler {
@@ -34,6 +35,11 @@ public class ObjectiveCCompiler extends Compiler {
     public ObjectiveCCompiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
         super(schemaPath, outputPath, sourceName);
         setNamespacePrefix("");
+    }
+
+
+    public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+        super(schemas, sourceName, hdrS, srcS);
     }
 
     @Override
@@ -63,7 +69,7 @@ public class ObjectiveCCompiler extends Compiler {
 
     @Override
     protected void doGenerate() {
-        for (Map.Entry<Schema, GenerationContext> cursor : schemaQueue.entrySet()) {
+        for (Map.Entry<Schema, GenerationContext> cursor : schemaGenerationQueue.entrySet()) {
             switch (cursor.getKey().getType()) {
                 case RECORD:
                     processRecord(cursor.getKey(), "ObjC/recordObjC.h.vm", "ObjC/recordObjC.m.vm");
