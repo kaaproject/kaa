@@ -33,6 +33,13 @@
             <servlet-class>org.spring4gwt.server.SpringGwtRemoteServiceServlet</servlet-class>
         </servlet>
 
+
+        <servlet>
+            <servlet-name>kaaUserConfServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.UserConfServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
         <servlet>
             <servlet-name>kaaSdkServlet</servlet-name>
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.SdkServlet</servlet-class>
@@ -95,6 +102,11 @@
             <servlet-name>springGwtRemoteServiceServlet</servlet-name>
             <url-pattern>/kaaAdmin/springGwtServices/*</url-pattern>
             <url-pattern>/login/springGwtServices/*</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaUserConfServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaUserConfServlet</url-pattern>
         </servlet-mapping>
 
         <servlet-mapping>

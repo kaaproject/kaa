@@ -17,6 +17,11 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+
+import com.google.gwt.activity.shared.Activity;
+import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.place.shared.Place;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationCtlSchemasPlace;
@@ -35,7 +40,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EventClassPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.GetUserConfigPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
@@ -59,14 +64,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UpdateUserConfigPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifiersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
 
-import com.google.gwt.activity.shared.Activity;
-import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.place.shared.Place;
 
 public class AppActivityMapper implements ActivityMapper {
 
@@ -174,6 +176,8 @@ public class AppActivityMapper implements ActivityMapper {
                 return new ApplicationCtlSchemasActivity((ApplicationCtlSchemasPlace) place, clientFactory);
             } else if (clazz == CtlSchemaPlace.class) {
                 return new CtlSchemaActivity((CtlSchemaPlace) place, clientFactory);
+            }   else if(clazz == GetUserConfigPlace.class){
+                return new GetUserConfigActivity((GetUserConfigPlace) place,clientFactory);
             }
         }
 
