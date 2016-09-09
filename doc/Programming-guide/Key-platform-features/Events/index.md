@@ -367,7 +367,7 @@ kaaClient->findEventListeners(FQNs, std::make_shared<SimpleFetchEventListeners>(
 </div><div id="c3" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/event.h>
+#include <extensions/event/kaa_event.h>
 #include <kaa/platform/ext_event_listeners_callback.h>
  
 const char *fqns[] = { "org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest"
@@ -520,7 +520,7 @@ tecf.sendEvent(ctc, target);
 </div><div id="c5" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/geb/kaa_thermo_event_class_family.h>
+#include <kaa/gen/kaa_thermo_event_class_family.h>
  
 /* Create and send an event */
 kaa_endpoint_id target_endpoint;
@@ -628,7 +628,7 @@ eventFamilyFactory.removeEventsBlock(trxId);
 </div><div id="c6" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_event.h>
+#include <extensions/event/kaa_event.h>
 #include <kaa/gen/kaa_thermo_event_class_family.h>
  
 kaa_event_block_id transaction_id;
@@ -751,7 +751,7 @@ tecf.addEventFamilyListener(eventsListener);
 </div><div id="c7" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_event.h>
+#include <extensions/event/kaa_event.h>
 #include <kaa/gen/kaa_thermo_event_class_family.h>
  
 void on_thermo_event_class_family_change_temperature_command(void *context, kaa_thermo_event_class_family_change_temperature_command_t *event, kaa_endpoint_id_p source)
