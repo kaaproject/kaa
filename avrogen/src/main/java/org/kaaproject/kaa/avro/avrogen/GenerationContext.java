@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.avro.avrogen;
 
+/*
+* This feature never used, the value is always INOUT
+* */
+@Deprecated
 public class GenerationContext {
     private enum DirectionType {
         IN,

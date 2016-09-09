@@ -52,7 +52,7 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
     @UiField public Label titleLabel;
     @UiField public HorizontalPanel buttonsPanel;
     @UiField public HorizontalPanel supportPanel;
-    @UiField (provided=true) public final ImageTextButton addButton;
+    @UiField (provided=true) public ImageTextButton addButton;
     @UiField (provided=true) public final AlertPanel errorPanel;
     @UiField (provided=true) public final KaaAdminStyle kaaAdminStyle;
     @UiField (provided=true) public final AvroUiStyle avroUiStyle;
@@ -65,7 +65,7 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
 
     public BaseListViewImpl(boolean editable) {
         this.editable = editable;
-        addButton = new ImageTextButton(Utils.resources.plus(), addButtonString());
+        initAddButton();
         errorPanel = new AlertPanel(Type.ERROR);
         kaaAdminStyle = Utils.kaaAdminStyle;
         avroUiStyle = Utils.avroUiStyle;
@@ -80,6 +80,10 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
         addButton.setVisible(editable);
 
         clearError();
+    }
+
+    protected void initAddButton(){
+        addButton = new ImageTextButton(Utils.resources.plus(), addButtonString());
     }
     
     protected void appendToolbarWidget(Widget widget) {

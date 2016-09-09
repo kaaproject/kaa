@@ -26,27 +26,35 @@
 #include <kaa/IKaaClientStateStorage.hpp>
 #include <kaa/context/IExecutorContext.hpp>
 
-
 namespace kaa {
 
 class KaaClientContext : public IKaaClientContext
 {
 public:
-    KaaClientContext(KaaClientProperties &properties, ILogger &logger,
-                     IExecutorContext &executorContext, IKaaClientStateStoragePtr state = nullptr)
-	  : properties_(properties), logger_(logger), executorContext_(executorContext), state_(state) {}
+    KaaClientContext(KaaClientProperties &properties,
+        ILogger &logger,
+        IExecutorContext &executorContext,
+        IKaaClientStateStoragePtr state = nullptr,
+        KaaClientStateListenerPtr stateListener = std::make_shared<KaaClientStateListener>())
+        : properties_(properties),
+          logger_(logger),
+          executorContext_(executorContext),
+          state_(state),
+          stateListener_(stateListener) {}
 
-    virtual KaaClientProperties              &getProperties() { return properties_; }
-    virtual ILogger                              &getLogger() { return logger_; }
-    virtual IKaaClientStateStorage               &getStatus() { return *state_; }
+    virtual KaaClientProperties         &getProperties() { return properties_; }
+    virtual ILogger                     &getLogger() { return logger_; }
+    virtual IKaaClientStateStorage      &getStatus() { return *state_; }
     virtual IExecutorContext            &getExecutorContext() { return executorContext_; }
+    virtual KaaClientStateListener      &getClientStateListener() { return *stateListener_; }
     void  setStatus(IKaaClientStateStoragePtr status) { state_ = status; }
 
 private:
-    KaaClientProperties        &properties_;
-    ILogger                        &logger_;
-    IExecutorContext      &executorContext_;
-    IKaaClientStateStoragePtr        state_;
+    KaaClientProperties       &properties_;
+    ILogger                   &logger_;
+    IExecutorContext          &executorContext_;
+    IKaaClientStateStoragePtr  state_;
+    KaaClientStateListenerPtr stateListener_;
 };
 
 }

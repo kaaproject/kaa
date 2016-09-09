@@ -249,10 +249,8 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
     public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException {
         try {
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+            Utils.checkNotNull(ctlSchemaDto);
             EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
-            eventClassDto.setCreatedTime(System.currentTimeMillis());
-            eventClassDto.setFqn(ctlSchemaDto.getMetaInfo().getFqn());
-            eventClassDto.setTenantId(getCurrentUser().getTenantId());
             return eventClassViewDto;
         } catch (ControlServiceException e) {
             throw Utils.handleException(e);
@@ -322,9 +320,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
         for (EventClassViewDto classViewDto : eventClassViewDto) {
             EventClassDto eventClassDto = classViewDto.getSchema();
             eventClassDto.setId(null);
-            eventClassDto.setFqn(classViewDto.getExistingMetaInfo().getMetaInfo().getFqn());
             eventClassDto.setCreatedUsername(getCurrentUser().getUsername());
-            eventClassDto.setCreatedTime(System.currentTimeMillis());
             eventClassDtoList.add(eventClassDto);
         }
         eventClassFamilyVersionDto.setRecords(eventClassDtoList);

@@ -26,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.kaaproject.kaa.common.dto.credentials.CredentialsStatus.AVAILABLE;
@@ -75,4 +76,20 @@ public class CredentialsCassandraDaoTest extends AbstractCassandraTest {
         Optional<CassandraCredentials> removed = this.credentialsDao.find(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID);
         Assert.assertFalse(removed.isPresent());
     }
+
+    @Test
+    public void testRemoveAllCredentials() {
+        CredentialsDto firstCredentials = this.generateCredentials(CREDENTIALS_APPLICATION_ID, CREDENTIALS_ID,
+                CREDENTIALS_BODY, AVAILABLE);
+        CredentialsDto secondCredentials = this.generateCredentials(CREDENTIALS_APPLICATION_ID.concat("1"), CREDENTIALS_ID,
+                CREDENTIALS_BODY, AVAILABLE);
+
+        List<CassandraCredentials> credentials = credentialsDao.find();
+        Assert.assertEquals(credentials.size(), 2);
+
+        credentialsDao.removeAll();
+        List<CassandraCredentials> removed = credentialsDao.find();
+        Assert.assertTrue(removed.isEmpty());
+    }
+
 }

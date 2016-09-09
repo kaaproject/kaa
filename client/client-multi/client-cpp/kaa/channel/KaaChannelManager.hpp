@@ -57,6 +57,8 @@ public:
 
     virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason);
 
+    virtual void onConnected(const EndpointConnectionInfo& connection);
+
     virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo);
 
     virtual void clearChannelList();

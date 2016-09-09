@@ -124,6 +124,9 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileContainer.java.template";
 
 
+    private static final String DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileContainer.java.template";
+
+
     private static final String PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileSerializer.java.template";
 
 
@@ -143,6 +146,9 @@ public class JavaSdkGenerator extends SdkGenerator {
 
 
     private static final String PROFILE_CONTAINER = "ProfileContainer";
+
+
+    private static final String DEFAULT_PROFILE_CONTAINER = "DefaultProfileContainer";
 
 
     private static final String PROFILE_SERIALIZER = "ProfileSerializer";
@@ -347,6 +353,12 @@ public class JavaSdkGenerator extends SdkGenerator {
                 PROFILE_CLASS_VAR, profileClassName);
         JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(PROFILE_CONTAINER, profileContainerSource);
         javaSources.add(profileContainerClassBean);
+
+        String defaultProfileContainerTemplate = readResource(DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE);
+        String defaultProfileContainerSource = defaultProfileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
+                PROFILE_CLASS_VAR, profileClassName);
+        JavaDynamicBean defaultProfileContainerClassBean = new JavaDynamicBean(DEFAULT_PROFILE_CONTAINER, defaultProfileContainerSource);
+        javaSources.add(defaultProfileContainerClassBean);
 
         String profileSerializerTemplate;
         if (profileSchemaVersion == DEFAULT_PROFILE_SCHEMA_VERSION) {

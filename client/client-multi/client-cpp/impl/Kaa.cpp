@@ -21,14 +21,13 @@
 #include "kaa/KaaClient.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/KaaClientPlatformContext.hpp"
-#include "kaa/DummyKaaClientStateListener.hpp"
 
 namespace kaa {
 
 Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
 
 std::shared_ptr<IKaaClient> Kaa::newClient(IKaaClientPlatformContextPtr context
-                                         , IKaaClientStateListenerPtr listener)
+                                         , KaaClientStateListenerPtr listener)
 {
     if (!context) {
         throw KaaException("Kaa client platform context is null");

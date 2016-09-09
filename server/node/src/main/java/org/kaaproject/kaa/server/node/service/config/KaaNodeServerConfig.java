@@ -42,6 +42,9 @@ public class KaaNodeServerConfig {
     /** The zk host port list. */
     private String zkHostPortList;
 
+    /** Time to connect to ZK. */
+    private int zkWaitConnectionTime;
+
     /** The zk max retry time. */
     private int zkMaxRetryTime;
 
@@ -104,6 +107,15 @@ public class KaaNodeServerConfig {
      */
     public String getZkHostPortList() {
         return zkHostPortList;
+    }
+
+    /**
+     * Time to connect to ZK.
+     *
+     * @return the zkWaitConnectionTime
+     */
+    public int getZkWaitConnectionTime() {
+        return zkWaitConnectionTime;
     }
 
     /**
@@ -187,6 +199,14 @@ public class KaaNodeServerConfig {
      */
     public void setZkHostPortList(String zkHostPortList) {
         this.zkHostPortList = zkHostPortList;
+    }
+
+    /**
+     * @param zkWaitConnectionTime
+     *            the zkWaitConnectionTime to set
+     */
+    public void setZkWaitConnectionTime(int zkWaitConnectionTime) {
+        this.zkWaitConnectionTime = zkWaitConnectionTime;
     }
 
     /**

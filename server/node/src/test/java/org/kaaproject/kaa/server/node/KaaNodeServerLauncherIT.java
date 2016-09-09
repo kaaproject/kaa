@@ -27,6 +27,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
@@ -133,6 +134,7 @@ public class KaaNodeServerLauncherIT {
      *
      * @throws Exception the exception
      */
+    @Ignore("KAA-1281 Kaa node should block startup process if zookeeper is unavailable.")
     @Test
     public void testStartKaaNodeServerApplicationWithoutZkStarted() throws Exception {
         TTransport transport = null;

@@ -38,7 +38,7 @@
 
     <util:properties id="properties"
         location="classpath:/operations/config-server-test.properties" />
-	
+
     <bean id="operationsInitializationService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsInitializationService" />
     <bean id="akkaService" class="org.kaaproject.kaa.server.operations.service.event.ESTestAkkaService" />
     <bean id="operationsService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsService" />

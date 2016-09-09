@@ -17,10 +17,10 @@
 package org.kaaproject.kaa.server.transport;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
@@ -77,9 +77,11 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
     @Override
     public TransportMetaData getConnectionInfo() {
         LOG.info("Serializing connection info");
-        ByteBuffer buf = getSerializedConnectionInfo();
-        LOG.trace("Serialized connection info is {}", Arrays.toString(buf.array()));
-        return new TransportMetaData(getMinSupportedVersion(), getMaxSupportedVersion(), buf.array());
+        List<byte[]> buffs = getSerializedConnectionInfoList();
+        for (byte[] buf : buffs) {
+            LOG.trace("Serialized connection info is {}", Arrays.toString(buf));
+        }
+        return new TransportMetaData(getMinSupportedVersion(), getMaxSupportedVersion(), buffs);
     }
 
     /**
@@ -98,7 +100,7 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
      */
     public abstract Class<T> getConfigurationClass();
 
-    protected abstract ByteBuffer getSerializedConnectionInfo();
+    protected abstract List<byte[]> getSerializedConnectionInfoList();
 
     protected abstract int getMinSupportedVersion();
 

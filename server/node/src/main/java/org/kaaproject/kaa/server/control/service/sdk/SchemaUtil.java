@@ -147,7 +147,7 @@ public class SchemaUtil {
         return map;
     }
     
-    private static List<Schema> getChildSchemas(Schema parent) {
+    public static List<Schema> getChildSchemas(Schema parent) {
         Map<String, Schema> namedSchemaMap = new HashMap<>();
         parseChildSchemas(parent, namedSchemaMap);
         return new LinkedList<Schema>(namedSchemaMap.values());

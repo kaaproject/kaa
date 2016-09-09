@@ -22,9 +22,11 @@
 #define TRANSPORT_POLL_DELAY    @"0"
 #define TRANSPORT_POLL_PERIOD   @"10"
 #define TRANSPORT_POLL_UNIT     @"1"
-#define STATE_FILE_LOCATION     @"state.properties"
 #define SDK_TOKEN               @"O7D+oECY1jhs6qIK8LA0zdaykmQ="
+#define APPLICATION_ID			@"1"
 #define CONFIG_DATA_DEFAULT     @"AFShENouyUD8pVD0DMUS6Hs="
+#define APP_PREFIX              APPLICATION_ID@"."SDK_TOKEN
+#define STATE_FILE_LOCATION     @"state.properties"
 
 static NSString *CONFIG_SCHEMA_DEFAULT = @"QrtXVRW7rbKIljMv5YpiLhHa8HzrYgIQkbfvk+3";
 static NSString *BOOTSTRAP_SERVERS = @"1:1456013202:1:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh//Ocexwg+gkGdsL6spS9O2wCtYNHBClaIDan6QrtXVRW7rbKIljMv5YpiLhHa8HzrYgIQkbfvk+37q3ohjsvGkZJPHbGJnZvB/d2nOy7uVp9iRF8jROmnbB5XxORMEh9zO/7alYjkdz3FS/ZA1aQz3NotXqPiq3Grpd+zo5xUsQFmeSeReh54TwvS/XdGT3O7jSaO+g4k5J7mMQGu1TSazulRx7IEKwl7/AQSt9hCfUYtqpU3icY3rzolz2Eb3kth7rZ39D9jd2LafbgGIxN6bnhF4wtAd4f37fYzxk4oklNFTOf/5JtjgGRZhs4wqpQiKoAD7KXc/AgCnFzmwh9QIDAQAB";

@@ -43,9 +43,24 @@
         <property name="thriftPort" value="#{properties[thrift_port]}" />
         <property name="zkEnabled" value="#{properties[zk_enabled]}" />
         <property name="zkHostPortList" value="#{properties[zk_host_port_list]}" />
+        <property name="zkWaitConnectionTime" value="#{properties[zk_wait_connection_time]}" />
         <property name="zkMaxRetryTime" value="#{properties[zk_max_retry_time]}" />
         <property name="zkSleepTime" value="#{properties[zk_sleep_time]}" />
         <property name="zkIgnoreErrors" value="#{properties[zk_ignore_errors]}" />
+    </bean>
+
+    <!--Zookeeper client configuration-->
+
+    <bean id="zkRetryPolicy" class="org.apache.curator.retry.RetryUntilElapsed">
+        <constructor-arg name="maxElapsedTimeMs" value="#{properties[zk_max_retry_time]}"/>
+        <constructor-arg name="sleepMsBetweenRetries" value="#{properties[zk_sleep_time]}"/>
+    </bean>
+
+    <bean id="zkClient" class="org.apache.curator.framework.CuratorFrameworkFactory" factory-method="newClient">
+        <constructor-arg name="connectString" value="#{properties[zk_host_port_list]}"/>
+        <constructor-arg name="sessionTimeoutMs" value="60000"/>
+        <constructor-arg name="connectionTimeoutMs" value="3000"/>
+        <constructor-arg name="retryPolicy" ref="zkRetryPolicy"/>
     </bean>
 
     <!-- Bootstrap Service -->

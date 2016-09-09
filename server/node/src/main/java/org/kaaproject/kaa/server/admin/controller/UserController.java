@@ -231,6 +231,7 @@ public class UserController extends AbstractAdminController {
                     "specify the user ID. If a user with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role can perform " +
                     "this operation.")
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Some of the mandatory fields are not correct or are empty"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
                     "does not match the Tenant ID of the authenticated user"),
