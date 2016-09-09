@@ -8,8 +8,8 @@ sort_idx: 10
 * TOC
 {:toc}
 
-We follow [Google Java Style](https://google.github.io/styleguide/javaguide.html) in Kaa Java SDK.  
-This guide describes tools which we use to check and format a code.
+Whole Java source code of Kaa project must conform to the [Google Java Style](https://google.github.io/styleguide/javaguide.html).  
+This guide describes tools used to check style and format Java source code.
 
 # IntelliJ IDEA plugin
 [Checkstyle](https://github.com/jshiell/checkstyle-idea) plugin installation:
@@ -29,14 +29,14 @@ Plugin usage:
 2. Select an inspection scope and an inspection profile.
 
 # Eclipse plugin
-Use the next [tutorial](http://eclipse-cs.sourceforge.net/#!/install) to install the checkstyle plugin.
+Follow the next [tutorial](http://eclipse-cs.sourceforge.net/#!/install) to install the checkstyle plugin.
 
 # Maven plugin
-We use [check style plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/usage.html) with [configuration for the Google coding conventions](https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml).
+In order to perform continuous java code style check the [check style maven plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/usage.html) is used with [configuration for the Google coding conventions](https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml).
 
 # Automatic code formatter
-We use IntelliJ IDEA to reformat Java source code to comply with Google Java Style.   
-Installing the coding style settings:
-1. Download [intellij java google style](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml).
+In order to automate Java code formatting it is preferred to use IntelliJ IDEA with appropriate Google Java Style settings.  
+Installing the code style settings:
+1. Download [IntelliJ Java Google Style](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml).
 2. Go to *File>Settings>Editor>Code Style*.
 3. Press *Manage* button and import `intellij-java-google-style.xml`.
