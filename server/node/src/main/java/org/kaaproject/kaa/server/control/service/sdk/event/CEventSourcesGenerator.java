@@ -90,13 +90,17 @@ public class CEventSourcesGenerator {
             context.put("event_family_name", name);
             context.put("EVENT_FAMILY_NAME", NAME);
             context.put("namespacePrefix", NAME_PREFIX_TEMPLATE.replace("{name}", name));
-            List<EventClassDto> records = eventFamily.getRecords();
+
+            List<Schema> records = new ArrayList<>();
+            eventFamily.getRawCtlsSchemas().forEach(rawCtl -> records.add(new Schema.Parser().parse(rawCtl)));
             List<String> emptyRecords = new ArrayList<>();
-            if (records != null) {
-                for (EventClassDto record : records) {
-                    emptyRecords.add(record.getFqn());
+
+            for (Schema record : records) {
+                if (record.getType() == Schema.Type.RECORD && record.getFields() != null && record.getFields().size() == 0) {
+                    emptyRecords.add(record.getFullName());
                 }
             }
+
             context.put("emptyRecords", emptyRecords);
 
             List<String> incomingEventFqns = new ArrayList<>();
