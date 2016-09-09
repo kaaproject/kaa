@@ -10,7 +10,7 @@ sort_idx: 10
 * TOC
 {:toc}
 
-This section discusses the basics of creating Kaa-based applications using the [Kaa Sandbox]({{root_url}}Glossary/kaa-sandbox).
+This section discusses the basics of creating Kaa-based applications using the [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
 Main principles of the Kaa platform operation are examplified by a practical case of collecting data from sensor devices.  
 To learn more about Kaa features, see [Further reading](#further-reading).
 
