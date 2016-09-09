@@ -877,26 +877,22 @@ int main(void) {
 <div id="Objective-C-1" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
- 
 #import "ViewController.h"
 
 @import Kaa;
-
+ 
 @interface ViewController () <KaaClientStateDelegate, ConfigurationDelegate, ProfileContainer>
-
+ 
 @property (nonatomic, weak) IBOutlet UITextView *logTextView;
-
+ 
 @property (nonatomic, strong) id<KaaClient> kaaClient;
-
+ 
 @end
-
+ 
 @implementation ViewController
-
+ 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [self addLogWithText:@"ConfigurationDemo started"];
 
     // Create a Kaa client and add a listener which displays the Kaa client configuration
     // as soon as the Kaa client is started.
@@ -916,12 +912,12 @@ int main(void) {
     // Start the Kaa client and connect it to the Kaa server.
     [self.kaaClient start];
 }
-
+ 
 - (void)onConfigurationUpdate:(KAASampleConfiguration *)configuration {
-    [self addLogWithText:@"Configuration was updated"];
+    NSLog(@"Configuration was updated");
     [self printConfiguration];
 }
-
+ 
 - (void)printConfiguration {
     KAASampleConfiguration *configuration = [self.kaaClient getConfiguration];
     NSArray *links = [configuration AddressList].data;
@@ -929,8 +925,7 @@ int main(void) {
     for (KAALink *link in links) {
         [confBody appendString:[NSString stringWithFormat:@"%@ - %@\n", link.label, link.url]];
     }
-    [self addLogWithText:@"Current configuration:"];
-    [self addLogWithText:confBody];
+    NSLog(@"Current configuration: %@", confBody);
 }
 
 ```

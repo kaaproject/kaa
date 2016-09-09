@@ -283,14 +283,14 @@ on_topic_list_uploaded(NULL, topics_list);
 </div><div id="Objective-C-9" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
+ 
 ...
     id<KaaClient> kaaClient = [Kaa client]
 ...
     // Start Kaa client
     [kaaClient start]
 ...
- 
     NSArray *topics = [kaaClient getTopics];
  
     for (Topic *topic in topics) {
@@ -360,7 +360,8 @@ error_code = kaa_unsubscribe_from_topic(kaa_client_get_context(kaa_client)->noti
 </div><div id="Objective-C-14" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
+ 
 ...
 // Add notification listener(s) (optional)
  
@@ -428,8 +429,11 @@ error_code = kaa_unsubscribe_from_topics(kaa_client_get_context(kaa_client)->not
 </div><div id="Objective-C-15" class="tab-pane fade" markdown="1" >
 
 ```objc
+@import Kaa;
+ 
+ ...
 // Add notification listener(s) (optional)
-...
+ 
 // Subscribe
 [kaaClient subscribeToTopicsWithIDs:@[@"iOS 8 notifications", @"another_optional_topic_id"] forceSync:YES];
 ...
@@ -523,7 +527,7 @@ error_code = kaa_remove_topic_list_listener(kaa_client_get_context(kaa_client)->
 </div><div id="Objective-C-10" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController() <NotificationTopicListDelegate>
  
@@ -610,10 +614,9 @@ error_code = kaa_sync_topic_subscriptions(kaa_client_get_context(kaa_client)->no
 </div><div id="Objective-C-11" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
- 
     // Do subscription changes with parameter forceSync set to false
     NSArray *topicIds = @[@"iOS 8 notifications", @"another_optional_topic_id"];
     [kaaClient subscribeToTopicsWithIDs:topicIds forceSync:NO];
@@ -718,20 +721,20 @@ error_code = kaa_remove_notification_listener(kaa_context_->notification_manager
 </div><div id="Objective-C-12" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <NotificationDelegate>
  
 ...
- 
+     // Add listener
+    [kaaClient addNotificationDelegate:self];
+...
  
 - (void)onNotification:(KAASampleNotification *)notification withTopicId:(NSString *)topicId {
     NSLog(@"Received a notification: %@", notification);
 }
  
-    // Add listener
-    [kaaClient addNotificationDelegate:self];
-    ...
+...
     // Remove listener
     [kaaClient removeNotificationDelegate:self];
 ```
@@ -808,9 +811,9 @@ error_code = kaa_remove_optional_notification_listener(kaa_client_get_context(ka
 </div><div id="Objective-C-13" class="tab-pane fade" markdown="1" >
 
 ```objc
-#import <Kaa/Kaa.h>
-...
+@import Kaa;
  
+...
 // Add listener
 [kaaClient addNotificationDelegate:self forTopicId:@"All devices notifications"];
 ...
