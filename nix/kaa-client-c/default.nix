@@ -50,8 +50,7 @@ assert clangSupport -> clang != null;
 assert esp8266Support -> gcc-xtensa-lx106 != null && esp8266-rtos-sdk != null;
 assert cc3200Support -> cc3200-sdk != null && gcc-arm-embedded != null;
 assert raspberrypiSupport -> raspberrypi-tools != null;
-assert testSupport -> posixSupport != null && cmocka != null && cppcheck != null &&
-                      valgrind != null && python != null;
+assert testSupport -> cmocka != null && cppcheck != null && python != null;
 
 let
   kaa-generic-makefile =
