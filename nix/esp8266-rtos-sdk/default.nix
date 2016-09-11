@@ -18,7 +18,7 @@
 }:
 let
   libhal = fetchurl {
-    url = "https://github.com/esp8266/esp8266-wiki/raw/master/libs/libhal.a";
+    url = https://github.com/esp8266/esp8266-wiki/raw/f7e9f968abaa9e2db693163501ea50349d03c016/libs/libhal.a;
     sha256 = "0ai5m223cv6cp0jlzck4wrgrjasnjjkfbnabjhk1715j8s6n1a67";
   };
 in stdenv.mkDerivation {
