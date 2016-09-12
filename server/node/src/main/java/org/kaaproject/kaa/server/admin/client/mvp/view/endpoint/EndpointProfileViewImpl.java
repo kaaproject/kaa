@@ -65,6 +65,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     private Button downloadServerProfileJsonButton;
     private Button editServerProfileButton;
 
+    private Anchor endpointConfigSchemaName;
+
+    private Button downloadEndpointConfigurationButton;
+    private RecordPanel endpointConfigurationForm;
+
     public EndpointProfileViewImpl() {
         super(false, false);
     }
@@ -213,6 +218,53 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         serverFormPanel.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
 
+        span = Document.get().createSpanElement();
+        span.appendChild(Document.get().createTextNode(Utils.constants.endpointConfiguration()));
+        span.addClassName("gwt-Label");
+
+        CaptionPanel endpointConfigurationFormPanel = new CaptionPanel(span.getString(), true);
+        FlexTable endpointConfigurationRecordTable = new FlexTable();
+        endpointConfigurationRecordTable.setWidth("100%");
+
+        schemaNamePanel.setSpacing(6);
+
+        Label endpointConfSchemaLabel = new Label(Utils.constants.schemaName());
+        endpointConfigSchemaName = new Anchor();
+        endpointConfigSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        endpointConfigSchemaName.setWidth("100%");
+
+        schemaNamePanel = new HorizontalPanel();
+        schemaNamePanel.setHeight("40px");
+        schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        schemaNamePanel.add(endpointConfSchemaLabel);
+        schemaNamePanel.add(endpointConfigSchemaName);
+        schemaNamePanel.setCellWidth(endpointConfigSchemaName, "200px");
+        schemaButtonsPanel = new HorizontalPanel();
+        schemaButtonsPanel.setSpacing(6);
+        downloadEndpointConfigurationButton = new ImageTextButton(Utils.resources.download(), Utils.constants.downloadJson());
+        schemaButtonsPanel.add(downloadEndpointConfigurationButton);
+
+        schemaNamePanel.add(schemaButtonsPanel);
+
+        schemaButtonsPanel.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
+        schemaNamePanel.setSpacing(6);
+
+        endpointConfigurationRecordTable.setWidget(0, 0, schemaNamePanel);
+        endpointConfigurationForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.configuration(),
+                this, true, true);
+        endpointConfigurationForm.getRecordWidget().setForceNavigation(true);
+        endpointConfigurationForm.setPreferredHeightPx(200);
+        endpointConfigurationRecordTable.setWidget(1, 0, endpointConfigurationForm);
+        endpointConfigurationRecordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+
+
+        endpointConfigurationFormPanel.add(endpointConfigurationRecordTable);
+
+        detailsTable.setWidget(++row, 0, endpointConfigurationFormPanel);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        serverFormPanel.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
+
+
         groupsGrid = new EndpointGroupGrid(true);
         groupsGrid.setSize("100%", "200px");
         Label groupsLabel = new Label(Utils.constants.endpointGroups());
@@ -248,6 +300,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         serverProfSchemaName.setText("");
         endpointProfForm.reset();
         serverProfForm.reset();
+    }
+
+    @Override
+    public Anchor getEndpointConfigSchemaName() {
+        return endpointConfigSchemaName;
     }
 
     @Override
@@ -321,6 +378,16 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public HasClickHandlers getDownloadServerProfileJsonButton() {
         return downloadServerProfileJsonButton;
+    }
+
+    @Override
+    public Button getDownloadEndpointConfigurationButton() {
+        return downloadEndpointConfigurationButton;
+    }
+
+    @Override
+    public RecordPanel getEndpointConfiguration() {
+        return endpointConfigurationForm;
     }
 
 }

@@ -40,6 +40,12 @@
         </servlet>
 
         <servlet>
+            <servlet-name>kaaEpConfServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.EndpointConfigurationServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
             <servlet-name>kaaRecordLibraryServlet</servlet-name>
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.RecordServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
@@ -100,6 +106,11 @@
         <servlet-mapping>
             <servlet-name>kaaSdkServlet</servlet-name>
             <url-pattern>/kaaAdmin/servlet/kaaSdkServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaEpConfServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaEpConfServlet</url-pattern>
         </servlet-mapping>
 
         <servlet-mapping>

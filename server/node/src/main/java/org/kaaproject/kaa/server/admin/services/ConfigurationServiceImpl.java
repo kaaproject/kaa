@@ -435,6 +435,9 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         return controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
     }
 
+
+
+
     private void checkSchemaId(String schemaId) throws IllegalArgumentException {
         if (isEmpty(schemaId)) {
             throw new IllegalArgumentException("The schemaId parameter is empty.");

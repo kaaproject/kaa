@@ -186,6 +186,16 @@ public class DataSource {
                 });
     }
 
+    public void findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash,final AsyncCallback<String> callback){
+        configurationRpcService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash, new DataCallback<String>(callback) {
+            @Override
+            protected void onResult(String result) {
+
+            }
+        });
+    }
+
+
     public void getMailProperties(
             final AsyncCallback<PropertiesDto> callback) {
         adminUIRpcService.getMailProperties(

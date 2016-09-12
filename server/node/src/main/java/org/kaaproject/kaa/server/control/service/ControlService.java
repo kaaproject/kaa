@@ -1775,4 +1775,8 @@ public interface ControlService {
     EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion,String tenantId);
 
     String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+
+    Schema findEndpointConfigurationSchemaByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+
+    ConfigurationSchemaDto findConfSchemaByAppIdAndVersion(String applicationId, int version);
 }

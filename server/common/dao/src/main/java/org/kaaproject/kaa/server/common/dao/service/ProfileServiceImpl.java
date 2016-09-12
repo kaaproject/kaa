@@ -17,9 +17,11 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.text.ParseException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.avro.ui.shared.Base64Utils;
 import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
@@ -73,6 +75,8 @@ public class ProfileServiceImpl implements ProfileService {
     private HistoryService historyService;
     @Autowired
     private ServerProfileService serverProfileService;
+    @Autowired
+    private EndpointService endpointService;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
@@ -431,15 +435,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash) {
-        byte[] hash;
-              try {
-                  hash = Base64Utils.fromBase64(endpointKeyHash);
-              } catch (ParseException e) {
-                  LOG.error("Could not parse endpointKeyHash:", e);
-                  return null;
-                    }
-            EndpointProfileDto endpointProfileDto = endpointProfileDao.findByKeyHash(hash).toDto();
-        return endpointProfileDto;
+        byte[] hash= Base64.decodeBase64(endpointKeyHash);
+            EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(hash);
+        return endpointProfile;
     }
 
 
