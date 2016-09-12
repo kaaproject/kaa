@@ -24,8 +24,7 @@ services:
     environment:
       - CASSANDRA_START_RPC=true
     stdin_open: false
-    expose:
-      - "9042"
+    mem_limit: "4G"
   kaa:
     image: cburr25/kaa:0.9.0
     # build: .
@@ -47,8 +46,6 @@ services:
       - "9889:9889"
       - "9997:9997"
       - "9999:9999"
-    links:
-      - "nosql"
 networks:
   back-tier:
     driver: bridge # overlay for Swarm (unreleased update)

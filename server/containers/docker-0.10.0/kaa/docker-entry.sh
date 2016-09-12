@@ -106,7 +106,7 @@ waitForMongo() {
 isCassandraReachable() {
 	OIFS="$IFS"
 	IFS="," read -r -a CASSANDRA_NODES <<< $CASSANDRA_NODE_LIST
-	for i in "${!CASSANDRA[@]}"
+	for i in "${!CASSANDRA_NODES[@]}"
 	do
 		# echo "Reaching node #$i: ${CASSANDRA_NODES[i]}"
 		HOST=$(echo ${CASSANDRA_NODES[i]} | cut -f1 -d:)
