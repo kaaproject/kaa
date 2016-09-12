@@ -53,15 +53,16 @@ The default notification schema installed for Kaa applications is empty. For the
 ```
 
 
-For creating your own notification schema via REST API first of all you need to [create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
-after that [create notification schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) which contains a reference to the created before CT or use Administration UI as shown below.
-
 The list of notification schemas created by a tenant developer for the application is shown in the **Notification schemas** window.
 
 ![Add Notification Schema 1](images/add_notification_schema_1.png)
 
+
 To export the notification schema, click **Export** in the last column of desired schema row and select export method from drop-down. 
 See [CT schema export support]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export-support) for available export methods details.
+
+For creating your own notification schema via REST API first of all you need to [create new CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct)
+after that [create notification schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) which contains a reference to the created before CT or use Administration UI as shown below.
 
 As a tenant developer, you can create new notification schemas for the application as follows:
 
@@ -84,6 +85,7 @@ If you want to review the added Avro schema, open the corresponding **Notificati
 
 ![Add Notification Schema 4](images/add_notification_schema_4.png)
    
+
 
 #### Notification topics
 
