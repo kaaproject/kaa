@@ -69,6 +69,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
 
     public CtlSchemaActivity(CtlSchemaPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
+        version = place.getVersion();
     }
 
     @Override

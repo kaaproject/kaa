@@ -43,13 +43,22 @@ public class OperationsNode extends WorkerNodeTracker {
      *
      * @param nodeInfo
      *            the node info
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param retryPolicy
-     *            the retry policy
      */
-    public OperationsNode(OperationsNodeInfo nodeInfo, String zkHostPortList, RetryPolicy retryPolicy) {
-        super(zkHostPortList, retryPolicy);
+    public OperationsNode(OperationsNodeInfo nodeInfo) {
+        super();
+        this.nodeInfo = nodeInfo;
+        this.nodeInfo.setTimeStarted(System.currentTimeMillis());
+    }
+
+    /**
+     * Instantiates a new endpoint node.
+     *
+     * @param nodeInfo
+     *            the node info
+     * @param zkClient Zookeeper client
+     */
+    public OperationsNode(OperationsNodeInfo nodeInfo, CuratorFramework zkClient) {
+        super(zkClient);
         this.nodeInfo = nodeInfo;
         this.nodeInfo.setTimeStarted(System.currentTimeMillis());
     }

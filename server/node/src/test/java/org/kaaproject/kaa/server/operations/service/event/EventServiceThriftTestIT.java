@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryUntilElapsed;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.server.TServer;
@@ -300,7 +302,8 @@ public class EventServiceThriftTestIT {
             nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
             nodeInfo.setTransports(new ArrayList<TransportMetaData>());
             String zkHostPortList = "localhost:" + ZK_PORT;
-            operationsNode = new OperationsNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(3000, 1000));
+            CuratorFramework zkClient = CuratorFrameworkFactory.newClient(zkHostPortList, new RetryUntilElapsed(3000, 1000));
+            operationsNode = new OperationsNode(nodeInfo, zkClient);
             try {
                 operationsNode.start();
                 eventService.setZkNode(operationsNode);

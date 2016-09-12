@@ -21,6 +21,7 @@ import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.server.control.service.sdk.CommonSdkUtil;
+import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ public class ObjCEventClassesGenerator {
     private static final String EVENT_FAMILY_FACTORY_IMPORTS_VAR = "\\{event_family_factory_imports\\}";
     private static final String EVENT_FAMILY_FACTORY_PROPERTIES_VAR = "\\{event_family_factory_properties\\}";
     private static final String EVENT_FAMILY_FACTORY_METHODS_VAR = "\\{event_family_factory_methods\\}";
+    public static final String EVENT_CLASS = "EventClass";
 
     private static String eventFamilyHeader;
     private static String eventFamilySource;
@@ -124,21 +126,22 @@ public class ObjCEventClassesGenerator {
             LOG.debug("Generating schemas for event family {}", efm.getEcfName());
             List<Schema> eventCtlSchemas = new ArrayList<>();
             efm.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
-            for (Schema ctlSchema : eventCtlSchemas) {
+
                 try (
                         OutputStream hdrStream = new ByteArrayOutputStream();
                         OutputStream srcStream = new ByteArrayOutputStream()
                 ) {
 
-                    Compiler compiler = new ObjectiveCCompiler(ctlSchema, EVENT_GEN, hdrStream, srcStream);
+                    Compiler compiler = new ObjectiveCCompiler(eventCtlSchemas, EVENT_GEN, hdrStream, srcStream);
+                    compiler.setNamespacePrefix(efm.getEcfClassName());
                     compiler.generate();
 
                     eventGenHeaderBuilder.append(hdrStream.toString()).append("\n");
                     eventGenSourceBuilder.append(srcStream.toString()).append("\n");
                 } catch (Exception e) {
-                    LOG.error("Got exception while generating object from schema: " + ctlSchema, e);
+                    LOG.error("Got exception while generating event classes for event family: " + efm.getEcfName(), e);
                 }
-            }
+
 
             LOG.error("Processing {}", efm.getEcfName());
             eventFamilyFactoryImports += "#import \"" + efm.getEcfClassName() + ".h\"\n";
@@ -165,7 +168,7 @@ public class ObjCEventClassesGenerator {
             String eventFamilyListenerMethods = "";
 
             for (ApplicationEventMapDto eventMap : efm.getEventMaps()) {
-                String eventClassName = eventFqnToClassName(eventMap.getFqn());
+                String eventClassName = efm.getEcfClassName() + eventFqnToClassName(eventMap.getFqn());
                 if (eventMap.getAction() == ApplicationEventAction.SINK ||
                         eventMap.getAction() == ApplicationEventAction.BOTH) {
                     addSupportedEventClassFqns += eventFamilyAddSupportedFqn
@@ -192,6 +195,7 @@ public class ObjCEventClassesGenerator {
                             .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
                 }
             }
+
             String resultFamilyHeader = eventFamilyHeader
                     .replaceAll(EVENT_FAMILY_NAMESPACE_VAR, efm.getEcfNamespace())
                     .replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName())
@@ -230,6 +234,7 @@ public class ObjCEventClassesGenerator {
 
         return eventSources;
     }
+
 
     private static String eventFqnToClassName(String fqn) {
         if (fqn == null || fqn.isEmpty()) {

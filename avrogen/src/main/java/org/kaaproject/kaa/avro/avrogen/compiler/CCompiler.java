@@ -65,7 +65,7 @@ public class CCompiler extends Compiler {
 
     @Override
     protected void doGenerate() {
-        for (Map.Entry<Schema, GenerationContext> cursor : schemaQueue.entrySet()) {
+        for (Map.Entry<Schema, GenerationContext> cursor : schemaGenerationQueue.entrySet()) {
             switch (cursor.getKey().getType()) {
                 case RECORD:
                     processRecord(cursor.getKey(), "record.h.vm", "record.c.vm");

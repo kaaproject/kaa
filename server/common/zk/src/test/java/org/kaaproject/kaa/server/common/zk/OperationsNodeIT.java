@@ -27,10 +27,14 @@ import java.nio.ByteBuffer;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.test.Timing;
+import org.apache.zookeeper.data.Stat;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
@@ -45,151 +49,160 @@ public class OperationsNodeIT {
     private static final int NEW_HTTP_ID = BootstrapNodeIT.HTTP_ID + 1;
     private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
     private static final String ENDPOINT_NODE_HOST = "192.168.0.101";
+    private CuratorFramework zkClient;
+    private TestingCluster cluster;
+
+    @Before
+    public void beforeTest() {
+        try {
+            cluster = new TestingCluster(3);
+            cluster.start();
+            zkClient = CuratorFrameworkFactory.newClient(cluster.getConnectString(), buildDefaultRetryPolicy());
+            zkClient.start();
+        } catch (Exception e) {
+            System.err.println("Unable to initialize cluster before test! " + e);
+        }
+    }
+
+    @After
+    public void afterTest() {
+        try {
+            zkClient.close();
+            cluster.close();
+        } catch (Exception e) {
+            System.err.println("Unable to shutdown cluster after test! " + e);
+        }
+    }
 
     @Test
     public void endpointListenerTest() throws Exception {
         Timing timing = new Timing();
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
-            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
-            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
-            bootstrapNode.addListener(mockListener);
-            bootstrapNode.start();
+        BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+        BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
+        OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
+        bootstrapNode.addListener(mockListener);
+        bootstrapNode.start();
 
-            endpointNode.start();
+        OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
 
-            timing.sleepABit();
-            verify(mockListener).onNodeAdded(endpointNodeInfo);
+        endpointNode.start();
 
-            assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
-            assertEquals(1, bootstrapNode.getCurrentOperationServerNodes().size());
+        timing.sleepABit();
+        verify(mockListener).onNodeAdded(endpointNodeInfo);
 
-            OperationsNodeInfo testNodeInfo = bootstrapNode.getCurrentOperationServerNodes().get(0);
-            assertNotNull(testNodeInfo.getTransports());
-            assertEquals(2, testNodeInfo.getTransports().size());
-            assertNotNull(testNodeInfo.getTransports().get(0));
-            assertEquals(BootstrapNodeIT.HTTP_ID, testNodeInfo.getTransports().get(0).getId().intValue());
-            assertEquals(BootstrapNodeIT.TCP_ID, testNodeInfo.getTransports().get(1).getId().intValue());
-            assertNotNull(testNodeInfo.getTransports().get(0).getConnectionInfo());
+        assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
+        assertEquals(1, bootstrapNode.getCurrentOperationServerNodes().size());
 
-            endpointNodeInfo.getTransports().get(0).setId(NEW_HTTP_ID);
+        OperationsNodeInfo testNodeInfo = bootstrapNode.getCurrentOperationServerNodes().get(0);
+        assertNotNull(testNodeInfo.getTransports());
+        assertEquals(2, testNodeInfo.getTransports().size());
+        assertNotNull(testNodeInfo.getTransports().get(0));
+        assertEquals(BootstrapNodeIT.HTTP_ID, testNodeInfo.getTransports().get(0).getId().intValue());
+        assertEquals(BootstrapNodeIT.TCP_ID, testNodeInfo.getTransports().get(1).getId().intValue());
+        assertNotNull(testNodeInfo.getTransports().get(0).getConnectionInfo());
 
-            endpointNode.updateNodeData(endpointNodeInfo);
-            timing.sleepABit();
-            verify(mockListener).onNodeUpdated(endpointNodeInfo);
+        endpointNodeInfo.getTransports().get(0).setId(NEW_HTTP_ID);
 
-            assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
-            assertEquals(1, bootstrapNode.getCurrentOperationServerNodes().size());
-            assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0));
-            testNodeInfo = bootstrapNode.getCurrentOperationServerNodes().get(0);
-            assertNotNull(testNodeInfo.getTransports());
-            assertEquals(NEW_HTTP_ID, testNodeInfo.getTransports().get(0).getId().intValue());
+        endpointNode.updateNodeData(endpointNodeInfo);
+        timing.sleepABit();
+        verify(mockListener).onNodeUpdated(endpointNodeInfo);
 
-            endpointNode.close();
-            timing.sleepABit();
-            verify(mockListener).onNodeRemoved(endpointNodeInfo);
-            Assert.assertTrue(bootstrapNode.removeListener(mockListener));
-            Assert.assertFalse(bootstrapNode.removeListener(mockListener));
-            bootstrapNode.close();
-        } finally {
-            cluster.close();
-        }
+        assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
+        assertEquals(1, bootstrapNode.getCurrentOperationServerNodes().size());
+        assertNotNull(bootstrapNode.getCurrentOperationServerNodes().get(0));
+        testNodeInfo = bootstrapNode.getCurrentOperationServerNodes().get(0);
+        assertNotNull(testNodeInfo.getTransports());
+        assertEquals(NEW_HTTP_ID, testNodeInfo.getTransports().get(0).getId().intValue());
+
+        endpointNode.close();
+        timing.sleepABit();
+        verify(mockListener).onNodeRemoved(endpointNodeInfo);
+        Assert.assertTrue(bootstrapNode.removeListener(mockListener));
+        Assert.assertFalse(bootstrapNode.removeListener(mockListener));
+        bootstrapNode.close();
     }
 
     @Test
     public void endpointExceptionTest() throws Exception {
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
-            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            endpointNode.start();
-            endpointNode.doZKClientAction(new ControlNodeTracker.ZKClientAction() {
+        OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
+        endpointNode.start();
+        endpointNode.doZKClientAction(new ControlNodeTracker.ZKClientAction() {
 
-                @Override
-                public void doWithZkClient(CuratorFramework client) throws Exception {
-                    throw new Exception("for test");
-                }
-            });
+            @Override
+            public void doWithZkClient(CuratorFramework client) throws Exception {
+                throw new Exception("for test");
+            }
+        });
 
-            Assert.assertFalse(endpointNode.isConnected());
-            endpointNode.close();
-        } finally {
-            cluster.close();
-        }
+        //check if operations node changed and deleted child node
+        //after unexpected exception, as child node was ephemeral and connection lost
+        String OPERATIONS_SERVER_NODE_PATH = "/operationsServerNodes";
+        Stat stat = zkClient.checkExists().forPath(OPERATIONS_SERVER_NODE_PATH);
+        int cversion = stat.getCversion();
+        int numChildren = stat.getNumChildren();
+        Assert.assertEquals(cversion, 2);
+        Assert.assertEquals(numChildren, 0);
+        endpointNode.close();
     }
 
     @Test(expected = IOException.class)
     public void endpointIOExceptionTest() throws Exception {
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
-            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            endpointNode.start();
-            endpointNode.doZKClientAction(new ControlNodeTracker.ZKClientAction() {
 
-                @Override
-                public void doWithZkClient(CuratorFramework client) throws Exception {
-                    throw new Exception("for test");
-                }
-            }, true);
+        OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
+        endpointNode.start();
+        endpointNode.doZKClientAction(new ControlNodeTracker.ZKClientAction() {
 
-            Assert.assertFalse(endpointNode.isConnected());
-            endpointNode.close();
-        } finally {
-            cluster.close();
-        }
+            @Override
+            public void doWithZkClient(CuratorFramework client) throws Exception {
+                throw new Exception("for test");
+            }
+        }, true);
+
+        Assert.assertFalse(endpointNode.isConnected());
+        endpointNode.close();
     }
 
     @Test
     public void outdatedRemovalTest() throws Exception {
         Timing timing = new Timing();
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
-            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
-            bootstrapNode.addListener(mockListener);
-            bootstrapNode.start();
+        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+        BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+        BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
+        OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
+        bootstrapNode.addListener(mockListener);
+        bootstrapNode.start();
 
-            endpointNode.start();
-            timing.sleepABit();
-            verify(mockListener).onNodeAdded(endpointNodeInfo);
+        OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
 
-            OperationsNodeInfo endpointNodeInfoWithGreaterTimeStarted = buildOperationsNodeInfo();
-            OperationsNode endpointNodeWithGreaterTimeStarted = new OperationsNode(endpointNodeInfoWithGreaterTimeStarted,
-                    cluster.getConnectString(), buildDefaultRetryPolicy());
+        endpointNode.start();
+        timing.sleepABit();
+        verify(mockListener).onNodeAdded(endpointNodeInfo);
 
-            endpointNodeWithGreaterTimeStarted.start();
-            timing.sleepABit();
+        OperationsNodeInfo endpointNodeInfoWithGreaterTimeStarted = buildOperationsNodeInfo();
+        OperationsNode endpointNodeWithGreaterTimeStarted = new OperationsNode(endpointNodeInfoWithGreaterTimeStarted, zkClient);
 
-            endpointNode.close();
-            timing.sleepABit();
-            verify(mockListener, never()).onNodeRemoved(endpointNodeInfo);
+        endpointNodeWithGreaterTimeStarted.start();
+        timing.sleepABit();
 
-            endpointNodeWithGreaterTimeStarted.close();
-            timing.sleepABit();
-            verify(mockListener).onNodeRemoved(endpointNodeInfoWithGreaterTimeStarted);
+        endpointNode.close();
+        timing.sleepABit();
+        verify(mockListener, never()).onNodeRemoved(endpointNodeInfo);
 
-            bootstrapNode.close();
-        } finally {
-            cluster.close();
-        }
+        endpointNodeWithGreaterTimeStarted.close();
+        timing.sleepABit();
+        verify(mockListener).onNodeRemoved(endpointNodeInfoWithGreaterTimeStarted);
+
+        bootstrapNode.close();
     }
 
     private RetryPolicy buildDefaultRetryPolicy() {

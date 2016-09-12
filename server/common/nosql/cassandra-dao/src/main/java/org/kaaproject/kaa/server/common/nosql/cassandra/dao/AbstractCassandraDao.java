@@ -158,9 +158,8 @@ public abstract class AbstractCassandraDao<T, K> {
     }
 
     public void removeAll() {
-        Statement delete = QueryBuilder.delete().all().from(getColumnFamilyName()).setConsistencyLevel(getWriteConsistencyLevel());
-        LOG.debug("Remove all request: {}", delete.toString());
-        session.execute(delete);
+        Statement truncate = QueryBuilder.truncate(getColumnFamilyName()).setConsistencyLevel(getWriteConsistencyLevel());
+        session.execute(truncate);
     }
 
     public void removeById(K key) {

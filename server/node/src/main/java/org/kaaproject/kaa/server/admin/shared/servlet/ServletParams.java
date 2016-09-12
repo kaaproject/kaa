@@ -22,12 +22,16 @@ public interface ServletParams {
     public final static String KAA_RECORD_LIBRARY_SERVLET_PATH = "servlet/kaaRecordLibraryServlet";
     public final static String KAA_CTL_EXPORT_SERVLET_PATH = "servlet/kaaCtlExportServlet";
     public final static String KAA_PROFILE_DOWNLOAD_SERVLET_PATH = "servlet/kaaProfileDownloadServlet";
-    
+    public final static String KAA_USER_CONFIGURATION_SERVLET_PATH = "servlet/kaaUserConfServlet";
+
     public static final String SDK_KEY_PARAMETER = "sdkKey";
     public static final String RECORD_KEY_PARAMETER = "recordKey";
     public static final String CTL_EXPORT_KEY_PARAMETER = "ctlExportKey";
     public static final String ENDPOINT_KEY_PARAMETER = "endpointKey";
     public static final String PROFILE_TYPE_PARAMETER = "profileType";
+    public static final String APPLICATION_ID_PARAMETER = "appId";
+    public static final String USER_EXTERNAL_ID_PARAMETER = "externalUId";
+
 
     public static final String CONFIGURATION_SCHEMA_ID = "schemaId";
     public static final String ENDPOINT_GROUP_ID = "endGroupId";

@@ -23,6 +23,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingCluster;
@@ -83,15 +85,14 @@ public class TestCluster {
             zkCluster.start();
 
             BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+            CuratorFramework zkClient = CuratorFrameworkFactory.newClient(zkCluster.getConnectString(), buildDefaultRetryPolicy());
 
-            bootstrapNode = new BootstrapNode(bootstrapNodeInfo, 
-                    zkCluster.getConnectString(), buildDefaultRetryPolicy());
+            bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
             bootstrapNode.start();
 
             OperationsNodeInfo endpointNodeInfo = buildEndpointNodeInfo();
 
-            endpointNode = new OperationsNode(endpointNodeInfo,
-                    zkCluster.getConnectString(), buildDefaultRetryPolicy());
+            endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
             endpointNode.start();
             
             kaaNodeInstance = kaaNodeInitializationService;

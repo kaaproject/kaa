@@ -118,8 +118,7 @@ public class PropertiesFacade {
         try {
             Schema schema = (Schema)propertiesClass.getField(SCHEMA).get(null);
             RawSchema rawSchema = new RawSchema(schema.toString());
-            DefaultRecordGenerationAlgorithm<RawData> algotithm = 
-                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+            DefaultRecordGenerationAlgorithm<RawData> algotithm = new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
             RawData rawData = algotithm.getRootData();
             AvroJsonConverter<S> converter = new AvroJsonConverter<>(schema, propertiesClass);
             result = converter.decodeJson(rawData.getRawData());
