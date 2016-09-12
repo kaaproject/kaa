@@ -39,8 +39,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld \n", @"TopicId", self.topicId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"SeqNumber", self.seqNumber]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"TopicId", self.topicId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNumber", self.seqNumber]];
 
     return fieldsDescription;
 }
@@ -87,8 +87,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld \n", @"TopicId", self.topicId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Command", self.command]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"TopicId", self.topicId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Command", SubscriptionCommandTypeArray(self.command)]];
 
     return fieldsDescription;
 }
@@ -197,7 +197,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Result", self.result]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ErrorCode", self.errorCode]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ErrorReason", self.errorReason]];
 
@@ -454,7 +454,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAccessToken", self.endpointAccessToken]];
 
     return fieldsDescription;
@@ -510,9 +510,9 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointKeyHash", self.endpointKeyHash]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Result", self.result]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
 
     return fieldsDescription;
 }
@@ -619,7 +619,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointKeyHash", self.endpointKeyHash]];
 
     return fieldsDescription;
@@ -667,8 +667,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Result", self.result]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
 
     return fieldsDescription;
 }
@@ -726,7 +726,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"SeqNum", self.seqNum]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNum", self.seqNum]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventClassFQN", self.eventClassFQN]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventData", self.eventData]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Source", self.source]];
@@ -900,7 +900,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventClassFQNs", self.eventClassFQNs]];
 
     return fieldsDescription;
@@ -956,9 +956,9 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Listeners", self.listeners]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Result", self.result]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
 
     return fieldsDescription;
 }
@@ -1098,7 +1098,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"SeqNum", self.seqNum]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNum", self.seqNum]];
 
     return fieldsDescription;
 }
@@ -1153,8 +1153,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld \n", @"TopicId", self.topicId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Type", self.type]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"TopicId", self.topicId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Type", NotificationTypeArray(self.type)]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Uid", self.uid]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SeqNumber", self.seqNumber]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Body", self.body]];
@@ -1328,9 +1328,9 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld \n", @"Id", self.id]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"Id", self.id]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Name", self.name]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"SubscriptionType", self.subscriptionType]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SubscriptionType", SubscriptionTypeArray(self.subscriptionType)]];
 
     return fieldsDescription;
 }
@@ -1836,8 +1836,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"Id", self.id]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"Version", self.version]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"Id", self.id]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"Version", self.version]];
 
     return fieldsDescription;
 }
@@ -1884,7 +1884,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SupportedProtocols", self.supportedProtocols]];
 
     return fieldsDescription;
@@ -2056,7 +2056,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"TopicListHash", self.topicListHash]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"TopicListHash", self.topicListHash]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"TopicStates", self.topicStates]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"AcceptedUnicastNotifications", self.acceptedUnicastNotifications]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SubscriptionCommands", self.subscriptionCommands]];
@@ -2748,7 +2748,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"LogEntries", self.logEntries]];
 
     return fieldsDescription;
@@ -2855,7 +2855,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"AccessPointId", self.accessPointId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"AccessPointId", self.accessPointId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProtocolVersionInfo", self.protocolVersionInfo]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConnectionInfo", self.connectionInfo]];
 
@@ -2907,7 +2907,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SupportedProtocols", self.supportedProtocols]];
 
     return fieldsDescription;
@@ -2955,7 +2955,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"ResponseStatus", self.responseStatus]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResponseStatus", SyncResponseStatusArray(self.responseStatus)]];
 
     return fieldsDescription;
 }
@@ -3008,7 +3008,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"ResponseStatus", self.responseStatus]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResponseStatus", SyncResponseStatusArray(self.responseStatus)]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfSchemaBody", self.confSchemaBody]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfDeltaBody", self.confDeltaBody]];
 
@@ -3183,7 +3183,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"ResponseStatus", self.responseStatus]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResponseStatus", SyncResponseStatusArray(self.responseStatus)]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Notifications", self.notifications]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"AvailableTopics", self.availableTopics]];
 
@@ -3955,8 +3955,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Result", self.result]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ErrorCode", self.errorCode]];
 
     return fieldsDescription;
@@ -4171,7 +4171,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"AccessPointId", self.accessPointId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"AccessPointId", self.accessPointId]];
 
     return fieldsDescription;
 }
@@ -4215,7 +4215,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"ExtensionId", self.extensionId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"ExtensionId", self.extensionId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Payload", self.payload]];
 
     return fieldsDescription;
@@ -4286,7 +4286,7 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SyncRequestMetaData", self.syncRequestMetaData]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"BootstrapSyncRequest", self.bootstrapSyncRequest]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProfileSyncRequest", self.profileSyncRequest]];
@@ -4904,8 +4904,8 @@
 - (NSString *)description {
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %u \n", @"Status", self.status]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Status", SyncResponseResultTypeArray(self.status)]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"BootstrapSyncResponse", self.bootstrapSyncResponse]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProfileSyncResponse", self.profileSyncResponse]];
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfigurationSyncResponse", self.configurationSyncResponse]];
@@ -5503,7 +5503,7 @@
     NSMutableString *fieldsDescription = [NSMutableString new]; 
 
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"TopicInfo", self.topicInfo]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d \n", @"SeqNumber", self.seqNumber]];
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNumber", self.seqNumber]];
 
     return fieldsDescription;
 }

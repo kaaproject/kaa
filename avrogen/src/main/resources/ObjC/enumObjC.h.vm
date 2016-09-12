@@ -22,3 +22,9 @@ typedef enum {
     ${ENUM_NAME}_$symbol,
 #end
 } $namespacePrefix${enum_name};
+
+# define ${namespacePrefix}${enum_name}Array(enum) [@[ \
+#foreach ($symbol in $schema.getEnumSymbols())
+@"${ENUM_NAME}_$symbol", \
+#end
+[NSNull null]] objectAtIndex:enum]

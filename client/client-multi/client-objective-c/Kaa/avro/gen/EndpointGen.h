@@ -24,6 +24,7 @@
 #import "KAAUnion.h"
 
 
+
 @interface TopicState : AvroBased
 
 @property(nonatomic) int64_t topicId;
@@ -41,12 +42,23 @@ typedef enum {
     SYNC_RESPONSE_STATUS_RESYNC,
 } SyncResponseStatus;
 
+# define SyncResponseStatusArray(enum) [@[ \
+@"SYNC_RESPONSE_STATUS_NO_DELTA", \
+@"SYNC_RESPONSE_STATUS_DELTA", \
+@"SYNC_RESPONSE_STATUS_RESYNC", \
+[NSNull null]] objectAtIndex:enum]
+
 
 
 typedef enum {
     NOTIFICATION_TYPE_SYSTEM,
     NOTIFICATION_TYPE_CUSTOM,
 } NotificationType;
+
+# define NotificationTypeArray(enum) [@[ \
+@"NOTIFICATION_TYPE_SYSTEM", \
+@"NOTIFICATION_TYPE_CUSTOM", \
+[NSNull null]] objectAtIndex:enum]
 
 
 
@@ -55,12 +67,22 @@ typedef enum {
     SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION,
 } SubscriptionType;
 
+# define SubscriptionTypeArray(enum) [@[ \
+@"SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION", \
+@"SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION", \
+[NSNull null]] objectAtIndex:enum]
+
 
 
 typedef enum {
     SUBSCRIPTION_COMMAND_TYPE_ADD,
     SUBSCRIPTION_COMMAND_TYPE_REMOVE,
 } SubscriptionCommandType;
+
+# define SubscriptionCommandTypeArray(enum) [@[ \
+@"SUBSCRIPTION_COMMAND_TYPE_ADD", \
+@"SUBSCRIPTION_COMMAND_TYPE_REMOVE", \
+[NSNull null]] objectAtIndex:enum]
 
 
 
@@ -71,6 +93,13 @@ typedef enum {
     SYNC_RESPONSE_RESULT_TYPE_REDIRECT,
 } SyncResponseResultType;
 
+# define SyncResponseResultTypeArray(enum) [@[ \
+@"SYNC_RESPONSE_RESULT_TYPE_SUCCESS", \
+@"SYNC_RESPONSE_RESULT_TYPE_FAILURE", \
+@"SYNC_RESPONSE_RESULT_TYPE_PROFILE_RESYNC", \
+@"SYNC_RESPONSE_RESULT_TYPE_REDIRECT", \
+[NSNull null]] objectAtIndex:enum]
+
 
 
 typedef enum {
@@ -79,6 +108,13 @@ typedef enum {
     LOG_DELIVERY_ERROR_CODE_REMOTE_CONNECTION_ERROR,
     LOG_DELIVERY_ERROR_CODE_REMOTE_INTERNAL_ERROR,
 } LogDeliveryErrorCode;
+
+# define LogDeliveryErrorCodeArray(enum) [@[ \
+@"LOG_DELIVERY_ERROR_CODE_NO_APPENDERS_CONFIGURED", \
+@"LOG_DELIVERY_ERROR_CODE_APPENDER_INTERNAL_ERROR", \
+@"LOG_DELIVERY_ERROR_CODE_REMOTE_CONNECTION_ERROR", \
+@"LOG_DELIVERY_ERROR_CODE_REMOTE_INTERNAL_ERROR", \
+[NSNull null]] objectAtIndex:enum]
 
 
 
@@ -91,6 +127,16 @@ typedef enum {
     USER_ATTACH_ERROR_CODE_REMOTE_ERROR,
     USER_ATTACH_ERROR_CODE_OTHER,
 } UserAttachErrorCode;
+
+# define UserAttachErrorCodeArray(enum) [@[ \
+@"USER_ATTACH_ERROR_CODE_NO_VERIFIER_CONFIGURED", \
+@"USER_ATTACH_ERROR_CODE_TOKEN_INVALID", \
+@"USER_ATTACH_ERROR_CODE_TOKEN_EXPIRED", \
+@"USER_ATTACH_ERROR_CODE_INTERNAL_ERROR", \
+@"USER_ATTACH_ERROR_CODE_CONNECTION_ERROR", \
+@"USER_ATTACH_ERROR_CODE_REMOTE_ERROR", \
+@"USER_ATTACH_ERROR_CODE_OTHER", \
+[NSNull null]] objectAtIndex:enum]
 
 
 
