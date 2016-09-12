@@ -23,7 +23,7 @@ application, Kaa provides a number of very useful features, such as:
 
 The structure of the configuration data is determined by the customizable configuration schema. 
 It is the responsibility of the Kaa developer to construct the configuration schema and make the client application interpret the data supplied by the endpoint SDK.
-Kaa developer can provision the configuration schema via REST API -- first [create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
+Kaa developer can provision the configuration schema via REST API -- first [create new CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct)
 and after that [create configuration schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema) which contains a reference to the created before CT or use Administration UI as shown below.
 
 1. In the **Configuration schemas** window for the application, click **Add schema**.
