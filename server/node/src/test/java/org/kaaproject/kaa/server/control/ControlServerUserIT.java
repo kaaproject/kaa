@@ -150,6 +150,22 @@ public class ControlServerUserIT extends AbstractTestControlServer {
         UserDto user = createUser(KaaAuthorityDto.TENANT_ADMIN);
     }
 
+    @Test
+    public void testFailCreateUserOnEmailValidation() throws Exception {
+        expectedException.expect(HttpClientErrorException.class);
+        expectedException.expectMessage("400 Bad Request");
+
+        loginTenantAdmin(tenantAdminDto.getUsername());
+        UserDto user = new UserDto();
+        String username = generateString(USERNAME);
+        user.setUsername(username);
+        user.setMail("invalid email!");
+        user.setFirstName(generateString("firstName"));
+        user.setLastName(generateString("lastName"));
+        user.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
+        client.editUser(user);
+    }
+
     /**
      * Test create user.
      * Users unable to have the same email addresses.
