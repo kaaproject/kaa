@@ -352,23 +352,7 @@ To add a profile filter for an endpoint group:
 
 ## Using REST API
 
-Use the server REST API to perform the following actions:
-
-* [Activate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/activateProfileFilter)
-* [Deactivate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deactivateProfileFilter)
-* [Delete endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteEndpointGroup)
-* [Delete profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteProfileFilterRecord)
-* [Create/edit endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup)
-* [Get endpoint group based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroup)
-* [Get endpoint groups based on application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroupsByApplicationToken)
-* [Get endpoint profiles bodies based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileBodyByEndpointGroupId)
-* [Get endpoint profiles based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileByEndpointGroupId)
-* [Create/edit profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editProfileFilter)
-* [Get profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecord)
-* [Get profile filter records]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecordsByEndpointGroupId)
-* [Get vacant profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getVacantProfileSchemasByEndpointGroupId)
-
-For detailed description of the REST API, its purpose, interface, and features, see [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) its purpose, interfaces and features supported.
+In alternative to using the Administration UI, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) to perform the above actions.
 
 ## Further reading
 
