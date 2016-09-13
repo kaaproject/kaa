@@ -74,7 +74,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <commons-lang3.version>3.1</commons-lang3.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jackson.version>2.4.1</jackson.version>
+        <jackson.version>2.7.5</jackson.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
