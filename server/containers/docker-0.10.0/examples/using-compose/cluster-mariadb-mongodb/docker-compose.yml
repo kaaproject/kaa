@@ -22,32 +22,13 @@ services:
     volumes:
       - nosql-data:/data/db
   kaa:
-    image: cburr25/kaa:0.9.0
+    image: kaa-node:0.10.0
     # build: .
     env_file: ../kaa-example.env
     environment:
       - SQL_PROVIDER_NAME=mariadb
       - NOSQL_PROVIDER_NAME=mongodb # (optional, default: mongodb)
       - SERVICES_WAIT_TIMEOUT=-1 # Wait forever for Zookeeper and SQL
-
-
-#  kaa_lb:
-#    image: dockercloud/haproxy:latest
-#    environment:
-#        - BALANCE=source
-#    ports:
-#      - "8080:8080"
-#      - "9888:9888"
-#      - "9889:9889"
-#      - "9997:9997"
-#      - "9999:9999"
-#    volumes:
-#        - /var/run/docker.sock:/var/run/docker.sock
-#    links:
-#   #     - kaa_node_conf:kaa_node_conf
-#        - kaa:kaa
-
-
     depends_on:
       - sql
       - nosql
@@ -56,11 +37,27 @@ services:
       - back-tier
       - front-tier
     ports:
-      - "8080:8080"
+      - "8080"
+      - "9888"
+      - "9889"
+      - "9997"
+      - "9999"
+  kaa_lb:
+    image: dockercloud/haproxy:latest
+    networks:
+      - back-tier
+    environment:
+        - BALANCE=source
+    ports:
+      - "8078:8078"
       - "9888:9888"
       - "9889:9889"
       - "9997:9997"
       - "9999:9999"
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+    links:
+        - kaa:kaa
 networks:
   back-tier:
     driver: bridge # overlay for Swarm (unreleased update)

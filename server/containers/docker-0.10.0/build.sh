@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build --build-arg setupfile=install/kaa-node.deb -t cburr25/kaa:0.9.0 .
+docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .

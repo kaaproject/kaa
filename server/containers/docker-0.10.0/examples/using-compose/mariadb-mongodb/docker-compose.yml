@@ -22,7 +22,7 @@ services:
     volumes:
       - nosql-data:/data/db
   kaa:
-    image: cburr25/kaa:0.9.0
+    image: kaa-node:0.10.0
     # build: .
     env_file: ../kaa-example.env
     environment:

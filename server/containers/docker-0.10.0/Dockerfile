@@ -37,10 +37,6 @@ RUN dpkg -i /install/kaa-node.deb \
     && rm -R /install/ \
     && apt-get autoremove -y && apt-get clean
 
-## PostgreSQL driver
-#ADD http://central.maven.org/maven2/org/postgresql/postgresql/9.4.1208/postgresql-9.4.1208.jar /usr/lib/kaa-node/lib/postgresql.jar
-#RUN chmod 755 /usr/lib/kaa-node/lib/postgresql.jar
-
 RUN touch /var/log/kaa/kaa-node.log \
     && chown kaa:kaa /var/log/kaa/kaa-node.log
 

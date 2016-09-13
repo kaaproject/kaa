@@ -16,17 +16,17 @@ services:
     volumes:
       - zookeeper-data:/tmp/zookeeper
   nosql:
-    image: cassandra:3.7
+    image: cassandra:latest
     networks:
       - back-tier
     volumes:
-      - /tmp/opt/data:/opt/data
+      - nosql-data:/data/db
     environment:
       - CASSANDRA_START_RPC=true
     stdin_open: false
     mem_limit: "4G"
   kaa:
-    image: cburr25/kaa:0.9.0
+    image: kaa-node:0.10.0
     # build: .
     env_file: ../kaa-example.env
     environment:
