@@ -18,7 +18,7 @@ For example, a notification can cause a [Kaa client]({{root_url}}/#kaa-client) t
 
 To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
 After that, you need to create a tenant and an application.
-To do this, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
+To do this, you can use the [tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant) and [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application) APIs or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
 
 It is strongly recommended that you first read the [Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) sections before you proceed.
 
