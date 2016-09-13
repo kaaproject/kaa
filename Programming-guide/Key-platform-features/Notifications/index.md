@@ -27,7 +27,7 @@ It is strongly recommended that you first read the [Data collection]({{root_url}
 The following diagram illustrates the basic entities and data flows in scope of the notification management:
 
 * Notifications are generated based on the [notification schema](#notification-schema) configured by the application developer.
-* The user or administrator sends a notification using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) call or the Administration UI (see [Send notifications](#send-notifications)).
+* The user or administrator sends a notification using the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/sendNotification) call or the Administration UI (see [Send notifications](#send-notifications)).
 
 ![Basic architecture](images/basic_architecture_notification.png)
 
@@ -63,7 +63,7 @@ For the purpose of this guide, a simple notification schema is shown in the exam
 }
 ```
 
-To configure your own notification schema, use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) or select it from the **Notification** page under the **Schemas** section of the application.
+To configure your own notification schema, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) or select it from the **Notification** page under the **Schemas** section of the application.
 
 ![Add Notification Schema 1](images/add_notification_schema_1.png)
 
