@@ -30,8 +30,6 @@ import java.util.*;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogen.GenerationContext;
@@ -61,6 +59,9 @@ public abstract class Compiler {
     protected String namespacePrefix;
 
     protected final Map<Schema, GenerationContext> schemaGenerationQueue;
+    // list of schemas that should be skipped during generation
+    protected Set<Schema> generatedSchemas = new HashSet<>();
+
 
     private void initVelocityEngine() {
         engine = new VelocityEngine();
@@ -96,6 +97,12 @@ public abstract class Compiler {
         this.headerWriter = new PrintWriter(hdrS);
         this.sourceWriter = new PrintWriter(srcS);
         prepareTemplates(false);
+    }
+
+
+    public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS, Set<Schema> generatedSchemas) throws KaaGeneratorException {
+        this(schemas, sourceName, hdrS, srcS);
+        this.generatedSchemas = new HashSet<>(generatedSchemas);
     }
 
     public Compiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
@@ -172,10 +179,11 @@ public abstract class Compiler {
     }
 
 
-    public void generate() throws KaaGeneratorException {
+    public Set<Schema> generate() throws KaaGeneratorException {
         try {
             LOG.debug("Processing schemas: [" + join(schemas, ", ") + "]");
             for (Schema schema : schemas) {
+
                 if (schema.getType() == Type.UNION) {
                     for (Schema s : schema.getTypes()) {
                         addAllSchemasToQueue(s, null);
@@ -185,9 +193,11 @@ public abstract class Compiler {
                 }
             }
 
+
             doGenerate();
 
             LOG.debug("Sources were successfully generated");
+            return schemaGenerationQueue.keySet();
         } catch (Exception e) {
             LOG.error("Failed to generate C sources: ", e);
             throw new KaaGeneratorException("Failed to generate sources: " + e.toString());
@@ -279,6 +289,5 @@ public abstract class Compiler {
     public void setNamespacePrefix(String namespacePrefix) {
         this.namespacePrefix = namespacePrefix;
     }
-
 
 }
