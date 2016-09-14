@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.avro.Schema;
@@ -225,8 +226,11 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             newFields.add(newField);
         }
         if (addressable) {
-            // This record supports partial updates, adding "uuid" field
-            newFields.add(getUuidField());
+            // This record supports partial updates, adding "uuid" field if it is not exists already
+            Optional<Field> uuidOptional = newFields.stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst();
+            if (!uuidOptional.isPresent()) {
+                newFields.add(getUuidField());
+            }
         }
         AvroUtils.copyJsonProperties(root, copySchema);
         copySchema.setFields(newFields);
