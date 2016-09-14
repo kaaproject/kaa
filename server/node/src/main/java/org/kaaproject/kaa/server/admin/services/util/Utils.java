@@ -77,11 +77,11 @@ public class Utils {
         return reference;
     }
 
-    public static void checkEmailUniquieness(String email, Set<String> storedEmails) throws KaaAdminServiceException {
+    public static void checkFieldUniquieness(String email, Set<String> storedEmails) throws KaaAdminServiceException {
         checkNotNull(email);
         boolean isAdded = storedEmails.add(email);
         if (!isAdded) {
-            throw new KaaAdminServiceException("Entered email is already used by another user!", ServiceErrorCode.INVALID_ARGUMENTS);
+            throw new KaaAdminServiceException("Entered property is already used by another user!", ServiceErrorCode.INVALID_ARGUMENTS);
         }
     }
 
