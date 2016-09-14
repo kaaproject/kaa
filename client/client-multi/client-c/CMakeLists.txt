@@ -189,6 +189,7 @@ set(KAA_INCLUDE_DIRS
         ${KAA_INCLUDE_PATHS}         # Provided by platform cmake
         ${CMAKE_CURRENT_LIST_DIR}/src
         ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls
+        ${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption/rsa_key_gen/include
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
 
@@ -280,9 +281,19 @@ if(${KAA_PLATFORM} STREQUAL "posix")
     option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
     if(${KAA_RUNTIME_KEY_GENERATION})
         add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+        add_subdirectory(tools/kaa_encryption/rsa_key_gen)
+        target_link_libraries(kaac PUBLIC rsa_keygen)
+    else()
+        add_dependencies(kaac kaa_rsa_keygen)
+        externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
+                            INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
+                            CMAKE_ARGS -DKAA_SDK_DIR=${KAA_SDK_DIR}
+                            BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
+
+        externalproject_add_step(kaa_rsa_keygen "Copying generated files"
+                                 COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
+                                 "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
     endif()
-    add_subdirectory(tools/kaa_encryption/rsa_key_gen)
-    target_link_libraries(kaac PUBLIC rsa_keygen)
 else()
     add_dependencies(kaac kaa_rsa_keygen)
     externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
