@@ -277,15 +277,17 @@ add_subdirectory(Modules/cppcheck)
 
 #Set key pair generation parameter for posix platform
 #Use application for another platform
+if(${KAA_PLATFORM} STREQUAL "posix")
+    option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
+    if(${KAA_RUNTIME_KEY_GENERATION})
+        add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+        add_subdirectory(tools/kaa_encryption/rsa_key_gen)
+        target_link_libraries(kaac PUBLIC rsa_keygen)
+    endif()
 
-option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
+endif()
 
-if(${KAA_PLATFORM} STREQUAL "posix" AND ${KAA_RUNTIME_KEY_GENERATION})
-    add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
-    add_subdirectory(tools/kaa_encryption/rsa_key_gen)
-    target_link_libraries(kaac PUBLIC rsa_keygen)
-else()
-    set(KAA_RUNTIME_KEY_GENERATION OFF)
+if(NOT ${KAA_RUNTIME_KEY_GENERATION})
     add_dependencies(kaac kaa_rsa_keygen)
     externalproject_add(kaa_rsa_keygen SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption"
                         INSTALL_COMMAND  "./generate_rsa_keys" COMMENT "Generating RSA headers"
