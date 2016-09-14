@@ -1101,4 +1101,9 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{externalUId}/{appToken}/{schemaVersion}",
                 EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
     }
+
+    public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{endpointKeyHash}/",
+                String.class, endpointKeyHash);
+    }
 }

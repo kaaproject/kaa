@@ -17,7 +17,8 @@
 package org.kaaproject.kaa.server.admin.shared.servlet;
 
 public interface ServletParams {
-    
+
+    public final static String EP_CONF_SERVLET_PATH = "servlet/kaaEpConfServlet";
     public final static String KAA_SDK_SERVLET_PATH = "servlet/kaaSdkServlet";
     public final static String KAA_RECORD_LIBRARY_SERVLET_PATH = "servlet/kaaRecordLibraryServlet";
     public final static String KAA_CTL_EXPORT_SERVLET_PATH = "servlet/kaaCtlExportServlet";

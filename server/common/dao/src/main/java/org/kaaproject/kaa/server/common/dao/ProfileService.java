@@ -19,13 +19,8 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.Collection;
 import java.util.List;
+import org.kaaproject.kaa.common.dto.*;
 
-import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.VersionDto;
 
 /**
  * The interface Profile service.
@@ -177,4 +172,6 @@ public interface ProfileService {
      * @return found profile filter
      */
     ProfileFilterDto findLatestFilterBySchemaIdsAndGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
+
+    EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash);
 }

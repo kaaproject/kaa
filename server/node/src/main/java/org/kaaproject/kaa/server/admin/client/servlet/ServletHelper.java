@@ -64,6 +64,13 @@ public class ServletHelper implements ServletParams {
         Window.open( url, "_self", "enabled");
     }
 
+    public static void downloadEndpointConfiguration(String endpointKeyHash){
+        String getUrl = composeURL(EP_CONF_SERVLET_PATH,
+                ENDPOINT_KEY_PARAMETER+"="+URL.encodeQueryString(endpointKeyHash));
+        String url = GWT.getModuleBaseURL() + getUrl;
+        Window.open( url, "_self", "enabled");
+    }
+
     /*
     Some browsers may not use given filename.
      */

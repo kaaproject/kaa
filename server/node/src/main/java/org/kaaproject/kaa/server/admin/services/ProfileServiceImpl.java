@@ -16,11 +16,13 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -39,10 +41,12 @@ import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.server.admin.shared.services.ConfigurationService;
 import org.kaaproject.kaa.server.admin.shared.services.CtlService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ProfileService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.operations.service.filter.DefaultFilterEvaluator;
 import org.kaaproject.kaa.server.operations.service.filter.el.GenericRecordPropertyAccessor;
 import org.slf4j.Logger;
@@ -72,6 +76,9 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
 
     @Autowired
     CtlService ctlService;
+
+    @Autowired
+    ConfigurationService configurationService;
 
     @Override
     public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
@@ -517,6 +524,18 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
                     endpointProfile.getClientProfileBody()));
             endpointProfileView.setServerProfileRecord(createRecordFieldFromCtlSchemaAndBody(serverProfileSchema.getCtlSchemaId(),
                     endpointProfile.getServerProfileBody()));
+
+            String endpointConfig = configurationService.findEndpointConfigurationByEndpointKeyHash(endpointProfileKeyHash);
+
+            Integer version = Integer.parseInt(controlService.findConfSchemaByAppIdAndVersion(endpointProfile.getApplicationId(),endpointProfile.getConfigurationVersion()).getId());
+            endpointProfileView.setSchemaId(version);
+
+            Schema schema = controlService.findEndpointConfigurationSchemaByEndpointKeyHash(endpointProfileKeyHash);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+            GenericRecord record = converter.decodeJson(endpointConfig);
+            RecordField recordField = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+            endpointProfileView.setEndpointConfig(recordField);
+
             List<TopicDto> topics = new ArrayList<>();
             if (endpointProfile.getSubscriptions() != null) {
                 for (String topicId : endpointProfile.getSubscriptions()) {
