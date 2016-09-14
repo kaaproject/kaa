@@ -337,7 +337,7 @@ The following server-side profile is compatible with our schema example.
 
 The schema structure from this example allows filtering the endpoints by subscription plan and the activation flag.
 
-### Setting server-side EP profile schema from Administration UI
+### Setting server-side EP profile schema
 
 To view the list of server-side endpoint profile schemas created by a [tenant developer]({{root_url}}Glossary/#tenant-developer), open the the **Server-side EP profile** page under the **Schemas** section of the application.
 
