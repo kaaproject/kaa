@@ -165,7 +165,9 @@ Kaa requires the following third party components to be installed and configured
    Create the Kaa database by executing the following command:
 
    ```sql   
-   CREATE DATABASE kaa;
+   CREATE DATABASE kaa
+       CHARACTER SET utf8
+       COLLATE utf8_general_ci;
    ```
 
    </div><div id="postgre" class="tab-pane fade" markdown="1" >
@@ -209,7 +211,12 @@ Kaa requires the following third party components to be installed and configured
    Create the Kaa database by executing the following command.
 
    ```sql
-   CREATE DATABASE kaa;
+   CREATE DATABASE "kaa"
+       WITH OWNER "postgres"
+       ENCODING 'UTF8'
+       LC_COLLATE = 'en_US.UTF-8'
+       LC_CTYPE = 'en_US.UTF-8'
+       TEMPLATE template0;
    ```
 
    </div>
@@ -535,7 +542,9 @@ cqlsh>
    Create the Kaa database by executing the following command.
 
    ```bash
-   MariaDB [(none)]> CREATE DATABASE kaa;
+   MariaDB [(none)]> CREATE DATABASE kaa
+                            CHARACTER SET utf8
+                            COLLATE utf8_general_ci;
    ```
 
    </div><div id="postgre_centos" class="tab-pane fade" markdown="1" >
@@ -620,7 +629,12 @@ cqlsh>
    Create the Kaa database by executing the following command.
 
    ```bash
-   CREATE DATABASE kaa;
+   CREATE DATABASE "kaa"
+          WITH OWNER "postgres"
+          ENCODING 'UTF8'
+          LC_COLLATE = 'en_US.UTF-8'
+          LC_CTYPE = 'en_US.UTF-8'
+          TEMPLATE template0;
    ```
 
    Update pg\_hba.conf file to allow local connections.
