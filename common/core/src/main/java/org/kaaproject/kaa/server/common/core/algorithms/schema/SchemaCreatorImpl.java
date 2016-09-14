@@ -88,7 +88,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             } else {
                 uuidFieldSchema = getUuidType();
             }
-            uuidField = new Field(UUID_FIELD, uuidFieldSchema, null, null);;
+            uuidField = new Field(UUID_FIELD, uuidFieldSchema, null, null);
             uuidField.addProp(DISPLAY_NAME_FIELD, UUID_FIELD_DISPLAY_NAME);
             uuidField.addProp(FIELD_ACCESS_FIELD, FIELD_ACCESS_READ_ONLY);
             return uuidField;
@@ -232,7 +232,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         copySchema.setFields(newFields);
         if (addressable) {
             // Adding addressable record's name to the storage
-            String fullName = root.getFullName();;
+            String fullName = root.getFullName();
             if (!fullName.equals(rootSchemaName)) {
                 addressableRecords.add(copySchema);
             }
