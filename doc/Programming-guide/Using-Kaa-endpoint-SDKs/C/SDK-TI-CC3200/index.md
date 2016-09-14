@@ -12,7 +12,13 @@ sort_idx: 30
 
 This guide explains how to build applications for Texas Instruments CC3200 LaunchPad (further, CC3200) based on the Kaa C SDK.
 
-# Installing necessary components for Linux (Ubuntu)
+## Installing necessary components for Linux (Ubuntu)
+
+**All steps described in this guide were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
+ - **Device:** [TI CC3200 LaunchPad](http://www.ti.com/tool/cc3200-launchxl)
+ - **SDK version:** [CC3200 SDK v1.2.0 release](http://www.ti.com/tool/cc3200sdk)
 
 Before building the C SDK for the CC3200 platform on Linux, you need to perform the next installation steps.
 
@@ -24,52 +30,59 @@ Before building the C SDK for the CC3200 platform on Linux, you need to perform 
         sudo chown <username>:<usergroup> /opt/kaa
         mv gcc-arm-none-eabi-4_9-2015q2 /opt/kaa/gcc-arm-none-eabi
 1. Install and configure OpenOCD, which is needed for running and debugging applications.
-    1. Install OpenOCD.
 
-            sudo apt-get install openocd
-    1. Add a rule file.
+   Install OpenOCD.
 
-            cd /etc/udev/rules.d/
-            sudo nano 98-usbftdi.rules
-    1. Write the following code into the added rule file and then save the file.
+        sudo apt-get install openocd
 
-            SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0660", GROUP="dialout",
-            RUN+="/sbin/modprobe ftdi-sio" RUN+="/bin/sh -c '/bin/echo 0451 c32a > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"
-    1. Reload the rules.
+   Add a rule file.
 
-            sudo udevadm control --reload-rules
-    1. To use OpenOCD as a regular user, add yourself to the dialout group.
+        cd /etc/udev/rules.d/
+        sudo nano 98-usbftdi.rules
 
-            sudo usermod -a -G dialout <username>
-    1. Log out and log in to finish the process.
-    NOTE: The board should be enumerated as `/dev/ttyUSB{0,1}`. Use ttyUSB1 for UART.
+   Write the following code into the added rule file and then save the file.
+
+        SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0660", GROUP="dialout",
+        RUN+="/sbin/modprobe ftdi-sio" RUN+="/bin/sh -c '/bin/echo 0451 c32a > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"
+
+   Reload the rules.
+
+        sudo udevadm control --reload-rules
+
+   To use OpenOCD as a regular user, add yourself to the dialout group.
+
+        sudo usermod -a -G dialout <username>
+
+   Log out and log in to finish the process.
+
+   >**NOTE:** The board should be enumerated as `/dev/ttyUSB{0,1}`. Use ttyUSB1 for UART.
+
 1. Install CC3200 SDK.
-    1. Install [Wine](https://www.winehq.org/).
 
-            sudo apt-get install wine
-    1. [Download](http://www.ti.com/tool/cc3200sdk) CC3200 SDK.
-    1. Unpack CC3200 SDK.
-    1. Change the configuration file for the debug interface.
-        In `/opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg` replace the following few lines:
+   Install [Wine](https://www.winehq.org/).
+
+        sudo apt-get install wine
+
+   [Download](http://www.ti.com/tool/cc3200sdk) and unpack CC3200 SDK. Change the configuration file for the debug interface. In `/opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg` replace the following few lines:
 
             interface ft2232
             ft2232_layout luminary_icdi
             ft2232_device_desc "USB <-> JTAG/SWD"
             ft2232_vid_pid 0x0451 0xc32a
 
-        with
+   with
 
             interface ftdi
             ftdi_device_desc "USB <-> JTAG/SWD"
             ftdi_vid_pid 0x0451 0xc32a
             ftdi_layout_init 0x00a8 0x00eb
             ftdi_layout_signal nSRST -noe 0x0020
-    1. Edit GDB configuration.
+   Edit GDB configuration.
 
             sed -i 's#-f cc3200.cfg#-f /opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg#g' /opt/kaa/cc3200-sdk/tools/gcc_scripts/gdbinit
 
 
-# Installing necessary components for Windows
+## Installing necessary components for Windows
 
 Before building the C SDK for the CC3200 platform on Windows, you need to perform the following installation.
 
@@ -99,12 +112,12 @@ For more information, please refer to [the official CC3200 Getting Started Guide
 
 [cc3200-getting-started-guide]: http://www.ti.com/lit/ug/swru376d/swru376d.pdf
 
-# Creating applications based on C SDK
+## Creating applications based on C SDK
 
 Before creating applications based on the C SDK, you should obtain the C SDK and build a static library from it.
 To do so, generate the [C SDK in Admin UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk), then extract the archive.
 
-## Building C SDK on Linux
+### Building C SDK on Linux
 
 Change directory to where SDK was unpacked and execute the following:
 
@@ -117,7 +130,7 @@ make
 
 Refer to [C SDK Linux page]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for more details.
 
-## Building C SDK on Windows
+### Building C SDK on Windows
 
 Open the Cygwin terminal and execute the following:
 
@@ -128,7 +141,7 @@ cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DCC32XX_TOOLCHAIN_PATH=c:/c
 make
 ```
 
-# Example
+## Example
 
 To quickly start with the Kaa IoT platform, you can download one of the Kaa demo applications from the [Kaa Sandbox]({{root_url}}/Getting-started/) and run it on the CC3200 board. We recommend you to start with the ConfigurationDemo.
 
@@ -155,7 +168,7 @@ To launch the application, execute the following:
 
 NOTE: If you want to see the debug output in the terminal, make sure to get connected to `/dev/ttyUSB{0,1}.`
 
-# Flashing (Windows only)
+## Flashing (Windows only)
 
 Jumpers on the CC3200 board should be connected as shown below.
 
