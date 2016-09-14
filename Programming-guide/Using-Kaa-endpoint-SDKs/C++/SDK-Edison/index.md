@@ -8,7 +8,7 @@ sort_idx: 60
 
 The guide explains how to build applications for Intel Edison based on the Kaa C++ endpoint SDK.
 
-**Note:** The instructions below are for the official Intel Edison firmware.
+>**Note:** The instructions below are for the official Intel Edison firmware.
 
 ## Configuring Intel Edison board
 

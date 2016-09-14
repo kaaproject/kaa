@@ -14,7 +14,7 @@ sort_idx: 40
 
 This guide explains how to build applications based on the Kaa C endpoint SDKs for the UDOO board.
 
-# Starting with UDOO board
+## Starting with UDOO board
 
 If this is the first time you use the UDOO technology, you have to start with configuring your board. For this purpose, refer to [the UDOO official documentation](http://www.udoo.org/docs/Introduction/Introduction.html).
 
@@ -28,6 +28,6 @@ The UDOO platform allows building the source code directly on the board. The onl
 
         scp /path/to/downloaded/sdk/c-sdk-archive-name.tar.gz root@<put ip address here>:c-sdk-archive-name.tar.gz
 
-# Creating an application
+## Creating an application
 
 Since UDOO board is powerful enough to run Linux and build applications directly on it, you can follow [the C SDK Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) to create Kaa client application for this target.
