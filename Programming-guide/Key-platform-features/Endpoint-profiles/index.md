@@ -232,7 +232,7 @@ kaaClient->start();
 <div id="C" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_profile.h>
+#include <extensions/profile/kaa_profile.h>
 #include <kaa/gen/kaa_profile_gen.h> // auto-generated header
  
 #define KAA_EXAMPLE_PROFILE_ID "sampleid"
