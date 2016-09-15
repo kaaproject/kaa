@@ -14,22 +14,16 @@ To configure an [endpoint]({{root_url}}Glossary/#endpoint-ep), the Kaa **Configu
 The data structure is defined in the schema selected by the user.
 For more information about schemas in Kaa, see [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library).
 
-Since Kaa operates on uniformly structured data, you can use the following features:
+Since Kaa operates on uniformly structured data, you can:
 
-* Automatic generation of the configuration object model in the endpoint SDK.
-* Automatic generation of the default configuration.
-* Enforcement of the configuration integrity.
-* Endpoint-specific configuration view based on the endpoint group membership.
+* Automatically generate a configuration object model in the endpoint SDK.
+* Automatically generate default configuration.
+* Enforceme configuration integrity.
+* View endpoint-specific configuration based on the endpoint group membership.
 
 ## Updating configuration data
 
-To provision a configuration schema:
-
-- Use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema).
-
-OR
-
-- Use the [Administration UI]({{root_url}}Glossary/#administration-ui) to open the **Configuration** page under the **Schemas** section of your application and click **Add schema**.
+To provision a configuration schema, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema) or open the **Configuration** page of the application and follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
 
 ![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
 
