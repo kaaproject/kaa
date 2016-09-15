@@ -343,8 +343,9 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         try {
             byte[] body = getFileContent(fileItemName);
 
+            Schema avroSchema = new Schema.Parser().parse(schema);
             JsonNode json = new ObjectMapper().readTree(body);
-            json = injectUuids(json);
+            json = injectUuids(json, avroSchema);
             body = json.toString().getBytes();
 
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
@@ -555,18 +556,31 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         return schemaInfos;
     }
 
-    private JsonNode injectUuids(JsonNode json) {
-        boolean containerWithoutId = json.isContainerNode() && !json.has("__uuid");
-        boolean notArray = !(json instanceof ArrayNode);
-        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
+    private JsonNode injectUuids(JsonNode json, Schema schema) {
+        if (json == null) return json;
+        String UUID_FIELD = "__uuid";
 
-        if (containerWithoutId && notArray && childIsNotArray) {
-            ((ObjectNode) json).put("__uuid", (Integer) null);
-        }
+        switch (schema.getType()) {
+            case RECORD:
+                schema.getFields().stream()
+                        .filter(f -> !f.name().equals(UUID_FIELD))
+                        .forEach(f -> injectUuids(json.get(f.name()), f.schema()));
 
-        for (JsonNode node : json) {
-            if (node.isContainerNode())
-                injectUuids(node);
+                boolean addressable = schema.getFields().stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst().isPresent();
+                if (addressable) {
+                    ((ObjectNode) json).put(UUID_FIELD, (Integer) null);
+                }
+                break;
+            case UNION:
+                schema.getTypes()
+                        .forEach(s -> injectUuids(json.get(s.getName()), s));
+                break;
+            case ARRAY:
+                schema.getElementType().getTypes()
+                        .forEach(s -> injectUuids(json.get(s.getName()), s));
+                break;
+            default:
+                return json;
         }
 
         return json;
