@@ -183,14 +183,12 @@ To do this, run the following commands in the terminal.
 		sudo apt-get install cmake
 		sudo apt-get install libssl-dev
 
-2. Create a direcory named **kaa** and unpack the C SDK archive it it.
+2. Create a direcory named **kaa** and unpack the C SDK archive it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
 		cmake_minimum_required(VERSION 2.8.8)
 		project(kaa-application C)
-		
-		find_package(OpenSSL REQUIRED)
 		
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
 		
@@ -198,7 +196,7 @@ To do this, run the following commands in the terminal.
 		
 		add_executable(kaa-app main.c)
 		
-		target_link_libraries(kaa-app kaac crypto)
+		target_link_libraries(kaa-app kaac)
 		
 4. Create a main.c source file containing empty main routine (for now).
 
