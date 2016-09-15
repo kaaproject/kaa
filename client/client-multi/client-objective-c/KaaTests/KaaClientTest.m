@@ -24,18 +24,16 @@
 #import <Kaa/Kaa.h>
 
 
-@interface ClientStateDelegateFailure : NSObject
+@interface ClientStateDelegateWithoutImplementedMethods : NSObject
 
 - (void)onStartFailureWithException:(NSException *)exception;
 - (void)onPauseFailureWithException:(NSException *)exception;
 - (void)onResumeFailureWithException:(NSException *)exception;
 - (void)onStopFailureWithException:(NSException *)exception;
 
-
-
 @end
 
-@implementation ClientStateDelegateFailure
+@implementation ClientStateDelegateWithoutImplementedMethods
 
 - (void)onStartFailureWithException:(NSException *)exception {
     [exception raise];
@@ -147,8 +145,8 @@
     [verifyCount(self.delegate, times(1)) onStopped];
 }
 
-- (void)testKlientStateDelegateEmpty {
-    id<KaaClientStateDelegate> fakeDelegate = (id<KaaClientStateDelegate>)mock([ClientStateDelegateFailure class]);
+- (void)testClientStateDelegateEmpty {
+    id<KaaClientStateDelegate> fakeDelegate = (id<KaaClientStateDelegate>)mock([ClientStateDelegateWithoutImplementedMethods class]);
     [self.client setStateDelegate:fakeDelegate];
     
     [self.client start];
