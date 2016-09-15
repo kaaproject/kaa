@@ -16,6 +16,8 @@
 
 #import "SHAMessageDigest.h"
 #import "NSString+Commons.h"
+#import <CommonCrypto/CommonDigest.h>
+
 
 @interface SHAMessageDigest ()
 
