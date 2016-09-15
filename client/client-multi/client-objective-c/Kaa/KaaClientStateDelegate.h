@@ -22,7 +22,7 @@
 /**
  * Notifies about Kaa client state changes and errors
  */
-@protocol KaaClientStateDelegate
+@protocol KaaClientStateDelegate <NSObject>
 @optional
 
 /**

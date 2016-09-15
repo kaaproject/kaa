@@ -23,6 +23,38 @@
 #import <XCTest/XCTest.h>
 #import <Kaa/Kaa.h>
 
+
+@interface ClientStateDelegateFailure : NSObject
+
+- (void)onStartFailureWithException:(NSException *)exception;
+- (void)onPauseFailureWithException:(NSException *)exception;
+- (void)onResumeFailureWithException:(NSException *)exception;
+- (void)onStopFailureWithException:(NSException *)exception;
+
+
+
+@end
+
+@implementation ClientStateDelegateFailure
+
+- (void)onStartFailureWithException:(NSException *)exception {
+    [exception raise];
+}
+
+- (void)onPauseFailureWithException:(NSException *)exception {
+    [exception raise];
+}
+
+- (void)onResumeFailureWithException:(NSException *)exception {
+    [exception raise];
+}
+
+- (void)onStopFailureWithException:(NSException *)exception {
+    [exception raise];
+}
+
+@end
+
 @interface TestFailoverStrategy : DefaultFailoverStrategy
 
 @end
@@ -113,6 +145,27 @@
     [self.client stop];
     [NSThread sleepForTimeInterval:1];
     [verifyCount(self.delegate, times(1)) onStopped];
+}
+
+- (void)testKlientStateDelegateEmpty {
+    id<KaaClientStateDelegate> fakeDelegate = (id<KaaClientStateDelegate>)mock([ClientStateDelegateFailure class]);
+    [self.client setStateDelegate:fakeDelegate];
+    
+    [self.client start];
+    [NSThread sleepForTimeInterval:1];
+    [verifyCount(fakeDelegate, times(0)) onStartFailureWithException:anything()];
+    
+    [self.client pause];
+    [NSThread sleepForTimeInterval:1];
+    [verifyCount(fakeDelegate, times(0)) onPauseFailureWithException:anything()];
+    
+    [self.client resume];
+    [NSThread sleepForTimeInterval:1];
+    [verifyCount(fakeDelegate, times(0)) onResumeFailureWithException:anything()];
+    
+    [self.client stop];
+    [NSThread sleepForTimeInterval:1];
+    [verifyCount(fakeDelegate, times(0)) onStopFailureWithException:anything()];
 }
 
 - (void)testBasicStartBootstrapFailure {
