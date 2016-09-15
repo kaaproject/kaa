@@ -177,12 +177,11 @@ The following section will illustrate a simple desktop application that sends te
 
 Before using the C application code, be sure to complete the following steps:
 
-1. Install CMake and OpenSSL.
+1. Install CMake.
 To do this, run the following commands in the terminal.
 
 		sudo apt-get install cmake
-		sudo apt-get install libssl-dev
-
+		
 2. Create a direcory named **kaa** and unpack the C SDK archive it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
