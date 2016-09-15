@@ -17,8 +17,8 @@ For example, a notification can cause a [Kaa client]({{root_url}}/#kaa-client) t
 ## Prerequisites
 
 To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
-After that, you need to create a tenant and an application.
-To do this, you can use the [tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant) and [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application) APIs or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
+After that, you need to create a tenant with tenant admin, and an application.
+To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}/Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)) or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
 
 It is strongly recommended that you first read the [Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) sections before you proceed.
 
@@ -163,9 +163,32 @@ Below is an example of the uploaded file contents that will match the default Sa
 
 A notification will be queued for delivery until the time you specified in the **Expires at** field of the **Notification details** page.
 If you leave this field blank, the message will be queued until it is delivered.
+For more information, see [Notification pipelines](#notification-pipelines).
 
-If you specified an endpoint ID in the **KeyHash** field, the notification will be only sent to that specific endpoint.
+If you specified an endpoint ID in the **Endpoint KeyHash** field, the notification will only be sent to that specific endpoint.
 If you leave this field blank, the notification will be sent to all endpoints subscribed to the selected notification topic.
+
+## Notification pipelines
+
+Notifications are processed by Kaa server using the **notification pipelines**.
+
+The server uses these pipelines to manage individual notifications within a topic.
+A notification remains queued in the pipeline until its time-to-live (TTL) expires, after that the notification will be deleted.
+
+Two types of pipelines are used depending on the scope of notifications delivery: **multicast** and **unicast** pipelines.
+A multicast pipeline manages notifications for unlimited number of endpoints, while a unicast pipeline manages notifications for a single specific endpoint.
+
+### Multicast pipelines
+
+When you send a notification to a topic that more than one endpoint is subscribed to, that notification is added to a multicast pipeline with a unique sequential index.
+Every endpoint maintains its position independently in the pipelines by storing the last sequential index received from each pipeline.
+
+### Unicast pipelines
+
+When you send a notification to a single endpoint by entering its KeyHash (see [Send notifications](#send-notifications)), that notification is added to a unicast pipeline with a unique ID.
+Every endpoint handled by a unicast pipeline maintains its pipeline by reporting the received notification ID.
+The server removes the notification from the pipeline once it receives a receipt confirmation from the endpoint.
+Make sure that the endpoint you specified is subscribed to the corresponding notification topic, otherwise the notification will not be delivered.
 
 ## Notifications API
 
@@ -609,7 +632,7 @@ error_code = kaa_sync_topic_subscriptions(kaa_client_get_context(kaa_client)->no
 
 There are two types of topic notification listeners: default and topic-specific.
 To receive notifications, add at least one default listener.
-As a result, the listener will receive notifications from all topics (all mandatory topics and all optional topics that the endpoint group is subscribed to.
+As a result, the listener will receive notifications from all topics (all mandatory and all optional topics) that the endpoint group is subscribed to.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-12">Java</a></li>
