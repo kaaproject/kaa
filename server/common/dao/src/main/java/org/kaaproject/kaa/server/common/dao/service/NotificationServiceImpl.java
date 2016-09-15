@@ -80,8 +80,8 @@ public class NotificationServiceImpl implements NotificationService {
     private NotificationDao<Notification> notificationDao;
     private EndpointNotificationDao<EndpointNotification> unicastNotificationDao;
 
-    // 7 days
-    private static final int TTL = 7 * 24 * 3600 * 1000;
+    @Value("#{properties[default_ttl]}")
+    private int TTL;
 
     @Override
     public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchemaDto) {
