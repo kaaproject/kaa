@@ -63,12 +63,10 @@ For the purpose of this guide, a simple notification schema is shown in the exam
 }
 ```
 
-To configure your own notification schema, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) or select it from the **Notification** page under the **Schemas** section of the application.
+As a tenant developer, you can create new notification schemas for an application.
+To do this, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Notifications/saveNotificationSchema) or open the **Notification** page of the application and follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
 
 ![Add Notification Schema 1](images/add_notification_schema_1.png)
-
-As a tenant developer, you can create new notification schemas for an application.
-To do this, open the **Notification** page of the application and follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
 
 ### Notification topics
 
