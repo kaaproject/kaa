@@ -253,7 +253,7 @@ for (const auto& topic : topics) {
 </div><div id="C-9" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/platform/kaa_client.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/kaa_notification_manager.h>
  
 kaa_client_t *kaa_client = /* ... */;
@@ -340,7 +340,7 @@ kaaClient->unsubscribeFromTopic("Android notifications");
 </div><div id="C-14" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_notification_manager.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/platform/ext_notification_receiver.h>
 // Assume we have some optional topic
 uint64_t topic_id = 12345;
@@ -408,7 +408,7 @@ kaaClient->unsubscribeFromTopics({"iOS 8 notifications", "another_optional_topic
 </div><div id="C-15" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_notification_manager.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/platform/ext_notification_receiver.h>
  
 // Assume we have some optional topics
@@ -509,7 +509,7 @@ kaaClient->removeTopicListListener(*topicListListener);
 </div><div id="C-10" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_notification_manager.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/platform/ext_notification_receiver.h>
 kaa_topic_listener_t topic_listener = { &on_topic_list_uploaded, NULL };
 uint32_t topic_listener_id = 0;
@@ -593,7 +593,7 @@ kaaClient->syncTopicSubscriptions();
 </div><div id="C-11" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_notification_manager.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/platform/ext_notification_receiver.h>
 // Assume we have some optional topics
 uint64_t topic_ids[] = { 12345, 6789 };
@@ -698,7 +698,7 @@ kaaClient->removeNotificationListener(*listener);
 </div><div id="C-12" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_notification_manager.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/platform/ext_notification_receiver.h>
 void on_notification(void *context, uint64_t *topic_id, kaa_notification_t *notification)
 {
@@ -712,7 +712,7 @@ uint32_t notification_listener_id = 0;
 kaa_error_t error_code = kaa_add_notification_listener(kaa_client_get_context(kaa_client)->notification_manager, &notification_listener, &notification_listener_id);
  
 // Remove listener
-error_code = kaa_remove_notification_listener(kaa_context_->notification_manager, &notification_listener_id);
+error_code = kaa_remove_notification_listener(kaa_client_get_context(kaa_client)->notification_manager, &notification_listener_id);
 ```
 
 </div><div id="Objective-C-12" class="tab-pane fade" markdown="1" >
@@ -788,7 +788,7 @@ kaaClient->removeNotificationListener("All devices notifications", *listener);
 </div><div id="C-13" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_notification_manager.h>
+#include <extensions/notification/kaa_notification_manager.h>
 #include <kaa/platform/ext_notification_receiver.h>
  
 // Assume we have some topic

@@ -282,7 +282,7 @@ kaaClient->attachUser("userExternalId", "userAccessToken", std::make_shared<Simp
 <div id="C" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_user.h>
+#include <extensions/user/kaa_user.h>
 #include <kaa/platform/ext_user_callback.h>
  
 kaa_client_t *kaa_client = /* ... */;
@@ -427,8 +427,8 @@ kaaClient->attachEndpoint("endpointAccessToken", std::make_shared<SimpleEndpoint
 #include <stdint.h>
 #include <kaa/kaa_error.h>
 #include <kaa/platform/kaa_client.h>
-#include <kaa/kaa_user.h>
 #include <kaa/platform/ext_user_callback.h>
+#include <extensions/user/kaa_user.h>
  
 kaa_client_t *kaa_client = /* ... */;
  
@@ -549,8 +549,8 @@ kaaClient->detachEndpoint("endpointKeyHash", std::make_shared<SimpleEndpointDeta
 #include <stdint.h>
 #include <kaa/kaa_error.h>
 #include <kaa/platform/kaa_client.h>
-#include <kaa/kaa_user.h>
 #include <kaa/platform/ext_user_callback.h>
+#include <extensions/user/kaa_user.h>
  
 kaa_client_t *kaa_client = /* ... */;
  

@@ -237,13 +237,12 @@ Now it is time to write application code that will send temperature data with th
 #include <stdint.h>
 #include <time.h>
 
-#include <kaa_error.h>
-#include <kaa_configuration_manager.h>
-#include <kaa_logging.h>
-#include <gen/kaa_logging_gen.h>
+#include <kaa/kaa.h>
 #include <platform/kaa_client.h>
-#include <utilities/kaa_log.h>
 #include <platform-impl/common/ext_log_upload_strategies.h>
+#include <extensions/logging/kaa_logging.h>
+#include <extensions/configuration/kaa_configuration_manager.h>
+#include <utilities/kaa_log.h>
 
 static int32_t sample_period;
 static time_t  last_sample_time;
