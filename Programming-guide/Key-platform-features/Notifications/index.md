@@ -162,7 +162,7 @@ Below is an example of the uploaded file contents that will match the default Sa
 ```
 
 A notification will be queued for delivery until the time you specified in the **Expires at** field of the **Notification details** page.
-If you leave this field blank, the message will be queued until it is delivered.
+If you leave this field blank, the message will be queued until the default time-to-live (TTL) period expires.
 For more information, see [Notification pipelines](#notification-pipelines).
 
 If you specified an endpoint ID in the **Endpoint KeyHash** field, the notification will only be sent to that specific endpoint.
