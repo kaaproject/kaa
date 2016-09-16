@@ -81,7 +81,7 @@ public class DeviceManagementController extends AbstractAdminController {
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
             @ApiResponse(code = 404, message = "The requested item was not found"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "credentialsStatus", params = {"applicationToken", "credentialsId"}, method = RequestMethod.GET)
+    @RequestMapping(value = "credentialsStatus", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CredentialsStatus getCredentialsStatus(
