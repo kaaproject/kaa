@@ -88,18 +88,16 @@ To create and upload the schemas, proceed as follows:
 
     `by_default` field defines the default value for the sampling period, which is in our example
     is set to 1 second.
+1. Create CTL schemas of Application scope using **Upload from file** section with previously created files `data-schema.json` and `configuration-schema.json` : [how to create CTL schema]({{root_url}}/Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct).
 1. Open the [admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management) in your browser and log in as a tenant developer (default user/password in the sandbox: `devuser`/`devuser123`; use the correct credentials if you changed the default).
 1. Open the relevant **Log schemas** window (**Applications => My First Kaa Application => Schemas => Log**) and click **Add schema**.
-1. In the **Add log schema** window, enter the name and description of the new data collection schema.
+1. In the **Add log schema** window, enter the name and description of the new data collection schema and select CTL created before (from file `data-schema.json`).
 
-    ![Data collection scheme](attach/new_data_schema.png)
-1. Scroll down and use the **Upload from file** function to find the previously created `data-schema.json` file with the schema.
-Alternatively, you can use the [Schema Avro UI]({{root_url}}/Administration-guide/Tenants-and-applications-management/#avro-ui-forms) form to create the schema.
-1. Click **Upload**.
+    ![Add log schema](attach/new_data_schema2.png)
 1. Click **Add** at the top of the window.
-1. Repeat uploading and adding for the configuration schema (`configuration-schema.json`) scheme:
+1. Repeat uploading and adding for the configuration schema (from file `configuration-schema.json`):
 
-    ![Data collection scheme](attach/new_config_schema.png)
+    ![Add configuration schema](attach/new_config_schema2.png)
 
 As a result of these operations, you will see configuration and data collection schemas in the list.
 Note that every time you add a new schema, Kaa assigns a new version number to it.
@@ -206,7 +204,11 @@ Before you start with C application code, some preparation is required.
 </div>
 
 <div id="prep-java" class="tab-pane fade" markdown="1" >
+Before you start with Java application code, some preparation is required.
 
+1. Install [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) for your OS.
+1. Create `demo_app` directory.
+1. [Generate Java SDK]({{root_url}}/Programming-guide/Your-first-Kaa-application/#generating-sdk) using Admin UI into `demo_app` directory.
 </div>
 
 <div id="prep-obj-c" class="tab-pane fade" markdown="1" >
@@ -546,6 +548,9 @@ public class FirstKaaDemo {
     }
 }
 ```
+</div>
+
+</div>
 
 ## Launching application
 
@@ -578,6 +583,22 @@ To launch C application next steps should be performed.
 </div>
 
 <div id="run-java" class="tab-pane fade" markdown="1" >
+
+To launch Java application next steps should be performed.
+
+1. Save application code into FirstKaaDemo.java file in `demo_app` directory.
+1. Navigate to `demo_app` directory.
+1. Build application.
+
+        javac -cp *.jar *.java
+
+1. Launch application.
+        
+        Unix-based systems:
+        java -cp '.:./*' FirstKaaDemo
+
+        Windows:
+        java -cp '.;.\*' FirstKaaDemo
 
 </div>
 
