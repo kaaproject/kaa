@@ -10,10 +10,12 @@ sort_idx: 20
 * TOC
 {:toc}
 
-## Introduction
+This page will guide you through Kaa C SDK installation and cross-compilation process for the ESP8266 platform.
 
-This page will guide you through Kaa C SDK installation and compilation process for the ESP8266 platform.
-All steps described here were tested on *Linux Ubuntu 14.04 x86_64*.
+**All steps described here were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
+ - **Device:** ESP8266-01 & NodeMCU
 
 ## Connecting ESP8266
 
@@ -144,10 +146,11 @@ Some notes:
 * [`CMakeLists.txt`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/CMakeLists.txt) is a CMake script (see below).
 * [`driver/uart.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/driver/uart.c) and [`driver/uart.h`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/driver/uart.h) files implement driver for ESP8266 UART interface.
 * The [`ld/`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/ld) directory contains two linker scripts required for ESP8266 applications.
-* You should create `kaa/` directory, put generated Kaa C SDK tarball into it and unpack the tarball:
+* You should put generated Kaa C SDK tarball into kaa/ directory and unpack it:
 
-        mkdir kaa
-        cd kaa && tar zxf kaa-c*.tar.gz
+        mkdir kaa && cd kaa
+        tar zxf kaa-c*.tar.gz
+
 * [`user/user_main.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/user/user_main.c) contains ESP8266 application entry ponit (`user_init()` function)
 and performs ESP8266-specific initizalizations (e.g. initialize UART).
 * [`src/kaa_demo.c`]({{github_url}}/doc/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/attach/esp8266-sample/src/kaa_demo.c) is a platofrm-independent source file with minimal Kaa code.

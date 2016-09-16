@@ -14,13 +14,13 @@ However, build system is not.
 
 Throughout the guide, we focus on details of the CMake-based build system that is used to tie application code together with the C SDK.
 
-**Verified against:**
-
-**Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
-
 ## C SDK build
 
 This section describes how to build C SDK on linux for the host.
+
+**All steps described here were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
 
 ### Dependencies
 

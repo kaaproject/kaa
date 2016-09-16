@@ -16,12 +16,13 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 
 ## Install dependencies
 
+**All steps described here were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
+ - **Target OS:** [Debian 8.5](http://beagleboard.org/latest-images)
+ - **Device:** [BeagleBone](http://beagleboard.org/bone-original)
+
 **The further instructions must be executed on the host machine.**
-
-**Verified against:**
-
- - **Host OS:** Ubuntu 14.04 64-bit LTS
- - **Target OS:** Ubuntu 16.04 32-bit LTS
 
 ### Download and install toolchain
 
