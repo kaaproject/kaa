@@ -83,9 +83,9 @@ static int32_t gBucketIdCounter = 0;
         [NSException raise:KaaRuntimeException format:@"Method should not be called in main thread!"];
     }
     double timeoutMillis = [TimeUtils convertValue:timeout fromTimeUnit:timeUnit toTimeUnit:TIME_UNIT_MILLISECONDS];
-    double endCheck = CACurrentMediaTime() * 1000 + timeoutMillis;
+    double endCheck = [NSDate currentTimeInMilliseconds] + timeoutMillis;
     
-    while (CACurrentMediaTime() * 1000 < endCheck) {
+    while ([NSDate currentTimeInMilliseconds] < endCheck) {
         if ([self.queue size] > 0) {
             return [self.queue take];
         }
