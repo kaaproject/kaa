@@ -29,7 +29,7 @@ The following third-party software components are used in Kaa.
 | Apache Velocity                           | 1.7             | Apache License 2.0 | Java     |
 | Apache ZooKeeper                          | 3.4.6           | Apache License 2.0 | Java     |
 | Twitter Commons                           | 0.0.64          | Apache License 2.0 | Java     |
-| Jackson                                   | 2.4.1           | Apache License 2.0 | Java     |
+| Jackson                                   | 2.7.5           | Apache License 2.0 | Java     |
 | MongoDB Driver*                           | 3.0.1           | Apache License 2.0 | Java     |
 | Oracle NoSQL Driver*                      | 3.1.7           | Apache License 2.0 | Java     |
 | CDAP Stream client*                       | 1.0.1           | Apache License 2.0 | Java     |
