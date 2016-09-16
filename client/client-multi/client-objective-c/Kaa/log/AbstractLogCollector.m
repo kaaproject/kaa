@@ -161,6 +161,7 @@
                         
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                             [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
+				            [self.deliveryRunnerDictionary removeObjectForKey:@(bucketInfo.bucketId)];
                         }];
                         
                         if (self.logDeliveryDelegate) {
@@ -310,7 +311,6 @@
             for (BucketRunner *runner in deliveryRunners) {
                 [runner setValue:bucketInfo];
             }
-//            [self.deliveryRunnerDictionary removeObjectForKey:bucketKey];
         }
     }
 }
