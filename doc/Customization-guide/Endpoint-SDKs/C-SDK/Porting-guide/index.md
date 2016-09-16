@@ -56,4 +56,4 @@ There are two platform dependencies files:
  
  > **NOTE:** Consider to provide a mechanism to set a platform name to a variable "KAA_PLATFORM". See a [CMake file]({{github_url}}client/client-multi/client-c/CMakeLists.txt), by default it uses "posix".
  
-- A CMake toolchain file. The file sets a proper compiler, a linker, some default flags and a search path. There are [a cross-compile documentation](http://www.vtk.org/Wiki/CMake_Cross_Compiling) and [the file examples]({{github_url}}client/client-multi/client-c/toolchains) which help to implement it.
+- A CMake toolchain file. The file sets a proper compiler, a linker, some default flags and a search path. You might need a CMake toolchain file if you want to cross-compile the SDK. For more info, see [CMake Cross-Compiling documentation](http://www.vtk.org/Wiki/CMake_Cross_Compiling) and [example toolchain files]({{github_url}}client/client-multi/client-c/toolchains).
