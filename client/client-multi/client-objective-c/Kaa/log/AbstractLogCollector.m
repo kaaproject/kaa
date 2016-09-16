@@ -103,6 +103,10 @@
     DDLogInfo(@"%@ New log storage was set: %@", TAG, storage);
 }
 
+- (NSMutableDictionary *)getDeliveryRunnerDictionary {
+    return self.deliveryRunnerDictionary;
+}
+
 - (void)fillSyncRequest:(LogSyncRequest *)request {
     if (![self isUploadAllowed]) {
         return;
@@ -306,7 +310,7 @@
             for (BucketRunner *runner in deliveryRunners) {
                 [runner setValue:bucketInfo];
             }
-            [self.deliveryRunnerDictionary removeObjectForKey:bucketKey];
+//            [self.deliveryRunnerDictionary removeObjectForKey:bucketKey];
         }
     }
 }

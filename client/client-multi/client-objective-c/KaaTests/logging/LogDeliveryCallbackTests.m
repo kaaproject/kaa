@@ -66,20 +66,23 @@
 
 - (void)setUp {
     [super setUp];
+    
     self.executorContext = mockProtocol(@protocol(ExecutorContext));
     self.logTransport = mockProtocol(@protocol(LogTransport));
     self.channelManager = mockProtocol(@protocol(KaaChannelManager));
     self.failoverManager = mockProtocol(@protocol(FailoverManager));
+    self.strategy = mockProtocol(@protocol(LogUploadStrategy));
+    
     self.logCollector = [[AbstractLogCollector alloc] initWithTransport:self.logTransport
                                                         executorContext:self.executorContext
                                                          channelManager:self.channelManager
                                                         failoverManager:self.failoverManager];
     
-    self.strategy = mockProtocol(@protocol(LogUploadStrategy));
     [given([self.strategy getMaxParallelUploads]) willReturn:@(10)];
     [self.logCollector setValue:self.strategy forKey:@"strategy"];
 }
 
+// TODO: NK: Separate this testcase for several sub-testcases (focus on status result)
 - (void)testSimpleCallbacksTriggering {
     
     id<LogDeliveryDelegate> delegate = mockProtocol(@protocol(LogDeliveryDelegate));
@@ -95,6 +98,7 @@
     LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
     status.requestId = 42;
     status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
+    
     LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
     
     BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:42 logCount:1];

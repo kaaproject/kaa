@@ -29,12 +29,72 @@
 #import "ExecutorContext.h"
 #import "MemLogStorage.h"
 #import "DefaultLogCollector.h"
+#import "KaaClient.h"
+#import "NSDate+Timestamp.h"
+
+
+#pragma mark - LogDeliveryDelegateImpl
+@interface LogDeliveryDelegateImp : NSObject <LogDeliveryDelegate>
+
+@property (nonatomic) double scheduledBucketRunnerTimestamp;
+@property (nonatomic) double bucketDeliveryDuration;
+
+@end
+
+@implementation LogDeliveryDelegateImp
+
+- (void)onLogDeliverySuccessWithBucketInfo:(BucketInfo *)bucketInfo {
+    self.scheduledBucketRunnerTimestamp = bucketInfo.scheduledBucketRunnerTimestamp;
+    self.bucketDeliveryDuration = bucketInfo.bucketDeliveryDuration;
+}
+
+- (void)onLogDeliveryFailureWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
+    [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
+}
+
+- (void)onLogDeliveryTimeoutWithBucketInfo:(BucketInfo *)bucketInfo {
+#pragma unused(bucketInfo)
+    [NSException raise:NSInternalInconsistencyException format:@"Method is not expected to be called!"];
+}
+
+@end
+
+#pragma mark - KAALogData
+@interface KAALogData : AvroBased
+
+@property(nonatomic, strong) NSString *tag;
+@property(nonatomic, strong) NSString *message;
+@property(nonatomic) int64_t timeStamp;
+
+- (instancetype)initWithTag:(NSString *)tag message:(NSString *)message timeStamp:(int64_t)timeStamp;
+
+@end
+
+
+@implementation KAALogData
+
+- (instancetype)initWithTag:(NSString *)tag message:(NSString *)message timeStamp:(int64_t)timeStamp {
+    self = [super init];
+    if (self) {
+        self.tag = tag;
+        self.message = message;
+        self.timeStamp = timeStamp;
+    }
+    return self;
+}
+
+@end
+
+
+#pragma mark - NoTimeoutLogCollector
 
 @interface NoTimeoutLogCollector : DefaultLogCollector
 
 - (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId;
 
 @end
+
 
 @implementation NoTimeoutLogCollector
 
@@ -44,6 +104,9 @@
 }
 
 @end
+
+
+#pragma mark - TestLogStorageStatus
 
 @interface TestLogStorageStatus : NSObject <LogStorageStatus>
 
@@ -221,5 +284,106 @@
     [verifyCount(logTransport, times(maxParallelUploads)) sync];
 }
 
+- (void)testSomethingNew {
+    
+}
+
+
+- (void)testLogDeliveryTimeCalculationForOneRunnerFirstImpl {
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    
+    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
+    NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    dispatch_queue_t schedulerQueue = dispatch_queue_create("scheduler", 0);
+    [given([executorContext getCallbackExecutor]) willReturn:executor];
+    [given([executorContext getApiExecutor]) willReturn:apiExecutor];
+    [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
+    
+    AbstractLogCollector *logCollector = [[NoTimeoutLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+
+    NSInteger const logCount = 5;
+    NSMutableArray *timestamps = [NSMutableArray arrayWithCapacity:logCount];
+    NSMutableArray *logs = [NSMutableArray arrayWithCapacity:logCount];
+    
+    NSMutableDictionary *buckets = [NSMutableDictionary dictionary];
+    for (int i = 0; i < logCount; i++) {
+        NSNumber *timestamp = @(CACurrentMediaTime() * 1000);
+        KAADummyLog *log = [[KAADummyLog alloc] init];
+        
+        [timestamps addObject:timestamp];
+        [logs addObject:log];
+        
+        buckets[timestamp] = [logCollector addLogRecord:log];
+    }
+    [NSThread sleepForTimeInterval:1.0];
+    
+    
+//    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+//    for (NSNumber *timeKey in buckets.allKeys) {
+//        BucketRunner *runner = buckets[timeKey];
+//        @try {
+//            [queue addOperationWithBlock:^{
+//                BucketInfo *bucketInfo = [runner getValue];
+//                NSLog(@"testLogDeliveryTimeCalculationForOneRunnerFirstImpl. Bucket Id [%d]. Record delivery time [%f ms]", bucketInfo.bucketId, bucketInfo.bucketDeliveryDuration);
+//            }];
+//        }
+//        @catch (NSException *exception) {
+//            NSLog(@"Exception was caught while waiting for callback");
+//        }
+//    }
+//    [NSThread sleepForTimeInterval:1.0];
+}
+
+- (void)testLogDeliveryTimeCalculationForOneRunnerSecondImpl {
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    
+    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
+    NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    dispatch_queue_t schedulerQueue = dispatch_queue_create("scheduler", 0);
+    [given([executorContext getCallbackExecutor]) willReturn:executor];
+    [given([executorContext getApiExecutor]) willReturn:apiExecutor];
+    [given([executorContext getSheduledExecutor]) willReturn:schedulerQueue];
+    
+    AbstractLogCollector *logCollector = [[NoTimeoutLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    
+    DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
+    [logCollector setValue:strategy forKey:@"strategy"];
+    
+    LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
+    status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
+    status.requestId = 42;
+    
+    __block BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:status.requestId logCount:1];
+    logCollector.bucketInfoDictionary[@(status.requestId)] = bucketInfo;
+    BucketRunner *brunner = [[BucketRunner alloc] init];
+    [logCollector addDeliveryRunner:brunner bucketInfo:bucketInfo];
+    
+    bucketInfo.receivedResponseTime = [NSDate currentTimeInMilliseconds];
+    [[executorContext getCallbackExecutor] addOperationWithBlock:^{
+        [logCollector notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
+    }];
+    [NSThread sleepForTimeInterval:0.1];
+    
+    for (int i = 0; i < [([logCollector getDeliveryRunnerDictionary])[@(status.requestId)] count]; i++) {
+	    BucketRunner *arunner = ([logCollector getDeliveryRunnerDictionary])[@(status.requestId)][i];
+	    @try {
+	        [[[NSOperationQueue alloc] init] addOperationWithBlock:^{
+	            BucketInfo *bucketInfo = [arunner getValue];
+	            NSLog(@"Received log record delivery info. Bucket Id [%d]. Record delivery time [%f ms]", bucketInfo.bucketId, bucketInfo.bucketDeliveryDuration);
+	        }];
+	    }
+	    @catch (NSException *exception) {
+	        NSLog(@"Exception was caught while waiting for callback");
+	    }
+    }
+    [NSThread sleepForTimeInterval:0.1];
+    
+}
 
 @end
