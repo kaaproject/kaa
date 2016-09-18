@@ -288,9 +288,9 @@
     [self processUploadDecision:[self.strategy isUploadNeededForStorageStatus:[self.storage getStatus]]];
 }
 
-- (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo {
+- (void)addDeliveryRunner:(BucketRunner *)runner byBucketInfoKey:(NSNumber *)bucketInfoKey {
     @synchronized(self.deliveryRunnerDictionary) {
-        NSNumber *bucketKey = @(bucketInfo.bucketId);
+        NSNumber *bucketKey = bucketInfoKey;
         
         NSMutableArray *deliveryRunners = self.deliveryRunnerDictionary[bucketKey];
         if (!deliveryRunners) {

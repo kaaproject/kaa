@@ -54,36 +54,32 @@
     status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
     status.requestId = 42;
     
-    const NSInteger runnersCount = 5;
+    const NSInteger kIterCount = 10;
     
-    __block BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:status.requestId logCount:1];
-    logCollector.bucketInfoDictionary[@(status.requestId)] = bucketInfo;
-    for (NSInteger i = 0; i < runnersCount; i++) {
-	    BucketRunner *brunner = [[BucketRunner alloc] init];
-	    [logCollector addDeliveryRunner:brunner bucketInfo:bucketInfo];
+    NSMutableArray<BucketInfo *> *bucketInfoInstances = [NSMutableArray new];
+    for (int i = 0; i < kIterCount; i++) {
+	    BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:status.requestId logCount:1];
+	    bucketInfo.receivedResponseTime = [NSDate currentTimeInMilliseconds];
+        [bucketInfoInstances addObject:bucketInfo];
     }
     
-    bucketInfo.receivedResponseTime = [NSDate currentTimeInMilliseconds];
+    logCollector.bucketInfoDictionary[@(status.requestId)] = bucketInfoInstances;
+    
+    for (NSInteger i = 0; i < kIterCount; i++) {
+	    BucketRunner *brunner = [[BucketRunner alloc] init];
+	    [logCollector addDeliveryRunner:brunner byBucketInfoKey:@([[bucketInfoInstances objectAtIndex:i] bucketId])];
+    }
     
     [[executorContext getCallbackExecutor] addOperationWithBlock:^{
-        [logCollector notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
+	    for (NSInteger i = 0; i < kIterCount; i++) {
+	        [logCollector notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfoInstances[i]];
+	    }
     }];
     [NSThread sleepForTimeInterval:0.1];
     
-    for (int i = 0; i < [([logCollector getDeliveryRunnerDictionary])[@(status.requestId)] count]; i++) {
-	    BucketRunner *arunner = ([logCollector getDeliveryRunnerDictionary])[@(status.requestId)][i];
-	    @try {
-	        [[[NSOperationQueue alloc] init] addOperationWithBlock:^{
-	            BucketInfo *bucketInfo = [arunner getValue];
-                NSLog(@"arunner: %@", arunner);
-	            NSLog(@"Received log record delivery info. Bucket Id [%d]. Record delivery time [%f ms]", bucketInfo.bucketId, bucketInfo.bucketDeliveryDuration);
-	        }];
-	    }
-	    @catch (NSException *exception) {
-	        NSLog(@"Exception was caught while waiting for callback");
-	    }
+    for (NSInteger i = 0; i < kIterCount; i++) {
+        XCTAssertLessThan(bucketInfoInstances[i].bucketDeliveryDuration, 1.f);
     }
-    [NSThread sleepForTimeInterval:0.1];
 }
 
 @end

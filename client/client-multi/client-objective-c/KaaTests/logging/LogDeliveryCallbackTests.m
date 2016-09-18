@@ -145,7 +145,7 @@
     BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:42 logCount:1];
     self.logCollector.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
     
-    [self.logCollector addDeliveryRunner:[[BucketRunner alloc] init] bucketInfo:bucketInfo];
+    [self.logCollector addDeliveryRunner:[[BucketRunner alloc] init] byBucketInfoKey:@(bucketInfo.bucketId)];
     
     [self.logCollector onLogResponse:response];
     

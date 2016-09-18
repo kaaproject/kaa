@@ -39,7 +39,7 @@
 
 - (void)uploadIfNeeded;
 
-- (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo;
+- (void)addDeliveryRunner:(BucketRunner *)runner byBucketInfoKey:(NSNumber *)bucketInfoKey;
 
 - (void)notifyOnSuccessDeliveryRunnersWithBucketInfo:(BucketInfo *)bucketInfo;
 

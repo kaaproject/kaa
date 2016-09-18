@@ -60,7 +60,7 @@ static int32_t gBucketIdCounter = 0;
 - (void)setValue:(BucketInfo *)value {
     @try {
         value.scheduledBucketRunnerTimestamp = self.executionStartTimestamp;
-        value.bucketDeliveryDuration = value.receivedResponseTime - value.scheduledBucketRunnerTimestamp;
+        value.bucketDeliveryDuration = fabs(value.receivedResponseTime - value.scheduledBucketRunnerTimestamp);
         [self.queue offer:value];
     }
     @catch (NSException *ex) {
