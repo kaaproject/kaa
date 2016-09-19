@@ -33,7 +33,7 @@ then
   JDBC_USERNAME="postgres"
   JDBC_PASSWORD="admin"
   [ -n "$JDBC_PORT" ] || JDBC_PORT="5432"
-  JDBC_URL="jdbc:postgresql:\\//${JDBC_HOST}:${JDBC_PORT}\\/${JDBC_DB_NAME}"
+  JDBC_URL="jdbc:postgresql:\\/\\/${JDBC_HOST}:${JDBC_PORT}\\/${JDBC_DB_NAME}"
 
 else
   echo -e "\nIncorrect SQL provider name: '${SQL_PROVIDER_NAME}'\nValid options: 'mariadb' , 'postgresql'\nConfiguration exiting now..."
@@ -81,5 +81,9 @@ then
   exit 1
 fi
 sed -i "s/\(nosql_db_provider_name *= *\).*/\1${NOSQL_PROVIDER_NAME}/" /usr/lib/kaa-node/conf/nosql-dao.properties
+
+# > kaa-node.properties
+[ -n "$ZOOKEEPER_NODE_LIST" ] || ZOOKEEPER_NODE_LIST="localhost:2181"
+sed -i "s/\(zk_host_port_list *= *\).*/\1${ZOOKEEPER_NODE_LIST}/" /usr/lib/kaa-node/conf/kaa-node.properties
 
 rm /usr/lib/kaa-node/conf/tmp.properties.template
