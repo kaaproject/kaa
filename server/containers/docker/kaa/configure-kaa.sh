@@ -2,6 +2,8 @@
 
 ## Kaa Docker configurator
 
+touch /usr/lib/kaa-node/conf/tmp.properties.template
+
 # Check if JDBC host:port + DB name are provided, use defaults otherwise
 [ -n "$JDBC_HOST" ] || JDBC_HOST="localhost"
 [ -n "$JDBC_DB_NAME" ] || JDBC_DB_NAME="kaa"
@@ -19,7 +21,7 @@ then
   JDBC_USERNAME="sqladmin"
   JDBC_PASSWORD="admin"
   [ -n "$JDBC_PORT" ] || JDBC_PORT="3306"
-  JDBC_URL="jdbc:mysql:failover://${JDBC_HOST}:${JDBC_PORT}/${JDBC_DB_NAME}"
+  JDBC_URL="jdbc:mysql:failover:\\/\\/${JDBC_HOST}:${JDBC_PORT}\\/${JDBC_DB_NAME}"
 
 elif [ $SQL_PROVIDER_NAME = "postgresql" ]
 then
@@ -31,7 +33,7 @@ then
   JDBC_USERNAME="postgres"
   JDBC_PASSWORD="admin"
   [ -n "$JDBC_PORT" ] || JDBC_PORT="5432"
-  JDBC_URL="jdbc:postgresql://${JDBC_HOST}:${JDBC_PORT}/${JDBC_DB_NAME}"
+  JDBC_URL="jdbc:postgresql:\\//${JDBC_HOST}:${JDBC_PORT}\\/${JDBC_DB_NAME}"
 
 else
   echo -e "\nIncorrect SQL provider name: '${SQL_PROVIDER_NAME}'\nValid options: 'mariadb' , 'postgresql'\nConfiguration exiting now..."
@@ -45,7 +47,9 @@ sed \
   -e "s/\(jdbc_username *= *\).*/\1${JDBC_USERNAME}/" \
   -e "s/\(jdbc_password *= *\).*/\1${JDBC_PASSWORD}/" \
   -e "s/\(jdbc_url *= *\).*/\1${JDBC_URL}/" \
-   /usr/lib/kaa-node/conf/admin-dao.properties
+   /usr/lib/kaa-node/conf/admin-dao.properties > /usr/lib/kaa-node/conf/tmp.properties.template
+
+cat /usr/lib/kaa-node/conf/tmp.properties.template > /usr/lib/kaa-node/conf/admin-dao.properties
 
 # > sql-dao.properties
 sed \
@@ -56,7 +60,9 @@ sed \
   -e "s/\(jdbc_password *= *\).*/\1${JDBC_PASSWORD}/" \
   -e "s/\(jdbc_host_port *= *\).*/\1${JDBC_HOST}:${JDBC_PORT}/" \
   -e "s/\(sql_provider_name *= *\).*/\1${SQL_PROVIDER_NAME}/" \
-   /usr/lib/kaa-node/conf/sql-dao.properties
+   /usr/lib/kaa-node/conf/sql-dao.properties > /usr/lib/kaa-node/conf/tmp.properties.template
+
+cat /usr/lib/kaa-node/conf/tmp.properties.template > /usr/lib/kaa-node/conf/sql-dao.properties
 
 # > common-dao-cassandra.properties
 [ -n "$CASSANDRA_NODE_LIST" ] || CASSANDRA_NODE_LIST="localhost:9042"
@@ -75,3 +81,5 @@ then
   exit 1
 fi
 sed -i "s/\(nosql_db_provider_name *= *\).*/\1${NOSQL_PROVIDER_NAME}/" /usr/lib/kaa-node/conf/nosql-dao.properties
+
+rm /usr/lib/kaa-node/conf/tmp.properties.template
