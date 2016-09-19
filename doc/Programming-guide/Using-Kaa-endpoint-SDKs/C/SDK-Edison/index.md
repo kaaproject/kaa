@@ -48,5 +48,5 @@ But remember, you must specify correct compiler when compiling your Kaa applicat
         cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$EDISON_CC ..
         make 
 
-For more details on how to build, upload and run your application on Edision board, you may refer to official [user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
+For more details on how to build, upload and run your application on Edison board, you may refer to official [user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
 
