@@ -41,6 +41,8 @@ public class EndpointProfileViewDto implements Serializable {
     private RecordField serverProfileRecord;
     private List<EndpointGroupDto> endpointGroups;
     private List<TopicDto> topics;
+    private RecordField endpointConfig;
+    private Integer schemaId;
 
     public EndpointProfileViewDto() {
     }
@@ -141,4 +143,20 @@ public class EndpointProfileViewDto implements Serializable {
         this.sdkProfileDto = sdkProfileDto;
     }
 
+    public void setEndpointConfig(RecordField endpointConfig) {
+        this.endpointConfig = endpointConfig;
+    }
+
+    public RecordField getEndpointConfig() {
+
+        return endpointConfig;
+    }
+
+    public Integer getSchemaId() {
+        return schemaId;
+    }
+
+    public void setSchemaId(Integer schemaId) {
+        this.schemaId = schemaId;
+    }
 }

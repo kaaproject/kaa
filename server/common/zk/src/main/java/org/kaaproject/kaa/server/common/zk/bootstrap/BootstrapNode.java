@@ -43,12 +43,20 @@ public class BootstrapNode extends WorkerNodeTracker {
      * Instantiates a new bootstrap node.
      *
      * @param nodeInfo the node info
-     * @param zkHostPortList the zk host port list
-     * @param retryPolicy the retry policy
      */
-    public BootstrapNode(BootstrapNodeInfo nodeInfo, String zkHostPortList,
-            RetryPolicy retryPolicy) {
-        super(zkHostPortList, retryPolicy);
+    public BootstrapNode(BootstrapNodeInfo nodeInfo) {
+        super();
+        this.nodeInfo = nodeInfo;
+    }
+
+    /**
+     * Instantiates a new bootstrap node.
+     *
+     * @param nodeInfo the node info
+     * @param zkClient Zookeeper client
+     */
+    public BootstrapNode(BootstrapNodeInfo nodeInfo, CuratorFramework zkClient) {
+        super(zkClient);
         this.nodeInfo = nodeInfo;
     }
 

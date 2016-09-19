@@ -12,28 +12,34 @@ sort_idx: 50
 
 This page describes C++ SDK build process on Windows.
 
-**Verified against**:
-
-OS: Windows XP SP2, Windows Vista, Windows 7, Windows 8, Windows 10
-
-IDE: MS Visual Studio 2013,MS Visual Studio 2015
-
 ## Installing prerequisites
 
-1. Download and install folowing dependencies:
-    1. [wget](http://downloads.sourceforge.net/gnuwin32/wget-1.11.4-1-setup.exe) and [libarchive](http://downloads.sourceforge.net/gnuwin32/libarchive-2.4.12-1-setup.exe).
-    1. [cmake 3.5.1](https://cmake.org/files/v3.5/cmake-3.5.1-win32-x86.msi).
+**All steps described here were tested on:**:
 
-        **NOTE:** Make sure that you chose one  "Add CMake to system path..." for all users or for current user on the "Install options" step.
+ - **Host OS**: Windows 7, 8, 10
 
-    1. Python 2.7 [32-bit](https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi) depending on your system architecture or [64-bit](https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi).
-    1. Boost 1.60 [32-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download)
+ - **IDE**: MS Visual Studio 2013, 2015
+
+### Dependencies
+
+Before building the C++ endpoint SDK, install the following components on your machine:
+
+1. [wget](http://downloads.sourceforge.net/gnuwin32/wget-1.11.4-1-setup.exe) and [libarchive](http://downloads.sourceforge.net/gnuwin32/libarchive-2.4.12-1-setup.exe).
+1. [cmake 3.5.1](https://cmake.org/files/v3.5/cmake-3.5.1-win32-x86.msi).
+
+    >**NOTE:** Make sure that you chose one  "Add CMake to system path..." for all users or for current user on the "Install options" step.
+
+1. Python 2.7 [32-bit](https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi) depending on your system architecture or [64-bit](https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi).
+1. Boost 1.60 [32-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download)
     or [64-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-64.exe/download).
-    1. 7-Zip from http://www.7-zip.org/ . Add the directory you installed 7-Zip into to your `PATH`.
-    1. `libbz2.dll` [32-bit](https://github.com/philr/bzip2-windows/releases/download/v1.0.6/bzip2-dll-1.0.6-win-x86.zip) or [64-bit](https://github.com/philr/bzip2-windows/releases/download/v1.0.6/bzip2-dll-1.0.6-win-x64.zip).
+1. 7-Zip from http://www.7-zip.org/ . Add the directory you installed 7-Zip into to your `PATH`.
+1. `libbz2.dll` [32-bit](https://github.com/philr/bzip2-windows/releases/download/v1.0.6/bzip2-dll-1.0.6-win-x86.zip) or [64-bit](https://github.com/philr/bzip2-windows/releases/download/v1.0.6/bzip2-dll-1.0.6-win-x64.zip).
     Unzip and add the directory whre the unzipped `libbz2.dll` is stored to your `PATH`.
+    
+### SDK Prerequisites
+
 1. Download and untar an appropriate C++ SDK tar.gz archive into some directory (further in text `KAA_BUILD_DIR`).
-1. Configure installation by editing the `env.bat` file:
+1. Configure installation by editing the `KAA_BUILD_DIR\tools\env.bat` file:
 
     * `BUILD_PLATFORM`
 
@@ -49,14 +55,12 @@ IDE: MS Visual Studio 2013,MS Visual Studio 2015
 
         Values:
 
-        | Value | Meaning            |
-        |-------|--------------------|
-        | `14`  | Visual Studio 2015 |
-        | `12`  | Visual Studio 2013 |
-        | `11`  | Visual Studio 2012 |
-        | `10`  | Visual Studio 2010 |
-        | `9`   | Visual Studio 2008 |
-        | `8`   | Visual Studio 2005 |
+         - `14` Visual Studio 2015
+         - `12` Visual Studio 2013
+         - `11` Visual Studio 2012
+         - `10` Visual Studio 2010
+         - `9`  Visual Studio 2008
+         - `8`  Visual Studio 2005
 
         Default: `14`.
 
@@ -87,7 +91,7 @@ and proceed as follows:
        build_sdk_thirdparty.bat
        ```
 
-       **NOTE:** By default, the debug configuration is used. To build release versions, use the `release` argument:
+       >**NOTE:** By default, the debug configuration is used. To build release versions, use the `release` argument:
 
        ```
        build_sdk_thirdparty.bat release
@@ -103,10 +107,9 @@ and run the following commands:
 
    ```
    cd KAA_BUILD_DIR
-   tools/env.bat
+   tools\env.bat
    avrogen.bat
-   md build
-   cd build
+   md build && cd build
    ```
 
 1. To build Kaa C++ SDK with `nmake` run:

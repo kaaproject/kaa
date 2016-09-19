@@ -60,10 +60,8 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
 
     private void setEnabledForAddButton() {
         listView.addButton().setEnabled(false);
-        if (place.getEventClassDtoList() != null) {
-            if (!place.getEventClassDtoList().isEmpty()) {
-                listView.addButton().setEnabled(true);
-            }
+        if (place.getEventClassDtoList() != null && !place.getEventClassDtoList().isEmpty()) {
+            listView.addButton().setEnabled(true);
         }
     }
 

@@ -7,11 +7,20 @@ sort_idx: 20
 
 {% include variables.md %}
 
-# The guide provides information on how to cross-compile C++ SDK for Raspberry PI
+* TOC
+{:toc}
 
-**Verified against:**
+The guide provides information on how to cross-compile C++ SDK for Raspberry PI.
+Alternatively, you can build the Kaa C endpoint SDK right on the Raspberry Pi board.
+Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for further details.
 
-**Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
+## Install dependencies
+
+**All steps described here were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
+ - **Device:** Raspberry Pi 3
+ - **Target OS:** [Raspbian Jessie](https://www.raspberrypi.org/downloads/)
 
 **The further instructions must be executed on the host machine.**
 

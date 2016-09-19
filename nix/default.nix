@@ -17,6 +17,12 @@
 let
   nixpkgs-bootstrap = import <nixpkgs> { };
 
+  # How to update nixpkgs version:
+  # - go to https://github.com/NixOS/nixpkgs-channels
+  # - select branch you want to track
+  # - get latest commit hash -- this goes to `rev` field
+  # - execute `nix-prefetch-url --unpack https://github.com/NixOS/nixpkgs-channels/<rev>.tar.gz`
+  # - output of the previous command goes to `sha256` field
   nixpkgs-16_03 = import (nixpkgs-bootstrap.fetchFromGitHub {
     owner = "NixOS";
     repo = "nixpkgs-channels";
@@ -34,9 +40,10 @@ let
   # We want to use latest versions of tools we have available
   # (more checks, less false positives)
   tools = {
-    doxygen = pkgs-tools.doxygen;
-    valgrind = pkgs-tools.valgrind;
-    cppcheck = pkgs-tools.cppcheck;
+    inherit (pkgs-tools)
+      doxygen
+      valgrind
+      cppcheck;
   };
 
   callPackage = pkgs.lib.callPackageWith (pkgs // tools // self);
@@ -58,17 +65,26 @@ let
 
     # Submitted patch upstream:
     # https://sourceforge.net/p/astyle/bugs/396/
-    astyle = pkgs.astyle.overrideDerivation (self: {
-      sourceRoot = "astyle";
-      preBuild = ''
-        cd build/${if self.stdenv.cc.isClang then "clang" else "gcc"}
-      '';
+    astyle = pkgs-tools.astyle.overrideDerivation (self: {
       patches = [ ./astyle/max_indent.patch ];
+      patchFlags = "--directory=../.. -p1";
     });
 
-    kaa-client-c = callPackage ./kaa-client-c { cmake = pkgs.cmake-2_8; };
+    cmocka = pkgs.cmocka.overrideDerivation (oldAttrs: {
+      patches = [
+        (pkgs-tools.fetchpatch {
+          url = "https://git.cryptomilk.org/projects/cmocka.git/patch/?id=1b595a80934fa95234fb290913cfe533f740d965";
+          sha256 = "1fg8xwb1mrrmw4dqa65ghnvgfdkpi0lv4j2gq0lm9ayvsi3v00vp";
+        })
+      ];
+    });
 
-    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = pkgs.cmake-2_8; };
+    # cmake-2.8 doesn't work on Darwin
+    test-cmake = if pkgs.stdenv.isDarwin then pkgs.cmake else pkgs.cmake-2_8;
+
+    kaa-client-c = callPackage ./kaa-client-c { cmake = test-cmake; };
+
+    kaa-client-cpp = callPackage ./kaa-client-cpp { cmake = test-cmake; };
 
     kaa-docs = callPackage ./kaa-docs { };
   };

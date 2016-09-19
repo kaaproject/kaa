@@ -20,7 +20,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.retry.RetryUntilElapsed;
 import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingCluster;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
@@ -63,9 +66,8 @@ public class TestCluster {
         zkCluster.start();
         LOG.info("ZK Cluster started");
         OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
-
-        operationsNode = new OperationsNode(endpointNodeInfo,
-                zkCluster.getConnectString(), buildDefaultRetryPolicy());
+        CuratorFramework zkClient = CuratorFrameworkFactory.newClient(zkCluster.getConnectString(), buildDefaultRetryPolicy());
+        operationsNode = new OperationsNode(endpointNodeInfo, zkClient);
         operationsNode.start();
     
     }

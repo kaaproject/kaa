@@ -21,6 +21,7 @@ import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.server.control.service.sdk.CommonSdkUtil;
+import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.slf4j.Logger;
@@ -32,7 +33,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import static org.kaaproject.kaa.server.control.service.sdk.SchemaUtil.getChildSchemas;
 
 public class ObjCEventClassesGenerator {
 
@@ -74,6 +78,7 @@ public class ObjCEventClassesGenerator {
     private static final String EVENT_FAMILY_FACTORY_IMPORTS_VAR = "\\{event_family_factory_imports\\}";
     private static final String EVENT_FAMILY_FACTORY_PROPERTIES_VAR = "\\{event_family_factory_properties\\}";
     private static final String EVENT_FAMILY_FACTORY_METHODS_VAR = "\\{event_family_factory_methods\\}";
+    public static final String KAA_EVENT_PREFIX = "KAAEvent";
 
     private static String eventFamilyHeader;
     private static String eventFamilySource;
@@ -119,26 +124,28 @@ public class ObjCEventClassesGenerator {
         StringBuilder eventGenSourceBuilder = new StringBuilder();
 
         LOG.debug("Received {} event families", eventFamilies.size());
+        HashSet<Schema> generatedSchemas = new HashSet<>();
         for (EventFamilyMetadata efm : eventFamilies) {
 
             LOG.debug("Generating schemas for event family {}", efm.getEcfName());
             List<Schema> eventCtlSchemas = new ArrayList<>();
             efm.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
-            for (Schema ctlSchema : eventCtlSchemas) {
+
                 try (
                         OutputStream hdrStream = new ByteArrayOutputStream();
                         OutputStream srcStream = new ByteArrayOutputStream()
                 ) {
 
-                    Compiler compiler = new ObjectiveCCompiler(ctlSchema, EVENT_GEN, hdrStream, srcStream);
-                    compiler.generate();
+                    Compiler compiler = new ObjectiveCCompiler(eventCtlSchemas, EVENT_GEN, hdrStream, srcStream, generatedSchemas);
+                    compiler.setNamespacePrefix(KAA_EVENT_PREFIX);
+                    generatedSchemas.addAll(compiler.generate());
 
                     eventGenHeaderBuilder.append(hdrStream.toString()).append("\n");
                     eventGenSourceBuilder.append(srcStream.toString()).append("\n");
                 } catch (Exception e) {
-                    LOG.error("Got exception while generating object from schema: " + ctlSchema, e);
+                    LOG.error("Got exception while generating event classes for event family: " + efm.getEcfName(), e);
                 }
-            }
+
 
             LOG.error("Processing {}", efm.getEcfName());
             eventFamilyFactoryImports += "#import \"" + efm.getEcfClassName() + ".h\"\n";
@@ -192,6 +199,7 @@ public class ObjCEventClassesGenerator {
                             .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
                 }
             }
+
             String resultFamilyHeader = eventFamilyHeader
                     .replaceAll(EVENT_FAMILY_NAMESPACE_VAR, efm.getEcfNamespace())
                     .replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName())
@@ -231,10 +239,11 @@ public class ObjCEventClassesGenerator {
         return eventSources;
     }
 
+
     private static String eventFqnToClassName(String fqn) {
         if (fqn == null || fqn.isEmpty()) {
             throw new RuntimeException("Failed to get class name from fqn: " + fqn);
         }
-        return fqn.substring(fqn.lastIndexOf('.') + 1);
+        return KAA_EVENT_PREFIX + fqn.substring(fqn.lastIndexOf('.') + 1);
     }
 }

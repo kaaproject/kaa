@@ -104,6 +104,7 @@ public class EndpointUsersPlace extends TreePlace {
                 HasData<TreePlace> display) {
             List<TreePlace> result = new ArrayList<TreePlace>();
             result.add(new UpdateUserConfigPlace(applicationId));
+            result.add(new GetUserConfigPlace(applicationId));
             callback.onSuccess(result, display);
         }
 

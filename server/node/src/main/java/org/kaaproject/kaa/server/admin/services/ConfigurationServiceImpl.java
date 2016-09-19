@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
+import static org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode.ITEM_NOT_FOUND;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("configurationService")
@@ -342,8 +343,9 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         try {
             byte[] body = getFileContent(fileItemName);
 
+            Schema avroSchema = new Schema.Parser().parse(schema);
             JsonNode json = new ObjectMapper().readTree(body);
-            json = injectUuids(json);
+            json = injectUuids(json, avroSchema);
             body = json.toString().getBytes();
 
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
@@ -423,10 +425,43 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     }
 
     @Override
+    public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+              checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+               return controlService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash);
+            }
+
+
+    @Override
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUserId, String appToken, Integer schemaVersion) throws KaaAdminServiceException {
        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        return controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+        try {
+            EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+            if (userConfigurationDto == null) {
+                throw Utils.handleException(new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND));
+            }
+            return userConfigurationDto;
+        } catch (Exception e){
+            throw Utils.handleException(e);
+        }
     }
+
+    @Override
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            String appToken = controlService.getApplication(appId).getApplicationToken();
+            EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,getTenantId());
+            if (userConfigurationDto == null) {
+                throw Utils.handleException(new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND));
+            }
+            return userConfigurationDto;
+        } catch (Exception e){
+            throw Utils.handleException(e);
+        }
+    }
+
+
+
 
     private void checkSchemaId(String schemaId) throws IllegalArgumentException {
         if (isEmpty(schemaId)) {
@@ -521,18 +556,31 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         return schemaInfos;
     }
 
-    private JsonNode injectUuids(JsonNode json) {
-        boolean containerWithoutId = json.isContainerNode() && !json.has("__uuid");
-        boolean notArray = !(json instanceof ArrayNode);
-        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
+    private JsonNode injectUuids(JsonNode json, Schema schema) {
+        if (json == null) return json;
+        String UUID_FIELD = "__uuid";
 
-        if (containerWithoutId && notArray && childIsNotArray) {
-            ((ObjectNode) json).put("__uuid", (Integer) null);
-        }
+        switch (schema.getType()) {
+            case RECORD:
+                schema.getFields().stream()
+                        .filter(f -> !f.name().equals(UUID_FIELD))
+                        .forEach(f -> injectUuids(json.get(f.name()), f.schema()));
 
-        for (JsonNode node : json) {
-            if (node.isContainerNode())
-                injectUuids(node);
+                boolean addressable = schema.getFields().stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst().isPresent();
+                if (addressable) {
+                    ((ObjectNode) json).put(UUID_FIELD, (Integer) null);
+                }
+                break;
+            case UNION:
+                schema.getTypes()
+                        .forEach(s -> injectUuids(json.get(s.getName()), s));
+                break;
+            case ARRAY:
+                schema.getElementType().getTypes()
+                        .forEach(s -> injectUuids(json.get(s.getName()), s));
+                break;
+            default:
+                return json;
         }
 
         return json;

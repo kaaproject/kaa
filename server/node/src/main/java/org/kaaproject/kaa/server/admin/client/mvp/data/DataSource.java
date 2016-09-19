@@ -56,6 +56,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -176,6 +177,18 @@ public class DataSource {
             });
     }
 
+    public void findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUserId, String appId, Integer schemaVersion,  final AsyncCallback<EndpointUserConfigurationDto> callback) {
+
+        configurationRpcService.findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(externalUserId, appId, schemaVersion, new DataCallback<EndpointUserConfigurationDto>(callback) {
+            @Override
+            protected void onResult(EndpointUserConfigurationDto result) {
+                eventBus.fireEvent(new DataEvent(EndpointUserConfigurationDto.class, true));
+            }
+        });
+
+
+    }
+
     public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
             final AsyncCallback<Void> callback) {
         userRpcService.editUserProfile(userProfileUpdateDto,
@@ -185,6 +198,16 @@ public class DataSource {
                     }
                 });
     }
+
+    public void findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash,final AsyncCallback<String> callback){
+        configurationRpcService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash, new DataCallback<String>(callback) {
+            @Override
+            protected void onResult(String result) {
+
+            }
+        });
+    }
+
 
     public void getMailProperties(
             final AsyncCallback<PropertiesDto> callback) {

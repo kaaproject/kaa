@@ -58,8 +58,7 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
 
     @Override
     protected EndpointUserConfigurationDto newEntity() {
-        EndpointUserConfigurationDto dto = new EndpointUserConfigurationDto();
-        return dto;
+        return new EndpointUserConfigurationDto();
     }
 
     @Override
