@@ -22,11 +22,6 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
-
-import javax.servlet.http.Cookie;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CtlSchemaPlace extends TreePlace {
 
@@ -148,7 +143,10 @@ public class CtlSchemaPlace extends TreePlace {
             if (scope == CTLSchemaScopeDto.TENANT) {
                 String ecfId = PlaceParams.getParam(ECF_ID);
                 String ecfVersionId = PlaceParams.getParam(ECF_VERSION_ID);
-                int ecfVersion = Integer.valueOf(PlaceParams.getParam(ECF_VERSION));
+                int ecfVersion = -1;
+                if(PlaceParams.getParam(ECF_VERSION) != null) {
+                    ecfVersion = Integer.valueOf(PlaceParams.getParam(ECF_VERSION));
+                }
                 place = new CtlSchemaPlace(metaInfoId, version, scope, ecfId, ecfVersionId, ecfVersion, editable, create);
             }
             place.setSchemaType(schemaType);

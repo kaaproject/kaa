@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.lang.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ObjectiveCCompiler extends Compiler {
 
@@ -40,6 +41,10 @@ public class ObjectiveCCompiler extends Compiler {
 
     public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
         super(schemas, sourceName, hdrS, srcS);
+    }
+
+    public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS, Set<Schema> generatedSchemas) throws KaaGeneratorException {
+        super(schemas, sourceName, hdrS, srcS, generatedSchemas);
     }
 
     @Override
@@ -70,13 +75,15 @@ public class ObjectiveCCompiler extends Compiler {
     @Override
     protected void doGenerate() {
         for (Map.Entry<Schema, GenerationContext> cursor : schemaGenerationQueue.entrySet()) {
-            switch (cursor.getKey().getType()) {
-                case RECORD:
-                    processRecord(cursor.getKey(), "ObjC/recordObjC.h.vm", "ObjC/recordObjC.m.vm");
-                    break;
-                case ENUM:
-                    processEnum(cursor.getKey(), "ObjC/enumObjC.h.vm");
-                    break;
+            if (!generatedSchemas.contains(cursor.getKey())) { // process only not generated schemas
+                switch (cursor.getKey().getType()) {
+                    case RECORD:
+                        processRecord(cursor.getKey(), "ObjC/recordObjC.h.vm", "ObjC/recordObjC.m.vm");
+                        break;
+                    case ENUM:
+                        processEnum(cursor.getKey(), "ObjC/enumObjC.h.vm");
+                        break;
+                }
             }
         }
     }

@@ -25,33 +25,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EventClassView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ProfileFilterView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UpdateUserConfigView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.*;
 import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppenderViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppendersViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.application.ApplicationViewImpl;
@@ -68,6 +42,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupVie
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfilesViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.GetUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.UpdateUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
@@ -199,6 +174,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final AefMapView createAefMapView = new AefMapViewImpl(true);
 
     private final UpdateUserConfigView updateUserConfigView = new UpdateUserConfigViewImpl();
+    private  final GetUserConfigView getUserConfigView = new GetUserConfigViewImpl();
     
     private final CtlSchemasView systemCtlSchemasView = new SystemCtlSchemasViewImpl();
     private final CtlSchemasView tenantCtlSchemasView = new TenantCtlSchemasViewImpl();
@@ -539,6 +515,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public UpdateUserConfigView getUpdateUserConfigView() {
         return updateUserConfigView;
+    }
+
+    @Override
+    public GetUserConfigView getUserConfigView() {
+        return getUserConfigView;
     }
 
     @Override

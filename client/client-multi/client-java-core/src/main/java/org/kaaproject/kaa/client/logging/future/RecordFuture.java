@@ -89,10 +89,10 @@ public class RecordFuture implements Future<RecordInfo> {
         return true;
     }
 
-    public void setValue(RecordInfo value) {
+    public void setValue(RecordInfo value, Long arriveTime) {
         try {
             value.setRecordAddedTimestampMs(recordAddedTimestampMs);
-            value.setRecordDeliveryTimeMs(System.currentTimeMillis() - recordAddedTimestampMs);
+            value.setRecordDeliveryTimeMs(arriveTime - recordAddedTimestampMs);
             this.queue.put(new ExecutionResult<>(value, null));
         } catch (InterruptedException e) {
             LOG.warn("Failed to push value", e);

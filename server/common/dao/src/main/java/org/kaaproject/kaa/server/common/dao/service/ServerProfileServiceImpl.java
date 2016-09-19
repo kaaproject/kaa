@@ -47,6 +47,7 @@ public class ServerProfileServiceImpl implements ServerProfileService {
     @Autowired
     private ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
 
+
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Override

@@ -10,103 +10,81 @@ sort_idx: 60
 * TOC
 {:toc}
 
-The Kaa Configuration subsystem is responsible for configuring endpoints by supplying them with the structured data of user-defined complexity that is managed
-via the Kaa server. The fact that Kaa operates with the uniformly structured data deserves a special emphasis. By knowing the data structure of the
-application, Kaa provides a number of very useful features, such as:
+To configure an [endpoint]({{root_url}}Glossary/#endpoint-ep), the Kaa **Configuration subsystem** sends structured data from [Kaa server]({{root_url}}Glossary/#kaa-server) to that endpoint.
+The data structure is defined in the schema selected by the user.
+For more information about schemas in Kaa, see [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library).
 
-* Automatic generation of the configuration object model in the endpoint SDK
-* Automatic generation of the default configuration
-* Enforcement of the configuration integrity
-* Endpoint-specific configuration view that is based on the endpoint membership in endpoint groups
+Since Kaa operates on uniformly structured data, you can:
 
-# Configuration management
+* Automatically generate a configuration object model in the endpoint SDK.
+* Automatically generate default configuration.
+* Enforceme configuration integrity.
+* View endpoint-specific configuration based on the endpoint group membership.
 
-The structure of the configuration data is determined by the customizable configuration schema. 
-It is the responsibility of the Kaa developer to construct the configuration schema and make the client application interpret the data supplied by the endpoint SDK.
-Kaa developer can provision the configuration schema via REST API -- first [create new CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct)
-and after that [create configuration schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema) which contains a reference to the created before CT or use Administration UI as shown below.
+## Updating configuration data
 
-1. In the **Configuration schemas** window for the application, click **Add schema**.
-2. In the **Add Configuration schema** window enter the name of the schema.
-3. Then create a schema using one of the two options:
+To provision a configuration schema, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema) or open the **Configuration** page of the application and follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
 
-    1. Using the existing CT by clicking **Select existing type** and selecting exiting CT version from FQN and version drop-downs.
-    
-        ![Add Configuration Schema 1](attach/admin-ui/add_configuration_schema_1.png)
-    
-    2. Create new CT by clicking **Create new type**. In this case you will be redirected to **Add new type** window. Here you can create a schema either by using the 
-    schema form or by uploading a schema in the [Avro](http://avro.apache.org/docs/current/spec.html) format from a file.
-    
-        ![Add Configuration Schema 2](attach/admin-ui/add_configuration_schema_2.png)
+![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
 
-4. Click **Add** at the top of the window to save the schema.
+Once a new configuration schema is provisioned, Kaa generates corresponding derivative schemas (a [base schema](#base-schema) and an [override schema](#override-schema)) and populates the group [all]({{root_url}}Glossary/#group-all) with the default configuration data using the [auto-generation algorithm](#automatic-generation-of-records).
 
+If you update your configuration schema, you need to update the [client application]({{root_url}}Glossary/#kaa-client).
+Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers maintain multiple versions of the configuration schema.
+See [CT schema versioning and dependencies]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/##ct-schema-versioning-and-dependencies).
+Configuration data is managed independently for every schema version.
 
-Once a new configuration schema is provisioned, Kaa 
-generates corresponding derivative schemas (a [base schema](#base-schema) and [override schema](#override-schema)),
-and [populates configuration data](#records-auto-generation) in the "all" group with the default values.
+The Kaa [Control service]({{root_url}}Glossary/#control-service) exposes API for loading configuration data into the "all" group.
+To make an update, you need to submit the new data set in the Avro binary or Avro JSON format that corresponds to the base schema version specified in the API call.
+As a result, all the configuration data for all endpoints of the application will be updated.
 
-In the current Kaa version, any configuration schema updates require updates of the client application.
+The following rules apply during the update:
 
-Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers are capable of maintaining more than one
-configuration schema version. For this purpose, a new, sequentially incremented version number is automatically assigned to every new configuration schema
-loaded into the Kaa server. Configuration data is managed independently for every schema version.
+* When loading the new data set, Kaa persists the existing UUIDs for all [addressable](#addressing) records, thus ignoring the corresponding values submitted in the new configuration.
+* If the record types in the old configuration and in the new configuration do not match, Kaa generates a new UUID value for the replacement record.
+* If non-addressable records are found (those directly or indirectly contained in the arrays), Kaa performs matching of the record instances by comparing the UUID values in the old and the new configuration.
 
-The endpoints report their supported configuration data schema version in the service profile. The Kaa server, in response, supplies them with the data updates
-that correspond to the reported version.
+### Application-specific configuration management
 
-## Application-specific configuration management
+Since all the endpoints of an application use the same configuration schema, you can update the configuration data for all endpoints at the same time.
+For this purpose, Kaa uses a [base schema](#base-schema) derived from the configuration schema.
+The base schema assigns an address to each addressable record from the configuration schema and uses it to update the record values.
 
-Kaa allows simultaneously updating configuration data for all endpoints under the application which use the same configuration schema. For this purpose,
-Kaa uses a _base schema_ which is derived from the configuration schema. The base schema assigns an address to each addressable record from the configuration
-schema and in this way enables updating the record values.
+You can change the configuration data using the REST API or Administration UI as follows:
 
-For each Kaa application, there is a default "all" endpoint group to which all endpoints registered under the application belong. The "all" group contains
-base schemas for all configuration schemas under the application as well as the corresponding default configuration data sets. The "all" group has weight 0.
-When a new configuration schema version is loaded into the application, the server automatically creates the corresponding base schema and
-default configuration data for the "all" group (by applying the default records generation algorithm described in the previous section to the root record in
-the base schema). This configuration data may be changed either via the Web UI or through the integration interface as follows:
+1. Retrieve the corresponding base schema.
 
-* the user retrieves the corresponding base schema
-* specifies new configuration data that corresponds to the base schema format
-* submits this data to the server.
+2. Specify new configuration data that corresponds to the base schema format.
 
-After the new configuration is submitted, the server overwrites the current configuration data which is stored in the "all" group for the base schema
-in question. Finally, Kaa delivers the up-to-date configuration data to all endpoints that support the corresponding configuration schema.
+3. Submit this data to the server.
 
-The fact that the "all" group has weight 0 results in the following: if apart from the schema-specific update the user introduces the
-[group-specific update](#group-specific-configuration-management) too, any conflicts in values between these two updates will be resolved by giving preference
-to the group-specific update (because 0 is the lowest priority value).
+After the new configuration is submitted, the server overwrites the current configuration data stored in the group [all]({{root_url}}Glossary/#group-all) for the base schema in question.
+Then Kaa delivers the up-to-date configuration data to all endpoints that support the corresponding configuration schema.
 
-## Group-specific configuration management
+The fact that the group "all" has weight 0 results in the following: if the user introduces both application-specific update and [group-specific update](#group-specific-configuration-management) at the same time, any conflicts in values between these two updates will be resolved by giving preference to the group-specific update (because 0 is the lowest priority value).
 
-Kaa allows updating configuration data for a specific endpoint group under the application, which is a more targeted approach than that described in
-[Application-specific configuration management](#application-specific-configuration-management) for the "all" group. To implement such a modification, Kaa distributes
-_configuration override data_ to the endpoint group. The structure of the _configuration override data_ is specified by the _override schema_, which is
-derived from the configuration schema used by the target endpoint group. As different from the base schema, the override schema allows
-updating fields selectively, leaving some of them without any change if necessary.
+### Group-specific configuration management
 
+You can update configuration data for a specific endpoint group of an application, which is a more targeted approach than that described in [Application-specific configuration management](#application-specific-configuration-management) for the group "all".
+To do this, you need to send the **configuration override data** to the endpoint group.
+The structure of the configuration override data is specified by the [override schema](#override-schema) that is derived from the configuration schema used by the target endpoint group.
+The override schema allows updating fields selectively, leaving some of them without any change if necessary.
 
-## User-specific configuration management
+### User-specific configuration management
 
-The user-specific configuration management with using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editUserConfiguration)
-allows updating configuration data for the specific user under the application. The user-specific configuration management implements the same approach as in
-[Group-specific configuration](#group-specific-configuration-management) management, based on the override schema and override algorithm.
+Use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/editUserConfiguration) to update the configuration data for a specific application user.
+The user-specific configuration management uses the same approach as the [Group-specific configuration management](#group-specific-configuration-management), based on the override schema and override algorithm.
 
->**NOTE:**
-> Since each endpoint belongs to only one user at a time, the override algorithm does not support data set merges as in the group-specific
-configuration management. <br/>
-The override algorithm applies user-specific overrides only after all group-specific overrides have been applied.
+>**NOTE:** Since each endpoint is assigned to only one user at a time, the override algorithm does not support merging data sets as in the group-specific configuration management.
+>The override algorithm applies user-specific overrides only after all group-specific overrides have been applied.
+{:.note}
 
+## Configuration schemas
 
-# Configuration schemas
+A configuration schema is a user-defined specification of the application data model that Kaa Configuration subsystem uses to configure endpoints registered under the application.
 
-A _configuration_ schema is a user-defined specification of the application data model that Kaa Configuration subsystem uses to configure endpoints registered
-under the application. In other words, the configuration schema defines in which format the actual configuration data should be entered by the user/developer
-and then transferred to the endpoints.
-
-The format of the configuration schema is similar to the [profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/) and based
-on the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas). The Kaa Configuration subsystem supports all of the Avro primitive types:
+The format of the configuration schema is similar to the [profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/) and is based on the [Apache Avro schema](http://avro.apache.org/docs/current/spec.html#schemas).
+The Kaa Configuration subsystem supports all of the Avro primitive types:
 
 * null
 * boolean
@@ -125,13 +103,15 @@ And most of the complex types:
 * union
 * fixed
 
->**NOTE:** <br/>
-> The Avro map type (a set of <key, value> pairs) is not currently supported.
-It is possible to define an array of unions, but Kaa expects all of the entities to be of the same type.
+>**NOTE:** The Avro map type (a set of _key_ and _value_ pairs) is currently not supported.
+>You can define an array of unions, but Kaa expects all of the entities to be of the same type.
+{:.note}
 
 The following examples illustrate basic constituents of the configuration schema and their usage.
 
-* The root object type in Kaa is always the record.
+<ul>
+<li markdown="1">
+The root object type in Kaa is always a record.
 
 ```json
 {
@@ -143,13 +123,18 @@ The following examples illustrate basic constituents of the configuration schema
     ]
 }
 ```
+</li>
+</ul>
 
-* The **name** and **namespace** attributes are both mandatory for the record type. They are used for the record referencing in derivative schemas.
+* The `name` and `namespace` attributes are both required for this record type.
+They are used for record referencing in derivative schemas.
 
-* The **optional** field attribute (```boolean```, false by default) determines whether or not the field in the record is optional. Internally, Kaa translates
-optional fields into union fields with the ```null``` type at the top of the list (which automatically makes them default to ```null``` - see the
-[Records auto-generation](#records-auto-generation) section for more details). <br/>
-In case of the _optional_ union field, Kaa automatically puts ```null``` at the top of the types list in the union definition.
+<ul>
+<li markdown="1">
+The **optional** field attribute (`boolean`, **false** by default) determines whether or not the field in the record is optional.
+Internally, Kaa translates optional fields into union fields with the `null` type at the top of the list.
+For more information, see [Automatic generation of records](#automatic-generation-of-records).
+If there is an **optional** union field, Kaa automatically puts `null` at the top of the types list in the union definition.
 
 ```json
 {
@@ -180,9 +165,12 @@ In case of the _optional_ union field, Kaa automatically puts ```null``` at the 
     ]
 }
 ```
+</li>
+</ul>
 
-* The **by_default** field attribute (the value is interpreted according to the field type; it has no default value) determines the default value for the field
-and is used for generation of the default record.
+<ul>
+<li markdown="1">
+The `by_default` field attribute determines the default value for the field depending on the field type, and is used to generate the default record.
 
 ```json
 {
@@ -203,24 +191,32 @@ and is used for generation of the default record.
     ]
 }
 ```
+</li>
+</ul>
 
-The following table specifies the **by_default** attribute format for every supported primitive type.
+<ul>
+<li markdown="1">
+The following table specifies the `by_default` attribute format for every supported primitive type.
 
 | Type           | Format                                   |              Example             |
 |----------------|:-----------------------------------------|:---------------------------------|
-| ```boolean```  | true/false                               | "by_default": true               |
-| ```bytes```    | json array of byte values                | "by_default": [1, 2, 55, 254, 4] |
-| ```double```   | floating point value                     | "by_default": 1.432              |
-| ```float```    | floating point value                     | "by_default": 1.432              |
-| ```int```      | numeric value from (-2^31+1) to (2^31-1) | "by_default": 55                 |
-| ```long```     | numeric value from (-2^63+1) to (2^63-1) | "by_default": 2147483648         |
-| ```string```   | simple string format                     | "by_default": "abcdef"           |
+| `boolean`      | true/false                               | "by_default": true               |
+| `bytes`        | json array of byte values                | "by_default": [1, 2, 55, 254, 4] |
+| `double`       | floating point value                     | "by_default": 1.432              |
+| `float`        | floating point value                     | "by_default": 1.432              |
+| `int`          | numeric value from (-2^31+1) to (2^31-1) | "by_default": 55                 |
+| `long`         | numeric value from (-2^63+1) to (2^63-1) | "by_default": 2147483648         |
+| `string`       | simple string format                     | "by_default": "abcdef"           |
 
-* The [addressable](#addressing) record type field attribute (```boolean```, ```true``` by default) determines whether or not the 
-record supports partial updates (override) from different endpoint groups.
-If this attribute is ```true```, Kaa automatically adds a UUID field (```__uuid```) to the record when producing
-derivative schemas, which is done for the addressing purposes. For this reason, ```__uuid``` is a reserved field name in Kaa.  Note that the root record
- in the configuration schema is always addressable and thus ignores the statement ```_"addressable": false_```.
+</li>
+</ul>
+
+<ul>
+<li markdown="1">
+The [addressable](#addressing) record type field attribute (`boolean`, **true** by default) determines whether or not the record supports partial updates (overrides) from different endpoint groups.
+If this attribute is **true**, Kaa automatically adds a UUID field (`__uuid`) to the record when producing derivative schemas, which is done for the addressing purposes.
+For this reason, `__uuid` is a reserved field name in Kaa.
+Note that the root record in the configuration schema is always addressable and thus ignores the statement `_"addressable": false_`.
 
 ```json
 {
@@ -252,9 +248,13 @@ derivative schemas, which is done for the addressing purposes. For this reason, 
     ]
 }
 ```
+</li>
+</ul>
 
-* The **overrideStrategy** array type field attribute (```string```, ```"replace"``` by default) determines how to
-[merge arrays in the configuration across the endpoint groups](#override-algorithm). Accepted values are ```"replace"``` and ```"append"```.
+<ul>
+<li markdown="1">
+The `overrideStrategy` array type field attribute (`string`, **replace** by default) defines how [arrays are merged in the configuration across the endpoint groups](#override-algorithm).
+Accepted values are **replace** and **append**.
 
 ```json
 {
@@ -301,14 +301,16 @@ derivative schemas, which is done for the addressing purposes. For this reason, 
     ]
 }
 ```
+</li>
+</ul>
 
-## Addressing
+### Addressing
 
-A field in Kaa configuration is addressable if the record containing this field is addressable (the **addressable** attribute of the record is ```true```).
-Addressable field values can be updated via the group-specific configuration mechanism.
+A field in Kaa configuration is addressable if the record containing this field is addressable (the `addressable` attribute of the record is **true**).
+Addressable field values can be updated using the group-specific configuration update mechanism.
 
-The field address is formed by appending the field name to the containing record address and using the slash (```"/"```) as a separator. The address
-of the root record is always ```"/"```.
+The field address is formed by appending the field name to the containing record address and using the slash symbol (`/`) as a separator.
+The address of the root record is always `/`.
 
 Consider the following record schema example.
 
@@ -360,32 +362,32 @@ Consider the following record schema example.
 }
 ```
 
-The following fields are addressable in the provided schema.
+In this schema example, the following fields are addressable:
 
-* ```/intField```
-* ```/nestedRecord```
-* ```/nestedRecord/enumField```
-* ```/nestedRecord/arrayField```
-* ```/arrayOfRecords```
+* `/intField`
+* `/nestedRecord`
+* `/nestedRecord/enumField`
+* `/nestedRecord/arrayField`
+* `/arrayOfRecords`
 
-However, the fields within the instances of ```org.kaaproject.kaa.schema.sample.nestedRecordT``` contained in ```/arrayOfRecords``` are not addressable,
-because it is not possible to address records within arrays in the current Kaa version.
+However, the fields within the instances of `org.kaaproject.kaa.schema.sample.nestedRecordT` contained in `/arrayOfRecords` are not addressable, because it is not possible to address records within arrays in the current Kaa version.
 
-## Records auto-generation
+### Automatic generation of records
 
-For every configuration schema, Kaa constructs the default configuration data records. During this process of the default configuration data generation,
-each record in the schema is analyzed one-by-one in the depth-first, top-to-bottom order, as follows:
+For every configuration schema, Kaa generates the default configuration data records.
+During this process, each record in the schema is analyzed one-by-one in the depth-first, top-to-bottom order, as follows:
 
-* Union fields assume the first type listed in the union definition. The default value is generated according to the rules specific to the type encountered.
->**NOTE:** <br/>
-> Any optional fields (those having attribute ```"optional": true``` in the schema) are in fact unions with the first type being ```null```. Therefore,
-optional fields default to the empty value.
-* For a field of any primitive type (except for ```null```), Kaa expects the **by_default** attribute to be present and provide the default field value.
-A schema missing such an attribute for a mandatory primitive record field generates an exception and gets rejected by Kaa.
+* Union fields assume the first type listed in the union definition.
+The default value is generated according to the type-specific rules.
+>**NOTE:** Any optional fields (`"optional": true` in the schema) are in fact unions with the first type being `null`.
+>Therefore, optional fields default to the empty value.
+{:.note}
+* For a field of any primitive type (except for `null`), Kaa expects the `by_default` attribute to be present and have a default field value.
+If the schema does not contain this attribute for a required primitive record field, Kaa generates an exception and rejects the schema.
 * Non-optional record type fields are generated by applying the same record generation algorithm.
 * Arrays are generated empty by default.
 * Fixed type fields are generated filled in with zeros.
-* ```__uuid``` fields of the ```org.kaaproject.configuration.uuidT``` type are generated with a valid UUID assigned to the value sub-field.
+* `__uuid` fields of the `org.kaaproject.configuration.uuidT` type are generated with a valid UUID assigned to the value sub-field.
 
 Consider the following record schema example.
 
@@ -467,7 +469,7 @@ Consider the following record schema example.
 }
 ```
 
-This schema would default to the following record.
+This schema defaults to the following record.
 
 ```json
 {
@@ -504,14 +506,15 @@ This schema would default to the following record.
 
 The Kaa server stores the auto-generated default records in a cache and re-uses them in further operation.
 
+### Base schema
 
-## Base schema
+The base schema is obtained by transforming the configuration schema as follows:
 
-The base schema is obtained by transforming the configuration schema, as follows:
+1. Optional fields are transformed into unions with the `null` type at the top of the type list.
 
-* Optional fields are transformed into unions with the ```null``` type at the top of the type list.
-* The ```__uuid``` field of the union type ```["org.kaaproject.configuration.uuidT", "null"]``` is added to every record having ```addressable = true```.
-In the following example, the ```org.kaaproject.configuration.uuidT``` type is declared in the ```nestedRecordT``` record type, and reused in ```rootT```.
+2. The `__uuid` field of the union type `["org.kaaproject.configuration.uuidT", "null"]` is added to every record having `addressable = true`.
+
+In the following example, the `org.kaaproject.configuration.uuidT` type is declared in the `nestedRecordT` record type, and re-used in `rootT`.
 
 ```json
 {
@@ -558,57 +561,35 @@ In the following example, the ```org.kaaproject.configuration.uuidT``` type is d
 }
 ```
 
-## Updating configuration data
+### UUID validation
 
-The Kaa Control service exposes API for loading configuration data into the "all" group. To introduce the configuration update, the new data set must be
-supplied in the Avro binary or Avro JSON format and correspond to the base schema version specified in the API call. As a result, all the endpoints under
-the application will assume the new configuration.
+Kaa performs UUID validation to prevent corruption of configuration data when the API user or Kaa administrator loads a new version of the configuration data to the server.
+In this case, Kaa inspects the UUIDs of the newly introduced configuration data and validates them against the UUIDs in the previous version of the configuration data.
 
-The following rules apply during the update:
+UUID validation is performed in two cases: when an existing object is updated and when a new object is created.
 
-* When loading the new data set, Kaa persists the existing UUIDs for all [addressable](#addressing) records, thus ignoring the corresponding values supplied
-with the new configuration.
-* In case of unions that assumes that the record types in the old configuration and in the new configuration match.
-If they don't, Kaa generates a new UUID value for the replacement record.
-* In case of non-addressable records (those directly or indirectly contained in the arrays), Kaa performs record instances matching by comparing
-the UUID values in the old and the new configuration.
-
-## UUID validation
-
-Kaa performs UUID validation to prevent corruption of configuration data when the API user or Kaa administrator loads a new version of the configuration data
-to the server. In this case, Kaa inspects the UUIDs of the newly introduced configuration data and validates them against the UUIDs in the previous version
-of the configuration data.
-
-UUID validation is performed in the following two cases: updating an existing object or creating a new object.
-
-### Updating an existing object (there is a UUID in the previous version of the configuration)
-
-The following rules apply for the object update.
+The following rules apply when an existing object is updated:
 
 * If the resolved UUID remains the same, the new configuration is stored with the existing UUID.
-* If the resolved UUID is null or unknown and the object is a record, Kaa does a search throughout the existing base schema to find the object in question and
-obtain its existing UUID; after the search is complete, the new configuration is stored with the existing UUID.
+* If the resolved UUID is null or unknown and the object is a record, Kaa searches throughout the existing base schema to find the object in question and obtain its existing UUID.
+After the search is complete, the new configuration is stored with the existing UUID.
 * If the resolved UUID is null or unknown and the object is an array, Kaa generates a new UUID for the new configuration.
 
-### Creating a new object (there is no UUID in previous version of the configuration)
-
-The following rules apply for object creation.
+The following rules apply when a new object is created:
 
 * If the resolved UUID is null, Kaa generates a new UUID for the object and stores it in the database.
-* If the resolved UUID is equal to some other UUID which is already in use or to unknown value, Kaa generates a new UUID for the object and stores it in the
-database.
+* If the resolved UUID is equal to some other UUID which is already in use, or to an unknown value, Kaa generates a new UUID for the object and stores it in the database.
 
-## Override schema
+### Override schema
 
-The override schema is obtained by transforming the configuration schema and looks very similar to the base schema. The difference is that when constructing
-an override schema, Kaa adds ```org.kaaproject.configuration.unchangedT``` to every field type definition (converting them into union types, if necessary).
-Thus, all mandatory fields become union types with either their original type (if there is any data change) or the ```org.kaaproject.configuration.unchangedT```
- type (if there is no data change). When org.kaaproject.configuration.unchangedT appears in the data, it indicates that the corresponding field value remains
-without the change during the update.
+The override schema is obtained by transforming the configuration schema and looks very similar to the base schema.
+The difference is that when generating an override schema, Kaa adds `org.kaaproject.configuration.unchangedT` to every field type definition (converting them into union types, if necessary).
+Thus, all required fields become union types with either their original type (if there is any data change) or the `org.kaaproject.configuration.unchangedT` type (if there is no data change).
+When `org.kaaproject.configuration.unchangedT` appears in the data, it indicates that the corresponding field value remains without the change during the update.
 
-As an example, consider how mandatory and optional fields are converted from the configuration schema to the override schema.
+Below is an example of how mandatory and optional fields are converted from the configuration schema to the override schema.
 
-Mandatory field in the **configuration schema**:
+Required field in a **configuration schema**:
 
 ```json
 {
@@ -618,7 +599,7 @@ Mandatory field in the **configuration schema**:
 }
 ```
 
-Mandatory field in the **override schema**:
+Required field in an **override schema**:
 
 ```json
 {
@@ -638,7 +619,7 @@ Mandatory field in the **override schema**:
 }
 ```
 
-Optional field in the **configuration schema**:
+Optional field in a **configuration schema**:
 
 ```json
 {
@@ -651,7 +632,7 @@ Optional field in the **configuration schema**:
 }
 ```
 
-Optional field in the **override schema**:
+Optional field in an **override schema**:
 
 ```json
 {
@@ -666,42 +647,41 @@ Optional field in the **override schema**:
 ```
 
 Loading the override data into the endpoint groups is similar to [loading base data into group "all"](#updating-configuration-data).
-Among other parameters, the group ID must be passed to the API call to indicate the group to which the new data should be applied. The loading
-algorithm processes the record UUID values identically to how it is done for the "all" group, persisting the UUID values that already existed in the
-previous version of the data in the processed group. Loading is done for the group in question independently of any other groups and without any
-cross-group data lookups.
+Among other parameters, the group ID must be specified in the API call to indicate the group to which the new data should be applied.
+The loading algorithm processes the record UUID values identically to how it is done for the "all" group, persisting the UUID values that already existed in the previous version of the data in the processed group.
+Loading is done for the group in question independently of any other groups and without any cross-group data lookups.
 
-## Override algorithm
+### Override algorithm
 
-To define and apply the resulting configuration update for the endpoint, the Operations service proceeds as follows:
+To define and apply the resulting configuration update for the endpoint, the [Operations service]({{root_url}}Glossary/#operations-service) proceeds as follows:
 
-1. Evaluates the endpoint group membership according to the endpoint profile.
-2. Merges all configuration data sets assigned to the groups the endpoint belongs to, starting with the one that has the lowest weight
-(which is always group "all" with the 0 weight). <br/>
-In case of the conflicting field alues, the field is set with the value from the group with the highest weight.
+1. Evaluates the [endpoint group]({{root_url}}Glossary/#endpoint-group) membership according to the [endpoint profile]({{root_url}}Glossary/#endpoint-profile).
 
->**NOTE:**
-> In case of the arrays, the ```overrideStrategy``` field in the configuration schema defines the way in which the arrays are merged. <br/>
-Record UUID fields never change from the values in the lowest weight group they were first encountered in. <br/>
-Both profile schema and configuration schema versions the endpoint supports are taken into account during the merge. <br/>
+2. Merges all configuration data sets assigned to the groups the endpoint belongs to, starting with the one that has the lowest weight (group "all").
+If confilicting field values are found, the field is assigned the value from the group with the highest weight.
 
-# Endpoint data synchronization
+>**NOTE:** The `overrideStrategy` field in the configuration schema defines the way in which the arrays are merged.
+>Record UUID fields never change from the values in the lowest weight group they were first found in.
+>Both profile schema and configuration schema versions the endpoint supports are taken into account during the merge.
+{:.note}
 
-After receiving configuration update for the endpoint group, the Operations service calculates and delivers the up-to-date configuration for all affected endpoints. 
+## Endpoint data synchronization
 
-Having received the update, the endpoint notifies the client application about the update and
-persists the resulting configuration. The data storage location is set as an abstraction in the endpoint, therefore the concrete location for
-persisting the data is defined in the client implementation.
+After receiving a configuration update for the endpoint group, the Operations service calculates and delivers the up-to-date configuration for all affected endpoints.
 
-Data consistency is ensured by the configuration hash comparison between the endpoint and the server.
+When the endpoint received the update, it notifies the [Kaa client]({{root_url}}Glossary/#kaa-client) about the update and persists the resulting configuration.
+The data storage location is set as an abstraction in the endpoint, therefore the specific location for persisting the data is defined in the client implementation.
+
+To ensure data consistency, Kaa compares the configuration hash on the endpoint and on the server to check if they match.
 
 ![Configuration management overview](attach/configuration.png)
 
-# Configuration management SDK API
+## Configuration management API
 
-The configuration management API varies depending on the target SDK platform. However, the general approach is the same.
+The configuration management API varies depending on the target SDK platform.
+However, the general approach is the same.
 
-The Kaa client application examples are provided below.
+Below are examples for different [SDK types]({{root_url}}Glossary/#sdk-type) of Kaa client application.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>

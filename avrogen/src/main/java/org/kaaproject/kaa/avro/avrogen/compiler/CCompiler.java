@@ -26,6 +26,7 @@ import org.kaaproject.kaa.avro.avrogen.TypeConverter;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.lang.*;
+import java.util.List;
 import java.util.Map;
 
 public class CCompiler extends Compiler {
@@ -36,6 +37,10 @@ public class CCompiler extends Compiler {
 
     public CCompiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
         super(schema, sourceName, hdrS, srcS);
+    }
+
+    public CCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+        super(schemas, sourceName, hdrS, srcS);
     }
 
     @Override
