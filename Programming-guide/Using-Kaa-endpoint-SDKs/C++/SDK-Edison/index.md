@@ -95,12 +95,12 @@ As example: replace the `make -j4` for `make`.
 
 ## Cross compiling applications based on C++ SDK
 
-Install the cross compilation environment in the same way as described in [C endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Edison) guide. Since now we assume the environment has been installed to its default directory `/opt/poky-edison/1.6.1`.
+Install the cross compilation environment in the same way as described in [C endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Edison) guide. Since now we assume the environment has been installed to its default directory `/opt/poky-edison/1.6.1`. Then perform steps 1 and 2 of the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux) to install Boost and Avro components for your host machine.
 
-The 3rd party conponents listed above have to be cross-compiled before building your Kaa application. This way we get object files `.o` and shared object files `.so` that are required for building and running the application.
+The 3rd party components listed above have to be cross-compiled before building your Kaa application. This way we get object files `.o` and shared object files `.so` that are required for building and running the application.
 
 1. Compile Boost.
-    Boost uses its own build system so it have to be compiled for host machine first.
+    Boost uses its own build system so it has to be compiled for host machine first.
 
         wget http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
         tar -zxf boost_1_58_0.tar.gz
@@ -115,21 +115,7 @@ The 3rd party conponents listed above have to be cross-compiled before building 
 
     Copy `${SDKTARGETSYSROOT}/usr/local/lib/libboost_*` object files to Edison's `/usr/local/lib` directory (e.g. using SSH, SCP, etc.).
 
-2. Install Avro for host and target. Also Avro depends on some Boost components. So they need to be installed too.
-
-    Install Avro for host:
-
-        sudo apt-get install libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-program-options-dev libboost-system-dev
-        wget https://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
-        mkdir -p avro/host
-        tar -xvzf avro-cpp-1.7.5.tar.gz -C ./avro/host
-        cd ./avro/host/avro-cpp-1.7.5
-        mkdir build && cd build
-
-        cmake ..
-        sudo make install
-
-    Build Avro for target (Avro should be patched to be built):
+2. Compile Avro. Also, Avro depends on some Boost components. So they need to be installed too.
 
         mkdir -p avro/target
         tar -xvzf avro-cpp-1.7.5.tar.gz -C ./avro/target
