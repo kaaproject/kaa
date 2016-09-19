@@ -11,14 +11,16 @@ sort_idx: 10
 
 This page describes Kaa C++ SDK build process on Linux system.
 
-**Verified against:**
-
-**Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
-
 ## Installing prerequisites
 
-**NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#quick-way-to-build-sdk).
+>**NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#quick-way-to-build-sdk).
 (Only applicable for x86\_64 platform.)
+
+**All steps described in this guide were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
+
+### Dependencies
 
 Before building the C++ endpoint SDK, install the following components on your machine:
 
@@ -56,6 +58,7 @@ To install, proceed as follows:
     ```
     sudo apt-get install libsqlite3-0 libsqlite3-dev
     ```
+
 ## Compiling SDK
 
 To build the C++ endpoint SDK, do the following:
@@ -64,8 +67,8 @@ To build the C++ endpoint SDK, do the following:
 1. [Generate]({{root_url}}Administration-UI-guide#AdministrationUIguide-GeneratingSDK) the C++ endpoint SDK in Admin UI.
 2. Download and untar the Kaa C++ SDK archive.
 
-   ``` bash
-   $ tar xfv kaa-cpp-ep-sdk.tar.gz
+   ```
+   tar xfv kaa-cpp-ep-sdk.tar.gz
    ```
 **Note: the archive name may be different in your case**
 

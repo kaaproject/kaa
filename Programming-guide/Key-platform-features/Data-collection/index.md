@@ -388,9 +388,9 @@ try {
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
 #include <kaa/gen/kaa_logging_gen.h>
 #include <kaa/platform/kaa_client.h>
+#include <extensions/logging/kaa_logging.h>
  
 kaa_client_t *kaa_client = /* ... */;
 void *log_storage_context         = NULL;
@@ -551,7 +551,7 @@ kaaClient->setStorage(persistentStorage);
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
  
 kaa_client_t *kaa_client = NULL /* ... */;
@@ -640,7 +640,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::PeriodicLogUploadStrategy>
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -675,7 +675,7 @@ error_code = ext_log_upload_strategy_set_upload_timeout(log_upload_strategy_cont
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
@@ -729,7 +729,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::RecordCountLogUploadStrate
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -763,7 +763,7 @@ error_code = ext_log_upload_strategy_set_threshold_count(log_upload_strategy_con
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
@@ -811,7 +811,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::StorageSizeLogUploadStrate
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -846,7 +846,7 @@ error_code = ext_log_upload_strategy_set_threshold_volume(log_upload_strategy_co
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
@@ -895,7 +895,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::RecordCountWithTimeLimitLo
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -934,7 +934,7 @@ error_code = ext_log_upload_strategy_set_upload_timeout(log_upload_strategy_cont
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
@@ -983,7 +983,7 @@ kaaClient->setLogUploadStrategy(std::make_shared<kaa::StorageSizeWithTimeLimitLo
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -1023,7 +1023,7 @@ error_code = ext_log_upload_strategy_set_upload_timeout(log_upload_strategy_cont
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
@@ -1081,7 +1081,7 @@ kaaClient->setLogUploadStrategy(logUploadStrategy);
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -1120,7 +1120,7 @@ error_code = ext_log_upload_strategy_set_threshold_volume(log_upload_strategy_co
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
@@ -1179,7 +1179,7 @@ kaaClient->setLogUploadStrategy(logUploadStrategy);
 
 ```c
 #include <stdint.h>
-#include <kaa/kaa_logging.h>
+#include <extensions/logging/kaa_logging.h>
 #include <kaa/platform/kaa_client.h>
 #include <kaa/platform-impl/common/ext_log_upload_strategies.h>
  
@@ -1216,7 +1216,7 @@ error_code = ext_log_upload_strategy_set_max_parallel_uploads(log_upload_strateg
  
 /* Initialize the log storage and strategy (by default it is not set) */
 error_code = kaa_logging_init(kaa_client_get_context(kaa_client)->log_collector
-                            , log_storage_contex
+                            , log_storage_context
                             , log_upload_strategy_context
                             , &bucket_sizes);
 ```
