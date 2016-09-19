@@ -41,6 +41,7 @@
     <util:properties id="properties"
         location="classpath:/kaa-node-test.properties" />
 
+
     <!-- Node configuration from properties file -->
 
     <bean id="kaaNodeServerConfig" class="org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig">
