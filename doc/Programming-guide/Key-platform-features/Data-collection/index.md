@@ -70,9 +70,9 @@ A simple definition of a log record with no data fields.
 ### Adding log schema
 
 The default log schema installed for Kaa applications is empty.
-You can configure your own log schema using the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema)) or open the **Log** page of the application and
+You can configure your own log schema using the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema) or open the **Log** page of the application and
 follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
-See also this [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Logging).
+See also the [logging REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Logging).
 
 For the purpose of this guide, we will use a typical log schema structure:
 

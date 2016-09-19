@@ -25,7 +25,7 @@ Since Kaa operates on uniformly structured data, you can:
 
 To provision a configuration schema, use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Configuration/saveConfigurationSchema) or open the **Configuration** page of the application and follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
 
-![Adding configuration schema from Administration UI](attach/admin-ui/configuration-schema.png)
+![Adding configuration schema from Administration UI](attach/admin-ui/add_configuration_schema_1.png)
 
 Once a new configuration schema is provisioned, Kaa generates corresponding derivative schemas (a [base schema](#base-schema) and an [override schema](#override-schema)) and populates the group [all]({{root_url}}Glossary/#group-all) with the default configuration data using the [auto-generation algorithm](#automatic-generation-of-records).
 
