@@ -149,4 +149,20 @@
     XCTAssertFalse([self.state needProfileResync]);
 }
 
+- (void)testEndpointAccessToken {
+    [self.state setNeedProfileResync:NO];
+    XCTAssertFalse([self.state needProfileResync]);
+    
+    NSString *endpointTokenInitial = @"ENDPOINT_TOKEN_0001";
+    [self.state setEndpointAccessToken:endpointTokenInitial];
+    
+    XCTAssertTrue([[self.state endpointAccessToken] isEqualToString:endpointTokenInitial]);
+    
+    NSString *endpointTokenChanged = @"ENDPOINT_TOKEN_0002";
+    [self.state setEndpointAccessToken:endpointTokenChanged];
+
+    XCTAssertTrue([[self.state endpointAccessToken] isEqualToString:endpointTokenChanged]);
+    XCTAssertTrue([self.state needProfileResync]);
+}
+
 @end

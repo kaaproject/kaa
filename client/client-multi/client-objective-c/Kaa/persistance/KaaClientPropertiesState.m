@@ -374,7 +374,11 @@
 }
 
 - (void)setEndpointAccessToken:(NSString *)endpointAccessToken {
+    NSString *prevEndpointAccessToken = self.endpointAccessToken;
     [self setStateStringValue:endpointAccessToken forPropertyKey:ENDPOINT_ACCESS_TOKEN];
+    if([prevEndpointAccessToken isEqualToString:endpointAccessToken] == NO) {
+        self.needProfileResync = YES;
+    }
 }
 
 - (NSString *)endpointAccessToken {
