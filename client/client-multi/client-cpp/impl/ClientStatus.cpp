@@ -302,7 +302,8 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
 
   ClientStatus::ClientStatus(IKaaClientContext& context)
       : filename_(context.getProperties().getStateFileName()),
-        isSDKPropertiesForUpdated_(false), hasUpdate_(false),
+        isSDKPropertiesForUpdated_(false),
+        hasUpdate_(false),
         context_(context)
 {
     auto eventSeqNumberTokenParamToken = parameterToToken_.left.find(ClientParameterT::EVENT_SEQUENCE_NUMBER);
@@ -359,14 +360,12 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
                 endpointKeyHashParamToken->second, endpointKeyHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHashParam));
     }
-
     auto propertiesHashParamToken = parameterToToken_.left.find(ClientParameterT::PROPERTIES_HASH);
     if (propertiesHashParamToken != parameterToToken_.left.end()) {
         std::shared_ptr<IPersistentParameter> propertiesHashParam(new ClientParameter<HashDigest>(
                 propertiesHashParamToken->second, endpointHashDefault_/*It's OK*/));
         parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHashParam));
     }
-
     auto isProfileResyncNeededParamToken = parameterToToken_.left.find(ClientParameterT::IS_PROFILE_RESYNC_NEEDED);
     if (isProfileResyncNeededParamToken != parameterToToken_.left.end()) {
         std::shared_ptr<IPersistentParameter> isProfileResyncNeededParam(new ClientParameter<bool>(
@@ -381,25 +380,27 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
 
 void ClientStatus::checkSDKPropertiesForUpdates()
 {
-    HashDigest truePropertiesHash = getPropertiesHash();
-    HashDigest storedPropertiesHash;
+    HashDigest currentPropertiesHash = getPropertiesHash();
 
     auto parameter_it = parameters_.find(ClientParameterT::PROPERTIES_HASH);
-    if (parameter_it != parameters_.end()) {
-        storedPropertiesHash = boost::any_cast<HashDigest>(parameter_it->second->getValue());
-    }
 
-    if (truePropertiesHash != storedPropertiesHash) {
-        setRegistered(false);
-        auto it = parameters_.find(ClientParameterT::PROPERTIES_HASH);
-        if (it != parameters_.end()) {
-            it->second->setValue(truePropertiesHash);
-        }
+    auto storedPropertiesHash = boost::any_cast<HashDigest>(parameter_it->second->getValue());
 
-        isSDKPropertiesForUpdated_ = true;
-        KAA_LOG_INFO("SDK properties were updated");
-    } else {
+    if (storedPropertiesHash == endpointHashDefault_) {
+        parameter_it->second->setValue(currentPropertiesHash);
+        hasUpdate_ = true;
         KAA_LOG_INFO("SDK properties are up to date");
+    } else {
+        if (currentPropertiesHash != storedPropertiesHash) {
+            parameter_it->second->setValue(currentPropertiesHash);
+
+            setRegistered(false);
+            isSDKPropertiesForUpdated_ = true;
+            hasUpdate_ = true;
+            KAA_LOG_INFO("SDK properties were updated");
+        } else {
+            KAA_LOG_INFO("SDK properties are up to date");
+        }
     }
 }
 
