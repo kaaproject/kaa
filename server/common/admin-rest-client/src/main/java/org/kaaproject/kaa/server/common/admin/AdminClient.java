@@ -1077,9 +1077,6 @@ public class AdminClient {
     }
 
     public CredentialsStatus getCredentialsStatus(String applicationToken, String credentialsId) {
-        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("applicationToken", applicationToken);
-        parameters.add("credentialsId", credentialsId);
         return this.restTemplate.getForObject(restTemplate.getUrl() + "credentialsStatus?applicationToken={applicationToken}&credentialsId={credentialsId}",
                 CredentialsStatus.class, applicationToken, credentialsId);
     }
