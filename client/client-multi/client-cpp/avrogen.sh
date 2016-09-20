@@ -22,6 +22,7 @@ fi
 echo "Generating necessary files according to Avro schemas"
 
 mkdir -p avro/event
+mkdir -p kaa/gen
 
 avrogencpp -i avro/endpoint.avsc -o kaa/gen/EndpointGen.hpp -n kaa
 avrogencpp -i avro/profile.avsc -o kaa/profile/gen/ProfileGen.hpp -n kaa_profile

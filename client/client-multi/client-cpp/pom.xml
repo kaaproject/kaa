@@ -78,7 +78,12 @@
                         <exclude>Modules/FindSqlite3.cmake</exclude>
                         <exclude>tools/avro-cpp-disable-tests.patch</exclude>
                         <exclude>toolchains/*.cmake</exclude>
-                    </excludes>
+                        <exclude>avro/configuration.avsc</exclude>
+                        <exclude>avro/endpoint.avsc</exclude>
+                        <exclude>avro/log.avsc</exclude>
+                        <exclude>avro/notification.avsc</exclude>
+                        <exclude>avro/profile.avsc</exclude>
+                </excludes>
                 </configuration>
             </plugin>
         </plugins>
