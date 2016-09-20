@@ -26,7 +26,6 @@ static const int64_t kDefaultTimeUnit = TIME_UNIT_SECONDS;
 
 @interface DefaultFailoverStrategy ()
 
-@property (nonatomic) int64_t noConnectivityRetryPeriod;
 
 @end
 
@@ -34,6 +33,7 @@ static const int64_t kDefaultTimeUnit = TIME_UNIT_SECONDS;
 
 @synthesize bootstrapServersRetryPeriod = _bootstrapServersRetryPeriod;
 @synthesize operationsServersRetryPeriod = _operationsServersRetryPeriod;
+@synthesize noConnectivityRetryPeriod = _noConnectivityRetryPeriod;
 @synthesize timeUnit = _timeUnit;
 
 - (instancetype)init {
