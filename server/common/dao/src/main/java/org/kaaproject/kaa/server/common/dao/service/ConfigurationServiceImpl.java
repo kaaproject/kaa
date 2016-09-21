@@ -47,6 +47,7 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaCreationException;
@@ -271,6 +272,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             EndpointGroup endpointGroup = endpointGroupDao.findById(currentConfiguration.getEndpointGroupId());
             GenericAvroConverter<GenericRecord> avroConverter;
+            Schema avroSchema;
             KaaData body = null;
             if (endpointGroup != null) {
                 if (endpointGroup.getWeight() == 0) {
@@ -278,17 +280,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     BaseSchema baseSchema = new BaseSchema(configurationSchema.getBaseSchema());
                     uuidValidator = new DefaultUuidValidator(baseSchema, new BaseDataFactory());
                     avroConverter = new GenericAvroConverter<GenericRecord>(baseSchema.getRawSchema());
+                    avroSchema = new Schema.Parser().parse(baseSchema.getRawSchema());
                 } else {
                     LOG.debug("Create default UUID validator with override schema: {}", configurationSchema.getOverrideSchema());
                     OverrideSchema overrideSchema = new OverrideSchema(configurationSchema.getOverrideSchema());
                     uuidValidator = new DefaultUuidValidator(overrideSchema, new OverrideDataFactory());
                     avroConverter = new GenericAvroConverter<GenericRecord>(overrideSchema.getRawSchema());
+                    avroSchema = new Schema.Parser().parse(overrideSchema.getRawSchema());
                 }
                 GenericRecord previousRecord = null;
                 if (previousConfiguration != null) {
                     previousRecord = avroConverter.decodeJson(previousConfiguration.getBody());
                 }
-                GenericRecord currentRecord = avroConverter.decodeJson(currentConfiguration.getBody());
+                GenericRecord currentRecord = avroConverter.decodeJson(AvroUtils.injectUuids(currentConfiguration.getBody(), avroSchema));
                 body = uuidValidator.validateUuidFields(currentRecord, previousRecord);
             }
             if (body != null) {

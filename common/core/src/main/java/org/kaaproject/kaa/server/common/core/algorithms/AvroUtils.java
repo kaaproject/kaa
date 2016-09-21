@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.apache.avro.generic.GenericData;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.*;
@@ -92,20 +93,50 @@ public class AvroUtils {
         }
     }
 
+    public static String injectUuids(String json, Schema schema) throws IOException {
+        return injectUuids(json.getBytes(), schema);
+    }
 
-    public static void injectUuids(JsonNode json) {
-        boolean containerWithoutId = json.isContainerNode() && !json.has(UUID_FIELD);
-        boolean notArray = !json.isArray();
-        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
+    public static String injectUuids(byte[] content, Schema schema) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode root = objectMapper.readTree(content);
+        injectUuidsFromJsonNodes(root, schema);
+        return root.toString();
+    }
 
-        if (containerWithoutId && notArray && childIsNotArray) {
-            ((ObjectNode)json).put(UUID_FIELD, (Integer)null);
+    public static String injectUuids(JsonNode root, Schema schema) {
+        return injectUuidsFromJsonNodes(root, schema).toString();
+    }
+
+    private static JsonNode injectUuidsFromJsonNodes(JsonNode json, Schema schema) {
+        if (json == null) {
+            return json;
         }
 
-        for (JsonNode node : json) {
-            if (node.isContainerNode())
-                injectUuids(node);
+        switch (schema.getType()) {
+            case RECORD:
+                schema.getFields().stream()
+                    .filter(f -> !f.name().equals(UUID_FIELD))
+                    .forEach(f -> injectUuidsFromJsonNodes(json.get(f.name()), f.schema()));
+
+                boolean addressable = schema.getFields().stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst().isPresent();
+                if (addressable) {
+                    ((ObjectNode) json).put(UUID_FIELD, (Integer) null);
+                }
+                break;
+            case UNION:
+                schema.getTypes()
+                    .forEach(s -> injectUuidsFromJsonNodes(json.get(s.getName()), s));
+                break;
+            case ARRAY:
+                schema.getElementType().getTypes()
+                    .forEach(s -> injectUuidsFromJsonNodes(json.get(s.getName()), s));
+                break;
+            default:
+                return json;
         }
+
+        return json;
     }
 
     public static void removeUuids(JsonNode json) {
