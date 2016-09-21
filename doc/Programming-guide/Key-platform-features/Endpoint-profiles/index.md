@@ -146,8 +146,8 @@ Think about the client-side profile schema as of a structured data set of your e
 due to your client application logic or device state.
 You can configure your own client-side profile schema using the 
 [Admin UI](#setting-client-side-endpoint-profile-schema-from-admin-ui) or Admin REST API.
-First of all you need to [create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
-after that [create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema) which will be contain a reference for this CT. 
+First of all you need to [create new CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct)
+after that [create client-side endpoint profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveProfileSchema) which will contain a reference to this CT. 
 Client-side endpoint profile updates are reported to the endpoint SDK using a profile container. The profile related API varies depending on the target SDK platform, 
 however the general approach is the same.
 
@@ -307,8 +307,8 @@ The server-side endpoint profile is initially generated at the stage of a new en
 the latest server-side profile schema of particular application. 
 In this case, endpoint membership in the endpoint groups is re-evaluated and updated to match the new endpoint profile.
 For creating server side endpoint profile by REST API first of all you need to 
-[create new CT schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken)
-after that [create server-side profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema) which will be contain a reference for this CT.
+[create new CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct)
+after that [create server-side profile schema]({{root_url}}Programming-guide/Server-REST-APIs/#!/Profiling/saveServerProfileSchema) which will contain a reference to this CT.
 
 <img src="endpoint-profile-generation/ServerSideEndpointProfileGeneration_0_8_0.png">
 

@@ -65,47 +65,14 @@ A simple definition of a log record with no data fields.
     ]
 }
 ```
-
-A simple log schema with the log level, tag, and message.
-
-```json
-{
-    "name":"LogData",
-    "namespace":"org.kaaproject.sample",
-    "type":"record",
-    "fields":[
-        {
-            "name":"level",
-            "type":{
-                "type":"enum",
-                "name":"Level",
-                "symbols":[
-                    "DEBUG",
-                    "ERROR",
-                    "FATAL",
-                    "INFO",
-                    "TRACE",
-                    "WARN"
-                ]
-            }
-        },
-        {
-            "name":"tag",
-            "type":"string"
-        },
-        {
-            "name":"message",
-            "type":"string"
-        }
-    ]
-}
-```
+`
 
 ### Adding log schema
 
 The default log schema installed for Kaa applications is empty.
-You can configure your own log schema using the [Administration UI]({{root_url}}Glossary/#administration-ui) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema).
-See also this [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Logging).
+You can configure your own log schema using the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/saveLogSchema) or open the **Log** page of the application and
+follow the same steps as described in [Setting client-side EP profile schema]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/#setting-client-side-ep-profile-schema).
+See also the [logging REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Logging).
 
 For the purpose of this guide, we will use a typical log schema structure:
 
@@ -146,21 +113,6 @@ For the purpose of this guide, we will use a typical log schema structure:
 }
 ```
 
-To create a new log schema for your application:
-
-1. Log in to the **Administration** page as a tenant developer.
-
-2. Under the **Schemas** section of the application, click **Log**, then click **Add schema**.
-
-3. On the **Add log schema** page, enter the name and description (optional) for your schema.
-Use the **Schema** section to compose your schema.
-For more details, see [schema form]({{root_url}}Administration-guide/Tenants-and-applications-management/#schema-form).
-
-	Alternatively, click **Browse...**, select your schema file in the [Avro](http://avro.apache.org/docs/current/spec.html) format and click **Upload**.
-
-	![Add log schema](attach/add-log-schema.png)
-
-4. Click **Add** to save the schema.
 
 ## Schema for log record header
 
