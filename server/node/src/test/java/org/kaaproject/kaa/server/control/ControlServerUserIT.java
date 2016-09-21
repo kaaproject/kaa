@@ -175,7 +175,7 @@ public class ControlServerUserIT extends AbstractTestControlServer {
     @Test
     public void testFailCreateUserOnDuplicatedEmail() throws Exception {
         expectedException.expect(HttpClientErrorException.class);
-        expectedException.expectMessage("Entered email is already used by another user!");
+        expectedException.expectMessage("400 Entered property is already used by another user!");
 
         loginTenantAdmin(tenantAdminDto.getUsername());
 
