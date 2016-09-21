@@ -412,7 +412,7 @@ kaaClient.attachEndpoint("endpointAccessToken", new OnAttachEndpointOperationCal
  
 using namespace kaa;
  
-class SimpleEndpointAttachCallback : public IAttachEndpointCallbackPtr {
+class SimpleEndpointAttachCallback : public IAttachEndpointCallback {
 public:
     virtual void onAttachSuccess()
     {
@@ -537,7 +537,7 @@ kaaClient.detachEndpoint("endpointKeyHash", new OnDetachEndpointOperationCallbac
  
 using namespace kaa;
  
-class SimpleEndpointDetachCallback : public IDetachEndpointCallbackPtr {
+class SimpleEndpointDetachCallback : public IDetachEndpointCallback {
 public:
     virtual void onDetachSuccess()
     {
