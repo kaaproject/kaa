@@ -120,12 +120,14 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
 
                 checkFieldUniquieness(
                         user.getMail(),
-                        userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet())
+                        userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet()),
+                        "email"
                 );
 
                 checkFieldUniquieness(
                         user.getUsername(),
-                        userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet())
+                        userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
+                        "userName"
                 );
 
                 CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
