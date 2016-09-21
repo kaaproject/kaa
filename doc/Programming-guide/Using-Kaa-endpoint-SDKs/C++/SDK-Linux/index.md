@@ -30,13 +30,13 @@ Before building the C++ endpoint SDK, install the following components on your m
    sudo apt-get install g++ cmake libboost1.55-all-dev libsqlite3-0 libsqlite3-dev
    ```
 
-4. Install the [AvroC++](http://avro.apache.org/docs/1.7.6/api/cpp/html/index.html) library manually:
+4. Install the [AvroC++](http://avro.apache.org/docs/1.7.5/api/cpp/html/index.html) library manually:
 
    ```
    wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
    tar -zxf avro-cpp-1.7.5.tar.gz
    cd avro-cpp-1.7.5/
-   cmake -G "Unix Makefiles"
+   cmake .
    sudo make install
    ```
 
