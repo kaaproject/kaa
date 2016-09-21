@@ -22,7 +22,6 @@
 #import "FailoverManager.h"
 #import "KaaLogging.h"
 #import "LogCollector.h"
-#import <QuartzCore/QuartzCore.h>
 #import "NSDate+Timestamp.h"
 
 #pragma clang diagnostic ignored "-Wprotocol"
@@ -103,10 +102,6 @@
     DDLogInfo(@"%@ New log storage was set: %@", TAG, storage);
 }
 
-- (NSMutableDictionary *)getDeliveryRunnerDictionary {
-    return self.deliveryRunnerDictionary;
-}
-
 - (void)fillSyncRequest:(LogSyncRequest *)request {
     if (![self isUploadAllowed]) {
         return;
@@ -161,7 +156,7 @@
                         
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                             [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
-				            [self.deliveryRunnerDictionary removeObjectForKey:@(bucketInfo.bucketId)];
+                            [self.deliveryRunnerDictionary removeObjectForKey:@(bucketInfo.bucketId)];
                         }];
                         
                         if (self.logDeliveryDelegate) {

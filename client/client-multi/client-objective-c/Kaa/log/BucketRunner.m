@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#import <QuartzCore/QuartzCore.h>
-
 #import "BucketRunner.h"
 #import "BlockingQueue.h"
 #import "KaaExceptions.h"

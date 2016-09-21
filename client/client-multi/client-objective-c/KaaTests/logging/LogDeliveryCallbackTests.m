@@ -82,7 +82,6 @@
     [self.logCollector setValue:self.strategy forKey:@"strategy"];
 }
 
-// TODO: NK: Separate this testcase for several sub-testcases (focus on status result)
 - (void)testSimpleCallbacksTriggering {
     
     id<LogDeliveryDelegate> delegate = mockProtocol(@protocol(LogDeliveryDelegate));

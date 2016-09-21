@@ -43,6 +43,4 @@
 
 - (void)notifyOnSuccessDeliveryRunnersWithBucketInfo:(BucketInfo *)bucketInfo;
 
-- (NSMutableDictionary *)getDeliveryRunnerDictionary;
-
 @end

@@ -58,22 +58,22 @@
     
     NSMutableArray<BucketInfo *> *bucketInfoInstances = [NSMutableArray new];
     for (int i = 0; i < kIterCount; i++) {
-	    BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:status.requestId logCount:1];
-	    bucketInfo.receivedResponseTime = [NSDate currentTimeInMilliseconds];
+        BucketInfo *bucketInfo = [[BucketInfo alloc] initWithBucketId:status.requestId logCount:1];
+        bucketInfo.receivedResponseTime = [NSDate currentTimeInMilliseconds];
         [bucketInfoInstances addObject:bucketInfo];
     }
     
     logCollector.bucketInfoDictionary[@(status.requestId)] = bucketInfoInstances;
     
     for (NSInteger i = 0; i < kIterCount; i++) {
-	    BucketRunner *brunner = [[BucketRunner alloc] init];
-	    [logCollector addDeliveryRunner:brunner byBucketInfoKey:@([[bucketInfoInstances objectAtIndex:i] bucketId])];
+        BucketRunner *brunner = [[BucketRunner alloc] init];
+        [logCollector addDeliveryRunner:brunner byBucketInfoKey:@([[bucketInfoInstances objectAtIndex:i] bucketId])];
     }
     
     [[executorContext getCallbackExecutor] addOperationWithBlock:^{
-	    for (NSInteger i = 0; i < kIterCount; i++) {
-	        [logCollector notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfoInstances[i]];
-	    }
+        for (NSInteger i = 0; i < kIterCount; i++) {
+            [logCollector notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfoInstances[i]];
+        }
     }];
     [NSThread sleepForTimeInterval:0.1];
     
