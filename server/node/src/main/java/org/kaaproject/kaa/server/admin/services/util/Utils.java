@@ -77,21 +77,14 @@ public class Utils {
         return reference;
     }
 
-    public static void checkEmailUniquieness(String email, Set<String> storedEmails) throws KaaAdminServiceException {
-        checkNotNull(email);
-        boolean isAdded = storedEmails.add(email);
+    public static void checkFieldUniquieness(String field, Set<String> storedEmails,String fieldName) throws KaaAdminServiceException {
+        checkNotNull(field);
+        boolean isAdded = storedEmails.add(field);
         if (!isAdded) {
-            throw new KaaAdminServiceException("Entered email is already used by another user!", ServiceErrorCode.INVALID_ARGUMENTS);
+            throw new KaaAdminServiceException(String.format("Entered %s is already used by another user!",fieldName), ServiceErrorCode.INVALID_ARGUMENTS);
         }
     }
 
-    public static void checkEmailFormat(String email) throws KaaAdminServiceException {
-        String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-                "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        if (email == null || !email.matches(EMAIL_REGEX)) {
-            throw new KaaAdminServiceException("Entered email is not valid or empty!", ServiceErrorCode.INVALID_ARGUMENTS);
-        }
-    }
 
     public static AuthUserDto getCurrentUser() throws KaaAdminServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
