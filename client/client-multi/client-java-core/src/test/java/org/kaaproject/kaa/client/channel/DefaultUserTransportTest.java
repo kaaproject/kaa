@@ -136,4 +136,35 @@ public class DefaultUserTransportTest {
 
         Mockito.verify(clientState, Mockito.times(2)).setAttachedEndpointsList(Mockito.anyMap());
     }
+
+    @Test
+    public void onDuplicateUserAttachResponse() throws Exception {
+        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
+
+        Map<Integer, EndpointAccessToken> attachingEPs = new HashMap<>();
+        attachingEPs.put(REQUEST_ID_1, new EndpointAccessToken("token1"));
+
+
+        Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachingEPs);
+
+        UserTransport transport = new DefaultUserTransport();
+        UserSyncResponse response1 = new UserSyncResponse();
+
+        response1.setEndpointAttachResponses(Arrays.asList(
+                new EndpointAttachResponse(REQUEST_ID_1, "keyhash1", SyncResponseResultType.SUCCESS)));
+
+        transport.setClientState(clientState);
+        transport.setEndpointRegistrationProcessor(processor);
+
+        Map<EndpointAccessToken, EndpointKeyHash> map = new HashMap<>();
+        map.put(new EndpointAccessToken("token1"), new EndpointKeyHash("keyhash1"));
+
+        transport.onUserResponse(response1);
+        Mockito.verify(clientState, Mockito.times(1)).setAttachedEndpointsList(map);
+
+        transport.onUserResponse(response1);
+        Mockito.verify(clientState, Mockito.times(1)).setAttachedEndpointsList(map);
+    }
+
 }
