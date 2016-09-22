@@ -378,25 +378,134 @@ Below are examples of assisted attachment.
 <div id="Java-1" class="tab-pane fade in active" markdown="1" >
 
 ```java
-import org.kaaproject.kaa.client.KaaClient;
-import org.kaaproject.kaa.client.KaaDesktop;
-import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
- 
-/**
-* Updates with new endpoint attach request
-*
-* @param   endpointAccessToken Access token of the endpoint being attached
-* @param   resultListener      Listener to notify about result of the endpoint attaching
-*
-*/
 
-kaaClient.attachEndpoint("endpointAccessToken", new OnAttachEndpointOperationCallback()
-{
-    @Override
-    public void onAttach(SyncResponseResultType result, EndpointKeyHash resultContext) {
-        //
+import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
+import org.kaaproject.kaa.client.Kaa;
+import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.KaaClientProperties;
+import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
+import org.kaaproject.kaa.client.event.EndpointAccessToken;
+import org.kaaproject.kaa.client.event.EndpointKeyHash;
+import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
+import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+public class EndpointAssistedAttachment {
+    //Credentials for attaching an endpoint to the user.
+    private static final String USER_EXTERNAL_ID = "user@email.com";
+    private static final String USER_ACCESS_TOKEN = "token";
+
+    //Directory where enpoint store its keys
+    private static final String WORKING_DIR_PREFIX = "kaa_endpoint_";
+
+    //This is to tell where endpoint store its files
+    private KaaClientProperties endpointAProperties;
+    private KaaClientProperties endpointBProperties;
+
+    //Endpoint which has owner
+    private KaaClient endpointA;
+
+    //Endpoint without owner, Endpoint A will assist
+    private KaaClient endpointB;
+
+    public void assistedAttachmentFullFlow() throws Throwable {
+        endpointAProperties = new KaaClientProperties();
+        endpointAProperties.setWorkingDirectory(WORKING_DIR_PREFIX + "A");
+        endpointA = Kaa.newClient(new DesktopKaaPlatformContext(endpointAProperties), new SimpleKaaClientStateListener() {
+            @Override
+            public void onStarted() {
+                System.out.println("Endpoint A started");
+            }
+
+            @Override
+            public void onStopped() {
+                System.out.println("Endpoint A stopped");
+            }
+        }, true);
+
+        endpointA.start();
+
+        // Attach the endpoint running the Kaa client to the user by verifying
+        // credentials sent by the endpoint against the user credentials
+        // stored on the Kaa server.
+        // This demo application uses a trustful verifier, therefore
+        // any credentials sent by the endpoint are accepted as valid.
+        CountDownLatch latch = new CountDownLatch(1);
+        endpointA.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN, new UserAttachCallback() {
+            @Override
+            public void onAttachResult(UserAttachResponse response) {
+                System.out.println("User attach response: " + response.getResult());
+
+                // Call onUserAttached if the endpoint was successfully attached.
+                if (response.getResult() == SyncResponseResultType.SUCCESS) {
+                    onUserAttached();
+                }
+
+                // Shut down all the Kaa client tasks and release
+                // all network connections and application resources
+                // if the endpoint was not attached.
+                else {
+                    endpointA.stop();
+                    System.out.println("Assisted attachment demo stopped");
+                }
+                latch.countDown();
+            }
+        });
+
+        //waiting callback with user attachment
+        // and Endpoint B assisted attachment
+        latch.await();
+
+        // Shut down all the Kaa client tasks and release
+        // all network connections and application resources.
+        endpointA.stop();
+        endpointB.stop();
+
+        System.out.println("Assisted attachment demo stopped");
     }
-});
+
+    public void onUserAttached() {
+        try {
+            endpointBProperties = new KaaClientProperties();
+            endpointBProperties.setWorkingDirectory(WORKING_DIR_PREFIX + "B");
+            endpointB = Kaa.newClient(new DesktopKaaPlatformContext(endpointBProperties), new SimpleKaaClientStateListener() {
+                @Override
+                public void onStarted() {
+                    System.out.println("Endpoint B started");
+                }
+
+                @Override
+                public void onStopped() {
+                    System.out.println("Endpoint B stopped");
+                }
+            }, true);
+
+            endpointB.start();
+
+            //Attaching Endpoint B by its access token via endpoint A
+            //because Endpoint B doesn't have owner yet
+            EndpointAccessToken endpointBAccessToken = new EndpointAccessToken(endpointB.getEndpointAccessToken());
+            CountDownLatch attachLatch = new CountDownLatch(1);
+            endpointA.attachEndpoint(endpointBAccessToken, new OnAttachEndpointOperationCallback() {
+                @Override
+                public void onAttach(SyncResponseResultType result, EndpointKeyHash resultContext) {
+                    System.out.println("Attach endpoint B result: " + result);
+                    attachLatch.countDown();
+                }
+            });
+
+            //waiting call with Endpoint B attachment
+            attachLatch.await(3, TimeUnit.SECONDS);
+
+        } catch (Exception e) {
+            System.out.println("Error occured during endpoint attachment!");
+        }
+    }
+}
 
 ```
 
