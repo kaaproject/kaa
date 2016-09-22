@@ -841,8 +841,11 @@ To obtain the temperature data stored on the server:
 
     ![Generate SDK](attach/app_token.png)
 
-2. Log in to your machine running Kaa server or to your Sandbox.
-For the Sandbox, use the default **kaa** username and **kaa123** password.
+2. Log in to your machine running Kaa server, or to your Virtual Machine running Sandbox.
+For Sandbox, use the ssh with default **kaa** username and **kaa** password.
+
+		$ ssh kaa@<YOUR-SANDBOX-IP>
+		password: kaa
 
 3. Start MongoDB shell.
 
