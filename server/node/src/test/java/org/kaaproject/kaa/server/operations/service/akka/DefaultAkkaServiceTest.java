@@ -16,24 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.nio.ByteBuffer;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,6 +72,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsService;
@@ -147,6 +130,26 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DefaultAkkaServiceTest {
 
@@ -494,7 +497,7 @@ public class DefaultAkkaServiceTest {
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
-        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.ASYNC, channelContextMock, request, responseBuilder,
                 errorBuilder);
 
         Assert.assertNotNull(akkaService.getActorSystem());
@@ -1846,6 +1849,50 @@ public class DefaultAkkaServiceTest {
                 address, classifier, new ThriftEndpointDeregistrationMessage()));
 
         Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointRevocationException.class));
+    }
+
+    @Test
+    public void testEndpointConfigurationRefresh() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = buildSyncRequestMetaData();
+        request.setSyncRequestMetaData(md);
+
+        ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        csRequest.setConfigurationHash(ByteBuffer.wrap("hash".getBytes()));
+        request.setConfigurationSyncRequest(csRequest);
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array())))
+                .thenReturn(clientPair.getPublic());
+        whenSync(noDeltaResponse);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        byte[] epsConfHash = "hash2".getBytes();
+        whenSync(deltaResponse);
+        Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        Mockito.when(operationsService.fetchEndpointSpecificConfigurationHash(any(EndpointProfileDto.class))).thenReturn(epsConfHash);
+        Mockito.when(operationsService.refreshServerEndpointProfile(any(EndpointObjectHash.class))).thenReturn(profileDto);
+        EndpointAddress address = new EndpointAddress(applicationDto.getTenantId(), applicationDto.getApplicationToken(),
+                EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
+        ActorClassifier classifier = ActorClassifier.GLOBAL;
+
+        ThriftEndpointConfigurationRefreshMessage msg = new ThriftEndpointConfigurationRefreshMessage(null, null);
+        clusterServiceListener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointConfigurationRefreshMessage>(address, classifier, msg));
+
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
+                Mockito.any(boolean.class));
+        Mockito.verify(operationsService).syncConfigurationHashes(any(SyncContext.class), isNull(byte[].class), eq(epsConfHash));
     }
     
     private SyncRequestMetaData buildSyncRequestMetaData() {

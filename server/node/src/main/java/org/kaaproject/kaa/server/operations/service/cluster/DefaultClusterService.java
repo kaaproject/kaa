@@ -16,13 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.cluster;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
@@ -30,6 +23,7 @@ import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityClusterAddress;
@@ -57,6 +51,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class DefaultClusterService implements ClusterService {
@@ -209,6 +209,11 @@ public class DefaultClusterService implements ClusterService {
         sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
     }
 
+    @Override
+    public void sendEndpointConfigurationRefreshMessage(String serverId, ThriftEndpointConfigurationRefreshMessage msg) {
+        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromEndpointConfigurationRefresh(msg));
+    }
+
     private void sendServerProfileUpdateMessage(String serverId, OperationsServiceMsg msg) {
         NeighborConnection<MessageTemplate, OperationsServiceMsg> server = neighbors.getNeghborConnection(serverId);
         if (server == null) {
@@ -236,6 +241,13 @@ public class DefaultClusterService implements ClusterService {
         EndpointAddress address = fromThriftAddress(msg.getAddress());
         ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
         listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(address, classifier, msg));
+    }
+
+    @Override
+    public void sendEndpointConfigurationRefreshMessage(ThriftEndpointConfigurationRefreshMessage msg) {
+        EndpointAddress address = fromThriftAddress(msg.getAddress());
+        ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
+        listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointConfigurationRefreshMessage>(address, classifier, msg));
     }
 
     @Override

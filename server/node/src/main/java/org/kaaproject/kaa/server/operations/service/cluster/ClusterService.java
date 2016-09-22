@@ -16,9 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.cluster;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
@@ -26,6 +25,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotif
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
+
+import java.util.List;
 
 public interface ClusterService {
 
@@ -124,6 +125,13 @@ public interface ClusterService {
     void sendServerProfileUpdateMessage(String nodeId, ThriftServerProfileUpdateMessage msg);
 
     /**
+     * Send endpoint configuration refresh message to specified node
+     * @param nodeId id of the server node
+     * @param msg the endpoint configuration refresh message
+     */
+    void sendEndpointConfigurationRefreshMessage(String nodeId, ThriftEndpointConfigurationRefreshMessage msg);
+
+    /**
      * Process entity route messages
      * 
      * @param msgs
@@ -136,6 +144,13 @@ public interface ClusterService {
      * @param msg the unicast notification message
      */
     void onUnicastNotificationMessage(ThriftUnicastNotificationMessage msg);
+
+    /**
+     * Process endpoint configuration refresh message
+     *
+     * @param msg endpoint configuration refresh message
+     */
+    void sendEndpointConfigurationRefreshMessage(ThriftEndpointConfigurationRefreshMessage msg);
 
     /**
      * Process server profile update message
