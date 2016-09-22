@@ -11,9 +11,10 @@ sort_idx: 80
 * TOC
 {:toc}
 
-The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same owner (potentially, across different applications). The Kaa event structure is determined by a configurable [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
+The Kaa **Events subsystem** is designed to generate endpoint events in real time, send them to other endpoints of the same owner and to [Kaa server]({{root_url}}Glossary/#kaa-server) for processing.
+The structure of a Kaa event is defined by the chosen [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
 
-The Kaa Event subsystem provides the following features.
+The Kaa Events subsystem provides the following features:
 
 * Generation of the event object model and related API calls in the endpoint SDK
 * Enforcement of data integrity and validity
