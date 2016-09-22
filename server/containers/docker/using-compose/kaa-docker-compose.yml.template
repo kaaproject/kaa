@@ -1,0 +1,28 @@
+version: '2'
+services:
+  {{KAA_SERVICE_NAME}}:
+    image: kaa-node:0.10.0
+    env_file: kaa-example.env
+    environment:
+      - SQL_PROVIDER_NAME=mariadb # (postgresql, default: mariadb)
+      - NOSQL_PROVIDER_NAME=mongodb # (cassandra, default: mongodb)
+      - SERVICES_WAIT_TIMEOUT=-1 # Wait forever for Zookeeper and SQL
+      - ADMIN_PORT={{ADMIN_PORT}}
+      - BOOTSTRAP_TCP={{BOOTSTRAP_TCP}}
+      - BOOTSTRAP_HTTP={{BOOTSTRAP_HTTP}}
+      - OPERATIONS_TCP={{OPERATIONS_TCP}}
+      - OPERATIONS_HTTP={{OPERATIONS_HTTP}}
+    networks:
+      - back-tier
+      - front-tier
+    ports:
+      - "{{ADMIN_PORT}}:{{ADMIN_PORT}}"
+      - "{{BOOTSTRAP_TCP}}:{{BOOTSTRAP_TCP}}"
+      - "{{BOOTSTRAP_HTTP}}:{{BOOTSTRAP_HTTP}}"
+      - "{{OPERATIONS_TCP}}:{{OPERATIONS_TCP}}"
+      - "{{OPERATIONS_HTTP}}:{{OPERATIONS_HTTP}}"
+networks:
+  back-tier:
+    driver: bridge
+  front-tier:
+    driver: bridge

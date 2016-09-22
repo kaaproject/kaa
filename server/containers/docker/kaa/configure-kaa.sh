@@ -84,6 +84,23 @@ sed -i "s/\(nosql_db_provider_name *= *\).*/\1${NOSQL_PROVIDER_NAME}/" /usr/lib/
 
 # > kaa-node.properties
 [ -n "$ZOOKEEPER_NODE_LIST" ] || ZOOKEEPER_NODE_LIST="localhost:2181"
-sed -i "s/\(zk_host_port_list *= *\).*/\1${ZOOKEEPER_NODE_LIST}/" /usr/lib/kaa-node/conf/kaa-node.properties
+sed \
+  -e "s/\(zk_host_port_list *= *\).*/\1${ZOOKEEPER_NODE_LIST}/" \
+  -e "s/\(admin_port *= *\).*/\1${ADMIN_PORT}/" \
+   /usr/lib/kaa-node/conf/kaa-node.properties > /usr/lib/kaa-node/conf/tmp.properties.template
+
+cat /usr/lib/kaa-node/conf/tmp.properties.template > /usr/lib/kaa-node/conf/kaa-node.properties
+
+# > kaa-bootstrap-http-transport.config.properties
+sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${BOOTSTRAP_HTTP}\",/" /usr/lib/kaa-node/conf/bootstrap-http-transport.config
+
+# > bootstrap-tcp-transport.config
+sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${BOOTSTRAP_TCP}\"/" /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config
+
+# > operations-http-transport.config
+sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${OPERATIONS_HTTP}\",/" /usr/lib/kaa-node/conf/operations-http-transport.config
+
+# > operations-tcp-transport.config
+sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${OPERATIONS_TCP}\"/" /usr/lib/kaa-node/conf/operations-tcp-transport.config
 
 rm /usr/lib/kaa-node/conf/tmp.properties.template
