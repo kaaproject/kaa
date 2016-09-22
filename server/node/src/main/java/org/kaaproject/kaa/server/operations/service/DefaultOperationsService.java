@@ -368,7 +368,7 @@ public class DefaultOperationsService implements OperationsService {
         EventServerSync response = new EventServerSync();
         List<EventListenersRequest> requests = request.getEventListenersRequests();
         if (requests != null && !requests.isEmpty()) {
-            LOG.debug("[{}] processing {} endpoint detach requests", endpointId, requests.size());
+            LOG.debug("[{}] processing {} endpoint listener requests", endpointId, requests.size());
             List<EventListenersResponse> responses = new ArrayList<>(requests.size());
             for (EventListenersRequest elRequest : requests) {
                 LOG.debug("[{}] processing event listener request {}", endpointId, request);
