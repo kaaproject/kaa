@@ -7,6 +7,9 @@ sort_idx: 20
 
 {% include variables.md %}
 
+* TOC
+{:toc}
+
 The [Kaa C++ SDK]({{root_url}}Glossary/#endpoint-sdk) allows deploying Kaa [endpoints]({{root_url}}Glossary/#endpoint-ep) across [different platforms]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Supported-platforms/).
 Basically, it enables the IoT functionality on any platform that provides the C++ runtime.
 
