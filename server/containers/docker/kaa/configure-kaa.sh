@@ -87,20 +87,26 @@ sed -i "s/\(nosql_db_provider_name *= *\).*/\1${NOSQL_PROVIDER_NAME}/" /usr/lib/
 sed \
   -e "s/\(zk_host_port_list *= *\).*/\1${ZOOKEEPER_NODE_LIST}/" \
   -e "s/\(admin_port *= *\).*/\1${ADMIN_PORT}/" \
+  -e "s/\(transport_public_interface *= *\).*/\1`ip route | awk 'NR==2 { print $9 }'`/" \
+  -e "s/\(thrift_host *= *\).*/\1`ip route | awk 'NR==2 { print $9 }'`/" \
    /usr/lib/kaa-node/conf/kaa-node.properties > /usr/lib/kaa-node/conf/tmp.properties.template
 
 cat /usr/lib/kaa-node/conf/tmp.properties.template > /usr/lib/kaa-node/conf/kaa-node.properties
 
 # > kaa-bootstrap-http-transport.config.properties
+sed -i "s/\(\"bindPort\" *: *\).*/\1${BOOTSTRAP_HTTP},/" /usr/lib/kaa-node/conf/bootstrap-http-transport.config
 sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${BOOTSTRAP_HTTP}\",/" /usr/lib/kaa-node/conf/bootstrap-http-transport.config
 
 # > bootstrap-tcp-transport.config
+sed -i "s/\(\"bindPort\" *: *\).*/\1${BOOTSTRAP_TCP},/" /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config
 sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${BOOTSTRAP_TCP}\"/" /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config
 
 # > operations-http-transport.config
+sed -i "s/\(\"bindPort\" *: *\).*/\1${OPERATIONS_HTTP},/" /usr/lib/kaa-node/conf/operations-http-transport.config
 sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${OPERATIONS_HTTP}\",/" /usr/lib/kaa-node/conf/operations-http-transport.config
 
 # > operations-tcp-transport.config
+sed -i "s/\(\"bindPort\" *: *\).*/\1${OPERATIONS_TCP},/" /usr/lib/kaa-node/conf/operations-tcp-transport.config
 sed -i "s/\(\"publicPorts\" *: *\).*/\1\"${OPERATIONS_TCP}\"/" /usr/lib/kaa-node/conf/operations-tcp-transport.config
 
 rm /usr/lib/kaa-node/conf/tmp.properties.template

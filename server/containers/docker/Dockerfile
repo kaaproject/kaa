@@ -10,6 +10,8 @@ RUN apt-get update && apt-get -yqq install \
 		nano \
 		vim  \
 		curl \
+		net-tools \
+		mc \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -40,6 +42,8 @@ RUN touch /var/log/kaa/kaa-node.log \
 
 # Kaa service & convenience shell scripts
 COPY kaa/ /kaa
+
+EXPOSE 9090
 
 # Make kaa sudoer
 RUN echo 'kaa     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
