@@ -840,43 +840,69 @@ See [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_E
 
 ### Managing event class families
 
-To use the Kaa events feature for one or more applications, the tenant admin should create an event class family (ECF).
+To use the Kaa events feature for one or more applications, the tenant administrator must create an event class family (ECF).
 
-To create a new ECF, log in as a tenant admin and do the following:
+To create a new ECF, log in as a tenant administrator and do the following:
 
-1. Open the **Event class families** window by clicking the corresponding link on the navigation panel.
-2. In the **Event class families** window, click **Add ECF**. 
-![](images/admin_ui/event_class_family/ecf1.png)
-3. In the **Add ECF** window, fill in all the required fields and then click **Add**.  
-<br> **NOTE:** _the namespace and class name values should be unique._
-![](images/admin_ui/event_class_family/ecf2.png)
-4. In the **Event class family** window, add (optionally) an ECF version by clicking **Add family version** under the **Versions** table. 
-![](images/admin_ui/event_class_family/ecf3.png)
-5. In the **Family version** window, create an ECF version by adding ECs by clicking **Add event class** and after all ECs are set up click button **Save**.
-<br> **NOTE:** _More than one version can be added to an ECF._
-![](images/admin_ui/event_class_family/ecf4.png)
-A unique version number is assigned to a family version after its creation and then the family version appears as a clickable line in the **Versions** table. To review the ECF version details, click the appropriate version line in the **Versions** table. Each family version automatically splits into event classes. A name, type, created by, date created and flat representation of corresponding [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) are shown for each event class in the table with the same name.
-![](images/admin_ui/event_class_family/ecf5.png)
-![](images/admin_ui/event_class_family/ecf6.png)
-6. In the **Add event class** window, fill in all the required fields and then click **Add**. 
-You are able to select existing [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) or create new. 
-To select existing [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) click on **Select fully qualified name of existing type** text field and choose one of available CTL schemas.
-To create new [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) click **Create new type** and go to p.7.
-![](images/admin_ui/event_class_family/ecf7.png)
-7. In the **Add new type** window, fill in all the required fields and then click **Add** or click **Choose file**. 
-![](images/admin_ui/event_class_family/ecf8.png)
+1. Open the **Event class families** page and click **Add ECF**.
+
+	![](images/admin_ui/event_class_family/ecf1.png)
+	
+2. On the **Add ECF** page, fill in the required fields and click **Add**.  
+	
+	![](images/admin_ui/event_class_family/ecf2.png)
+
+	>**NOTE:** The **Namespace** and **Class name** values must be unique.
+	{:.note}
+		
+3. On the **Event class family details** page, click **Add family version** under the **Versions** section to add an ECF verision (optional).
+	
+	![](images/admin_ui/event_class_family/ecf3.png)
+	
+4. On the **Family version** page, click **Add event class** to create an ECF version.
+Make the necessary changes to the ECs and click **Save**.
+
+	![](images/admin_ui/event_class_family/ecf4.png)
+	
+	>**NOTE:** You can add multiple versions of a single ECF.
+	{:.note}
+	
+	A unique version number is assigned to every ECF after it is created.
+	The family version appears as a clickable line in the **Versions** section.
+	To review ECF version details, click the appropriate version line in the **Versions** section.
+	Each family version automatically splits into event classes.
+	Name, type, created by, date created and flat representation of the corresponding [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) are displayed for each event class.
+	
+	![](images/admin_ui/event_class_family/ecf5.png)
+	
+	![](images/admin_ui/event_class_family/ecf6.png)
+
+5. In the **Add event class** window, fill in the required fields and click **Add**.
+Select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) or create a new one.
+
+To select existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Select fully qualified name of existing type** text field and choose one of the available CT schemas.
+
+To create a new [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Create new type** and go to step 6.
+
+	![](images/admin_ui/event_class_family/ecf7.png)
+
+6. On the **Add new type** page, fill in the required fields and click **Add** or click **Choose file**.
+
+	![](images/admin_ui/event_class_family/ecf8.png)
 
 ### Adding event family mappings
 
-Event family mappings are used by tenant developers to set event class families for the application and determine the actions for each class family - whether an application should be a source, a sink, or both.
+Event family mappings are used by tenant developers to set event class families for the application and define the actions for each class family -- whether an application should be a source, a sink, or both.
 
-To view the list of ECFs which are mapped to the application, open the **Event family mappings** window by clicking **Event family mappings** under the application on the navigation panel. 
+To add an event family mapping, log in as a tenant developer and do the following:
 
-![](images/admin_ui/event_family_mapping/efm1.png)
+1. Open the **Event family mappings** page of the application.
 
-To add a new mapping, do the following:
+	![](images/admin_ui/event_family_mapping/efm1.png)
 
-1. In the **Event family mappings window**, click **Add family event mapping**.
-2. Select an appropriate ECF from the drop-down list and then set appropriate actions for each class of the family.
+2. Click **Add family event mapping**.
+The **Event family mapping details** page will open.
 
-![](images/admin_ui/event_family_mapping/efm2.png)
+	![](images/admin_ui/event_family_mapping/efm2.png)
+	
+3. Select an appropriate ECF from the drop-down list and set the required actions for each class of the family.
