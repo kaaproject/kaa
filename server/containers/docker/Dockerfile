@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Christopher Burroughs <chris@xmight.com>
+MAINTAINER KAA IoT PLATFORM <www.kaaproject.org>
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get -yqq install \
@@ -40,8 +40,6 @@ RUN touch /var/log/kaa/kaa-node.log \
 
 # Kaa service & convenience shell scripts
 COPY kaa/ /kaa
-
-EXPOSE 8080 9888 9889 9997 9999
 
 # Make kaa sudoer
 RUN echo 'kaa     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers

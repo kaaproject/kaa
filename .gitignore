@@ -61,6 +61,7 @@ Tests/Pods
 **/.toDelete
 /test-gh-pages-current/
 doc/Programming-guide/Server-REST-APIs/swagger.json
+/server/containers/docker/using-compose/kaa-docker-compose.yml
 /server/containers/docker/using-compose/sql-example.env
 /server/containers/docker/kaa-node.deb
 /keys
