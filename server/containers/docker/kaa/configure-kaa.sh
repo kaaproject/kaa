@@ -5,7 +5,6 @@
 touch /usr/lib/kaa-node/conf/tmp.properties.template
 
 # Check if JDBC host:port + DB name are provided, use defaults otherwise
-[ -n "$JDBC_HOST" ] || JDBC_HOST="localhost"
 [ -n "$JDBC_DB_NAME" ] || JDBC_DB_NAME="kaa"
 
 # Determine JDBC url and driver
@@ -65,15 +64,12 @@ sed \
 cat /usr/lib/kaa-node/conf/tmp.properties.template > /usr/lib/kaa-node/conf/sql-dao.properties
 
 # > common-dao-cassandra.properties
-[ -n "$CASSANDRA_NODE_LIST" ] || CASSANDRA_NODE_LIST="localhost:9042"
 sed -i "s/\(node_list *= *\).*/\1${CASSANDRA_NODE_LIST}/" /usr/lib/kaa-node/conf/common-dao-cassandra.properties
 
 # > common-dao-mongodb.properties
-[ -n "$MONGODB_NODE_LIST" ] || MONGODB_NODE_LIST="localhost:27017"
 sed -i "s/\(servers *= *\).*/\1${MONGODB_NODE_LIST}/" /usr/lib/kaa-node/conf/common-dao-mongodb.properties
 
 # > nosql-dao.properties
-[ -n "$NOSQL_PROVIDER_NAME" ] || NOSQL_PROVIDER_NAME="mongodb"
 # Fail early if invalid provider name
 if ! [[ "$NOSQL_PROVIDER_NAME" =~ ^(mongodb|cassandra)$ ]];
 then
@@ -83,12 +79,13 @@ fi
 sed -i "s/\(nosql_db_provider_name *= *\).*/\1${NOSQL_PROVIDER_NAME}/" /usr/lib/kaa-node/conf/nosql-dao.properties
 
 # > kaa-node.properties
-[ -n "$ZOOKEEPER_NODE_LIST" ] || ZOOKEEPER_NODE_LIST="localhost:2181"
+[ -n "$TRANSPORT_PUBLIC_INTERFACE" ]  || TRANSPORT_PUBLIC_INTERFACE=`ip route | awk 'NR==2 { print $9 }'`
+[ -n "$THRIFT_HOST" ] || THRIFT_HOST=`ip route | awk 'NR==2 { print $9 }'`
 sed \
   -e "s/\(zk_host_port_list *= *\).*/\1${ZOOKEEPER_NODE_LIST}/" \
   -e "s/\(admin_port *= *\).*/\1${ADMIN_PORT}/" \
-  -e "s/\(transport_public_interface *= *\).*/\1`ip route | awk 'NR==2 { print $9 }'`/" \
-  -e "s/\(thrift_host *= *\).*/\1`ip route | awk 'NR==2 { print $9 }'`/" \
+  -e "s/\(transport_public_interface *= *\).*/\1${TRANSPORT_PUBLIC_INTERFACE}/" \
+  -e "s/\(thrift_host *= *\).*/\1${THRIFT_HOST}/" \
    /usr/lib/kaa-node/conf/kaa-node.properties > /usr/lib/kaa-node/conf/tmp.properties.template
 
 cat /usr/lib/kaa-node/conf/tmp.properties.template > /usr/lib/kaa-node/conf/kaa-node.properties
