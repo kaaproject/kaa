@@ -18,10 +18,6 @@ package org.kaaproject.kaa.server.admin.services;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
@@ -49,6 +45,7 @@ import org.kaaproject.kaa.server.admin.shared.services.CtlService;
 import org.kaaproject.kaa.server.admin.shared.services.GroupService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -341,17 +338,12 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     public RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            byte[] body = getFileContent(fileItemName);
-
             Schema avroSchema = new Schema.Parser().parse(schema);
-            JsonNode json = new ObjectMapper().readTree(body);
-            json = injectUuids(json, avroSchema);
-            body = json.toString().getBytes();
-
+            byte[] body = getFileContent(fileItemName);
+            body = AvroUtils.injectUuids(body, avroSchema).getBytes();
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
             GenericRecord record = converter.decodeJson(body);
-            RecordField recordData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
-            return recordData;
+            return FormAvroConverter.createRecordFieldFromGenericRecord(record);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -555,35 +547,4 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         }
         return schemaInfos;
     }
-
-    private JsonNode injectUuids(JsonNode json, Schema schema) {
-        if (json == null) return json;
-        String UUID_FIELD = "__uuid";
-
-        switch (schema.getType()) {
-            case RECORD:
-                schema.getFields().stream()
-                        .filter(f -> !f.name().equals(UUID_FIELD))
-                        .forEach(f -> injectUuids(json.get(f.name()), f.schema()));
-
-                boolean addressable = schema.getFields().stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst().isPresent();
-                if (addressable) {
-                    ((ObjectNode) json).put(UUID_FIELD, (Integer) null);
-                }
-                break;
-            case UNION:
-                schema.getTypes()
-                        .forEach(s -> injectUuids(json.get(s.getName()), s));
-                break;
-            case ARRAY:
-                schema.getElementType().getTypes()
-                        .forEach(s -> injectUuids(json.get(s.getName()), s));
-                break;
-            default:
-                return json;
-        }
-
-        return json;
-    }
-
 }
