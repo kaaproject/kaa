@@ -12,7 +12,7 @@ sort_idx: 80
 {:toc}
 
 The Kaa **Events subsystem** is designed to generate [endpoint]({{root_url}}Glossary/#endpoint-ep) events in real time, send them to other endpoints of the same [owner]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and to [Kaa server]({{root_url}}Glossary/#kaa-server) for processing.
-The data set structure of a Kaa event is defined by the chosen [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
+The data set structure of a Kaa event is defined by the chosen [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
 
 The Kaa Events subsystem provides the following features:
 
@@ -51,7 +51,7 @@ Below are some basic examples of an event class CT schema.
 }
 ```
 
-* This is and event definition fith two data fields (**field1** and **field2**), where **com.company.project.SimpleEvent2** is the FQN and <code>classType</code> is an event.
+* This is and event definition with two data fields (**field1** and **field2**), where **com.company.project.SimpleEvent2** is the FQN and <code>classType</code> is an event.
 
 ```json
 {  
@@ -840,7 +840,7 @@ See [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_E
 
 ### Managing event class families
 
-To use the Kaa events feature for one or more applications, the tenant administrator must create an event class family (ECF).
+To use the Kaa events feature for one or more applications, the tenant administrator must create an ECF.
 
 To create a new ECF, log in as a tenant administrator and do the following:
 
@@ -848,14 +848,14 @@ To create a new ECF, log in as a tenant administrator and do the following:
 
 	![](images/admin_ui/event_class_family/ecf1.png)
 	
-2. On the **Add ECF** page, fill in the required fields and click **Add**.  
+2. On the **Add ECF** page, fill in the required fields and click **Add**.
 	
 	![](images/admin_ui/event_class_family/ecf2.png)
 
 	>**NOTE:** The **Namespace** and **Class name** values must be unique.
 	{:.note}
 		
-3. On the **Event class family details** page, click **Add family version** under the **Versions** section to add an ECF verision (optional).
+3. On the **Event class family details** page, click **Add family version** under the **Versions** section to add an ECF version (optional).
 	
 	![](images/admin_ui/event_class_family/ecf3.png)
 	
@@ -869,20 +869,21 @@ Make the necessary changes to the ECs and click **Save**.
 	
 	A unique version number is assigned to every ECF after it is created.
 	The family version appears as a clickable line in the **Versions** section.
+		
+	![](images/admin_ui/event_class_family/ecf5.png)
+	
 	To review ECF version details, click the appropriate version line in the **Versions** section.
 	Each family version automatically splits into event classes.
 	Name, type, created by, date created and flat representation of the corresponding [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) are displayed for each event class.
-	
-	![](images/admin_ui/event_class_family/ecf5.png)
 	
 	![](images/admin_ui/event_class_family/ecf6.png)
 
 5. In the **Add event class** window, fill in the required fields and click **Add**.
 Select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) or create a new one.
 
-To select existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Select fully qualified name of existing type** text field and choose one of the available CT schemas.
+	To select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Select fully qualified name of existing type** text field and choose one of the available CT schemas.
 
-To create a new [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Create new type** and go to step 6.
+	To create a new [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Create new type** and go to step 6.
 
 	![](images/admin_ui/event_class_family/ecf7.png)
 
