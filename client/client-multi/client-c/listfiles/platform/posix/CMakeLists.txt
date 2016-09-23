@@ -17,7 +17,6 @@
 set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/platform-impl/posix/kaa_client.c
-        ${KAA_SRC_FOLDER}/platform-impl/posix/key_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/file_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/status.c
@@ -26,6 +25,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/key_utils.c
     )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)

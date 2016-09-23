@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(kaa_mbedtls C)
+project(mbedtls C)
 
 set(KAA_MBEDTLS_SOURCE_FILES
         ${CMAKE_CURRENT_LIST_DIR}/aes.c
@@ -24,5 +24,5 @@ set(KAA_MBEDTLS_SOURCE_FILES
 )
 
 
-add_library(kaa_mbedtls ${KAA_MBEDTLS_SOURCE_FILES})
-target_include_directories(kaa_mbedtls PUBLIC ${CMAKE_CURRENT_LIST_DIR}/mbedtls ${CMAKE_CURRENT_LIST_DIR})
+add_library(mbedtls ${KAA_MBEDTLS_SOURCE_FILES})
+target_include_directories(mbedtls PUBLIC ${CMAKE_CURRENT_LIST_DIR}/mbedtls ${CMAKE_CURRENT_LIST_DIR})
