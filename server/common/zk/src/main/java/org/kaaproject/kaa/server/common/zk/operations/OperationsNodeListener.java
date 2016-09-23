@@ -32,24 +32,24 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
  */
 public interface OperationsNodeListener {
 
-    /**
-     * On node added.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeAdded(OperationsNodeInfo nodeInfo);
+  /**
+   * On node added.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeAdded(OperationsNodeInfo nodeInfo);
 
-    /**
-     * Invoked when on node update occurs.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeUpdated(OperationsNodeInfo nodeInfo);
+  /**
+   * Invoked when on node update occurs.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeUpdated(OperationsNodeInfo nodeInfo);
 
-    /**
-     * On node removed.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeRemoved(OperationsNodeInfo nodeInfo);
+  /**
+   * On node removed.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeRemoved(OperationsNodeInfo nodeInfo);
 }

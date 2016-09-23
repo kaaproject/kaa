@@ -23,27 +23,26 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.8.0
  */
 public class SdkProfilesViewImpl extends BaseListViewImpl<SdkProfileDto> {
 
-    public SdkProfilesViewImpl() {
-        super(true);
-    }
+  public SdkProfilesViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<SdkProfileDto, String> createGrid() {
-        return new SdkProfilesGrid();
-    }
+  @Override
+  protected AbstractGrid<SdkProfileDto, String> createGrid() {
+    return new SdkProfilesGrid();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.sdkProfiles();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.sdkProfiles();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewSdkProfile();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewSdkProfile();
+  }
 }

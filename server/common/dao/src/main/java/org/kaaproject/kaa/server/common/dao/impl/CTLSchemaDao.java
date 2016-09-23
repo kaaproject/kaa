@@ -25,106 +25,115 @@ import java.util.List;
  */
 public interface CTLSchemaDao<T> extends SqlDao<T> {
 
-    /**
-     * Find CTL schemas available in the database.
-     *
-     * @return the list of CTL schemas available in the database.
-     */
-    List<T> findSystemSchemas();
+  /**
+   * Find CTL schemas available in the database.
+   *
+   * @return the list of CTL schemas available in the database.
+   */
+  List<T> findSystemSchemas();
 
-    /**
-     * Find available for tenant(include system scope) CTL schemas by given tenant identifier.
-     *
-     * @param tenantId the tenant identifier.
-     * @return the list of available schemas.
-     */
-    List<T> findAvailableSchemasForTenant(String tenantId);
+  /**
+   * Find available for tenant(include system scope) CTL schemas by given tenant identifier.
+   *
+   * @param tenantId the tenant identifier.
+   * @return the list of available schemas.
+   */
+  List<T> findAvailableSchemasForTenant(String tenantId);
 
-    /**
-     * Find available for application(include system and tenant scope) CTL schemas by given tenant and application identifier.
-     * 
-     * @param tenantId the tenant identifier.
-     * @param appId the application identifier.
-     * @return the list of available schemas.
-     */
-    List<T> findAvailableSchemasForApplication(String tenantId, String appId);
+  /**
+   * Find available for application(include system and tenant scope) CTL schemas by given tenant and
+   * application identifier.
+   *
+   * @param tenantId the tenant identifier.
+   * @param appId    the application identifier.
+   * @return the list of available schemas.
+   */
+  List<T> findAvailableSchemasForApplication(String tenantId, String appId);
 
-    /**
-     * Find CTL schema with the given meta info id and version.
-     *
-     * @param metaInfoId the id of meta info object.
-     * @param version    the schema version.
-     * @return the CTL schema with the given meta info id and version.
-     */
+  /**
+   * Find CTL schema with the given meta info id and version.
+   *
+   * @param metaInfoId the id of meta info object.
+   * @param version    the schema version.
+   * @return the CTL schema with the given meta info id and version.
+   */
 
-    T findByMetaInfoIdAndVer(String metaInfoId, Integer version);
+  T findByMetaInfoIdAndVer(String metaInfoId, Integer version);
 
-    /**
-     * Find CTL schema with the given fully qualified name, version, tenant and application identifiers.
-     *
-     * @param fqn      the fully qualified name.
-     * @param version  the schema version.
-     * @param tenantId the tenant identifier.
-     * @param applicationId the application identifier.
-     * @return the CTL schema with the given fully qualified name, version, tenant and application identifiers.
-     */
-    
-    T findByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
+  /**
+   * Find CTL schema with the given fully qualified name, version, tenant and application
+   * identifiers.
+   *
+   * @param fqn           the fully qualified name.
+   * @param version       the schema version.
+   * @param tenantId      the tenant identifier.
+   * @param applicationId the application identifier.
+   * @return the CTL schema with the given fully qualified name, version, tenant and application
+   * identifiers.
+   */
 
-    /**
-     * Find any CTL schema with the given fully qualified name, version, tenant and application identifiers.
-     *
-     * @param fqn      the fully qualified name.
-     * @param version  the schema version.
-     * @param tenantId the tenant identifier.
-     * @param applicationId the application identifier.
-     * @return the any CTL schema with the given fully qualified name, version, tenant and application identifiers.
-     */
-    T findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
+  T findByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
 
-    /**
-     * Find the last version of CTL schema with the given fully qualified name, tenant and application identifiers.
-     *
-     * @param fqn the qualified name.
-     * @param tenantId the tenant identifier.
-     * @param applicationId the application identifier.
-     * @return the latest version of CTL schema with the given fully qualified name, tenant and application identifiers.
-     */
-    T findLatestByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+  /**
+   * Find any CTL schema with the given fully qualified name, version, tenant and application
+   * identifiers.
+   *
+   * @param fqn           the fully qualified name.
+   * @param version       the schema version.
+   * @param tenantId      the tenant identifier.
+   * @param applicationId the application identifier.
+   * @return the any CTL schema with the given fully qualified name, version, tenant and application
+   * identifiers.
+   */
+  T findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
 
-    /**
-     * Find the last version of CTL schema with the given meta info id.
-     *
-     * @param metaInfoId the id of meta info object.
-     * @return the latest version of  CTL schema with the given meta info id.
-     */
-    
-    T findLatestByMetaInfoId(String metaInfoId);
+  /**
+   * Find the last version of CTL schema with the given fully qualified name, tenant and application
+   * identifiers.
+   *
+   * @param fqn           the qualified name.
+   * @param tenantId      the tenant identifier.
+   * @param applicationId the application identifier.
+   * @return the latest version of CTL schema with the given fully qualified name, tenant and
+   * application identifiers.
+   */
+  T findLatestByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
 
-    /**
-     * Find all available versions of CTL schema with the given fully qualified name, tenant and application identifiers.
-     *
-     * @param fqn the qualified name.
-     * @param tenantId the tenant identifier.
-     * @param applicationId the application identifier.
-     * @return the list of available versions of CTL schema with the given fully qualified name, tenant and application identifiers.
-     */
-    List<T> findAllByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+  /**
+   * Find the last version of CTL schema with the given meta info id.
+   *
+   * @param metaInfoId the id of meta info object.
+   * @return the latest version of  CTL schema with the given meta info id.
+   */
 
-    /**
-     * Find all available versions of CTL schema with the given meta info id.
-     *
-     * @param metaInfoId the id of meta info object.
-     * @return the list of available versions of CTL schema with the given meta info id.
-     */
-    List<T> findAllByMetaInfoId(String metaInfoId);
+  T findLatestByMetaInfoId(String metaInfoId);
 
-    /**
-     * Find dependents CTL schemas from the schema with the given schema identifier.
-     *
-     * @param schemaId the schema identifier.
-     * @return the list of dependents schemas from schema with given identifier.
-     */
-    List<T> findDependentSchemas(String schemaId);
+  /**
+   * Find all available versions of CTL schema with the given fully qualified name, tenant and
+   * application identifiers.
+   *
+   * @param fqn           the qualified name.
+   * @param tenantId      the tenant identifier.
+   * @param applicationId the application identifier.
+   * @return the list of available versions of CTL schema with the given fully qualified name,
+   * tenant and application identifiers.
+   */
+  List<T> findAllByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+
+  /**
+   * Find all available versions of CTL schema with the given meta info id.
+   *
+   * @param metaInfoId the id of meta info object.
+   * @return the list of available versions of CTL schema with the given meta info id.
+   */
+  List<T> findAllByMetaInfoId(String metaInfoId);
+
+  /**
+   * Find dependents CTL schemas from the schema with the given schema identifier.
+   *
+   * @param schemaId the schema identifier.
+   * @return the list of dependents schemas from schema with given identifier.
+   */
+  List<T> findDependentSchemas(String schemaId);
 
 }

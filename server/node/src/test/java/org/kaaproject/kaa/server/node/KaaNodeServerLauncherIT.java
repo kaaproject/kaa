@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.node;
 
-import java.util.concurrent.TimeoutException;
-
 import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingCluster;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -35,146 +33,150 @@ import org.kaaproject.kaa.server.common.thrift.gen.node.KaaNodeThriftService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeoutException;
+
 /**
  * The Class KaaNodeServerLauncherIT.
  */
 public class KaaNodeServerLauncherIT {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KaaNodeServerLauncherIT.class);
-    
-    /** The Constant HOST. */
-    private static final String HOST = "localhost";
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory
+      .getLogger(KaaNodeServerLauncherIT.class);
 
-    /** The Constant PORT. */
-    private static final int PORT = 10090;
-    
-    /**
-     * Inits the.
-     * 
-     * @throws Exception
-     *             the exception
-     */
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
+  /**
+   * The Constant HOST.
+   */
+  private static final String HOST = "localhost";
 
-    /**
-     * After.
-     * 
-     * @throws Exception
-     *             the exception
-     */
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.getDB().dropDatabase();
-        MongoDBTestRunner.tearDown();
-    }
+  /**
+   * The Constant PORT.
+   */
+  private static final int PORT = 10090;
 
-    /**
-     * Test start kaa node server application.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testStartKaaNodeServerApplication() throws Exception {
-        TestingCluster zkCluster = null;
-        TTransport transport = null;
-        Thread kaaNodeServerLauncherThread = null;
-        KaaNodeThriftService.Client client = null;
+  /**
+   * Inits the.
+   *
+   * @throws Exception the exception
+   */
+  @BeforeClass
+  public static void init() throws Exception {
+    MongoDBTestRunner.setUp();
+  }
+
+  /**
+   * After.
+   *
+   * @throws Exception the exception
+   */
+  @AfterClass
+  public static void after() throws Exception {
+    MongoDBTestRunner.getDB().dropDatabase();
+    MongoDBTestRunner.tearDown();
+  }
+
+  /**
+   * Test start kaa node server application.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testStartKaaNodeServerApplication() throws Exception {
+    TestingCluster zkCluster = null;
+    TTransport transport = null;
+    Thread kaaNodeServerLauncherThread = null;
+    KaaNodeThriftService.Client client = null;
+    try {
+      zkCluster = new TestingCluster(new InstanceSpec(null, 2185, -1, -1, true, -1, -1, -1));
+      zkCluster.start();
+
+      kaaNodeServerLauncherThread = new Thread(new Runnable() {
+        @SuppressWarnings("static-access")
+        @Override
+        public void run() {
+          LOG.info("Starting Kaa Node Server ...");
+          new KaaNodeApplication(new String[]{}, new String[]{}).main(new String[]{"common-test-context.xml", "kaa-node-test.properties"});
+          LOG.info("Kaa Node Server Stopped");
+        }
+      });
+
+      kaaNodeServerLauncherThread.start();
+
+      Thread.sleep(15000);
+
+      transport = new TSocket(HOST, PORT);
+      TProtocol protocol = new TBinaryProtocol(transport);
+      TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, KaaThriftService.KAA_NODE_SERVICE.getServiceName());
+      client = new KaaNodeThriftService.Client(mp);
+      transport.open();
+      client.shutdown();
+
+    } finally {
+      if (transport != null && transport.isOpen()) {
         try {
-            zkCluster = new TestingCluster(new InstanceSpec(null, 2185, -1, -1, true, -1, -1, -1));
-            zkCluster.start();
-            
-            kaaNodeServerLauncherThread = new Thread(new Runnable() {
-                @SuppressWarnings("static-access")
-                @Override
-                public void run() {
-                    LOG.info("Starting Kaa Node Server ...");
-                    new KaaNodeApplication(new String[]{}, new String[]{}).main(new String[]{"common-test-context.xml", "kaa-node-test.properties"});
-                    LOG.info("Kaa Node Server Stopped");
-                }
-            });
-            
-            kaaNodeServerLauncherThread.start();
-            
-            Thread.sleep(15000);
-
-            transport = new TSocket(HOST, PORT);
-            TProtocol protocol = new TBinaryProtocol(transport);
-            TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, KaaThriftService.KAA_NODE_SERVICE.getServiceName());
-            client = new KaaNodeThriftService.Client(mp);
-            transport.open();
-            client.shutdown();
-            
+          transport.close();
+        } catch (Exception e) {
         }
-        finally {
-            if (transport != null && transport.isOpen()) {
-                try {
-                    transport.close();
-                }
-                catch (Exception e){}
-            }
-            if (kaaNodeServerLauncherThread != null) {
-                kaaNodeServerLauncherThread.join(30000);
-                if (kaaNodeServerLauncherThread.isAlive()) {
-                    throw new TimeoutException("Timeout (30 sec) occured while waiting kaa node server shutdown thread!");
-                }
-            }
-            if (zkCluster != null) {
-                zkCluster.close();
-            }
+      }
+      if (kaaNodeServerLauncherThread != null) {
+        kaaNodeServerLauncherThread.join(30000);
+        if (kaaNodeServerLauncherThread.isAlive()) {
+          throw new TimeoutException("Timeout (30 sec) occured while waiting kaa node server shutdown thread!");
         }
+      }
+      if (zkCluster != null) {
+        zkCluster.close();
+      }
     }
+  }
 
-    /**
-     * Test start kaa node server application without Zk started.
-     *
-     * @throws Exception the exception
-     */
-    @Ignore("KAA-1281 Kaa node should block startup process if zookeeper is unavailable.")
-    @Test
-    public void testStartKaaNodeServerApplicationWithoutZkStarted() throws Exception {
-        TTransport transport = null;
-        Thread kaaNodeServerLauncherThread = null;
-        KaaNodeThriftService.Client client = null;
+  /**
+   * Test start kaa node server application without Zk started.
+   *
+   * @throws Exception the exception
+   */
+  @Ignore("KAA-1281 Kaa node should block startup process if zookeeper is unavailable.")
+  @Test
+  public void testStartKaaNodeServerApplicationWithoutZkStarted() throws Exception {
+    TTransport transport = null;
+    Thread kaaNodeServerLauncherThread = null;
+    KaaNodeThriftService.Client client = null;
+    try {
+      kaaNodeServerLauncherThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          LOG.info("Starting Kaa Node Server ...");
+          KaaNodeApplication.main(new String[]{"common-zk-test-context.xml", "kaa-node-zk-test.properties"});
+          LOG.info("Kaa Node Server Stopped");
+        }
+      });
+
+      kaaNodeServerLauncherThread.start();
+
+      Thread.sleep(30000);
+
+      transport = new TSocket(HOST, PORT);
+      TProtocol protocol = new TBinaryProtocol(transport);
+      TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, KaaThriftService.KAA_NODE_SERVICE.getServiceName());
+      client = new KaaNodeThriftService.Client(mp);
+      transport.open();
+      client.shutdown();
+    } finally {
+      if (transport != null && transport.isOpen()) {
         try {
-            kaaNodeServerLauncherThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    LOG.info("Starting Kaa Node Server ...");
-                    KaaNodeApplication.main(new String[]{"common-zk-test-context.xml", "kaa-node-zk-test.properties"});
-                    LOG.info("Kaa Node Server Stopped");
-                }
-            });
-            
-            kaaNodeServerLauncherThread.start();
-            
-            Thread.sleep(30000);
-            
-            transport = new TSocket(HOST, PORT);
-            TProtocol protocol = new TBinaryProtocol(transport);
-            TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, KaaThriftService.KAA_NODE_SERVICE.getServiceName());
-            client = new KaaNodeThriftService.Client(mp);
-            transport.open();
-            client.shutdown();
+          transport.close();
+        } catch (Exception e) {
         }
-        finally {
-            if (transport != null && transport.isOpen()) {
-                try {
-                    transport.close();
-                }
-                catch (Exception e){}
-            }
-            if (kaaNodeServerLauncherThread != null) {
-                kaaNodeServerLauncherThread.join(30000);
-                if (kaaNodeServerLauncherThread.isAlive()) {
-                    throw new TimeoutException("Timeout (30 sec) occured while waiting kaa node server shutdown thread!");
-                }
-            }
+      }
+      if (kaaNodeServerLauncherThread != null) {
+        kaaNodeServerLauncherThread.join(30000);
+        if (kaaNodeServerLauncherThread.isAlive()) {
+          throw new TimeoutException("Timeout (30 sec) occured while waiting kaa node server shutdown thread!");
         }
+      }
     }
+  }
 
 }

@@ -23,30 +23,26 @@ import org.kaaproject.kaa.client.persistence.KaaClientState;
  * and response for the specific service.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface KaaTransport {
 
-    /**
-     * Sets the specific {@link KaaChannelManager} for the current transport.
-     *
-     * @param channelManager manager to be set.
-     *
-     */
-    void setChannelManager(KaaChannelManager channelManager);
+  /**
+   * Sets the specific {@link KaaChannelManager} for the current transport.
+   *
+   * @param channelManager manager to be set.
+   */
+  void setChannelManager(KaaChannelManager channelManager);
 
-    /**
-     * Sets the client's state object.
-     *
-     * @param state state object to be set.
-     *
-     */
-    void setClientState(KaaClientState state);
+  /**
+   * Sets the client's state object.
+   *
+   * @param state state object to be set.
+   */
+  void setClientState(KaaClientState state);
 
-    /**
-     * Sends the update request to the server.
-     *
-     */
-    void sync();
+  /**
+   * Sends the update request to the server.
+   */
+  void sync();
 
 }

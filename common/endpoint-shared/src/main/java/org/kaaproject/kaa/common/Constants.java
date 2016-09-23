@@ -21,37 +21,37 @@ package org.kaaproject.kaa.common;
  */
 public interface Constants { //NOSONAR
 
-    String URI_DELIM = "/"; //NOSONAR
+  String URI_DELIM = "/"; //NOSONAR
 
-    /**
-     * HTTP response content-type.
-     */
-    String RESPONSE_CONTENT_TYPE = "\"application/x-kaa\""; //NOSONAR
+  /**
+   * HTTP response content-type.
+   */
+  String RESPONSE_CONTENT_TYPE = "\"application/x-kaa\""; //NOSONAR
 
-    /**
-     * HTTP response custom header for set RSA Signature encoded in base64
-     */
-    String SIGNATURE_HEADER_NAME = "X-SIGNATURE"; //NOSONAR
-
-
-    //The identifier for the Avro platform protocol
-    int KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xf291f2d4;
-
-    //cvc32 of AvroEncDecUseRawChema
-    int KAA_PLATFORM_PROTOCOL_AVRO_ID_V2 = 0xe0c0c178;
+  /**
+   * HTTP response custom header for set RSA Signature encoded in base64
+   */
+  String SIGNATURE_HEADER_NAME = "X-SIGNATURE"; //NOSONAR
 
 
-    //The identifier for the Binary platform protocol
-    int KAA_PLATFORM_PROTOCOL_BINARY_ID = 0x3553c66f;
+  //The identifier for the Avro platform protocol
+  int KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xf291f2d4;
 
-    //cvc32 of BinaryEncDecUseRawSchema
-    int KAA_PLATFORM_PROTOCOL_BINARY_ID_V2 = 0x0231ad61;
+  //cvc32 of AvroEncDecUseRawChema
+  int KAA_PLATFORM_PROTOCOL_AVRO_ID_V2 = 0xe0c0c178;
 
 
-    int SDK_TOKEN_SIZE = 27;
+  //The identifier for the Binary platform protocol
+  int KAA_PLATFORM_PROTOCOL_BINARY_ID = 0x3553c66f;
 
-    int APP_TOKEN_SIZE = 20;
+  //cvc32 of BinaryEncDecUseRawSchema
+  int KAA_PLATFORM_PROTOCOL_BINARY_ID_V2 = 0x0231ad61;
 
-    int USER_VERIFIER_TOKEN_SIZE = 20;
+
+  int SDK_TOKEN_SIZE = 27;
+
+  int APP_TOKEN_SIZE = 20;
+
+  int USER_VERIFIER_TOKEN_SIZE = 20;
 
 }

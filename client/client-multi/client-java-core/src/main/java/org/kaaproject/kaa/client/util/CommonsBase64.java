@@ -17,29 +17,29 @@
 package org.kaaproject.kaa.client.util;
 
 public class CommonsBase64 implements Base64 {
-    
-    private static CommonsBase64 instance;
-    
-    public static CommonsBase64 getInstance() {
-        if (instance == null) {
-            instance = new CommonsBase64();
-        }
-        return instance;
-    }
 
-    @Override
-    public byte[] decodeBase64(byte[] base64Data) {
-        return org.apache.commons.codec.binary.Base64.decodeBase64(base64Data);
-    }
+  private static CommonsBase64 instance;
 
-    @Override
-    public byte[] encodeBase64(byte[] binaryData) {
-        return org.apache.commons.codec.binary.Base64.encodeBase64(binaryData);
+  public static CommonsBase64 getInstance() {
+    if (instance == null) {
+      instance = new CommonsBase64();
     }
+    return instance;
+  }
 
-    @Override
-    public byte[] decodeBase64(String base64String) {
-        return org.apache.commons.codec.binary.Base64.decodeBase64(base64String);
-    }
+  @Override
+  public byte[] decodeBase64(byte[] base64Data) {
+    return org.apache.commons.codec.binary.Base64.decodeBase64(base64Data);
+  }
+
+  @Override
+  public byte[] encodeBase64(byte[] binaryData) {
+    return org.apache.commons.codec.binary.Base64.encodeBase64(binaryData);
+  }
+
+  @Override
+  public byte[] decodeBase64(String base64String) {
+    return org.apache.commons.codec.binary.Base64.decodeBase64(base64String);
+  }
 
 }

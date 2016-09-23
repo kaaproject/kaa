@@ -20,216 +20,227 @@ package org.kaaproject.kaa.server.node.service.config;
  * The Class KaaNodeServerConfig.
  */
 public class KaaNodeServerConfig {
-    
-    /** Enable control service parameter. */
-    private boolean controlServiceEnabled;
 
-    /** Enable bootstrap service parameter. */
-    private boolean bootstrapServiceEnabled;
-    
-    /** Enable operations service parameter. */
-    private boolean operationsServiceEnabled;
+  /**
+   * Enable control service parameter.
+   */
+  private boolean controlServiceEnabled;
 
-    /** The thrift host. */
-    private String thriftHost;
+  /**
+   * Enable bootstrap service parameter.
+   */
+  private boolean bootstrapServiceEnabled;
 
-    /** The thrift port. */
-    private int thriftPort;
+  /**
+   * Enable operations service parameter.
+   */
+  private boolean operationsServiceEnabled;
 
-    /** The zk enabled. */
-    private boolean zkEnabled;
+  /**
+   * The thrift host.
+   */
+  private String thriftHost;
 
-    /** The zk host port list. */
-    private String zkHostPortList;
+  /**
+   * The thrift port.
+   */
+  private int thriftPort;
 
-    /** Time to connect to ZK. */
-    private int zkWaitConnectionTime;
+  /**
+   * The zk enabled.
+   */
+  private boolean zkEnabled;
 
-    /** The zk max retry time. */
-    private int zkMaxRetryTime;
+  /**
+   * The zk host port list.
+   */
+  private String zkHostPortList;
 
-    /** The zk sleep time. */
-    private int zkSleepTime;
+  /**
+   * Time to connect to ZK.
+   */
+  private int zkWaitConnectionTime;
 
-    /** The zk ignore errors. */
-    private boolean zkIgnoreErrors;
-    
-    /**
-     * @return true if Control service enabled
-     */
-    public boolean isControlServiceEnabled() {
-        return controlServiceEnabled;
-    }
+  /**
+   * The zk max retry time.
+   */
+  private int zkMaxRetryTime;
 
-    /**
-     * @return true if Bootstrap server enabled
-     */
-    public boolean isBootstrapServiceEnabled() {
-        return bootstrapServiceEnabled;
-    }
+  /**
+   * The zk sleep time.
+   */
+  private int zkSleepTime;
 
-    /**
-     * @return true if Operations server enabled
-     */
-    public boolean isOperationsServiceEnabled() {
-        return operationsServiceEnabled;
-    }
+  /**
+   * The zk ignore errors.
+   */
+  private boolean zkIgnoreErrors;
 
-    /**
-     * The thrift host.
-     * 
-     * @return the thriftHost
-     */
-    public String getThriftHost() {
-        return thriftHost;
-    }
+  /**
+   * @return true if Control service enabled
+   */
+  public boolean isControlServiceEnabled() {
+    return controlServiceEnabled;
+  }
 
-    /**
-     * The thrift port.
-     * 
-     * @return the thriftPort
-     */
-    public int getThriftPort() {
-        return thriftPort;
-    }
+  /**
+   * @param controlServiceEnabled set flag to enable/disable Control service
+   */
+  public void setControlServiceEnabled(boolean controlServiceEnabled) {
+    this.controlServiceEnabled = controlServiceEnabled;
+  }
 
-    /**
-     * @return the zkEnabled
-     */
-    public boolean isZkEnabled() {
-        return zkEnabled;
-    }
+  /**
+   * @return true if Bootstrap server enabled
+   */
+  public boolean isBootstrapServiceEnabled() {
+    return bootstrapServiceEnabled;
+  }
 
-    /**
-     * The zk host port list.
-     * 
-     * @return the zkHostPortList
-     */
-    public String getZkHostPortList() {
-        return zkHostPortList;
-    }
+  /**
+   * @param bootstrapServiceEnabled set flag to enable/disable Bootstrap service
+   */
+  public void setBootstrapServiceEnabled(boolean bootstrapServiceEnabled) {
+    this.bootstrapServiceEnabled = bootstrapServiceEnabled;
+  }
 
-    /**
-     * Time to connect to ZK.
-     *
-     * @return the zkWaitConnectionTime
-     */
-    public int getZkWaitConnectionTime() {
-        return zkWaitConnectionTime;
-    }
+  /**
+   * @return true if Operations server enabled
+   */
+  public boolean isOperationsServiceEnabled() {
+    return operationsServiceEnabled;
+  }
 
-    /**
-     * The zk max retry time.
-     * 
-     * @return the zkMaxRetryTime
-     */
-    public int getZkMaxRetryTime() {
-        return zkMaxRetryTime;
-    }
+  /**
+   * @param operationsServiceEnabled set flag to enable/disable Operations server
+   */
+  public void setOperationsServiceEnabled(boolean operationsServiceEnabled) {
+    this.operationsServiceEnabled = operationsServiceEnabled;
+  }
 
-    /**
-     * The zk sleep time.
-     * 
-     * @return the zkSleepTime
-     */
-    public int getZkSleepTime() {
-        return zkSleepTime;
-    }
+  /**
+   * The thrift host.
+   *
+   * @return the thriftHost
+   */
+  public String getThriftHost() {
+    return thriftHost;
+  }
 
-    /**
-     * The zk ignore errors.
-     * 
-     * @return the zkIgnoreErrors
-     */
-    public boolean isZkIgnoreErrors() {
-        return zkIgnoreErrors;
-    }
-    
-    /**
-     * @param controlServiceEnabled
-     *            set flag to enable/disable Control service
-     */
-    public void setControlServiceEnabled(boolean controlServiceEnabled) {
-        this.controlServiceEnabled = controlServiceEnabled;
-    }
+  /**
+   * @param thriftHost the thriftHost to set
+   */
+  public void setThriftHost(String thriftHost) {
+    this.thriftHost = thriftHost;
+  }
 
-    /**
-     * @param bootstrapServiceEnabled
-     *            set flag to enable/disable Bootstrap service
-     */
-    public void setBootstrapServiceEnabled(boolean bootstrapServiceEnabled) {
-        this.bootstrapServiceEnabled = bootstrapServiceEnabled;
-    }
+  /**
+   * The thrift port.
+   *
+   * @return the thriftPort
+   */
+  public int getThriftPort() {
+    return thriftPort;
+  }
 
-    /**
-     * @param operationsServiceEnabled
-     *            set flag to enable/disable Operations server
-     */
-    public void setOperationsServiceEnabled(boolean operationsServiceEnabled) {
-        this.operationsServiceEnabled = operationsServiceEnabled;
-    }
+  /**
+   * @param thriftPort the thriftPort to set
+   */
+  public void setThriftPort(int thriftPort) {
+    this.thriftPort = thriftPort;
+  }
 
-    /**
-     * @param thriftHost
-     *            the thriftHost to set
-     */
-    public void setThriftHost(String thriftHost) {
-        this.thriftHost = thriftHost;
-    }
+  /**
+   * @return the zkEnabled
+   */
+  public boolean isZkEnabled() {
+    return zkEnabled;
+  }
 
-    /**
-     * @param thriftPort
-     *            the thriftPort to set
-     */
-    public void setThriftPort(int thriftPort) {
-        this.thriftPort = thriftPort;
-    }
+  /**
+   * @param zkEnabled the zkEnabled to set
+   */
+  public void setZkEnabled(boolean zkEnabled) {
+    this.zkEnabled = zkEnabled;
+  }
 
-    /**
-     * @param zkEnabled
-     *            the zkEnabled to set
-     */
-    public void setZkEnabled(boolean zkEnabled) {
-        this.zkEnabled = zkEnabled;
-    }
+  /**
+   * The zk host port list.
+   *
+   * @return the zkHostPortList
+   */
+  public String getZkHostPortList() {
+    return zkHostPortList;
+  }
 
-    /**
-     * @param zkHostPortList
-     *            the zkHostPortList to set
-     */
-    public void setZkHostPortList(String zkHostPortList) {
-        this.zkHostPortList = zkHostPortList;
-    }
+  /**
+   * @param zkHostPortList the zkHostPortList to set
+   */
+  public void setZkHostPortList(String zkHostPortList) {
+    this.zkHostPortList = zkHostPortList;
+  }
 
-    /**
-     * @param zkWaitConnectionTime
-     *            the zkWaitConnectionTime to set
-     */
-    public void setZkWaitConnectionTime(int zkWaitConnectionTime) {
-        this.zkWaitConnectionTime = zkWaitConnectionTime;
-    }
+  /**
+   * Time to connect to ZK.
+   *
+   * @return the zkWaitConnectionTime
+   */
+  public int getZkWaitConnectionTime() {
+    return zkWaitConnectionTime;
+  }
 
-    /**
-     * @param zkMaxRetryTime
-     *            the zkMaxRetryTime to set
-     */
-    public void setZkMaxRetryTime(int zkMaxRetryTime) {
-        this.zkMaxRetryTime = zkMaxRetryTime;
-    }
+  /**
+   * @param zkWaitConnectionTime the zkWaitConnectionTime to set
+   */
+  public void setZkWaitConnectionTime(int zkWaitConnectionTime) {
+    this.zkWaitConnectionTime = zkWaitConnectionTime;
+  }
 
-    /**
-     * @param zkSleepTime
-     *            the zkSleepTime to set
-     */
-    public void setZkSleepTime(int zkSleepTime) {
-        this.zkSleepTime = zkSleepTime;
-    }
+  /**
+   * The zk max retry time.
+   *
+   * @return the zkMaxRetryTime
+   */
+  public int getZkMaxRetryTime() {
+    return zkMaxRetryTime;
+  }
 
-    /**
-     * @param zkIgnoreErrors
-     *            the zkIgnoreErrors to set
-     */
-    public void setZkIgnoreErrors(boolean zkIgnoreErrors) {
-        this.zkIgnoreErrors = zkIgnoreErrors;
-    }
+  /**
+   * @param zkMaxRetryTime the zkMaxRetryTime to set
+   */
+  public void setZkMaxRetryTime(int zkMaxRetryTime) {
+    this.zkMaxRetryTime = zkMaxRetryTime;
+  }
+
+  /**
+   * The zk sleep time.
+   *
+   * @return the zkSleepTime
+   */
+  public int getZkSleepTime() {
+    return zkSleepTime;
+  }
+
+  /**
+   * @param zkSleepTime the zkSleepTime to set
+   */
+  public void setZkSleepTime(int zkSleepTime) {
+    this.zkSleepTime = zkSleepTime;
+  }
+
+  /**
+   * The zk ignore errors.
+   *
+   * @return the zkIgnoreErrors
+   */
+  public boolean isZkIgnoreErrors() {
+    return zkIgnoreErrors;
+  }
+
+  /**
+   * @param zkIgnoreErrors the zkIgnoreErrors to set
+   */
+  public void setZkIgnoreErrors(boolean zkIgnoreErrors) {
+    this.zkIgnoreErrors = zkIgnoreErrors;
+  }
 }

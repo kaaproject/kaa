@@ -22,20 +22,19 @@ package org.kaaproject.kaa.client.logging;
  * <p>Retrieves information about current status of the log storage. Used by
  * a log upload strategy on each adding of new log record in order to check
  * whether to send logs to the server or clean up local storage.</p>
- *
  */
 public interface LogStorageStatus {
-    /**
-     * Retrieves current log storage size used by added records.
-     *
-     * @return Amount of bytes consumed by added records
-     */
-    long getConsumedVolume();
+  /**
+   * Retrieves current log storage size used by added records.
+   *
+   * @return Amount of bytes consumed by added records
+   */
+  long getConsumedVolume();
 
-    /**
-     * Retrieves current number of added records.
-     *
-     * @return Number of records in a local storage
-     */
-    long getRecordCount();
+  /**
+   * Retrieves current number of added records.
+   *
+   * @return Number of records in a local storage
+   */
+  long getRecordCount();
 }

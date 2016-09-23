@@ -16,13 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.application;
 
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -31,47 +24,54 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class ApplicationViewImpl extends BaseDetailsViewImpl implements ApplicationView {
 
-    private SizedTextBox applicationName;
-    private SizedTextBox applicationToken;
+  private SizedTextBox applicationName;
+  private SizedTextBox applicationToken;
 
-    private ValueListBox<String> credentialsServiceName;
+  private ValueListBox<String> credentialsServiceName;
 
-    private Button generateSdkButton;
+  private Button generateSdkButton;
 
-    public ApplicationViewImpl(boolean create, boolean editable) {
-        super(create, editable);
+  public ApplicationViewImpl(boolean create, boolean editable) {
+    super(create, editable);
+  }
+
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addNewApplication();
+  }
+
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.application();
+  }
+
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.applicationDetails();
+  }
+
+  @Override
+  protected void initDetailsTable() {
+    applicationName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, editable);
+    applicationName.setWidth("100%");
+    Label titleLabel = new Label(Utils.constants.title());
+    if (editable) {
+      titleLabel.addStyleName(avroUiStyle.requiredField());
     }
+    detailsTable.setWidget(0, 0, titleLabel);
+    detailsTable.setWidget(0, 1, applicationName);
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addNewApplication();
-    }
-
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.application();
-    }
-
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.applicationDetails();
-    }
-
-    @Override
-    protected void initDetailsTable() {
-        applicationName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE, editable);
-        applicationName.setWidth("100%");
-        Label titleLabel = new Label(Utils.constants.title());
-        if (editable) {
-            titleLabel.addStyleName(avroUiStyle.requiredField());
-        }
-        detailsTable.setWidget(0, 0, titleLabel);
-        detailsTable.setWidget(0, 1, applicationName);
-
-        applicationName.addInputHandler(this);
-        applicationName.setFocus(true);
+    applicationName.addInputHandler(this);
+    applicationName.setFocus(true);
 
 //        applicationKey = new SizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
 //        applicationKey.setWidth("100%");
@@ -80,76 +80,76 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
 //        detailsTable.setWidget(1, 0, keyLabel);
 //        detailsTable.setWidget(1, 1, applicationKey);
 
-        if (!create) {
-            applicationToken = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
-            applicationToken.setWidth("100%");
-            applicationToken.setEnabled(false);
+    if (!create) {
+      applicationToken = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
+      applicationToken.setWidth("100%");
+      applicationToken.setEnabled(false);
 
-            Label tokenLabel = new Label(Utils.constants.appToken());
-            detailsTable.setWidget(2, 0, tokenLabel);
-            detailsTable.setWidget(2, 1, applicationToken);
-        }
+      Label tokenLabel = new Label(Utils.constants.appToken());
+      detailsTable.setWidget(2, 0, tokenLabel);
+      detailsTable.setWidget(2, 1, applicationToken);
+    }
 
 //        applicationKey.addInputHandler(this);
 
-        if (KaaAdmin.isDevMode()) {
-            generateSdkButton = new Button(Utils.constants.generateSdk());
-            detailsTable.setWidget(3, 0, generateSdkButton);
-        } else {
-            this.credentialsServiceName = new ValueListBox<String>();
-            this.credentialsServiceName.addValueChangeHandler(new ValueChangeHandler<String>() {
-                @Override
-                public void onValueChange(ValueChangeEvent<String> event) {
-                    ApplicationViewImpl.this.fireChanged();
-                }
-            });
-            this.credentialsServiceName.setWidth("100%");
-
-            Label label = new Label(Utils.constants.credentialsService());
-            label.addStyleName(this.avroUiStyle.requiredField());
-
-            this.detailsTable.setWidget(3, 0, label);
-            this.detailsTable.setWidget(3, 1, this.credentialsServiceName);
+    if (KaaAdmin.isDevMode()) {
+      generateSdkButton = new Button(Utils.constants.generateSdk());
+      detailsTable.setWidget(3, 0, generateSdkButton);
+    } else {
+      this.credentialsServiceName = new ValueListBox<String>();
+      this.credentialsServiceName.addValueChangeHandler(new ValueChangeHandler<String>() {
+        @Override
+        public void onValueChange(ValueChangeEvent<String> event) {
+          ApplicationViewImpl.this.fireChanged();
         }
-    }
+      });
+      this.credentialsServiceName.setWidth("100%");
 
-    @Override
-    protected void resetImpl() {
-        applicationName.setValue("");
+      Label label = new Label(Utils.constants.credentialsService());
+      label.addStyleName(this.avroUiStyle.requiredField());
 
-        if (this.credentialsServiceName != null) {
-            this.credentialsServiceName.setValue("");
-        }
+      this.detailsTable.setWidget(3, 0, label);
+      this.detailsTable.setWidget(3, 1, this.credentialsServiceName);
     }
+  }
 
-    @Override
-    protected boolean validate() {
-        return applicationName.getValue().length()>0 && credentialsServiceName.getValue().length() > 0;
-    }
+  @Override
+  protected void resetImpl() {
+    applicationName.setValue("");
 
-    @Override
-    public HasValue<String> getApplicationName() {
-        return applicationName;
+    if (this.credentialsServiceName != null) {
+      this.credentialsServiceName.setValue("");
     }
+  }
 
-    @Override
-    public ValueListBox<String> getCredentialsServiceName() {
-        return this.credentialsServiceName;
-    }
+  @Override
+  protected boolean validate() {
+    return applicationName.getValue().length() > 0 && credentialsServiceName.getValue().length() > 0;
+  }
 
-    @Override
-    public HasClickHandlers getGenerateSdkButton() {
-        return generateSdkButton;
-    }
+  @Override
+  public HasValue<String> getApplicationName() {
+    return applicationName;
+  }
+
+  @Override
+  public ValueListBox<String> getCredentialsServiceName() {
+    return this.credentialsServiceName;
+  }
+
+  @Override
+  public HasClickHandlers getGenerateSdkButton() {
+    return generateSdkButton;
+  }
 
 //    @Override
 //    public HasValue<String> getApplicationKey() {
 //        return applicationKey;
 //    }
 
-    @Override
-    public HasValue<String> getApplicationToken() {
-        return applicationToken;
-    }
+  @Override
+  public HasValue<String> getApplicationToken() {
+    return applicationToken;
+  }
 
 }

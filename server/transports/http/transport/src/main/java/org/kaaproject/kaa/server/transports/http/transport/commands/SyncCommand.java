@@ -27,29 +27,29 @@ import org.kaaproject.kaa.server.transport.channel.ChannelType;
  */
 public class SyncCommand extends AbstractHttpSyncCommand implements CommonEPConstans {
 
-    @Override
-    public ChannelType getChannelType() {
-        return ChannelType.SYNC;
-    }
+  /**
+   * Instantiates a new sync command.
+   */
+  public SyncCommand() {
+    super();
+    LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
+  }
 
-    /**
-     * Instantiates a new sync command.
-     */
-    public SyncCommand() {
-        super();
-        LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
-    }
+  public static String getCommandName() {
+    return SYNC_COMMAND;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#isNeedConnectionClose()
-     */
-    @Override
-    public boolean isNeedConnectionClose() {
-        return true;
-    }
+  @Override
+  public ChannelType getChannelType() {
+    return ChannelType.SYNC;
+  }
 
-    public static String getCommandName() {
-        return SYNC_COMMAND;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#isNeedConnectionClose()
+   */
+  @Override
+  public boolean isNeedConnectionClose() {
+    return true;
+  }
 
 }

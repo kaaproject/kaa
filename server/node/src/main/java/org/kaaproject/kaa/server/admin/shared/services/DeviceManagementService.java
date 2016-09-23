@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 
@@ -26,19 +27,19 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/deviceManagementService")
 public interface DeviceManagementService extends RemoteService {
 
-    CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException;
+  CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException;
 
-    void provisionRegistration(String applicationToken, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
+  void provisionRegistration(String applicationToken, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
 
-    void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException;
+  void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException;
 
-    void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException;
+  void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException;
 
-    CredentialsStatus getCredentialsStatus(
-            String applicationToken,
-            String credentialsId
-    ) throws KaaAdminServiceException;
+  CredentialsStatus getCredentialsStatus(
+      String applicationToken,
+      String credentialsId
+  ) throws KaaAdminServiceException;
 
-    List<String> getCredentialsServiceNames() throws KaaAdminServiceException;
+  List<String> getCredentialsServiceNames() throws KaaAdminServiceException;
 
 }

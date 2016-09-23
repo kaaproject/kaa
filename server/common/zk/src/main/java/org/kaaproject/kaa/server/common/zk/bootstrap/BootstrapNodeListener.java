@@ -32,24 +32,24 @@ import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
  */
 public interface BootstrapNodeListener {
 
-    /**
-     * On node added.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeAdded(BootstrapNodeInfo nodeInfo);
+  /**
+   * On node added.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeAdded(BootstrapNodeInfo nodeInfo);
 
-    /**
-     * Invoked when on node update occurs.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeUpdated(BootstrapNodeInfo nodeInfo);
+  /**
+   * Invoked when on node update occurs.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeUpdated(BootstrapNodeInfo nodeInfo);
 
-    /**
-     * On node removed.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeRemoved(BootstrapNodeInfo nodeInfo);
+  /**
+   * On node removed.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeRemoved(BootstrapNodeInfo nodeInfo);
 }

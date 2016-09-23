@@ -29,12 +29,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -55,262 +49,268 @@ import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class DefaultEndpointRegistrationManagerTest {
 
-    private static final int REQUEST_ID = 42;
-    
-    private static ExecutorContext executorContext;
-    private static ExecutorService executor;
-    
-    @BeforeClass
-    public static void beforeSuite(){
-        executorContext = Mockito.mock(ExecutorContext.class);
-        executor = Executors.newSingleThreadExecutor();
-        Mockito.when(executorContext.getApiExecutor()).thenReturn(executor);
-        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
-    }
-    
-    @AfterClass
-    public static void afterSuite(){
-        executor.shutdown();
-    }
-    
-    @Test(expected=IllegalStateException.class)
-    public void checkUserAttachWithNoDefaultVerifier() throws Exception {
-        KaaClientState state = mock(KaaClientState.class);
+  private static final int REQUEST_ID = 42;
 
-        when(state.getEndpointAccessToken()).thenReturn("");
+  private static ExecutorContext executorContext;
+  private static ExecutorService executor;
 
-        UserTransport transport = mock(UserTransport.class);
-        DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
+  @BeforeClass
+  public static void beforeSuite() {
+    executorContext = Mockito.mock(ExecutorContext.class);
+    executor = Executors.newSingleThreadExecutor();
+    Mockito.when(executorContext.getApiExecutor()).thenReturn(executor);
+    Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
+  }
 
-        manager.attachUser("externalId", "token", null);
-    }
-    
-    @Test
-    public void checkUserAttachWithCustomVerifier() throws Exception {
-        KaaClientState state = mock(KaaClientState.class);
-        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-        when(state.getEndpointAccessToken()).thenReturn("");
+  @AfterClass
+  public static void afterSuite() {
+    executor.shutdown();
+  }
 
-        UserTransport transport = mock(UserTransport.class);
-        DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
+  @Test(expected = IllegalStateException.class)
+  public void checkUserAttachWithNoDefaultVerifier() throws Exception {
+    KaaClientState state = mock(KaaClientState.class);
 
-        manager.attachUser("verifierToken", "externalId", "token", null);
-        verify(transport, times(1)).sync();
-    }
+    when(state.getEndpointAccessToken()).thenReturn("");
 
-    @Test
-    public void checkAttachEndpoint() throws Exception {
-        KaaClientState state = mock(KaaClientState.class);
-        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-        when(state.getEndpointAccessToken()).thenReturn("");
-        UserTransport transport = mock(UserTransport.class);
-        DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
-        OnAttachEndpointOperationCallback listener = mock(OnAttachEndpointOperationCallback.class);
-        manager.attachEndpoint(new EndpointAccessToken("accessToken1"), listener);
-        manager.attachEndpoint(new EndpointAccessToken("accessToken2"), listener);
+    UserTransport transport = mock(UserTransport.class);
+    DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
 
-        ReflectionTestUtils.setField(manager, "userTransport", null);
-        manager.attachEndpoint(new EndpointAccessToken("accessToken3"), null);
-        verify(transport, times(2)).sync();
-    }
+    manager.attachUser("externalId", "token", null);
+  }
 
-    @Test
-    public void checkDetachEndpoint() throws Exception {
-        KaaClientState state = mock(KaaClientState.class);
-        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-        when(state.getEndpointAccessToken()).thenReturn("");
+  @Test
+  public void checkUserAttachWithCustomVerifier() throws Exception {
+    KaaClientState state = mock(KaaClientState.class);
+    ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+    when(state.getEndpointAccessToken()).thenReturn("");
 
-        OnDetachEndpointOperationCallback listener = mock(OnDetachEndpointOperationCallback.class);
-        UserTransport transport = mock(UserTransport.class);
+    UserTransport transport = mock(UserTransport.class);
+    DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
 
-        DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
-        manager.detachEndpoint(new EndpointKeyHash("keyHash1"), listener);
-        manager.detachEndpoint(new EndpointKeyHash("keyHash2"), listener);
+    manager.attachUser("verifierToken", "externalId", "token", null);
+    verify(transport, times(1)).sync();
+  }
 
-        ReflectionTestUtils.setField(manager, "userTransport", null);
-        manager.detachEndpoint(new EndpointKeyHash("keyHash3"), null);
-        verify(transport, times(2)).sync();
-    }
+  @Test
+  public void checkAttachEndpoint() throws Exception {
+    KaaClientState state = mock(KaaClientState.class);
+    ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+    when(state.getEndpointAccessToken()).thenReturn("");
+    UserTransport transport = mock(UserTransport.class);
+    DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
+    OnAttachEndpointOperationCallback listener = mock(OnAttachEndpointOperationCallback.class);
+    manager.attachEndpoint(new EndpointAccessToken("accessToken1"), listener);
+    manager.attachEndpoint(new EndpointAccessToken("accessToken2"), listener);
 
-    @Ignore("Ignore during removing endpoint list change listener .")
-    @Test
-    public void checkEndpointAttachDetachResponse() throws Exception {
-        try {
-            KaaClientState state = mock(KaaClientState.class);
-            ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-            when(state.getEndpointAccessToken()).thenReturn("");
+    ReflectionTestUtils.setField(manager, "userTransport", null);
+    manager.attachEndpoint(new EndpointAccessToken("accessToken3"), null);
+    verify(transport, times(2)).sync();
+  }
 
-            UserTransport transport = new DefaultUserTransport();
-            DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
+  @Test
+  public void checkDetachEndpoint() throws Exception {
+    KaaClientState state = mock(KaaClientState.class);
+    ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+    when(state.getEndpointAccessToken()).thenReturn("");
 
-            ChangedAttachedEndpointListCallback listListener = mock(ChangedAttachedEndpointListCallback.class);
+    OnDetachEndpointOperationCallback listener = mock(OnDetachEndpointOperationCallback.class);
+    UserTransport transport = mock(UserTransport.class);
+
+    DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
+    manager.detachEndpoint(new EndpointKeyHash("keyHash1"), listener);
+    manager.detachEndpoint(new EndpointKeyHash("keyHash2"), listener);
+
+    ReflectionTestUtils.setField(manager, "userTransport", null);
+    manager.detachEndpoint(new EndpointKeyHash("keyHash3"), null);
+    verify(transport, times(2)).sync();
+  }
+
+  @Ignore("Ignore during removing endpoint list change listener .")
+  @Test
+  public void checkEndpointAttachDetachResponse() throws Exception {
+    try {
+      KaaClientState state = mock(KaaClientState.class);
+      ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+      when(state.getEndpointAccessToken()).thenReturn("");
+
+      UserTransport transport = new DefaultUserTransport();
+      DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, transport, null));
+
+      ChangedAttachedEndpointListCallback listListener = mock(ChangedAttachedEndpointListCallback.class);
 //            manager.addAttachedEndpointListChangeListener(listListener);
 
-            transport.setEndpointRegistrationProcessor(manager);
+      transport.setEndpointRegistrationProcessor(manager);
 
-            UserSyncResponse sr = new UserSyncResponse();
-            sr.setEndpointAttachResponses(null);
-            sr.setEndpointDetachResponses(null);
+      UserSyncResponse sr = new UserSyncResponse();
+      sr.setEndpointAttachResponses(null);
+      sr.setEndpointDetachResponses(null);
 
-            List<EndpointAttachResponse> attach = new LinkedList<EndpointAttachResponse>();
-            attach.add(new EndpointAttachResponse(REQUEST_ID, "keyHash", SyncResponseResultType.SUCCESS));
-            sr.setEndpointAttachResponses(attach);
-            transport.onUserResponse(sr);
+      List<EndpointAttachResponse> attach = new LinkedList<EndpointAttachResponse>();
+      attach.add(new EndpointAttachResponse(REQUEST_ID, "keyHash", SyncResponseResultType.SUCCESS));
+      sr.setEndpointAttachResponses(attach);
+      transport.onUserResponse(sr);
 
 //            manager.removeAttachedEndpointListChangeListener(listListener);
 
-            List<EndpointDetachResponse> detach = new LinkedList<EndpointDetachResponse>();
-            detach.add(new EndpointDetachResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
-            sr.setEndpointAttachResponses(null);
-            sr.setEndpointDetachResponses(detach);
-            transport.onUserResponse(sr);
+      List<EndpointDetachResponse> detach = new LinkedList<EndpointDetachResponse>();
+      detach.add(new EndpointDetachResponse(REQUEST_ID, SyncResponseResultType.SUCCESS));
+      sr.setEndpointAttachResponses(null);
+      sr.setEndpointDetachResponses(detach);
+      transport.onUserResponse(sr);
 
-            verify(manager, times(2)).onUpdate(anyListOf(EndpointAttachResponse.class), anyListOf(EndpointDetachResponse.class), any(UserAttachResponse.class), any(UserAttachNotification.class), any(UserDetachNotification.class));
-            verify(listListener, times(1)).onAttachedEndpointListChanged(anyMapOf(EndpointAccessToken.class, EndpointKeyHash.class));
-        } catch (IOException e) {
-            assertTrue("Unexpected exception " + e.getMessage(), false);
-        }
+      verify(manager, times(2)).onUpdate(anyListOf(EndpointAttachResponse.class), anyListOf(EndpointDetachResponse.class), any(UserAttachResponse.class), any(UserAttachNotification.class), any(UserDetachNotification.class));
+      verify(listListener, times(1)).onAttachedEndpointListChanged(anyMapOf(EndpointAccessToken.class, EndpointKeyHash.class));
+    } catch (IOException e) {
+      assertTrue("Unexpected exception " + e.getMessage(), false);
     }
+  }
 
-    @Ignore("Ignore during removing endpoint list change listener .")
-    @Test
-    public void checkAccessTokenChange() {
-        KaaClientState state = mock(KaaClientState.class);
-        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-        
-        when(state.getEndpointAccessToken()).thenReturn("token1");
+  @Ignore("Ignore during removing endpoint list change listener .")
+  @Test
+  public void checkAccessTokenChange() {
+    KaaClientState state = mock(KaaClientState.class);
+    ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
 
-        DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, null, null));
+    when(state.getEndpointAccessToken()).thenReturn("token1");
 
-        String accessToken1 = state.getEndpointAccessToken();
+    DefaultEndpointRegistrationManager manager = spy(new DefaultEndpointRegistrationManager(state, executorContext, null, null));
 
-        state.refreshEndpointAccessToken();
+    String accessToken1 = state.getEndpointAccessToken();
 
-        String accessToken2 = state.getEndpointAccessToken();
+    state.refreshEndpointAccessToken();
 
-        assertNotEquals("Endpoint access token is same after regeneration!", accessToken1, accessToken2);
-    }
+    String accessToken2 = state.getEndpointAccessToken();
 
-    @Test
-    public void checkAttachUser() {
-        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-        KaaClientState state = mock(KaaClientState.class);
-        when(state.getEndpointAccessToken()).thenReturn("");
+    assertNotEquals("Endpoint access token is same after regeneration!", accessToken1, accessToken2);
+  }
 
-        UserTransport transport = mock(UserTransport.class);
-        EndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, executorContext, transport, null);
-        manager.attachUser("externalId", "userExternalId", "userAccessToken", new UserAttachCallback() {
-            @Override
-            public void onAttachResult(UserAttachResponse response) {
-            }
-        });
-        verify(transport, times(1)).sync();
-    }
+  @Test
+  public void checkAttachUser() {
+    ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+    KaaClientState state = mock(KaaClientState.class);
+    when(state.getEndpointAccessToken()).thenReturn("");
 
-    @Test
-    public void checkWrappers() {
-        String token1 = "token1";
-        String token2 = "token2";
+    UserTransport transport = mock(UserTransport.class);
+    EndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, executorContext, transport, null);
+    manager.attachUser("externalId", "userExternalId", "userAccessToken", new UserAttachCallback() {
+      @Override
+      public void onAttachResult(UserAttachResponse response) {
+      }
+    });
+    verify(transport, times(1)).sync();
+  }
 
-        EndpointAccessToken at1 = new EndpointAccessToken(token1);
-        EndpointAccessToken at1_2 = new EndpointAccessToken(token1);
-        EndpointAccessToken at2 = new EndpointAccessToken(token2);
+  @Test
+  public void checkWrappers() {
+    String token1 = "token1";
+    String token2 = "token2";
 
-        assertEquals("EnndpointAccessToken != EndpointAccessToken", at1, at1);
-        assertNotEquals("EndpointAccessToken should be not equal to String object", at1, token1);
-        assertEquals("toString() returned different value from getToken()", at1.getToken(), at1.toString());
-        assertEquals("Objects with equal tokens are not equal", at1, at1_2);
-        assertNotEquals("Objects with different tokens are equal", at1, at2);
-        assertEquals("Objects' hash codes with equal tokens are not equal", at1.hashCode(), at1_2.hashCode());
-        assertNotEquals("Objects' hash codes with different tokens are equal", at1.hashCode(), at2.hashCode());
+    EndpointAccessToken at1 = new EndpointAccessToken(token1);
+    EndpointAccessToken at1_2 = new EndpointAccessToken(token1);
+    EndpointAccessToken at2 = new EndpointAccessToken(token2);
 
-        at1_2.setToken(token2);
-        assertEquals("Objects with equal tokens are not equal", at1_2, at2);
-        assertNotEquals("Objects with different tokens are equal", at1, at1_2);
+    assertEquals("EnndpointAccessToken != EndpointAccessToken", at1, at1);
+    assertNotEquals("EndpointAccessToken should be not equal to String object", at1, token1);
+    assertEquals("toString() returned different value from getToken()", at1.getToken(), at1.toString());
+    assertEquals("Objects with equal tokens are not equal", at1, at1_2);
+    assertNotEquals("Objects with different tokens are equal", at1, at2);
+    assertEquals("Objects' hash codes with equal tokens are not equal", at1.hashCode(), at1_2.hashCode());
+    assertNotEquals("Objects' hash codes with different tokens are equal", at1.hashCode(), at2.hashCode());
 
-        EndpointAccessToken emptyToken1 = new EndpointAccessToken(null);
-        EndpointAccessToken emptyToken2 = new EndpointAccessToken(null);
+    at1_2.setToken(token2);
+    assertEquals("Objects with equal tokens are not equal", at1_2, at2);
+    assertNotEquals("Objects with different tokens are equal", at1, at1_2);
 
-        assertEquals("Empty objects with are not equal", emptyToken1, emptyToken2);
-        assertEquals("Objects' hash codes with empty tokens are not equal", emptyToken1.hashCode(), emptyToken1.hashCode());
-        assertNotEquals("Different objects are equal", at1, emptyToken1);
-        assertNotEquals("Null-equality of EndpointAccessToken", at1, null);
+    EndpointAccessToken emptyToken1 = new EndpointAccessToken(null);
+    EndpointAccessToken emptyToken2 = new EndpointAccessToken(null);
 
-        String hash1 = "hash1";
-        String hash2 = "hash2";
+    assertEquals("Empty objects with are not equal", emptyToken1, emptyToken2);
+    assertEquals("Objects' hash codes with empty tokens are not equal", emptyToken1.hashCode(), emptyToken1.hashCode());
+    assertNotEquals("Different objects are equal", at1, emptyToken1);
+    assertNotEquals("Null-equality of EndpointAccessToken", at1, null);
 
-        EndpointKeyHash eoh1 = new EndpointKeyHash(hash1);
-        EndpointKeyHash eoh1_2 = new EndpointKeyHash(hash1);
-        EndpointKeyHash eoh2 = new EndpointKeyHash(hash2);
+    String hash1 = "hash1";
+    String hash2 = "hash2";
 
-        assertEquals("EndpointKeyHash != EndpointKeyHash", eoh1, eoh1);
-        assertNotEquals("EndpointKeyHash should be not equal to String object", eoh1, hash1);
-        assertEquals("toString() returned different value from getKeyHash()", eoh1.getKeyHash(), eoh1.toString());
-        assertEquals("Objects with equal keyHashes are not equal", eoh1, eoh1_2);
-        assertNotEquals("Objects with different keyHashes are equal", eoh1, eoh2);
-        assertEquals("Objects' hash codes with equal keyHashes are not equal", eoh1.hashCode(), eoh1_2.hashCode());
-        assertNotEquals("Objects' hash codes with different keyHashes are equal", eoh1.hashCode(), eoh2.hashCode());
+    EndpointKeyHash eoh1 = new EndpointKeyHash(hash1);
+    EndpointKeyHash eoh1_2 = new EndpointKeyHash(hash1);
+    EndpointKeyHash eoh2 = new EndpointKeyHash(hash2);
 
-        eoh1_2.setKeyHash(hash2);
-        assertEquals("Objects with equal keyHashes are not equal", eoh1_2, eoh2);
-        assertNotEquals("Objects with different keyHashes are equal", eoh1, eoh1_2);
+    assertEquals("EndpointKeyHash != EndpointKeyHash", eoh1, eoh1);
+    assertNotEquals("EndpointKeyHash should be not equal to String object", eoh1, hash1);
+    assertEquals("toString() returned different value from getKeyHash()", eoh1.getKeyHash(), eoh1.toString());
+    assertEquals("Objects with equal keyHashes are not equal", eoh1, eoh1_2);
+    assertNotEquals("Objects with different keyHashes are equal", eoh1, eoh2);
+    assertEquals("Objects' hash codes with equal keyHashes are not equal", eoh1.hashCode(), eoh1_2.hashCode());
+    assertNotEquals("Objects' hash codes with different keyHashes are equal", eoh1.hashCode(), eoh2.hashCode());
 
-        EndpointKeyHash emptyHash1 = new EndpointKeyHash(null);
-        EndpointKeyHash emptyHash2 = new EndpointKeyHash(null);
+    eoh1_2.setKeyHash(hash2);
+    assertEquals("Objects with equal keyHashes are not equal", eoh1_2, eoh2);
+    assertNotEquals("Objects with different keyHashes are equal", eoh1, eoh1_2);
 
-        assertEquals("Empty objects with are not equal", emptyHash1, emptyHash2);
-        assertEquals("Objects' hash codes with empty hashes are not equal", emptyHash1.hashCode(), emptyHash1.hashCode());
-        assertNotEquals("Different objects are equal", eoh1, emptyHash1);
-        assertNotEquals("Null-equality of EndpointKeyHash", eoh1, null);
-    }
+    EndpointKeyHash emptyHash1 = new EndpointKeyHash(null);
+    EndpointKeyHash emptyHash2 = new EndpointKeyHash(null);
 
-    @Test
-    public void checkOnAttachedCallback() throws IOException {
-        KaaClientState state = mock(KaaClientState.class);
-        when(state.getEndpointAccessToken()).thenReturn("");
+    assertEquals("Empty objects with are not equal", emptyHash1, emptyHash2);
+    assertEquals("Objects' hash codes with empty hashes are not equal", emptyHash1.hashCode(), emptyHash1.hashCode());
+    assertNotEquals("Different objects are equal", eoh1, emptyHash1);
+    assertNotEquals("Null-equality of EndpointKeyHash", eoh1, null);
+  }
 
-        AttachEndpointToUserCallback listener = mock(AttachEndpointToUserCallback.class);
+  @Test
+  public void checkOnAttachedCallback() throws IOException {
+    KaaClientState state = mock(KaaClientState.class);
+    when(state.getEndpointAccessToken()).thenReturn("");
 
-        DefaultEndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, executorContext, null, null);
-        manager.setAttachedCallback(null);
-        manager.onUpdate(null, null, null, new UserAttachNotification("foo", "bar"), null);
-        manager.setAttachedCallback(listener);
-        manager.onUpdate(null, null, null, new UserAttachNotification("foo", "bar"), null);
+    AttachEndpointToUserCallback listener = mock(AttachEndpointToUserCallback.class);
 
-        verify(listener, Mockito.timeout(1000).times(1)).onAttachedToUser("foo", "bar");
-        verify(state, Mockito.timeout(1000).times(2)).setAttachedToUser(true);
+    DefaultEndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, executorContext, null, null);
+    manager.setAttachedCallback(null);
+    manager.onUpdate(null, null, null, new UserAttachNotification("foo", "bar"), null);
+    manager.setAttachedCallback(listener);
+    manager.onUpdate(null, null, null, new UserAttachNotification("foo", "bar"), null);
 
-        manager.setAttachedCallback(null);
-        manager.attachUser("externalId", "foo", "bar", null);
-        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
+    verify(listener, Mockito.timeout(1000).times(1)).onAttachedToUser("foo", "bar");
+    verify(state, Mockito.timeout(1000).times(2)).setAttachedToUser(true);
 
-        manager.setAttachedCallback(listener);
-        manager.attachUser("externalId", "foo", "bar", null);
-        manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
+    manager.setAttachedCallback(null);
+    manager.attachUser("externalId", "foo", "bar", null);
+    manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
 
-        verify(listener, Mockito.timeout(1000).times(1)).onAttachedToUser(anyString(), anyString());
-        verify(state, Mockito.timeout(1000).times(4)).setAttachedToUser(true);
-    }
+    manager.setAttachedCallback(listener);
+    manager.attachUser("externalId", "foo", "bar", null);
+    manager.onUpdate(null, null, new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), null, null);
 
-    @Test
-    public void checkOnDetachedCallback() throws IOException {
-        KaaClientState state = mock(KaaClientState.class);
-        when(state.getEndpointAccessToken()).thenReturn("");
+    verify(listener, Mockito.timeout(1000).times(1)).onAttachedToUser(anyString(), anyString());
+    verify(state, Mockito.timeout(1000).times(4)).setAttachedToUser(true);
+  }
 
-        DetachEndpointFromUserCallback listener = mock(DetachEndpointFromUserCallback.class);
+  @Test
+  public void checkOnDetachedCallback() throws IOException {
+    KaaClientState state = mock(KaaClientState.class);
+    when(state.getEndpointAccessToken()).thenReturn("");
 
-        DefaultEndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, executorContext, null, null);
-        manager.setDetachedCallback(null);
-        manager.onUpdate(null, null, null, null, new UserDetachNotification("foo"));
+    DetachEndpointFromUserCallback listener = mock(DetachEndpointFromUserCallback.class);
 
-        manager.setDetachedCallback(listener);
-        manager.onUpdate(null, null, null, null, new UserDetachNotification("foo"));
+    DefaultEndpointRegistrationManager manager = new DefaultEndpointRegistrationManager(state, executorContext, null, null);
+    manager.setDetachedCallback(null);
+    manager.onUpdate(null, null, null, null, new UserDetachNotification("foo"));
+
+    manager.setDetachedCallback(listener);
+    manager.onUpdate(null, null, null, null, new UserDetachNotification("foo"));
 
 
-        verify(listener, Mockito.timeout(1000).times(1)).onDetachedFromUser("foo");
-        verify(state, Mockito.timeout(1000).times(2)).setAttachedToUser(false);
-    }
+    verify(listener, Mockito.timeout(1000).times(1)).onDetachedFromUser("foo");
+    verify(state, Mockito.timeout(1000).times(2)).setAttachedToUser(false);
+  }
 
 }

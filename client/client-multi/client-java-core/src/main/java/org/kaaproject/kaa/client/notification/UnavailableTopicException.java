@@ -18,11 +18,11 @@ package org.kaaproject.kaa.client.notification;
 
 public class UnavailableTopicException extends Exception {
 
-    public UnavailableTopicException() {
+  public UnavailableTopicException() {
 
-    }
+  }
 
-    public UnavailableTopicException(String msg) {
-        super(msg);
-    }
+  public UnavailableTopicException(String msg) {
+    super(msg);
+  }
 }

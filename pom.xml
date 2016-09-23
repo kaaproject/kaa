@@ -14,8 +14,9 @@ Copyright 2014-2016 CyberVision, Inc.
   limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kaaproject</groupId>
@@ -95,7 +96,9 @@ Copyright 2014-2016 CyberVision, Inc.
         <metrics.version>3.1.0</metrics.version>
 
         <findbugs.version>2.5.2</findbugs.version>
-        <checkstyle.version>2.9.1</checkstyle.version>
+        <checkstyle.version>2.17</checkstyle.version>
+        <checkstyle.tools.version>7.0</checkstyle.tools.version>
+        <checkstyle.exclusions>**/gen/**, **/target/**</checkstyle.exclusions>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
         <signpost-core.version>1.2.1.2</signpost-core.version>
@@ -113,8 +116,11 @@ Copyright 2014-2016 CyberVision, Inc.
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**</sonar.exclusions>
-        <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
+        <sonar.exclusions>
+            **/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**
+        </sonar.exclusions>
+        <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client
+        </sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
 
@@ -280,8 +286,8 @@ Copyright 2014-2016 CyberVision, Inc.
             <id>repository</id>
             <distributionManagement>
                 <repository>
-                  <id>kaa.release</id>
-                  <url>http://repository.kaaproject.org/repository/internal/</url>
+                    <id>kaa.release</id>
+                    <url>http://repository.kaaproject.org/repository/internal/</url>
                 </repository>
                 <snapshotRepository>
                     <id>kaa.snapshots</id>
@@ -530,6 +536,33 @@ Copyright 2014-2016 CyberVision, Inc.
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.tools.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <excludes>${checkstyle.exclusions}</excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
@@ -1346,23 +1379,6 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <reporting>
         <plugins>
-            <plugin>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle.version}</version>
-                <configuration>
-                    <configLocation>${main.dir}/checkstyle.xml</configLocation>
-                    <propertyExpansion>config_loc=${main.dir}</propertyExpansion>
-                    <enableRulesSummary>false</enableRulesSummary>
-                    <excludes>**/gen/**</excludes>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>checkstyle</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
             <!-- Requires setting 'export MAVEN_OPTS="-Xmx512m" ' -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

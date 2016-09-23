@@ -19,11 +19,11 @@ package org.kaaproject.kaa.server.common.core.algorithms.schema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 
 public class SchemaGenerationAlgorithmFactoryImpl implements
-        SchemaGenerationAlgorithmFactory {
+    SchemaGenerationAlgorithmFactory {
 
-    @Override
-    public SchemaGenerationAlgorithm createSchemaGenerator(DataSchema schema) {
-        return new SchemaGenerationAlgorithmImpl(schema);
-    }
+  @Override
+  public SchemaGenerationAlgorithm createSchemaGenerator(DataSchema schema) {
+    return new SchemaGenerationAlgorithmImpl(schema);
+  }
 
 }

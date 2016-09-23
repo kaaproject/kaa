@@ -21,12 +21,11 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 
 /**
  * Resolves {@link OperationsNodeInfo operations service node} for given entities
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
-public interface OperationsServerResolver extends OperationsNodeListener{
+public interface OperationsServerResolver extends OperationsNodeListener {
 
-    OperationsNodeInfo getNode(String user);
+  OperationsNodeInfo getNode(String user);
 
 }

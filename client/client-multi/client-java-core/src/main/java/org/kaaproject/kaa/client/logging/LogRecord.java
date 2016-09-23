@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.schema.base.Log;
+
 import java.io.IOException;
 
 import javax.annotation.Generated;
-
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.schema.base.Log;
 
 /**
  * <p>Wrapper class to encapsulate Avro-generated log record.</p>
@@ -30,42 +30,42 @@ import org.kaaproject.kaa.schema.base.Log;
  */
 @Generated("LogRecord.java.template")
 public class LogRecord {
-    /**
-     * Thread-local converter of log records to bytes.
-     */
-    private static final ThreadLocal<AvroByteArrayConverter<Log>> CONVERTER
-                            = new ThreadLocal<AvroByteArrayConverter<Log>>() {
-        @Override
-        protected AvroByteArrayConverter<Log> initialValue() {
-            return new AvroByteArrayConverter<>(Log.class);
-        }
-    };
-
-    /**
-     * Avro-encoded log record.
-     */
-    private final byte [] encodedRecord;
-
-    /**
-     * Used for unit tests. Do not change it.
-     */
-    public LogRecord() {
-        encodedRecord = new byte[3];
+  /**
+   * Thread-local converter of log records to bytes.
+   */
+  private static final ThreadLocal<AvroByteArrayConverter<Log>> CONVERTER
+      = new ThreadLocal<AvroByteArrayConverter<Log>>() {
+    @Override
+    protected AvroByteArrayConverter<Log> initialValue() {
+      return new AvroByteArrayConverter<>(Log.class);
     }
+  };
 
-    public LogRecord(Log record) throws IOException {
-        encodedRecord = CONVERTER.get().toByteArray(record);
-    }
+  /**
+   * Avro-encoded log record.
+   */
+  private final byte[] encodedRecord;
 
-    LogRecord(byte[] avroEncodedRecord) {
-        encodedRecord = avroEncodedRecord;
-    }
+  /**
+   * Used for unit tests. Do not change it.
+   */
+  public LogRecord() {
+    encodedRecord = new byte[3];
+  }
 
-    byte [] getData() {
-        return encodedRecord;
-    }
+  public LogRecord(Log record) throws IOException {
+    encodedRecord = CONVERTER.get().toByteArray(record);
+  }
 
-    public long getSize() {
-        return encodedRecord.length;
-    }
+  LogRecord(byte[] avroEncodedRecord) {
+    encodedRecord = avroEncodedRecord;
+  }
+
+  byte[] getData() {
+    return encodedRecord;
+  }
+
+  public long getSize() {
+    return encodedRecord.length;
+  }
 }

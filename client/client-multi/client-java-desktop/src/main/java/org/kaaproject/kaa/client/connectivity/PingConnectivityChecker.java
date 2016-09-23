@@ -16,39 +16,39 @@
 
 package org.kaaproject.kaa.client.connectivity;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.text.MessageFormat;
-
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.text.MessageFormat;
+
 public class PingConnectivityChecker implements ConnectivityChecker {
-    public static final Logger LOG = LoggerFactory //NOSONAR
-            .getLogger(DefaultBootstrapChannel.class);
+  public static final Logger LOG = LoggerFactory //NOSONAR
+      .getLogger(DefaultBootstrapChannel.class);
 
-    private static final int CONNECTION_TIMEOUT_MS = 3000;
-    private static final String DEFAULT_HOST = "www.google.com";
+  private static final int CONNECTION_TIMEOUT_MS = 3000;
+  private static final String DEFAULT_HOST = "www.google.com";
 
-    private final String host;
+  private final String host;
 
-    public PingConnectivityChecker() {
-        this(DEFAULT_HOST);
+  public PingConnectivityChecker() {
+    this(DEFAULT_HOST);
+  }
+
+  public PingConnectivityChecker(String host) {
+    this.host = host;
+  }
+
+  @Override
+  public boolean checkConnectivity() {
+    try {
+      return InetAddress.getByName(host).isReachable(CONNECTION_TIMEOUT_MS);
+    } catch (IOException e) {
+      LOG.warn(MessageFormat.format("Host {0} is unreachable", host), e);
+      return false;
     }
-    
-    public PingConnectivityChecker(String host) {
-        this.host = host;
-    }
-
-    @Override
-    public boolean checkConnectivity() {
-        try {
-            return InetAddress.getByName(host).isReachable(CONNECTION_TIMEOUT_MS);
-        } catch (IOException e) {
-            LOG.warn(MessageFormat.format("Host {0} is unreachable", host), e);
-            return false;
-        }
-    }
+  }
 }

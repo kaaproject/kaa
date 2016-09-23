@@ -17,35 +17,35 @@
 package org.kaaproject.kaa.server.datamigration.utils;
 
 public class BaseSchemaIdCounter {
-    private static BaseSchemaIdCounter instance;
-    private Long value;
-    private static boolean isInitMethodCalled;
+  private static BaseSchemaIdCounter instance;
+  private static boolean isInitMethodCalled;
+  private Long value;
 
-    // can be called only once
-    public static void setInitValue(Long value) {
-        getInstance();
-        if (isInitMethodCalled) {
-            return;
-        }
-        isInitMethodCalled = true;
-        instance.value = value;
+  private BaseSchemaIdCounter() {
+
+  }
+
+  // can be called only once
+  public static void setInitValue(Long value) {
+    getInstance();
+    if (isInitMethodCalled) {
+      return;
     }
+    isInitMethodCalled = true;
+    instance.value = value;
+  }
 
-    public Long getAndShift(Long shift) {
-        Long oldValue = value;
-        value += shift;
-        return oldValue;
+  public static BaseSchemaIdCounter getInstance() {
+    if (instance == null) {
+      instance = new BaseSchemaIdCounter();
     }
+    return instance;
+  }
 
-    private BaseSchemaIdCounter() {
-
-    }
-
-    public static BaseSchemaIdCounter getInstance() {
-        if (instance == null) {
-            instance = new BaseSchemaIdCounter();
-        }
-        return instance;
-    }
+  public Long getAndShift(Long shift) {
+    Long oldValue = value;
+    value += shift;
+    return oldValue;
+  }
 
 }

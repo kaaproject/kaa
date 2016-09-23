@@ -16,38 +16,38 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class GeneralPropertiesActivity
-        extends
-        AbstractPropertiesActivity<GeneralPropertiesPlace> {
+    extends
+    AbstractPropertiesActivity<GeneralPropertiesPlace> {
 
-    public GeneralPropertiesActivity(GeneralPropertiesPlace place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
-        this.create = false;
-    }
+  public GeneralPropertiesActivity(GeneralPropertiesPlace place,
+                                   ClientFactory clientFactory) {
+    super(place, clientFactory);
+    this.create = false;
+  }
 
-    @Override
-    protected BasePropertiesView getView(boolean create) {
-        return clientFactory.getGeneralPropertiesView();
-    }
+  @Override
+  protected BasePropertiesView getView(boolean create) {
+    return clientFactory.getGeneralPropertiesView();
+  }
 
-    @Override
-    protected void getEntity(String id, AsyncCallback<PropertiesDto> callback) {
-        KaaAdmin.getDataSource().getGeneralProperties(callback);
-    }
+  @Override
+  protected void getEntity(String id, AsyncCallback<PropertiesDto> callback) {
+    KaaAdmin.getDataSource().getGeneralProperties(callback);
+  }
 
-    @Override
-    protected void editEntity(PropertiesDto entity,
-            AsyncCallback<PropertiesDto> callback) {
-        KaaAdmin.getDataSource().editGeneralProperties(entity, callback);
-    }
+  @Override
+  protected void editEntity(PropertiesDto entity,
+                            AsyncCallback<PropertiesDto> callback) {
+    KaaAdmin.getDataSource().editGeneralProperties(entity, callback);
+  }
 
 }

@@ -17,9 +17,9 @@ package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 public interface EventConstants {
 
-    public static final String APPLICATION_TOKEN_HEADER = "flume.application.token";
-    public static final String SCHEMA_VERSION_HEADER = "flume.schema.version";
-    
-    public static final String AVRO_SCHEMA_LITERAL_HEADER = "flume.avro.schema.literal";
+  public static final String APPLICATION_TOKEN_HEADER = "flume.application.token";
+  public static final String SCHEMA_VERSION_HEADER = "flume.schema.version";
+
+  public static final String AVRO_SCHEMA_LITERAL_HEADER = "flume.avro.schema.literal";
 
 }

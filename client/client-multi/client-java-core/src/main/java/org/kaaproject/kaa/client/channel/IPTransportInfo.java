@@ -16,73 +16,73 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.security.PublicKey;
-
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
+import java.security.PublicKey;
+
 public class IPTransportInfo extends GenericTransportInfo {
-    public static final Logger LOG = LoggerFactory // NOSONAR
-            .getLogger(IPTransportInfo.class);
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+  public static final Logger LOG = LoggerFactory // NOSONAR
+      .getLogger(IPTransportInfo.class);
+  private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private final String host;
-    private final int port;
-    private final PublicKey publicKey;
+  private final String host;
+  private final int port;
+  private final PublicKey publicKey;
 
-    public IPTransportInfo(TransportConnectionInfo parent) {
-        super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(), new ProtocolVersionPair(parent.getTransportId()
-                .getProtocolId(), parent.getTransportId().getProtocolVersion()), ByteBuffer.wrap(parent.getConnectionInfo())));
-        ByteBuffer buf = md.getConnectionInfo().duplicate();
-        byte[] publicKeyData = new byte[buf.getInt()];
-        buf.get(publicKeyData);
-        try {
-            this.publicKey = KeyUtil.getPublic(publicKeyData);
-        } catch (InvalidKeyException e) {
-            LOG.error("Can't initialize public key", e);
-            throw new RuntimeException(e);
-        }
-        byte[] hostData = new byte[buf.getInt()];
-        buf.get(hostData);
-        this.host = new String(hostData, UTF8);
-        this.port = buf.getInt();
+  public IPTransportInfo(TransportConnectionInfo parent) {
+    super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(), new ProtocolVersionPair(parent.getTransportId()
+        .getProtocolId(), parent.getTransportId().getProtocolVersion()), ByteBuffer.wrap(parent.getConnectionInfo())));
+    ByteBuffer buf = md.getConnectionInfo().duplicate();
+    byte[] publicKeyData = new byte[buf.getInt()];
+    buf.get(publicKeyData);
+    try {
+      this.publicKey = KeyUtil.getPublic(publicKeyData);
+    } catch (InvalidKeyException e) {
+      LOG.error("Can't initialize public key", e);
+      throw new RuntimeException(e);
     }
+    byte[] hostData = new byte[buf.getInt()];
+    buf.get(hostData);
+    this.host = new String(hostData, UTF8);
+    this.port = buf.getInt();
+  }
 
-    public String getHost() {
-        return host;
-    }
+  public String getHost() {
+    return host;
+  }
 
-    public int getPort() {
-        return port;
-    }
+  public int getPort() {
+    return port;
+  }
 
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
+  public PublicKey getPublicKey() {
+    return publicKey;
+  }
 
-    public String getURL() {
-        return "http://" + host + ":" + port;
-    }
+  public String getURL() {
+    return "http://" + host + ":" + port;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("IPTransportInfo [host=");
-        builder.append(host);
-        builder.append(", port=");
-        builder.append(port);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("IPTransportInfo [host=");
+    builder.append(host);
+    builder.append(", port=");
+    builder.append(port);
+    builder.append("]");
+    return builder.toString();
+  }
 
-    @Override
-    public ServerType getServerType() {
-        return serverType;
-    }
+  @Override
+  public ServerType getServerType() {
+    return serverType;
+  }
 }

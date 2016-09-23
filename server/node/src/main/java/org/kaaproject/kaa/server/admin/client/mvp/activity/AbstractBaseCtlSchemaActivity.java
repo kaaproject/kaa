@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
@@ -28,78 +31,75 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.BaseSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
-        T extends BaseSchemaViewDto<S>,
-        V extends BaseCtlSchemaView,
-        P extends TreePlace>
-        extends AbstractDetailsActivity<T, V, P>
-        implements ErrorMessageCustomizer, FormDataLoader {
+    T extends BaseSchemaViewDto<S>,
+    V extends BaseCtlSchemaView,
+    P extends TreePlace>
+    extends AbstractDetailsActivity<T, V, P>
+    implements ErrorMessageCustomizer, FormDataLoader {
 
-    private static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
+  private static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
 
-    public AbstractBaseCtlSchemaActivity(P place,
-                                         ClientFactory clientFactory) {
-        super(place, clientFactory);
+  public AbstractBaseCtlSchemaActivity(P place,
+                                       ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
+
+  protected abstract T newSchema();
+
+  protected P existingSchemaPlace(String applicationId, String schemaId) {
+    return null;
+  }
+
+  protected P existingSchemaPlaceForEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+    return null;
+  }
+
+  protected abstract void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback);
+
+  @Override
+  protected void bind(final EventBus eventBus) {
+    if (create) {
+      detailsView.getSchemaForm().setFormDataLoader(this);
     }
+    super.bind(eventBus);
+  }
 
-    protected abstract T newSchema();
+  protected abstract SchemaType getPlaceSchemaType();
 
-    protected P existingSchemaPlace(String applicationId, String schemaId) {
-        return null;
+  protected void bindDetailsView(boolean fireChanged) {
+    S schema = entity.getSchema();
+    String version = schema.getVersion() + "";
+    detailsView.getVersion().setValue(version);
+    detailsView.getName().setValue(schema.getName());
+    detailsView.getDescription().setValue(schema.getDescription());
+    detailsView.getCreatedUsername().setValue(schema.getCreatedUsername());
+    detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
+    if (entity.getCtlSchemaForm() != null) {
+      detailsView.getSchemaForm().setValue(entity.getCtlSchemaForm().getSchema(), fireChanged);
     }
+  }
 
-    protected P existingSchemaPlaceForEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId){
-        return null;
+  @Override
+  protected void onSave() {
+    S schema = entity.getSchema();
+    schema.setName(detailsView.getName().getValue());
+    schema.setDescription(detailsView.getDescription().getValue());
+    if (create) {
+      entity.setUseExistingCtlSchema(detailsView.useExistingCtlSchema());
+      if (detailsView.useExistingCtlSchema()) {
+        entity.setExistingMetaInfo(detailsView.getCtlSchemaReference().getValue());
+      }
     }
+  }
 
-    protected abstract void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback);
-
-    @Override
-    protected void bind(final EventBus eventBus) {
-        if (create) {
-            detailsView.getSchemaForm().setFormDataLoader(this);
-        }
-        super.bind(eventBus);
+  @Override
+  public String customizeErrorMessage(Throwable caught) {
+    String errorMessage = schemaErrorMessageCustomizer.customizeErrorMessage(caught);
+    if (errorMessage == null) {
+      errorMessage = "Incorrect schema: Please validate your schema.";
     }
-
-    protected abstract SchemaType getPlaceSchemaType();
-
-    protected void bindDetailsView(boolean fireChanged) {
-        S schema = entity.getSchema();
-        String version = schema.getVersion() + "";
-        detailsView.getVersion().setValue(version);
-        detailsView.getName().setValue(schema.getName());
-        detailsView.getDescription().setValue(schema.getDescription());
-        detailsView.getCreatedUsername().setValue(schema.getCreatedUsername());
-        detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
-        if (entity.getCtlSchemaForm() != null) {
-            detailsView.getSchemaForm().setValue(entity.getCtlSchemaForm().getSchema(), fireChanged);
-        }
-    }
-
-    @Override
-    protected void onSave() {
-        S schema = entity.getSchema();
-        schema.setName(detailsView.getName().getValue());
-        schema.setDescription(detailsView.getDescription().getValue());
-        if (create) {
-            entity.setUseExistingCtlSchema(detailsView.useExistingCtlSchema());
-            if (detailsView.useExistingCtlSchema()) {
-                entity.setExistingMetaInfo(detailsView.getCtlSchemaReference().getValue());
-            }
-        }
-    }
-
-    @Override
-    public String customizeErrorMessage(Throwable caught) {
-        String errorMessage = schemaErrorMessageCustomizer.customizeErrorMessage(caught);
-        if (errorMessage == null) {
-            errorMessage = "Incorrect schema: Please validate your schema.";
-        }
-        return errorMessage;
-    }
+    return errorMessage;
+  }
 
 }

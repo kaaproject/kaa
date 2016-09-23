@@ -20,14 +20,14 @@ import java.sql.Connection;
 
 public class CTLLogMigration extends AbstractCTLMigration {
 
-    public static final String LOG_SCHEMA_PREFIX_TABLE_NAME = "log";
+  public static final String LOG_SCHEMA_PREFIX_TABLE_NAME = "log";
 
-    public CTLLogMigration(Connection connection) {
-        super(connection);
-    }
+  public CTLLogMigration(Connection connection) {
+    super(connection);
+  }
 
-    @Override
-    protected String getPrefixTableName() {
-        return LOG_SCHEMA_PREFIX_TABLE_NAME;
-    }
+  @Override
+  protected String getPrefixTableName() {
+    return LOG_SCHEMA_PREFIX_TABLE_NAME;
+  }
 }

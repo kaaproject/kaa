@@ -16,22 +16,22 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.commands;
 
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 
-public class LongSyncCommandFactory extends SyncCommandFactory{
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 
-    @Override
-    public String getCommandName() {
-        return CommonEPConstans.LONG_SYNC_COMMAND;
-    }
+public class LongSyncCommandFactory extends SyncCommandFactory {
 
-    @Override
-    public KaaCommandProcessor<HttpRequest, HttpResponse> createCommandProcessor() {
-        return setupCommand(new LongSyncCommand());
-    }
+  @Override
+  public String getCommandName() {
+    return CommonEPConstans.LONG_SYNC_COMMAND;
+  }
+
+  @Override
+  public KaaCommandProcessor<HttpRequest, HttpResponse> createCommandProcessor() {
+    return setupCommand(new LongSyncCommand());
+  }
 
 }

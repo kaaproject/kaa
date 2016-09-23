@@ -23,15 +23,14 @@ import java.lang.annotation.Target;
 
 /**
  * Represents a marker annotation for {@link PluginConfig}.
- * 
- * @author Igor Kulikov
  *
+ * @author Igor Kulikov
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE) 
+@Target(ElementType.TYPE)
 public @interface KaaPluginConfig {
 
-    PluginType pluginType();
-    
+  PluginType pluginType();
+
 }

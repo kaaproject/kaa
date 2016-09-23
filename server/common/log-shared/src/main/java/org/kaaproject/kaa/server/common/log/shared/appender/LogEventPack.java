@@ -16,24 +16,24 @@
 
 package org.kaaproject.kaa.server.common.log.shared.appender;
 
-import java.util.List;
-
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
+
+import java.util.List;
 
 public interface LogEventPack {
 
-    String getEndpointKey();
+  String getEndpointKey();
 
-    String getUserId();
+  String getUserId();
 
-    long getDateCreated();
+  long getDateCreated();
 
-    LogSchema getLogSchema();
+  LogSchema getLogSchema();
 
-    List<LogEvent> getEvents();
+  List<LogEvent> getEvents();
 
-    ProfileInfo getClientProfile();
+  ProfileInfo getClientProfile();
 
-    ProfileInfo getServerProfile();
+  ProfileInfo getServerProfile();
 
 }

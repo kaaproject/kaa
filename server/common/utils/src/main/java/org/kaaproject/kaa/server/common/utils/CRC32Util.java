@@ -20,29 +20,26 @@ import java.nio.charset.Charset;
 import java.util.zip.CRC32;
 
 /**
- * 
  * An util class that provides convenient methods to get crc32 checksum from {@link String}
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public class CRC32Util {
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private CRC32Util() {
-    }
+  private CRC32Util() {
+  }
 
-    /**
-     * Calculates the crc32 hash based on the name parameter.
-     * 
-     * @param name
-     *            the name parameter
-     * @return crc32 hash
-     */
-    public static int crc32(String name) {
-        CRC32 crc32 = new CRC32();
-        crc32.update(name.getBytes(UTF8));
-        return (int) crc32.getValue();
-    }
+  /**
+   * Calculates the crc32 hash based on the name parameter.
+   *
+   * @param name the name parameter
+   * @return crc32 hash
+   */
+  public static int crc32(String name) {
+    CRC32 crc32 = new CRC32();
+    crc32.update(name.getBytes(UTF8));
+    return (int) crc32.getValue();
+  }
 }

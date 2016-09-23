@@ -28,37 +28,35 @@ import akka.actor.ActorSystem;
  */
 public interface AkkaService extends MessageHandler {
 
-    /**
-     * Gets the actor system.
-     *
-     * @return the actor system
-     */
-    ActorSystem getActorSystem();
+  /**
+   * Gets the actor system.
+   *
+   * @return the actor system
+   */
+  ActorSystem getActorSystem();
 
-    /**
-     * On redirection rule set
-     * 
-     * @param redirectionRule the redirection rule
-     */
-    void onRedirectionRule(RedirectionRule redirectionRule);
+  /**
+   * On redirection rule set
+   *
+   * @param redirectionRule the redirection rule
+   */
+  void onRedirectionRule(RedirectionRule redirectionRule);
 
-    /**
-     * On notification.
-     *
-     * @param notification
-     *            the notification
-     */
-    void onNotification(Notification notification);
+  /**
+   * On notification.
+   *
+   * @param notification the notification
+   */
+  void onNotification(Notification notification);
 
-    /**
-     * Reports update of user configuration to the global user actor
-     * 
-     * @param update
-     *            - user configuration update
-     */
-    void onUserConfigurationUpdate(UserConfigurationUpdate update);
+  /**
+   * Reports update of user configuration to the global user actor
+   *
+   * @param update - user configuration update
+   */
+  void onUserConfigurationUpdate(UserConfigurationUpdate update);
 
-    void setStatusListener(AkkaStatusListener defaultLoadBalancingService, long loadStatsUpdateFrequency);
+  void setStatusListener(AkkaStatusListener defaultLoadBalancingService, long loadStatsUpdateFrequency);
 
-    void removeStatusListener();
+  void removeStatusListener();
 }

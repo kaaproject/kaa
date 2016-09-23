@@ -24,21 +24,21 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 public abstract class AbstractVersionableMongoDao<T extends HasVersion, K> extends AbstractMongoDao<T, K> {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractVersionableMongoDao.class);
-    
-    public T save(T dto) {
-        try {
-            mongoTemplate.save(dto);
-            return dto;
-        } catch (OptimisticLockingFailureException exception) {
-            LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getDocumentClass(), dto.getVersion());
-            throw new KaaOptimisticLockingFailureException(
-                    "Can't update entity with version " + dto.getVersion() + ". Entity already changed!");
-        } catch (DuplicateKeyException exception) {
-            LOG.error("[{}] Can't insert entity. Entity already exists!", getDocumentClass());
-            throw new KaaOptimisticLockingFailureException("Can't insert entity. Entity already exists!");
-        }
+
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractVersionableMongoDao.class);
+
+  public T save(T dto) {
+    try {
+      mongoTemplate.save(dto);
+      return dto;
+    } catch (OptimisticLockingFailureException exception) {
+      LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getDocumentClass(), dto.getVersion());
+      throw new KaaOptimisticLockingFailureException(
+          "Can't update entity with version " + dto.getVersion() + ". Entity already changed!");
+    } catch (DuplicateKeyException exception) {
+      LOG.error("[{}] Can't insert entity. Entity already exists!", getDocumentClass());
+      throw new KaaOptimisticLockingFailureException("Can't insert entity. Entity already exists!");
     }
+  }
 
 }

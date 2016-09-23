@@ -20,22 +20,17 @@ import org.kaaproject.kaa.server.transport.session.SessionAware;
 
 /**
  * Represents a handler of messages with the transport layer connection info.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public interface MessageHandler {
-    /**
-     * Handle a session aware message.
-     * 
-     * @param message
-     */
-    void process(SessionAware message);
+  /**
+   * Handle a session aware message.
+   */
+  void process(SessionAware message);
 
-    /**
-     * Handle a session init message.
-     * 
-     * @param message
-     */
-    void process(SessionInitMessage message);
+  /**
+   * Handle a session init message.
+   */
+  void process(SessionInitMessage message);
 }

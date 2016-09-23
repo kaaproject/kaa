@@ -17,109 +17,108 @@
 package org.kaaproject.kaa.server.datamigration.utils.datadefinition;
 
 public class Constraint {
-    private String constraintName;
-    private String field;
-    private ConstraintType type;
-    private String referencedTable;
-    private String referencedField;
-    private ReferenceOptions onDeleteOpt;
-    private ReferenceOptions onUpdateOpt;
+  private String constraintName;
+  private String field;
+  private ConstraintType type;
+  private String referencedTable;
+  private String referencedField;
+  private ReferenceOptions onDeleteOpt;
+  private ReferenceOptions onUpdateOpt;
 
-    public Constraint(String constraintName) {
-        this.constraintName = constraintName;
+  public Constraint(String constraintName) {
+    this.constraintName = constraintName;
+  }
+
+  public static Constraint constraint(String constraintName) {
+    return new Constraint(constraintName);
+  }
+
+  public String getConstraintName() {
+    return constraintName;
+  }
+
+  public String getField() {
+    return field;
+  }
+
+  public ConstraintType getType() {
+    return type;
+  }
+
+  public String getReferencedTable() {
+    return referencedTable;
+  }
+
+  public String getReferencedField() {
+    return referencedField;
+  }
+
+  public ReferenceOptions getOnDeleteOpt() {
+    return onDeleteOpt;
+  }
+
+  public ReferenceOptions getOnUpdateOpt() {
+    return onUpdateOpt;
+  }
+
+  public Constraint unique(String field) {
+    if (this.type != null) {
+      throw new BuilderException("Incorrect sequence of builder's methods");
     }
+    this.type = ConstraintType.PK;
+    this.field = field;
+    return this;
+  }
 
-    public String getConstraintName() {
-        return constraintName;
+  public Constraint primaryKey(String field) {
+    if (this.type != null) {
+      throw new BuilderException("Incorrect sequence of builder's methods");
     }
+    this.type = ConstraintType.UNIQUE;
+    this.field = field;
+    return this;
+  }
 
-    public String getField() {
-        return field;
+  public Constraint foreignKey(String field) {
+    if (this.type != null) {
+      throw new BuilderException("Incorrect sequence of builder's methods");
     }
+    this.type = ConstraintType.FK;
+    this.field = field;
+    return this;
+  }
 
-    public ConstraintType getType() {
-        return type;
+
+  public Constraint references(String referencedTable, String referencedField) {
+    if (this.type != ConstraintType.FK) {
+      throw new BuilderException("Constraint type should be FK");
     }
+    this.referencedTable = referencedTable;
+    this.referencedField = referencedField;
+    return this;
+  }
 
-    public String getReferencedTable() {
-        return referencedTable;
+  public Constraint onDelete(ReferenceOptions referenceOption) {
+    if (this.type != ConstraintType.FK) {
+      throw new BuilderException("Constraint type should be FK");
     }
-
-    public String getReferencedField() {
-        return referencedField;
+    if (this.referencedTable == null) {
+      throw new BuilderException("Referenced table not defined");
     }
+    onDeleteOpt = referenceOption;
+    return this;
+  }
 
-    public ReferenceOptions getOnDeleteOpt() {
-        return onDeleteOpt;
+  public Constraint onUpdate(ReferenceOptions referenceOption) {
+    if (this.type != ConstraintType.FK) {
+      throw new BuilderException("Constraint type should be FK");
     }
-
-    public ReferenceOptions getOnUpdateOpt() {
-        return onUpdateOpt;
+    if (this.referencedTable == null) {
+      throw new BuilderException("Referenced table not defined");
     }
-
-    public static Constraint constraint(String constraintName) {
-        return new Constraint(constraintName);
-    }
-
-
-    public Constraint unique(String field) {
-        if (this.type != null) {
-            throw new BuilderException("Incorrect sequence of builder's methods");
-        }
-        this.type = ConstraintType.PK;
-        this.field = field;
-        return this;
-    }
-
-    public Constraint primaryKey(String field) {
-        if (this.type != null) {
-            throw new BuilderException("Incorrect sequence of builder's methods");
-        }
-        this.type = ConstraintType.UNIQUE;
-        this.field = field;
-        return this;
-    }
-
-    public Constraint foreignKey(String field) {
-        if (this.type != null) {
-            throw new BuilderException("Incorrect sequence of builder's methods");
-        }
-        this.type = ConstraintType.FK;
-        this.field = field;
-        return this;
-    }
-
-
-    public Constraint references(String referencedTable, String referencedField) {
-        if (this.type != ConstraintType.FK) {
-            throw new BuilderException("Constraint type should be FK");
-        }
-        this.referencedTable = referencedTable;
-        this.referencedField = referencedField;
-        return this;
-    }
-
-    public Constraint onDelete(ReferenceOptions referenceOption) {
-        if (this.type != ConstraintType.FK) {
-            throw new BuilderException("Constraint type should be FK");
-        }
-        if (this.referencedTable == null) {
-            throw new BuilderException("Referenced table not defined");
-        }
-        onDeleteOpt = referenceOption;
-        return this;
-    }
-
-    public Constraint onUpdate(ReferenceOptions referenceOption) {
-        if (this.type != ConstraintType.FK) {
-            throw new BuilderException("Constraint type should be FK");
-        }
-        if (this.referencedTable == null) {
-            throw new BuilderException("Referenced table not defined");
-        }
-        onUpdateOpt = referenceOption;
-        return this;
-    }
+    onUpdateOpt = referenceOption;
+    return this;
+  }
 
 
 }

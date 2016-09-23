@@ -20,7 +20,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public interface ConnectListener extends MessageListener<Connect> {
 

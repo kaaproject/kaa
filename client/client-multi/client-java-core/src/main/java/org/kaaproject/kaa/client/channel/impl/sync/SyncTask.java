@@ -16,64 +16,64 @@
 
 package org.kaaproject.kaa.client.channel.impl.sync;
 
+import org.kaaproject.kaa.common.TransportType;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.kaaproject.kaa.common.TransportType;
-
 public class SyncTask {
-    private final Set<TransportType> types;
-    private final boolean ackOnly;
-    private final boolean all;
+  private final Set<TransportType> types;
+  private final boolean ackOnly;
+  private final boolean all;
 
-    public SyncTask(TransportType type, boolean ackOnly, boolean all) {
-        this(Collections.singleton(type), ackOnly, all);
-    }
+  public SyncTask(TransportType type, boolean ackOnly, boolean all) {
+    this(Collections.singleton(type), ackOnly, all);
+  }
 
-    public SyncTask(Set<TransportType> types, boolean ackOnly, boolean all) {
-        super();
-        this.types = types;
-        this.ackOnly = ackOnly;
-        this.all = all;
-    }
+  public SyncTask(Set<TransportType> types, boolean ackOnly, boolean all) {
+    super();
+    this.types = types;
+    this.ackOnly = ackOnly;
+    this.all = all;
+  }
 
-    public Set<TransportType> getTypes() {
-        return types;
+  public static SyncTask merge(SyncTask task, List<SyncTask> additionalTasks) {
+    Set<TransportType> types = new HashSet<TransportType>();
+    types.addAll(task.types);
+    boolean ack = task.ackOnly;
+    boolean all = task.all;
+    for (SyncTask aTask : additionalTasks) {
+      types.addAll(aTask.types);
+      ack = ack && aTask.ackOnly;
+      all = all || aTask.all;
     }
+    return new SyncTask(types, ack, all);
+  }
 
-    public boolean isAckOnly() {
-        return ackOnly;
-    }
+  public Set<TransportType> getTypes() {
+    return types;
+  }
 
-    public boolean isAll() {
-        return all;
-    }
+  public boolean isAckOnly() {
+    return ackOnly;
+  }
 
-    public static SyncTask merge(SyncTask task, List<SyncTask> additionalTasks) {
-        Set<TransportType> types = new HashSet<TransportType>();
-        types.addAll(task.types);
-        boolean ack = task.ackOnly;
-        boolean all = task.all;
-        for (SyncTask aTask : additionalTasks) {
-            types.addAll(aTask.types);
-            ack = ack && aTask.ackOnly;
-            all = all || aTask.all;
-        }
-        return new SyncTask(types, ack, all);
-    }
+  public boolean isAll() {
+    return all;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SyncTask [types=");
-        builder.append(types);
-        builder.append(", ackOnly=");
-        builder.append(ackOnly);
-        builder.append(", all=");
-        builder.append(all);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("SyncTask [types=");
+    builder.append(types);
+    builder.append(", ackOnly=");
+    builder.append(ackOnly);
+    builder.append(", all=");
+    builder.append(all);
+    builder.append("]");
+    return builder.toString();
+  }
 }

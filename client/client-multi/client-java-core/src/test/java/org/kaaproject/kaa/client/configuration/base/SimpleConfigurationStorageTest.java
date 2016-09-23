@@ -16,54 +16,54 @@
 
 package org.kaaproject.kaa.client.configuration.base;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientPlatformContext;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 public class SimpleConfigurationStorageTest {
 
-    private static final String TEST_PATH = "configuration.data";
+  private static final String TEST_PATH = "configuration.data";
 
-    @Test
-    public void readTest() throws IOException {
-        KaaClientPlatformContext context = Mockito.mock(KaaClientPlatformContext.class);
-        PersistentStorage persistentStorage = Mockito.mock(PersistentStorage.class);
+  @Test
+  public void readTest() throws IOException {
+    KaaClientPlatformContext context = Mockito.mock(KaaClientPlatformContext.class);
+    PersistentStorage persistentStorage = Mockito.mock(PersistentStorage.class);
 
-        Mockito.when(context.createPersistentStorage()).thenReturn(persistentStorage);
-        Mockito.when(persistentStorage.exists(TEST_PATH)).thenReturn(true);
-        Mockito.when(persistentStorage.openForRead(TEST_PATH)).thenReturn(new ByteArrayInputStream(createTestData()));
+    Mockito.when(context.createPersistentStorage()).thenReturn(persistentStorage);
+    Mockito.when(persistentStorage.exists(TEST_PATH)).thenReturn(true);
+    Mockito.when(persistentStorage.openForRead(TEST_PATH)).thenReturn(new ByteArrayInputStream(createTestData()));
 
-        SimpleConfigurationStorage storage = new SimpleConfigurationStorage(context, TEST_PATH);
-        ByteBuffer result = storage.loadConfiguration();
+    SimpleConfigurationStorage storage = new SimpleConfigurationStorage(context, TEST_PATH);
+    ByteBuffer result = storage.loadConfiguration();
 
-        Assert.assertTrue(Arrays.equals(result.array(), createTestData()));
-    }
+    Assert.assertTrue(Arrays.equals(result.array(), createTestData()));
+  }
 
-    protected byte[] createTestData() {
-        byte[] data = new byte[1024 * 32 - 100];
-        data[0] = 42;
-        data[data.length - 1] = 73;
-        return data;
-    }
+  protected byte[] createTestData() {
+    byte[] data = new byte[1024 * 32 - 100];
+    data[0] = 42;
+    data[data.length - 1] = 73;
+    return data;
+  }
 
-    @Test
-    public void writeTest() throws IOException {
-        KaaClientPlatformContext context = Mockito.mock(KaaClientPlatformContext.class);
-        PersistentStorage persistentStorage = Mockito.mock(PersistentStorage.class);
+  @Test
+  public void writeTest() throws IOException {
+    KaaClientPlatformContext context = Mockito.mock(KaaClientPlatformContext.class);
+    PersistentStorage persistentStorage = Mockito.mock(PersistentStorage.class);
 
-        Mockito.when(context.createPersistentStorage()).thenReturn(persistentStorage);
-        OutputStream osMock = Mockito.mock(OutputStream.class);
-        Mockito.when(persistentStorage.openForWrite(TEST_PATH)).thenReturn(osMock);
+    Mockito.when(context.createPersistentStorage()).thenReturn(persistentStorage);
+    OutputStream osMock = Mockito.mock(OutputStream.class);
+    Mockito.when(persistentStorage.openForWrite(TEST_PATH)).thenReturn(osMock);
 
-        SimpleConfigurationStorage storage = new SimpleConfigurationStorage(context, TEST_PATH);
-        storage.saveConfiguration(ByteBuffer.wrap(createTestData()));
-    }
+    SimpleConfigurationStorage storage = new SimpleConfigurationStorage(context, TEST_PATH);
+    storage.saveConfiguration(ByteBuffer.wrap(createTestData()));
+  }
 }

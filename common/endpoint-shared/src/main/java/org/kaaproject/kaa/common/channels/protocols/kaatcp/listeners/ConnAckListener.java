@@ -20,7 +20,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public interface ConnAckListener extends MessageListener<ConnAck> {
 

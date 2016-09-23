@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -23,72 +25,69 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.kaaproject.kaa.server.admin.services.schema.ConfigurationSchemaFormAvroConverter;
 import org.kaaproject.kaa.server.admin.shared.schema.ConfigurationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 
 public class ConfigurationSchemaActivity extends
-        AbstractBaseCtlSchemaActivityApplication<ConfigurationSchemaDto, ConfigurationSchemaViewDto, BaseCtlSchemaView, ConfigurationSchemaPlace> {
+    AbstractBaseCtlSchemaActivityApplication<ConfigurationSchemaDto, ConfigurationSchemaViewDto, BaseCtlSchemaView, ConfigurationSchemaPlace> {
 
-    public ConfigurationSchemaActivity(ConfigurationSchemaPlace place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
+  public ConfigurationSchemaActivity(ConfigurationSchemaPlace place,
+                                     ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
+
+
+  @Override
+  protected ConfigurationSchemaViewDto newSchema() {
+    return new ConfigurationSchemaViewDto();
+  }
+
+
+  @Override
+  protected BaseCtlSchemaView getView(boolean create) {
+    if (create) {
+      return clientFactory.getCreateConfigurationSchemaView();
+    } else {
+      return clientFactory.getConfigurationSchemaView();
     }
+  }
+
+  @Override
+  protected void getEntity(String id, AsyncCallback<ConfigurationSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().getConfigurationSchemaView(id, callback);
+  }
 
 
-    @Override
-    protected ConfigurationSchemaViewDto newSchema() {
-        return new ConfigurationSchemaViewDto();
-    }
+  @Override
+  protected void editEntity(ConfigurationSchemaViewDto entity, AsyncCallback<ConfigurationSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().saveConfigurationSchemaView(entity, callback);
+  }
+
+  @Override
+  protected ConfigurationSchemaPlace existingSchemaPlace(String applicationId, String schemaId) {
+    return new ConfigurationSchemaPlace(applicationId, schemaId);
+  }
+
+  @Override
+  protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+    KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
+        null,
+        applicationId,
+        ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER,
+        callback);
+  }
+
+  @Override
+  protected CtlSchemaPlace.SchemaType getPlaceSchemaType() {
+    return CtlSchemaPlace.SchemaType.CONFIGURATION;
+  }
 
 
-    @Override
-    protected BaseCtlSchemaView getView(boolean create) {
-        if (create) {
-            return clientFactory.getCreateConfigurationSchemaView();
-        } else {
-            return clientFactory.getConfigurationSchemaView();
-        }
-    }
+  @Override
+  public void loadFormData(String fileItemName,
+                           AsyncCallback<RecordField> callback) {
+    KaaAdmin.getDataSource().generateConfigurationSchemaForm(fileItemName, callback);
+  }
 
-    @Override
-    protected void getEntity(String id, AsyncCallback<ConfigurationSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().getConfigurationSchemaView(id, callback);
-    }
-
-
-    @Override
-    protected void editEntity(ConfigurationSchemaViewDto entity, AsyncCallback<ConfigurationSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().saveConfigurationSchemaView(entity, callback);
-    }
-
-    @Override
-    protected ConfigurationSchemaPlace existingSchemaPlace(String applicationId, String schemaId) {
-        return new ConfigurationSchemaPlace(applicationId, schemaId);
-    }
-
-    @Override
-    protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
-                null,
-                applicationId,
-                ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER,
-                callback);
-    }
-
-    @Override
-    protected CtlSchemaPlace.SchemaType getPlaceSchemaType() {
-        return CtlSchemaPlace.SchemaType.CONFIGURATION;
-    }
-
-
-    @Override
-    public void loadFormData(String fileItemName,
-            AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateConfigurationSchemaForm(fileItemName, callback);
-    }
-    
 }

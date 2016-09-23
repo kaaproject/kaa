@@ -22,32 +22,32 @@ import akka.actor.ActorRef;
 
 public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage implements TenantAwareMessage {
 
-    private final EndpointUserConfigurationUpdate update;
+  private final EndpointUserConfigurationUpdate update;
 
-    public EndpointUserConfigurationUpdateMessage(EndpointUserConfigurationUpdate update) {
-        super(update.getApplicationToken(), update.getKey(), ActorRef.noSender());
-        this.update = update;
-    }
+  public EndpointUserConfigurationUpdateMessage(EndpointUserConfigurationUpdate update) {
+    super(update.getApplicationToken(), update.getKey(), ActorRef.noSender());
+    this.update = update;
+  }
 
-    @Override
-    public String getTenantId() {
-        return update.getTenantId();
-    }
+  @Override
+  public String getTenantId() {
+    return update.getTenantId();
+  }
 
-    public String getUserId() {
-        return update.getUserId();
-    }
+  public String getUserId() {
+    return update.getUserId();
+  }
 
-    public EndpointUserConfigurationUpdate getUserConfigurationUpdate() {
-        return update;
-    }
+  public EndpointUserConfigurationUpdate getUserConfigurationUpdate() {
+    return update;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointStateUpdateMessage [update=");
-        builder.append(update);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointStateUpdateMessage [update=");
+    builder.append(update);
+    builder.append("]");
+    return builder.toString();
+  }
 }

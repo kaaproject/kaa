@@ -17,20 +17,20 @@
 package org.kaaproject.kaa.avro.avrogen;
 
 
-import org.kaaproject.kaa.avro.avrogen.compiler.*;
+import org.kaaproject.kaa.avro.avrogen.compiler.ObjectiveCCompiler;
 
 public class Main {
-    public static void main(String[] args) {
-        try {
-            if (args.length < 3) {
-                throw new KaaGeneratorException("Not enough argument. "
-                        + "Need {FULL_PATH_TO_SCHEMA} {OUTPUT_PATH} {SOURCE_NAME}");
-            }
+  public static void main(String[] args) {
+    try {
+      if (args.length < 3) {
+        throw new KaaGeneratorException("Not enough argument. "
+            + "Need {FULL_PATH_TO_SCHEMA} {OUTPUT_PATH} {SOURCE_NAME}");
+      }
 
-            org.kaaproject.kaa.avro.avrogen.compiler.Compiler compiler = new ObjectiveCCompiler(args[0], args[1], args[2]);
-            compiler.generate();
-        } catch (Exception e) {
-            System.err.println("Compilation failure: " + e.toString());
-        }
+      org.kaaproject.kaa.avro.avrogen.compiler.Compiler compiler = new ObjectiveCCompiler(args[0], args[1], args[2]);
+      compiler.generate();
+    } catch (Exception e) {
+      System.err.println("Compilation failure: " + e.toString());
     }
+  }
 }

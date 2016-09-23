@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
@@ -28,51 +29,51 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implements EcfVersionView {
 
-    @UiField
-    public final ImageTextButton addECButton;
+  @UiField
+  public final ImageTextButton addECButton;
 
-    public EcfVersionViewImpl(boolean editable) {
-        super(true);
-        this.addECButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
-        addECButton.setVisible(editable);
-        addButton.setVisible(editable);
-        supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        supportPanel.setWidth("300px");
-        supportPanel.add(addECButton);
-    }
+  public EcfVersionViewImpl(boolean editable) {
+    super(true);
+    this.addECButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
+    addECButton.setVisible(editable);
+    addButton.setVisible(editable);
+    supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+    supportPanel.setWidth("300px");
+    supportPanel.add(addECButton);
+  }
 
-    @Override
-    protected void initAddButton() {
-        addButton = new ImageTextButton(null, addButtonString());
-    }
+  @Override
+  protected void initAddButton() {
+    addButton = new ImageTextButton(null, addButtonString());
+  }
 
-    @Override
-    protected AbstractGrid<EventClassDto, String> createGrid() {
-        return new EcfVersionGrid();
-    }
+  @Override
+  protected AbstractGrid<EventClassDto, String> createGrid() {
+    return new EcfVersionGrid();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.familyVersion();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.familyVersion();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.save();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.save();
+  }
 
-    private String addButtonEventClassString() {
-        return Utils.constants.addEventClass();
-    }
+  private String addButtonEventClassString() {
+    return Utils.constants.addEventClass();
+  }
 
-    @Override
-    public Button addButtonEventClass() {
-        return addECButton;
-    }
+  @Override
+  public Button addButtonEventClass() {
+    return addECButton;
+  }
 
-    @Override
-    public Button addButton() {
-        return addButton;
-    }
+  @Override
+  public Button addButton() {
+    return addButton;
+  }
 
 }

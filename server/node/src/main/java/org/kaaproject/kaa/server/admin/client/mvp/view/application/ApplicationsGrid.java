@@ -16,44 +16,44 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.application;
 
-import java.util.Comparator;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.cellview.client.DataGrid;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.DataGrid;
+import java.util.Comparator;
 
 public class ApplicationsGrid extends AbstractKaaGrid<ApplicationDto, String> {
 
-    public ApplicationsGrid(Unit unit) {
-        super(unit, false);
-    }
+  public ApplicationsGrid(Unit unit) {
+    super(unit, false);
+  }
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<ApplicationDto> table) {
-        float prefWidth = 0;
+  @Override
+  protected float constructColumnsImpl(DataGrid<ApplicationDto> table) {
+    float prefWidth = 0;
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.appName(),
-                new StringValueProvider<ApplicationDto>() {
-                    @Override
-                    public String getValue(ApplicationDto item) {
-                        return item.getName();
-                    }
-                }, 
-                new Comparator<ApplicationDto>() {
-                    @Override
-                    public int compare(ApplicationDto o1, ApplicationDto o2) {
-                        return o1.getName().compareToIgnoreCase(o2.getName());
-                    }
-                },
-                Boolean.TRUE,
-                true,
-                160);
+    prefWidth += constructStringColumn(table,
+        Utils.constants.appName(),
+        new StringValueProvider<ApplicationDto>() {
+          @Override
+          public String getValue(ApplicationDto item) {
+            return item.getName();
+          }
+        },
+        new Comparator<ApplicationDto>() {
+          @Override
+          public int compare(ApplicationDto o1, ApplicationDto o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
+          }
+        },
+        Boolean.TRUE,
+        true,
+        160);
 
-        return prefWidth;
-    }
+    return prefWidth;
+  }
 
 }

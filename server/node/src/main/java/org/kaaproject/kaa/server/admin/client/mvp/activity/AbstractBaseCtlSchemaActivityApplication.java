@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
@@ -36,82 +37,82 @@ import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import java.util.List;
 
 public abstract class AbstractBaseCtlSchemaActivityApplication<S extends BaseSchemaDto,
-        T extends BaseSchemaViewDto<S>,
-        V extends BaseCtlSchemaView,
-        P extends AbstractSchemaPlaceApplication>
-        extends AbstractBaseCtlSchemaActivity<S, T, V, P>
-        implements ErrorMessageCustomizer, FormDataLoader {
+    T extends BaseSchemaViewDto<S>,
+    V extends BaseCtlSchemaView,
+    P extends AbstractSchemaPlaceApplication>
+    extends AbstractBaseCtlSchemaActivity<S, T, V, P>
+    implements ErrorMessageCustomizer, FormDataLoader {
 
-    protected String applicationId;
+  protected String applicationId;
 
-    public AbstractBaseCtlSchemaActivityApplication(P place,
-                                                    ClientFactory clientFactory) {
-        super(place, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  public AbstractBaseCtlSchemaActivityApplication(P place,
+                                                  ClientFactory clientFactory) {
+    super(place, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    @Override
-    protected T newEntity() {
-        T schema = newSchema();
-        schema.setApplicationId(applicationId);
-        return schema;
-    }
+  @Override
+  protected T newEntity() {
+    T schema = newSchema();
+    schema.setApplicationId(applicationId);
+    return schema;
+  }
 
-    @Override
-    protected String getEntityId(P place) {
-        return place.getSchemaId();
-    }
+  @Override
+  protected String getEntityId(P place) {
+    return place.getSchemaId();
+  }
 
-    @Override
-    protected void onEntityRetrieved() {
-        if (create) {
-            registrations.add(detailsView.getNewCtlButton().addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    CtlSchemaPlace newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.APPLICATION, place.getApplicationId(), true, true);
-                    newCtlPlace.setSchemaType(getPlaceSchemaType());
-                    newCtlPlace.setPreviousPlace(place);
-                    canceled = true;
-                    goTo(newCtlPlace);
-                }
-            }));
-            KaaAdmin.getDataSource().getAvailableApplicationCTLSchemaReferences(applicationId,
-                    new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
-                        @Override
-                        public void onFailureImpl(Throwable caught) {
-                            Utils.handleException(caught, detailsView);
-                        }
-
-                        @Override
-                        public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
-                            detailsView.getCtlSchemaReference().setAcceptableValues(result);
-                            bindDetailsView(true);
-                        }
-                    });
-            detailsView.getSchemaForm().setFormDataLoader(this);
-        } else {
-            bindDetailsView(false);
+  @Override
+  protected void onEntityRetrieved() {
+    if (create) {
+      registrations.add(detailsView.getNewCtlButton().addClickHandler(new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+          CtlSchemaPlace newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.APPLICATION, place.getApplicationId(), true, true);
+          newCtlPlace.setSchemaType(getPlaceSchemaType());
+          newCtlPlace.setPreviousPlace(place);
+          canceled = true;
+          goTo(newCtlPlace);
         }
+      }));
+      KaaAdmin.getDataSource().getAvailableApplicationCTLSchemaReferences(applicationId,
+          new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
+            @Override
+            public void onFailureImpl(Throwable caught) {
+              Utils.handleException(caught, detailsView);
+            }
+
+            @Override
+            public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
+              detailsView.getCtlSchemaReference().setAcceptableValues(result);
+              bindDetailsView(true);
+            }
+          });
+      detailsView.getSchemaForm().setFormDataLoader(this);
+    } else {
+      bindDetailsView(false);
     }
+  }
 
-    @Override
-    protected void doSave(final EventBus eventBus) {
-        super.onSave();
+  @Override
+  protected void doSave(final EventBus eventBus) {
+    super.onSave();
 
-        editEntity(entity,
-                new BusyAsyncCallback<T>() {
-                    public void onSuccessImpl(T result) {
-                        if (!create) {
-                            goTo(existingSchemaPlace(applicationId, result.getId()));
-                        } else if (place.getPreviousPlace() != null) {
-                            goTo(place.getPreviousPlace());
-                        }
-                    }
+    editEntity(entity,
+        new BusyAsyncCallback<T>() {
+          public void onSuccessImpl(T result) {
+            if (!create) {
+              goTo(existingSchemaPlace(applicationId, result.getId()));
+            } else if (place.getPreviousPlace() != null) {
+              goTo(place.getPreviousPlace());
+            }
+          }
 
-                    public void onFailureImpl(Throwable caught) {
-                        Utils.handleException(caught, detailsView);
-                    }
-                });
-    }
+          public void onFailureImpl(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
+        });
+  }
 
 }

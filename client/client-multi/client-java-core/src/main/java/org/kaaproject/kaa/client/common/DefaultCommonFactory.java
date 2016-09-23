@@ -16,52 +16,51 @@
 
 package org.kaaproject.kaa.client.common;
 
+import org.apache.avro.Schema;
+
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.avro.Schema;
 
 /**
  * Default {@link CommonFactory} implementation.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public class DefaultCommonFactory implements CommonFactory {
 
-    @Override
-    public CommonValue createCommonValue(Object value) {
-        return new DefaultCommonValue(value);
-    }
+  @Override
+  public CommonValue createCommonValue(Object value) {
+    return new DefaultCommonValue(value);
+  }
 
-    @Override
-    public CommonRecord createCommonRecord(Schema schema) {
-        return new DefaultCommonRecord(schema);
-    }
+  @Override
+  public CommonRecord createCommonRecord(Schema schema) {
+    return new DefaultCommonRecord(schema);
+  }
 
-    @Override
-    public CommonRecord createCommonRecord(CommonRecord record) {
-        return new DefaultCommonRecord(record);
-    }
+  @Override
+  public CommonRecord createCommonRecord(CommonRecord record) {
+    return new DefaultCommonRecord(record);
+  }
 
-    @Override
-    public CommonRecord createCommonRecord(UUID uuid, Schema schema) {
-        return new DefaultCommonRecord(uuid, schema);
-    }
+  @Override
+  public CommonRecord createCommonRecord(UUID uuid, Schema schema) {
+    return new DefaultCommonRecord(uuid, schema);
+  }
 
-    @Override
-    public CommonArray createCommonArray(Schema schema, List<CommonValue> list) {
-        return new DefaultCommonArray(schema, list);
-    }
+  @Override
+  public CommonArray createCommonArray(Schema schema, List<CommonValue> list) {
+    return new DefaultCommonArray(schema, list);
+  }
 
-    @Override
-    public CommonFixed createCommonFixed(Schema schema, byte[] bytes) {
-        return new DefaultCommonFixed(schema, bytes);
-    }
+  @Override
+  public CommonFixed createCommonFixed(Schema schema, byte[] bytes) {
+    return new DefaultCommonFixed(schema, bytes);
+  }
 
-    @Override
-    public CommonEnum createCommonEnum(Schema schema, String symbol) {
-        return new DefaultCommonEnum(schema, symbol);
-    }
+  @Override
+  public CommonEnum createCommonEnum(Schema schema, String symbol) {
+    return new DefaultCommonEnum(schema, symbol);
+  }
 
 }

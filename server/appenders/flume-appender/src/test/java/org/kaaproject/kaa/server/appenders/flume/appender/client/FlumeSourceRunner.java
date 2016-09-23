@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
-import java.io.IOException;
+import com.google.common.collect.Lists;
 
 import org.apache.flume.Channel;
 import org.apache.flume.ChannelSelector;
@@ -27,72 +27,72 @@ import org.apache.flume.channel.MultiplexingChannelSelector;
 import org.apache.flume.conf.Configurables;
 import org.apache.flume.source.AvroSource;
 
-import com.google.common.collect.Lists;
+import java.io.IOException;
 
 public class FlumeSourceRunner {
 
-    private static FlumeSourceRunner INSTANCE;
-    
-    private AvroSource flumeSource;
-    
-    public synchronized static FlumeSourceRunner getInstance() throws Exception {
-        if (INSTANCE == null) {
-            INSTANCE = new FlumeSourceRunner();
-        }
-        return INSTANCE;
+  private static FlumeSourceRunner INSTANCE;
+
+  private AvroSource flumeSource;
+
+  private FlumeSourceRunner() {
+  }
+
+  public synchronized static FlumeSourceRunner getInstance() throws Exception {
+    if (INSTANCE == null) {
+      INSTANCE = new FlumeSourceRunner();
     }
-    
-    private FlumeSourceRunner() {
+    return INSTANCE;
+  }
+
+  public synchronized boolean isRunning() {
+    return flumeSource != null;
+  }
+
+  public synchronized void stopFlumeSource() throws Exception {
+    if (flumeSource == null) {
+      throw new Exception("Flume source not found");
     }
+    flumeSource.stop();
+    flumeSource = null;
+  }
 
-    public synchronized boolean isRunning() {
-        return flumeSource != null;
+  public synchronized void startFlumeSource(String name, String bindHost, int port) throws Exception {
+    if (flumeSource != null) {
+      throw new Exception("Flume source is already running");
     }
+    flumeSource = new AvroSource();
+    flumeSource.setName(name);
 
-    public synchronized void stopFlumeSource() throws Exception {
-        if (flumeSource == null) {
-            throw new Exception("Flume source not found");
-        }
-        flumeSource.stop();
-        flumeSource = null;
-    }
+    Channel channel = new MemoryChannel();
 
-    public synchronized void startFlumeSource(String name, String bindHost, int port) throws Exception {
-        if (flumeSource != null) {
-            throw new Exception("Flume source is already running");
-        }
-        flumeSource = new AvroSource();
-        flumeSource.setName(name);
-        
-        Channel channel = new MemoryChannel();
-        
-        Context context = prepareContext(bindHost, port);
-        
-        Configurables.configure(flumeSource, context);
-        Configurables.configure(channel, context);
-        
-        ChannelSelector cs = new MultiplexingChannelSelector();
-        cs.setChannels(Lists.newArrayList(channel));
+    Context context = prepareContext(bindHost, port);
 
-        Configurables.configure(cs, context);
+    Configurables.configure(flumeSource, context);
+    Configurables.configure(channel, context);
 
-        flumeSource.setChannelProcessor(new ChannelProcessor(cs));
+    ChannelSelector cs = new MultiplexingChannelSelector();
+    cs.setChannels(Lists.newArrayList(channel));
 
-        flumeSource.start();
-    }
-    
-    private Context prepareContext(String bindHost, int port) throws IOException {
-        Context context = new Context();
+    Configurables.configure(cs, context);
 
-        context.put("bind", bindHost);
-        context.put("port", port+"");
+    flumeSource.setChannelProcessor(new ChannelProcessor(cs));
 
-        // Channel parameters
-        context.put("capacity", "100000000");
-        context.put("transactionCapacity", "10000000");
-        context.put("keep-alive", "1");
+    flumeSource.start();
+  }
 
-        return context;
-    }
- 
+  private Context prepareContext(String bindHost, int port) throws IOException {
+    Context context = new Context();
+
+    context.put("bind", bindHost);
+    context.put("port", port + "");
+
+    // Channel parameters
+    context.put("capacity", "100000000");
+    context.put("transactionCapacity", "10000000");
+    context.put("keep-alive", "1");
+
+    return context;
+  }
+
 }

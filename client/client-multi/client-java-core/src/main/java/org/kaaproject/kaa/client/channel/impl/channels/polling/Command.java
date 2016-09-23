@@ -20,20 +20,17 @@ package org.kaaproject.kaa.client.channel.impl.channels.polling;
  * Interface for the Operations server commands.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface Command {
 
-    /**
-     * Executes command.
-     *
-     */
-    void execute();
+  /**
+   * Executes command.
+   */
+  void execute();
 
-    /**
-     * Cancels command.
-     *
-     */
-    void cancel();
+  /**
+   * Cancels command.
+   */
+  void cancel();
 
 }

@@ -19,19 +19,20 @@ package org.kaaproject.kaa.server.transport;
 /**
  * Class that represents exception that is thrown when client makes request
  * and uses invalid SDK token
- *
  */
 public class InvalidSDKTokenException extends Exception {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -6241500436883054355L;
+  /**
+   * The Constant serialVersionUID.
+   */
+  private static final long serialVersionUID = -6241500436883054355L;
 
-    /**
-     * Instantiates a new invalid sdk token exception
-     *
-     * @param message the message
-     */
-    public InvalidSDKTokenException() {
-        super();
-    }
+  /**
+   * Instantiates a new invalid sdk token exception
+   *
+   * @param message the message
+   */
+  public InvalidSDKTokenException() {
+    super();
+  }
 }

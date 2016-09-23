@@ -16,24 +16,24 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
-
 import com.google.gwt.user.client.ui.HasValue;
+
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 public interface BaseSchemaView extends BaseDetailsView {
 
-    public HasValue<String> getVersion();
+  public HasValue<String> getVersion();
 
-    public HasValue<String> getName();
+  public HasValue<String> getName();
 
-    public HasValue<String> getDescription();
+  public HasValue<String> getDescription();
 
-    public HasValue<String> getCreatedUsername();
+  public HasValue<String> getCreatedUsername();
 
-    public HasValue<String> getCreatedDateTime();
+  public HasValue<String> getCreatedDateTime();
 
-    public HasValue<String> getEndpointCount();
+  public HasValue<String> getEndpointCount();
 
-    public RecordPanel getSchemaForm();
+  public RecordPanel getSchemaForm();
 
 }

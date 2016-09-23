@@ -37,121 +37,119 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class OperationsThriftServiceTest {
 
-    private static final int PF_VERSION = 3;
-    OperationsThriftService.Iface operationsThriftService;
-    //mocks
-    private AkkaService akkaService;
-    private CacheService cacheService;
-    private ApplicationService applicationService;
+  private static final int PF_VERSION = 3;
+  private static final String TEST_TENANT_ID = "testTenantId";
+  private static final String TEST_APP_ID = "testAppId";
+  private static final String TEST_APP_TOKEN = "testApp";
+  private static final String TEST_PF_ID = "pfID";
+  private static final String TEST_PF_ENDPOINT_SCHEMA_ID = "epPfSchemaId";
+  private static final String TEST_PF_SERVER_SCHEMA_ID = "serverPfSchemaId";
+  private static final Integer TEST_PF_ENDPOINT_SCHEMA_VERSION = 42;
+  private static final Integer TEST_PF_SERVER_SCHEMA_VERSION = 73;
+  private static final int TEST_APP_SEQ_NUMBER = 42;
+  OperationsThriftService.Iface operationsThriftService;
+  //mocks
+  private AkkaService akkaService;
+  private CacheService cacheService;
+  private ApplicationService applicationService;
 
-    private static final String TEST_TENANT_ID = "testTenantId";
-    private static final String TEST_APP_ID = "testAppId";
-    private static final String TEST_APP_TOKEN = "testApp";
-    private static final String TEST_PF_ID = "pfID";
-    private static final String TEST_PF_ENDPOINT_SCHEMA_ID = "epPfSchemaId";
-    private static final String TEST_PF_SERVER_SCHEMA_ID = "serverPfSchemaId";
-    private static final Integer TEST_PF_ENDPOINT_SCHEMA_VERSION = 42;
-    private static final Integer TEST_PF_SERVER_SCHEMA_VERSION = 73;
-    private static final int TEST_APP_SEQ_NUMBER = 42;
+  @Before
+  public void before() {
+    operationsThriftService = new OperationsThriftServiceImpl();
+    cacheService = mock(CacheService.class);
+    akkaService = mock(AkkaService.class);
+    applicationService = mock(ApplicationService.class);
 
+    ReflectionTestUtils.setField(operationsThriftService, "cacheService", cacheService);
+    ReflectionTestUtils.setField(operationsThriftService, "akkaService", akkaService);
+    ReflectionTestUtils.setField(operationsThriftService, "applicationService", applicationService);
+  }
 
-    @Before
-    public void before(){
-        operationsThriftService = new OperationsThriftServiceImpl();
-        cacheService = mock(CacheService.class);
-        akkaService = mock(AkkaService.class);
-        applicationService = mock(ApplicationService.class);
+  @Test
+  public void testSimpleFlowWithZeroAppSeqNumber() throws TException {
+    Notification notification = new Notification();
+    notification.setAppId(TEST_APP_ID);
+    notification.setProfileFilterId(TEST_PF_ID);
+    notification.setAppSeqNumber(0);
 
-        ReflectionTestUtils.setField(operationsThriftService, "cacheService", cacheService);
-        ReflectionTestUtils.setField(operationsThriftService, "akkaService", akkaService);
-        ReflectionTestUtils.setField(operationsThriftService, "applicationService", applicationService);
-    }
+    ApplicationDto appDto = new ApplicationDto();
+    appDto.setId(TEST_APP_ID);
+    appDto.setApplicationToken(TEST_APP_TOKEN);
 
-    @Test
-    public void testSimpleFlowWithZeroAppSeqNumber() throws TException{
-        Notification notification = new Notification();
-        notification.setAppId(TEST_APP_ID);
-        notification.setProfileFilterId(TEST_PF_ID);
-        notification.setAppSeqNumber(0);
+    ProfileFilterDto pfDto = new ProfileFilterDto();
+    pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
+    pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
+    pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
+    pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
 
-        ApplicationDto appDto = new ApplicationDto();
-        appDto.setId(TEST_APP_ID);
-        appDto.setApplicationToken(TEST_APP_TOKEN);
+    Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
+    Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
+    operationsThriftService.onNotification(notification);
+    Mockito.verify(applicationService).findAppById(TEST_APP_ID);
+    Mockito.verify(cacheService).getFilter(TEST_PF_ID);
+    Mockito.verify(cacheService).resetFilters(new AppProfileVersionsKey(TEST_APP_TOKEN, TEST_PF_ENDPOINT_SCHEMA_VERSION, TEST_PF_SERVER_SCHEMA_VERSION));
+    //Due to notification.setAppSeqNumber(0);
+    Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
 
-        ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
-        pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
-        pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
-        pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
+    Mockito.verify(akkaService).onNotification(notification);
+  }
 
-        Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
-        Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
-        operationsThriftService.onNotification(notification);
-        Mockito.verify(applicationService).findAppById(TEST_APP_ID);
-        Mockito.verify(cacheService).getFilter(TEST_PF_ID);
-        Mockito.verify(cacheService).resetFilters(new AppProfileVersionsKey(TEST_APP_TOKEN, TEST_PF_ENDPOINT_SCHEMA_VERSION, TEST_PF_SERVER_SCHEMA_VERSION));
-        //Due to notification.setAppSeqNumber(0);
-        Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
+  @Test
+  public void testSimpleFlowWithNotZeroAppSeqNumber() throws TException {
+    Notification notification = new Notification();
+    notification.setAppId(TEST_APP_ID);
+    notification.setProfileFilterId(TEST_PF_ID);
+    notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
 
-        Mockito.verify(akkaService).onNotification(notification);
-    }
+    ApplicationDto appDto = new ApplicationDto();
+    appDto.setId(TEST_APP_ID);
+    appDto.setApplicationToken(TEST_APP_TOKEN);
 
-    @Test
-    public void testSimpleFlowWithNotZeroAppSeqNumber() throws TException{
-        Notification notification = new Notification();
-        notification.setAppId(TEST_APP_ID);
-        notification.setProfileFilterId(TEST_PF_ID);
-        notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
+    ProfileFilterDto pfDto = new ProfileFilterDto();
+    pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
+    pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
+    pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
+    pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
 
-        ApplicationDto appDto = new ApplicationDto();
-        appDto.setId(TEST_APP_ID);
-        appDto.setApplicationToken(TEST_APP_TOKEN);
+    Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
+    Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, 0));
+    Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
+    operationsThriftService.onNotification(notification);
+    Mockito.verify(applicationService).findAppById(TEST_APP_ID);
+    Mockito.verify(cacheService).getFilter(TEST_PF_ID);
+    Mockito.verify(cacheService).resetFilters(new AppProfileVersionsKey(TEST_APP_TOKEN, TEST_PF_ENDPOINT_SCHEMA_VERSION, TEST_PF_SERVER_SCHEMA_VERSION));
+    //Due to notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
+    Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER));
+    Mockito.verify(akkaService).onNotification(notification);
+  }
 
-        ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
-        pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
-        pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
-        pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
+  @Test
+  public void testAppNotFound() throws TException {
+    Notification notification = new Notification();
+    notification.setAppId(TEST_APP_ID);
+    notification.setProfileFilterId(TEST_PF_ID);
+    notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
 
-        Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
-        Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, 0));
-        Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
-        operationsThriftService.onNotification(notification);
-        Mockito.verify(applicationService).findAppById(TEST_APP_ID);
-        Mockito.verify(cacheService).getFilter(TEST_PF_ID);
-        Mockito.verify(cacheService).resetFilters(new AppProfileVersionsKey(TEST_APP_TOKEN, TEST_PF_ENDPOINT_SCHEMA_VERSION, TEST_PF_SERVER_SCHEMA_VERSION));
-        //Due to notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
-        Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER));
-        Mockito.verify(akkaService).onNotification(notification);
-    }
+    ProfileFilterDto pfDto = new ProfileFilterDto();
+    pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
+    pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
+    pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
+    pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
 
-    @Test
-    public void testAppNotFound() throws TException{
-        Notification notification = new Notification();
-        notification.setAppId(TEST_APP_ID);
-        notification.setProfileFilterId(TEST_PF_ID);
-        notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
+    Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(null);
+    operationsThriftService.onNotification(notification);
+    Mockito.verify(applicationService).findAppById(TEST_APP_ID);
+    Mockito.verify(cacheService, Mockito.times(0)).getFilter(Mockito.anyString());
+    Mockito.verify(cacheService, Mockito.times(0)).resetFilters(Mockito.any(AppProfileVersionsKey.class));
+    Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
+    Mockito.verify(akkaService).onNotification(notification);
+  }
 
-        ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
-        pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
-        pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
-        pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
+  @Test
+  public void testSetRedirectionRule() throws TException {
+    RedirectionRule redirectionRule = new RedirectionRule();
+    operationsThriftService.setRedirectionRule(redirectionRule);
+    Mockito.verify(akkaService, atLeastOnce()).onRedirectionRule(redirectionRule);
+  }
 
-        Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(null);
-        operationsThriftService.onNotification(notification);
-        Mockito.verify(applicationService).findAppById(TEST_APP_ID);
-        Mockito.verify(cacheService, Mockito.times(0)).getFilter(Mockito.anyString());
-        Mockito.verify(cacheService, Mockito.times(0)).resetFilters(Mockito.any(AppProfileVersionsKey.class));
-        Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
-        Mockito.verify(akkaService).onNotification(notification);
-    }
-
-    @Test
-    public void testSetRedirectionRule() throws TException{
-        RedirectionRule redirectionRule = new RedirectionRule();
-        operationsThriftService.setRedirectionRule(redirectionRule);
-        Mockito.verify(akkaService, atLeastOnce()).onRedirectionRule(redirectionRule);
-    }
-    
 }

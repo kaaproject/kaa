@@ -16,28 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.services.auth;
 
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-
 public class KaaAdminAuthEntryPoint implements AuthenticationEntryPoint {
 
-    @Override
-    public void commence(HttpServletRequest request,
-            HttpServletResponse response, AuthenticationException authException)
-            throws IOException, ServletException {
+  @Override
+  public void commence(HttpServletRequest request,
+                       HttpServletResponse response, AuthenticationException authException)
+      throws IOException, ServletException {
 
-        if (request.getContentType() != null) {
-            response.setContentType(request.getContentType());
-        }
-
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getOutputStream().print(authException.getMessage());
+    if (request.getContentType() != null) {
+      response.setContentType(request.getContentType());
     }
+
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    response.getOutputStream().print(authException.getMessage());
+  }
 
 }

@@ -25,22 +25,22 @@ import org.kaaproject.kaa.server.common.plugin.PluginType;
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
 public class KafkaAppenderConfig implements PluginConfig {
 
-    public KafkaAppenderConfig() {
-    }
+  public KafkaAppenderConfig() {
+  }
 
-    @Override
-    public String getPluginTypeName() {
-        return "Kafka";
-    }
+  @Override
+  public String getPluginTypeName() {
+    return "Kafka";
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.kafka.appender.KafkaLogAppender";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.appenders.kafka.appender.KafkaLogAppender";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return KafkaConfig.getClassSchema();
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return KafkaConfig.getClassSchema();
+  }
 
 }

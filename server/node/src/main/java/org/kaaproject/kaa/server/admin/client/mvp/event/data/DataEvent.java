@@ -18,43 +18,43 @@ package org.kaaproject.kaa.server.admin.client.mvp.event.data;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-public class DataEvent extends GwtEvent<DataEventHandler>{
+public class DataEvent extends GwtEvent<DataEventHandler> {
   private static Type<DataEventHandler> TYPE;
 
   private final Class<?> clazz;
   private boolean refreshTree = false;
 
   public DataEvent(Class<?> clazz) {
-      this.clazz = clazz;
+    this.clazz = clazz;
   }
 
   public DataEvent(Class<?> clazz, boolean refreshTree) {
-      this.clazz = clazz;
-      this.refreshTree = refreshTree;
-  }
-
-  public Class<?> getClazz() {
-      return clazz;
-  }
-
-  public boolean refreshTree() {
-      return refreshTree;
-  }
-
-  public boolean checkClass(Class<?> clazz) {
-      return this.clazz.equals(clazz);
+    this.clazz = clazz;
+    this.refreshTree = refreshTree;
   }
 
   public static Type<DataEventHandler> getType() {
-      if (TYPE == null) {
-          TYPE = new Type<DataEventHandler>();
-      }
+    if (TYPE == null) {
+      TYPE = new Type<DataEventHandler>();
+    }
     return TYPE;
+  }
+
+  public Class<?> getClazz() {
+    return clazz;
+  }
+
+  public boolean refreshTree() {
+    return refreshTree;
+  }
+
+  public boolean checkClass(Class<?> clazz) {
+    return this.clazz.equals(clazz);
   }
 
   @Override
   public Type<DataEventHandler> getAssociatedType() {
-      return TYPE;
+    return TYPE;
   }
 
   @Override

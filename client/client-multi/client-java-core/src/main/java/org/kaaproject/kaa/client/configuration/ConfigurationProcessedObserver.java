@@ -23,8 +23,8 @@ package org.kaaproject.kaa.client.configuration;
  */
 public interface ConfigurationProcessedObserver {
 
-    /**
-     * Notify about configuration processing is finished.
-     */
-    void onConfigurationProcessed();
+  /**
+   * Notify about configuration processing is finished.
+   */
+  void onConfigurationProcessed();
 }

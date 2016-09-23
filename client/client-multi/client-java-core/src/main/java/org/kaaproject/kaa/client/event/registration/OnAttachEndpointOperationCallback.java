@@ -35,19 +35,19 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
  */
 public interface OnAttachEndpointOperationCallback {
 
-    /**
-     * Callback on endpoint attach response<br>
-     * <br>
-     * <b>NOTE:</b> {@code resultContext} is not {@code null} for endpoint attach
-     * operation and contains {@link EndpointKeyHash} object with key hash of attached
-     * endpoint.
-     *
-     * @param result        The enum value [{@code SUCCESS, FAILURE}]
-     * @param resultContext Additional data of operation result. May be {@code null}.
-     *                      For AttachEndpoint operation is populated with {@link EndpointKeyHash}
-     *                      of attached endpoint.
-     * @see SyncResponseResultType
-     */
-    void onAttach(SyncResponseResultType result, EndpointKeyHash resultContext);
+  /**
+   * Callback on endpoint attach response<br>
+   * <br>
+   * <b>NOTE:</b> {@code resultContext} is not {@code null} for endpoint attach
+   * operation and contains {@link EndpointKeyHash} object with key hash of attached
+   * endpoint.
+   *
+   * @param result        The enum value [{@code SUCCESS, FAILURE}]
+   * @param resultContext Additional data of operation result. May be {@code null}. For
+   *                      AttachEndpoint operation is populated with {@link EndpointKeyHash} of
+   *                      attached endpoint.
+   * @see SyncResponseResultType
+   */
+  void onAttach(SyncResponseResultType result, EndpointKeyHash resultContext);
 
 }

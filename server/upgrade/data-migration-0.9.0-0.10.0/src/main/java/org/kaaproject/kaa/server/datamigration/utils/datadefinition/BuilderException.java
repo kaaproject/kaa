@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.datamigration.utils.datadefinition;
 
 public class BuilderException extends RuntimeException {
 
-    public BuilderException(String s) {
-        super(s);
-    }
+  public BuilderException(String s) {
+    super(s);
+  }
 }

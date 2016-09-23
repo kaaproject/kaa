@@ -20,7 +20,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public interface DisconnectListener extends MessageListener<Disconnect> {
 

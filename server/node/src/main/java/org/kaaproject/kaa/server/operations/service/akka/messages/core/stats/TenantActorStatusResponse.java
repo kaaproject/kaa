@@ -20,8 +20,8 @@ import java.util.UUID;
 
 public class TenantActorStatusResponse extends ActorStatusResponse {
 
-    public TenantActorStatusResponse(UUID requestId, int endpointCount) {
-        super(requestId, endpointCount);
-    }
+  public TenantActorStatusResponse(UUID requestId, int endpointCount) {
+    super(requestId, endpointCount);
+  }
 
 }

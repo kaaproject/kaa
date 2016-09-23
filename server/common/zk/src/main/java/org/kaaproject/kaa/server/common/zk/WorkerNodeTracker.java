@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.common.zk;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
@@ -33,361 +29,370 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * The Class WorkerNodeTracker.
  */
 public abstract class WorkerNodeTracker extends ControlNodeTracker {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(WorkerNodeTracker.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(WorkerNodeTracker.class);
 
-    /** The endpoint cache. */
-    private PathChildrenCache endpointCache;
+  /**
+   * The endpoint cache.
+   */
+  private PathChildrenCache endpointCache;
 
-    /** The bootstrap cache. */
-    private PathChildrenCache bootstrapCache;
+  /**
+   * The bootstrap cache.
+   */
+  private PathChildrenCache bootstrapCache;
 
-    /** The endpoint listeners. */
-    private List<OperationsNodeListener> endpointListeners;
+  /**
+   * The endpoint listeners.
+   */
+  private List<OperationsNodeListener> endpointListeners;
 
-    /** The bootstrap listeners. */
-    private List<BootstrapNodeListener> bootstrapListeners;
+  /**
+   * The bootstrap listeners.
+   */
+  private List<BootstrapNodeListener> bootstrapListeners;
 
-    /** Correspondence between each functioning operation node's thriftHost+thriftPort
-     * string and its start time */
-    private Map<String, Long> operationNodesStartTimes;
+  /**
+   * Correspondence between each functioning operation node's thriftHost+thriftPort
+   * string and its start time
+   */
+  private Map<String, Long> operationNodesStartTimes;
 
-    /** Correspondence between each functioning bootstrap node's thriftHost+thriftPort
-     * string and its start time */
-    private Map<String, Long> bootstrapNodesStartTimes;
+  /**
+   * Correspondence between each functioning bootstrap node's thriftHost+thriftPort
+   * string and its start time
+   */
+  private Map<String, Long> bootstrapNodesStartTimes;
 
-    /**
-     * Instantiates a new worker node tracker.
-     *
-     */
-    public WorkerNodeTracker() {
-        super();
-        init();
-    }
+  /**
+   * Instantiates a new worker node tracker.
+   */
+  public WorkerNodeTracker() {
+    super();
+    init();
+  }
 
-    /**
-     * Instantiates a new worker node tracker.
-     * @param zkClient Zookeeper client
-     */
-    public WorkerNodeTracker(CuratorFramework zkClient) {
-        super();
-        this.zkClient = zkClient;
-        init();
-    }
+  /**
+   * Instantiates a new worker node tracker.
+   *
+   * @param zkClient Zookeeper client
+   */
+  public WorkerNodeTracker(CuratorFramework zkClient) {
+    super();
+    this.zkClient = zkClient;
+    init();
+  }
 
-    private void init() {
-        endpointCache = new PathChildrenCache(zkClient, OPERATIONS_SERVER_NODE_PATH, true);
-        bootstrapCache = new PathChildrenCache(zkClient, BOOTSTRAP_SERVER_NODE_PATH, true);
-        endpointListeners = new CopyOnWriteArrayList<OperationsNodeListener>();
-        bootstrapListeners = new CopyOnWriteArrayList<BootstrapNodeListener>();
-        operationNodesStartTimes = new HashMap<String, Long>();
-        bootstrapNodesStartTimes = new HashMap<String, Long>();
-    }
+  private void init() {
+    endpointCache = new PathChildrenCache(zkClient, OPERATIONS_SERVER_NODE_PATH, true);
+    bootstrapCache = new PathChildrenCache(zkClient, BOOTSTRAP_SERVER_NODE_PATH, true);
+    endpointListeners = new CopyOnWriteArrayList<OperationsNodeListener>();
+    bootstrapListeners = new CopyOnWriteArrayList<BootstrapNodeListener>();
+    operationNodesStartTimes = new HashMap<String, Long>();
+    bootstrapNodesStartTimes = new HashMap<String, Long>();
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.common.zk.ControlNodeTracker#start()
-     */
-    @Override
-    public void start() throws Exception {
-        super.start();
-        endpointCache.getListenable().addListener(new PathChildrenCacheListener() {
-            @Override
-            public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
-                switch (event.getType()) {
-                case CHILD_ADDED:
-                    endpointAdded(event.getData());
-                    break;
-                case CHILD_UPDATED:
-                    endpointUpdated(event.getData());
-                    break;
-                case CHILD_REMOVED:
-                    endpointRemoved(event.getData());
-                    break;
-                default:
-                    break;
-                }
-            }
-        });
-        endpointCache.start(StartMode.NORMAL);
-
-        bootstrapCache.getListenable().addListener(new PathChildrenCacheListener() {
-            @Override
-            public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
-                LOG.info("Bootstrap node event: " + event.getType());
-                switch (event.getType()) {
-                case CHILD_ADDED:
-                    bootstrapAdded(event.getData());
-                    break;
-                case CHILD_UPDATED:
-                    bootstrapUpdated(event.getData());
-                    break;
-                case CHILD_REMOVED:
-                    bootstrapRemoved(event.getData());
-                    break;
-                default:
-                    break;
-                }
-            }
-        });
-        bootstrapCache.start(StartMode.NORMAL);
-    }
-
-    /**
-     * Gets the current endpoint nodes.
-     *
-     * @return the current endpoint nodes
-     */
-    public List<OperationsNodeInfo> getCurrentOperationServerNodes() {
-        List<ChildData> nodesData = endpointCache != null ? endpointCache.getCurrentData() : new ArrayList<ChildData>();
-        Map<ConnectionInfoKey, OperationsNodeInfo> uniqueMap = new HashMap<>();
-
-        for (ChildData data : nodesData) {
-            OperationsNodeInfo newNodeInfo = extractOperationServerInfo(data);
-            ConnectionInfoKey key = new ConnectionInfoKey(newNodeInfo.getConnectionInfo());
-            OperationsNodeInfo oldNodeInfo = uniqueMap.get(key);
-            if (oldNodeInfo != null) {
-                if (newNodeInfo.getTimeStarted() >= oldNodeInfo.getTimeStarted()) {
-                    uniqueMap.put(key, newNodeInfo);
-                }
-            } else {
-                uniqueMap.put(key, newNodeInfo);
-            }
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.common.zk.ControlNodeTracker#start()
+   */
+  @Override
+  public void start() throws Exception {
+    super.start();
+    endpointCache.getListenable().addListener(new PathChildrenCacheListener() {
+      @Override
+      public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+        switch (event.getType()) {
+          case CHILD_ADDED:
+            endpointAdded(event.getData());
+            break;
+          case CHILD_UPDATED:
+            endpointUpdated(event.getData());
+            break;
+          case CHILD_REMOVED:
+            endpointRemoved(event.getData());
+            break;
+          default:
+            break;
         }
+      }
+    });
+    endpointCache.start(StartMode.NORMAL);
 
-        return new ArrayList<>(uniqueMap.values());
-    }
-
-    /**
-     * Gets the current bootstrap nodes.
-     *
-     * @return the current bootstrap nodes
-     */
-    public List<BootstrapNodeInfo> getCurrentBootstrapNodes() {
-        List<ChildData> nodesData = bootstrapCache != null ? bootstrapCache.getCurrentData() : new ArrayList<ChildData>();
-        List<BootstrapNodeInfo> result = new ArrayList<>(nodesData.size());
-        for (ChildData data : nodesData) {
-            result.add(extractBootstrapServerInfo(data));
+    bootstrapCache.getListenable().addListener(new PathChildrenCacheListener() {
+      @Override
+      public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+        LOG.info("Bootstrap node event: " + event.getType());
+        switch (event.getType()) {
+          case CHILD_ADDED:
+            bootstrapAdded(event.getData());
+            break;
+          case CHILD_UPDATED:
+            bootstrapUpdated(event.getData());
+            break;
+          case CHILD_REMOVED:
+            bootstrapRemoved(event.getData());
+            break;
+          default:
+            break;
         }
-        return result;
-    }
+      }
+    });
+    bootstrapCache.start(StartMode.NORMAL);
+  }
 
-    /**
-     * Operations Node added.
-     *
-     * @param data
-     *            the data
-     */
-    protected void endpointAdded(ChildData data) {
-        OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
-        String endpointAddress = constructEndpointAddress(nodeInfo);
-        operationNodesStartTimes.put(endpointAddress, nodeInfo.getTimeStarted());
-        for (OperationsNodeListener listener : endpointListeners) {
-            listener.onNodeAdded(nodeInfo);
+  /**
+   * Gets the current endpoint nodes.
+   *
+   * @return the current endpoint nodes
+   */
+  public List<OperationsNodeInfo> getCurrentOperationServerNodes() {
+    List<ChildData> nodesData = endpointCache != null ? endpointCache.getCurrentData() : new ArrayList<ChildData>();
+    Map<ConnectionInfoKey, OperationsNodeInfo> uniqueMap = new HashMap<>();
+
+    for (ChildData data : nodesData) {
+      OperationsNodeInfo newNodeInfo = extractOperationServerInfo(data);
+      ConnectionInfoKey key = new ConnectionInfoKey(newNodeInfo.getConnectionInfo());
+      OperationsNodeInfo oldNodeInfo = uniqueMap.get(key);
+      if (oldNodeInfo != null) {
+        if (newNodeInfo.getTimeStarted() >= oldNodeInfo.getTimeStarted()) {
+          uniqueMap.put(key, newNodeInfo);
         }
+      } else {
+        uniqueMap.put(key, newNodeInfo);
+      }
     }
 
-    /**
-     * Operations Node updated.
-     *
-     * @param data
-     *            the data
-     */
-    protected void endpointUpdated(ChildData data) {
-        OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
-        String endpointAddress = constructEndpointAddress(nodeInfo);
-        operationNodesStartTimes.put(endpointAddress, nodeInfo.getTimeStarted());
-        for (OperationsNodeListener listener : endpointListeners) {
-            listener.onNodeUpdated(nodeInfo);
-        }
-    }
+    return new ArrayList<>(uniqueMap.values());
+  }
 
-    /**
-     * Operations Node removed.
-     *
-     * @param data
-     *            the data
-     */
-    protected void endpointRemoved(ChildData data) {
-        OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
-        String endpointAddress = constructEndpointAddress(nodeInfo);
-        Long removeTime = nodeInfo.getTimeStarted();
-        Long updateTime = operationNodesStartTimes.get(endpointAddress);
-        if (updateTime == null || removeTime >= updateTime) {
-            operationNodesStartTimes.remove(endpointAddress);
-            for (OperationsNodeListener listener : endpointListeners) {
-                listener.onNodeRemoved(nodeInfo);
-            }
-        } else {
-            LOG.debug("Ignoring [{}] endpoint removal, as it was before add/update", endpointAddress);
-        }
+  /**
+   * Gets the current bootstrap nodes.
+   *
+   * @return the current bootstrap nodes
+   */
+  public List<BootstrapNodeInfo> getCurrentBootstrapNodes() {
+    List<ChildData> nodesData = bootstrapCache != null ? bootstrapCache.getCurrentData() : new ArrayList<ChildData>();
+    List<BootstrapNodeInfo> result = new ArrayList<>(nodesData.size());
+    for (ChildData data : nodesData) {
+      result.add(extractBootstrapServerInfo(data));
     }
+    return result;
+  }
 
-    /**
-     * Bootstrap added.
-     *
-     * @param data
-     *            the data
-     */
-    protected void bootstrapAdded(ChildData data) {
-        BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
-        String bootstrapAddress = constructBootstrapAddress(nodeInfo);
-        bootstrapNodesStartTimes.put(bootstrapAddress, nodeInfo.getTimeStarted());
-        for (BootstrapNodeListener listener : bootstrapListeners) {
-            listener.onNodeAdded(nodeInfo);
-        }
+  /**
+   * Operations Node added.
+   *
+   * @param data the data
+   */
+  protected void endpointAdded(ChildData data) {
+    OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
+    String endpointAddress = constructEndpointAddress(nodeInfo);
+    operationNodesStartTimes.put(endpointAddress, nodeInfo.getTimeStarted());
+    for (OperationsNodeListener listener : endpointListeners) {
+      listener.onNodeAdded(nodeInfo);
     }
+  }
 
-    /**
-     * Bootstrap updated.
-     *
-     * @param data
-     *            the data
-     */
-    protected void bootstrapUpdated(ChildData data) {
-        BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
-        String bootstrapAddress = constructBootstrapAddress(nodeInfo);
-        bootstrapNodesStartTimes.put(bootstrapAddress, nodeInfo.getTimeStarted());
-        for (BootstrapNodeListener listener : bootstrapListeners) {
-            listener.onNodeUpdated(nodeInfo);
-        }
+  /**
+   * Operations Node updated.
+   *
+   * @param data the data
+   */
+  protected void endpointUpdated(ChildData data) {
+    OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
+    String endpointAddress = constructEndpointAddress(nodeInfo);
+    operationNodesStartTimes.put(endpointAddress, nodeInfo.getTimeStarted());
+    for (OperationsNodeListener listener : endpointListeners) {
+      listener.onNodeUpdated(nodeInfo);
     }
+  }
 
-    /**
-     * Bootstrap removed.
-     *
-     * @param data
-     *            the data
-     */
-    protected void bootstrapRemoved(ChildData data) {
-        BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
-        String bootstrapAddress = constructBootstrapAddress(nodeInfo);
-        Long removeTime = nodeInfo.getTimeStarted();
-        Long updateTime = bootstrapNodesStartTimes.get(bootstrapAddress);
-        if (updateTime == null || removeTime >= updateTime) {
-            for (BootstrapNodeListener listener : bootstrapListeners) {
-                listener.onNodeRemoved(nodeInfo);
-            }
-        } else {
-            LOG.debug("Ignoring [{}] bootstrap removal, as it was before add/update", bootstrapAddress);
-        }
+  /**
+   * Operations Node removed.
+   *
+   * @param data the data
+   */
+  protected void endpointRemoved(ChildData data) {
+    OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
+    String endpointAddress = constructEndpointAddress(nodeInfo);
+    Long removeTime = nodeInfo.getTimeStarted();
+    Long updateTime = operationNodesStartTimes.get(endpointAddress);
+    if (updateTime == null || removeTime >= updateTime) {
+      operationNodesStartTimes.remove(endpointAddress);
+      for (OperationsNodeListener listener : endpointListeners) {
+        listener.onNodeRemoved(nodeInfo);
+      }
+    } else {
+      LOG.debug("Ignoring [{}] endpoint removal, as it was before add/update", endpointAddress);
     }
+  }
 
-    /**
-     * Adds the listener.
-     *
-     * @param listener
-     *            the listener
-     */
-    public void addListener(OperationsNodeListener listener) {
-        LOG.debug("Listener registered: " + listener);
-        endpointListeners.add(listener);
+  /**
+   * Bootstrap added.
+   *
+   * @param data the data
+   */
+  protected void bootstrapAdded(ChildData data) {
+    BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
+    String bootstrapAddress = constructBootstrapAddress(nodeInfo);
+    bootstrapNodesStartTimes.put(bootstrapAddress, nodeInfo.getTimeStarted());
+    for (BootstrapNodeListener listener : bootstrapListeners) {
+      listener.onNodeAdded(nodeInfo);
     }
+  }
 
-    /**
-     * Removes the listener.
-     *
-     * @param listener
-     *            the listener
-     * @return true, if successful
-     */
-    public boolean removeListener(OperationsNodeListener listener) {
-        if (endpointListeners.remove(listener)) {
-            LOG.debug("Listener removed: " + listener);
-            return true;
-        } else {
-            LOG.debug("Listener not found: " + listener);
-            return false;
-        }
+  /**
+   * Bootstrap updated.
+   *
+   * @param data the data
+   */
+  protected void bootstrapUpdated(ChildData data) {
+    BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
+    String bootstrapAddress = constructBootstrapAddress(nodeInfo);
+    bootstrapNodesStartTimes.put(bootstrapAddress, nodeInfo.getTimeStarted());
+    for (BootstrapNodeListener listener : bootstrapListeners) {
+      listener.onNodeUpdated(nodeInfo);
     }
+  }
 
-    /**
-     * Adds the listener.
-     *
-     * @param listener
-     *            the listener
-     */
-    public void addListener(BootstrapNodeListener listener) {
-        LOG.debug("Listener registered: " + listener);
-        bootstrapListeners.add(listener);
+  /**
+   * Bootstrap removed.
+   *
+   * @param data the data
+   */
+  protected void bootstrapRemoved(ChildData data) {
+    BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
+    String bootstrapAddress = constructBootstrapAddress(nodeInfo);
+    Long removeTime = nodeInfo.getTimeStarted();
+    Long updateTime = bootstrapNodesStartTimes.get(bootstrapAddress);
+    if (updateTime == null || removeTime >= updateTime) {
+      for (BootstrapNodeListener listener : bootstrapListeners) {
+        listener.onNodeRemoved(nodeInfo);
+      }
+    } else {
+      LOG.debug("Ignoring [{}] bootstrap removal, as it was before add/update", bootstrapAddress);
     }
+  }
 
-    /**
-     * Removes the listener.
-     *
-     * @param listener
-     *            the listener
-     * @return true, if successful
-     */
-    public boolean removeListener(BootstrapNodeListener listener) {
-        if (bootstrapListeners.remove(listener)) {
-            LOG.debug("Listener removed: " + listener);
-            return true;
-        } else {
-            LOG.debug("Listener not found: " + listener);
-            return false;
-        }
-    }
+  /**
+   * Adds the listener.
+   *
+   * @param listener the listener
+   */
+  public void addListener(OperationsNodeListener listener) {
+    LOG.debug("Listener registered: " + listener);
+    endpointListeners.add(listener);
+  }
 
-    /**
-     * Extract endpoint server info.
-     *
-     * @param currentData
-     *            the current data
-     * @return the endpoint node info
-     */
-    private OperationsNodeInfo extractOperationServerInfo(ChildData currentData) {
-        OperationsNodeInfo endpointServerInfo = null;
-        try {
-            endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
-        } catch (IOException e) {
-            LOG.error("error reading control service info", e);
-        }
-        return endpointServerInfo;
+  /**
+   * Removes the listener.
+   *
+   * @param listener the listener
+   * @return true, if successful
+   */
+  public boolean removeListener(OperationsNodeListener listener) {
+    if (endpointListeners.remove(listener)) {
+      LOG.debug("Listener removed: " + listener);
+      return true;
+    } else {
+      LOG.debug("Listener not found: " + listener);
+      return false;
     }
+  }
 
-    /**
-     * Extract bootstrap service info.
-     *
-     * @param currentData
-     *            the current data
-     * @return the bootstrap node info
-     */
-    private BootstrapNodeInfo extractBootstrapServerInfo(ChildData currentData) {
-        BootstrapNodeInfo bootstrapServerInfo = null;
-        try {
-            bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
-        } catch (IOException e) {
-            LOG.error("error reading control service info", e);
-        }
-        return bootstrapServerInfo;
-    }
+  /**
+   * Adds the listener.
+   *
+   * @param listener the listener
+   */
+  public void addListener(BootstrapNodeListener listener) {
+    LOG.debug("Listener registered: " + listener);
+    bootstrapListeners.add(listener);
+  }
 
-    private String constructEndpointAddress(OperationsNodeInfo nodeInfo) {
-        return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
-                String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+  /**
+   * Removes the listener.
+   *
+   * @param listener the listener
+   * @return true, if successful
+   */
+  public boolean removeListener(BootstrapNodeListener listener) {
+    if (bootstrapListeners.remove(listener)) {
+      LOG.debug("Listener removed: " + listener);
+      return true;
+    } else {
+      LOG.debug("Listener not found: " + listener);
+      return false;
     }
+  }
 
-    private String constructBootstrapAddress(BootstrapNodeInfo nodeInfo) {
-        return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
-                String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+  /**
+   * Extract endpoint server info.
+   *
+   * @param currentData the current data
+   * @return the endpoint node info
+   */
+  private OperationsNodeInfo extractOperationServerInfo(ChildData currentData) {
+    OperationsNodeInfo endpointServerInfo = null;
+    try {
+      endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
+    } catch (IOException e) {
+      LOG.error("error reading control service info", e);
     }
+    return endpointServerInfo;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.io.Closeable#close()
-     */
-    @Override
-    public void close() throws IOException {
-        endpointCache.close();
-        bootstrapCache.close();
-        super.close();
+  /**
+   * Extract bootstrap service info.
+   *
+   * @param currentData the current data
+   * @return the bootstrap node info
+   */
+  private BootstrapNodeInfo extractBootstrapServerInfo(ChildData currentData) {
+    BootstrapNodeInfo bootstrapServerInfo = null;
+    try {
+      bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
+    } catch (IOException e) {
+      LOG.error("error reading control service info", e);
     }
+    return bootstrapServerInfo;
+  }
+
+  private String constructEndpointAddress(OperationsNodeInfo nodeInfo) {
+    return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
+        String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+  }
+
+  private String constructBootstrapAddress(BootstrapNodeInfo nodeInfo) {
+    return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
+        String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see java.io.Closeable#close()
+   */
+  @Override
+  public void close() throws IOException {
+    endpointCache.close();
+    bootstrapCache.close();
+    super.close();
+  }
 }

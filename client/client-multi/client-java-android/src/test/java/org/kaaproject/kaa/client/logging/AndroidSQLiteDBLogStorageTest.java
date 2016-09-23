@@ -27,13 +27,13 @@ import org.robolectric.shadows.ShadowLog;
 @Config(manifest = Config.NONE)
 public class AndroidSQLiteDBLogStorageTest extends AbstractPersistentLogStorageTest {
 
-    @BeforeClass
-    public static void beforeClass() {
-        ShadowLog.stream = System.out;
-    }
+  @BeforeClass
+  public static void beforeClass() {
+    ShadowLog.stream = System.out;
+  }
 
-    @Override
-    protected Object getStorage(long bucketSize, int recordCount) {
-        return new AndroidSQLiteDBLogStorage(Robolectric.application, bucketSize, recordCount);
-    }
+  @Override
+  protected Object getStorage(long bucketSize, int recordCount) {
+    return new AndroidSQLiteDBLogStorage(Robolectric.application, bucketSize, recordCount);
+  }
 }

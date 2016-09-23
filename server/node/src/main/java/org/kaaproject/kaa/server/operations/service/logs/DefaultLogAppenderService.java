@@ -35,85 +35,87 @@ import java.util.List;
 @Service
 public class DefaultLogAppenderService implements LogAppenderService {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultLogAppenderService.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultLogAppenderService.class);
 
-    @Autowired
-    private LogSchemaService logSchemaService;
+  @Autowired
+  private LogSchemaService logSchemaService;
 
-    @Autowired
-    private LogAppenderBuilder logAppenderResolver;
+  @Autowired
+  private LogAppenderBuilder logAppenderResolver;
 
-    @Autowired
-    private CTLService ctlService;
+  @Autowired
+  private CTLService ctlService;
 
-    @Autowired
-    private LogAppendersService logAppendersService;
+  @Autowired
+  private LogAppendersService logAppendersService;
 
-    @Override
-    public List<LogAppender> getApplicationAppenders(String applicationId) {
-        LOG.debug("Get log appenders by application id [{}]", applicationId);
-        List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(applicationId);
-        LOG.debug("Found all appenders [{}] for application.", appenders);
-        List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
+  @Override
+  public List<LogAppender> getApplicationAppenders(String applicationId) {
+    LOG.debug("Get log appenders by application id [{}]", applicationId);
+    List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(applicationId);
+    LOG.debug("Found all appenders [{}] for application.", appenders);
+    List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
 
-        for (LogAppenderDto appender : appenders) {
-            try {
-                LogAppender logAppender = logAppenderResolver.getAppender(appender);
-                logAppenders.add(logAppender);
-            } catch (Exception e) {
-                LOG.warn("Can't initialize log appender [{}]", appender, e);
-                continue;
-            }
-        }
-        return logAppenders;
+    for (LogAppenderDto appender : appenders) {
+      try {
+        LogAppender logAppender = logAppenderResolver.getAppender(appender);
+        logAppenders.add(logAppender);
+      } catch (Exception e) {
+        LOG.warn("Can't initialize log appender [{}]", appender, e);
+        continue;
+      }
     }
-    
-    @Override
-    public List<LogAppender> getApplicationAppendersByLogSchemaVersion(
-            String applicationId, int schemaVersion) {
-        LOG.debug("Get log appenders by application id [{}] and schema version [{}]", applicationId, schemaVersion);
-        List<LogAppenderDto> appenders = logAppendersService.findLogAppendersByAppIdAndSchemaVersion(applicationId, schemaVersion);
-        LOG.debug("Found all appenders [{}] for application and schema version.", appenders);
-        List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
+    return logAppenders;
+  }
 
-        for (LogAppenderDto appender : appenders) {
-            try {
-                LogAppender logAppender = logAppenderResolver.getAppender(appender);
-                logAppenders.add(logAppender);
-            } catch (Exception e) {
-                LOG.warn("Can't initialize log appender [{}], exception catched: {}", appender, e);
-                continue;
-            }
-        }
-        return logAppenders;
-    }
+  @Override
+  public List<LogAppender> getApplicationAppendersByLogSchemaVersion(
+      String applicationId, int schemaVersion) {
+    LOG.debug("Get log appenders by application id [{}] and schema version [{}]", applicationId, schemaVersion);
+    List<LogAppenderDto> appenders = logAppendersService.findLogAppendersByAppIdAndSchemaVersion(applicationId, schemaVersion);
+    LOG.debug("Found all appenders [{}] for application and schema version.", appenders);
+    List<LogAppender> logAppenders = new ArrayList<>(appenders.size());
 
-    @Override
-    public LogAppender getApplicationAppender(String appenderId) {
-        LOG.debug("Get log appender by id [{}]", appenderId);
-        LogAppenderDto appender = logAppendersService.findLogAppenderById(appenderId);
-        LOG.debug("Found appender [{}] by appender id [{}] ", appender, appenderId);
-        LogAppender logAppender = null;
-        try {
-            logAppender = logAppenderResolver.getAppender(appender);
-        } catch (Exception e) {
-            LOG.warn("Can't initialize log appender [{}]", appender, e);
-        }
-        return logAppender;
+    for (LogAppenderDto appender : appenders) {
+      try {
+        LogAppender logAppender = logAppenderResolver.getAppender(appender);
+        logAppenders.add(logAppender);
+      } catch (Exception e) {
+        LOG.warn("Can't initialize log appender [{}], exception catched: {}", appender, e);
+        continue;
+      }
     }
+    return logAppenders;
+  }
 
-    @Override
-    public LogSchema getLogSchema(String applicationId, int logSchemaVersion) {
-        LOG.debug("Fetching log schema for application {} and version {}", applicationId, logSchemaVersion);
-        LogSchema logSchema = null;
-        LogSchemaDto logSchemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
-        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(logSchemaDto.getCtlSchemaId());
-        String logFlatSchema = ctlService.flatExportAsString(ctlSchema);
-        if (logSchemaDto != null) {
-            logSchema = new LogSchema(logSchemaDto, logFlatSchema);
-        }
-        return logSchema;
+  @Override
+  public LogAppender getApplicationAppender(String appenderId) {
+    LOG.debug("Get log appender by id [{}]", appenderId);
+    LogAppenderDto appender = logAppendersService.findLogAppenderById(appenderId);
+    LOG.debug("Found appender [{}] by appender id [{}] ", appender, appenderId);
+    LogAppender logAppender = null;
+    try {
+      logAppender = logAppenderResolver.getAppender(appender);
+    } catch (Exception e) {
+      LOG.warn("Can't initialize log appender [{}]", appender, e);
     }
+    return logAppender;
+  }
+
+  @Override
+  public LogSchema getLogSchema(String applicationId, int logSchemaVersion) {
+    LOG.debug("Fetching log schema for application {} and version {}", applicationId, logSchemaVersion);
+    LogSchema logSchema = null;
+    LogSchemaDto logSchemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+    CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(logSchemaDto.getCtlSchemaId());
+    String logFlatSchema = ctlService.flatExportAsString(ctlSchema);
+    if (logSchemaDto != null) {
+      logSchema = new LogSchema(logSchemaDto, logFlatSchema);
+    }
+    return logSchema;
+  }
 
 }

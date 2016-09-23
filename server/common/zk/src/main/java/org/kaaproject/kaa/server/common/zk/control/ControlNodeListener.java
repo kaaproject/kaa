@@ -31,16 +31,17 @@ import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
  * @see ControlNodeEvent
  */
 public interface ControlNodeListener {
-    
-    /**
-     * On control node down.
-     */
-    void onControlNodeDown();
 
-    /**control
-     * On control node change.
-     *
-     * @param nodeInfo the node info
-     */
-    void onControlNodeChange(ControlNodeInfo nodeInfo);
+  /**
+   * On control node down.
+   */
+  void onControlNodeDown();
+
+  /**
+   * control
+   * On control node change.
+   *
+   * @param nodeInfo the node info
+   */
+  void onControlNodeChange(ControlNodeInfo nodeInfo);
 }

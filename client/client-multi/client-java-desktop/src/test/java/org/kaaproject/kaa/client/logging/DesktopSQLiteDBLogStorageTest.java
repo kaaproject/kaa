@@ -18,29 +18,30 @@ package org.kaaproject.kaa.client.logging;
 
 import org.junit.After;
 import org.junit.Before;
+
 import java.io.File;
 import java.sql.SQLException;
 
 public class DesktopSQLiteDBLogStorageTest extends AbstractPersistentLogStorageTest {
-    private static final String DB_FILENAME = "test.db";
-    private static File dbFile = new File(DB_FILENAME);
+  private static final String DB_FILENAME = "test.db";
+  private static File dbFile = new File(DB_FILENAME);
 
-    @Before
-    public void prepare() throws ClassNotFoundException, SQLException {
-        deleteDBFile();
-    }
+  @Before
+  public void prepare() throws ClassNotFoundException, SQLException {
+    deleteDBFile();
+  }
 
-    @After
-    public void cleanup() {
-        deleteDBFile();
-    }
+  @After
+  public void cleanup() {
+    deleteDBFile();
+  }
 
-    @Override
-    protected DesktopSQLiteDBLogStorage getStorage(long bucketSize, int recordCount) {
-        return new DesktopSQLiteDBLogStorage(DB_FILENAME, bucketSize, recordCount);
-    }
+  @Override
+  protected DesktopSQLiteDBLogStorage getStorage(long bucketSize, int recordCount) {
+    return new DesktopSQLiteDBLogStorage(DB_FILENAME, bucketSize, recordCount);
+  }
 
-    private void deleteDBFile() {
-        dbFile.delete();
-    }
+  private void deleteDBFile() {
+    dbFile.delete();
+  }
 }

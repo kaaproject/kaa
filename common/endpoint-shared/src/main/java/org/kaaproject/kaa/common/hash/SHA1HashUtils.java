@@ -16,59 +16,59 @@
 
 package org.kaaproject.kaa.common.hash;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * The Class SHA1HashUtils.
  */
 public abstract class SHA1HashUtils {
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
-
-    protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class); //NOSONAR
-
-    private SHA1HashUtils() {
+  protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class); //NOSONAR
+  private static final Charset UTF_8 = Charset.forName("UTF-8");
+  /**
+   * The Constant digest.
+   */
+  private static final ThreadLocal<MessageDigest> DIGEST = new ThreadLocal<MessageDigest>() {
+    @Override
+    protected MessageDigest initialValue() {
+      return forAlgorithm("SHA-1");
     }
+  };
 
-    /** The Constant digest. */
-    private static final ThreadLocal<MessageDigest> DIGEST = new ThreadLocal<MessageDigest>() {
-        @Override
-        protected MessageDigest initialValue() {
-            return forAlgorithm("SHA-1");
-        }
-    };
+  private SHA1HashUtils() {
+  }
 
-    static MessageDigest forAlgorithm(String algorithm){
-        try {
-            return MessageDigest.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("No such algorithm: {}, exception catched: {}", algorithm, e);
-            return null;
-        }
+  static MessageDigest forAlgorithm(String algorithm) {
+    try {
+      return MessageDigest.getInstance(algorithm);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.error("No such algorithm: {}, exception catched: {}", algorithm, e);
+      return null;
     }
+  }
 
-    /**
-     * Hash to bytes.
-     *
-     * @param data the data
-     * @return the byte[]
-     */
-    public static byte[] hashToBytes(String data) {
-        return hashToBytes(data.getBytes(UTF_8));
-    }
+  /**
+   * Hash to bytes.
+   *
+   * @param data the data
+   * @return the byte[]
+   */
+  public static byte[] hashToBytes(String data) {
+    return hashToBytes(data.getBytes(UTF_8));
+  }
 
-    /**
-     * Hash to bytes.
-     *
-     * @param bytes the bytes
-     * @return the byte[]
-     */
-    public static byte[] hashToBytes(byte[] bytes) {
-        return DIGEST.get().digest(bytes);
-    }
+  /**
+   * Hash to bytes.
+   *
+   * @param bytes the bytes
+   * @return the byte[]
+   */
+  public static byte[] hashToBytes(byte[] bytes) {
+    return DIGEST.get().digest(bytes);
+  }
 }

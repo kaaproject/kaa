@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.security;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaaproject.kaa.server.common.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -26,92 +32,85 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Random;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaaproject.kaa.server.common.Environment;
-import org.kaaproject.kaa.server.operations.service.security.OperationsFileKeyStoreService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class FileKeyStoreServiceTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileKeyStoreServiceTest.class);
-        
-    @Test
-    public void testKeysCreation() throws IOException{
-        OperationsFileKeyStoreService keyStoreService = new OperationsFileKeyStoreService();
-        String randomFolderName = "randomFolder" + new Random().nextInt(100000);
-        LOG.info("Creating random folder: {}", randomFolderName);
-        keyStoreService.setPrivateKeyLocation(randomFolderName + File.separator + "private.key");
-        keyStoreService.setPublicKeyLocation(randomFolderName + File.separator + "public.key");
-        try{
-            keyStoreService.loadKeys();
-            Assert.assertNotNull(keyStoreService.getPrivateKey());
-            Assert.assertNotNull(keyStoreService.getPublicKey());
-        }finally{
-            removeFolder(Environment.getServerHomeDir() + File.separator + randomFolderName);
-        }
+  private static final Logger LOG = LoggerFactory.getLogger(FileKeyStoreServiceTest.class);
+
+  @Test
+  public void testKeysCreation() throws IOException {
+    OperationsFileKeyStoreService keyStoreService = new OperationsFileKeyStoreService();
+    String randomFolderName = "randomFolder" + new Random().nextInt(100000);
+    LOG.info("Creating random folder: {}", randomFolderName);
+    keyStoreService.setPrivateKeyLocation(randomFolderName + File.separator + "private.key");
+    keyStoreService.setPublicKeyLocation(randomFolderName + File.separator + "public.key");
+    try {
+      keyStoreService.loadKeys();
+      Assert.assertNotNull(keyStoreService.getPrivateKey());
+      Assert.assertNotNull(keyStoreService.getPublicKey());
+    } finally {
+      removeFolder(Environment.getServerHomeDir() + File.separator + randomFolderName);
     }
-    
-    @Test(expected=RuntimeException.class)
-    public void testNotValidPrivateKey() throws IOException {
-        OperationsFileKeyStoreService keyStoreService = new OperationsFileKeyStoreService();
-        String randomFolderName = "randomFolder" + new Random().nextInt(100000);
-        LOG.info("Creating random folder: {}", randomFolderName);
-        keyStoreService.setPrivateKeyLocation(randomFolderName + File.separator + "private.key");
-        keyStoreService.setPublicKeyLocation(randomFolderName + File.separator + "public.key");
-        try {
-            keyStoreService.loadKeys();
-            Assert.assertNotNull(keyStoreService.getPrivateKey());
-            Assert.assertNotNull(keyStoreService.getPublicKey());
+  }
 
-            Files.delete(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
-            Files.createFile(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
-            keyStoreService.loadKeys();
+  @Test(expected = RuntimeException.class)
+  public void testNotValidPrivateKey() throws IOException {
+    OperationsFileKeyStoreService keyStoreService = new OperationsFileKeyStoreService();
+    String randomFolderName = "randomFolder" + new Random().nextInt(100000);
+    LOG.info("Creating random folder: {}", randomFolderName);
+    keyStoreService.setPrivateKeyLocation(randomFolderName + File.separator + "private.key");
+    keyStoreService.setPublicKeyLocation(randomFolderName + File.separator + "public.key");
+    try {
+      keyStoreService.loadKeys();
+      Assert.assertNotNull(keyStoreService.getPrivateKey());
+      Assert.assertNotNull(keyStoreService.getPublicKey());
 
-        } finally {
-            removeFolder(Environment.getServerHomeDir() + File.separator + randomFolderName);
-        }
+      Files.delete(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
+      Files.createFile(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
+      keyStoreService.loadKeys();
+
+    } finally {
+      removeFolder(Environment.getServerHomeDir() + File.separator + randomFolderName);
     }
-    
-    @Test(expected=RuntimeException.class)
-    public void testNotValidPublicKey() throws IOException {
-        OperationsFileKeyStoreService keyStoreService = new OperationsFileKeyStoreService();
-        String randomFolderName = "randomFolder" + new Random().nextInt(100000);
-        LOG.info("Creating random folder: {}", randomFolderName);
-        keyStoreService.setPrivateKeyLocation(randomFolderName + File.separator + "private.key");
-        keyStoreService.setPublicKeyLocation(randomFolderName + File.separator + "public.key");
-        try {
-            keyStoreService.loadKeys();
-            Assert.assertNotNull(keyStoreService.getPrivateKey());
-            Assert.assertNotNull(keyStoreService.getPublicKey());
+  }
 
-            Files.delete(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
-            Files.createFile(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
-            keyStoreService.loadKeys();
+  @Test(expected = RuntimeException.class)
+  public void testNotValidPublicKey() throws IOException {
+    OperationsFileKeyStoreService keyStoreService = new OperationsFileKeyStoreService();
+    String randomFolderName = "randomFolder" + new Random().nextInt(100000);
+    LOG.info("Creating random folder: {}", randomFolderName);
+    keyStoreService.setPrivateKeyLocation(randomFolderName + File.separator + "private.key");
+    keyStoreService.setPublicKeyLocation(randomFolderName + File.separator + "public.key");
+    try {
+      keyStoreService.loadKeys();
+      Assert.assertNotNull(keyStoreService.getPrivateKey());
+      Assert.assertNotNull(keyStoreService.getPublicKey());
 
-        } finally {
-            removeFolder(Environment.getServerHomeDir() + File.separator + randomFolderName);
-        }
-    }    
+      Files.delete(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
+      Files.createFile(Paths.get(Environment.getServerHomeDir(), keyStoreService.getPrivateKeyLocation()));
+      keyStoreService.loadKeys();
 
-    protected void removeFolder(String randomFolderName) throws IOException {
-        LOG.info("Deleting random folder: {}", Paths.get(randomFolderName).toAbsolutePath().toString());
-        Files.walkFileTree(Paths.get(randomFolderName), new SimpleFileVisitor<Path>() {
-            
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
+    } finally {
+      removeFolder(Environment.getServerHomeDir() + File.separator + randomFolderName);
+    }
+  }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
+  protected void removeFolder(String randomFolderName) throws IOException {
+    LOG.info("Deleting random folder: {}", Paths.get(randomFolderName).toAbsolutePath().toString());
+    Files.walkFileTree(Paths.get(randomFolderName), new SimpleFileVisitor<Path>() {
 
-        });
-    }   
-    
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        Files.delete(dir);
+        return FileVisitResult.CONTINUE;
+      }
+
+    });
+  }
+
 }

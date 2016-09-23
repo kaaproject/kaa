@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,85 +25,83 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto> implements Serializable, Comparable<ProfileFilterRecordDto> {
 
-    private static final long serialVersionUID = 4493137983752138274L;
+  private static final long serialVersionUID = 4493137983752138274L;
 
-    public ProfileFilterRecordDto() {
-        super();
-    }
+  public ProfileFilterRecordDto() {
+    super();
+  }
 
-    public ProfileFilterRecordDto(ProfileFilterDto activeProfileFilter, ProfileFilterDto inactiveProfileFilter) {
-        super(activeProfileFilter, inactiveProfileFilter);
-    }
+  public ProfileFilterRecordDto(ProfileFilterDto activeProfileFilter, ProfileFilterDto inactiveProfileFilter) {
+    super(activeProfileFilter, inactiveProfileFilter);
+  }
 
-    @JsonIgnore
-    public Integer getEndpointProfileSchemaVersion() {
-        return activeStructureDto != null ? activeStructureDto.getEndpointProfileSchemaVersion() : inactiveStructureDto.getEndpointProfileSchemaVersion();
+  public static List<ProfileFilterRecordDto> convertToProfileFilterRecords(Collection<ProfileFilterDto> profileFilters) {
+    Map<ProfileVersionPairDto, ProfileFilterRecordDto> profileFiltterRecordsMap = new HashMap<>();
+    for (ProfileFilterDto profileFilter : profileFilters) {
+      ProfileVersionPairDto versionPair = new ProfileVersionPairDto(profileFilter.getEndpointProfileSchemaId(),
+          profileFilter.getEndpointProfileSchemaVersion(),
+          profileFilter.getServerProfileSchemaId(),
+          profileFilter.getServerProfileSchemaVersion());
+      ProfileFilterRecordDto profileFilterRecord = profileFiltterRecordsMap.get(versionPair);
+      if (profileFilterRecord == null) {
+        profileFilterRecord = new ProfileFilterRecordDto();
+        profileFiltterRecordsMap.put(versionPair, profileFilterRecord);
+      }
+      if (profileFilter.getStatus() == UpdateStatus.ACTIVE) {
+        profileFilterRecord.setActiveStructureDto(profileFilter);
+      } else if (profileFilter.getStatus() == UpdateStatus.INACTIVE) {
+        profileFilterRecord.setInactiveStructureDto(profileFilter);
+      }
     }
+    return new ArrayList<>(profileFiltterRecordsMap.values());
+  }
 
-    @JsonIgnore
-    public Integer getServerProfileSchemaVersion() {
-        return activeStructureDto != null ? activeStructureDto.getServerProfileSchemaVersion() : inactiveStructureDto.getServerProfileSchemaVersion();
-    }
+  @JsonIgnore
+  public Integer getEndpointProfileSchemaVersion() {
+    return activeStructureDto != null ? activeStructureDto.getEndpointProfileSchemaVersion() : inactiveStructureDto.getEndpointProfileSchemaVersion();
+  }
 
-    @JsonIgnore
-    public String getEndpointProfileSchemaId() {
-        return activeStructureDto != null ? activeStructureDto.getEndpointProfileSchemaId() : inactiveStructureDto.getEndpointProfileSchemaId();
-    }
+  @JsonIgnore
+  public Integer getServerProfileSchemaVersion() {
+    return activeStructureDto != null ? activeStructureDto.getServerProfileSchemaVersion() : inactiveStructureDto.getServerProfileSchemaVersion();
+  }
 
-    @JsonIgnore
-    public String getServerProfileSchemaId() {
-        return activeStructureDto != null ? activeStructureDto.getServerProfileSchemaId() : inactiveStructureDto.getServerProfileSchemaId();
-    }
+  @JsonIgnore
+  public String getEndpointProfileSchemaId() {
+    return activeStructureDto != null ? activeStructureDto.getEndpointProfileSchemaId() : inactiveStructureDto.getEndpointProfileSchemaId();
+  }
 
-    public static List<ProfileFilterRecordDto> convertToProfileFilterRecords(Collection<ProfileFilterDto> profileFilters) {
-        Map<ProfileVersionPairDto, ProfileFilterRecordDto> profileFiltterRecordsMap = new HashMap<>();
-        for (ProfileFilterDto profileFilter : profileFilters) {
-            ProfileVersionPairDto versionPair = new ProfileVersionPairDto(profileFilter.getEndpointProfileSchemaId(), 
-                    profileFilter.getEndpointProfileSchemaVersion(), 
-                    profileFilter.getServerProfileSchemaId(),
-                    profileFilter.getServerProfileSchemaVersion());
-            ProfileFilterRecordDto profileFilterRecord = profileFiltterRecordsMap.get(versionPair);
-            if (profileFilterRecord == null) {
-                profileFilterRecord = new ProfileFilterRecordDto();
-                profileFiltterRecordsMap.put(versionPair, profileFilterRecord);
-            }
-            if (profileFilter.getStatus()==UpdateStatus.ACTIVE) {
-                profileFilterRecord.setActiveStructureDto(profileFilter);
-            } else if (profileFilter.getStatus()==UpdateStatus.INACTIVE) {
-                profileFilterRecord.setInactiveStructureDto(profileFilter);
-            }
-        }
-        return new ArrayList<>(profileFiltterRecordsMap.values());
-    }
+  @JsonIgnore
+  public String getServerProfileSchemaId() {
+    return activeStructureDto != null ? activeStructureDto.getServerProfileSchemaId() : inactiveStructureDto.getServerProfileSchemaId();
+  }
 
-    @Override
-    public int compareTo(ProfileFilterRecordDto o) {
-        int endpointProfileShemaVersion = getEndpointProfileSchemaVersion() != null ? 
-                                                getEndpointProfileSchemaVersion() : -1;
-        int otherEndpointProfileShemaVersion = o.getEndpointProfileSchemaVersion() != null ? 
-                                                    o.getEndpointProfileSchemaVersion() : -1;      
-        int result = endpointProfileShemaVersion - otherEndpointProfileShemaVersion;
-        if (result == 0) {
-            int serverProfileShemaVersion = getServerProfileSchemaVersion() != null ? 
-                                                    getServerProfileSchemaVersion() : -1;
-            int otherServerProfileShemaVersion = o.getServerProfileSchemaVersion() != null ? 
-                                                        o.getServerProfileSchemaVersion() : -1;    
-            result = serverProfileShemaVersion - otherServerProfileShemaVersion;
-        }
-        return result;
+  @Override
+  public int compareTo(ProfileFilterRecordDto o) {
+    int endpointProfileShemaVersion = getEndpointProfileSchemaVersion() != null ?
+        getEndpointProfileSchemaVersion() : -1;
+    int otherEndpointProfileShemaVersion = o.getEndpointProfileSchemaVersion() != null ?
+        o.getEndpointProfileSchemaVersion() : -1;
+    int result = endpointProfileShemaVersion - otherEndpointProfileShemaVersion;
+    if (result == 0) {
+      int serverProfileShemaVersion = getServerProfileSchemaVersion() != null ?
+          getServerProfileSchemaVersion() : -1;
+      int otherServerProfileShemaVersion = o.getServerProfileSchemaVersion() != null ?
+          o.getServerProfileSchemaVersion() : -1;
+      result = serverProfileShemaVersion - otherServerProfileShemaVersion;
     }
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 }

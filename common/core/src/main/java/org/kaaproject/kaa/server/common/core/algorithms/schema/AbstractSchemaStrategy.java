@@ -22,10 +22,10 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 
 public abstract class AbstractSchemaStrategy<T extends KaaSchema> implements SchemaCreationStrategy<T> {
 
-    private final KaaSchemaFactory schemaFactory = new KaaSchemaFactoryImpl();
+  private final KaaSchemaFactory schemaFactory = new KaaSchemaFactoryImpl();
 
-    protected KaaSchemaFactory getSchemaFactory() {
-        return schemaFactory;
-    }
+  protected KaaSchemaFactory getSchemaFactory() {
+    return schemaFactory;
+  }
 
 }

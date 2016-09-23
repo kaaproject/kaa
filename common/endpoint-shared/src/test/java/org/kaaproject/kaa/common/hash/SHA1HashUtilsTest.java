@@ -21,15 +21,15 @@ import org.junit.Test;
 
 public class SHA1HashUtilsTest {
 
-    
-    @Test
-    public void testExistingDigestAlgorithm(){
-        Assert.assertNotNull(SHA1HashUtils.forAlgorithm("SHA-1"));
-    }
-    
-    @Test
-    public void testNotExistingDigestAlgorithm(){
-        Assert.assertNull(SHA1HashUtils.forAlgorithm("SHA-142"));
-    }
-       
+
+  @Test
+  public void testExistingDigestAlgorithm() {
+    Assert.assertNotNull(SHA1HashUtils.forAlgorithm("SHA-1"));
+  }
+
+  @Test
+  public void testNotExistingDigestAlgorithm() {
+    Assert.assertNull(SHA1HashUtils.forAlgorithm("SHA-142"));
+  }
+
 }

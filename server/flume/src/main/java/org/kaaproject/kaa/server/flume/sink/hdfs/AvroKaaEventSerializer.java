@@ -20,11 +20,6 @@ import static org.apache.flume.serialization.AvroEventSerializerConfigurationCon
 import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.DEFAULT_SYNC_INTERVAL_BYTES;
 import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.SYNC_INTERVAL_BYTES;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.apache.avro.file.CodecFactory;
@@ -46,147 +41,147 @@ import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 public class AvroKaaEventSerializer implements EventSerializer, Configurable,
-        EventConstants {
+    EventConstants {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AvroKaaEventSerializer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AvroKaaEventSerializer.class);
+  private static Map<KaaSinkKey, Schema> schemaCache = new HashMap<KaaSinkKey, Schema>();
+  private final OutputStream out;
+  private DatumReader<GenericRecord> datumReader;
+  private BinaryDecoder binaryDecoder;
+  private DatumWriter<Object> writer = null;
+  private DataFileWriter<Object> dataFileWriter = null;
+  private GenericRecord wrapperRecord;
+  private int syncIntervalBytes;
+  private String compressionCodec;
+  private AvroSchemaSource schemaSource;
 
-    private final OutputStream out;
-    
-    private DatumReader<GenericRecord> datumReader;
-    private BinaryDecoder binaryDecoder;
-    
-    private DatumWriter<Object> writer = null;
-    private DataFileWriter<Object> dataFileWriter = null;
-    private GenericRecord wrapperRecord;
+  private AvroKaaEventSerializer(OutputStream out) {
+    this.out = out;
+    this.schemaSource = new AvroSchemaSource();
+  }
 
-    private int syncIntervalBytes;
-    private String compressionCodec;
-    private static Map<KaaSinkKey, Schema> schemaCache = new HashMap<KaaSinkKey, Schema>();
+  @Override
+  public void configure(Context context) {
+    syncIntervalBytes = context.getInteger(SYNC_INTERVAL_BYTES,
+        DEFAULT_SYNC_INTERVAL_BYTES);
+    compressionCodec = context.getString(COMPRESSION_CODEC,
+        DEFAULT_COMPRESSION_CODEC);
+    schemaSource.configure(context);
+  }
 
-    private AvroSchemaSource schemaSource;
+  @Override
+  public void afterCreate() throws IOException {
+    // no-op
+  }
 
-    private AvroKaaEventSerializer(OutputStream out) {
-        this.out = out;
-        this.schemaSource = new AvroSchemaSource();
+  @Override
+  public void afterReopen() throws IOException {
+    // impossible to initialize DataFileWriter without writing the schema?
+    throw new UnsupportedOperationException(
+        "Avro API doesn't support append");
+  }
+
+  @Override
+  public void write(Event event) throws IOException {
+    if (dataFileWriter == null) {
+      initialize(event);
     }
+    if (!(event instanceof KaaRecordEvent)) {
+      throw new IOException("Not instance of KaaRecordEvent!");
+    }
+    KaaRecordEvent kaaRecordEvent = (KaaRecordEvent) event;
+
+    binaryDecoder = DecoderFactory.get().binaryDecoder(kaaRecordEvent.getBody(), binaryDecoder);
+    GenericRecord recordData = datumReader.read(null, binaryDecoder);
+
+    wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD, kaaRecordEvent.getRecordHeader());
+    wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD, recordData);
+
+    dataFileWriter.append(wrapperRecord);
+  }
+
+  private void initialize(Event event) throws IOException {
+    Schema schema = null;
+    Schema wrapperSchema = null;
+    KaaSinkKey key = new KaaSinkKey(event.getHeaders());
+    schema = schemaCache.get(key);
+    if (schema == null) {
+      try {
+        schema = schemaSource.loadByKey(key);
+      } catch (Exception e) {
+        LOG.error("Unable to load schema by key {}", key);
+        LOG.error("Caused by: ", e);
+        throw new FlumeException("Could not find schema for event "
+            + event);
+      }
+      schemaCache.put(key, schema);
+    }
+
+    if (schema == null) {
+      String schemaString = event.getHeaders().get(
+          AVRO_SCHEMA_LITERAL_HEADER);
+      if (schemaString == null) {
+        throw new FlumeException("Could not find schema for event "
+            + event);
+      }
+      schema = new Schema.Parser().parse(schemaString);
+    }
+
+    datumReader = new GenericDatumReader<GenericRecord>(schema);
+
+    wrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schema.toString());
+
+    writer = new GenericDatumWriter<Object>(wrapperSchema);
+    dataFileWriter = new DataFileWriter<Object>(writer);
+
+    dataFileWriter.setSyncInterval(syncIntervalBytes);
+
+    try {
+      CodecFactory codecFactory = CodecFactory
+          .fromString(compressionCodec);
+      dataFileWriter.setCodec(codecFactory);
+    } catch (AvroRuntimeException e) {
+      LOG.warn("Unable to instantiate avro codec with name ("
+          + compressionCodec
+          + "). Compression disabled. Exception follows.", e);
+    }
+
+    dataFileWriter.create(wrapperSchema, out);
+    wrapperRecord = new GenericData.Record(wrapperSchema);
+  }
+
+  @Override
+  public void flush() throws IOException {
+    if (dataFileWriter != null) {
+      dataFileWriter.flush();
+    }
+  }
+
+  @Override
+  public void beforeClose() throws IOException {
+    // no-op
+  }
+
+  @Override
+  public boolean supportsReopen() {
+    return false;
+  }
+
+  public static class Builder implements EventSerializer.Builder {
 
     @Override
-    public void configure(Context context) {
-        syncIntervalBytes = context.getInteger(SYNC_INTERVAL_BYTES,
-                DEFAULT_SYNC_INTERVAL_BYTES);
-        compressionCodec = context.getString(COMPRESSION_CODEC,
-                DEFAULT_COMPRESSION_CODEC);
-        schemaSource.configure(context);
+    public EventSerializer build(Context context, OutputStream out) {
+      AvroKaaEventSerializer writer = new AvroKaaEventSerializer(out);
+      writer.configure(context);
+      return writer;
     }
 
-    @Override
-    public void afterCreate() throws IOException {
-        // no-op
-    }
-
-    @Override
-    public void afterReopen() throws IOException {
-        // impossible to initialize DataFileWriter without writing the schema?
-        throw new UnsupportedOperationException(
-                "Avro API doesn't support append");
-    }
-
-    @Override
-    public void write(Event event) throws IOException {
-        if (dataFileWriter == null) {
-            initialize(event);
-        }
-        if (!(event instanceof KaaRecordEvent)) {
-            throw new IOException("Not instance of KaaRecordEvent!");
-        }
-        KaaRecordEvent kaaRecordEvent = (KaaRecordEvent)event;
-        
-        binaryDecoder = DecoderFactory.get().binaryDecoder(kaaRecordEvent.getBody(), binaryDecoder);
-        GenericRecord recordData = datumReader.read(null, binaryDecoder);
-        
-        wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD, kaaRecordEvent.getRecordHeader());
-        wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD, recordData);
-        
-        dataFileWriter.append(wrapperRecord);
-    }
-
-    private void initialize(Event event) throws IOException {
-        Schema schema = null;
-        Schema wrapperSchema = null;
-        KaaSinkKey key = new KaaSinkKey(event.getHeaders());
-        schema = schemaCache.get(key);
-        if (schema == null) {
-            try {
-                schema = schemaSource.loadByKey(key);
-            } catch (Exception e) {
-                LOG.error("Unable to load schema by key {}", key);
-                LOG.error("Caused by: ", e);
-                throw new FlumeException("Could not find schema for event "
-                        + event);
-            }
-            schemaCache.put(key, schema);
-        }
-
-        if (schema == null) {
-            String schemaString = event.getHeaders().get(
-                    AVRO_SCHEMA_LITERAL_HEADER);
-            if (schemaString == null) {
-                throw new FlumeException("Could not find schema for event "
-                        + event);
-            }
-            schema = new Schema.Parser().parse(schemaString);
-        }
-        
-        datumReader = new GenericDatumReader<GenericRecord>(schema);
-        
-        wrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schema.toString());
-
-        writer = new GenericDatumWriter<Object>(wrapperSchema);
-        dataFileWriter = new DataFileWriter<Object>(writer);
-
-        dataFileWriter.setSyncInterval(syncIntervalBytes);
-
-        try {
-            CodecFactory codecFactory = CodecFactory
-                    .fromString(compressionCodec);
-            dataFileWriter.setCodec(codecFactory);
-        } catch (AvroRuntimeException e) {
-            LOG.warn("Unable to instantiate avro codec with name ("
-                    + compressionCodec
-                    + "). Compression disabled. Exception follows.", e);
-        }
-
-        dataFileWriter.create(wrapperSchema, out);
-        wrapperRecord = new GenericData.Record(wrapperSchema);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        if (dataFileWriter != null) {
-            dataFileWriter.flush();
-        }
-    }
-
-    @Override
-    public void beforeClose() throws IOException {
-        // no-op
-    }
-
-    @Override
-    public boolean supportsReopen() {
-        return false;
-    }
-
-    public static class Builder implements EventSerializer.Builder {
-
-        @Override
-        public EventSerializer build(Context context, OutputStream out) {
-            AvroKaaEventSerializer writer = new AvroKaaEventSerializer(out);
-            writer.configure(context);
-            return writer;
-        }
-
-    }
+  }
 
 }

@@ -16,21 +16,21 @@
 
 package org.kaaproject.kaa.server.common.dao.model;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HasVersion;
 
+import java.util.List;
+
 public interface EndpointProfile extends ToDto<EndpointProfileDto>, HasVersion {
 
-    byte[] getEndpointKey();
+  byte[] getEndpointKey();
 
-    String getId();
+  String getId();
 
-    String getEndpointUserId();
+  String getEndpointUserId();
 
-    void setEndpointUserId(String id);
+  void setEndpointUserId(String id);
 
-    List<String> getSubscriptions();
+  List<String> getSubscriptions();
 
 }

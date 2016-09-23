@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.common.server;
 
-public interface KaaCommandProcessorFactory<U,V> {
+public interface KaaCommandProcessorFactory<U, V> {
 
-    String getCommandName();
+  String getCommandName();
 
-    KaaCommandProcessor<U,V> createCommandProcessor();
+  KaaCommandProcessor<U, V> createCommandProcessor();
 
 }

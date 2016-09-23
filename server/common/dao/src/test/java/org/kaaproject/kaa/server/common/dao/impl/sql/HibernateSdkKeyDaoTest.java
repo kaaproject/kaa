@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,31 +25,33 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateSdkKeyDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void saveTest() {
-        SdkProfile saved = this.generateSdkProfile(null, null);
-        Assert.assertNotNull(saved.getId());
-    }
+  @Test
+  public void saveTest() {
+    SdkProfile saved = this.generateSdkProfile(null, null);
+    Assert.assertNotNull(saved.getId());
+  }
 
-    @Test
-    public void findSdkProfileByTokenTest() {
-        String token = HibernateSdkKeyDaoTest.class.getName();
-        SdkProfile saved = this.generateSdkProfile(null, token);
-        SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(token);
-        Assert.assertEquals(saved, loaded);
-    }
+  @Test
+  public void findSdkProfileByTokenTest() {
+    String token = HibernateSdkKeyDaoTest.class.getName();
+    SdkProfile saved = this.generateSdkProfile(null, token);
+    SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(token);
+    Assert.assertEquals(saved, loaded);
+  }
 
-    @Test
-    public void findSdkProfilesByApplicationIdTest() {
-        SdkProfile saved = this.generateSdkProfile(null, null);
-        List<SdkProfile> loaded = sdkProfileDao.findSdkProfileByApplicationId(saved.getApplication().getId().toString());
-        Assert.assertEquals(1, loaded.size());
-        Assert.assertEquals(saved, loaded.get(0));
-    }
+  @Test
+  public void findSdkProfilesByApplicationIdTest() {
+    SdkProfile saved = this.generateSdkProfile(null, null);
+    List<SdkProfile> loaded = sdkProfileDao.findSdkProfileByApplicationId(saved.getApplication().getId().toString());
+    Assert.assertEquals(1, loaded.size());
+    Assert.assertEquals(saved, loaded.get(0));
+  }
 }

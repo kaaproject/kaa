@@ -35,62 +35,62 @@ import java.nio.ByteBuffer;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointConfigurationDaoTest extends AbstractMongoTest {
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
+  @BeforeClass
+  public static void init() throws Exception {
+    MongoDBTestRunner.setUp();
+  }
 
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
+  @AfterClass
+  public static void after() throws Exception {
+    MongoDBTestRunner.tearDown();
+  }
 
-    @After
-    public void afterTest() {
-        MongoDataLoader.clearDBData();
-    }
+  @After
+  public void afterTest() {
+    MongoDataLoader.clearDBData();
+  }
 
-    @Test
-    public void saveEndpointConfigurationTest() {
-        EndpointConfigurationDto configurationDto = generateEndpointConfiguration();
-        MongoEndpointConfiguration found = endpointConfigurationDao.findById(ByteBuffer.wrap(configurationDto.getConfigurationHash()));
-        Assert.assertNotNull(found);
-        MongoEndpointConfiguration savedDto = endpointConfigurationDao.save(found);
-        Assert.assertNotNull(savedDto);
-        Assert.assertEquals(savedDto, found);
-    }
+  @Test
+  public void saveEndpointConfigurationTest() {
+    EndpointConfigurationDto configurationDto = generateEndpointConfiguration();
+    MongoEndpointConfiguration found = endpointConfigurationDao.findById(ByteBuffer.wrap(configurationDto.getConfigurationHash()));
+    Assert.assertNotNull(found);
+    MongoEndpointConfiguration savedDto = endpointConfigurationDao.save(found);
+    Assert.assertNotNull(savedDto);
+    Assert.assertEquals(savedDto, found);
+  }
 
-    @Test
-    public void findEndpointConfigurationByIdTest() {
-        EndpointConfigurationDto configurationDto = generateEndpointConfiguration();
-        MongoEndpointConfiguration found = endpointConfigurationDao.findById(ByteBuffer.wrap(configurationDto.getConfigurationHash()));
-        Assert.assertNotNull(found);
-    }
+  @Test
+  public void findEndpointConfigurationByIdTest() {
+    EndpointConfigurationDto configurationDto = generateEndpointConfiguration();
+    MongoEndpointConfiguration found = endpointConfigurationDao.findById(ByteBuffer.wrap(configurationDto.getConfigurationHash()));
+    Assert.assertNotNull(found);
+  }
 
-    @Test
-    public void removeEndpointConfigurationByIdTest() {
-        EndpointConfigurationDto endpointConfiguration = generateEndpointConfiguration();
-        Assert.assertNotNull(endpointConfiguration);
-        endpointConfigurationDao.removeById(ByteBuffer.wrap(endpointConfiguration.getConfigurationHash()));
-        MongoEndpointConfiguration found = endpointConfigurationDao.findById(ByteBuffer.wrap(endpointConfiguration.getConfigurationHash()));
-        Assert.assertNull(found);
-    }
+  @Test
+  public void removeEndpointConfigurationByIdTest() {
+    EndpointConfigurationDto endpointConfiguration = generateEndpointConfiguration();
+    Assert.assertNotNull(endpointConfiguration);
+    endpointConfigurationDao.removeById(ByteBuffer.wrap(endpointConfiguration.getConfigurationHash()));
+    MongoEndpointConfiguration found = endpointConfigurationDao.findById(ByteBuffer.wrap(endpointConfiguration.getConfigurationHash()));
+    Assert.assertNull(found);
+  }
 
-    @Test
-    public void removeEndpointConfigurationByHashTest() {
-        EndpointConfigurationDto endpointConfiguration = generateEndpointConfiguration();
-        Assert.assertNotNull(endpointConfiguration);
-        byte[] bytes = endpointConfiguration.getConfigurationHash();
-        endpointConfigurationDao.removeByHash(bytes);
-        MongoEndpointConfiguration configurationDto = endpointConfigurationDao.findByHash(bytes);
-        Assert.assertNull(configurationDto);
-    }
+  @Test
+  public void removeEndpointConfigurationByHashTest() {
+    EndpointConfigurationDto endpointConfiguration = generateEndpointConfiguration();
+    Assert.assertNotNull(endpointConfiguration);
+    byte[] bytes = endpointConfiguration.getConfigurationHash();
+    endpointConfigurationDao.removeByHash(bytes);
+    MongoEndpointConfiguration configurationDto = endpointConfigurationDao.findByHash(bytes);
+    Assert.assertNull(configurationDto);
+  }
 
-    @Test
-    public void convertToDtoTest() {
-        EndpointConfigurationDto endpointConfiguration = generateEndpointConfiguration();
-        Assert.assertNotNull(endpointConfiguration);
-        MongoEndpointConfiguration converted = new MongoEndpointConfiguration(endpointConfiguration);
-        Assert.assertEquals(endpointConfiguration, converted.toDto());
-    }
+  @Test
+  public void convertToDtoTest() {
+    EndpointConfigurationDto endpointConfiguration = generateEndpointConfiguration();
+    Assert.assertNotNull(endpointConfiguration);
+    MongoEndpointConfiguration converted = new MongoEndpointConfiguration(endpointConfiguration);
+    Assert.assertEquals(endpointConfiguration, converted.toDto());
+  }
 }

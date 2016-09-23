@@ -21,23 +21,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class MailPropertiesViewImpl extends BasePropertiesViewImpl {
 
-    public MailPropertiesViewImpl() {
-        super(false);
-    }
+  public MailPropertiesViewImpl() {
+    super(false);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return "";
-    }
+  @Override
+  protected String getCreateTitle() {
+    return "";
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.outgoingMail();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.outgoingMail();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.smtpMailServerDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.smtpMailServerDetails();
+  }
 
 }

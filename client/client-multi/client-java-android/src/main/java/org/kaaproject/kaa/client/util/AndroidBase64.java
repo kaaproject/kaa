@@ -18,28 +18,28 @@ package org.kaaproject.kaa.client.util;
 
 public class AndroidBase64 implements Base64 {
 
-    private static AndroidBase64 instance;
-    
-    public static AndroidBase64 getInstance() {
-        if (instance == null) {
-            instance = new AndroidBase64();
-        }
-        return instance;
-    }
-    
-    @Override
-    public byte[] decodeBase64(byte[] base64Data) {
-        return android.util.Base64.decode(base64Data,  android.util.Base64.DEFAULT);
-    }
+  private static AndroidBase64 instance;
 
-    @Override
-    public byte[] encodeBase64(byte[] binaryData) {
-        return android.util.Base64.encode(binaryData, android.util.Base64.DEFAULT);
+  public static AndroidBase64 getInstance() {
+    if (instance == null) {
+      instance = new AndroidBase64();
     }
+    return instance;
+  }
 
-    @Override
-    public byte[] decodeBase64(String base64String) {
-        return android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
-    }
+  @Override
+  public byte[] decodeBase64(byte[] base64Data) {
+    return android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT);
+  }
+
+  @Override
+  public byte[] encodeBase64(byte[] binaryData) {
+    return android.util.Base64.encode(binaryData, android.util.Base64.DEFAULT);
+  }
+
+  @Override
+  public byte[] decodeBase64(String base64String) {
+    return android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+  }
 
 }

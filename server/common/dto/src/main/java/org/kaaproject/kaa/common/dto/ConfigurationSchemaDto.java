@@ -18,52 +18,52 @@ package org.kaaproject.kaa.common.dto;
 
 public class ConfigurationSchemaDto extends BaseSchemaDto {
 
-    private static final long serialVersionUID = 7053272285029134851L;
+  private static final long serialVersionUID = 7053272285029134851L;
 
-    private String protocolSchema;
-    private String baseSchema;
-    private String overrideSchema;
-    private UpdateStatus status;
+  private String protocolSchema;
+  private String baseSchema;
+  private String overrideSchema;
+  private UpdateStatus status;
 
-    public String getProtocolSchema() {
-        return protocolSchema;
-    }
+  public String getProtocolSchema() {
+    return protocolSchema;
+  }
 
-    public void setProtocolSchema(String protocolSchema) {
-        this.protocolSchema = protocolSchema;
-    }
+  public void setProtocolSchema(String protocolSchema) {
+    this.protocolSchema = protocolSchema;
+  }
 
-    public String getBaseSchema() {
-        return baseSchema;
-    }
+  public String getBaseSchema() {
+    return baseSchema;
+  }
 
-    public void setBaseSchema(String baseSchema) {
-        this.baseSchema = baseSchema;
-    }
+  public void setBaseSchema(String baseSchema) {
+    this.baseSchema = baseSchema;
+  }
 
-    public String getOverrideSchema() {
-        return overrideSchema;
-    }
+  public String getOverrideSchema() {
+    return overrideSchema;
+  }
 
-    public void setOverrideSchema(String overrideSchema) {
-        this.overrideSchema = overrideSchema;
-    }
+  public void setOverrideSchema(String overrideSchema) {
+    this.overrideSchema = overrideSchema;
+  }
 
-    public UpdateStatus getStatus() {
-        return status;
-    }
+  public UpdateStatus getStatus() {
+    return status;
+  }
 
-    public void setStatus(UpdateStatus status) {
-        this.status = status;
-    }
+  public void setStatus(UpdateStatus status) {
+    this.status = status;
+  }
 
-    @Override
-    public String toString() {
-        return "ConfigurationSchemaDto{" +
-                "id='" + id + '\'' +
-                ", applicationId='" + applicationId + '\'' +
-                ", version=" + version +
-                ", status=" + status +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "ConfigurationSchemaDto{" +
+        "id='" + id + '\'' +
+        ", applicationId='" + applicationId + '\'' +
+        ", version=" + version +
+        ", status=" + status +
+        '}';
+  }
 }

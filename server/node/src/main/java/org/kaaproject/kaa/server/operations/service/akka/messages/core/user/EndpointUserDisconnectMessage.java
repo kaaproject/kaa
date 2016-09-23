@@ -23,35 +23,34 @@ import akka.actor.ActorRef;
 
 /**
  * Represents intent of endpoint to disconnect from local user actor
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
-public class EndpointUserDisconnectMessage extends EndpointAwareMessage implements UserAwareMessage{
+public class EndpointUserDisconnectMessage extends EndpointAwareMessage implements UserAwareMessage {
 
-    private final String userId;
+  private final String userId;
 
-    public EndpointUserDisconnectMessage(String userId, EndpointObjectHash endpointKey, String applicationToken, ActorRef originator) {
-        super(applicationToken, endpointKey, originator);
-        this.userId = userId;
-    }
+  public EndpointUserDisconnectMessage(String userId, EndpointObjectHash endpointKey, String applicationToken, ActorRef originator) {
+    super(applicationToken, endpointKey, originator);
+    this.userId = userId;
+  }
 
-    @Override
-    public String getUserId() {
-        return userId;
-    }
+  @Override
+  public String getUserId() {
+    return userId;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointUserDisconnectMessage [userId=");
-        builder.append(userId);
-        builder.append(", getAppToken()=");
-        builder.append(getAppToken());
-        builder.append(", getKey()=");
-        builder.append(getKey());
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointUserDisconnectMessage [userId=");
+    builder.append(userId);
+    builder.append(", getAppToken()=");
+    builder.append(getAppToken());
+    builder.append(", getKey()=");
+    builder.append(getKey());
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

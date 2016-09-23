@@ -21,23 +21,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class LogSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
-    public LogSchemaViewImpl(boolean create) {
-        super(create);
-    }
+  public LogSchemaViewImpl(boolean create) {
+    super(create);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addLogSchema();
-    }
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addLogSchema();
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.logSchema();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.logSchema();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.logSchemaDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.logSchemaDetails();
+  }
 
 }

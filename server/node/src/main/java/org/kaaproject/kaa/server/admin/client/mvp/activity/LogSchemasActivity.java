@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -31,62 +34,59 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class LogSchemasActivity extends AbstractBaseCtlSchemasActivity<LogSchemaDto, LogSchemasPlace> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public LogSchemasActivity(LogSchemasPlace place, ClientFactory clientFactory) {
-        super(place, LogSchemaDto.class, clientFactory);
-        this.applicationId = place.getApplicationId();
+  public LogSchemasActivity(LogSchemasPlace place, ClientFactory clientFactory) {
+    super(place, LogSchemaDto.class, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
+
+  @Override
+  protected BaseListView<LogSchemaDto> getView() {
+    return clientFactory.getLogSchemasView();
+  }
+
+  @Override
+  protected AbstractDataProvider<LogSchemaDto, String> getDataProvider(
+      AbstractGrid<LogSchemaDto, String> dataGrid) {
+    return new LogSchemasDataProvider(dataGrid, listView, applicationId);
+  }
+
+  @Override
+  protected Place newEntityPlace() {
+    return new LogSchemaPlace(applicationId, "");
+  }
+
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new LogSchemaPlace(applicationId, id);
+  }
+
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    callback.onSuccess((Void) null);
+  }
+
+  @Override
+  protected void onCustomRowAction(RowActionEvent<String> event) {
+    super.onCustomRowAction(event);
+    Integer schemaVersion = Integer.valueOf(event.getClickedId());
+
+    if (event.getAction() == KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY) {
+      KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY,
+          new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              Utils.handleException(caught, listView);
+            }
+
+            @Override
+            public void onSuccess(String key) {
+              ServletHelper.downloadRecordLibrary(key);
+            }
+          });
     }
-
-    @Override
-    protected BaseListView<LogSchemaDto> getView() {
-        return clientFactory.getLogSchemasView();
-    }
-
-    @Override
-    protected AbstractDataProvider<LogSchemaDto, String> getDataProvider(
-            AbstractGrid<LogSchemaDto, String> dataGrid) {
-        return new LogSchemasDataProvider(dataGrid, listView, applicationId);
-    }
-
-    @Override
-    protected Place newEntityPlace() {
-        return new LogSchemaPlace(applicationId, "");
-    }
-
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new LogSchemaPlace(applicationId, id);
-    }
-
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        callback.onSuccess((Void)null);
-    }
-
-    @Override
-    protected void onCustomRowAction(RowActionEvent<String> event) {
-        super.onCustomRowAction(event);
-        Integer schemaVersion = Integer.valueOf(event.getClickedId());
-
-        if (event.getAction() == KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY) {
-            KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY,
-                    new AsyncCallback<String>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            Utils.handleException(caught, listView);
-                        }
-
-                        @Override
-                        public void onSuccess(String key) {
-                            ServletHelper.downloadRecordLibrary(key);
-                        }
-                    });
-        }
-    }
+  }
 }

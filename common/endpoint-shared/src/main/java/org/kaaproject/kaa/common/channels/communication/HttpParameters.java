@@ -18,7 +18,6 @@ package org.kaaproject.kaa.common.channels.communication;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public class HttpParameters extends IPParameters {
 }

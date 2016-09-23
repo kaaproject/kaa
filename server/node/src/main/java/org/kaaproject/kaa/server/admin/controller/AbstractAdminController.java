@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.controller;
 
-import io.swagger.annotations.Api;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
@@ -48,148 +47,150 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import io.swagger.annotations.Api;
+
 /**
  * The Class AbstractAdminController.
  */
 @Api(value = "Admin REST API",
-        description = "Provides function for manage Kaa cluster", basePath = "/kaaAdmin/rest")
+    description = "Provides function for manage Kaa cluster", basePath = "/kaaAdmin/rest")
 @Controller
 @RequestMapping("api")
 public abstract class AbstractAdminController {
 
-    /**
-     * The Constant LOG.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminController.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminController.class);
 
-    /**
-     * The kaa admin UI service.
-     */
-    @Autowired
-    AdminUIService adminUIService;
+  /**
+   * The kaa admin UI service.
+   */
+  @Autowired
+  AdminUIService adminUIService;
 
-    /**
-     * The kaa application service.
-     */
-    @Autowired
-    ApplicationService applicationService;
+  /**
+   * The kaa application service.
+   */
+  @Autowired
+  ApplicationService applicationService;
 
-    /**
-     * The kaa configuration service.
-     */
-    @Autowired
-    ConfigurationService configurationService;
+  /**
+   * The kaa configuration service.
+   */
+  @Autowired
+  ConfigurationService configurationService;
 
-    /**
-     * The kaa CTL service.
-     */
-    @Autowired
-    CtlService ctlService;
+  /**
+   * The kaa CTL service.
+   */
+  @Autowired
+  CtlService ctlService;
 
-    /**
-     * The kaa device management service.
-     */
-    @Autowired
-    DeviceManagementService deviceManagementService;
+  /**
+   * The kaa device management service.
+   */
+  @Autowired
+  DeviceManagementService deviceManagementService;
 
-    /**
-     * The kaa event service.
-     */
-    @Autowired
-    EventService eventService;
+  /**
+   * The kaa event service.
+   */
+  @Autowired
+  EventService eventService;
 
-    /**
-     * The kaa group service.
-     */
-    @Autowired
-    GroupService groupService;
+  /**
+   * The kaa group service.
+   */
+  @Autowired
+  GroupService groupService;
 
-    /**
-     * The kaa logging service.
-     */
-    @Autowired
-    LoggingService loggingService;
+  /**
+   * The kaa logging service.
+   */
+  @Autowired
+  LoggingService loggingService;
 
-    /**
-     * The kaa notification service.
-     */
-    @Autowired
-    NotificationService notificationService;
+  /**
+   * The kaa notification service.
+   */
+  @Autowired
+  NotificationService notificationService;
 
-    /**
-     * The kaa profile service.
-     */
-    @Autowired
-    ProfileService profileService;
+  /**
+   * The kaa profile service.
+   */
+  @Autowired
+  ProfileService profileService;
 
-    /**
-     * The kaa sdk service.
-     */
-    @Autowired
-    SdkService sdkService;
+  /**
+   * The kaa sdk service.
+   */
+  @Autowired
+  SdkService sdkService;
 
-    /**
-     * The kaa tenant service.
-     */
-    @Autowired
-    TenantService tenantService;
+  /**
+   * The kaa tenant service.
+   */
+  @Autowired
+  TenantService tenantService;
 
-    /**
-     * The kaa user service.
-     */
-    @Autowired
-    UserService userService;
+  /**
+   * The kaa user service.
+   */
+  @Autowired
+  UserService userService;
 
-    /**
-     * The kaa verifier service.
-     */
-    @Autowired
-    VerifierService verifierService;
+  /**
+   * The kaa verifier service.
+   */
+  @Autowired
+  VerifierService verifierService;
 
-    /**
-     * The kaa auth service.
-     */
-    @Autowired
-    KaaAuthService kaaAuthService;
+  /**
+   * The kaa auth service.
+   */
+  @Autowired
+  KaaAuthService kaaAuthService;
 
-    /**
-     * The user facade.
-     */
-    @Autowired
-    UserFacade userFacade;
-    /**
-     * The control service.
-     */
-    @Autowired
-    ControlService controlService;
+  /**
+   * The user facade.
+   */
+  @Autowired
+  UserFacade userFacade;
+  /**
+   * The control service.
+   */
+  @Autowired
+  ControlService controlService;
 
-    /**
-     * The password encoder.
-     */
-    @Autowired
-    @Qualifier("encoder")
-    PasswordEncoder passwordEncoder;
+  /**
+   * The password encoder.
+   */
+  @Autowired
+  @Qualifier("encoder")
+  PasswordEncoder passwordEncoder;
 
 
-    /**
-     * Gets the file content.
-     *
-     * @param file the file
-     * @return the file content
-     * @throws KaaAdminServiceException the kaa admin service exception
-     */
-    protected byte[] getFileContent(MultipartFile file) throws KaaAdminServiceException {
-        if (!file.isEmpty()) {
-            LOG.debug("Uploading file with name '{}'", file.getOriginalFilename());
-            try {
-                return file.getBytes();
-            } catch (IOException e) {
-                throw Utils.handleException(e);
-            }
-        } else {
-            LOG.error("No file found in post request!");
-            throw new KaaAdminServiceException("No file found in post request!", ServiceErrorCode.FILE_NOT_FOUND);
-        }
+  /**
+   * Gets the file content.
+   *
+   * @param file the file
+   * @return the file content
+   * @throws KaaAdminServiceException the kaa admin service exception
+   */
+  protected byte[] getFileContent(MultipartFile file) throws KaaAdminServiceException {
+    if (!file.isEmpty()) {
+      LOG.debug("Uploading file with name '{}'", file.getOriginalFilename());
+      try {
+        return file.getBytes();
+      } catch (IOException e) {
+        throw Utils.handleException(e);
+      }
+    } else {
+      LOG.error("No file found in post request!");
+      throw new KaaAdminServiceException("No file found in post request!", ServiceErrorCode.FILE_NOT_FOUND);
     }
+  }
 
 }

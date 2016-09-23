@@ -20,21 +20,19 @@ import java.util.List;
 
 public interface SdkProfileDao<T> extends Dao<T, String> {
 
-    /**
-     * Returns an SDK profile with the given token.
-     *
-     * @param token An SDK profile token
-     *
-     * @return An SDK profile with the given token
-     */
-    public T findSdkProfileByToken(String token);
+  /**
+   * Returns an SDK profile with the given token.
+   *
+   * @param token An SDK profile token
+   * @return An SDK profile with the given token
+   */
+  public T findSdkProfileByToken(String token);
 
-    /**
-     * Returns a list of SDK profiles for an application with the given identifier.
-     *
-     * @param applicationId An application identifier
-     *
-     * @return A list of SDK profiles for an application with the given identifier
-     */
-    public List<T> findSdkProfileByApplicationId(String applicationId);
+  /**
+   * Returns a list of SDK profiles for an application with the given identifier.
+   *
+   * @param applicationId An application identifier
+   * @return A list of SDK profiles for an application with the given identifier
+   */
+  public List<T> findSdkProfileByApplicationId(String applicationId);
 }

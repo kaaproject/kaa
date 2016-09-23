@@ -18,37 +18,38 @@ package org.kaaproject.kaa.server.transports.http.transport.commands;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static org.kaaproject.kaa.common.Constants.RESPONSE_CONTENT_TYPE;
-import io.netty.handler.codec.http.HttpResponse;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand;
 
+import io.netty.handler.codec.http.HttpResponse;
+
 public class SyncCommandTest {
 
-    @Test
-    public void testSyncCommand() throws Exception {
-        SyncCommandFactory commandFactory = new SyncCommandFactory();
-        SyncCommand command = (SyncCommand)commandFactory.createCommandProcessor();
-        command.setResponseBody("responseBody".getBytes());
-        HttpResponse response = command.getResponse();
-        Assert.assertNotNull(response);
-        Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
-        Assert.assertEquals(ChannelType.SYNC, command.getChannelType());
-        Assert.assertEquals("", command.getName());
-        Assert.assertEquals("", AbstractCommand.getCommandName());
-        command.call();
-    }
+  @Test
+  public void testSyncCommand() throws Exception {
+    SyncCommandFactory commandFactory = new SyncCommandFactory();
+    SyncCommand command = (SyncCommand) commandFactory.createCommandProcessor();
+    command.setResponseBody("responseBody".getBytes());
+    HttpResponse response = command.getResponse();
+    Assert.assertNotNull(response);
+    Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
+    Assert.assertEquals(ChannelType.SYNC, command.getChannelType());
+    Assert.assertEquals("", command.getName());
+    Assert.assertEquals("", AbstractCommand.getCommandName());
+    command.call();
+  }
 
-    @Test
-    public void testLongSyncCommand(){
-        SyncCommandFactory commandFactory = new LongSyncCommandFactory();
-        SyncCommand command = (LongSyncCommand)commandFactory.createCommandProcessor();
-        command.setResponseBody("responseBody".getBytes());
-        HttpResponse response = command.getResponse();
-        Assert.assertNotNull(response);
-        Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
-        Assert.assertEquals(ChannelType.SYNC_WITH_TIMEOUT, command.getChannelType());
-    }
+  @Test
+  public void testLongSyncCommand() {
+    SyncCommandFactory commandFactory = new LongSyncCommandFactory();
+    SyncCommand command = (LongSyncCommand) commandFactory.createCommandProcessor();
+    command.setResponseBody("responseBody".getBytes());
+    HttpResponse response = command.getResponse();
+    Assert.assertNotNull(response);
+    Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
+    Assert.assertEquals(ChannelType.SYNC_WITH_TIMEOUT, command.getChannelType());
+  }
 }

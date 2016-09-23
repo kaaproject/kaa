@@ -18,11 +18,11 @@ package org.kaaproject.kaa.client.schema;
 
 public class SchemaRuntimeException extends RuntimeException {
 
-    public SchemaRuntimeException() {
+  public SchemaRuntimeException() {
 
-    }
+  }
 
-    public SchemaRuntimeException(String msg) {
-        super(msg);
-    }
+  public SchemaRuntimeException(String msg) {
+    super(msg);
+  }
 }

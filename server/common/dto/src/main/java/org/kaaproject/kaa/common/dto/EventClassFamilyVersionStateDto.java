@@ -20,79 +20,79 @@ import java.io.Serializable;
 
 public class EventClassFamilyVersionStateDto implements Serializable {
 
-    private static final long serialVersionUID = -1658174097110691624L;
+  private static final long serialVersionUID = -1658174097110691624L;
 
-    private String ecfId;
-    private int version;
+  private String ecfId;
+  private int version;
 
-    public EventClassFamilyVersionStateDto() {
-        super();
+  public EventClassFamilyVersionStateDto() {
+    super();
+  }
+
+  protected EventClassFamilyVersionStateDto(String ecfId, int version) {
+    super();
+    this.ecfId = ecfId;
+    this.version = version;
+  }
+
+  public String getEcfId() {
+    return ecfId;
+  }
+
+  public void setEcfId(String ecfId) {
+    this.ecfId = ecfId;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
+    result = prime * result + version;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    protected EventClassFamilyVersionStateDto(String ecfId, int version) {
-        super();
-        this.ecfId = ecfId;
-        this.version = version;
+    if (obj == null) {
+      return false;
     }
-
-    public void setEcfId(String ecfId) {
-        this.ecfId = ecfId;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setVersion(int version) {
-        this.version = version;
+    EventClassFamilyVersionStateDto other = (EventClassFamilyVersionStateDto) obj;
+    if (ecfId == null) {
+      if (other.ecfId != null) {
+        return false;
+      }
+    } else if (!ecfId.equals(other.ecfId)) {
+      return false;
     }
-
-    public String getEcfId() {
-        return ecfId;
+    if (version != other.version) {
+      return false;
     }
+    return true;
+  }
 
-    public int getVersion() {
-        return version;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
-        result = prime * result + version;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClassFamilyVersionStateDto other = (EventClassFamilyVersionStateDto) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
-                return false;
-            }
-        } else if (!ecfId.equals(other.ecfId)) {
-            return false;
-        }
-        if (version != other.version) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EventClassFamilyStateDto [ecfId=");
-        builder.append(ecfId);
-        builder.append(", version=");
-        builder.append(version);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EventClassFamilyStateDto [ecfId=");
+    builder.append(ecfId);
+    builder.append(", version=");
+    builder.append(version);
+    builder.append("]");
+    return builder.toString();
+  }
 }

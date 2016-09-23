@@ -25,17 +25,16 @@ import java.nio.ByteBuffer;
  * Receives and decodes the raw configuration data
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface ConfigurationProcessor {
 
-    /**
-     * Routine for processing received configuration data.
-     *
-     * @param   buffer      The input buffer with raw data
-     * @param   fullResync  Notify whether configuration is a full resync
-     * @throws  IOException the io exception
-     */
-    void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException;
+  /**
+   * Routine for processing received configuration data.
+   *
+   * @param buffer     The input buffer with raw data
+   * @param fullResync Notify whether configuration is a full resync
+   * @throws IOException the io exception
+   */
+  void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException;
 
 }

@@ -16,39 +16,39 @@
 
 package org.kaaproject.kaa.server.datamigration;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import static org.kaaproject.kaa.server.datamigration.utils.datadefinition.Constraint.constraint;
 import static org.kaaproject.kaa.server.datamigration.utils.datadefinition.ReferenceOptions.CASCADE;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CTLConfigurationMigration extends AbstractCTLMigration {
 
 
-    public CTLConfigurationMigration(Connection connection) {
-        super(connection);
-    }
+  public CTLConfigurationMigration(Connection connection) {
+    super(connection);
+  }
 
-    @Override
-    public void beforeTransform() throws SQLException {
-        super.beforeTransform();
+  @Override
+  public void beforeTransform() throws SQLException {
+    super.beforeTransform();
 
-        // change FK constraint between table that contains data and appropriate <feature>_schems table
-        dd.dropUnnamedFK("configuration", "configuration_schems");
-        dd.alterTable(getPrefixTableName())
-                .add(constraint("FK_configuration_schems_id")
-                        .foreignKey("configuration_schems_id")
-                        .references("configuration_schems", "id")
-                        .onDelete(CASCADE)
-                        .onUpdate(CASCADE)
-                )
-                .execute();
-    }
+    // change FK constraint between table that contains data and appropriate <feature>_schems table
+    dd.dropUnnamedFK("configuration", "configuration_schems");
+    dd.alterTable(getPrefixTableName())
+        .add(constraint("FK_configuration_schems_id")
+            .foreignKey("configuration_schems_id")
+            .references("configuration_schems", "id")
+            .onDelete(CASCADE)
+            .onUpdate(CASCADE)
+        )
+        .execute();
+  }
 
-    @Override
-    protected String getPrefixTableName() {
-        return "configuration";
-    }
+  @Override
+  protected String getPrefixTableName() {
+    return "configuration";
+  }
 
 
 }

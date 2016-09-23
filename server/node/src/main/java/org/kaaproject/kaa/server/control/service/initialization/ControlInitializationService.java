@@ -31,50 +31,58 @@ import org.springframework.stereotype.Service;
 @Service
 public class ControlInitializationService extends AbstractInitializationService {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ControlInitializationService.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(ControlInitializationService.class);
 
-    /** The control zookeeper service. */
-    @Autowired
-    private ControlZkService controlZkService;
+  /**
+   * The control zookeeper service.
+   */
+  @Autowired
+  private ControlZkService controlZkService;
 
-    /** Dynamic Load Distribution Service */
-    @Autowired
-    private LoadDistributionService loadMgmtService;
-    
-    /** The control zookeeper service. */
-    @Autowired
-    private InitializationService adminInitializationService;
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kaaproject.kaa.server.control.service.ControlService#start()
-     */
-    @Override
-    public void start() {
-        if (getNodeConfig().isZkEnabled()) {
-            controlZkService.start();
-            loadMgmtService.setZkService(controlZkService);
-            loadMgmtService.start();
-        }
-        adminInitializationService.start();
-        LOG.info("Control Service Started.");
+  /**
+   * Dynamic Load Distribution Service
+   */
+  @Autowired
+  private LoadDistributionService loadMgmtService;
+
+  /**
+   * The control zookeeper service.
+   */
+  @Autowired
+  private InitializationService adminInitializationService;
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.control.service.ControlService#start()
+   */
+  @Override
+  public void start() {
+    if (getNodeConfig().isZkEnabled()) {
+      controlZkService.start();
+      loadMgmtService.setZkService(controlZkService);
+      loadMgmtService.start();
     }
+    adminInitializationService.start();
+    LOG.info("Control Service Started.");
+  }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kaaproject.kaa.server.control.service.ControlService#stop()
-     */
-    @Override
-    public void stop() {
-        adminInitializationService.stop();
-        if (getNodeConfig().isZkEnabled()) {
-            loadMgmtService.shutdown();
-            controlZkService.stop();
-        }
-        LOG.info("Control Service Stopped.");
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.control.service.ControlService#stop()
+   */
+  @Override
+  public void stop() {
+    adminInitializationService.stop();
+    if (getNodeConfig().isZkEnabled()) {
+      loadMgmtService.shutdown();
+      controlZkService.stop();
     }
+    LOG.info("Control Service Stopped.");
+  }
 
 }

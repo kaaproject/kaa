@@ -25,36 +25,32 @@ import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
  * Updates the Endpoint manager state.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface UserTransport extends KaaTransport {
 
-    /**
-     * Creates new User update request.
-     *
-     * @return new User update request.
-     * @see UserSyncRequest
-     *
-     */
-    UserSyncRequest createUserRequest();
+  /**
+   * Creates new User update request.
+   *
+   * @return new User update request.
+   * @see UserSyncRequest
+   */
+  UserSyncRequest createUserRequest();
 
-    /**
-     * Updates the state of the Endpoint manager according to the given response.
-     *
-     * @param   response the response from the server.
-     * @throws  Exception the exception
-     * @see     UserSyncResponse
-     *
-     */
-    void onUserResponse(UserSyncResponse response) throws Exception;
+  /**
+   * Updates the state of the Endpoint manager according to the given response.
+   *
+   * @param response the response from the server.
+   * @throws Exception the exception
+   * @see UserSyncResponse
+   */
+  void onUserResponse(UserSyncResponse response) throws Exception;
 
-    /**
-     * Sets the given Endpoint processor.
-     *
-     * @param processor the Endpoint processor to be set.
-     * @see EndpointRegistrationProcessor
-     *
-     */
-    void setEndpointRegistrationProcessor(EndpointRegistrationProcessor processor);
+  /**
+   * Sets the given Endpoint processor.
+   *
+   * @param processor the Endpoint processor to be set.
+   * @see EndpointRegistrationProcessor
+   */
+  void setEndpointRegistrationProcessor(EndpointRegistrationProcessor processor);
 
 }

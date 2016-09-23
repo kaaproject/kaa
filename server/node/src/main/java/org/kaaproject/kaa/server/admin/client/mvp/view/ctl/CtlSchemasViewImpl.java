@@ -16,60 +16,60 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.ctl;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HasValue;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasValue;
-
 public class CtlSchemasViewImpl extends BaseListViewImpl<CTLSchemaMetaInfoDto> implements CtlSchemasView {
 
-        private CheckBox showHigherScopeCheckBox;
-    
-        public CtlSchemasViewImpl() {
-            super(true);
-            if (displayShowHigherLevelScopeCheckBox()) {
-                showHigherScopeCheckBox = new CheckBox(Utils.constants.displayHigherScopes());
-                showHigherScopeCheckBox.addStyleName(Utils.kaaAdminStyle.bAppContentTitle());
-                Element.as(showHigherScopeCheckBox.getElement().getChild(0)).
-                    getStyle().setMarginRight(10, Unit.PX);
-                showHigherScopeCheckBox.setValue(defaultShowHigherLevelScopes());
-                appendToolbarWidget(showHigherScopeCheckBox);
-            }
-        }
+  private CheckBox showHigherScopeCheckBox;
 
-        @Override
-        protected AbstractGrid<CTLSchemaMetaInfoDto, String> createGrid() {
-            return new CtlGrid(Unit.PX);
-        }
+  public CtlSchemasViewImpl() {
+    super(true);
+    if (displayShowHigherLevelScopeCheckBox()) {
+      showHigherScopeCheckBox = new CheckBox(Utils.constants.displayHigherScopes());
+      showHigherScopeCheckBox.addStyleName(Utils.kaaAdminStyle.bAppContentTitle());
+      Element.as(showHigherScopeCheckBox.getElement().getChild(0)).
+          getStyle().setMarginRight(10, Unit.PX);
+      showHigherScopeCheckBox.setValue(defaultShowHigherLevelScopes());
+      appendToolbarWidget(showHigherScopeCheckBox);
+    }
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.ctl();
-        }
+  @Override
+  protected AbstractGrid<CTLSchemaMetaInfoDto, String> createGrid() {
+    return new CtlGrid(Unit.PX);
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewCtl();
-        }
-        
-        @Override
-        public boolean displayShowHigherLevelScopeCheckBox() {
-            return false;
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.ctl();
+  }
 
-        @Override
-        public HasValue<Boolean> getShowHigherScopeCheckBox() {
-            return showHigherScopeCheckBox;
-        }
-        
-        protected boolean defaultShowHigherLevelScopes() {
-            return true;
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewCtl();
+  }
+
+  @Override
+  public boolean displayShowHigherLevelScopeCheckBox() {
+    return false;
+  }
+
+  @Override
+  public HasValue<Boolean> getShowHigherScopeCheckBox() {
+    return showHigherScopeCheckBox;
+  }
+
+  protected boolean defaultShowHigherLevelScopes() {
+    return true;
+  }
 }
 

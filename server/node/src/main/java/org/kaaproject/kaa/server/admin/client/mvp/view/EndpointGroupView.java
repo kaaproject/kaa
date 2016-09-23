@@ -16,44 +16,44 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.HasValue;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationStructGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterStructGrid;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.HasValue;
-
 public interface EndpointGroupView extends BaseDetailsView {
 
-    public void setReadOnly();
+  public void setReadOnly();
 
-    public HasValue<String> getName();
+  public HasValue<String> getName();
 
-    public HasValue<Integer> getWeight();
+  public HasValue<Integer> getWeight();
 
-    public HasValue<String> getDescription();
+  public HasValue<String> getDescription();
 
-    public HasValue<String> getCreatedUsername();
+  public HasValue<String> getCreatedUsername();
 
-    public HasValue<String> getCreatedDateTime();
+  public HasValue<String> getCreatedDateTime();
 
-    public ProfileFilterStructGrid getProfileFiltersGrid();
-    
-    public void setProfileFiltersVisible(boolean visible);
+  public ProfileFilterStructGrid getProfileFiltersGrid();
 
-    public ConfigurationStructGrid getConfigurationsGrid();
+  public void setProfileFiltersVisible(boolean visible);
 
-    public AbstractGrid<TopicDto, String> getTopicsGrid();
+  public ConfigurationStructGrid getConfigurationsGrid();
 
-    public HasClickHandlers getAddProfileFilterButton();
+  public AbstractGrid<TopicDto, String> getTopicsGrid();
 
-    public HasClickHandlers getAddConfigurationButton();
+  public HasClickHandlers getAddProfileFilterButton();
 
-    public HasClickHandlers getAddTopicButton();
+  public HasClickHandlers getAddConfigurationButton();
 
-    public HasValue<Boolean> getIncludeDeprecatedProfileFilters();
+  public HasClickHandlers getAddTopicButton();
 
-    public HasValue<Boolean> getIncludeDeprecatedConfigurations();
+  public HasValue<Boolean> getIncludeDeprecatedProfileFilters();
+
+  public HasValue<Boolean> getIncludeDeprecatedConfigurations();
 
 }

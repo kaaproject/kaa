@@ -20,8 +20,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public interface MqttFramelistener {
-    public void onMqttFrame(MqttFrame frame);
+  public void onMqttFrame(MqttFrame frame);
 }

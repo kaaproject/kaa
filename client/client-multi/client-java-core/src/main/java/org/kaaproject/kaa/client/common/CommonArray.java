@@ -22,14 +22,13 @@ import java.util.List;
  * Common array interface
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface CommonArray extends SchemaDependent {
 
-    /**
-     * @return list of common values
-     * @see CommonValue
-     */
-    List<CommonValue> getList();
+  /**
+   * @return list of common values
+   * @see CommonValue
+   */
+  List<CommonValue> getList();
 
 }

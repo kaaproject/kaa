@@ -31,13 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class HibernateTenantDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void testRemoveTenantByName() {
-        Tenant tenant = generateTenant();
-        Tenant found = tenantDao.findByName(tenant.getName());
-        Assert.assertNotNull(found);
-        tenantDao.removeByName(tenant.getName());
-        found = tenantDao.findByName(tenant.getName());
-        Assert.assertNull(found);
-    }
+  @Test
+  public void testRemoveTenantByName() {
+    Tenant tenant = generateTenant();
+    Tenant found = tenantDao.findByName(tenant.getName());
+    Assert.assertNotNull(found);
+    tenantDao.removeByName(tenant.getName());
+    found = tenantDao.findByName(tenant.getName());
+    Assert.assertNull(found);
+  }
 }

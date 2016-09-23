@@ -23,24 +23,24 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class LogSchemasViewImpl extends BaseListViewImpl<LogSchemaDto> {
 
-    public LogSchemasViewImpl() {
-        super(true);
-    }
+  public LogSchemasViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<LogSchemaDto, String> createGrid() {
-        return new LogSchemaGrid();
-    }
+  @Override
+  protected AbstractGrid<LogSchemaDto, String> createGrid() {
+    return new LogSchemaGrid();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.logSchemas();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.logSchemas();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewSchema();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewSchema();
+  }
 
 }
 

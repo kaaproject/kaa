@@ -20,8 +20,6 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME;
 
-import java.nio.ByteBuffer;
-
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
@@ -29,57 +27,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.nio.ByteBuffer;
+
 @Repository(value = "endpointConfigurationDao")
 public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer>
-        implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
+    implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
 
-    @Override
-    protected Class<CassandraEndpointConfiguration> getColumnFamilyClass() {
-        return CassandraEndpointConfiguration.class;
+  @Override
+  protected Class<CassandraEndpointConfiguration> getColumnFamilyClass() {
+    return CassandraEndpointConfiguration.class;
+  }
+
+  @Override
+  protected String getColumnFamilyName() {
+    return ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME;
+  }
+
+  @Override
+  public CassandraEndpointConfiguration findByHash(final byte[] hash) {
+    LOG.debug("Try to find endpoint configuration by hash [{}] ", hash);
+    return (CassandraEndpointConfiguration) getMapper().get(getByteBuffer(hash));
+  }
+
+  @Override
+  public void removeByHash(final byte[] hash) {
+    LOG.debug("Remove endpoint configuration by hash [{}] ", hash);
+    getMapper().delete(getByteBuffer(hash));
+  }
+
+  @Override
+  public CassandraEndpointConfiguration save(EndpointConfigurationDto dto) {
+    LOG.debug("Save endpoint configuration [{}] ", dto);
+    return save(new CassandraEndpointConfiguration(dto));
+  }
+
+  @Override
+  public CassandraEndpointConfiguration findById(ByteBuffer key) {
+    LOG.debug("Try to find endpoint configuration by hash [{}] ", key);
+    CassandraEndpointConfiguration configuration = null;
+    if (key != null) {
+      configuration = findByHash(getBytes(key));
     }
+    LOG.debug("[{}] Found endpoint configuration by hash {} ", key, configuration);
+    return configuration;
+  }
 
-    @Override
-    protected String getColumnFamilyName() {
-        return ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME;
+  @Override
+  public void removeById(ByteBuffer key) {
+    LOG.debug("Remove endpoint configuration by hash [{}] ", key);
+    if (key != null) {
+      removeByHash(getBytes(key));
     }
-
-    @Override
-    public CassandraEndpointConfiguration findByHash(final byte[] hash) {
-        LOG.debug("Try to find endpoint configuration by hash [{}] ", hash);
-        return (CassandraEndpointConfiguration) getMapper().get(getByteBuffer(hash));
-    }
-
-    @Override
-    public void removeByHash(final byte[] hash) {
-        LOG.debug("Remove endpoint configuration by hash [{}] ", hash);
-        getMapper().delete(getByteBuffer(hash));
-    }
-
-    @Override
-    public CassandraEndpointConfiguration save(EndpointConfigurationDto dto) {
-        LOG.debug("Save endpoint configuration [{}] ", dto);
-        return save(new CassandraEndpointConfiguration(dto));
-    }
-
-    @Override
-    public CassandraEndpointConfiguration findById(ByteBuffer key) {
-        LOG.debug("Try to find endpoint configuration by hash [{}] ", key);
-        CassandraEndpointConfiguration configuration = null;
-        if (key != null) {
-            configuration = findByHash(getBytes(key));
-        }
-        LOG.debug("[{}] Found endpoint configuration by hash {} ", key, configuration);
-        return configuration;
-    }
-
-    @Override
-    public void removeById(ByteBuffer key) {
-        LOG.debug("Remove endpoint configuration by hash [{}] ", key);
-        if (key != null) {
-            removeByHash(getBytes(key));
-        }
-    }
+  }
 
 }

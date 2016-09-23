@@ -21,43 +21,43 @@ import com.google.web.bindery.event.shared.EventBus;
 
 public abstract class AbstractSchemaPlaceApplication extends SchemasPlaceApplication {
 
-    protected String schemaId;
+  protected String schemaId;
 
-    public AbstractSchemaPlaceApplication(String applicationId, String schemaId) {
-        super(applicationId);
-        this.schemaId = schemaId;
-    }
+  public AbstractSchemaPlaceApplication(String applicationId, String schemaId) {
+    super(applicationId);
+    this.schemaId = schemaId;
+  }
 
-    public String getSchemaId() {
-        return schemaId;
-    }
+  public String getSchemaId() {
+    return schemaId;
+  }
 
-    public static abstract class Tokenizer<P extends AbstractSchemaPlaceApplication> implements PlaceTokenizer<P>, PlaceConstants {
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
 
-        @Override
-        public P getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(SCHEMA_ID));
-        }
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    return null;
+  }
 
-        protected abstract P getPlaceImpl(String applicationId, String schemaId);
-
-        @Override
-        public String getToken(P place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(SCHEMA_ID, place.getSchemaId());
-            return PlaceParams.generateToken();
-        }
-    }
+  public static abstract class Tokenizer<P extends AbstractSchemaPlaceApplication> implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
-    public boolean isLeaf() {
-        return true;
+    public P getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(SCHEMA_ID));
     }
 
+    protected abstract P getPlaceImpl(String applicationId, String schemaId);
+
     @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
+    public String getToken(P place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      PlaceParams.putParam(SCHEMA_ID, place.getSchemaId());
+      return PlaceParams.generateToken();
     }
+  }
 }

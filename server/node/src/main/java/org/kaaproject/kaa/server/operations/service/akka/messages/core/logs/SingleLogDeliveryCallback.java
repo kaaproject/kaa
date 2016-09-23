@@ -24,27 +24,25 @@ import akka.actor.ActorRef;
  */
 public class SingleLogDeliveryCallback extends AbstractActorCallback {
 
-    /**
-     * Instantiates a new actor log delivery callback.
-     * 
-     * @param actor
-     *            the actor
-     * @param requestId
-     *            the request id
-     */
-    public SingleLogDeliveryCallback(ActorRef actor, int requestId) {
-        super(actor, requestId);
-    }
+  /**
+   * Instantiates a new actor log delivery callback.
+   *
+   * @param actor     the actor
+   * @param requestId the request id
+   */
+  public SingleLogDeliveryCallback(ActorRef actor, int requestId) {
+    super(actor, requestId);
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback
-     * #onSuccess()
-     */
-    @Override
-    public void onSuccess() {
-        sendSuccessToEndpoint();
-    }
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback
+   * #onSuccess()
+   */
+  @Override
+  public void onSuccess() {
+    sendSuccessToEndpoint();
+  }
 }

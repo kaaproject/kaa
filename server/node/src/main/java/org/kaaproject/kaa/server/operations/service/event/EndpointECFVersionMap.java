@@ -16,39 +16,39 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-
 public class EndpointECFVersionMap {
 
-    private final Map<EndpointObjectHash, Map<String, Integer>> map;
+  private final Map<EndpointObjectHash, Map<String, Integer>> map;
 
-    public EndpointECFVersionMap() {
-        super();
-        map = new HashMap<EndpointObjectHash, Map<String, Integer>>();
-    }
+  public EndpointECFVersionMap() {
+    super();
+    map = new HashMap<EndpointObjectHash, Map<String, Integer>>();
+  }
 
-    public void put(EndpointObjectHash endpoint, List<EventClassFamilyVersion> versions) {
-        Map<String, Integer> innerMap = new HashMap<>();
-        for (EventClassFamilyVersion ecfVersion : versions) {
-            innerMap.put(ecfVersion.getEcfId(), ecfVersion.getVersion());
-        }
-        map.put(endpoint, innerMap);
+  public void put(EndpointObjectHash endpoint, List<EventClassFamilyVersion> versions) {
+    Map<String, Integer> innerMap = new HashMap<>();
+    for (EventClassFamilyVersion ecfVersion : versions) {
+      innerMap.put(ecfVersion.getEcfId(), ecfVersion.getVersion());
     }
+    map.put(endpoint, innerMap);
+  }
 
-    public Integer get(EndpointObjectHash endpoint, String ecfId) {
-        Map<String, Integer> ecfVersions = map.get(endpoint);
-        if (ecfVersions != null) {
-            return ecfVersions.get(ecfId);
-        } else {
-            return null;
-        }
+  public Integer get(EndpointObjectHash endpoint, String ecfId) {
+    Map<String, Integer> ecfVersions = map.get(endpoint);
+    if (ecfVersions != null) {
+      return ecfVersions.get(ecfId);
+    } else {
+      return null;
     }
+  }
 
-    public boolean remove(EndpointObjectHash endpoint){
-        return map.remove(endpoint) != null;
-    }
+  public boolean remove(EndpointObjectHash endpoint) {
+    return map.remove(endpoint) != null;
+  }
 }

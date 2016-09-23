@@ -19,106 +19,106 @@ package org.kaaproject.kaa.server.sync;
 import java.nio.ByteBuffer;
 
 public class ProfileClientSync {
-    private ByteBuffer endpointPublicKey;
-    private ByteBuffer profileBody;
-    private String endpointAccessToken;
+  private ByteBuffer endpointPublicKey;
+  private ByteBuffer profileBody;
+  private String endpointAccessToken;
 
 
-    public ProfileClientSync() {
+  public ProfileClientSync() {
+  }
+
+
+  public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
+                           String endpointAccessToken) {
+    this.endpointPublicKey = endpointPublicKey;
+    this.profileBody = profileBody;
+    this.endpointAccessToken = endpointAccessToken;
+  }
+
+
+  public ByteBuffer getEndpointPublicKey() {
+    return endpointPublicKey;
+  }
+
+  public void setEndpointPublicKey(ByteBuffer value) {
+    this.endpointPublicKey = value;
+  }
+
+
+  public ByteBuffer getProfileBody() {
+    return profileBody;
+  }
+
+  public void setProfileBody(ByteBuffer value) {
+    this.profileBody = value;
+  }
+
+
+  public String getEndpointAccessToken() {
+    return endpointAccessToken;
+  }
+
+  public void setEndpointAccessToken(String value) {
+    this.endpointAccessToken = value;
+  }
+
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
+    result = prime * result + ((endpointPublicKey == null) ? 0 : endpointPublicKey.hashCode());
+    result = prime * result + ((profileBody == null) ? 0 : profileBody.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-
-    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
-            String endpointAccessToken) {
-        this.endpointPublicKey = endpointPublicKey;
-        this.profileBody = profileBody;
-        this.endpointAccessToken = endpointAccessToken;
+    if (obj == null) {
+      return false;
     }
-
-
-    public ByteBuffer getEndpointPublicKey() {
-        return endpointPublicKey;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setEndpointPublicKey(ByteBuffer value) {
-        this.endpointPublicKey = value;
+    ProfileClientSync other = (ProfileClientSync) obj;
+    if (endpointAccessToken == null) {
+      if (other.endpointAccessToken != null) {
+        return false;
+      }
+    } else if (!endpointAccessToken.equals(other.endpointAccessToken)) {
+      return false;
     }
-
-
-    public ByteBuffer getProfileBody() {
-        return profileBody;
+    if (endpointPublicKey == null) {
+      if (other.endpointPublicKey != null) {
+        return false;
+      }
+    } else if (!endpointPublicKey.equals(other.endpointPublicKey)) {
+      return false;
     }
-
-    public void setProfileBody(ByteBuffer value) {
-        this.profileBody = value;
+    if (profileBody == null) {
+      if (other.profileBody != null) {
+        return false;
+      }
+    } else if (!profileBody.equals(other.profileBody)) {
+      return false;
     }
+    return true;
+  }
 
-
-    public String getEndpointAccessToken() {
-        return endpointAccessToken;
-    }
-
-    public void setEndpointAccessToken(String value) {
-        this.endpointAccessToken = value;
-    }
-
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
-        result = prime * result + ((endpointPublicKey == null) ? 0 : endpointPublicKey.hashCode());
-        result = prime * result + ((profileBody == null) ? 0 : profileBody.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ProfileClientSync other = (ProfileClientSync) obj;
-        if (endpointAccessToken == null) {
-            if (other.endpointAccessToken != null) {
-                return false;
-            }
-        } else if (!endpointAccessToken.equals(other.endpointAccessToken)) {
-            return false;
-        }
-        if (endpointPublicKey == null) {
-            if (other.endpointPublicKey != null) {
-                return false;
-            }
-        } else if (!endpointPublicKey.equals(other.endpointPublicKey)) {
-            return false;
-        }
-        if (profileBody == null) {
-            if (other.profileBody != null) {
-                return false;
-            }
-        } else if (!profileBody.equals(other.profileBody)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ProfileClientSync [endpointPublicKey=");
-        builder.append(endpointPublicKey);
-        builder.append(", profileBody=");
-        builder.append(profileBody);
-        builder.append(", endpointAccessToken=");
-        builder.append(endpointAccessToken);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ProfileClientSync [endpointPublicKey=");
+    builder.append(endpointPublicKey);
+    builder.append(", profileBody=");
+    builder.append(profileBody);
+    builder.append(", endpointAccessToken=");
+    builder.append(endpointAccessToken);
+    builder.append("]");
+    return builder.toString();
+  }
 }

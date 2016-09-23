@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 public interface HasVersion {
-    int getVersion();
+  int getVersion();
 }

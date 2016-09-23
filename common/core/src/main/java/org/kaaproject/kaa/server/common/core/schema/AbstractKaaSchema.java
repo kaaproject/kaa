@@ -18,58 +18,58 @@ package org.kaaproject.kaa.server.common.core.schema;
 
 public abstract class AbstractKaaSchema implements KaaSchema {
 
-    private static final long serialVersionUID = 3174607197960720521L;
+  private static final long serialVersionUID = 3174607197960720521L;
 
-    private final String rawSchema;
+  private final String rawSchema;
 
-    public AbstractKaaSchema(String schema) {
-        this.rawSchema = schema;
+  public AbstractKaaSchema(String schema) {
+    this.rawSchema = schema;
+  }
+
+  @Override
+  public String getRawSchema() {
+    return rawSchema;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return rawSchema.isEmpty();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((rawSchema == null) ? 0 : rawSchema.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Override
-    public String getRawSchema() {
-        return rawSchema;
+    if (obj == null) {
+      return false;
     }
-
-    @Override
-    public boolean isEmpty() {
-        return rawSchema.isEmpty();
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((rawSchema == null) ? 0 : rawSchema.hashCode());
-        return result;
+    AbstractKaaSchema other = (AbstractKaaSchema) obj;
+    if (rawSchema == null) {
+      if (other.rawSchema != null) {
+        return false;
+      }
+    } else if (!rawSchema.equals(other.rawSchema)) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractKaaSchema other = (AbstractKaaSchema) obj;
-        if (rawSchema == null) {
-            if (other.rawSchema != null) {
-                return false;
-            }
-        } else if (!rawSchema.equals(other.rawSchema)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractKaaSchema [rawSchema=" + rawSchema + "]";
-    }
+  @Override
+  public String toString() {
+    return "AbstractKaaSchema [rawSchema=" + rawSchema + "]";
+  }
 
 }

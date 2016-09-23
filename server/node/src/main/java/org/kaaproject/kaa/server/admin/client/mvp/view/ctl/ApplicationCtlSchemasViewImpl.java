@@ -20,19 +20,19 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ApplicationCtlSchemasViewImpl extends CtlSchemasViewImpl {
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.applicationCtlTitle();
-    }
-    
-    @Override
-    public boolean displayShowHigherLevelScopeCheckBox() {
-        return true;
-    }
-    
-    @Override
-    protected boolean defaultShowHigherLevelScopes() {
-        return false;
-    }
-    
+  @Override
+  protected String titleString() {
+    return Utils.constants.applicationCtlTitle();
+  }
+
+  @Override
+  public boolean displayShowHigherLevelScopeCheckBox() {
+    return true;
+  }
+
+  @Override
+  protected boolean defaultShowHigherLevelScopes() {
+    return false;
+  }
+
 }

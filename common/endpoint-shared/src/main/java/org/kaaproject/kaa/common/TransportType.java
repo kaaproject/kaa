@@ -21,14 +21,13 @@ package org.kaaproject.kaa.common;
  * every Channel can support.
  *
  * @author Andrey Panasenko
- *
  */
 public enum TransportType {
-    BOOTSTRAP,
-    PROFILE,
-    CONFIGURATION,
-    NOTIFICATION,
-    USER,
-    EVENT,
-    LOGGING
+  BOOTSTRAP,
+  PROFILE,
+  CONFIGURATION,
+  NOTIFICATION,
+  USER,
+  EVENT,
+  LOGGING
 }

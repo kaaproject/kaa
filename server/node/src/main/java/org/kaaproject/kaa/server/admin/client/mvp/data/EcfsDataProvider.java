@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
@@ -24,28 +24,29 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class EcfsDataProvider extends AbstractDataProvider<EventClassFamilyDto, String>{
+public class EcfsDataProvider extends AbstractDataProvider<EventClassFamilyDto, String> {
 
-    public EcfsDataProvider(AbstractGrid<EventClassFamilyDto, String> dataGrid,
-                            HasErrorMessage hasErrorMessage) {
-        super(dataGrid, hasErrorMessage);
-    }
+  public EcfsDataProvider(AbstractGrid<EventClassFamilyDto, String> dataGrid,
+                          HasErrorMessage hasErrorMessage) {
+    super(dataGrid, hasErrorMessage);
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadEcfs(new AsyncCallback<List<EventClassFamilyDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadEcfs(new AsyncCallback<List<EventClassFamilyDto>>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<EventClassFamilyDto> result) {
-                callback.onSuccess(result);
-            }
-        });
-    }
+      }
+
+      @Override
+      public void onSuccess(List<EventClassFamilyDto> result) {
+        callback.onSuccess(result);
+      }
+    });
+  }
 
 }

@@ -18,87 +18,87 @@ package org.kaaproject.kaa.server.datamigration.utils;
 
 
 final public class Options {
-    public static final String DEFAULT_USER_NAME = "sqladmin";
-    public static final String DEFAULT_PASSWORD = "admin";
-    public static final String DEFAULT_DB_NAME = "kaa";
-    public static final String DEFAULT_HOST = "localhost";
-    public static final String DEFAULT_NO_SQL = "mongo";
-    public static final String DEFAULT_DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
-    public static final String DEFAULT_JDBC_URL = "jdbc:mysql:failover://localhost:3333/kaa";
+  public static final String DEFAULT_USER_NAME = "sqladmin";
+  public static final String DEFAULT_PASSWORD = "admin";
+  public static final String DEFAULT_DB_NAME = "kaa";
+  public static final String DEFAULT_HOST = "localhost";
+  public static final String DEFAULT_NO_SQL = "mongo";
+  public static final String DEFAULT_DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+  public static final String DEFAULT_JDBC_URL = "jdbc:mysql:failover://localhost:3333/kaa";
 
-    private String username = DEFAULT_USER_NAME;
-    private String password = DEFAULT_PASSWORD;
-    private String dbName = DEFAULT_DB_NAME;
-    private String host = DEFAULT_HOST;
-    private String noSQL = DEFAULT_NO_SQL;
-    private String driverClassName = DEFAULT_DRIVER_CLASS_NAME;
-    private String jdbcUrl = DEFAULT_JDBC_URL;
+  private String username = DEFAULT_USER_NAME;
+  private String password = DEFAULT_PASSWORD;
+  private String dbName = DEFAULT_DB_NAME;
+  private String host = DEFAULT_HOST;
+  private String noSQL = DEFAULT_NO_SQL;
+  private String driverClassName = DEFAULT_DRIVER_CLASS_NAME;
+  private String jdbcUrl = DEFAULT_JDBC_URL;
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public String getDbName() {
-        return dbName;
-    }
+  public String getDbName() {
+    return dbName;
+  }
 
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
-    }
+  public void setDbName(String dbName) {
+    this.dbName = dbName;
+  }
 
-    public String getHost() {
-        return host;
-    }
+  public String getHost() {
+    return host;
+  }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+  public void setHost(String host) {
+    this.host = host;
+  }
 
-    public String getNoSQL() {
-        return noSQL;
-    }
+  public String getNoSQL() {
+    return noSQL;
+  }
 
-    public void setNoSQL(String noSQL) {
-        this.noSQL = noSQL;
-    }
+  public void setNoSQL(String noSQL) {
+    this.noSQL = noSQL;
+  }
 
-    public String getDriverClassName() {
-        return driverClassName;
-    }
+  public String getDriverClassName() {
+    return driverClassName;
+  }
 
-    public void setDriverClassName(String driverClassName) {
-        this.driverClassName = driverClassName;
-    }
+  public void setDriverClassName(String driverClassName) {
+    this.driverClassName = driverClassName;
+  }
 
-    public String getJdbcUrl() {
-        return jdbcUrl;
-    }
+  public String getJdbcUrl() {
+    return jdbcUrl;
+  }
 
-    public void setJdbcUrl(String jdbcUrl) {
-        this.jdbcUrl = jdbcUrl;
-    }
+  public void setJdbcUrl(String jdbcUrl) {
+    this.jdbcUrl = jdbcUrl;
+  }
 
-    @Override
-    public String toString() {
-        return "Options{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", dbName='" + dbName + '\'' +
-                ", host='" + host + '\'' +
-                ", driverClassName='" + driverClassName + '\'' +
-                ", jdbcUrl='" + jdbcUrl + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Options{" +
+        "username='" + username + '\'' +
+        ", password='" + password + '\'' +
+        ", dbName='" + dbName + '\'' +
+        ", host='" + host + '\'' +
+        ", driverClassName='" + driverClassName + '\'' +
+        ", jdbcUrl='" + jdbcUrl + '\'' +
+        '}';
+  }
 }

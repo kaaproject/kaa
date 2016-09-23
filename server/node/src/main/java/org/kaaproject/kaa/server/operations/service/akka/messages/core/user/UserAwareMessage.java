@@ -18,6 +18,6 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
 public interface UserAwareMessage {
 
-    public String getUserId();
+  public String getUserId();
 
 }

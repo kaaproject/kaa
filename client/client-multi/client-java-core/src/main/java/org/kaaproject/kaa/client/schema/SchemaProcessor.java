@@ -16,32 +16,31 @@
 
 package org.kaaproject.kaa.client.schema;
 
+import org.apache.avro.Schema;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import org.apache.avro.Schema;
 
 /**
  * Receives the data from stream and creates the schema object.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface SchemaProcessor {
 
-    /**
-     * Loads new schema from the buffer.
-     *
-     * @throws IOException in case of loading schema failure
-     * @param buffer schema buffer
-     */
-    void loadSchema(ByteBuffer buffer) throws IOException;
+  /**
+   * Loads new schema from the buffer.
+   *
+   * @param buffer schema buffer
+   * @throws IOException in case of loading schema failure
+   */
+  void loadSchema(ByteBuffer buffer) throws IOException;
 
-    /**
-     * Retrieves current schema object.
-     *
-     * @return current schema.
-     * @see org.apache.avro.Schema
-     */
-    Schema getSchema();
+  /**
+   * Retrieves current schema object.
+   *
+   * @return current schema.
+   * @see org.apache.avro.Schema
+   */
+  Schema getSchema();
 }

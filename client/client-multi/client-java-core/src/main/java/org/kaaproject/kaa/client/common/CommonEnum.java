@@ -20,12 +20,11 @@ package org.kaaproject.kaa.client.common;
  * Common enum interface
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface CommonEnum extends SchemaDependent {
 
-    /**
-     * @return enum symbol
-     */
-    String getSymbol();
+  /**
+   * @return enum symbol
+   */
+  String getSymbol();
 }

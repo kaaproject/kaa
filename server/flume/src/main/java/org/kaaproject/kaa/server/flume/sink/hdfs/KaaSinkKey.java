@@ -15,85 +15,85 @@
  */
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
-import java.util.Map;
-
 import org.apache.hadoop.fs.Path;
+
+import java.util.Map;
 
 public class KaaSinkKey implements EventConstants {
 
-    private final String applicationToken;
-    private final int schemaVersion;
-    
-    public KaaSinkKey(String applicationToken,
-            int schemaVersion) {
-        super();
-        this.applicationToken = applicationToken;
-        this.schemaVersion = schemaVersion;
-    }
-    
-    public KaaSinkKey(Map<String,String> headers) {
-        this.applicationToken = headers.get(APPLICATION_TOKEN_HEADER);
-        this.schemaVersion = Integer.valueOf(headers.get(SCHEMA_VERSION_HEADER));
-    }
+  private final String applicationToken;
+  private final int schemaVersion;
 
-    public String getApplicationToken() {
-        return applicationToken;
-    }
+  public KaaSinkKey(String applicationToken,
+                    int schemaVersion) {
+    super();
+    this.applicationToken = applicationToken;
+    this.schemaVersion = schemaVersion;
+  }
 
-    public int getSchemaVersion() {
-        return schemaVersion;
-    }
-    
-    public void updateHeaders(Map<String,String> headers) {
-        headers.put(APPLICATION_TOKEN_HEADER, applicationToken);
-        headers.put(SCHEMA_VERSION_HEADER, ""+schemaVersion);
-    }
-    
-    public String getPath() {
-        return applicationToken + Path.SEPARATOR + schemaVersion;
-    }
+  public KaaSinkKey(Map<String, String> headers) {
+    this.applicationToken = headers.get(APPLICATION_TOKEN_HEADER);
+    this.schemaVersion = Integer.valueOf(headers.get(SCHEMA_VERSION_HEADER));
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime
-                * result
-                + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result + schemaVersion;
-        return result;
-    }
+  public String getApplicationToken() {
+    return applicationToken;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        KaaSinkKey other = (KaaSinkKey) obj;
-        if (applicationToken == null) {
-            if (other.applicationToken != null) {
-                return false;
-            }
-        } else if (!applicationToken.equals(other.applicationToken)) {
-            return false;
-        }
-        if (schemaVersion != other.schemaVersion) {
-            return false;
-        }
-        return true;
+  public int getSchemaVersion() {
+    return schemaVersion;
+  }
+
+  public void updateHeaders(Map<String, String> headers) {
+    headers.put(APPLICATION_TOKEN_HEADER, applicationToken);
+    headers.put(SCHEMA_VERSION_HEADER, "" + schemaVersion);
+  }
+
+  public String getPath() {
+    return applicationToken + Path.SEPARATOR + schemaVersion;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime
+        * result
+        + ((applicationToken == null) ? 0 : applicationToken.hashCode());
+    result = prime * result + schemaVersion;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    KaaSinkKey other = (KaaSinkKey) obj;
+    if (applicationToken == null) {
+      if (other.applicationToken != null) {
+        return false;
+      }
+    } else if (!applicationToken.equals(other.applicationToken)) {
+      return false;
+    }
+    if (schemaVersion != other.schemaVersion) {
+      return false;
+    }
+    return true;
+  }
 
 
-    @Override
-    public String toString() {
-        return "KaaSinkKey [applicationToken=" + applicationToken
-                + ", schemaVersion=" + schemaVersion + "]";
-    }
+  @Override
+  public String toString() {
+    return "KaaSinkKey [applicationToken=" + applicationToken
+        + ", schemaVersion=" + schemaVersion + "]";
+  }
 
 }

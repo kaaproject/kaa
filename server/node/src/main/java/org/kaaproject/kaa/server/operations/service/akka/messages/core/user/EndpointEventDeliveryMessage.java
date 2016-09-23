@@ -16,44 +16,43 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-public class EndpointEventDeliveryMessage implements UserAwareMessage{
+public class EndpointEventDeliveryMessage implements UserAwareMessage {
 
-    public static enum EventDeliveryStatus {
-        SUCCESS, 
-        FAILURE
-    }
+  private final EndpointEventReceiveMessage message;
+  private final EventDeliveryStatus status;
+  public EndpointEventDeliveryMessage(EndpointEventReceiveMessage message,
+                                      EventDeliveryStatus status) {
+    this.message = message;
+    this.status = status;
+  }
 
-    private final EndpointEventReceiveMessage message;
-    private final EventDeliveryStatus status;
+  @Override
+  public String getUserId() {
+    return message.getUserId();
+  }
 
-    public EndpointEventDeliveryMessage(EndpointEventReceiveMessage message,
-            EventDeliveryStatus status) {
-        this.message = message;
-        this.status = status;
-    }
+  public EndpointEventReceiveMessage getMessage() {
+    return message;
+  }
 
-    @Override
-    public String getUserId() {
-        return message.getUserId();
-    }
+  public EventDeliveryStatus getStatus() {
+    return status;
+  }
 
-    public EndpointEventReceiveMessage getMessage() {
-        return message;
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointEventDeliveryMessage [message=");
+    builder.append(message);
+    builder.append(", status=");
+    builder.append(status);
+    builder.append("]");
+    return builder.toString();
+  }
 
-    public EventDeliveryStatus getStatus() {
-        return status;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointEventDeliveryMessage [message=");
-        builder.append(message);
-        builder.append(", status=");
-        builder.append(status);
-        builder.append("]");
-        return builder.toString();
-    }
+  public static enum EventDeliveryStatus {
+    SUCCESS,
+    FAILURE
+  }
 
 }

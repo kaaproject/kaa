@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 
 import java.util.List;
@@ -25,12 +26,12 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/applicationService")
 public interface ApplicationService extends RemoteService {
 
-    List<ApplicationDto> getApplications() throws KaaAdminServiceException;
+  List<ApplicationDto> getApplications() throws KaaAdminServiceException;
 
-    ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException;
 
-    ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException;
+  ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException;
 
-    ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException;
+  ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException;
 
 }

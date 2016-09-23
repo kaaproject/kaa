@@ -16,42 +16,42 @@
 
 package org.kaaproject.kaa.server.admin.shared.config;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
+
+import java.io.Serializable;
 
 public class ConfigurationRecordViewDto extends StructureRecordDto<ConfigurationRecordFormDto> implements Serializable, Comparable<ConfigurationRecordViewDto> {
 
-    private static final long serialVersionUID = 5838762122987694212L;
-    
-    public ConfigurationRecordViewDto() {
-        super();
-    }
+  private static final long serialVersionUID = 5838762122987694212L;
 
-    public ConfigurationRecordViewDto(ConfigurationRecordFormDto activeConfiguration, ConfigurationRecordFormDto inactiveConfiguration) {
-        super(activeConfiguration, inactiveConfiguration);
-    }
+  public ConfigurationRecordViewDto() {
+    super();
+  }
 
-    public int getSchemaVersion() {
-      return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
-    }
-    
-    public String getSchemaId() {
-        return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
-    }
+  public ConfigurationRecordViewDto(ConfigurationRecordFormDto activeConfiguration, ConfigurationRecordFormDto inactiveConfiguration) {
+    super(activeConfiguration, inactiveConfiguration);
+  }
 
-    @Override
-    public int compareTo(ConfigurationRecordViewDto o) {
-        return this.getSchemaVersion() - o.getSchemaVersion();
-    }
+  public int getSchemaVersion() {
+    return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
+  public String getSchemaId() {
+    return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
+  }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+  @Override
+  public int compareTo(ConfigurationRecordViewDto o) {
+    return this.getSchemaVersion() - o.getSchemaVersion();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 }

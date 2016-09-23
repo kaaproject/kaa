@@ -23,17 +23,21 @@ import org.kaaproject.kaa.common.Constants;
  */
 public interface CommonBSConstants extends Constants { //NOSONAR
 
-    public static final String BOOTSTRAP_DOMAIN = "BS"; //NOSONAR
+  public static final String BOOTSTRAP_DOMAIN = "BS"; //NOSONAR
 
-    public static final String BOOTSTRAP_RESOLVE_COMMAND = "Resolve"; //NOSONAR
-    public static final String BOOTSTRAP_RESOLVE_URI = URI_DELIM + BOOTSTRAP_DOMAIN + URI_DELIM //NOSONAR
-            + BOOTSTRAP_RESOLVE_COMMAND;
+  public static final String BOOTSTRAP_RESOLVE_COMMAND = "Resolve"; //NOSONAR
+  public static final String BOOTSTRAP_RESOLVE_URI = URI_DELIM + BOOTSTRAP_DOMAIN + URI_DELIM //NOSONAR
+      + BOOTSTRAP_RESOLVE_COMMAND;
 
-    /** The Constant RESPONSE_TYPE. */
-    public static final String RESPONSE_TYPE = "X-RESPONSETYPE"; //NOSONAR
+  /**
+   * The Constant RESPONSE_TYPE.
+   */
+  public static final String RESPONSE_TYPE = "X-RESPONSETYPE"; //NOSONAR
 
-    /** The Constant RESPONSE_TYPE_BOOTSTRAP. */
-    public static final String RESPONSE_TYPE_BOOTSTRAP = "bootstrap"; //NOSONAR
+  /**
+   * The Constant RESPONSE_TYPE_BOOTSTRAP.
+   */
+  public static final String RESPONSE_TYPE_BOOTSTRAP = "bootstrap"; //NOSONAR
 
-    public static final String APPLICATION_TOKEN_ATTR_NAME = "Application-Token"; //NOSONAR
+  public static final String APPLICATION_TOKEN_ATTR_NAME = "Application-Token"; //NOSONAR
 }

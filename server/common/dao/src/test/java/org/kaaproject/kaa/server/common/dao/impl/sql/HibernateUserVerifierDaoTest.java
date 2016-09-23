@@ -33,16 +33,16 @@ import java.util.UUID;
 @Transactional
 public class HibernateUserVerifierDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void testFindByAppIdAndVerifierToken() {
-        String token = UUID.randomUUID().toString();
-        UserVerifier expected = generateUserVerifier(null, token);
-        generateUserVerifier(expected.getApplication(), UUID.randomUUID().toString());
-        generateUserVerifier(null, UUID.randomUUID().toString());
-        UserVerifier found = verifierDao.findByAppIdAndVerifierToken(expected.getApplication().getStringId(), token);
-        Assert.assertEquals(expected, found);
-        UserVerifier expectNull = verifierDao.findByAppIdAndVerifierToken(expected.getApplication().getStringId(), UUID.randomUUID().toString());
-        Assert.assertNull(expectNull);
-    }
+  @Test
+  public void testFindByAppIdAndVerifierToken() {
+    String token = UUID.randomUUID().toString();
+    UserVerifier expected = generateUserVerifier(null, token);
+    generateUserVerifier(expected.getApplication(), UUID.randomUUID().toString());
+    generateUserVerifier(null, UUID.randomUUID().toString());
+    UserVerifier found = verifierDao.findByAppIdAndVerifierToken(expected.getApplication().getStringId(), token);
+    Assert.assertEquals(expected, found);
+    UserVerifier expectNull = verifierDao.findByAppIdAndVerifierToken(expected.getApplication().getStringId(), UUID.randomUUID().toString());
+    Assert.assertNull(expectNull);
+  }
 
 }

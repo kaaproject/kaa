@@ -22,10 +22,10 @@ package org.kaaproject.kaa.server.common.core.algorithms.override;
  */
 public interface OverrideAlgorithmFactory {
 
-    /**
-     * Creates a new OverrideAlgorithm object.
-     *
-     * @return the override algorithm
-     */
-    OverrideAlgorithm createConfigurationOverrideAlgorithm();
+  /**
+   * Creates a new OverrideAlgorithm object.
+   *
+   * @return the override algorithm
+   */
+  OverrideAlgorithm createConfigurationOverrideAlgorithm();
 }

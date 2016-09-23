@@ -22,34 +22,31 @@ import akka.actor.ActorRef;
 
 public class MultiLogDeliveryCallback extends AbstractActorCallback {
 
-    private final AtomicInteger appendersCount;
+  private final AtomicInteger appendersCount;
 
-    /**
-     * Instantiates a new actor log delivery callback.
-     * 
-     * @param actor
-     *            the actor
-     * @param requestId
-     *            the request id
-     * @param appendersCount
-     *            the count of appenders that need to confirm delivery
-     */
-    public MultiLogDeliveryCallback(ActorRef actor, int requestId, int appendersCount) {
-        super(actor, requestId);
-        this.appendersCount = new AtomicInteger(appendersCount);
-    }
+  /**
+   * Instantiates a new actor log delivery callback.
+   *
+   * @param actor          the actor
+   * @param requestId      the request id
+   * @param appendersCount the count of appenders that need to confirm delivery
+   */
+  public MultiLogDeliveryCallback(ActorRef actor, int requestId, int appendersCount) {
+    super(actor, requestId);
+    this.appendersCount = new AtomicInteger(appendersCount);
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback
-     * #onSuccess()
-     */
-    @Override
-    public void onSuccess() {
-        if (appendersCount.decrementAndGet() == 0) {
-            sendSuccessToEndpoint();
-        }
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback
+   * #onSuccess()
+   */
+  @Override
+  public void onSuccess() {
+    if (appendersCount.decrementAndGet() == 0) {
+      sendSuccessToEndpoint();
     }
+  }
 }

@@ -16,87 +16,87 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
-import java.io.Serializable;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
+import java.io.Serializable;
 
 @Document
 public final class LogEvent implements Serializable {
 
-    private static final long serialVersionUID = -2738374699172219071L;
+  private static final long serialVersionUID = -2738374699172219071L;
 
-    @Id
-    private String id;
-    private DBObject header;
-    private DBObject event;
-    private DBObject clientProfile;
-    private DBObject serverProfile;
+  @Id
+  private String id;
+  private DBObject header;
+  private DBObject event;
+  private DBObject clientProfile;
+  private DBObject serverProfile;
 
-    public LogEvent() {
+  public LogEvent() {
 
-    }
+  }
 
-    public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
-        this.id = dto.getId();
-        this.header = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getHeader()));
-        this.event = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getEvent()));
-        this.clientProfile = (clientProfile != null) ? MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(clientProfile.getBody())) : null;
-        this.serverProfile = (serverProfile != null) ? MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(serverProfile.getBody())) : null;
-    }
+  public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
+    this.id = dto.getId();
+    this.header = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getHeader()));
+    this.event = MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(dto.getEvent()));
+    this.clientProfile = (clientProfile != null) ? MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(clientProfile.getBody())) : null;
+    this.serverProfile = (serverProfile != null) ? MongoDaoUtil.encodeReservedCharacteres((DBObject) JSON.parse(serverProfile.getBody())) : null;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public DBObject getEvent() {
-        return event;
-    }
+  public DBObject getEvent() {
+    return event;
+  }
 
-    public void setEvent(DBObject event) {
-        this.event = MongoDaoUtil.encodeReservedCharacteres(event);
-    }
+  public void setEvent(DBObject event) {
+    this.event = MongoDaoUtil.encodeReservedCharacteres(event);
+  }
 
-    public DBObject getHeader() {
-        return header;
-    }
+  public DBObject getHeader() {
+    return header;
+  }
 
-    public void setHeader(DBObject header) {
-        this.header = MongoDaoUtil.encodeReservedCharacteres(header);
-    }
+  public void setHeader(DBObject header) {
+    this.header = MongoDaoUtil.encodeReservedCharacteres(header);
+  }
 
-    public DBObject getClientProfile() {
-        return clientProfile;
-    }
+  public DBObject getClientProfile() {
+    return clientProfile;
+  }
 
-    public void setClientProfile(DBObject clientProfile) {
-        this.clientProfile = MongoDaoUtil.encodeReservedCharacteres(clientProfile);
-    }
+  public void setClientProfile(DBObject clientProfile) {
+    this.clientProfile = MongoDaoUtil.encodeReservedCharacteres(clientProfile);
+  }
 
-    public DBObject getServerProfile() {
-        return serverProfile;
-    }
+  public DBObject getServerProfile() {
+    return serverProfile;
+  }
 
-    public void setServerProfile(DBObject serverProfile) {
-        this.serverProfile = MongoDaoUtil.encodeReservedCharacteres(serverProfile);
-    }
+  public void setServerProfile(DBObject serverProfile) {
+    this.serverProfile = MongoDaoUtil.encodeReservedCharacteres(serverProfile);
+  }
 
-    @Override
-    public String toString() {
-        return "LogEvent [id=" + id + ", header=" + header != null ? MongoDaoUtil.decodeReservedCharacteres(header).toString() : "" + ", event=" +
-                event != null ? MongoDaoUtil.decodeReservedCharacteres(event).toString() : "" + ", clientProfile=" +
-                clientProfile != null ? MongoDaoUtil.decodeReservedCharacteres(clientProfile).toString() : "" + ", serverProfile=" +
-                serverProfile != null ? MongoDaoUtil.decodeReservedCharacteres(serverProfile).toString() : "" + "]";
-    }
+  @Override
+  public String toString() {
+    return "LogEvent [id=" + id + ", header=" + header != null ? MongoDaoUtil.decodeReservedCharacteres(header).toString() : "" + ", event=" +
+        event != null ? MongoDaoUtil.decodeReservedCharacteres(event).toString() : "" + ", clientProfile=" +
+        clientProfile != null ? MongoDaoUtil.decodeReservedCharacteres(clientProfile).toString() : "" + ", serverProfile=" +
+        serverProfile != null ? MongoDaoUtil.decodeReservedCharacteres(serverProfile).toString() : "" + "]";
+  }
 
 }

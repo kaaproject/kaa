@@ -20,7 +20,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse
 
 /**
  * @author Andrey Panasenko
- *
  */
 public interface PingResponseListener extends MessageListener<PingResponse> {
 

@@ -20,24 +20,24 @@ import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 
 public class TestCliThriftService extends BaseCliThriftService {
 
-    private final String thriftCliServerName;
-    
-    /**
-     * Instantiates a new test cli thrift service.
-     *
-     * @param thriftCliServerName the thrift cli server name
-     */
-    public TestCliThriftService(String thriftCliServerName) {
-        this.thriftCliServerName = thriftCliServerName;
-    }
-    
-    @Override
-    protected String getServerShortName() {
-        return thriftCliServerName;
-    }
+  private final String thriftCliServerName;
 
-    @Override
-    protected void initServiceCommands() {
-    }
+  /**
+   * Instantiates a new test cli thrift service.
+   *
+   * @param thriftCliServerName the thrift cli server name
+   */
+  public TestCliThriftService(String thriftCliServerName) {
+    this.thriftCliServerName = thriftCliServerName;
+  }
+
+  @Override
+  protected String getServerShortName() {
+    return thriftCliServerName;
+  }
+
+  @Override
+  protected void initServiceCommands() {
+  }
 
 }

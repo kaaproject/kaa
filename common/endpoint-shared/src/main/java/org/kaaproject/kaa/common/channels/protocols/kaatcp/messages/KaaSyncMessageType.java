@@ -22,25 +22,25 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
  * UNUSED    0           reserved value
  * SYNC      1           Sync request/response
  * BOOTSTRAP 2           Bootstrap resolve/response
- * 
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 public enum KaaSyncMessageType {
-    UNUSED((byte)0),
-    SYNC((byte)1);
-    
-    private byte type;
-    
-    private KaaSyncMessageType(byte type) {
-        this.type = type;
-    }
+  UNUSED((byte) 0),
+  SYNC((byte) 1);
 
-    /**
-     * Return byte representation of KAASYNC subcomand MessageType enum.
-     * @return byte type
-     */
-    public byte getType() {
-        return type;
-    }
+  private byte type;
+
+  private KaaSyncMessageType(byte type) {
+    this.type = type;
+  }
+
+  /**
+   * Return byte representation of KAASYNC subcomand MessageType enum.
+   *
+   * @return byte type
+   */
+  public byte getType() {
+    return type;
+  }
 }

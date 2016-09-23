@@ -22,31 +22,31 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DataCollectionDBHelper extends SQLiteOpenHelper {
-    private static final String TAG = "DataCollectionDBHelper";
+  private static final String TAG = "DataCollectionDBHelper";
 
-    public DataCollectionDBHelper(Context context, String name) {
-        super(context, name, null, PersistentLogStorageConstants.DB_VERSION);
-    }
+  public DataCollectionDBHelper(Context context, String name) {
+    super(context, name, null, PersistentLogStorageConstants.DB_VERSION);
+  }
 
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        Log.i(TAG, "Database is being created");
-        sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_LOG_TABLE);
-        sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_INFO_TABLE);
-        sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_BUCKET_ID_INDEX);
-        Log.i(TAG, "Database with its tables and indices was successfully created");
-    }
+  @Override
+  public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    Log.i(TAG, "Database is being created");
+    sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_LOG_TABLE);
+    sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_INFO_TABLE);
+    sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_BUCKET_ID_INDEX);
+    Log.i(TAG, "Database with its tables and indices was successfully created");
+  }
 
-    /*
-     * This method is called when database is upgraded like modifying
-     * the table structure, adding constraints to database etc.
-     */
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        Log.i(TAG, "Database was upgraded. Dropping its contents");
+  /*
+   * This method is called when database is upgraded like modifying
+   * the table structure, adding constraints to database etc.
+   */
+  @Override
+  public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+    Log.i(TAG, "Database was upgraded. Dropping its contents");
 
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.LOG_TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.STORAGE_INFO_TABLE_NAME);
-        onCreate(sqLiteDatabase);
-    }
+    sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.LOG_TABLE_NAME);
+    sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.STORAGE_INFO_TABLE_NAME);
+    onCreate(sqLiteDatabase);
+  }
 }

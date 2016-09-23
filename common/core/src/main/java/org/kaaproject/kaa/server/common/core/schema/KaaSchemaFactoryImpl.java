@@ -18,24 +18,24 @@ package org.kaaproject.kaa.server.common.core.schema;
 
 public class KaaSchemaFactoryImpl implements KaaSchemaFactory {
 
-    @Override
-    public BaseSchema createBaseSchema(String schema) {
-        return new BaseSchema(schema);
-    }
+  @Override
+  public BaseSchema createBaseSchema(String schema) {
+    return new BaseSchema(schema);
+  }
 
-    @Override
-    public OverrideSchema createOverrideSchema(String schema) {
-        return new OverrideSchema(schema);
-    }
+  @Override
+  public OverrideSchema createOverrideSchema(String schema) {
+    return new OverrideSchema(schema);
+  }
 
-    @Override
-    public ProtocolSchema createProtocolSchema(String schema) {
-        return new ProtocolSchema(schema);
-    }
+  @Override
+  public ProtocolSchema createProtocolSchema(String schema) {
+    return new ProtocolSchema(schema);
+  }
 
-    @Override
-    public DataSchema createDataSchema(String schema) {
-        return new DataSchema(schema);
-    }
+  @Override
+  public DataSchema createDataSchema(String schema) {
+    return new DataSchema(schema);
+  }
 
 }

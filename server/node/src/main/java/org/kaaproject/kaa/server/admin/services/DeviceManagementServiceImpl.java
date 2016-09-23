@@ -38,112 +38,112 @@ import java.util.Optional;
 @Service("deviceManagementService")
 public class DeviceManagementServiceImpl extends AbstractAdminService implements DeviceManagementService {
 
-    @Override
-    public CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        try {
-            String applicationId = checkApplicationToken(applicationToken);
-            return this.controlService.provisionCredentials(applicationId, credentialsBody);
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+  @Override
+  public CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException {
+    this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+    try {
+      String applicationId = checkApplicationToken(applicationToken);
+      return this.controlService.provisionCredentials(applicationId, credentialsBody);
+    } catch (Exception cause) {
+      throw Utils.handleException(cause);
     }
+  }
 
-    @Override
-    public void provisionRegistration(
-            String applicationToken,
-            String credentialsId,
-            Integer serverProfileVersion,
-            String serverProfileBody)
-            throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        try {
-            String applicationId = checkApplicationToken(applicationToken);
-            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
-            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
-            Validate.isTrue(credentials.get().getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
-            if (serverProfileVersion != null && serverProfileBody != null) {
-                ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
-                this.validateServerProfile(serverProfileSchema, serverProfileBody);
-            } else if (serverProfileVersion != null || serverProfileBody != null) {
-                String missingParameter = (serverProfileVersion == null ? "schema version" : "body");
-                String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
-                throw new IllegalArgumentException(message);
-            }
-            this.controlService.provisionRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+  @Override
+  public void provisionRegistration(
+      String applicationToken,
+      String credentialsId,
+      Integer serverProfileVersion,
+      String serverProfileBody)
+      throws KaaAdminServiceException {
+    this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+    try {
+      String applicationId = checkApplicationToken(applicationToken);
+      Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+      Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+      Validate.isTrue(credentials.get().getStatus() != CredentialsStatus.REVOKED, "The credentials with the given ID are revoked!");
+      if (serverProfileVersion != null && serverProfileBody != null) {
+        ServerProfileSchemaDto serverProfileSchema = this.getServerProfileSchema(applicationId, serverProfileVersion);
+        this.validateServerProfile(serverProfileSchema, serverProfileBody);
+      } else if (serverProfileVersion != null || serverProfileBody != null) {
+        String missingParameter = (serverProfileVersion == null ? "schema version" : "body");
+        String message = MessageFormat.format("The server-side endpoint profile {0} provided is empty!", missingParameter);
+        throw new IllegalArgumentException(message);
+      }
+      this.controlService.provisionRegistration(applicationId, credentialsId, serverProfileVersion, serverProfileBody);
+    } catch (Exception cause) {
+      throw Utils.handleException(cause);
     }
+  }
 
-    @Override
-    public void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        try {
-            String applicationId = checkApplicationToken(applicationToken);
-            Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId).isPresent(), "No credentials with the given ID found!");
-            this.controlService.revokeCredentials(applicationId, credentialsId);
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+  @Override
+  public void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException {
+    this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+    try {
+      String applicationId = checkApplicationToken(applicationToken);
+      Validate.isTrue(this.controlService.getCredentials(applicationId, credentialsId).isPresent(), "No credentials with the given ID found!");
+      this.controlService.revokeCredentials(applicationId, credentialsId);
+    } catch (Exception cause) {
+      throw Utils.handleException(cause);
     }
+  }
 
-    @Override
-    public void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        try {
-            String applicationId = checkApplicationToken(applicationToken);
-            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
-            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
-            Validate.isTrue(credentials.get().getStatus() == CredentialsStatus.REVOKED, "Credentails with the given ID are not revoked!");
-            this.controlService.onCredentailsRevoked(applicationId, credentials.get().getId());
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+  @Override
+  public void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException {
+    this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+    try {
+      String applicationId = checkApplicationToken(applicationToken);
+      Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+      Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+      Validate.isTrue(credentials.get().getStatus() == CredentialsStatus.REVOKED, "Credentails with the given ID are not revoked!");
+      this.controlService.onCredentailsRevoked(applicationId, credentials.get().getId());
+    } catch (Exception cause) {
+      throw Utils.handleException(cause);
     }
+  }
 
-    @Override
-    public CredentialsStatus getCredentialsStatus(
-            String applicationToken,
-            String credentialsId
-    ) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-        try {
-            String applicationId = checkApplicationToken(applicationToken);
-            Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
-            Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
-            return credentials.get().getStatus();
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+  @Override
+  public CredentialsStatus getCredentialsStatus(
+      String applicationToken,
+      String credentialsId
+  ) throws KaaAdminServiceException {
+    this.checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+    try {
+      String applicationId = checkApplicationToken(applicationToken);
+      Optional<CredentialsDto> credentials = this.controlService.getCredentials(applicationId, credentialsId);
+      Validate.isTrue(credentials.isPresent(), "No credentials with the given ID found!");
+      return credentials.get().getStatus();
+    } catch (Exception cause) {
+      throw Utils.handleException(cause);
     }
+  }
 
-    @Override
-    public List<String> getCredentialsServiceNames() throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.values());
-        try {
-            return this.controlService.getCredentialsServiceNames();
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+  @Override
+  public List<String> getCredentialsServiceNames() throws KaaAdminServiceException {
+    this.checkAuthority(KaaAuthorityDto.values());
+    try {
+      return this.controlService.getCredentialsServiceNames();
+    } catch (Exception cause) {
+      throw Utils.handleException(cause);
     }
+  }
 
-    private ServerProfileSchemaDto getServerProfileSchema(String applicationId, Integer serverProfileVersion) throws Exception {
-        ServerProfileSchemaDto serverProfileSchema = this.controlService.getServerProfileSchemaByApplicationIdAndVersion(applicationId, serverProfileVersion);
-        if (serverProfileSchema == null) {
-            throw new NotFoundException("No server-side endpoint profile schema found!");
-        }
-        return serverProfileSchema;
+  private ServerProfileSchemaDto getServerProfileSchema(String applicationId, Integer serverProfileVersion) throws Exception {
+    ServerProfileSchemaDto serverProfileSchema = this.controlService.getServerProfileSchemaByApplicationIdAndVersion(applicationId, serverProfileVersion);
+    if (serverProfileSchema == null) {
+      throw new NotFoundException("No server-side endpoint profile schema found!");
     }
+    return serverProfileSchema;
+  }
 
-    private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema, String serverProfileBody) throws Exception {
-        CTLSchemaDto commonType = this.controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
-        Schema typeSchema = this.controlService.exportCTLSchemaFlatAsSchema(commonType);
-        try {
-            new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
-        } catch (Exception cause) {
-            throw new IllegalArgumentException("Invalid server-side endpoint profile body provided!");
-        }
+  private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema, String serverProfileBody) throws Exception {
+    CTLSchemaDto commonType = this.controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
+    Schema typeSchema = this.controlService.exportCTLSchemaFlatAsSchema(commonType);
+    try {
+      new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
+    } catch (Exception cause) {
+      throw new IllegalArgumentException("Invalid server-side endpoint profile body provided!");
     }
+  }
 
 }

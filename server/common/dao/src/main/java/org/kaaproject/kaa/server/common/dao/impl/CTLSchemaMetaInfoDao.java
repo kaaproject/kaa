@@ -25,57 +25,59 @@ import java.util.List;
  */
 public interface CTLSchemaMetaInfoDao<T> extends SqlDao<T> {
 
-    /**
-     * Find a CTL schema meta info of the given fully qualified name, tenant and application identifiers.
-     *
-     * @param fqn     the fully qualified.
-     * @param tenantId the tenant identifier.
-     * @param applicationId the application identifier.
-     * @return the CTL schema meta information object with given 
-     * fully qualified name, tenant and application identifiers.
-     */
-    T findByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
-    
-    /**
-     * Find CTL schema meta infos which are the application level siblings to the CTL 
-     * of the given fully qualified name, tenant and application identifiers.
-     *
-     * @param fqn     the fully qualified.
-     * @param tenantId the tenant identifier.
-     * @param applicationId the application identifier.
-     * @return the CTL schema meta information objects which are the siblings to the given CTL.
-     */
-    List<T> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
-    
-    /**
-     * Find a list of CTL schema meta infos of the given fully qualified name 
-     * which is not in specified tenant or application scope.
-     *
-     * @param fqn     the fully qualified.
-     * @param excludingTenantId the tenant identifier.
-     * @param excludingApplicationId the application identifier.
-     * @return the list of CTL schemas meta information object with given fully qualified name.
-     */
-    List<T> findExistingFqns(String fqn, String excludingTenantId, String excludingApplicationId);
-    
-    /**
-     * Find others CTL schema meta infos with the given fully qualified name and tenant, excluding meta info id.
-     *
-     * @param fqn      the fully qualified name.
-     * @param tenantId the tenant identifier.
-     * @param excludingId the ctl schema meta info identifier to exclude.
-     * @return the others CTL schema meta infos with the given fully qualified name and tenant identifier.
-     */
-    List<T> findOthersByFqnAndTenantId(String fqn, String tenantId, String excludingId);
-    
-    /**
-     * Update scope of the given CTL schema meta information.
-     *
-     * @param ctlSchema the CTL schema meta information object.
-     * @return the saved the CTL schema meta information object.
-     */
-    T updateScope(T ctlSchema);
-    
-    
- 
+  /**
+   * Find a CTL schema meta info of the given fully qualified name, tenant and application
+   * identifiers.
+   *
+   * @param fqn           the fully qualified.
+   * @param tenantId      the tenant identifier.
+   * @param applicationId the application identifier.
+   * @return the CTL schema meta information object with given fully qualified name, tenant and
+   * application identifiers.
+   */
+  T findByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+
+  /**
+   * Find CTL schema meta infos which are the application level siblings to the CTL
+   * of the given fully qualified name, tenant and application identifiers.
+   *
+   * @param fqn           the fully qualified.
+   * @param tenantId      the tenant identifier.
+   * @param applicationId the application identifier.
+   * @return the CTL schema meta information objects which are the siblings to the given CTL.
+   */
+  List<T> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+
+  /**
+   * Find a list of CTL schema meta infos of the given fully qualified name
+   * which is not in specified tenant or application scope.
+   *
+   * @param fqn                    the fully qualified.
+   * @param excludingTenantId      the tenant identifier.
+   * @param excludingApplicationId the application identifier.
+   * @return the list of CTL schemas meta information object with given fully qualified name.
+   */
+  List<T> findExistingFqns(String fqn, String excludingTenantId, String excludingApplicationId);
+
+  /**
+   * Find others CTL schema meta infos with the given fully qualified name and tenant, excluding
+   * meta info id.
+   *
+   * @param fqn         the fully qualified name.
+   * @param tenantId    the tenant identifier.
+   * @param excludingId the ctl schema meta info identifier to exclude.
+   * @return the others CTL schema meta infos with the given fully qualified name and tenant
+   * identifier.
+   */
+  List<T> findOthersByFqnAndTenantId(String fqn, String tenantId, String excludingId);
+
+  /**
+   * Update scope of the given CTL schema meta information.
+   *
+   * @param ctlSchema the CTL schema meta information object.
+   * @return the saved the CTL schema meta information object.
+   */
+  T updateScope(T ctlSchema);
+
+
 }

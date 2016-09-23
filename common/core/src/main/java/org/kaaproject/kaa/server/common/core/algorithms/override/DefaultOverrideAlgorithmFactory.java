@@ -22,11 +22,11 @@ package org.kaaproject.kaa.server.common.core.algorithms.override;
  */
 public class DefaultOverrideAlgorithmFactory implements OverrideAlgorithmFactory {
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.delta.merge.ConfigurationMergerFactory#createConfigurationMerger()
-     */
-    @Override
-    public OverrideAlgorithm createConfigurationOverrideAlgorithm() {
-        return new DefaultOverrideAlgorithm();
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.operations.service.delta.merge.ConfigurationMergerFactory#createConfigurationMerger()
+   */
+  @Override
+  public OverrideAlgorithm createConfigurationOverrideAlgorithm() {
+    return new DefaultOverrideAlgorithm();
+  }
 }

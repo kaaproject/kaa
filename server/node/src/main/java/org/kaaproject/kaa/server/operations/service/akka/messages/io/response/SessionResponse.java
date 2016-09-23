@@ -23,13 +23,18 @@ import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
-public interface SessionResponse extends ChannelAware, PlatformAware{
+public interface SessionResponse extends ChannelAware, PlatformAware {
 
-    int getPlatformId();
-    ServerSync getResponse();
-    Exception getError();
-    SessionInfo getSessionInfo();
-    MessageBuilder getMessageBuilder();
-    ErrorBuilder getErrorBuilder();
+  int getPlatformId();
+
+  ServerSync getResponse();
+
+  Exception getError();
+
+  SessionInfo getSessionInfo();
+
+  MessageBuilder getMessageBuilder();
+
+  ErrorBuilder getErrorBuilder();
 
 }

@@ -21,27 +21,27 @@ import org.junit.Test;
 
 
 public class StyleUtilsTest {
-    @Test
-    public void testToLowerUnderScore() {
-        String pattern1 = "endpoint_key_hash";
-        Assert.assertTrue(StyleUtils.toLowerUnderScore("endpointKeyHash").equals(pattern1));
+  @Test
+  public void testToLowerUnderScore() {
+    String pattern1 = "endpoint_key_hash";
+    Assert.assertTrue(StyleUtils.toLowerUnderScore("endpointKeyHash").equals(pattern1));
 
-        String pattern2 = "event_class_fqn";
-        Assert.assertTrue(StyleUtils.toLowerUnderScore("eventClassFQN").equals(pattern2));
-    }
+    String pattern2 = "event_class_fqn";
+    Assert.assertTrue(StyleUtils.toLowerUnderScore("eventClassFQN").equals(pattern2));
+  }
 
-    @Test
-    public void testToUpperUnderScore() {
-        String pattern1 = "ENDPOINT_KEY_HASH";
-        Assert.assertTrue(StyleUtils.toUpperUnderScore("endpointKeyHash").equals(pattern1));
+  @Test
+  public void testToUpperUnderScore() {
+    String pattern1 = "ENDPOINT_KEY_HASH";
+    Assert.assertTrue(StyleUtils.toUpperUnderScore("endpointKeyHash").equals(pattern1));
 
-        String pattern2 = "EVENT_CLASS_FQN";
-        Assert.assertTrue(StyleUtils.toUpperUnderScore("eventClassFQN").equals(pattern2));
-    }
+    String pattern2 = "EVENT_CLASS_FQN";
+    Assert.assertTrue(StyleUtils.toUpperUnderScore("eventClassFQN").equals(pattern2));
+  }
 
-    @Test
-    public void testRemovePackageName() {
-        String longName = "org.kaaproject.kaa.common.endpoint.gen";
-        Assert.assertTrue(StyleUtils.removePackageName(longName).equals("gen"));
-    }
+  @Test
+  public void testRemovePackageName() {
+    String longName = "org.kaaproject.kaa.common.endpoint.gen";
+    Assert.assertTrue(StyleUtils.removePackageName(longName).equals("gen"));
+  }
 }

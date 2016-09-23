@@ -17,6 +17,6 @@
 package org.kaaproject.kaa.client.channel;
 
 public enum ServerType {
-    BOOTSTRAP,
-    OPERATIONS
+  BOOTSTRAP,
+  OPERATIONS
 }

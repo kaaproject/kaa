@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.layout;
 
-import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
-import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.Version;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,150 +30,151 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.common.Version;
+
 public class AppLayout extends Composite {
-    interface AppLayoutUiBinder extends UiBinder<Widget, AppLayout> {
-    }
+  private static final String OPEN = "<<";
+  private static final String CLOSE = ">>";
+  private static final int PANEL_WIDTH = 200;
+  private static final String PANEL_WIDTH_IN_PX = PANEL_WIDTH + "px";
+  private static final double DELTA_FACTOR = 2.0;
+  private static AppLayoutUiBinder uiBinder = GWT.create(AppLayoutUiBinder.class);
+  @UiField(provided = true)
+  final KaaAdminStyle kaaAdminStyle;
+  @UiField(provided = true)
+  final AvroUiStyle avroUiStyle;
+  @UiField
+  FlowPanel mainLayoutPanel;
+  @UiField
+  SimplePanel appHeader;
+  @UiField
+  FlowPanel navPanel;
+  @UiField
+  SimpleWidgetPanel appContent;
+  CustomDeckLayoutPanel navContent;
+  @UiField
+  HTMLPanel footerPanel;
+  private int clickCount = 1;
+  public AppLayout() {
+    kaaAdminStyle = Utils.kaaAdminStyle;
+    avroUiStyle = Utils.avroUiStyle;
+    initWidget(uiBinder.createAndBindUi(this));
+    init();
+  }
 
-    private static AppLayoutUiBinder uiBinder = GWT.create(AppLayoutUiBinder.class);
-    private static final String OPEN = "<<";
-    private static final String CLOSE = ">>";
-    private static final int PANEL_WIDTH = 200;
-    private static final String PANEL_WIDTH_IN_PX = PANEL_WIDTH + "px";
-    private static final double DELTA_FACTOR = 2.0;
+  public SimplePanel getAppHeaderHolder() {
+    return this.appHeader;
+  }
 
-    private int clickCount = 1;
+  public CustomDeckLayoutPanel getNavContentHolder() {
+    return this.navContent;
+  }
 
-    @UiField
-    FlowPanel mainLayoutPanel;
-    @UiField
-    SimplePanel appHeader;
-    @UiField
-    FlowPanel navPanel;
-    @UiField
-    SimpleWidgetPanel appContent;
-    CustomDeckLayoutPanel navContent;
-    @UiField 
-    HTMLPanel footerPanel;
-    
-    @UiField(provided=true) 
-    final KaaAdminStyle kaaAdminStyle;
-    @UiField(provided=true) 
-    final AvroUiStyle avroUiStyle;
+  public SimpleWidgetPanel getAppContentHolder() {
+    return this.appContent;
+  }
 
-    public AppLayout() {
-        kaaAdminStyle = Utils.kaaAdminStyle;
-        avroUiStyle = Utils.avroUiStyle;
-        initWidget(uiBinder.createAndBindUi(this));
-        init();
-    }
+  private void incr() {
+    ++clickCount;
+  }
 
-    public SimplePanel getAppHeaderHolder() {
-        return this.appHeader;
-    }
+  private void init() {
+    final SimplePanel emptyPanel = new SimplePanel();
+    navContent = new CustomDeckLayoutPanel();
+    navContent.setAnimationVertical(false);
 
-    public CustomDeckLayoutPanel getNavContentHolder() {
-        return this.navContent;
-    }
+    navContent.setAnimationDuration(0);
+    navContent.setStyleName(kaaAdminStyle.bNavContent());
+    navContent.setSize("200px", "100%");
 
-    public SimpleWidgetPanel getAppContentHolder() {
-        return this.appContent;
-    }
+    navPanel.add(navContent);
+    final Label back = new Label(OPEN);
+    back.setStyleName(kaaAdminStyle.bNavLabel());
 
-    private void incr() {
-        ++clickCount;
-    }
+    navPanel.add(back);
+    appHeader.setSize("100%", "60px");
 
-    private void init() {
-        final SimplePanel emptyPanel = new SimplePanel();
-        navContent = new CustomDeckLayoutPanel();
-        navContent.setAnimationVertical(false);
+    appContent.setStyleName(avroUiStyle.bAppContent());
+    navPanel.setStyleName(kaaAdminStyle.bNavPanel());
 
-        navContent.setAnimationDuration(0);
-        navContent.setStyleName(kaaAdminStyle.bNavContent());
-        navContent.setSize("200px", "100%");
+    footerPanel.getElement().setInnerHTML(Utils.messages.footerMessage(Version.PROJECT_VERSION));
 
-        navPanel.add(navContent);
-        final Label back = new Label(OPEN);
-        back.setStyleName(kaaAdminStyle.bNavLabel());
+    back.addClickHandler(new ClickHandler() {
 
-        navPanel.add(back);
-        appHeader.setSize("100%", "60px");
-
-        appContent.setStyleName(avroUiStyle.bAppContent());
-        navPanel.setStyleName(kaaAdminStyle.bNavPanel());
-        
-        footerPanel.getElement().setInnerHTML(Utils.messages.footerMessage(Version.PROJECT_VERSION));
-
-        back.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (clickCount == 1) {
-                    navContent.add(emptyPanel);
-                    navContent.setAnimationDuration(100);
-                    navContent.showWidget(clickCount, new CustomAnimationCallback(true));
-                    back.setText(CLOSE);
-                } else if (clickCount % 2 == 0) {
-                    navContent.showWidget(0, new CustomAnimationCallback(false));
-                    back.setText(OPEN);
-                } else {
-                    navContent.showWidget(1, new CustomAnimationCallback(true));
-                    back.setText(CLOSE);
-                }
-                incr();
-            }
-        });
-    }
-
-    class CustomAnimationCallback implements AnimationCallback {
-
-        private boolean isOpen;
-
-        public CustomAnimationCallback(boolean isOpen) {
-            this.isOpen = isOpen;
+      @Override
+      public void onClick(ClickEvent event) {
+        if (clickCount == 1) {
+          navContent.add(emptyPanel);
+          navContent.setAnimationDuration(100);
+          navContent.showWidget(clickCount, new CustomAnimationCallback(true));
+          back.setText(CLOSE);
+        } else if (clickCount % 2 == 0) {
+          navContent.showWidget(0, new CustomAnimationCallback(false));
+          back.setText(OPEN);
+        } else {
+          navContent.showWidget(1, new CustomAnimationCallback(true));
+          back.setText(CLOSE);
         }
+        incr();
+      }
+    });
+  }
 
-        @Override
-        public void onAnimationComplete() {
-            if (isOpen) {
-                navContent.setSize("0", "100%");
-            } else {
-                navContent.setSize(PANEL_WIDTH_IN_PX, "100%");
-            }
-        }
+  interface AppLayoutUiBinder extends UiBinder<Widget, AppLayout> {
+  }
 
-        @Override
-        public void onLayout(Layer arg0, double progres) {
-            navContent.setSize(getNewSize(progres) + "px", "100%");
-        }
+  class CustomAnimationCallback implements AnimationCallback {
 
-        private double getNewSize(double progres) {
-            double delta = getDelta(progres);
-            if (isOpen) {
-                double newSize = PANEL_WIDTH - delta;
-                if (newSize < 0) {
-                    return 0;
-                } else {
-                    return newSize;
-                }
-            } else {
-                double newSize = delta;
-                if (newSize > PANEL_WIDTH) {
-                    return PANEL_WIDTH;
-                } else {
-                    return newSize;
-                }
-            }
-        }
+    private boolean isOpen;
 
-        private double getDelta(double progres) {
-            if (isOpen) {
-                return PANEL_WIDTH * progres * DELTA_FACTOR;
-            } else {
-                return PANEL_WIDTH * progres;
-            }
-
-        }
+    public CustomAnimationCallback(boolean isOpen) {
+      this.isOpen = isOpen;
     }
+
+    @Override
+    public void onAnimationComplete() {
+      if (isOpen) {
+        navContent.setSize("0", "100%");
+      } else {
+        navContent.setSize(PANEL_WIDTH_IN_PX, "100%");
+      }
+    }
+
+    @Override
+    public void onLayout(Layer arg0, double progres) {
+      navContent.setSize(getNewSize(progres) + "px", "100%");
+    }
+
+    private double getNewSize(double progres) {
+      double delta = getDelta(progres);
+      if (isOpen) {
+        double newSize = PANEL_WIDTH - delta;
+        if (newSize < 0) {
+          return 0;
+        } else {
+          return newSize;
+        }
+      } else {
+        double newSize = delta;
+        if (newSize > PANEL_WIDTH) {
+          return PANEL_WIDTH;
+        } else {
+          return newSize;
+        }
+      }
+    }
+
+    private double getDelta(double progres) {
+      if (isOpen) {
+        return PANEL_WIDTH * progres * DELTA_FACTOR;
+      } else {
+        return PANEL_WIDTH * progres;
+      }
+
+    }
+  }
 
 }

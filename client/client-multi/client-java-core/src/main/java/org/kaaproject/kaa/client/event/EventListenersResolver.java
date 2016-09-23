@@ -53,13 +53,12 @@ import java.util.List;
  */
 public interface EventListenersResolver {
 
-    /**
-     * Submits an event listeners resolution request
-     *
-     * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
-     * @param listener      Result listener {@link FindEventListenersCallback}}
-     *
-     * @return Request ID of submitted request
-     */
-    int findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
+  /**
+   * Submits an event listeners resolution request
+   *
+   * @param eventFQNs List of event class FQNs which have to be supported by endpoint.
+   * @param listener  Result listener {@link FindEventListenersCallback}}
+   * @return Request ID of submitted request
+   */
+  int findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
 }

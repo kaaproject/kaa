@@ -16,16 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-
 import com.google.gwt.user.client.ui.HasValue;
+
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 
 public interface UserView extends BaseDetailsView {
 
-    HasValue<String> getUserName();
+  HasValue<String> getUserName();
 
-    HasValue<String> getEmail();
+  HasValue<String> getEmail();
 
-    HasValue<KaaAuthorityDto> getAuthority();
+  HasValue<KaaAuthorityDto> getAuthority();
 
 }

@@ -16,69 +16,68 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 
+import java.util.List;
+
 /**
  * @author Andrey Panasenko
- *
  */
 public class ESTestApplicationService implements ApplicationService {
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.dao.ApplicationService#findAppsByTenantId(java.lang.String)
-     */
-    @Override
-    public List<ApplicationDto> findAppsByTenantId(String tenantId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.dao.ApplicationService#findAppsByTenantId(java.lang.String)
+   */
+  @Override
+  public List<ApplicationDto> findAppsByTenantId(String tenantId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.dao.ApplicationService#removeAppsByTenantId(java.lang.String)
-     */
-    @Override
-    public void removeAppsByTenantId(String tenantId) {
-        // TODO Auto-generated method stub
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.dao.ApplicationService#removeAppsByTenantId(java.lang.String)
+   */
+  @Override
+  public void removeAppsByTenantId(String tenantId) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.dao.ApplicationService#findAppById(java.lang.String)
-     */
-    @Override
-    public ApplicationDto findAppById(String id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.dao.ApplicationService#findAppById(java.lang.String)
+   */
+  @Override
+  public ApplicationDto findAppById(String id) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.dao.ApplicationService#removeAppById(java.lang.String)
-     */
-    @Override
-    public void removeAppById(String id) {
-        // TODO Auto-generated method stub
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.dao.ApplicationService#removeAppById(java.lang.String)
+   */
+  @Override
+  public void removeAppById(String id) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.dao.ApplicationService#findAppByApplicationToken(java.lang.String)
-     */
-    @Override
-    public ApplicationDto findAppByApplicationToken(String applicationToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.dao.ApplicationService#findAppByApplicationToken(java.lang.String)
+   */
+  @Override
+  public ApplicationDto findAppByApplicationToken(String applicationToken) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.dao.ApplicationService#saveApp(org.kaaproject.kaa.common.dto.ApplicationDto)
-     */
-    @Override
-    public ApplicationDto saveApp(ApplicationDto applicationDto) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.dao.ApplicationService#saveApp(org.kaaproject.kaa.common.dto.ApplicationDto)
+   */
+  @Override
+  public ApplicationDto saveApp(ApplicationDto applicationDto) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 }

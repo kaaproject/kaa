@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,66 +26,68 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateApplicationDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void testSaveApplication() {
-        Application application = generateApplication(null);
-        Assert.assertNotNull(application.getId());
-    }
+  @Test
+  public void testSaveApplication() {
+    Application application = generateApplication(null);
+    Assert.assertNotNull(application.getId());
+  }
 
-    @Test
-    public void testFindByTenantId() {
-        Tenant ten = generateTenant();
-        Application app = generateApplication(ten);
-        List<Application> found = applicationDao.findByTenantId(ten.getId().toString());
-        Assert.assertEquals(app, found.get(0));
-    }
+  @Test
+  public void testFindByTenantId() {
+    Tenant ten = generateTenant();
+    Application app = generateApplication(ten);
+    List<Application> found = applicationDao.findByTenantId(ten.getId().toString());
+    Assert.assertEquals(app, found.get(0));
+  }
 
-    @Test
-    public void testFindByApplicationToken() {
-        Tenant ten = generateTenant();
-        Application app = generateApplication(ten);
-        String token = app.getApplicationToken();
-        Application found = applicationDao.findByApplicationToken(token);
-        Assert.assertEquals(app, found);
-    }
+  @Test
+  public void testFindByApplicationToken() {
+    Tenant ten = generateTenant();
+    Application app = generateApplication(ten);
+    String token = app.getApplicationToken();
+    Application found = applicationDao.findByApplicationToken(token);
+    Assert.assertEquals(app, found);
+  }
 
-    @Test
-    public void testFindByNameAndTenantId() {
-        Tenant ten = generateTenant();
-        Application app = generateApplication(ten);
-        String name = app.getName();
-        Application found = applicationDao.findByNameAndTenantId(name, ten.getId().toString());
-        Assert.assertEquals(app, found);
-    }
+  @Test
+  public void testFindByNameAndTenantId() {
+    Tenant ten = generateTenant();
+    Application app = generateApplication(ten);
+    String name = app.getName();
+    Application found = applicationDao.findByNameAndTenantId(name, ten.getId().toString());
+    Assert.assertEquals(app, found);
+  }
 
-    @Test
-    public void testRemoveByApplicationToken() {
-        Tenant ten = generateTenant();
-        Application app = generateApplication(ten);
-        String token = app.getApplicationToken();
-        applicationDao.removeByApplicationToken(token);
-        Assert.assertNull(applicationDao.findByApplicationToken(token));
-    }
+  @Test
+  public void testRemoveByApplicationToken() {
+    Tenant ten = generateTenant();
+    Application app = generateApplication(ten);
+    String token = app.getApplicationToken();
+    applicationDao.removeByApplicationToken(token);
+    Assert.assertNull(applicationDao.findByApplicationToken(token));
+  }
 
-    @Test
-    public void testGetNextSeqNumber() {
-        Tenant ten = generateTenant();
-        Application app = generateApplication(ten);
-        int sequenceNumber = app.getSequenceNumber();
-        app = applicationDao.getNextSeqNumber(app.getId().toString());
-        Assert.assertNotEquals(sequenceNumber, app.getSequenceNumber());
-    }
+  @Test
+  public void testGetNextSeqNumber() {
+    Tenant ten = generateTenant();
+    Application app = generateApplication(ten);
+    int sequenceNumber = app.getSequenceNumber();
+    app = applicationDao.getNextSeqNumber(app.getId().toString());
+    Assert.assertNotEquals(sequenceNumber, app.getSequenceNumber());
+  }
 
-    @Test
-    public void testGetNextSeqNumberWithIncorrectAppId() {
-        Application app = applicationDao.getNextSeqNumber("777");
-        Assert.assertNull(app);
-    }
+  @Test
+  public void testGetNextSeqNumberWithIncorrectAppId() {
+    Application app = applicationDao.getNextSeqNumber("777");
+    Assert.assertNull(app);
+  }
 
 }

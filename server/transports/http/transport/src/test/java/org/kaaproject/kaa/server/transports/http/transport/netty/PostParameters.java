@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.transports.http.transport.netty;
 
@@ -24,28 +24,27 @@ import java.net.URLEncoder;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
- *
  */
 public class PostParameters {
 
-    private StringBuffer query;
+  private StringBuffer query;
 
-    public PostParameters() {
-        query = new StringBuffer();
-    }
+  public PostParameters() {
+    query = new StringBuffer();
+  }
 
-    public synchronized PostParameters add(Object name, Object value)
-                throws UnsupportedEncodingException {
-        if (!query.toString().trim().equals("")) {
-            query.append("&");
-        }
-        query.append(URLEncoder.encode(name.toString(), "UTF-8"));
-        query.append("=");
-        query.append(URLEncoder.encode(value.toString(), "UTF-8"));
-        return this;
+  public synchronized PostParameters add(Object name, Object value)
+      throws UnsupportedEncodingException {
+    if (!query.toString().trim().equals("")) {
+      query.append("&");
     }
+    query.append(URLEncoder.encode(name.toString(), "UTF-8"));
+    query.append("=");
+    query.append(URLEncoder.encode(value.toString(), "UTF-8"));
+    return this;
+  }
 
-    public String toString() {
-        return query.toString();
-    }
+  public String toString() {
+    return query.toString();
+  }
 }

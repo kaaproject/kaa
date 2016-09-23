@@ -18,9 +18,9 @@ package org.kaaproject.kaa.server.datamigration;
 
 public class MigrationException extends RuntimeException {
 
-    public MigrationException(String message) {
-        super(message);
-    }
+  public MigrationException(String message) {
+    super(message);
+  }
 
 
 }

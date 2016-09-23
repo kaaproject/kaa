@@ -22,14 +22,14 @@ import javax.sql.DataSource;
 
 final public class DataSources {
 
-    public static DataSource getDataSource(Options opt) {
-        BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName(opt.getDriverClassName());
-        bds.setUrl(opt.getJdbcUrl());
-        bds.setUsername(opt.getUsername());
-        bds.setPassword(opt.getPassword());
-        bds.setDefaultAutoCommit(false);
-        return bds;
-    }
+  public static DataSource getDataSource(Options opt) {
+    BasicDataSource bds = new BasicDataSource();
+    bds.setDriverClassName(opt.getDriverClassName());
+    bds.setUrl(opt.getJdbcUrl());
+    bds.setUsername(opt.getUsername());
+    bds.setPassword(opt.getPassword());
+    bds.setDefaultAutoCommit(false);
+    return bds;
+  }
 
 }

@@ -17,53 +17,53 @@
 package org.kaaproject.kaa.server.datamigration.model;
 
 public class Ctl {
-    private final Long id;
-    private final CtlMetaInfo metaInfo;
-    private final String defaultRecord;
-    private boolean existInDb;
+  private final Long id;
+  private final CtlMetaInfo metaInfo;
+  private final String defaultRecord;
+  private boolean existInDb;
 
-    public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
-        this.id = id;
-        this.metaInfo = metaInfo;
-        this.defaultRecord = defaultRecord;
-    }
+  public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
+    this.id = id;
+    this.metaInfo = metaInfo;
+    this.defaultRecord = defaultRecord;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
-        Ctl ctl = (Ctl) o;
+    Ctl ctl = (Ctl) o;
 
-        if (!metaInfo.equals(ctl.metaInfo)) return false;
-        return defaultRecord.equals(ctl.defaultRecord);
+    if (!metaInfo.equals(ctl.metaInfo)) return false;
+    return defaultRecord.equals(ctl.defaultRecord);
 
-    }
+  }
 
-    @Override
-    public int hashCode() {
-        int result = metaInfo.hashCode();
-        result = 31 * result + defaultRecord.hashCode();
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    int result = metaInfo.hashCode();
+    result = 31 * result + defaultRecord.hashCode();
+    return result;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public CtlMetaInfo getMetaInfo() {
-        return metaInfo;
-    }
+  public CtlMetaInfo getMetaInfo() {
+    return metaInfo;
+  }
 
-    public String getDefaultRecord() {
-        return defaultRecord;
-    }
+  public String getDefaultRecord() {
+    return defaultRecord;
+  }
 
-    public boolean isExistInDb() {
-        return existInDb;
-    }
+  public boolean isExistInDb() {
+    return existInDb;
+  }
 
-    public void setExistInDb(boolean existInDb) {
-        this.existInDb = existInDb;
-    }
+  public void setExistInDb(boolean existInDb) {
+    this.existInDb = existInDb;
+  }
 }

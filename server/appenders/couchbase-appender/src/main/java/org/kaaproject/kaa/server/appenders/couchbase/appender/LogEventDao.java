@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.appenders.couchbase.appender;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 
+import java.util.List;
+
 public interface LogEventDao {
 
-    List<LogEvent> save(RecordHeader header, List<LogEventDto> logEventDtos);
-    
-    void close();
-    
+  List<LogEvent> save(RecordHeader header, List<LogEventDto> logEventDtos);
+
+  void close();
+
 }

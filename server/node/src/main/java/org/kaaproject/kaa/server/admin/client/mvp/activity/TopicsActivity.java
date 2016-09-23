@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -29,56 +32,53 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class TopicsActivity extends AbstractListActivity<TopicDto, TopicsPlace> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public TopicsActivity(TopicsPlace place, ClientFactory clientFactory) {
-        super(place, TopicDto.class, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  public TopicsActivity(TopicsPlace place, ClientFactory clientFactory) {
+    super(place, TopicDto.class, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    @Override
-    protected BaseListView<TopicDto> getView() {
-        return clientFactory.getTopicsView();
-    }
+  @Override
+  protected BaseListView<TopicDto> getView() {
+    return clientFactory.getTopicsView();
+  }
 
-    @Override
-    protected AbstractDataProvider<TopicDto, String> getDataProvider(
-            AbstractGrid<TopicDto, String> dataGrid) {
-        return new TopicsDataProvider(dataGrid, listView, applicationId, null);
-    }
+  @Override
+  protected AbstractDataProvider<TopicDto, String> getDataProvider(
+      AbstractGrid<TopicDto, String> dataGrid) {
+    return new TopicsDataProvider(dataGrid, listView, applicationId, null);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new TopicPlace(applicationId, "");
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new TopicPlace(applicationId, "");
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new TopicPlace(applicationId, id);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new TopicPlace(applicationId, id);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteTopic(id, callback);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    KaaAdmin.getDataSource().deleteTopic(id, callback);
+  }
 
-    @Override
-    protected void onCustomRowAction(RowActionEvent<String> event) {
-        if (event.getAction()==KaaRowAction.SEND_NOTIFICATION) {
-            String id = event.getClickedId();
-            sendNotification(id);
-        }
+  @Override
+  protected void onCustomRowAction(RowActionEvent<String> event) {
+    if (event.getAction() == KaaRowAction.SEND_NOTIFICATION) {
+      String id = event.getClickedId();
+      sendNotification(id);
     }
+  }
 
-    private void sendNotification(String topicId) {
-        SendNotificationPlace sendNotificationPlace = new SendNotificationPlace(applicationId, topicId);
-        sendNotificationPlace.setPreviousPlace(place);
-        goTo(sendNotificationPlace);
-    }
+  private void sendNotification(String topicId) {
+    SendNotificationPlace sendNotificationPlace = new SendNotificationPlace(applicationId, topicId);
+    sendNotificationPlace.setPreviousPlace(place);
+    goTo(sendNotificationPlace);
+  }
 
 }

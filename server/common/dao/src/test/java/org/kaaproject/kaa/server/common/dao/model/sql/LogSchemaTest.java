@@ -17,21 +17,22 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 public class LogSchemaTest {
 
-    private static final long TEST_ID = 1L;
+  private static final long TEST_ID = 1L;
 
-    @Test
-    public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(LogSchema.class).usingGetClass().verify();
-        }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(LogSchema.class).usingGetClass().verify();
+  }
 
-    @Test
-    public void basicLogSchemaTest() {
-        LogSchema logSchema = new LogSchema(TEST_ID);
-        Assert.assertEquals((Long) TEST_ID, logSchema.getId());
-    }
+  @Test
+  public void basicLogSchemaTest() {
+    LogSchema logSchema = new LogSchema(TEST_ID);
+    Assert.assertEquals((Long) TEST_ID, logSchema.getId());
+  }
 }

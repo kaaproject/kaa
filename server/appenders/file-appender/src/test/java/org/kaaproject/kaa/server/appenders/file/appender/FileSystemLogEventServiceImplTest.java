@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.appenders.file.appender;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -24,87 +29,82 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
-
 public class FileSystemLogEventServiceImplTest {
 
-    private static final String TEST_FILE = "/test";
-    private static final String TEST_TEXT = "test text";
-    private static final String USER_HOME = "user.home";
+  private static final String TEST_FILE = "/test";
+  private static final String TEST_TEXT = "test text";
+  private static final String USER_HOME = "user.home";
 
-    private FileSystemLogEventService fileSystemLogEventService = new FileSystemLogEventServiceImpl();
+  private FileSystemLogEventService fileSystemLogEventService = new FileSystemLogEventServiceImpl();
 
-    @Test
-    public void createDirectoryAndRemoveAllTest() throws FileNotFoundException {
-        if (System.getProperty(USER_HOME) != null && new File(System.getProperty(USER_HOME)).exists()) {
-            String tempDir = System.getProperty(USER_HOME) + "/temp_dir_" + System.currentTimeMillis();
-            File file = new File(tempDir);
+  @Test
+  public void createDirectoryAndRemoveAllTest() throws FileNotFoundException {
+    if (System.getProperty(USER_HOME) != null && new File(System.getProperty(USER_HOME)).exists()) {
+      String tempDir = System.getProperty(USER_HOME) + "/temp_dir_" + System.currentTimeMillis();
+      File file = new File(tempDir);
 
-            Assert.assertFalse(file.exists());
+      Assert.assertFalse(file.exists());
 
-            fileSystemLogEventService.createDirectory(tempDir);
+      fileSystemLogEventService.createDirectory(tempDir);
 
-            Assert.assertTrue(file.exists());
+      Assert.assertTrue(file.exists());
 
-            PrintWriter writer = new PrintWriter(new File(tempDir + TEST_FILE));
-            writer.write(TEST_TEXT);
-            writer.close();
+      PrintWriter writer = new PrintWriter(new File(tempDir + TEST_FILE));
+      writer.write(TEST_TEXT);
+      writer.close();
 
-            fileSystemLogEventService.removeAll(tempDir);
+      fileSystemLogEventService.removeAll(tempDir);
 
-            Assert.assertFalse(file.exists());
-        }
+      Assert.assertFalse(file.exists());
     }
+  }
 
-    @Test
-    public void createDirectoryAlreadyExistsTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        if (System.getProperty(USER_HOME) != null && new File(System.getProperty(USER_HOME)).exists()) {
-            FileSystemLogEventService logEventService = new FileSystemLogEventServiceImpl();
+  @Test
+  public void createDirectoryAlreadyExistsTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+    if (System.getProperty(USER_HOME) != null && new File(System.getProperty(USER_HOME)).exists()) {
+      FileSystemLogEventService logEventService = new FileSystemLogEventServiceImpl();
 
-            String tempDir = System.getProperty(USER_HOME) + "/temp_dir_" + System.currentTimeMillis();
-            File file = new File(tempDir);
+      String tempDir = System.getProperty(USER_HOME) + "/temp_dir_" + System.currentTimeMillis();
+      File file = new File(tempDir);
 
-            logEventService.createDirectory(tempDir);
+      logEventService.createDirectory(tempDir);
 
-            Logger testLogger = Mockito.mock(Logger.class);
+      Logger testLogger = Mockito.mock(Logger.class);
 
-            Field field = logEventService.getClass().getDeclaredField("LOG");
+      Field field = logEventService.getClass().getDeclaredField("LOG");
 
-            field.setAccessible(true);
+      field.setAccessible(true);
 
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+      Field modifiersField = Field.class.getDeclaredField("modifiers");
+      modifiersField.setAccessible(true);
+      modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-            field.set(null, testLogger);
+      field.set(null, testLogger);
 
-            Assert.assertTrue(file.exists());
+      Assert.assertTrue(file.exists());
 
-            logEventService.createDirectory(tempDir);
+      logEventService.createDirectory(tempDir);
 
-            Mockito.verify(testLogger, Mockito.atLeast(2)).debug(Mockito.anyString(), Mockito.eq(tempDir));
+      Mockito.verify(testLogger, Mockito.atLeast(2)).debug(Mockito.anyString(), Mockito.eq(tempDir));
 
-            logEventService.removeAll(tempDir);
-        }
+      logEventService.removeAll(tempDir);
     }
+  }
 
-    @Test(expected = RuntimeException.class)
-    public void executeCommandFailureTest() throws Throwable {
-        String testDir = "testdir";
-        File targetTestDir = new File("target", testDir);
-        if (!targetTestDir.exists()) {
-            targetTestDir.mkdirs();
-        }
-        FileSystemLogEventServiceImpl service = new FileSystemLogEventServiceImpl();
-        Method executeCommand = FileSystemLogEventServiceImpl.class.getDeclaredMethod("executeCommand", File.class, String[].class);
-        executeCommand.setAccessible(true);
-        try {
-            executeCommand.invoke(service, "target", new String[]{"mkdir", testDir});
-        } catch (InvocationTargetException e){
-            throw e.getCause();
-        }
+  @Test(expected = RuntimeException.class)
+  public void executeCommandFailureTest() throws Throwable {
+    String testDir = "testdir";
+    File targetTestDir = new File("target", testDir);
+    if (!targetTestDir.exists()) {
+      targetTestDir.mkdirs();
     }
+    FileSystemLogEventServiceImpl service = new FileSystemLogEventServiceImpl();
+    Method executeCommand = FileSystemLogEventServiceImpl.class.getDeclaredMethod("executeCommand", File.class, String[].class);
+    executeCommand.setAccessible(true);
+    try {
+      executeCommand.invoke(service, "target", new String[]{"mkdir", testDir});
+    } catch (InvocationTargetException e) {
+      throw e.getCause();
+    }
+  }
 }

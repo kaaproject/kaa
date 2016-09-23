@@ -27,35 +27,37 @@ import java.io.ObjectOutputStream;
 
 public class DtoByteMarshaller {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DtoByteMarshaller.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory
+      .getLogger(DtoByteMarshaller.class);
 
-    private DtoByteMarshaller() {
-    }
+  private DtoByteMarshaller() {
+  }
 
-    public static <T> byte[] toBytes(T object) {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(byteStream);
-            out.writeObject(object);
-        } catch (IOException e) {
-            LOG.error("Can't convert object to bytes.", e);
-        }
-        return byteStream.toByteArray();
+  public static <T> byte[] toBytes(T object) {
+    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(byteStream);
+      out.writeObject(object);
+    } catch (IOException e) {
+      LOG.error("Can't convert object to bytes.", e);
     }
+    return byteStream.toByteArray();
+  }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T fromBytes(byte[] bytes) {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        T object = null;
-        try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            object = (T) objectInputStream.readObject();
-        } catch (Exception e) {
-            LOG.error("Can't convert bytes to object.", e);
-        }
-        return object;
+  @SuppressWarnings("unchecked")
+  public static <T> T fromBytes(byte[] bytes) {
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+    T object = null;
+    try {
+      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+      object = (T) objectInputStream.readObject();
+    } catch (Exception e) {
+      LOG.error("Can't convert bytes to object.", e);
     }
+    return object;
+  }
 
 }

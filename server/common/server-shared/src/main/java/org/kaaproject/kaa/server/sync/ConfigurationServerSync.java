@@ -20,111 +20,109 @@ import java.nio.ByteBuffer;
 
 public final class ConfigurationServerSync {
 
-    private SyncResponseStatus responseStatus;
-    private ByteBuffer confSchemaBody;
-    private ByteBuffer confDeltaBody;
+  private SyncResponseStatus responseStatus;
+  private ByteBuffer confSchemaBody;
+  private ByteBuffer confDeltaBody;
 
-    public ConfigurationServerSync() {
+  public ConfigurationServerSync() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public ConfigurationServerSync(int appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
+                                 ByteBuffer confDeltaBody) {
+    this.responseStatus = responseStatus;
+    this.confSchemaBody = confSchemaBody;
+    this.confDeltaBody = confDeltaBody;
+  }
+
+  /**
+   * Gets the value of the 'responseStatus' field.
+   */
+  public SyncResponseStatus getResponseStatus() {
+    return responseStatus;
+  }
+
+  /**
+   * Sets the value of the 'responseStatus' field.
+   *
+   * @param value the value to set.
+   */
+  public void setResponseStatus(SyncResponseStatus value) {
+    this.responseStatus = value;
+  }
+
+  /**
+   * Gets the value of the 'confSchemaBody' field.
+   */
+  public ByteBuffer getConfSchemaBody() {
+    return confSchemaBody;
+  }
+
+  /**
+   * Sets the value of the 'confSchemaBody' field.
+   *
+   * @param value the value to set.
+   */
+  public void setConfSchemaBody(ByteBuffer value) {
+    this.confSchemaBody = value;
+  }
+
+  /**
+   * Gets the value of the 'confDeltaBody' field.
+   */
+  public ByteBuffer getConfDeltaBody() {
+    return confDeltaBody;
+  }
+
+  /**
+   * Sets the value of the 'confDeltaBody' field.
+   *
+   * @param value the value to set.
+   */
+  public void setConfDeltaBody(ByteBuffer value) {
+    this.confDeltaBody = value;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    ConfigurationServerSync that = (ConfigurationServerSync) o;
+
+    if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null) {
+      return false;
     }
-
-    /**
-     * All-args constructor.
-     */
-    public ConfigurationServerSync(int appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
-            ByteBuffer confDeltaBody) {
-        this.responseStatus = responseStatus;
-        this.confSchemaBody = confSchemaBody;
-        this.confDeltaBody = confDeltaBody;
+    if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null) {
+      return false;
     }
-
-    /**
-     * Gets the value of the 'responseStatus' field.
-     */
-    public SyncResponseStatus getResponseStatus() {
-        return responseStatus;
+    if (responseStatus != that.responseStatus) return false;
+    {
+      return true;
     }
+  }
 
-    /**
-     * Sets the value of the 'responseStatus' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setResponseStatus(SyncResponseStatus value) {
-        this.responseStatus = value;
-    }
+  @Override
+  public int hashCode() {
+    int result = 1;
+    result = 31 * result + (responseStatus != null ? responseStatus.hashCode() : 0);
+    result = 31 * result + (confSchemaBody != null ? confSchemaBody.hashCode() : 0);
+    result = 31 * result + (confDeltaBody != null ? confDeltaBody.hashCode() : 0);
+    return result;
+  }
 
-    /**
-     * Gets the value of the 'confSchemaBody' field.
-     */
-    public ByteBuffer getConfSchemaBody() {
-        return confSchemaBody;
-    }
-
-    /**
-     * Sets the value of the 'confSchemaBody' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setConfSchemaBody(ByteBuffer value) {
-        this.confSchemaBody = value;
-    }
-
-    /**
-     * Gets the value of the 'confDeltaBody' field.
-     */
-    public ByteBuffer getConfDeltaBody() {
-        return confDeltaBody;
-    }
-
-    /**
-     * Sets the value of the 'confDeltaBody' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setConfDeltaBody(ByteBuffer value) {
-        this.confDeltaBody = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ConfigurationServerSync that = (ConfigurationServerSync) o;
-
-        if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null) {
-            return false;
-        }
-        if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null) {
-            return false;
-        }
-        if (responseStatus != that.responseStatus) return false; {
-        return true;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 1;
-        result = 31 * result + (responseStatus != null ? responseStatus.hashCode() : 0);
-        result = 31 * result + (confSchemaBody != null ? confSchemaBody.hashCode() : 0);
-        result = 31 * result + (confDeltaBody != null ? confDeltaBody.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ConfigurationServerSync [responseStatus=");
-        builder.append(responseStatus);
-        builder.append(", confSchemaBody=");
-        builder.append(confSchemaBody);
-        builder.append(", confDeltaBody=");
-        builder.append(confDeltaBody);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ConfigurationServerSync [responseStatus=");
+    builder.append(responseStatus);
+    builder.append(", confSchemaBody=");
+    builder.append(confSchemaBody);
+    builder.append(", confDeltaBody=");
+    builder.append(confDeltaBody);
+    builder.append("]");
+    return builder.toString();
+  }
 }

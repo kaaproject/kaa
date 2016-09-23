@@ -22,57 +22,57 @@ import akka.actor.ActorRef;
 
 public class UserVerificationRequestMessage {
 
-    private final UUID id;
-    private final ActorRef originator;
-    private final String verifierId;
-    private final String userId;
-    private final String accessToken;
+  private final UUID id;
+  private final ActorRef originator;
+  private final String verifierId;
+  private final String userId;
+  private final String accessToken;
 
-    public UserVerificationRequestMessage(ActorRef originator, String verifierId, String userId, String accessToken) {
-        super();
-        this.id = UUID.randomUUID();
-        this.originator = originator;
-        this.verifierId = verifierId;
-        this.userId = userId;
-        this.accessToken = accessToken;
-    }
+  public UserVerificationRequestMessage(ActorRef originator, String verifierId, String userId, String accessToken) {
+    super();
+    this.id = UUID.randomUUID();
+    this.originator = originator;
+    this.verifierId = verifierId;
+    this.userId = userId;
+    this.accessToken = accessToken;
+  }
 
-    public UUID getRequestid() {
-        return id;
-    }
+  public UUID getRequestid() {
+    return id;
+  }
 
-    public String getVerifierId() {
-        return verifierId;
-    }
+  public String getVerifierId() {
+    return verifierId;
+  }
 
-    public String getUserId() {
-        return userId;
-    }
+  public String getUserId() {
+    return userId;
+  }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-    
-    public ActorRef getOriginator() {
-        return originator;
-    }
+  public String getAccessToken() {
+    return accessToken;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserVerificationRequestMessage [id=");
-        builder.append(id);
-        builder.append(", originator=");
-        builder.append(originator);
-        builder.append(", verifierId=");
-        builder.append(verifierId);
-        builder.append(", userId=");
-        builder.append(userId);
-        builder.append(", accessToken=");
-        builder.append(accessToken);
-        builder.append("]");
-        return builder.toString();
-    }
+  public ActorRef getOriginator() {
+    return originator;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("UserVerificationRequestMessage [id=");
+    builder.append(id);
+    builder.append(", originator=");
+    builder.append(originator);
+    builder.append(", verifierId=");
+    builder.append(verifierId);
+    builder.append(", userId=");
+    builder.append(userId);
+    builder.append(", accessToken=");
+    builder.append(accessToken);
+    builder.append("]");
+    return builder.toString();
+  }
 
 
 }

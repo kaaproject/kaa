@@ -33,40 +33,40 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+
+import java.util.List;
 
 public interface LogAppendersService {
 
-    /**
-     * @param   appId the app id
-     * @return  the list log appender dto
-     */
-    List<LogAppenderDto> findAllAppendersByAppId(String appId);
+  /**
+   * @param appId the app id
+   * @return the list log appender dto
+   */
+  List<LogAppenderDto> findAllAppendersByAppId(String appId);
 
-    /**
-     * @param   appId           the app id
-     * @param   schemaVersion   the schema version
-     * @return  the list log appender dto
-     */
-    List<LogAppenderDto> findLogAppendersByAppIdAndSchemaVersion(String appId, int schemaVersion);
+  /**
+   * @param appId         the app id
+   * @param schemaVersion the schema version
+   * @return the list log appender dto
+   */
+  List<LogAppenderDto> findLogAppendersByAppIdAndSchemaVersion(String appId, int schemaVersion);
 
-    /**
-     * @param id the id
-     */
-    void removeLogAppenderById(String id);
+  /**
+   * @param id the id
+   */
+  void removeLogAppenderById(String id);
 
-    /**
-     * @param   id the id
-     * @return  the log appender dto
-     */
-    LogAppenderDto findLogAppenderById(String id);
+  /**
+   * @param id the id
+   * @return the log appender dto
+   */
+  LogAppenderDto findLogAppenderById(String id);
 
-    /**
-     * @param   logAppenderDto the log appender dto
-     * @return  the log appender dto
-     */
-    LogAppenderDto saveLogAppender(LogAppenderDto logAppenderDto);
+  /**
+   * @param logAppenderDto the log appender dto
+   * @return the log appender dto
+   */
+  LogAppenderDto saveLogAppender(LogAppenderDto logAppenderDto);
 
 }

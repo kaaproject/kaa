@@ -29,12 +29,12 @@ import org.kaaproject.kaa.client.common.CommonRecord;
  */
 public interface ConfigurationReceiver {
 
-    /**
-     * This callback will be called on any configuration update
-     *
-     * @param configuration full configuration in common objects
-     * @see CommonRecord
-     */
-    void onConfigurationUpdated(CommonRecord configuration);
+  /**
+   * This callback will be called on any configuration update
+   *
+   * @param configuration full configuration in common objects
+   * @see CommonRecord
+   */
+  void onConfigurationUpdated(CommonRecord configuration);
 
 }

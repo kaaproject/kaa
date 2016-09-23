@@ -17,79 +17,76 @@
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.Prefix;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EventClassView;
+
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventClassPlace extends AbstractSchemaPlaceEvent {
 
-    private String ctlSchemaId;
-    private String nameEC;
+  private String ctlSchemaId;
+  private String nameEC;
 
-    public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId, List<EventClassViewDto> eventClassDtoList) {
-        super(ecfId, ecfVersionId, ecfVersion, schemaId);
-        this.eventClassDtoList = eventClassDtoList;
-    }
+  public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId, List<EventClassViewDto> eventClassDtoList) {
+    super(ecfId, ecfVersionId, ecfVersion, schemaId);
+    this.eventClassDtoList = eventClassDtoList;
+  }
 
-    public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
-        super(ecfId, ecfVersionId, ecfVersion, schemaId);
-    }
+  public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+    super(ecfId, ecfVersionId, ecfVersion, schemaId);
+  }
 
-    public String getCtlSchemaId() {
-        return ctlSchemaId;
-    }
+  public String getCtlSchemaId() {
+    return ctlSchemaId;
+  }
 
-    public void setCtlSchemaId(String ctlSchemaId) {
-        this.ctlSchemaId = ctlSchemaId;
-    }
+  public void setCtlSchemaId(String ctlSchemaId) {
+    this.ctlSchemaId = ctlSchemaId;
+  }
 
-    public String getNameEC() {
-        return nameEC;
-    }
+  public String getNameEC() {
+    return nameEC;
+  }
 
-    public void setNameEC(String nameEC) {
-        this.nameEC = nameEC;
-    }
+  public void setNameEC(String nameEC) {
+    this.nameEC = nameEC;
+  }
 
-    @Override
-    public String getName() {
-        return Utils.constants.versions();
-    }
+  @Override
+  public String getName() {
+    return Utils.constants.versions();
+  }
 
-    @Prefix(value = "eventClass")
-    public static class Tokenizer extends AbstractSchemaPlaceEvent.Tokenizer<EventClassPlace> {
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new EcfVersionPlace(ecfId, ecfVersionId, ecfVersion, eventClassDtoList);
+  }
 
-        @Override
-        protected EventClassPlace getPlaceImpl(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
-            return new EventClassPlace(ecfId, ecfVersionId, ecfVersion, schemaId);
-        }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof EventClassPlace)) return false;
+    if (!super.equals(o)) return false;
 
-    }
+    EventClassPlace that = (EventClassPlace) o;
 
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new EcfVersionPlace(ecfId, ecfVersionId, ecfVersion, eventClassDtoList);
-    }
+    return getEcfVersionId() != null ? getEcfVersionId().equals(that.getEcfVersionId()) : that.getEcfVersionId() == null;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EventClassPlace)) return false;
-        if (!super.equals(o)) return false;
+  }
 
-        EventClassPlace that = (EventClassPlace) o;
+  @Override
+  public int hashCode() {
+    return getEcfVersionId() != null ? getEcfVersionId().hashCode() : 0;
+  }
 
-        return getEcfVersionId() != null ? getEcfVersionId().equals(that.getEcfVersionId()) : that.getEcfVersionId() == null;
-
-    }
+  @Prefix(value = "eventClass")
+  public static class Tokenizer extends AbstractSchemaPlaceEvent.Tokenizer<EventClassPlace> {
 
     @Override
-    public int hashCode() {
-        return getEcfVersionId() != null ? getEcfVersionId().hashCode() : 0;
+    protected EventClassPlace getPlaceImpl(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+      return new EventClassPlace(ecfId, ecfVersionId, ecfVersion, schemaId);
     }
+
+  }
 }

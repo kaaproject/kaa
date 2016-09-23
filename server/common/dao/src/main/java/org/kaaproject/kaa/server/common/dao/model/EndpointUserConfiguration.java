@@ -20,15 +20,15 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 
 public interface EndpointUserConfiguration extends ToDto<EndpointUserConfigurationDto> {
 
-    String getUserId();
+  String getUserId();
 
-    void setUserId(String userId);
+  void setUserId(String userId);
 
-    String getAppToken();
+  String getAppToken();
 
-    public void setAppToken(String appToken);
+  public void setAppToken(String appToken);
 
-    Integer getSchemaVersion();
+  Integer getSchemaVersion();
 
-    void setSchemaVersion(Integer schemaVersion);
+  void setSchemaVersion(Integer schemaVersion);
 }

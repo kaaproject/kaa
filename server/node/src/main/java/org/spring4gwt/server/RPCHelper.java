@@ -16,145 +16,145 @@
 
 package org.spring4gwt.server;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.AbstractSerializationStream;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 public class RPCHelper {
-	
-	private static final Log LOG = LogFactory.getLog(RPCHelper.class);
 
-	private RPCHelper() {
-	}
+  private static final Log LOG = LogFactory.getLog(RPCHelper.class);
 
-	public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
-		      SerializationPolicy serializationPolicy) throws SerializationException {
-		    return invokeAndEncodeResponse(target, serviceMethod, args, serializationPolicy,
-		        AbstractSerializationStream.DEFAULT_FLAGS);
-		  }
-	  
-	  public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
-		      SerializationPolicy serializationPolicy, int flags) throws SerializationException {
-		    if (serviceMethod == null) {
-		      throw new NullPointerException("serviceMethod");
-		    }
+  private RPCHelper() {
+  }
 
-		    if (serializationPolicy == null) {
-		      throw new NullPointerException("serializationPolicy");
-		    }
+  public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
+                                               SerializationPolicy serializationPolicy) throws SerializationException {
+    return invokeAndEncodeResponse(target, serviceMethod, args, serializationPolicy,
+        AbstractSerializationStream.DEFAULT_FLAGS);
+  }
 
-		    String responsePayload;
-		    try {
-		      Object result = serviceMethod.invoke(target, args);
+  public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
+                                               SerializationPolicy serializationPolicy, int flags) throws SerializationException {
+    if (serviceMethod == null) {
+      throw new NullPointerException("serviceMethod");
+    }
 
-		      responsePayload = RPC.encodeResponseForSuccess(serviceMethod, result, serializationPolicy, flags);
-		    } catch (IllegalAccessException e) {
-		      SecurityException securityException =
-		          new SecurityException(formatIllegalAccessErrorMessage(target, serviceMethod));
-		      securityException.initCause(e);
-		      throw securityException;
-		    } catch (IllegalArgumentException e) {
-		      SecurityException securityException =
-		          new SecurityException(formatIllegalArgumentErrorMessage(target, serviceMethod, args));
-		      securityException.initCause(e);
-		      throw securityException;
-		    } catch (InvocationTargetException e) {
-		      // Try to encode the caught exception
-		      //
-		      Throwable cause = e.getCause();
-		      
-		      LOG.error("Unexpected exception occured while invoking service method - " 
-		      + (serviceMethod != null ? serviceMethod.getName() : "null"), e);
+    if (serializationPolicy == null) {
+      throw new NullPointerException("serializationPolicy");
+    }
 
-		      responsePayload = RPC.encodeResponseForFailure(serviceMethod, cause, serializationPolicy, flags);
-		    }
+    String responsePayload;
+    try {
+      Object result = serviceMethod.invoke(target, args);
 
-		    return responsePayload;
-		  }
-	  
-	  private static String formatIllegalArgumentErrorMessage(Object target, Method serviceMethod,
-		      Object[] args) {
-		    StringBuffer sb = new StringBuffer();
-		    sb.append("Blocked attempt to invoke method '");
-		    sb.append(getSourceRepresentation(serviceMethod));
-		    sb.append("'");
+      responsePayload = RPC.encodeResponseForSuccess(serviceMethod, result, serializationPolicy, flags);
+    } catch (IllegalAccessException e) {
+      SecurityException securityException =
+          new SecurityException(formatIllegalAccessErrorMessage(target, serviceMethod));
+      securityException.initCause(e);
+      throw securityException;
+    } catch (IllegalArgumentException e) {
+      SecurityException securityException =
+          new SecurityException(formatIllegalArgumentErrorMessage(target, serviceMethod, args));
+      securityException.initCause(e);
+      throw securityException;
+    } catch (InvocationTargetException e) {
+      // Try to encode the caught exception
+      //
+      Throwable cause = e.getCause();
 
-		    if (target != null) {
-		      sb.append(" on target '");
-		      sb.append(printTypeName(target.getClass()));
-		      sb.append("'");
-		    }
+      LOG.error("Unexpected exception occured while invoking service method - "
+          + (serviceMethod != null ? serviceMethod.getName() : "null"), e);
 
-		    sb.append(" with invalid arguments");
+      responsePayload = RPC.encodeResponseForFailure(serviceMethod, cause, serializationPolicy, flags);
+    }
 
-		    if (args != null && args.length > 0) {
-		      sb.append(Arrays.asList(args));
-		    }
+    return responsePayload;
+  }
 
-		    return sb.toString();
-		  }
-	  
-	  private static String formatIllegalAccessErrorMessage(Object target, Method serviceMethod) {
-		    StringBuffer sb = new StringBuffer();
-		    sb.append("Blocked attempt to access inaccessible method '");
-		    sb.append(getSourceRepresentation(serviceMethod));
-		    sb.append("'");
+  private static String formatIllegalArgumentErrorMessage(Object target, Method serviceMethod,
+                                                          Object[] args) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("Blocked attempt to invoke method '");
+    sb.append(getSourceRepresentation(serviceMethod));
+    sb.append("'");
 
-		    if (target != null) {
-		      sb.append(" on target '");
-		      sb.append(printTypeName(target.getClass()));
-		      sb.append("'");
-		    }
+    if (target != null) {
+      sb.append(" on target '");
+      sb.append(printTypeName(target.getClass()));
+      sb.append("'");
+    }
 
-		    sb.append("; this is either misconfiguration or a hack attempt");
+    sb.append(" with invalid arguments");
 
-		    return sb.toString();
-		  }
-	  
-	  private static String printTypeName(Class<?> type) {
-		    // Primitives
-		    //
-		    if (type.equals(Integer.TYPE)) {
-		      return "int";
-		    } else if (type.equals(Long.TYPE)) {
-		      return "long";
-		    } else if (type.equals(Short.TYPE)) {
-		      return "short";
-		    } else if (type.equals(Byte.TYPE)) {
-		      return "byte";
-		    } else if (type.equals(Character.TYPE)) {
-		      return "char";
-		    } else if (type.equals(Boolean.TYPE)) {
-		      return "boolean";
-		    } else if (type.equals(Float.TYPE)) {
-		      return "float";
-		    } else if (type.equals(Double.TYPE)) {
-		      return "double";
-		    }
+    if (args != null && args.length > 0) {
+      sb.append(Arrays.asList(args));
+    }
 
-		    // Arrays
-		    //
-		    if (type.isArray()) {
-		      Class<?> componentType = type.getComponentType();
-		      return printTypeName(componentType) + "[]";
-		    }
+    return sb.toString();
+  }
 
-		    // Everything else
-		    //
-		    return type.getName().replace('$', '.');
-		  }
-	  
-	  private static String getSourceRepresentation(Method method) {
-		    return method.toString().replace('$', '.');
-		  }
+  private static String formatIllegalAccessErrorMessage(Object target, Method serviceMethod) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("Blocked attempt to access inaccessible method '");
+    sb.append(getSourceRepresentation(serviceMethod));
+    sb.append("'");
 
-	  
+    if (target != null) {
+      sb.append(" on target '");
+      sb.append(printTypeName(target.getClass()));
+      sb.append("'");
+    }
+
+    sb.append("; this is either misconfiguration or a hack attempt");
+
+    return sb.toString();
+  }
+
+  private static String printTypeName(Class<?> type) {
+    // Primitives
+    //
+    if (type.equals(Integer.TYPE)) {
+      return "int";
+    } else if (type.equals(Long.TYPE)) {
+      return "long";
+    } else if (type.equals(Short.TYPE)) {
+      return "short";
+    } else if (type.equals(Byte.TYPE)) {
+      return "byte";
+    } else if (type.equals(Character.TYPE)) {
+      return "char";
+    } else if (type.equals(Boolean.TYPE)) {
+      return "boolean";
+    } else if (type.equals(Float.TYPE)) {
+      return "float";
+    } else if (type.equals(Double.TYPE)) {
+      return "double";
+    }
+
+    // Arrays
+    //
+    if (type.isArray()) {
+      Class<?> componentType = type.getComponentType();
+      return printTypeName(componentType) + "[]";
+    }
+
+    // Everything else
+    //
+    return type.getName().replace('$', '.');
+  }
+
+  private static String getSourceRepresentation(Method method) {
+    return method.toString().replace('$', '.');
+  }
+
+
 }

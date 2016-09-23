@@ -21,39 +21,39 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 public class CtlSchemaFormDto extends CTLSchemaDto {
 
-    private static final long serialVersionUID = -5383847121615543863L;
-    
-    private RecordField schema;
-    private boolean hasDependencies;
-    
-    public CtlSchemaFormDto() {
-        super();
-    }
+  private static final long serialVersionUID = -5383847121615543863L;
 
-    public CtlSchemaFormDto(CTLSchemaDto ctlSchema) {
-        super();
-        setId(ctlSchema.getId());            
-        setMetaInfo(ctlSchema.getMetaInfo());
-        setVersion(ctlSchema.getVersion());
-        setCreatedTime(ctlSchema.getCreatedTime());
-        setCreatedUsername(ctlSchema.getCreatedUsername());
-        setHasDependencies(ctlSchema.getDependencySet() != null && !ctlSchema.getDependencySet().isEmpty());
-    }
-    
-    public RecordField getSchema() {
-        return schema;
-    }
+  private RecordField schema;
+  private boolean hasDependencies;
 
-    public void setSchema(RecordField schema) {
-        this.schema = schema;
-    }
-    
-    public boolean hasDependencies() {
-        return hasDependencies;
-    }
+  public CtlSchemaFormDto() {
+    super();
+  }
 
-    public void setHasDependencies(boolean hasDependencies) {
-        this.hasDependencies = hasDependencies;
-    }
+  public CtlSchemaFormDto(CTLSchemaDto ctlSchema) {
+    super();
+    setId(ctlSchema.getId());
+    setMetaInfo(ctlSchema.getMetaInfo());
+    setVersion(ctlSchema.getVersion());
+    setCreatedTime(ctlSchema.getCreatedTime());
+    setCreatedUsername(ctlSchema.getCreatedUsername());
+    setHasDependencies(ctlSchema.getDependencySet() != null && !ctlSchema.getDependencySet().isEmpty());
+  }
+
+  public RecordField getSchema() {
+    return schema;
+  }
+
+  public void setSchema(RecordField schema) {
+    this.schema = schema;
+  }
+
+  public boolean hasDependencies() {
+    return hasDependencies;
+  }
+
+  public void setHasDependencies(boolean hasDependencies) {
+    this.hasDependencies = hasDependencies;
+  }
 
 }

@@ -22,8 +22,8 @@ import org.junit.Test;
 
 public class RouteTableAddressTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(RouteTableAddress.class).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(RouteTableAddress.class).verify();
+  }
 }

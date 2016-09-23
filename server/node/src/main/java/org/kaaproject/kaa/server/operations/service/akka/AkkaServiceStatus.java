@@ -18,20 +18,20 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 public class AkkaServiceStatus {
 
-    private final long ts;
-    private final int endpointCount;
+  private final long ts;
+  private final int endpointCount;
 
-    public AkkaServiceStatus(long ts, int endpointCount) {
-        super();
-        this.ts = ts;
-        this.endpointCount = endpointCount;
-    }
-    
-    public long getTs() {
-        return ts;
-    }
+  public AkkaServiceStatus(long ts, int endpointCount) {
+    super();
+    this.ts = ts;
+    this.endpointCount = endpointCount;
+  }
 
-    public int getEndpointCount() {
-        return endpointCount;
-    }    
+  public long getTs() {
+    return ts;
+  }
+
+  public int getEndpointCount() {
+    return endpointCount;
+  }
 }

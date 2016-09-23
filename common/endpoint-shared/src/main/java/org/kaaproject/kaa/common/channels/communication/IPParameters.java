@@ -18,92 +18,96 @@ package org.kaaproject.kaa.common.channels.communication;
 
 /**
  * IPParameters Class.
- * Base type for IP oriented Channels - IPParameters consists 
+ * Base type for IP oriented Channels - IPParameters consists
  * HostName String and Integer port
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 public class IPParameters {
-    private String hostName;
-    private int port;
-    
-    /**
-     * HostName getter.
-     * @return String HostName
-     */
-    public String getHostName() {
-        return hostName;
+  private String hostName;
+  private int port;
+
+  /**
+   * HostName getter.
+   *
+   * @return String HostName
+   */
+  public String getHostName() {
+    return hostName;
+  }
+
+  /**
+   * HostName setter.
+   *
+   * @param hostName the host name
+   */
+  public void setHostName(String hostName) {
+    this.hostName = hostName;
+  }
+
+  /**
+   * Port getter.
+   *
+   * @return int port
+   */
+  public int getPort() {
+    return port;
+  }
+
+  /**
+   * Port setter.
+   *
+   * @param port the port
+   */
+  public void setPort(int port) {
+    this.port = port;
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return "IPParameters [hostName=" + hostName + ", port=" + port + "]";
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((hostName == null) ? 0 : hostName.hashCode());
+    result = prime * result + port;
+    return result;
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
-    /**
-     * Port getter.
-     * @return int port
-     */
-    public int getPort() {
-        return port;
+    if (obj == null) {
+      return false;
     }
-    
-    /**
-     * HostName setter.
-     * @param hostName the host name
-     */
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-    
-    /**
-     * Port setter.
-     * @param port the port
-     */
-    public void setPort(int port) {
-        this.port = port;
+    IPParameters other = (IPParameters) obj;
+    if (hostName == null) {
+      if (other.hostName != null) {
+        return false;
+      }
+    } else if (!hostName.equals(other.hostName)) {
+      return false;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "IPParameters [hostName=" + hostName + ", port=" + port + "]";
+    if (port != other.port) {
+      return false;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((hostName == null) ? 0 : hostName.hashCode());
-        result = prime * result + port;
-        return result;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        IPParameters other = (IPParameters) obj;
-        if (hostName == null) {
-            if (other.hostName != null) {
-                return false;
-            }
-        } else if (!hostName.equals(other.hostName)) {
-            return false;
-        }
-        if (port != other.port) {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 }

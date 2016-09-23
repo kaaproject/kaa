@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-
 import com.google.gwt.user.client.ui.HasValue;
+
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 
 public interface CtlSchemasView extends BaseListView<CTLSchemaMetaInfoDto> {
 
-    HasValue<Boolean> getShowHigherScopeCheckBox();
-    
-    boolean displayShowHigherLevelScopeCheckBox();
-    
+  HasValue<Boolean> getShowHigherScopeCheckBox();
+
+  boolean displayShowHigherLevelScopeCheckBox();
+
 }

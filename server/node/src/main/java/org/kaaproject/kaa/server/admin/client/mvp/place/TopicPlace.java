@@ -16,76 +16,76 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class TopicPlace extends TopicsPlace {
 
-    protected String topicId;
+  protected String topicId;
 
-    public TopicPlace(String applicationId, String topicId) {
-        super(applicationId);
-        this.topicId = topicId;
+  public TopicPlace(String applicationId, String topicId) {
+    super(applicationId);
+    this.topicId = topicId;
+  }
+
+  public String getTopicId() {
+    return topicId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.notificationTopic();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    TopicPlace other = (TopicPlace) obj;
+    if (topicId == null) {
+      if (other.topicId != null) {
+        return false;
+      }
+    } else if (!topicId.equals(other.topicId)) {
+      return false;
+    }
+    return true;
+  }
 
-    public String getTopicId() {
-        return topicId;
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new TopicsPlace(applicationId);
+  }
+
+  @Prefix(value = "topic")
+  public static class Tokenizer implements PlaceTokenizer<TopicPlace>, PlaceConstants {
+
+    @Override
+    public TopicPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new TopicPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.notificationTopic();
+    public String getToken(TopicPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      PlaceParams.putParam(TOPIC_ID, place.getTopicId());
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "topic")
-    public static class Tokenizer implements PlaceTokenizer<TopicPlace>, PlaceConstants {
-
-        @Override
-        public TopicPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new TopicPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
-        }
-
-        @Override
-        public String getToken(TopicPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(TOPIC_ID, place.getTopicId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TopicPlace other = (TopicPlace) obj;
-        if (topicId == null) {
-            if (other.topicId != null) {
-                return false;
-            }
-        } else if (!topicId.equals(other.topicId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new TopicsPlace(applicationId);
-    }
+  }
 }

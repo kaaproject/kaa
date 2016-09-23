@@ -21,18 +21,18 @@ package org.kaaproject.kaa.common.dto;
 
 public interface HasVersion {
 
-    /**
-     * This method return long version
-     *
-     * @return long version
-     */
-    Long getVersion();
+  /**
+   * This method return long version
+   *
+   * @return long version
+   */
+  Long getVersion();
 
-    /**
-     * This is method set long version
-     *
-     * @param version long version
-     */
-    void setVersion(Long version);
-    
+  /**
+   * This is method set long version
+   *
+   * @param version long version
+   */
+  void setVersion(Long version);
+
 }

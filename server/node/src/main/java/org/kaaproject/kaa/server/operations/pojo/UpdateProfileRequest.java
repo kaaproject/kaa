@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.pojo;
 
-import java.util.Arrays;
-
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
+import java.util.Arrays;
 
 
 /**
@@ -31,81 +31,76 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  */
 public class UpdateProfileRequest {
 
-    private final EndpointObjectHash endpointKeyHash;
+  private final EndpointObjectHash endpointKeyHash;
 
-    private final byte[] profile;
+  private final byte[] profile;
 
-    private final String appToken;
+  private final String appToken;
 
-    private final String sdkToken;
+  private final String sdkToken;
 
-    private final String accessToken;
+  private final String accessToken;
 
-    /**
-     * Instantiates a new update profile request.
-     *
-     * @param appToken
-     *            the app token
-     * @param endpointKeyHash
-     *            the endpoint key hash
-     * @param accessToken
-     *            the access token
-     * @param profile
-     *            the profile
-     * @param sdkToken
-     *            the sdk token
-     */
-    public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, String accessToken, byte[] profile, String sdkToken) {
-        super();
-        this.appToken = appToken;
-        this.endpointKeyHash = endpointKeyHash;
-        this.accessToken = accessToken;
-        this.profile = Arrays.copyOf(profile, profile.length);
-        this.sdkToken = sdkToken;
-    }
+  /**
+   * Instantiates a new update profile request.
+   *
+   * @param appToken        the app token
+   * @param endpointKeyHash the endpoint key hash
+   * @param accessToken     the access token
+   * @param profile         the profile
+   * @param sdkToken        the sdk token
+   */
+  public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, String accessToken, byte[] profile, String sdkToken) {
+    super();
+    this.appToken = appToken;
+    this.endpointKeyHash = endpointKeyHash;
+    this.accessToken = accessToken;
+    this.profile = Arrays.copyOf(profile, profile.length);
+    this.sdkToken = sdkToken;
+  }
 
-    /**
-     * Gets the endpoint key hash.
-     *
-     * @return the endpoint key hash
-     */
-    public EndpointObjectHash getEndpointKeyHash() {
-        return endpointKeyHash;
-    }
+  /**
+   * Gets the endpoint key hash.
+   *
+   * @return the endpoint key hash
+   */
+  public EndpointObjectHash getEndpointKeyHash() {
+    return endpointKeyHash;
+  }
 
-    /**
-     * Gets the profile.
-     *
-     * @return the profile
-     */
-    public byte[] getProfile() {
-        return Arrays.copyOf(profile, profile.length);
-    }
+  /**
+   * Gets the profile.
+   *
+   * @return the profile
+   */
+  public byte[] getProfile() {
+    return Arrays.copyOf(profile, profile.length);
+  }
 
-    /**
-     * Gets the application token.
-     *
-     * @return the application token
-     */
-    public String getApplicationToken() {
-        return appToken;
-    }
+  /**
+   * Gets the application token.
+   *
+   * @return the application token
+   */
+  public String getApplicationToken() {
+    return appToken;
+  }
 
-    /**
-     * Gets the access token.
-     *
-     * @return the access token
-     */
-    public String getAccessToken() {
-        return accessToken;
-    }
+  /**
+   * Gets the access token.
+   *
+   * @return the access token
+   */
+  public String getAccessToken() {
+    return accessToken;
+  }
 
-    /**
-     * Gets the sdk token.
-     *
-     * @return the sdk token
-     */
-    public String getSdkToken() {
-        return sdkToken;
-    }
+  /**
+   * Gets the sdk token.
+   *
+   * @return the sdk token
+   */
+  public String getSdkToken() {
+    return sdkToken;
+  }
 }

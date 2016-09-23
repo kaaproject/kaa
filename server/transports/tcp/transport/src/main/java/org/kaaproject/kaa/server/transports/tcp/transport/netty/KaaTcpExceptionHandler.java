@@ -16,40 +16,39 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport.netty;
 
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+
 /**
  * KaaTcpExceptionHandler Class. Used to generate Kaa Tcp response in case of
  * error during Kaa Tcp request processing.
- *
  */
 public class KaaTcpExceptionHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KaaTcpExceptionHandler.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(KaaTcpExceptionHandler.class);
 
-    @Override
-    public final void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
-            throws Exception {
-        LOG.error("Exception caught", cause);
-        DisconnectReason reason = null;
-        if (cause instanceof BadRequestException) {
-            reason = DisconnectReason.BAD_REQUEST;
-        } else {
-            reason = DisconnectReason.INTERNAL_ERROR;
-        }
-        Disconnect message = new Disconnect(reason);
-        ChannelFuture future = ctx.writeAndFlush(message.getFrame().array());
-        future.addListener(ChannelFutureListener.CLOSE);
-        ctx.close();
+  @Override
+  public final void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
+      throws Exception {
+    LOG.error("Exception caught", cause);
+    DisconnectReason reason = null;
+    if (cause instanceof BadRequestException) {
+      reason = DisconnectReason.BAD_REQUEST;
+    } else {
+      reason = DisconnectReason.INTERNAL_ERROR;
     }
+    Disconnect message = new Disconnect(reason);
+    ChannelFuture future = ctx.writeAndFlush(message.getFrame().array());
+    future.addListener(ChannelFutureListener.CLOSE);
+    ctx.close();
+  }
 }

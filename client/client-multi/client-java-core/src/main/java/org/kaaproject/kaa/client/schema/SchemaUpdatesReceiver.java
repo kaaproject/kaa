@@ -22,16 +22,14 @@ import org.apache.avro.Schema;
  * Interface for subscriber to receive schema updates
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface SchemaUpdatesReceiver {
 
-    /**
-     * Called on each schema update
-     *
-     * @param schema new schema
-     *
-     */
-    void onSchemaUpdated(Schema schema);
+  /**
+   * Called on each schema update
+   *
+   * @param schema new schema
+   */
+  void onSchemaUpdated(Schema schema);
 
 }

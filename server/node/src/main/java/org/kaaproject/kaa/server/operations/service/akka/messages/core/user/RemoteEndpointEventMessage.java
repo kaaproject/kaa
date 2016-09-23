@@ -24,30 +24,29 @@ import org.kaaproject.kaa.server.operations.service.event.RemoteEndpointEvent;
  * Represents message with events that was sent from remote server.
  * Originator: {@link EndpointService}
  * Destination: {@link LocalUserActor}
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
-public class RemoteEndpointEventMessage implements UserAwareMessage, TenantAwareMessage{
+public class RemoteEndpointEventMessage implements UserAwareMessage, TenantAwareMessage {
 
-    private final RemoteEndpointEvent event;
+  private final RemoteEndpointEvent event;
 
-    public RemoteEndpointEventMessage(RemoteEndpointEvent event) {
-        super();
-        this.event = event;
-    }
+  public RemoteEndpointEventMessage(RemoteEndpointEvent event) {
+    super();
+    this.event = event;
+  }
 
-    public RemoteEndpointEvent getEvent() {
-        return event;
-    }
+  public RemoteEndpointEvent getEvent() {
+    return event;
+  }
 
-    @Override
-    public String getTenantId() {
-        return event.getTenantId();
-    }
+  @Override
+  public String getTenantId() {
+    return event.getTenantId();
+  }
 
-    @Override
-    public String getUserId() {
-        return event.getUserId();
-    }
+  @Override
+  public String getUserId() {
+    return event.getUserId();
+  }
 }

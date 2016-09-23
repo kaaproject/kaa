@@ -24,23 +24,23 @@ import org.kaaproject.kaa.server.common.plugin.PluginType;
 
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
 public class CouchbaseAppenderConfig implements PluginConfig {
-    
-    public CouchbaseAppenderConfig() {
-    }
 
-    @Override
-    public String getPluginTypeName() {
-        return "Couchbase";
-    }
+  public CouchbaseAppenderConfig() {
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.couchbase.appender.CouchbaseLogAppender";
-    }
+  @Override
+  public String getPluginTypeName() {
+    return "Couchbase";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return CouchbaseConfig.getClassSchema();
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.appenders.couchbase.appender.CouchbaseLogAppender";
+  }
+
+  @Override
+  public Schema getPluginConfigSchema() {
+    return CouchbaseConfig.getClassSchema();
+  }
 
 }

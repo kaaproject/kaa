@@ -16,18 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.service.cache;
 
-import java.security.PublicKey;
-import java.util.List;
-import java.util.Set;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -49,6 +45,10 @@ import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 
+import java.security.PublicKey;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * The Interface CacheService is used to model cache service.
@@ -65,363 +65,361 @@ import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
  */
 public interface CacheService {
 
-    /**
-     * Gets the app seq number.
-     *
-     * @param applicationToken the application token
-     * @return the app seq number
-     */
-    AppSeqNumber getAppSeqNumber(String applicationToken);
+  /**
+   * Gets the app seq number.
+   *
+   * @param applicationToken the application token
+   * @return the app seq number
+   */
+  AppSeqNumber getAppSeqNumber(String applicationToken);
 
-    /**
-     * Gets the conf id by key.
-     *
-     * @param key the key
-     * @return the conf id by key
-     */
-    String getConfIdByKey(ConfigurationIdKey key);
+  /**
+   * Gets the conf id by key.
+   *
+   * @param key the key
+   * @return the conf id by key
+   */
+  String getConfIdByKey(ConfigurationIdKey key);
 
-    /**
-     * Gets the history.
-     *
-     * @param historyKey the history key
-     * @return the history
-     */
-    List<HistoryDto> getHistory(HistoryKey historyKey);
+  /**
+   * Gets the history.
+   *
+   * @param historyKey the history key
+   * @return the history
+   */
+  List<HistoryDto> getHistory(HistoryKey historyKey);
 
-    /**
-     * Gets the filters.
-     *
-     * @param key the key
-     * @return the filters
-     */
-    List<ProfileFilterDto> getFilters(AppProfileVersionsKey key);
+  /**
+   * Gets the filters.
+   *
+   * @param key the key
+   * @return the filters
+   */
+  List<ProfileFilterDto> getFilters(AppProfileVersionsKey key);
 
-    /**
-     * Gets application event family maps by their ids.
-     *
-     * @param key list of ids
-     * @return list of application event family maps
-     */
-    List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByIds(List<String> key);
+  /**
+   * Gets application event family maps by their ids.
+   *
+   * @param key list of ids
+   * @return list of application event family maps
+   */
+  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByIds(List<String> key);
 
-    /**
-     * Gets the filter.
-     *
-     * @param profileFilterId the profile filter id
-     * @return the filter
-     */
-    ProfileFilterDto getFilter(String profileFilterId);
+  /**
+   * Gets the filter.
+   *
+   * @param profileFilterId the profile filter id
+   * @return the filter
+   */
+  ProfileFilterDto getFilter(String profileFilterId);
 
 
-    /**
-     * Gets the conf by hash.
-     *
-     * @param hash the hash
-     * @return the conf by hash
-     */
-    EndpointConfigurationDto getConfByHash(EndpointObjectHash hash);
+  /**
+   * Gets the conf by hash.
+   *
+   * @param hash the hash
+   * @return the conf by hash
+   */
+  EndpointConfigurationDto getConfByHash(EndpointObjectHash hash);
 
-    /**
-     * Gets the conf schema by app.
-     *
-     * @param key the key
-     * @return the conf schema by app
-     */
-    ConfigurationSchemaDto getConfSchemaByAppAndVersion(AppVersionKey key);
+  /**
+   * Gets the conf schema by app.
+   *
+   * @param key the key
+   * @return the conf schema by app
+   */
+  ConfigurationSchemaDto getConfSchemaByAppAndVersion(AppVersionKey key);
 
-    /**
-     * Gets the profile schema by app.
-     *
-     * @param key the key
-     * @return the conf schema by app
-     */
-    EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
-    
-    /**
-     * Gets the server profile schema by app.
-     *
-     * @param key the key
-     * @return the server schema by app
-     */
-    ServerProfileSchemaDto getServerProfileSchemaByAppAndVersion(AppVersionKey key);
+  /**
+   * Gets the profile schema by app.
+   *
+   * @param key the key
+   * @return the conf schema by app
+   */
+  EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
 
-    /**
-     * Gets the sdk profile by sdk token.
-     *
-     * @param key the sdk token
-     * @return sdk profile by sdk token
-     */
-    SdkProfileDto getSdkProfileBySdkToken(String key);
+  /**
+   * Gets the server profile schema by app.
+   *
+   * @param key the key
+   * @return the server schema by app
+   */
+  ServerProfileSchemaDto getServerProfileSchemaByAppAndVersion(AppVersionKey key);
 
-    /**
-     * Gets the merged configuration.
-     *
-     * @param egsList the egs list
-     * @param worker the worker
-     * @return the merged configuration
-     */
-    Pair<BaseData, RawData> getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker);
+  /**
+   * Gets the sdk profile by sdk token.
+   *
+   * @param key the sdk token
+   * @return sdk profile by sdk token
+   */
+  SdkProfileDto getSdkProfileBySdkToken(String key);
 
-    /**
-     * Sets the merged configuration.
-     *
-     * @param egsList the egs list
-     * @param mergedConfiguration the merged configuration
-     * @return the string
-     */
-    BaseData setMergedConfiguration(List<EndpointGroupStateDto> egsList, BaseData mergedConfiguration);
+  /**
+   * Gets the merged configuration.
+   *
+   * @param egsList the egs list
+   * @param worker  the worker
+   * @return the merged configuration
+   */
+  Pair<BaseData, RawData> getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker);
 
-    /**
-     * Gets the delta.
-     *
-     * @param deltaKey the delta key
-     * @param worker the worker
-     * @return the delta
-     * @throws GetDeltaException the get delta exception
-     */
-    ConfigurationCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, ConfigurationCacheEntry> worker) throws GetDeltaException;
+  /**
+   * Sets the merged configuration.
+   *
+   * @param egsList             the egs list
+   * @param mergedConfiguration the merged configuration
+   * @return the string
+   */
+  BaseData setMergedConfiguration(List<EndpointGroupStateDto> egsList, BaseData mergedConfiguration);
 
-    /**
-     * Sets the delta.
-     *
-     * @param deltaKey the delta key
-     * @param delta the delta
-     * @return the delta cache entry
-     */
-    ConfigurationCacheEntry setDelta(DeltaCacheKey deltaKey, ConfigurationCacheEntry delta);
+  /**
+   * Gets the delta.
+   *
+   * @param deltaKey the delta key
+   * @param worker   the worker
+   * @return the delta
+   * @throws GetDeltaException the get delta exception
+   */
+  ConfigurationCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, ConfigurationCacheEntry> worker) throws GetDeltaException;
 
-    /**
-     * Gets the endpoint key.
-     *
-     * @param hash the hash
-     * @return the endpoint key
-     */
-    PublicKey getEndpointKey(EndpointObjectHash hash);
+  /**
+   * Sets the delta.
+   *
+   * @param deltaKey the delta key
+   * @param delta    the delta
+   * @return the delta cache entry
+   */
+  ConfigurationCacheEntry setDelta(DeltaCacheKey deltaKey, ConfigurationCacheEntry delta);
 
-    /**
-     * Gets the EndpointClassFamily Id using tenant Id and name;
-     *
-     * @param key the event class family id key
-     * @return the EndpointClassFamily Id
-     */
-    String getEventClassFamilyIdByName(EventClassFamilyIdKey key);
+  /**
+   * Gets the endpoint key.
+   *
+   * @param hash the hash
+   * @return the endpoint key
+   */
+  PublicKey getEndpointKey(EndpointObjectHash hash);
 
-    /**
-     * Gets the Tenant Id by application token;
-     *
-     * @param appToken token of Application that belongs to Tenant
-     * @return the Tenant Id
-     */
-    String getTenantIdByAppToken(String appToken);
-    
-    /**
-     * Gets the {@link ApplicationDto} by application token;
-     *
-     * @param appToken token of Application
-     * @return the Application
-     */
-    String getApplicationIdByAppToken(String appToken);
+  /**
+   * Gets the EndpointClassFamily Id using tenant Id and name;
+   *
+   * @param key the event class family id key
+   * @return the EndpointClassFamily Id
+   */
+  String getEventClassFamilyIdByName(EventClassFamilyIdKey key);
 
-    /**
-     * Gets the application token by the sdk token
-     *
-     * @param sdkToken the sdk token
-     * @return application token for the specified sdk token
-     */
-    String getAppTokenBySdkToken(String sdkToken);
+  /**
+   * Gets the Tenant Id by application token;
+   *
+   * @param appToken token of Application that belongs to Tenant
+   * @return the Tenant Id
+   */
+  String getTenantIdByAppToken(String appToken);
 
-    /**
-     * Gets the Event Class Family Id by Event Class FQN
-     *
-     * @param fqn of one of the events that belong to target Event Class Family
-     * @return the Event Class Family Id
-     */
-	String getEventClassFamilyIdByEventClassFqn(EventClassFqnKey fqn);
+  /**
+   * Gets the {@link ApplicationDto} by application token;
+   *
+   * @param appToken token of Application
+   * @return the Application
+   */
+  String getApplicationIdByAppToken(String appToken);
 
-    /**
-     * Gets all possible Event Class Family - Application keys that are interested in receiving
-     * events for this particular Event Class
-     *
-     * @param eventClassVersion Event Class Id and Version pair
-     * @return set of Event Class Family - Application keys
-     */
-	Set<RouteTableKey> getRouteKeys(EventClassFqnVersion eventClassVersion);
+  /**
+   * Gets the application token by the sdk token
+   *
+   * @param sdkToken the sdk token
+   * @return application token for the specified sdk token
+   */
+  String getAppTokenBySdkToken(String sdkToken);
 
-    /**
-     * Sets the endpoint key.
-     *
-     * @param hash the hash
-     * @param endpointKey the endpoint key
-     *
-     * @return cached endpoint key
-     */
-    PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
+  /**
+   * Gets the Event Class Family Id by Event Class FQN
+   *
+   * @param fqn of one of the events that belong to target Event Class Family
+   * @return the Event Class Family Id
+   */
+  String getEventClassFamilyIdByEventClassFqn(EventClassFqnKey fqn);
 
-    /**
-     *
-     * Remove key from hash
-     *
-     * @param hash the hash
-     * @param endpointKey the endpoint key
-     */
-    void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
+  /**
+   * Gets all possible Event Class Family - Application keys that are interested in receiving
+   * events for this particular Event Class
+   *
+   * @param eventClassVersion Event Class Id and Version pair
+   * @return set of Event Class Family - Application keys
+   */
+  Set<RouteTableKey> getRouteKeys(EventClassFqnVersion eventClassVersion);
 
-    /**
-     * Setter for test purpose only.
-     *
-     * @param applicationService the new application service
-     */
-    void setApplicationService(ApplicationService applicationService);
+  /**
+   * Sets the endpoint key.
+   *
+   * @param hash        the hash
+   * @param endpointKey the endpoint key
+   * @return cached endpoint key
+   */
+  PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
-    /**
-     * Setter for test purpose only.
-     *
-     * @param configurationService the new configuration service
-     */
-    void setConfigurationService(ConfigurationService configurationService);
+  /**
+   * Remove key from hash
+   *
+   * @param hash        the hash
+   * @param endpointKey the endpoint key
+   */
+  void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
-    /**
-     * Setter for test purpose only.
-     *
-     * @param historyService the new history service
-     */
-    void setHistoryService(HistoryService historyService);
+  /**
+   * Setter for test purpose only.
+   *
+   * @param applicationService the new application service
+   */
+  void setApplicationService(ApplicationService applicationService);
 
-    /**
-     * Setter for test purpose only.
-     *
-     * @param profileService the new profile service
-     */
-    void setProfileService(ProfileService profileService);
+  /**
+   * Setter for test purpose only.
+   *
+   * @param configurationService the new configuration service
+   */
+  void setConfigurationService(ConfigurationService configurationService);
 
-    /**
-     * Setter for test purpose only.
-     *
-     * @param endpointService the new endpoint service
-     */
-    void setEndpointService(EndpointService endpointService);
+  /**
+   * Setter for test purpose only.
+   *
+   * @param historyService the new history service
+   */
+  void setHistoryService(HistoryService historyService);
 
-    /**
-     * Setter for test purposes only
-     *
-     * @param sdkProfileService the new sdk profile service
-     */
-    void setSdkProfileService(SdkProfileService sdkProfileService);
+  /**
+   * Setter for test purpose only.
+   *
+   * @param profileService the new profile service
+   */
+  void setProfileService(ProfileService profileService);
 
-    /**
-     * Cache invalidate method.
-     *
-     * @param key the key
-     */
-    void resetFilters(AppProfileVersionsKey key);
+  /**
+   * Setter for test purpose only.
+   *
+   * @param endpointService the new endpoint service
+   */
+  void setEndpointService(EndpointService endpointService);
 
-    /**
-     * Cache invalidate method.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the int
-     */
-    AppSeqNumber putAppSeqNumber(String key, AppSeqNumber value);
+  /**
+   * Setter for test purposes only
+   *
+   * @param sdkProfileService the new sdk profile service
+   */
+  void setSdkProfileService(SdkProfileService sdkProfileService);
 
-    /**
-     * Put profile schema.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the profile schema dto
-     */
-    EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value);
+  /**
+   * Cache invalidate method.
+   *
+   * @param key the key
+   */
+  void resetFilters(AppProfileVersionsKey key);
 
-    /**
-     * Put configuration schema.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the configuration schema dto
-     */
-    ConfigurationSchemaDto putConfigurationSchema(AppVersionKey key, ConfigurationSchemaDto value);
+  /**
+   * Cache invalidate method.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the int
+   */
+  AppSeqNumber putAppSeqNumber(String key, AppSeqNumber value);
 
-    /**
-     * Put configuration.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the endpoint configuration dto
-     */
-    EndpointConfigurationDto putConfiguration(EndpointObjectHash key, EndpointConfigurationDto value);
+  /**
+   * Put profile schema.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the profile schema dto
+   */
+  EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value);
 
-    /**
-     * Put filter.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the profile filter dto
-     */
-    ProfileFilterDto putFilter(String key, ProfileFilterDto value);
+  /**
+   * Put configuration schema.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the configuration schema dto
+   */
+  ConfigurationSchemaDto putConfigurationSchema(AppVersionKey key, ConfigurationSchemaDto value);
 
-    /**
-     * Put filter list.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the list
-     */
-    List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value);
+  /**
+   * Put configuration.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the endpoint configuration dto
+   */
+  EndpointConfigurationDto putConfiguration(EndpointObjectHash key, EndpointConfigurationDto value);
 
-    /**
-     * Put history.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the list
-     */
-    List<HistoryDto> putHistory(HistoryKey key, List<HistoryDto> value);
+  /**
+   * Put filter.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the profile filter dto
+   */
+  ProfileFilterDto putFilter(String key, ProfileFilterDto value);
 
-    /**
-     * Put conf id.
-     *
-     * @param key the key
-     * @param value the value
-     * @return the string
-     */
-    String putConfId(ConfigurationIdKey key, String value);
+  /**
+   * Put filter list.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the list
+   */
+  List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value);
 
-    /**
-     * Put application event family maps
-     *
-     * @param key list of event family maps ids
-     * @param value list of event family maps
-     * @return the list
-     */
-    public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value);
+  /**
+   * Put history.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the list
+   */
+  List<HistoryDto> putHistory(HistoryKey key, List<HistoryDto> value);
 
-    void setEventClassService(EventClassService eventClassService);
+  /**
+   * Put conf id.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the string
+   */
+  String putConfId(ConfigurationIdKey key, String value);
 
-    void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService);
+  /**
+   * Put application event family maps
+   *
+   * @param key   list of event family maps ids
+   * @param value list of event family maps
+   * @return the list
+   */
+  public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value);
 
-    EndpointGroupDto getEndpointGroupById(String endpointGroupId);
+  void setEventClassService(EventClassService eventClassService);
 
-    TopicDto getTopicById(String topicId);
+  void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService);
 
-    EndpointGroupDto putEndpointGroup(String key, EndpointGroupDto value);
+  EndpointGroupDto getEndpointGroupById(String endpointGroupId);
 
-    TopicDto putTopic(String key, TopicDto value);
+  TopicDto getTopicById(String topicId);
 
-    void resetGroup(String key);
+  EndpointGroupDto putEndpointGroup(String key, EndpointGroupDto value);
 
-    CTLSchemaDto getCtlSchemaById(String id);
+  TopicDto putTopic(String key, TopicDto value);
 
-    String getFlatCtlSchemaById(String id);
+  void resetGroup(String key);
 
-    EndpointGroupDto getDefaultGroup(String applicationToken);
+  CTLSchemaDto getCtlSchemaById(String id);
 
-    TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry);
+  String getFlatCtlSchemaById(String id);
 
-    TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash);
+  EndpointGroupDto getDefaultGroup(String applicationToken);
 
-    ApplicationDto findAppById(String applicationId);
-    
-    void resetAppById(String applicationId);
+  TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry);
+
+  TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash);
+
+  ApplicationDto findAppById(String applicationId);
+
+  void resetAppById(String applicationId);
 }

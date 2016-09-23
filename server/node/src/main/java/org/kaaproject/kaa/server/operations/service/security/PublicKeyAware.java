@@ -20,6 +20,6 @@ import java.security.PublicKey;
 
 public interface PublicKeyAware {
 
-    void setPublicKey(PublicKey publicKey);
+  void setPublicKey(PublicKey publicKey);
 
 }

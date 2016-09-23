@@ -20,7 +20,6 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.KaaSync;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public interface KaaSyncListener extends MessageListener<KaaSync> {
 

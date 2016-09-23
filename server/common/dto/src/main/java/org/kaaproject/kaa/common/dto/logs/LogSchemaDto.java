@@ -20,28 +20,28 @@ import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 
 public class LogSchemaDto extends BaseSchemaDto {
 
-    private static final long serialVersionUID = -7023640650614573350L;
+  private static final long serialVersionUID = -7023640650614573350L;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof LogSchemaDto)) {
-            return false;
-        }
-        
-        return super.equals(o);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof LogSchemaDto)) {
+      return false;
     }
 
-    @Override
-    public int hashCode() { //NOSONAR
-        return super.hashCode();
-    }
+    return super.equals(o);
+  }
 
-    @Override
-    public String toString() {
-        return "LogSchemaDto{" + super.toString() +
-                '}';
-    }
+  @Override
+  public int hashCode() { //NOSONAR
+    return super.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "LogSchemaDto{" + super.toString() +
+        '}';
+  }
 }

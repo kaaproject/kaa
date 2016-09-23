@@ -21,28 +21,28 @@ import org.kaaproject.avro.ui.shared.StringField.InputType;
 
 public class KaaAdminSizedTextBox extends SizedTextBox {
 
-    public KaaAdminSizedTextBox(int maxChars) {
-        super(maxChars, InputType.PLAIN, null);
-    }
-    
-    public KaaAdminSizedTextBox(int maxChars, String prompt) {
-        super(maxChars, InputType.PLAIN, prompt);
-    }
-    
-    public KaaAdminSizedTextBox(int maxChars, boolean editable, boolean addNotes) {
-        super(maxChars, InputType.PLAIN, null, editable, addNotes);
-    }
+  public KaaAdminSizedTextBox(int maxChars) {
+    super(maxChars, InputType.PLAIN, null);
+  }
 
-    public KaaAdminSizedTextBox(int maxChars, String prompt, boolean editable, boolean addNotes) {
-        super(maxChars, InputType.PLAIN, prompt, editable, addNotes);
-    }
+  public KaaAdminSizedTextBox(int maxChars, String prompt) {
+    super(maxChars, InputType.PLAIN, prompt);
+  }
 
-    public KaaAdminSizedTextBox(int maxChars, boolean editable) {
-        super(maxChars, InputType.PLAIN, null, editable);
-    }
-    
-    public KaaAdminSizedTextBox(int maxChars, String prompt, boolean editable) {
-        super(maxChars, InputType.PLAIN, prompt, editable);
-    }
-    
+  public KaaAdminSizedTextBox(int maxChars, boolean editable, boolean addNotes) {
+    super(maxChars, InputType.PLAIN, null, editable, addNotes);
+  }
+
+  public KaaAdminSizedTextBox(int maxChars, String prompt, boolean editable, boolean addNotes) {
+    super(maxChars, InputType.PLAIN, prompt, editable, addNotes);
+  }
+
+  public KaaAdminSizedTextBox(int maxChars, boolean editable) {
+    super(maxChars, InputType.PLAIN, null, editable);
+  }
+
+  public KaaAdminSizedTextBox(int maxChars, String prompt, boolean editable) {
+    super(maxChars, InputType.PLAIN, prompt, editable);
+  }
+
 }

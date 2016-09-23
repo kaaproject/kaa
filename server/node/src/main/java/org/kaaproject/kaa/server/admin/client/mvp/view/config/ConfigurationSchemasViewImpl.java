@@ -23,24 +23,24 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ConfigurationSchemasViewImpl extends BaseListViewImpl<ConfigurationSchemaDto> {
 
-    public ConfigurationSchemasViewImpl() {
-        super(true);
-    }
+  public ConfigurationSchemasViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<ConfigurationSchemaDto, String> createGrid() {
-        return new ConfigSchemaGrid();
-    }
+  @Override
+  protected AbstractGrid<ConfigurationSchemaDto, String> createGrid() {
+    return new ConfigSchemaGrid();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.configurationSchemas();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.configurationSchemas();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewSchema();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewSchema();
+  }
 
 }
 
