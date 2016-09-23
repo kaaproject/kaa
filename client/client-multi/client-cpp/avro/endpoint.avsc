@@ -1,0 +1,488 @@
+[
+
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "TopicState",
+ "direction": "out",
+ "fields": [
+     {"name": "topicId", "type": "long"},
+     {"name": "seqNumber", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "SyncResponseStatus",
+ "symbols" : ["NO_DELTA", "DELTA", "RESYNC"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "NotificationType",
+ "symbols" : ["SYSTEM", "CUSTOM"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "SubscriptionType",
+ "symbols" : ["MANDATORY_SUBSCRIPTION", "OPTIONAL_SUBSCRIPTION"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "SubscriptionCommandType",
+ "symbols" : ["ADD", "REMOVE"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "SyncResponseResultType",
+ "symbols" : ["SUCCESS", "FAILURE", "PROFILE_RESYNC", "REDIRECT"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "LogDeliveryErrorCode",
+ "direction": "in",
+ "symbols" : ["NO_APPENDERS_CONFIGURED", "APPENDER_INTERNAL_ERROR", "REMOTE_CONNECTION_ERROR", "REMOTE_INTERNAL_ERROR"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "UserAttachErrorCode",
+ "symbols" : ["NO_VERIFIER_CONFIGURED", "TOKEN_INVALID", "TOKEN_EXPIRED", "INTERNAL_ERROR", "CONNECTION_ERROR", "REMOTE_ERROR", "OTHER"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "direction": "out",
+ "name": "SubscriptionCommand",
+ "fields": [
+     {"name": "topicId", "type": "long"},
+     {"name": "command", "type": "org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "direction": "out",
+ "name": "UserAttachRequest",
+ "fields": [
+     {"name": "userVerifierId", "type": "string"},
+     {"name": "userExternalId", "type": "string"},
+     {"name": "userAccessToken", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "UserAttachResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode", "null"]},
+     {"name": "errorReason", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "UserAttachNotification",
+ "direction": "in",
+ "fields": [
+     {"name": "userExternalId", "type": "string"},
+     {"name": "endpointAccessToken", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "UserDetachNotification",
+ "direction": "in",
+ "fields": [
+     {"name": "endpointAccessToken", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EndpointAttachRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "endpointAccessToken", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EndpointAttachResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "endpointKeyHash", "type": ["string", "null"]},
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EndpointDetachRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "endpointKeyHash", "type": "string"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EndpointDetachResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "Event",
+ "fields": [
+     {"name": "seqNum", "type": "int"},
+     {"name": "eventClassFQN", "type": "string"},
+     {"name": "eventData", "type": "bytes"},
+     {"name": "source", "type": ["string", "null"]},
+     {"name": "target", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EventListenersRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "eventClassFQNs", "type": {"type": "array", "items":"string"}}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EventListenersResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "listeners", "type": [{"type": "array", "items":"string"}, "null"]},
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+ ]
+},
+{
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "type": "record",
+    "name": "EventSequenceNumberRequest",
+    "direction": "out",
+    "fields": []
+},
+{
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "type": "record",
+    "name": "EventSequenceNumberResponse",
+    "direction": "in",
+    "fields": [
+         {"name": "seqNum", "type": "int"}
+    ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "Notification",
+ "direction": "in",
+  "fields": [
+     {"name": "topicId", "type": "long"},
+     {"name": "type", "type": "org.kaaproject.kaa.common.endpoint.gen.NotificationType"},
+     {"name": "uid", "type": ["string", "null"]},
+     {"name": "seqNumber", "type": ["int", "null"]},
+     {"name": "body", "type": "bytes"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "Topic",
+ "direction": "in",
+  "fields": [
+     {"name": "id", "type": "long"},
+     {"name": "name", "type": "string"},
+     {"name": "subscriptionType", "type": "org.kaaproject.kaa.common.endpoint.gen.SubscriptionType"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "LogEntry",
+ "direction": "out",
+ "fields": [
+     {"name": "data", "type": "bytes"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "SyncRequestMetaData",
+ "direction": "out",
+ "fields": [
+     {"name": "sdkToken", "type": "string"},
+     {"name": "endpointPublicKeyHash",  "type": ["bytes", "null"]},
+     {"name": "profileHash",  "type": ["bytes", "null"]},
+     {"name": "timeout",  "type": ["long", "null"]}
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProfileSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "endpointPublicKey", "type": ["bytes", "null"]},
+     {"name": "profileBody", "type": "bytes"},
+     {"name": "endpointAccessToken", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProtocolVersionPair",
+ "fields": [
+     {"name": "id", "type": "int"},
+     {"name": "version", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "BootstrapSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"}}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ConfigurationSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "configurationHash",  "type": "bytes"},
+     {"name": "resyncOnly", "type": ["boolean", "null"]}
+ ]
+},
+
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "NotificationSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "topicListHash", "type": "int"},
+     {"name": "topicStates", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.TopicState"}, "null"]},
+     {"name": "acceptedUnicastNotifications", "type": [{"type": "array", "items":"string"}, "null"]},
+     {"name": "subscriptionCommands", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "UserSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "userAttachRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest", "null"]},
+     {"name": "endpointAttachRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest"}, "null"]},
+     {"name": "endpointDetachRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EventSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "eventSequenceNumberRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest", "null"]},
+     {"name": "eventListenersRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest"}, "null"]},
+     {"name": "events", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Event"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "LogSyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "logEntries", "type": [{ "type": "array", "items": "org.kaaproject.kaa.common.endpoint.gen.LogEntry"}, "null"] }
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProtocolMetaData",
+ "direction": "in",
+ "fields": [
+     {"name": "accessPointId", "type": "int"},
+     {"name": "protocolVersionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"},
+     {"name": "connectionInfo", "type": "bytes"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "BootstrapSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData"}}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ProfileSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "responseStatus", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "ConfigurationSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "responseStatus", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus"},
+     {"name": "confSchemaBody", "type": ["bytes", "null"]},
+     {"name": "confDeltaBody", "type": ["bytes", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "NotificationSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "responseStatus", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus"},
+     {"name": "notifications", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Notification"}, "null"]},
+     {"name": "availableTopics", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Topic"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "UserSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "userAttachResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse", "null"]},
+     {"name": "userAttachNotification", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification", "null"]},
+     {"name": "userDetachNotification", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification", "null"]},
+     {"name": "endpointAttachResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse"}, "null"]},
+     {"name": "endpointDetachResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "EventSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "eventSequenceNumberResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse", "null"]},
+     {"name": "eventListenersResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse"}, "null"]},
+     {"name": "events", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Event"}, "null"]} 
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "LogDeliveryStatus",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "LogSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "deliveryStatuses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "RedirectSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "accessPointId", "type": "int"}
+ ]
+},
+{
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "type": "record",
+    "name": "ExtensionSync",
+    "fields": [
+        {"name": "extensionId", "type": "int"},
+        {"name": "payload", "type": "bytes"}
+    ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "SyncRequest",
+ "direction": "out",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "syncRequestMetaData", "type": ["org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData", "null"]},
+     {"name": "bootstrapSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest", "null"]},
+     {"name": "profileSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest", "null"]},
+     {"name": "configurationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest", "null"]},
+     {"name": "notificationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest", "null"]},
+     {"name": "userSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest", "null"]},
+     {"name": "eventSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest", "null"]},
+     {"name": "logSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest", "null"]},
+     {"name": "extensionSyncRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync"}, "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "SyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "requestId", "type": "int"},
+     {"name": "status", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "bootstrapSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse", "null"]},
+     {"name": "profileSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse", "null"]},
+     {"name": "configurationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse", "null"]},
+     {"name": "notificationSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse", "null"]},
+     {"name": "userSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse", "null"]},
+     {"name": "eventSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse", "null"]},
+     {"name": "redirectSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse", "null"]},
+     {"name": "logSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse", "null"]},
+     {"name": "extensionSyncResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync"}, "null"]}
+ ]
+},
+{
+ "type": "record",
+ "name": "TopicSubscriptionInfo",
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "direction": "in",
+ "fields": [
+     {"name": "topicInfo", "type":"org.kaaproject.kaa.common.endpoint.gen.Topic"},
+     {"name": "seqNumber", "type": "int"}
+ ]
+}
+]

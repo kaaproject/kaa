@@ -5,6 +5,7 @@ target 'Kaa' do
   pod 'CocoaLumberjack'
   pod 'AFNetworking', '~> 3.x'
   pod 'sqlite3', :inhibit_warnings => true
+  pod 'CommonCrypto', '~> 1.1'
 end
 
 target :KaaTests do

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2751A21FD925C7B97408EDB2 /* libPods-Kaa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 236E19905FF92899F3DD4D05 /* libPods-Kaa.a */; };
 		391A91A31BBE604C00DBA851 /* EndPointObjectHashTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 391A91A21BBE604C00DBA851 /* EndPointObjectHashTest.m */; };
+		7B9A9A021D8BEFD40090D528 /* NSData+CommonCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9A9A001D8BEFD40090D528 /* NSData+CommonCrypto.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B9A9A031D8BEFD40090D528 /* NSData+CommonCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9A9A011D8BEFD40090D528 /* NSData+CommonCrypto.m */; };
 		B843B49E1BE67F950060519D /* TestsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B843B49D1BE67F950060519D /* TestsHelper.m */; };
 		B85B18F51C92E9CA002467B1 /* AbstractLogCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */; };
 		B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */; };
@@ -197,7 +199,6 @@
 		C5AAD9191CB7DE700046AA91 /* KeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF421C46799D00C26F0B /* KeyPair.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5AAD91A1CB7DE700046AA91 /* KeyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF441C46799D00C26F0B /* KeyUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5AAD91B1CB7DE700046AA91 /* MessageEncoderDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF461C46799D00C26F0B /* MessageEncoderDecoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C5AAD91C1CB7DE700046AA91 /* NSData+CommonCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF481C46799D00C26F0B /* NSData+CommonCrypto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5AAD91D1CB7DE700046AA91 /* Transactable.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF571C4679BE00C26F0B /* Transactable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5AAD91E1CB7DE700046AA91 /* TransactionId.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF581C4679BE00C26F0B /* TransactionId.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C5AAD91F1CB7DE700046AA91 /* BlockingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF671C467B2E00C26F0B /* BlockingQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -321,7 +322,6 @@
 		C5AAD9A51CB7E1B20046AA91 /* KeyPair.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF431C46799D00C26F0B /* KeyPair.m */; };
 		C5AAD9A61CB7E1B20046AA91 /* KeyUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF451C46799D00C26F0B /* KeyUtils.m */; };
 		C5AAD9A71CB7E1B20046AA91 /* MessageEncoderDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF471C46799D00C26F0B /* MessageEncoderDecoder.m */; };
-		C5AAD9A81CB7E1B20046AA91 /* NSData+CommonCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF491C46799D00C26F0B /* NSData+CommonCrypto.m */; };
 		C5AAD9A91CB7E1B20046AA91 /* TransactionId.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF591C4679BE00C26F0B /* TransactionId.m */; };
 		C5AAD9AA1CB7E1B20046AA91 /* BlockingQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF681C467B2E00C26F0B /* BlockingQueue.m */; };
 		C5AAD9AB1CB7E1B20046AA91 /* KAABase64.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF6A1C467B2E00C26F0B /* KAABase64.m */; };
@@ -360,6 +360,8 @@
 		392356A81C56647800BCA885 /* TopicListHashCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopicListHashCalculator.h; sourceTree = "<group>"; };
 		392356A91C56647800BCA885 /* TopicListHashCalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopicListHashCalculator.m; sourceTree = "<group>"; };
 		4CAC4D1133C2E2FBC990B5AC /* Pods-libKaa.a.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-libKaa.a.debug.xcconfig"; path = "Pods/Target Support Files/Pods-libKaa.a/Pods-libKaa.a.debug.xcconfig"; sourceTree = "<group>"; };
+		7B9A9A001D8BEFD40090D528 /* NSData+CommonCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+CommonCrypto.h"; sourceTree = "<group>"; };
+		7B9A9A011D8BEFD40090D528 /* NSData+CommonCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+CommonCrypto.m"; sourceTree = "<group>"; };
 		82D20E3FF13591EBE78EEF11 /* Pods-Kaa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kaa.release.xcconfig"; path = "Pods/Target Support Files/Pods-Kaa/Pods-Kaa.release.xcconfig"; sourceTree = "<group>"; };
 		ACAA02F0BC14427987EC4DE4 /* Pods-Kaa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kaa.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kaa/Pods-Kaa.debug.xcconfig"; sourceTree = "<group>"; };
 		B0EF18F15697D1F651B3AED4 /* libPods-KaaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KaaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -623,8 +625,6 @@
 		B8CCBF451C46799D00C26F0B /* KeyUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyUtils.m; sourceTree = "<group>"; };
 		B8CCBF461C46799D00C26F0B /* MessageEncoderDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageEncoderDecoder.h; sourceTree = "<group>"; };
 		B8CCBF471C46799D00C26F0B /* MessageEncoderDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageEncoderDecoder.m; sourceTree = "<group>"; };
-		B8CCBF481C46799D00C26F0B /* NSData+CommonCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+CommonCrypto.h"; sourceTree = "<group>"; };
-		B8CCBF491C46799D00C26F0B /* NSData+CommonCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+CommonCrypto.m"; sourceTree = "<group>"; };
 		B8CCBF571C4679BE00C26F0B /* Transactable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transactable.h; sourceTree = "<group>"; };
 		B8CCBF581C4679BE00C26F0B /* TransactionId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransactionId.h; sourceTree = "<group>"; };
 		B8CCBF591C4679BE00C26F0B /* TransactionId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransactionId.m; sourceTree = "<group>"; };
@@ -1286,8 +1286,8 @@
 				B8CCBF451C46799D00C26F0B /* KeyUtils.m */,
 				B8CCBF461C46799D00C26F0B /* MessageEncoderDecoder.h */,
 				B8CCBF471C46799D00C26F0B /* MessageEncoderDecoder.m */,
-				B8CCBF481C46799D00C26F0B /* NSData+CommonCrypto.h */,
-				B8CCBF491C46799D00C26F0B /* NSData+CommonCrypto.m */,
+				7B9A9A001D8BEFD40090D528 /* NSData+CommonCrypto.h */,
+				7B9A9A011D8BEFD40090D528 /* NSData+CommonCrypto.m */,
 			);
 			path = security;
 			sourceTree = "<group>";
@@ -1684,7 +1684,6 @@
 				C5AAD9191CB7DE700046AA91 /* KeyPair.h in Headers */,
 				C5AAD91A1CB7DE700046AA91 /* KeyUtils.h in Headers */,
 				C5AAD91B1CB7DE700046AA91 /* MessageEncoderDecoder.h in Headers */,
-				C5AAD91C1CB7DE700046AA91 /* NSData+CommonCrypto.h in Headers */,
 				C5AAD91D1CB7DE700046AA91 /* Transactable.h in Headers */,
 				C5AAD91E1CB7DE700046AA91 /* TransactionId.h in Headers */,
 				C5AAD91F1CB7DE700046AA91 /* BlockingQueue.h in Headers */,
@@ -1695,6 +1694,7 @@
 				C5AAD9241CB7DE700046AA91 /* SHAMessageDigest.h in Headers */,
 				C5AAD9251CB7DE700046AA91 /* TimeCommons.h in Headers */,
 				C5AAD9261CB7DE700046AA91 /* UUID.h in Headers */,
+				7B9A9A021D8BEFD40090D528 /* NSData+CommonCrypto.h in Headers */,
 				C5AAD9271CB7DE700046AA91 /* KaaClientFactory.h in Headers */,
 				C5AAD9281CB7DE700046AA91 /* BaseKaaClient.h in Headers */,
 				C5AAD9291CB7DE700046AA91 /* GenericKaaClient.h in Headers */,
@@ -1727,12 +1727,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B824A2021B1452C50076C753 /* Build configuration list for PBXNativeTarget "KaaTests" */;
 			buildPhases = (
-				B66933FD8935E5B3BC6153B6 /* Check Pods Manifest.lock */,
+				B66933FD8935E5B3BC6153B6 /* [CP] Check Pods Manifest.lock */,
 				B824A1F21B1452C50076C753 /* Sources */,
 				B824A1F31B1452C50076C753 /* Frameworks */,
 				B824A1F41B1452C50076C753 /* Resources */,
-				187C1CBC80866C0AFDD68769 /* Copy Pods Resources */,
-				ED6792EF2E814A4017A759DC /* Embed Pods Frameworks */,
+				187C1CBC80866C0AFDD68769 /* [CP] Copy Pods Resources */,
+				ED6792EF2E814A4017A759DC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1747,11 +1747,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C5AAD8901CB7DC710046AA91 /* Build configuration list for PBXNativeTarget "Kaa" */;
 			buildPhases = (
-				4836AC55C9524E366A3B1311 /* Check Pods Manifest.lock */,
+				4836AC55C9524E366A3B1311 /* [CP] Check Pods Manifest.lock */,
 				C5AAD8841CB7DC710046AA91 /* Sources */,
 				C5AAD8851CB7DC710046AA91 /* Frameworks */,
 				C5AAD8861CB7DC710046AA91 /* Headers */,
-				9D7EDA889FB49B43974032B7 /* Copy Pods Resources */,
+				9D7EDA889FB49B43974032B7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1808,14 +1808,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		187C1CBC80866C0AFDD68769 /* Copy Pods Resources */ = {
+		187C1CBC80866C0AFDD68769 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1823,14 +1823,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KaaTests/Pods-KaaTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4836AC55C9524E366A3B1311 /* Check Pods Manifest.lock */ = {
+		4836AC55C9524E366A3B1311 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1838,14 +1838,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		9D7EDA889FB49B43974032B7 /* Copy Pods Resources */ = {
+		9D7EDA889FB49B43974032B7 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1853,14 +1853,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Kaa/Pods-Kaa-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B66933FD8935E5B3BC6153B6 /* Check Pods Manifest.lock */ = {
+		B66933FD8935E5B3BC6153B6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1868,14 +1868,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		ED6792EF2E814A4017A759DC /* Embed Pods Frameworks */ = {
+		ED6792EF2E814A4017A759DC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2007,6 +2007,7 @@
 				C5AAD9851CB7E1B10046AA91 /* ConfigurationDeserializer.m in Sources */,
 				C5AAD9861CB7E1B10046AA91 /* ResyncConfigurationManager.m in Sources */,
 				C5AAD9871CB7E1B10046AA91 /* AbstractExecutorContext.m in Sources */,
+				7B9A9A031D8BEFD40090D528 /* NSData+CommonCrypto.m in Sources */,
 				C5AAD9881CB7E1B10046AA91 /* SimpleExecutorContext.m in Sources */,
 				C5AAD9891CB7E1B10046AA91 /* SingleThreadExecutorContext.m in Sources */,
 				C5AAD98A1CB7E1B10046AA91 /* TransportContext.m in Sources */,
@@ -2040,7 +2041,6 @@
 				C5AAD9A51CB7E1B20046AA91 /* KeyPair.m in Sources */,
 				C5AAD9A61CB7E1B20046AA91 /* KeyUtils.m in Sources */,
 				C5AAD9A71CB7E1B20046AA91 /* MessageEncoderDecoder.m in Sources */,
-				C5AAD9A81CB7E1B20046AA91 /* NSData+CommonCrypto.m in Sources */,
 				C5AAD9A91CB7E1B20046AA91 /* TransactionId.m in Sources */,
 				C5AAD9AA1CB7E1B20046AA91 /* BlockingQueue.m in Sources */,
 				C5AAD9AB1CB7E1B20046AA91 /* KAABase64.m in Sources */,

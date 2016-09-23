@@ -18,7 +18,7 @@ Since Kaa operates on uniformly structured data, you can:
 
 * Automatically generate a configuration object model in the endpoint SDK.
 * Automatically generate default configuration.
-* Enforceme configuration integrity.
+* Enforce configuration integrity.
 * View endpoint-specific configuration based on the endpoint group membership.
 
 ## Updating configuration data
