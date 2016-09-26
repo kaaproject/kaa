@@ -65,7 +65,6 @@ A simple definition of a log record with no data fields.
     ]
 }
 ```
-`
 
 ### Adding log schema
 
