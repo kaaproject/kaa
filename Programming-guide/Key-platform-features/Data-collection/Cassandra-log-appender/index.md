@@ -210,37 +210,19 @@ We have next log schema:
 ```json
 {
     "type":"record",
-    "name":"LogData",
-    "namespace":"org.kaaproject.kaa.schema.sample.logging",
+    "name":"Data",
+    "namespace":"org.kaaproject.kaa.scheme.sample",
     "fields":[
         {
-            "name":"level",
-            "type":{
-                "type":"enum",
-                "name":"Level",
-                "symbols":[
-                    "KAA_DEBUG",
-                    "KAA_ERROR",
-                    "KAA_FATAL",
-                    "KAA_INFO",
-                    "KAA_TRACE",
-                    "KAA_WARN"
-                ]
-            }
-        },
-        {
-            "name":"tag",
-            "type":"string"
-        },
-        {
-            "name":"message",
-            "type":"string"
+            "name":"temperature",
+            "type":"int"
         },
         {
             "name":"timeStamp",
             "type":"long"
         }
-    ]
+    ],
+    "displayName":"Logging scheme"
 }
 ```
 
@@ -248,10 +230,8 @@ The following JSON example matches the previous schema.
 
 ```json
 {
-    "level":"KAA_INFO",
-    "tag":"TEST_TAG",
-    "message":"My simple message",
-    "timeStamp":"1466075369795"
+    "temperature":"28",
+    "timeStamp":"1474366798"
 }
 ```
 
@@ -268,7 +248,7 @@ The following JSON example matches the previous schema.
 8. Add new node in the **Configuration** section (localhost:9042)
 ![Add new node](attach/configuration-section.png)
 9. Add auth details if needed (for Sandbox it's empty)
-10. Fill keyspace name. "kaa" is used in this example, because it's already created on a Sandbox machine.
+10. Fill **Keyspace name**. "kaa" is used in this example, because it's already created on a Sandbox machine.
 11. "logs_example" is used as the **Table name pattern**.
 ![Keyspace configuration](attach/configuration-section-keyspace.png)
 12. The important part of configuration is **Column Mapping**:
@@ -279,24 +259,18 @@ The following JSON example matches the previous schema.
 ![Add button](attach/add-button.png)
 15. Verify that newly created appender has appeared in list.
 ![Verify newly created appender](attach/verify-created-appender.png)
-16. Use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
+16. Use instructions from Sandbox to run Data collection demo application.
 17. After this you should see something like below:
 
     ```bash
-    2016-06-16 14:09:28,483 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
-    2016-06-16 14:09:29,795 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
-    2016-06-16 14:09:29,798 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466075369795} sent
-    2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466075369795} sent
-    2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466075369795} sent
-    2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466075369795} sent
-    2016-06-16 14:09:29,807 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466075369795} sent
-    2016-06-16 14:09:29,999 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [204 ms].
-    2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [205 ms].
-    2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [205 ms].
-    2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [205 ms].
-    2016-06-16 14:09:30,000 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [204 ms].
-    2016-06-16 14:09:30,001 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
-    2016-06-16 14:09:30,006 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
+    Data collection demo started
+    Received new sample period: 1
+    Sampled temperature 28 1474366979
+    Sampled temperature 31 1474366980
+    Sampled temperature 32 1474366981
+    Sampled temperature 30 1474366982
+    Sampled temperature 28 1474366983
+    ...
     ```
 
 18. Let's verify that our logs have been persisted in Cassandra. Go to Sandbox VM and run next command to connect Cassandra:
@@ -314,15 +288,15 @@ The following JSON example matches the previous schema.
 20. You should observe similar output:
 
     ```bash
-      level_field | date                         | application_token    | tag_field | message_field | timestamp_field | id
-     -------------+------------------------------+----------------------+-----------+---------------+-----------------+--------------------------------------
-         KAA_INFO | 2016-06-16-Time:01:08:03.301 | 82635305199158071549 |       TAG |     MESSAGE_0 |   1466075369795 | 92f326db-831f-419a-9fd0-142404ed1c4c
-         KAA_INFO | 2016-06-16-Time:01:08:03.301 | 82635305199158071549 |       TAG |     MESSAGE_1 |   1466075369795 | 6a5506bb-509d-4446-b667-75e256732f2d
-         KAA_INFO | 2016-06-16-Time:01:08:03.301 | 82635305199158071549 |       TAG |     MESSAGE_2 |   1466075369795 | a33e4693-d17f-4a9e-b85c-068d7e53ad5c
-         KAA_INFO | 2016-06-16-Time:01:08:03.301 | 82635305199158071549 |       TAG |     MESSAGE_3 |   1466075369795 | 2d7a3970-f6f5-4c64-a4ac-93e7dbab23b5
-         KAA_INFO | 2016-06-16-Time:01:08:03.301 | 82635305199158071549 |       TAG |     MESSAGE_4 |   1466075369795 | fc98f7a2-4771-4aaa-88a1-476770134d2a
-
-     (5 rows)
+     date                         | timestamp_field | id                                   | application_token    | temperature_field
+    ------------------------------+-----------------+--------------------------------------+----------------------+-------------------
+     2016-09-20-Time:03:21:54.532 |      1474366979 | 8206acb5-e8b8-447f-bb61-757f25c154e9 | 65691512829156876532 |                28
+     2016-09-20-Time:03:21:54.532 |      1474366980 | 193df613-3b0a-4498-b0fe-71ac8f8f964d | 65691512829156876532 |                31
+     2016-09-20-Time:03:21:54.532 |      1474366981 | 26af685a-962a-4c6d-910d-3a08e66819cd | 65691512829156876532 |                32
+     2016-09-20-Time:03:21:54.532 |      1474366982 | 6a276954-4adc-41c2-b3cb-bb09bf683b4b | 65691512829156876532 |                30
+     2016-09-20-Time:03:21:54.532 |      1474366983 | 01e8408a-c2cd-451a-a402-ceafdd7c9df6 | 65691512829156876532 |                28
+     ...
+(5 rows)
     ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
