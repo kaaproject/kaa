@@ -43,7 +43,7 @@ public class ControlServerUserIT extends AbstractTestControlServer {
     protected boolean createTenantDeveloperNeeded() {
         return false;
     }
-    
+
     /**
      * Test create user.
      * Kaa admin creates tenant admin user.

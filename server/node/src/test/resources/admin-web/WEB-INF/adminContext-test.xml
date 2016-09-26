@@ -39,7 +39,7 @@
 	<tx:annotation-driven transaction-manager="adminTransactionManager"/>
 	<cache:annotation-driven />
     
-	<util:properties id="admin_dao" location="classpath:/admin-dao.properties" />
+	<util:properties id="admin_dao" location="classpath:/admin-dao-test.properties" />
 	
     <bean id="adminDataSource"
         class="org.apache.commons.dbcp.BasicDataSource">
@@ -76,11 +76,8 @@
             </list>
         </property>
     </bean>
-	
-    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingServiceImpl" init-method="init" destroy-method="destroy">
-            <property name="sendPoolSize" value="10"/>
-            <property name="sendTimeout" value="20"/>
-    </bean>
+
+    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingServiceTestImpl"/>
 
     <bean id="kaaAdminAuthListener" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthListener"/>
 	
