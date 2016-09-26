@@ -22,7 +22,7 @@ You can report your findings by creating a bug in [Jira®](http://jira.kaaprojec
 
 If you are willing to contribute to the Kaa code base, or to submit sample applications for Kaa Sandbox, you will need to register at [Kaa public Jira](http://jira.kaaproject.org/browse/KAA/), and then fill out and sign the [Individual Contributor Licensing Agreement](http://www.kaaproject.org/Uploads/ICLA.pdf) (ICLA). If you are contributing on behalf of an organization, you would also need to sign the [Corporate Contributor License Agreement](http://www.kaaproject.org/Uploads/CCLA.pdf) (CCLA). Please sign, scan and send the forms to [legal@kaaproject.org](mailto:legal@kaaproject.org).
 
-To contribute to the source code, you will need to create a ticket describing the proposed change in [Jira](http://jira.kaaproject.org/browse/KAA/). See our [Jira guide]({{root_url}}Customization-guide/How-to-contribute/Jira-guide) for Jira procedure.
+To contribute to the source code, you will need to create a ticket describing the proposed change in [Jira](http://jira.kaaproject.org/browse/KAA/).
 
 We prefer that you contribute by submitting [GitHub pull requests](https://help.github.com/articles/using-pull-requests/) and posting a pull request link in corresponding Jira tickets. The Kaa open-source project is located [here](https://github.com/kaaproject/kaa). See our [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/) guide for more details.
 
