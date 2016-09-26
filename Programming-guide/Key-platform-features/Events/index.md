@@ -11,30 +11,34 @@ sort_idx: 80
 * TOC
 {:toc}
 
-The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same owner (potentially, across different applications). The Kaa event structure is determined by a configurable [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
+The Kaa **Events subsystem** is designed to generate [endpoint]({{root_url}}Glossary/#endpoint-ep) events in real time, send them to other endpoints of the same [owner]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and to [Kaa server]({{root_url}}Glossary/#kaa-server) for processing.
+The data set structure of a Kaa event is defined by the chosen [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
 
-The Kaa Event subsystem provides the following features.
+The Kaa Events subsystem provides the following features:
 
-* Generation of the event object model and related API calls in the endpoint SDK
-* Enforcement of data integrity and validity
-* Efficient targeting of event recipients
-* Efficient and compact serialization
+* Generation of the event object model and related API calls in the endpoint SDK.
+* Enforcement of data integrity and validity.
+* Efficient targeting of event recipients.
+* Efficient and compact serialization.
 
-## Event generation and handling overview
+## Event generation and handling
 
-Process of event generation and handling described on the following diagram:
+The following diagram shows how events are generated and processed.
 
-![](images/general/EventGeneration2.png)
+![Event generation and processing](images/general/EventGeneration2.png)
 
-It is the developer's responsibility to design event class schemas and make the client application interpret event data supplied by the endpoint library. The Kaa administrator, in turn, can provision those schemas into the Kaa server and generate the endpoint SDK.
+To make the [Kaa client]({{root_url}}Glossary/#kaa-client) iterpret the events data sent from the endpoint library, you need to set up the event class schemas.
+The [Kaa administrator]({{root_url}}Glossary/#kaa-administrator) can provision the events schemas on the Kaa server and generate the corresponding endpoint SDK.
 
 ## Event class
 
-Each event is based on a particular event class (EC) that is defined by the corresponding [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) with the additional attribute classType that supports two values: event and object. Kaa uses the classType attribute to distinguish actual events from objects, which are reusable parts of events. This is useful for avoiding redundant methods in SDK API.
+Every event is based on a particular event class (EC) that is defined by the corresponding [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) with the additional <code>classType</code> attribute that supports two values: **event** and **object**.
+Kaa uses the <code>classType</code> attribute to distinguish the actual events from event class objects that are reusable parts of events.
+This helps avoid redundant methods in the SDK API.
 
-The following examples illustrate basic event class CTL schemas.
+Below are some basic examples of an event class CT schema.
 
-* The simplest definition of an event with the com.company.project.SimpleEvent1 FQN and no data fields, classType is event.
+* This is a simple definition of an event with no data fields, where **com.company.project.SimpleEvent1** is the **Fully qualified name (FQN)** and <code>classType</code> is an event.
 
 ```json
 {  
@@ -47,7 +51,7 @@ The following examples illustrate basic event class CTL schemas.
 }
 ```
 
-* The event definition with the com.company.project.SimpleEvent2 FQN and two data fields (field1 and field2), classType is event.
+* This is and event definition with two data fields (**field1** and **field2**), where **com.company.project.SimpleEvent2** is the FQN and <code>classType</code> is an event.
 
 ```json
 {  
@@ -67,7 +71,9 @@ The following examples illustrate basic event class CTL schemas.
 }
 ```
 
-* The event definition with the com.company.project.ComplexEvent (classType is event) FQN and two complex fields (classType of each is object): com.company.project.SimpleRecordObject and com.company.project.SimpleEnumObject.
+* This is an event definition with two complex fields: **com.company.project.SimpleRecordObject** and **com.company.project.SimpleEnumObject**.
+The <code>classType</code> of each field is an object.
+The FQN of the event is **com.company.project.ComplexEvent**, the <code>classType</code> is an event.
 
 ```json
 {  
@@ -106,21 +112,25 @@ The following examples illustrate basic event class CTL schemas.
 
 ## Event class families
 
-ECs are grouped into event class families (ECF) by subject areas. ECFs are registered within the Kaa tenant.
-Once the event class family is saved into the Kaa application, the Control server automatically assigns it the version number. The user can define new versions of the ECF, whereas each version may contain different event classes, if necessary. Event class family versions (ECFV) are used to group list of particular ECs which belong to ECF.
+ECs are grouped into event class families (ECF) by subject areas.
+ECFs are registered within the [Kaa tenant]({{root_url}}Glossary/#kaa-tenant).
+Once an event class family is saved in the [Kaa application]({{root_url}}Glossary/#kaa-application), the [Control service]({{root_url}}Glossary/#control-service) automatically assigns a version number to that ECF.
+The user can define new versions of the ECF that contain different ECs.
+ECF versions are used for grouping ECs that belong to a certain ECF.
 
-The structure is: ECF contains list of ECFVs, each ECFV contain list of ECs. 
+This means that an ECF contains the list of ECF versions, and each ECF version contains a list of ECs.
+While ECFs and ECF versions are lists, the actual CT schemas are contained in the ECs.
 
-An ECF is uniquely identified by its name and/or class name and tenant. In other words, there cannot be two ECFs with the same name or same class name within a single tenant. Although this is quite a strict requirement, it helps prevent naming collisions during the SDK generation.
+To change the list of ECs for an ECF, you need to create a new version of that ECF.
 
-An ECFV represents list of ECs. If you need to change the list of ECs then new ECFV must be created.
+An ECF is uniquely identified by its name and/or class name, and tenant.
+There cannot be two ECFs with the same name or same class name within a single tenant.
+This helps prevent naming collisions during the SDK generation.
 
-Unlike EC, ECF and ECFV doesn't contain any schemas. 
+For example, ECF with FQN **com.company.project.family1.Family1** is a list containing one element: **version 1** of that ECF.
+This version contains a list of two ECs: **com.company.project.family1.ComplexEvent1** and **com.company.project.family1.ComplexEvent2** with complex field **com.company.project.family1.SimpleEnumObject** and previously saved object **com.company.project.family1.CustomField**.
 
-For example, ECF with FQN com.company.project.family1.Family1 contain list of single ECFV with version 1.
-ECFV com.company.project.family1.Family1 version 1 contains list of two ECs: com.company.project.family1.ComplexEvent1 and com.company.project.family1.ComplexEvent2, with complex field com.company.project.family1.SimpleEnumObject and previously saved object com.company.project.family1.CustomField.
-
-* The event definition com.company.project.family1.ComplexEvent1 with complex field com.company.project.family1.SimpleEnumObject and previously saved CTL schema com.company.project.family1.CustomField (pay attention to declaration, this field is optional, could be null).
+Below is the **com.company.project.family1.ComplexEvent1** EC definition with complex field **com.company.project.family1.SimpleEnumObject** and previously saved CT schema **com.company.project.family1.CustomField** (pay attention to the declaration as this field is optional and could be **null**).
 
 ```json
 {  
@@ -155,7 +165,7 @@ ECFV com.company.project.family1.Family1 version 1 contains list of two ECs: com
 }
 ```
 
-* The event definition com.company.project.family1.ComplexEvent1 with complex field com.company.project.family1.SimpleEnumObject and two primitive fields.
+This is definition of the **com.company.project.family1.ComplexEvent1** EC with complex field **com.company.project.family1.SimpleEnumObject** and two primitive fields.
 
 ```json
 {  
@@ -185,55 +195,68 @@ ECFV com.company.project.family1.Family1 version 1 contains list of two ECs: com
 }
 ```
 
-## Event family mapping 
+## Event family mapping
 
-One application can use multiple ECFs, while the same ECF can be used in multiple applications. In other words, the user can define ECFs that will be used by multiple applications. This is useful for controlling sources and sinks of particular events. For example, the user may want to implement the following rules:
+One application can use multiple ECFs, and the same ECF can be used in multiple applications.
+The user can define which ECFs will be used by multiple applications.
+This helps control sources and sinks of particular events.
 
-* Application A should be able to send events with class E1 but does not need to receive them. Thus, application A is the source of E1.
-* Application B should be able to receive events of class E1 but does not need to send them. Thus, application B is the sink of E1.
-* Application C should be able to both receive and send events of class E1. Thus, application C is both the source and the sink of E1.
+For example, the user may want to implement the following rules:
 
-Once the application and ECF are created, the tenant administrator can create a mapping between these two entities by assigning a certain version of the ECF to the application. This mapping in Kaa is called event family mapping. Multiple ECFs (but not multiple versions of the same ECF) can be mapped to a single application.
+* Application A should be able to send class E1 events but does not need to receive them.
+Thus, application A is the source for E1.
+* Application B should be able to receive class E1 events of but does not need to send them.
+Thus, application B is the sink for E1.
+* Application C should be able to both receive and send class E1 events.
+Thus, application C is both the source and the sink for E1.
 
-By default, the application is mapped to each event of the ECF as both the source and the sink; however, the administrator can overwrite the default mapping. Once defined, the mapping cannot be changed in the future.
+Once the application and ECF are created, the tenant administrator can create a mapping between these two entities by assigning a certain version of the ECF to the application.
+This mapping in Kaa is called **event family mapping**.
+Multiple ECFs (but not multiple versions of the same ECF) can be mapped to a single application.
+
+By default, Kaa application is mapped to each event of the ECF as both the source and the sink.
+This setting can be change by the administrator.
+Once defined, the mapping cannot be changed in the future.
 
 
 ## Event routing
 
-Events can be sent to a single endpoint (unicast traffic) or to all the event sink endpoints of the given owner (multicast traffic).
+Events can be sent to a single endpoint (unicast traffic) or to all sink endpoints of the given owner (multicast traffic).
 
-In case of a multicast event, the Kaa server relays the event to all endpoints registered as the corresponding EC sinks during the ECF mapping. If the owner's endpoints are distributed over multiple Operation servers, the event is sent to all these Operation servers. Until being expired, thew event remains deliverable for the endpoints that were offline at the moment of the event generation.
+Kaa server will send the events to all endpoints registered as the corresponding EC sinks during the ECF mapping.
+If the owner's endpoints are distributed over multiple Operation services, the event is sent to all these Operation services.
+If an endpoint is offline while an event is being delivered to it, such event will be queued for delivery until the endpoint in question goes online.
 
-In case of a unicast event, the Kaa server delivers the event to the target endpoint only if the endpoint was registered as the corresponding EC sink during the ECF mapping. The EP SDK supplies API to query the list of endpoints currently registered as the EC sinks under the given owner.
+To view the list of endpoints registered as sinks for a certain owner, use the [endpoint SDK API](#manage-events-using-SDK-API).
 
 
 ## Event exchange scope
 
-To use events between several endpoints, it is required that those endpoints were attached to the same owner (in other words, registered with the same user). Kaa provides necessary APIs to attach/detach endpoints to/from owners. To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
+Endpoints can exchange events only if they are attached to the same owner (registered with the same user).
+You can use the APIs to attach/detach endpoints to/from owners.
+See also [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/).
 
 
 ## Event sequence number
 
-Sequence numbers are used to avoid duplication of events sent by endpoints. Each endpoint has its own sequence number, which is incremented by one with every event sent by this endpoint.
+Kaa server assigns a sequential number to every event to avoid duplication of events sent by different endpoints.
+An endpoint first assigns a sequential number (incremented by one for every event sent) to the event and then synchronizes it with the Operations service.
+During the synchronization request, the Operations service provides the last sequential number received from the endpoint (or number **0** if no events were received so far).
 
-With the first sync request, the endpoint attempts to synchronize its event sequence number with the one stored at the Operation server. The server answers with either the sequence number of the latest event received from the endpoint or the number zero (if no events were received so far). If the number provided by the server differs from the number stored at the endpoint, the endpoint accepts the former and uses it as a starting number for new events.
+If the number provided by the Operations service differs from the number stored at the endpoint, the endpoint accepts the former and uses it as a starting number for new events.
 
 
-## SDK generation
+## Event object model
 
-During the SDK generation, the Control server generates the event object model and extends the APIs to support methods for sending events and registering event listeners. The generated SDK can support multiple ECFs, although it cannot simultaneously support multiple versions of the same ECF.
+During the SDK generation, the Control service generates the event object model and extends the APIs to support methods for sending events and registering event listeners.
+The generated SDK can supports using multiple ECFs but does not support using multiple versions of the same ECF.
 
-## Kaa Events SDK API
 
-#### Attach endpoint to user
+## Manage events using SDK API
 
-To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
+To access the Kaa events functionality, you need to first get the ECF factory and then get a specific ECF object from it.
 
-#### Get ECF factory and create ECF object
-
-To access the Kaa event functionality, the client should implement the two following blocks of code.
-
-**Get ECF factory from Kaa:**
+### Get ECF factory
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java1">Java</a></li>
@@ -272,7 +295,7 @@ EventFamilyFactory *eventFamilyFactory = [kaaClient getEventFamilyFactory];
 </div>
 </div>
 
-**Get specific ECF object from ECF factory:**
+### Get ECF object
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java2">Java</a></li>
@@ -311,13 +334,13 @@ ThermostatEventClassFamily *tecf = [self.eventFamilyFactory getThermostatEventCl
 </div>
 </div>
 
-#### Send events
+### Send events
 
-To send one or more events, the client should proceed as described in this section.
+To send one or more events, follow the instruction below.
 
-**Get endpoint addresses**
+#### Get endpoint addresses
 
-Execute the asynchronous findEventListeners method to request a list of the endpoints supporting all specified EC FQNs (FQN stands for fully qualified name).
+Execute the asynchronous <code>findEventListeners</code> method to request a list of the endpoints supporting all specified EC FQNs.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java3">Java</a></li>
@@ -435,9 +458,9 @@ kaa_error_t error_code = kaa_event_manager_find_event_listeners(kaa_client_get_c
 </div>
 </div>
 
-**Send one event to all endpoints**
+#### Send one event to all endpoints
 
-To send an event to all endpoints which were previously located by the findEventListeners method, execute the sendEventToAll method upon the specific ECF object.
+To send an event to all endpoints that were previously located by the <code>findEventListeners</code> method, execute the <code>sendEventToAll</code> method upon the specific ECF object.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java4">Java</a></li>
@@ -496,9 +519,9 @@ ThermostatInfoRequest *request = [[ThermostatInfoRequest alloc] init];
 </div>
 </div>
 
-**Send one event to one endpoint**
+#### Send one event to one endpoint
 
-To send an event to a single endpoint which was previously located by the findEventListeners method, execute the sendEvent method upon the specific ECF object and this endpoint.
+To send an event to a single endpoint that was previously located by the <code>findEventListeners</code> method, execute the <code>sendEvent</code> method upon the specific ECF object and this endpoint.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java5">Java</a></li>
@@ -566,9 +589,9 @@ ChangeDegreeRequest *changeDegree = [[ChangeDegreeRequest alloc] initWithDegree:
 </div>
 </div>
 
-**Send batch of events to endpoint(s)**
+#### Send batch of events to endpoint(s)
 
-To send a batch of events at once to a single or all endpoints, execute the following code.
+To send a batch of events to a single endpoint or all endpoints at once, use the code below.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java6">Java</a></li>
@@ -706,7 +729,7 @@ request.degree = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@
 
 #### Receive events
 
-To start listening to incoming events, execute the addListener method upon the specific ECF object.
+To start listening to incoming events, execute the <code>addListener</code> method upon the specific ECF object.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java7">Java</a></li>
@@ -808,68 +831,79 @@ kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_cha
 </div>
 </div>
 
-## Kaa Events REST API 
+## Manage events using REST API
 
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Events) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
+See [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Events) for detailed description of the REST API, its purpose, interfaces and features supported.
 
-Admin REST API provides the following actions:
 
-* [Add the event class family version]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/addEventClassFamilyVersion)
-* [Create/Edit application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/editApplicationEventFamilyMap)
-* [Get application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getApplicationEventFamilyMap)
-* [Get application event family maps by application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getApplicationEventFamilyMapsByApplicationToken)
-* [Get event class families]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassFamilies)
-* [Get application event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassFamiliesByApplicationToken)
-* [Create/Edit event class family]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/editEventClassFamily)
-* [Get event class family]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassFamily)
-* [Get event classes]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassesByFamilyIdVersionAndType)
-* [Get vacant event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getVacantEventClassFamiliesByApplicationToken)
+## Manage events using Administration UI
 
-## Kaa Events Admin UI
+### Managing event class families
 
-#### Managing event class families
+To use the Kaa events feature for one or more applications, the tenant administrator must create an ECF.
 
-> **NOTE:** this functionality available for Tenant admin
+To create a new ECF, log in as a tenant administrator and do the following:
 
-To use the Kaa events feature for one or more applications, the tenant admin should create an event class family (ECF). 
+1. Open the **Event class families** page and click **Add ECF**.
 
-To create a new ECF, do the following:
+	![](images/admin_ui/event_class_family/ecf1.png)
+	
+2. On the **Add ECF** page, fill in the required fields and click **Add**.
+	
+	![](images/admin_ui/event_class_family/ecf2.png)
 
-1. Open the **Event class families** window by clicking the corresponding link on the navigation panel.
-2. In the **Event class families** window, click **Add ECF**. 
-![](images/admin_ui/event_class_family/ecf1.png)
-3. In the **Add ECF** window, fill in all the required fields and then click **Add**.  
-<br> **NOTE:** _the namespace and class name values should be unique._
-![](images/admin_ui/event_class_family/ecf2.png)
-4. In the **Event class family** window, add (optionally) an ECF version by clicking **Add family version** under the **Versions** table. 
-![](images/admin_ui/event_class_family/ecf3.png)
-5. In the **Family version** window, create an ECF version by adding ECs by clicking **Add event class** and after all ECs are set up click button **Save**.
-<br> **NOTE:** _More than one version can be added to an ECF._
-![](images/admin_ui/event_class_family/ecf4.png)
-A unique version number is assigned to a family version after its creation and then the family version appears as a clickable line in the **Versions** table. To review the ECF version details, click the appropriate version line in the **Versions** table. Each family version automatically splits into event classes. A name, type, created by, date created and flat representation of corresponding [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) are shown for each event class in the table with the same name.
-![](images/admin_ui/event_class_family/ecf5.png)
-![](images/admin_ui/event_class_family/ecf6.png)
-6. In the **Add event class** window, fill in all the required fields and then click **Add**. 
-You are able to select existing [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) or create new. 
-To select existing [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) click on **Select fully qualified name of existing type** text field and choose one of available CTL schemas.
-To create new [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) click **Create new type** and go to p.7.
-![](images/admin_ui/event_class_family/ecf7.png)
-7. In the **Add new type** window, fill in all the required fields and then click **Add** or click **Choose file**. 
-![](images/admin_ui/event_class_family/ecf8.png)
+	>**NOTE:** The **Namespace** and **Class name** values must be unique.
+	{:.note}
+		
+3. On the **Event class family details** page, click **Add family version** under the **Versions** section to add an ECF version (optional).
+	
+	![](images/admin_ui/event_class_family/ecf3.png)
+	
+4. On the **Family version** page, click **Add event class** to create an ECF version.
+Make the necessary changes to the ECs and click **Save**.
 
-#### Adding event family mappings
+	![](images/admin_ui/event_class_family/ecf4.png)
+	
+	>**NOTE:** You can add multiple versions of a single ECF.
+	{:.note}
+	
+	A unique version number is assigned to every ECF after it is created.
+	The family version appears as a clickable line in the **Versions** section.
+		
+	![](images/admin_ui/event_class_family/ecf5.png)
+	
+	To review ECF version details, click the appropriate version line in the **Versions** section.
+	Each family version automatically splits into event classes.
+	Name, type, created by, date created and flat representation of the corresponding [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) are displayed for each event class.
+	
+	![](images/admin_ui/event_class_family/ecf6.png)
 
-> **NOTE:** this functionality available for Tenant developer
+5. In the **Add event class** window, fill in the required fields and click **Add**.
+Select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) or create a new one.
 
-Event family mappings are used by tenant developers to set event class families for the application and determine the actions for each class family - whether an application should be a source, a sink, or both.
+	To select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Select fully qualified name of existing type** text field and choose one of the available CT schemas.
 
-To view the list of ECFs which are mapped to the application, open the **Event family mappings** window by clicking **Event family mappings** under the application on the navigation panel. 
+	To create a new [CT schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/), click **Create new type** and go to step 6.
 
-![](images/admin_ui/event_family_mapping/efm1.png)
+	![](images/admin_ui/event_class_family/ecf7.png)
 
-To add a new mapping, do the following:
+6. On the **Add new type** page, fill in the required fields and click **Add** or click **Choose file**.
 
-1. In the **Event family mappings window**, click **Add family event mapping**.
-2. Select an appropriate ECF from the drop-down list and then set appropriate actions for each class of the family.
+	![](images/admin_ui/event_class_family/ecf8.png)
 
-![](images/admin_ui/event_family_mapping/efm2.png)
+### Adding event family mappings
+
+Event family mappings are used by tenant developers to set event class families for the application and define the actions for each class family -- whether an application should be a source, a sink, or both.
+
+To add an event family mapping, log in as a tenant developer and do the following:
+
+1. Open the **Event family mappings** page of the application.
+
+	![](images/admin_ui/event_family_mapping/efm1.png)
+
+2. Click **Add family event mapping**.
+The **Event family mapping details** page will open.
+
+	![](images/admin_ui/event_family_mapping/efm2.png)
+	
+3. Select an appropriate ECF from the drop-down list and set the required actions for each class of the family.
