@@ -2,12 +2,15 @@
 
 DATABASE_SQL_NOSQL=$1
 KAA_NODE_SCALE=$2
+INTERNAL_LOCALHOST=$3
 
 VARIATIONS_OF_DATABASES=("mariadb-mongodb" "mariadb-cassandra" "postgresql-mongodb" "postgresql-cassandra")
 
 isValid=false
 DEFAULT_KAA_SERVICE_NAME=kaa_
 
+DEFAULT_THRIFT_PORT=9090
+DEFAULT_INTERNAL_ADMIN_PORT=8080
 DEFAULT_ADMIN_PORT=10080
 DEFAULT_BOOTSTRAP_TCP=10088
 DEFAULT_BOOTSTRAP_HTTP=10089
@@ -18,6 +21,9 @@ IMAGE_VERSION_MARIADB="5.5"
 IMAGE_VERSION_POSTGRESQL="9.4"
 IMAGE_VERSION_MONGODB="3.2"
 IMAGE_VERSION_CASSANDRA="3.7"
+
+KAA_ADMIN_UI_PORTS=()
+STRING_NAMES_NODES_KAA=()
 
 isValidDatabases() {
 if [ -z "$DATABASE_SQL_NOSQL" ]; then
@@ -98,7 +104,9 @@ removeAvailableContainers() {
     return 0;
 }
 
-configureAndStartKaa() {
+configureOneNodeKaa() {
+    KAA_ADMIN_UI_PORTS+=(${DEFAULT_ADMIN_PORT})
+    STRING_NAMES_NODES_KAA+=(${DEFAULT_KAA_SERVICE_NAME}0)
     cat kaa-docker-compose.yml.template | sed \
     -e "s|{{KAA_SERVICE_NAME}}|${DEFAULT_KAA_SERVICE_NAME}0|g" \
     -e "s|{{ADMIN_PORT}}|${DEFAULT_ADMIN_PORT}|g" \
@@ -110,13 +118,16 @@ configureAndStartKaa() {
     return 0;
 }
 
-configureAndStartClusterKaa() {
-    configureAndStartKaa
+configureClusterNodesKaa() {
+    configureOneNodeKaa
     KAA_NODE_SCALE=$(( KAA_NODE_SCALE - 1 ))
     for i in `seq 1 $KAA_NODE_SCALE`; do
-        ex -sc "24i|`cat kaa-docker-compose.yml.template | tail -26 | head -20 | sed \
+        KAA_ADMIN_UI_PORT+=( $(( DEFAULT_ADMIN_PORT + $i * 100 )) )
+        STRING_NAMES_NODES_KAA+=(${DEFAULT_KAA_SERVICE_NAME}${i})
+        KAA_ADMIN_UI_PORTS+=(${KAA_ADMIN_UI_PORT})
+        ex -sc "25i|`cat kaa-docker-compose.yml.template | tail -47 | head -22 | sed \
         -e "s|{{KAA_SERVICE_NAME}}|${DEFAULT_KAA_SERVICE_NAME}${i} |g" \
-        -e "s|{{ADMIN_PORT}}|$(( DEFAULT_ADMIN_PORT + $i * 100 ))|g" \
+        -e "s|{{ADMIN_PORT}}|${KAA_ADMIN_UI_PORT}|g" \
         -e "s|{{BOOTSTRAP_TCP}}|$(( DEFAULT_BOOTSTRAP_TCP + $i * 100 ))|g" \
         -e "s|{{BOOTSTRAP_HTTP}}|$(( DEFAULT_BOOTSTRAP_HTTP + $i * 100 ))|g" \
         -e "s|{{OPERATIONS_TCP}}|$(( DEFAULT_OPERATIONS_TCP + $i * 100 ))|g" \
@@ -126,19 +137,68 @@ configureAndStartClusterKaa() {
     return 0;
 }
 
+createNginxConfFiles() {
+    INTERNAL_HOST_KAA=`docker inspect --format='{{(index (index .NetworkSettings.Networks ) "usingcompose_front-tier").IPAddress}}' usingcompose_${DEFAULT_KAA_SERVICE_NAME}0_1`
+    cat kaa-nginx-config/nginx.conf.template | sed \
+        -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
+        -e "s|{{PROXY_PORT}}|${DEFAULT_ADMIN_PORT}|g" \
+    > kaa-nginx-config/kaa-nginx.conf
+    cat kaa-nginx-config/default.conf.template | sed \
+        -e "s|{{NGINX_PORT}}|${DEFAULT_INTERNAL_ADMIN_PORT}|g" \
+        -e "s|{{NGINX_HOST}}|${INTERNAL_LOCALHOST}|g" \
+    > kaa-nginx-config/kaa-default.conf
+
+    cat kaa-nginx-config/nginx.conf.template | sed \
+        -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
+        -e "s|{{PROXY_PORT}}|${DEFAULT_THRIFT_PORT}|g" \
+    > kaa-nginx-config/kaa-thrift-nginx.conf
+    cat kaa-nginx-config/default.conf.template | sed \
+        -e "s|{{NGINX_PORT}}|${DEFAULT_THRIFT_PORT}|g" \
+        -e "s|{{NGINX_HOST}}|${INTERNAL_LOCALHOST}|g" \
+    > kaa-nginx-config/kaa-thrift-default.conf
+}
+
 stopRunningContainers
 removeAvailableContainers
 
 isValidDatabases
 configureAndStartThirdPartyComponents
 
-configureAndStartKaa
-if ! [ -z "$KAA_NODE_SCALE" ]; then
-    configureAndStartClusterKaa
-    docker-compose -f kaa-docker-compose.yml up -d
+[ -n "$INTERNAL_LOCALHOST" ] || INTERNAL_LOCALHOST=`ip route get 8.8.8.8 | awk '{print $NF; exit}'`
+echo "TRANSPORT_PUBLIC_INTERFACE =" $INTERNAL_LOCALHOST
+echo "THRIFT_HOST =" $INTERNAL_LOCALHOST
+sed -i "s/\(TRANSPORT_PUBLIC_INTERFACE *= *\).*/\1${INTERNAL_LOCALHOST}/" kaa-example.env
+
+if [ -z "$KAA_NODE_SCALE" ]; then
+    configureOneNodeKaa
+    docker-compose -f kaa-docker-compose.yml up -d "${DEFAULT_KAA_SERVICE_NAME}0"
+    createNginxConfFiles
+    docker-compose -f kaa-docker-compose.yml up -d kaa_lb kaa_thrift_lb
 else
-    configureAndStartKaa
-    docker-compose -f kaa-docker-compose.yml up -d
+    configureClusterNodesKaa
+    docker-compose -f kaa-docker-compose.yml up -d ${STRING_NAMES_NODES_KAA[@]}
+    createNginxConfFiles
+    j=1
+    for i in "${KAA_ADMIN_UI_PORTS[@]}"
+    do
+        if [ "$i" =  "$DEFAULT_ADMIN_PORT" ]; then
+            createNginxConfFiles
+        else
+            INTERNAL_HOST_KAA=`docker inspect --format='{{(index (index .NetworkSettings.Networks ) "usingcompose_front-tier").IPAddress}}' usingcompose_${DEFAULT_KAA_SERVICE_NAME}${j}_1`
+            (( j++ ))
+            ex -sc "31i|`cat kaa-nginx-config/nginx.conf.template | tail -5 | head -1 | sed \
+            -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
+            -e "s|{{PROXY_PORT}}|${i}|g" \
+            `" -cx kaa-nginx-config/kaa-nginx.conf
+
+            ex -sc "31i|`cat kaa-nginx-config/nginx.conf.template | tail -5 | head -1 | sed \
+            -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
+            -e "s|{{PROXY_PORT}}|${DEFAULT_THRIFT_PORT}|g" \
+            `" -cx kaa-nginx-config/kaa-thrift-nginx.conf
+        fi
+    done
+    docker-compose -f kaa-docker-compose.yml up -d kaa_lb
 fi
 
-docker ps
+docker-compose -f kaa-docker-compose.yml ps
+docker-compose -f third-party-docker-compose.yml ps
