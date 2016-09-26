@@ -17,7 +17,7 @@ The REST log appender is responsible for transferring logs from Operations servi
 
 # Creating REST log appender with Admin UI
 
-The easiest way to create a Cassandra log appender for your application is by using Admin UI.
+The easiest way to create REST log appender for your application is by using Admin UI.
 
 To create a log appender, do the following:
 

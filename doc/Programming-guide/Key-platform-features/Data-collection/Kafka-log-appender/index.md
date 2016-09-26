@@ -170,37 +170,19 @@ We have next log schema:
 ```json
 {
     "type":"record",
-    "name":"LogData",
-    "namespace":"org.kaaproject.kaa.schema.sample.logging",
+    "name":"Data",
+    "namespace":"org.kaaproject.kaa.scheme.sample",
     "fields":[
         {
-            "name":"level",
-            "type":{
-                "type":"enum",
-                "name":"Level",
-                "symbols":[
-                    "KAA_DEBUG",
-                    "KAA_ERROR",
-                    "KAA_FATAL",
-                    "KAA_INFO",
-                    "KAA_TRACE",
-                    "KAA_WARN"
-                ]
-            }
-        },
-        {
-            "name":"tag",
-            "type":"string"
-        },
-        {
-            "name":"message",
-            "type":"string"
+            "name":"temperature",
+            "type":"int"
         },
         {
             "name":"timeStamp",
             "type":"long"
         }
-    ]
+    ],
+    "displayName":"Logging scheme"
 }
 ```
 
@@ -208,11 +190,10 @@ The following JSON example matches the schema above.
 
 ```json
 {
-    "level":"KAA_INFO",
-    "tag":"TEST_TAG",
-    "message":"My simple message",
-    "timeStamp":"1466075369795"
+    "temperature":"28",
+    "timeStamp":"1474366798"
 }
+
 ```
 
 1. Go to the Data collection demos in Sandbox.
@@ -239,24 +220,18 @@ In this example, Kafka server installed in the Sandbox VM.
     ```
 
     This will bring up Kafka consumer, so we can see logs transferred from Kaa.
-11. Use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
+11. Use instructions from Sandbox to run Data collection demo application.
 12. After this you should see something like below:
 
-    ```
-    2016-06-21 12:38:12,260 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
-    2016-06-21 12:38:13,337 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
-    2016-06-21 12:38:13,339 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,628 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
-    2016-06-21 12:38:13,629 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
+    ```bash
+    Data collection demo started
+    Received new sample period: 1
+    Sampled temperature 28 1474622330
+    Sampled temperature 31 1474622331
+    Sampled temperature 32 1474622332
+    Sampled temperature 30 1474622333
+    Sampled temperature 28 1474622334
+    ...
     ```
 
 13. Let's verify that Kafka consumer receive logs. From Kafka installation directory run the next command:
@@ -268,11 +243,11 @@ In this example, Kafka server installed in the Sandbox VM.
 14. You should observe similar output:
 
     ```
-    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466501893337}}
-    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466501893337}}
-    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466501893337}}
-    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466501893337}}
-    {"header":{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466501893600},"logSchemaVersion":{"int":2}},"event":{"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466501893337}}
+    {"header":{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}},"event":{"temperature":28,"timeStamp":1474622330}}
+    {"header":{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}},"event":{"temperature":28,"timeStamp":1474622330}}
+    {"header":{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}},"event":{"temperature":28,"timeStamp":1474622330}}
+    {"header":{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}},"event":{"temperature":28,"timeStamp":1474622330}}
+    {"header":{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}},"event":{"temperature":28,"timeStamp":1474622330}}
     ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
