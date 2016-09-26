@@ -51,7 +51,6 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
 
   public ThriftEntityClusterAddress address; // required
   /**
-   *
    * @see ThriftRouteOperation
    */
   public ThriftRouteOperation operation; // required
@@ -102,7 +101,9 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
     this.address = null;
   }
 
-  /** Returns true if field address is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field address is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAddress() {
     return this.address != null;
   }
@@ -114,7 +115,6 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
   }
 
   /**
-   *
    * @see ThriftRouteOperation
    */
   public ThriftRouteOperation getOperation() {
@@ -122,7 +122,6 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
   }
 
   /**
-   *
    * @see ThriftRouteOperation
    */
   public ThriftEntityRouteMessage setOperation(ThriftRouteOperation operation) {
@@ -134,7 +133,9 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
     this.operation = null;
   }
 
-  /** Returns true if field operation is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field operation is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetOperation() {
     return this.operation != null;
   }
@@ -178,7 +179,10 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -335,11 +339,13 @@ public class ThriftEntityRouteMessage implements org.apache.thrift.TBase<ThriftE
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ADDRESS((short) 1, "address"),
     /**
-     *
      * @see ThriftRouteOperation
      */
     OPERATION((short) 2, "operation");

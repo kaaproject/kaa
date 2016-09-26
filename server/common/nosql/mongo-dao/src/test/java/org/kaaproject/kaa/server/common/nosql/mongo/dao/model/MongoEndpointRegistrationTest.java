@@ -25,7 +25,6 @@ import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public class MongoEndpointRegistrationTest {

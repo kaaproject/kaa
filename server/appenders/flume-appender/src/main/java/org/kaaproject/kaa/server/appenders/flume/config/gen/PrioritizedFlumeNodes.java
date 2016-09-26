@@ -30,17 +30,24 @@ public class PrioritizedFlumeNodes extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new PrioritizedFlumeNodes RecordBuilder */
+  /**
+   * Creates a new PrioritizedFlumeNodes RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder();
   }
 
-  /** Creates a new PrioritizedFlumeNodes RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new PrioritizedFlumeNodes RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder(other);
   }
 
-  /** Creates a new PrioritizedFlumeNodes RecordBuilder by copying an existing PrioritizedFlumeNodes instance */
+  /**
+   * Creates a new PrioritizedFlumeNodes RecordBuilder by copying an existing PrioritizedFlumeNodes
+   * instance
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder(other);
   }
@@ -80,6 +87,7 @@ public class PrioritizedFlumeNodes extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'flumeNodes' field.
+   *
    * @param value the value to set.
    */
   public void setFlumeNodes(java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode> value) {
@@ -94,12 +102,16 @@ public class PrioritizedFlumeNodes extends org.apache.avro.specific.SpecificReco
 
     private java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode> flumeNodes;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.flumeNodes)) {
@@ -108,7 +120,9 @@ public class PrioritizedFlumeNodes extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing PrioritizedFlumeNodes instance */
+    /**
+     * Creates a Builder by copying an existing PrioritizedFlumeNodes instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes other) {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.SCHEMA$);
       if (isValidValue(fields()[0], other.flumeNodes)) {
@@ -117,12 +131,16 @@ public class PrioritizedFlumeNodes extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'flumeNodes' field */
+    /**
+     * Gets the value of the 'flumeNodes' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode> getFlumeNodes() {
       return flumeNodes;
     }
 
-    /** Sets the value of the 'flumeNodes' field */
+    /**
+     * Sets the value of the 'flumeNodes' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder setFlumeNodes(java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode> value) {
       validate(fields()[0], value);
       this.flumeNodes = value;
@@ -130,12 +148,16 @@ public class PrioritizedFlumeNodes extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'flumeNodes' field has been set */
+    /**
+     * Checks whether the 'flumeNodes' field has been set
+     */
     public boolean hasFlumeNodes() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'flumeNodes' field */
+    /**
+     * Clears the value of the 'flumeNodes' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes.Builder clearFlumeNodes() {
       flumeNodes = null;
       fieldSetFlags()[0] = false;

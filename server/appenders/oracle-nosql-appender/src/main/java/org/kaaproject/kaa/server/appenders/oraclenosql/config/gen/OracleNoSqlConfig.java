@@ -22,6 +22,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
   private java.lang.String sslHostnameVerifier;
   private java.lang.String sslTrustStore;
   private java.lang.String sslTrustStoreType;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -53,17 +54,23 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new OracleNoSqlConfig RecordBuilder */
+  /**
+   * Creates a new OracleNoSqlConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder();
   }
 
-  /** Creates a new OracleNoSqlConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new OracleNoSqlConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder(other);
   }
 
-  /** Creates a new OracleNoSqlConfig RecordBuilder by copying an existing OracleNoSqlConfig instance */
+  /**
+   * Creates a new OracleNoSqlConfig RecordBuilder by copying an existing OracleNoSqlConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig other) {
     return new org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder(other);
   }
@@ -163,6 +170,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'storeName' field.
+   *
    * @param value the value to set.
    */
   public void setStoreName(java.lang.String value) {
@@ -178,6 +186,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'kvStoreNodes' field.
+   *
    * @param value the value to set.
    */
   public void setKvStoreNodes(java.util.List<org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode> value) {
@@ -193,6 +202,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'username' field.
+   *
    * @param value the value to set.
    */
   public void setUsername(java.lang.String value) {
@@ -208,6 +218,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'walletDir' field.
+   *
    * @param value the value to set.
    */
   public void setWalletDir(java.lang.String value) {
@@ -223,6 +234,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'pwdFile' field.
+   *
    * @param value the value to set.
    */
   public void setPwdFile(java.lang.String value) {
@@ -238,6 +250,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'securityFile' field.
+   *
    * @param value the value to set.
    */
   public void setSecurityFile(java.lang.String value) {
@@ -253,6 +266,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'transport' field.
+   *
    * @param value the value to set.
    */
   public void setTransport(java.lang.String value) {
@@ -268,6 +282,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'ssl' field.
+   *
    * @param value the value to set.
    */
   public void setSsl(java.lang.String value) {
@@ -283,6 +298,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'sslCipherSuites' field.
+   *
    * @param value the value to set.
    */
   public void setSslCipherSuites(java.lang.String value) {
@@ -298,6 +314,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'sslProtocols' field.
+   *
    * @param value the value to set.
    */
   public void setSslProtocols(java.lang.String value) {
@@ -313,6 +330,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'sslHostnameVerifier' field.
+   *
    * @param value the value to set.
    */
   public void setSslHostnameVerifier(java.lang.String value) {
@@ -328,6 +346,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'sslTrustStore' field.
+   *
    * @param value the value to set.
    */
   public void setSslTrustStore(java.lang.String value) {
@@ -343,6 +362,7 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'sslTrustStoreType' field.
+   *
    * @param value the value to set.
    */
   public void setSslTrustStoreType(java.lang.String value) {
@@ -369,12 +389,16 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
     private java.lang.String sslTrustStore;
     private java.lang.String sslTrustStoreType;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.storeName)) {
@@ -431,7 +455,9 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing OracleNoSqlConfig instance */
+    /**
+     * Creates a Builder by copying an existing OracleNoSqlConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig other) {
       super(org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.storeName)) {
@@ -488,12 +514,16 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'storeName' field */
+    /**
+     * Gets the value of the 'storeName' field
+     */
     public java.lang.String getStoreName() {
       return storeName;
     }
 
-    /** Sets the value of the 'storeName' field */
+    /**
+     * Sets the value of the 'storeName' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setStoreName(java.lang.String value) {
       validate(fields()[0], value);
       this.storeName = value;
@@ -501,24 +531,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'storeName' field has been set */
+    /**
+     * Checks whether the 'storeName' field has been set
+     */
     public boolean hasStoreName() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'storeName' field */
+    /**
+     * Clears the value of the 'storeName' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearStoreName() {
       storeName = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'kvStoreNodes' field */
+    /**
+     * Gets the value of the 'kvStoreNodes' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode> getKvStoreNodes() {
       return kvStoreNodes;
     }
 
-    /** Sets the value of the 'kvStoreNodes' field */
+    /**
+     * Sets the value of the 'kvStoreNodes' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setKvStoreNodes(java.util.List<org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.KvStoreNode> value) {
       validate(fields()[1], value);
       this.kvStoreNodes = value;
@@ -526,24 +564,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'kvStoreNodes' field has been set */
+    /**
+     * Checks whether the 'kvStoreNodes' field has been set
+     */
     public boolean hasKvStoreNodes() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'kvStoreNodes' field */
+    /**
+     * Clears the value of the 'kvStoreNodes' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearKvStoreNodes() {
       kvStoreNodes = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'username' field */
+    /**
+     * Gets the value of the 'username' field
+     */
     public java.lang.String getUsername() {
       return username;
     }
 
-    /** Sets the value of the 'username' field */
+    /**
+     * Sets the value of the 'username' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setUsername(java.lang.String value) {
       validate(fields()[2], value);
       this.username = value;
@@ -551,24 +597,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'username' field has been set */
+    /**
+     * Checks whether the 'username' field has been set
+     */
     public boolean hasUsername() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'username' field */
+    /**
+     * Clears the value of the 'username' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearUsername() {
       username = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'walletDir' field */
+    /**
+     * Gets the value of the 'walletDir' field
+     */
     public java.lang.String getWalletDir() {
       return walletDir;
     }
 
-    /** Sets the value of the 'walletDir' field */
+    /**
+     * Sets the value of the 'walletDir' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setWalletDir(java.lang.String value) {
       validate(fields()[3], value);
       this.walletDir = value;
@@ -576,24 +630,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'walletDir' field has been set */
+    /**
+     * Checks whether the 'walletDir' field has been set
+     */
     public boolean hasWalletDir() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'walletDir' field */
+    /**
+     * Clears the value of the 'walletDir' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearWalletDir() {
       walletDir = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'pwdFile' field */
+    /**
+     * Gets the value of the 'pwdFile' field
+     */
     public java.lang.String getPwdFile() {
       return pwdFile;
     }
 
-    /** Sets the value of the 'pwdFile' field */
+    /**
+     * Sets the value of the 'pwdFile' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setPwdFile(java.lang.String value) {
       validate(fields()[4], value);
       this.pwdFile = value;
@@ -601,24 +663,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'pwdFile' field has been set */
+    /**
+     * Checks whether the 'pwdFile' field has been set
+     */
     public boolean hasPwdFile() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'pwdFile' field */
+    /**
+     * Clears the value of the 'pwdFile' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearPwdFile() {
       pwdFile = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'securityFile' field */
+    /**
+     * Gets the value of the 'securityFile' field
+     */
     public java.lang.String getSecurityFile() {
       return securityFile;
     }
 
-    /** Sets the value of the 'securityFile' field */
+    /**
+     * Sets the value of the 'securityFile' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSecurityFile(java.lang.String value) {
       validate(fields()[5], value);
       this.securityFile = value;
@@ -626,24 +696,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'securityFile' field has been set */
+    /**
+     * Checks whether the 'securityFile' field has been set
+     */
     public boolean hasSecurityFile() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'securityFile' field */
+    /**
+     * Clears the value of the 'securityFile' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSecurityFile() {
       securityFile = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'transport' field */
+    /**
+     * Gets the value of the 'transport' field
+     */
     public java.lang.String getTransport() {
       return transport;
     }
 
-    /** Sets the value of the 'transport' field */
+    /**
+     * Sets the value of the 'transport' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setTransport(java.lang.String value) {
       validate(fields()[6], value);
       this.transport = value;
@@ -651,24 +729,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'transport' field has been set */
+    /**
+     * Checks whether the 'transport' field has been set
+     */
     public boolean hasTransport() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'transport' field */
+    /**
+     * Clears the value of the 'transport' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearTransport() {
       transport = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'ssl' field */
+    /**
+     * Gets the value of the 'ssl' field
+     */
     public java.lang.String getSsl() {
       return ssl;
     }
 
-    /** Sets the value of the 'ssl' field */
+    /**
+     * Sets the value of the 'ssl' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSsl(java.lang.String value) {
       validate(fields()[7], value);
       this.ssl = value;
@@ -676,24 +762,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'ssl' field has been set */
+    /**
+     * Checks whether the 'ssl' field has been set
+     */
     public boolean hasSsl() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'ssl' field */
+    /**
+     * Clears the value of the 'ssl' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSsl() {
       ssl = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'sslCipherSuites' field */
+    /**
+     * Gets the value of the 'sslCipherSuites' field
+     */
     public java.lang.String getSslCipherSuites() {
       return sslCipherSuites;
     }
 
-    /** Sets the value of the 'sslCipherSuites' field */
+    /**
+     * Sets the value of the 'sslCipherSuites' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSslCipherSuites(java.lang.String value) {
       validate(fields()[8], value);
       this.sslCipherSuites = value;
@@ -701,24 +795,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'sslCipherSuites' field has been set */
+    /**
+     * Checks whether the 'sslCipherSuites' field has been set
+     */
     public boolean hasSslCipherSuites() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'sslCipherSuites' field */
+    /**
+     * Clears the value of the 'sslCipherSuites' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSslCipherSuites() {
       sslCipherSuites = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'sslProtocols' field */
+    /**
+     * Gets the value of the 'sslProtocols' field
+     */
     public java.lang.String getSslProtocols() {
       return sslProtocols;
     }
 
-    /** Sets the value of the 'sslProtocols' field */
+    /**
+     * Sets the value of the 'sslProtocols' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSslProtocols(java.lang.String value) {
       validate(fields()[9], value);
       this.sslProtocols = value;
@@ -726,24 +828,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'sslProtocols' field has been set */
+    /**
+     * Checks whether the 'sslProtocols' field has been set
+     */
     public boolean hasSslProtocols() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'sslProtocols' field */
+    /**
+     * Clears the value of the 'sslProtocols' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSslProtocols() {
       sslProtocols = null;
       fieldSetFlags()[9] = false;
       return this;
     }
 
-    /** Gets the value of the 'sslHostnameVerifier' field */
+    /**
+     * Gets the value of the 'sslHostnameVerifier' field
+     */
     public java.lang.String getSslHostnameVerifier() {
       return sslHostnameVerifier;
     }
 
-    /** Sets the value of the 'sslHostnameVerifier' field */
+    /**
+     * Sets the value of the 'sslHostnameVerifier' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSslHostnameVerifier(java.lang.String value) {
       validate(fields()[10], value);
       this.sslHostnameVerifier = value;
@@ -751,24 +861,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'sslHostnameVerifier' field has been set */
+    /**
+     * Checks whether the 'sslHostnameVerifier' field has been set
+     */
     public boolean hasSslHostnameVerifier() {
       return fieldSetFlags()[10];
     }
 
-    /** Clears the value of the 'sslHostnameVerifier' field */
+    /**
+     * Clears the value of the 'sslHostnameVerifier' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSslHostnameVerifier() {
       sslHostnameVerifier = null;
       fieldSetFlags()[10] = false;
       return this;
     }
 
-    /** Gets the value of the 'sslTrustStore' field */
+    /**
+     * Gets the value of the 'sslTrustStore' field
+     */
     public java.lang.String getSslTrustStore() {
       return sslTrustStore;
     }
 
-    /** Sets the value of the 'sslTrustStore' field */
+    /**
+     * Sets the value of the 'sslTrustStore' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSslTrustStore(java.lang.String value) {
       validate(fields()[11], value);
       this.sslTrustStore = value;
@@ -776,24 +894,32 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'sslTrustStore' field has been set */
+    /**
+     * Checks whether the 'sslTrustStore' field has been set
+     */
     public boolean hasSslTrustStore() {
       return fieldSetFlags()[11];
     }
 
-    /** Clears the value of the 'sslTrustStore' field */
+    /**
+     * Clears the value of the 'sslTrustStore' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSslTrustStore() {
       sslTrustStore = null;
       fieldSetFlags()[11] = false;
       return this;
     }
 
-    /** Gets the value of the 'sslTrustStoreType' field */
+    /**
+     * Gets the value of the 'sslTrustStoreType' field
+     */
     public java.lang.String getSslTrustStoreType() {
       return sslTrustStoreType;
     }
 
-    /** Sets the value of the 'sslTrustStoreType' field */
+    /**
+     * Sets the value of the 'sslTrustStoreType' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder setSslTrustStoreType(java.lang.String value) {
       validate(fields()[12], value);
       this.sslTrustStoreType = value;
@@ -801,12 +927,16 @@ public class OracleNoSqlConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'sslTrustStoreType' field has been set */
+    /**
+     * Checks whether the 'sslTrustStoreType' field has been set
+     */
     public boolean hasSslTrustStoreType() {
       return fieldSetFlags()[12];
     }
 
-    /** Clears the value of the 'sslTrustStoreType' field */
+    /**
+     * Clears the value of the 'sslTrustStoreType' field
+     */
     public org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig.Builder clearSslTrustStoreType() {
       sslTrustStoreType = null;
       fieldSetFlags()[12] = false;

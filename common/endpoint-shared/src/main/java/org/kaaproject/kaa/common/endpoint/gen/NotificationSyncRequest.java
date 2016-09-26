@@ -13,6 +13,7 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.TopicState> topicStates;
   private java.util.List<java.lang.String> acceptedUnicastNotifications;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand> subscriptionCommands;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -35,17 +36,24 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
     return SCHEMA$;
   }
 
-  /** Creates a new NotificationSyncRequest RecordBuilder */
+  /**
+   * Creates a new NotificationSyncRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder();
   }
 
-  /** Creates a new NotificationSyncRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new NotificationSyncRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder(other);
   }
 
-  /** Creates a new NotificationSyncRequest RecordBuilder by copying an existing NotificationSyncRequest instance */
+  /**
+   * Creates a new NotificationSyncRequest RecordBuilder by copying an existing
+   * NotificationSyncRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder(other);
   }
@@ -100,6 +108,7 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'topicListHash' field.
+   *
    * @param value the value to set.
    */
   public void setTopicListHash(java.lang.Integer value) {
@@ -115,6 +124,7 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'topicStates' field.
+   *
    * @param value the value to set.
    */
   public void setTopicStates(java.util.List<org.kaaproject.kaa.common.endpoint.gen.TopicState> value) {
@@ -130,6 +140,7 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'acceptedUnicastNotifications' field.
+   *
    * @param value the value to set.
    */
   public void setAcceptedUnicastNotifications(java.util.List<java.lang.String> value) {
@@ -145,6 +156,7 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'subscriptionCommands' field.
+   *
    * @param value the value to set.
    */
   public void setSubscriptionCommands(java.util.List<org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand> value) {
@@ -162,12 +174,16 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
     private java.util.List<java.lang.String> acceptedUnicastNotifications;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand> subscriptionCommands;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.topicListHash)) {
@@ -188,7 +204,9 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
       }
     }
 
-    /** Creates a Builder by copying an existing NotificationSyncRequest instance */
+    /**
+     * Creates a Builder by copying an existing NotificationSyncRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.topicListHash)) {
@@ -209,12 +227,16 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
       }
     }
 
-    /** Gets the value of the 'topicListHash' field */
+    /**
+     * Gets the value of the 'topicListHash' field
+     */
     public java.lang.Integer getTopicListHash() {
       return topicListHash;
     }
 
-    /** Sets the value of the 'topicListHash' field */
+    /**
+     * Sets the value of the 'topicListHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder setTopicListHash(int value) {
       validate(fields()[0], value);
       this.topicListHash = value;
@@ -222,23 +244,31 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'topicListHash' field has been set */
+    /**
+     * Checks whether the 'topicListHash' field has been set
+     */
     public boolean hasTopicListHash() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'topicListHash' field */
+    /**
+     * Clears the value of the 'topicListHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder clearTopicListHash() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'topicStates' field */
+    /**
+     * Gets the value of the 'topicStates' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.TopicState> getTopicStates() {
       return topicStates;
     }
 
-    /** Sets the value of the 'topicStates' field */
+    /**
+     * Sets the value of the 'topicStates' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder setTopicStates(java.util.List<org.kaaproject.kaa.common.endpoint.gen.TopicState> value) {
       validate(fields()[1], value);
       this.topicStates = value;
@@ -246,24 +276,32 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'topicStates' field has been set */
+    /**
+     * Checks whether the 'topicStates' field has been set
+     */
     public boolean hasTopicStates() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'topicStates' field */
+    /**
+     * Clears the value of the 'topicStates' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder clearTopicStates() {
       topicStates = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'acceptedUnicastNotifications' field */
+    /**
+     * Gets the value of the 'acceptedUnicastNotifications' field
+     */
     public java.util.List<java.lang.String> getAcceptedUnicastNotifications() {
       return acceptedUnicastNotifications;
     }
 
-    /** Sets the value of the 'acceptedUnicastNotifications' field */
+    /**
+     * Sets the value of the 'acceptedUnicastNotifications' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder setAcceptedUnicastNotifications(java.util.List<java.lang.String> value) {
       validate(fields()[2], value);
       this.acceptedUnicastNotifications = value;
@@ -271,24 +309,32 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'acceptedUnicastNotifications' field has been set */
+    /**
+     * Checks whether the 'acceptedUnicastNotifications' field has been set
+     */
     public boolean hasAcceptedUnicastNotifications() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'acceptedUnicastNotifications' field */
+    /**
+     * Clears the value of the 'acceptedUnicastNotifications' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder clearAcceptedUnicastNotifications() {
       acceptedUnicastNotifications = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'subscriptionCommands' field */
+    /**
+     * Gets the value of the 'subscriptionCommands' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand> getSubscriptionCommands() {
       return subscriptionCommands;
     }
 
-    /** Sets the value of the 'subscriptionCommands' field */
+    /**
+     * Sets the value of the 'subscriptionCommands' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder setSubscriptionCommands(java.util.List<org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand> value) {
       validate(fields()[3], value);
       this.subscriptionCommands = value;
@@ -296,12 +342,16 @@ public class NotificationSyncRequest extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'subscriptionCommands' field has been set */
+    /**
+     * Checks whether the 'subscriptionCommands' field has been set
+     */
     public boolean hasSubscriptionCommands() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'subscriptionCommands' field */
+    /**
+     * Clears the value of the 'subscriptionCommands' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest.Builder clearSubscriptionCommands() {
       subscriptionCommands = null;
       fieldSetFlags()[3] = false;

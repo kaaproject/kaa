@@ -12,6 +12,7 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
   private org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest eventSequenceNumberRequest;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest> eventListenersRequests;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> events;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
     return SCHEMA$;
   }
 
-  /** Creates a new EventSyncRequest RecordBuilder */
+  /**
+   * Creates a new EventSyncRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder();
   }
 
-  /** Creates a new EventSyncRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EventSyncRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder(other);
   }
 
-  /** Creates a new EventSyncRequest RecordBuilder by copying an existing EventSyncRequest instance */
+  /**
+   * Creates a new EventSyncRequest RecordBuilder by copying an existing EventSyncRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder(other);
   }
@@ -93,6 +100,7 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
 
   /**
    * Sets the value of the 'eventSequenceNumberRequest' field.
+   *
    * @param value the value to set.
    */
   public void setEventSequenceNumberRequest(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest value) {
@@ -108,6 +116,7 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
 
   /**
    * Sets the value of the 'eventListenersRequests' field.
+   *
    * @param value the value to set.
    */
   public void setEventListenersRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest> value) {
@@ -123,6 +132,7 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
 
   /**
    * Sets the value of the 'events' field.
+   *
    * @param value the value to set.
    */
   public void setEvents(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> value) {
@@ -139,12 +149,16 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest> eventListenersRequests;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> events;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.eventSequenceNumberRequest)) {
@@ -161,7 +175,9 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
       }
     }
 
-    /** Creates a Builder by copying an existing EventSyncRequest instance */
+    /**
+     * Creates a Builder by copying an existing EventSyncRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.eventSequenceNumberRequest)) {
@@ -178,12 +194,16 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
       }
     }
 
-    /** Gets the value of the 'eventSequenceNumberRequest' field */
+    /**
+     * Gets the value of the 'eventSequenceNumberRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest getEventSequenceNumberRequest() {
       return eventSequenceNumberRequest;
     }
 
-    /** Sets the value of the 'eventSequenceNumberRequest' field */
+    /**
+     * Sets the value of the 'eventSequenceNumberRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder setEventSequenceNumberRequest(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest value) {
       validate(fields()[0], value);
       this.eventSequenceNumberRequest = value;
@@ -191,24 +211,32 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Checks whether the 'eventSequenceNumberRequest' field has been set */
+    /**
+     * Checks whether the 'eventSequenceNumberRequest' field has been set
+     */
     public boolean hasEventSequenceNumberRequest() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'eventSequenceNumberRequest' field */
+    /**
+     * Clears the value of the 'eventSequenceNumberRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder clearEventSequenceNumberRequest() {
       eventSequenceNumberRequest = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventListenersRequests' field */
+    /**
+     * Gets the value of the 'eventListenersRequests' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest> getEventListenersRequests() {
       return eventListenersRequests;
     }
 
-    /** Sets the value of the 'eventListenersRequests' field */
+    /**
+     * Sets the value of the 'eventListenersRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder setEventListenersRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest> value) {
       validate(fields()[1], value);
       this.eventListenersRequests = value;
@@ -216,24 +244,32 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Checks whether the 'eventListenersRequests' field has been set */
+    /**
+     * Checks whether the 'eventListenersRequests' field has been set
+     */
     public boolean hasEventListenersRequests() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'eventListenersRequests' field */
+    /**
+     * Clears the value of the 'eventListenersRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder clearEventListenersRequests() {
       eventListenersRequests = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'events' field */
+    /**
+     * Gets the value of the 'events' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> getEvents() {
       return events;
     }
 
-    /** Sets the value of the 'events' field */
+    /**
+     * Sets the value of the 'events' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder setEvents(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Event> value) {
       validate(fields()[2], value);
       this.events = value;
@@ -241,12 +277,16 @@ public class EventSyncRequest extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Checks whether the 'events' field has been set */
+    /**
+     * Checks whether the 'events' field has been set
+     */
     public boolean hasEvents() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'events' field */
+    /**
+     * Clears the value of the 'events' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest.Builder clearEvents() {
       events = null;
       fieldSetFlags()[2] = false;

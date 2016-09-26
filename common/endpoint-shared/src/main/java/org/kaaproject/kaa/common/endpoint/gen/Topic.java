@@ -12,6 +12,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
   private long id;
   private java.lang.String name;
   private org.kaaproject.kaa.common.endpoint.gen.SubscriptionType subscriptionType;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
     return SCHEMA$;
   }
 
-  /** Creates a new Topic RecordBuilder */
+  /**
+   * Creates a new Topic RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Topic.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.Topic.Builder();
   }
 
-  /** Creates a new Topic RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new Topic RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Topic.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.Topic.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.Topic.Builder(other);
   }
 
-  /** Creates a new Topic RecordBuilder by copying an existing Topic instance */
+  /**
+   * Creates a new Topic RecordBuilder by copying an existing Topic instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Topic.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.Topic other) {
     return new org.kaaproject.kaa.common.endpoint.gen.Topic.Builder(other);
   }
@@ -93,6 +100,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'id' field.
+   *
    * @param value the value to set.
    */
   public void setId(java.lang.Long value) {
@@ -108,6 +116,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'name' field.
+   *
    * @param value the value to set.
    */
   public void setName(java.lang.String value) {
@@ -123,6 +132,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'subscriptionType' field.
+   *
    * @param value the value to set.
    */
   public void setSubscriptionType(org.kaaproject.kaa.common.endpoint.gen.SubscriptionType value) {
@@ -139,12 +149,16 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
     private java.lang.String name;
     private org.kaaproject.kaa.common.endpoint.gen.SubscriptionType subscriptionType;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.Topic.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.Topic.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
@@ -161,7 +175,9 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
       }
     }
 
-    /** Creates a Builder by copying an existing Topic instance */
+    /**
+     * Creates a Builder by copying an existing Topic instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.Topic other) {
       super(org.kaaproject.kaa.common.endpoint.gen.Topic.SCHEMA$);
       if (isValidValue(fields()[0], other.id)) {
@@ -178,12 +194,16 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
       }
     }
 
-    /** Gets the value of the 'id' field */
+    /**
+     * Gets the value of the 'id' field
+     */
     public java.lang.Long getId() {
       return id;
     }
 
-    /** Sets the value of the 'id' field */
+    /**
+     * Sets the value of the 'id' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder setId(long value) {
       validate(fields()[0], value);
       this.id = value;
@@ -191,23 +211,31 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'id' field has been set */
+    /**
+     * Checks whether the 'id' field has been set
+     */
     public boolean hasId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'id' field */
+    /**
+     * Clears the value of the 'id' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder clearId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'name' field */
+    /**
+     * Gets the value of the 'name' field
+     */
     public java.lang.String getName() {
       return name;
     }
 
-    /** Sets the value of the 'name' field */
+    /**
+     * Sets the value of the 'name' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder setName(java.lang.String value) {
       validate(fields()[1], value);
       this.name = value;
@@ -215,24 +243,32 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'name' field has been set */
+    /**
+     * Checks whether the 'name' field has been set
+     */
     public boolean hasName() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'name' field */
+    /**
+     * Clears the value of the 'name' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder clearName() {
       name = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'subscriptionType' field */
+    /**
+     * Gets the value of the 'subscriptionType' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionType getSubscriptionType() {
       return subscriptionType;
     }
 
-    /** Sets the value of the 'subscriptionType' field */
+    /**
+     * Sets the value of the 'subscriptionType' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder setSubscriptionType(org.kaaproject.kaa.common.endpoint.gen.SubscriptionType value) {
       validate(fields()[2], value);
       this.subscriptionType = value;
@@ -240,12 +276,16 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'subscriptionType' field has been set */
+    /**
+     * Checks whether the 'subscriptionType' field has been set
+     */
     public boolean hasSubscriptionType() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'subscriptionType' field */
+    /**
+     * Clears the value of the 'subscriptionType' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder clearSubscriptionType() {
       subscriptionType = null;
       fieldSetFlags()[2] = false;

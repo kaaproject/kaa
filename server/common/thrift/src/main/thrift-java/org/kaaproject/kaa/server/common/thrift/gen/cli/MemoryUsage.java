@@ -115,7 +115,9 @@ public class MemoryUsage implements org.apache.thrift.TBase<MemoryUsage, MemoryU
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MAX_ISSET_ID);
   }
 
-  /** Returns true if field max is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field max is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetMax() {
     return EncodingUtils.testBit(__isset_bitfield, __MAX_ISSET_ID);
   }
@@ -138,7 +140,9 @@ public class MemoryUsage implements org.apache.thrift.TBase<MemoryUsage, MemoryU
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOTAL_ISSET_ID);
   }
 
-  /** Returns true if field total is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field total is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTotal() {
     return EncodingUtils.testBit(__isset_bitfield, __TOTAL_ISSET_ID);
   }
@@ -161,7 +165,9 @@ public class MemoryUsage implements org.apache.thrift.TBase<MemoryUsage, MemoryU
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FREE_ISSET_ID);
   }
 
-  /** Returns true if field free is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field free is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetFree() {
     return EncodingUtils.testBit(__isset_bitfield, __FREE_ISSET_ID);
   }
@@ -214,7 +220,10 @@ public class MemoryUsage implements org.apache.thrift.TBase<MemoryUsage, MemoryU
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -392,7 +401,10 @@ public class MemoryUsage implements org.apache.thrift.TBase<MemoryUsage, MemoryU
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     MAX((short) 1, "max"),
     TOTAL((short) 2, "total"),

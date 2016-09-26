@@ -12,6 +12,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
   private org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo;
   private java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports;
   private long timeStarted;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new BootstrapNodeInfo RecordBuilder */
+  /**
+   * Creates a new BootstrapNodeInfo RecordBuilder
+   */
   public static org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder();
   }
 
-  /** Creates a new BootstrapNodeInfo RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new BootstrapNodeInfo RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder other) {
     return new org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder(other);
   }
 
-  /** Creates a new BootstrapNodeInfo RecordBuilder by copying an existing BootstrapNodeInfo instance */
+  /**
+   * Creates a new BootstrapNodeInfo RecordBuilder by copying an existing BootstrapNodeInfo instance
+   */
   public static org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo other) {
     return new org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder(other);
   }
@@ -93,6 +100,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'connectionInfo' field.
+   *
    * @param value the value to set.
    */
   public void setConnectionInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo value) {
@@ -108,6 +116,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'transports' field.
+   *
    * @param value the value to set.
    */
   public void setTransports(java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> value) {
@@ -123,6 +132,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'timeStarted' field.
+   *
    * @param value the value to set.
    */
   public void setTimeStarted(java.lang.Long value) {
@@ -139,12 +149,16 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
     private java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports;
     private long timeStarted;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.connectionInfo)) {
@@ -161,7 +175,9 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing BootstrapNodeInfo instance */
+    /**
+     * Creates a Builder by copying an existing BootstrapNodeInfo instance
+     */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo other) {
       super(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.SCHEMA$);
       if (isValidValue(fields()[0], other.connectionInfo)) {
@@ -178,12 +194,16 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'connectionInfo' field */
+    /**
+     * Gets the value of the 'connectionInfo' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo getConnectionInfo() {
       return connectionInfo;
     }
 
-    /** Sets the value of the 'connectionInfo' field */
+    /**
+     * Sets the value of the 'connectionInfo' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder setConnectionInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo value) {
       validate(fields()[0], value);
       this.connectionInfo = value;
@@ -191,24 +211,32 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'connectionInfo' field has been set */
+    /**
+     * Checks whether the 'connectionInfo' field has been set
+     */
     public boolean hasConnectionInfo() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'connectionInfo' field */
+    /**
+     * Clears the value of the 'connectionInfo' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder clearConnectionInfo() {
       connectionInfo = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'transports' field */
+    /**
+     * Gets the value of the 'transports' field
+     */
     public java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> getTransports() {
       return transports;
     }
 
-    /** Sets the value of the 'transports' field */
+    /**
+     * Sets the value of the 'transports' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder setTransports(java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> value) {
       validate(fields()[1], value);
       this.transports = value;
@@ -216,24 +244,32 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'transports' field has been set */
+    /**
+     * Checks whether the 'transports' field has been set
+     */
     public boolean hasTransports() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'transports' field */
+    /**
+     * Clears the value of the 'transports' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder clearTransports() {
       transports = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'timeStarted' field */
+    /**
+     * Gets the value of the 'timeStarted' field
+     */
     public java.lang.Long getTimeStarted() {
       return timeStarted;
     }
 
-    /** Sets the value of the 'timeStarted' field */
+    /**
+     * Sets the value of the 'timeStarted' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder setTimeStarted(long value) {
       validate(fields()[2], value);
       this.timeStarted = value;
@@ -241,12 +277,16 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'timeStarted' field has been set */
+    /**
+     * Checks whether the 'timeStarted' field has been set
+     */
     public boolean hasTimeStarted() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'timeStarted' field */
+    /**
+     * Clears the value of the 'timeStarted' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder clearTimeStarted() {
       fieldSetFlags()[2] = false;
       return this;

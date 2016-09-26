@@ -31,7 +31,6 @@ import java.util.Optional;
  * is needed.
  *
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Service

@@ -11,6 +11,7 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TopicSubscriptionInfo\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicInfo\",\"type\":{\"type\":\"record\",\"name\":\"Topic\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY_SUBSCRIPTION\",\"OPTIONAL_SUBSCRIPTION\"]}}],\"direction\":\"in\"}},{\"name\":\"seqNumber\",\"type\":\"int\"}],\"direction\":\"in\"}");
   private org.kaaproject.kaa.common.endpoint.gen.Topic topicInfo;
   private int seqNumber;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new TopicSubscriptionInfo RecordBuilder */
+  /**
+   * Creates a new TopicSubscriptionInfo RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder();
   }
 
-  /** Creates a new TopicSubscriptionInfo RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new TopicSubscriptionInfo RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder(other);
   }
 
-  /** Creates a new TopicSubscriptionInfo RecordBuilder by copying an existing TopicSubscriptionInfo instance */
+  /**
+   * Creates a new TopicSubscriptionInfo RecordBuilder by copying an existing TopicSubscriptionInfo
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo other) {
     return new org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder(other);
   }
@@ -86,6 +94,7 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'topicInfo' field.
+   *
    * @param value the value to set.
    */
   public void setTopicInfo(org.kaaproject.kaa.common.endpoint.gen.Topic value) {
@@ -101,6 +110,7 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'seqNumber' field.
+   *
    * @param value the value to set.
    */
   public void setSeqNumber(java.lang.Integer value) {
@@ -116,12 +126,16 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
     private org.kaaproject.kaa.common.endpoint.gen.Topic topicInfo;
     private int seqNumber;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.topicInfo)) {
@@ -134,7 +148,9 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing TopicSubscriptionInfo instance */
+    /**
+     * Creates a Builder by copying an existing TopicSubscriptionInfo instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo other) {
       super(org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.SCHEMA$);
       if (isValidValue(fields()[0], other.topicInfo)) {
@@ -147,12 +163,16 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'topicInfo' field */
+    /**
+     * Gets the value of the 'topicInfo' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Topic getTopicInfo() {
       return topicInfo;
     }
 
-    /** Sets the value of the 'topicInfo' field */
+    /**
+     * Sets the value of the 'topicInfo' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder setTopicInfo(org.kaaproject.kaa.common.endpoint.gen.Topic value) {
       validate(fields()[0], value);
       this.topicInfo = value;
@@ -160,24 +180,32 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'topicInfo' field has been set */
+    /**
+     * Checks whether the 'topicInfo' field has been set
+     */
     public boolean hasTopicInfo() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'topicInfo' field */
+    /**
+     * Clears the value of the 'topicInfo' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder clearTopicInfo() {
       topicInfo = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'seqNumber' field */
+    /**
+     * Gets the value of the 'seqNumber' field
+     */
     public java.lang.Integer getSeqNumber() {
       return seqNumber;
     }
 
-    /** Sets the value of the 'seqNumber' field */
+    /**
+     * Sets the value of the 'seqNumber' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder setSeqNumber(int value) {
       validate(fields()[1], value);
       this.seqNumber = value;
@@ -185,12 +213,16 @@ public class TopicSubscriptionInfo extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'seqNumber' field has been set */
+    /**
+     * Checks whether the 'seqNumber' field has been set
+     */
     public boolean hasSeqNumber() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'seqNumber' field */
+    /**
+     * Clears the value of the 'seqNumber' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo.Builder clearSeqNumber() {
       fieldSetFlags()[1] = false;
       return this;

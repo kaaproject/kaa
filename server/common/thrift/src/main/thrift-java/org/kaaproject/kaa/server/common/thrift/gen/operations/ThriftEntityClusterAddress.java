@@ -98,7 +98,9 @@ public class ThriftEntityClusterAddress implements org.apache.thrift.TBase<Thrif
     this.nodeId = null;
   }
 
-  /** Returns true if field nodeId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field nodeId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetNodeId() {
     return this.nodeId != null;
   }
@@ -122,7 +124,9 @@ public class ThriftEntityClusterAddress implements org.apache.thrift.TBase<Thrif
     this.address = null;
   }
 
-  /** Returns true if field address is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field address is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAddress() {
     return this.address != null;
   }
@@ -166,7 +170,10 @@ public class ThriftEntityClusterAddress implements org.apache.thrift.TBase<Thrif
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -323,7 +330,10 @@ public class ThriftEntityClusterAddress implements org.apache.thrift.TBase<Thrif
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     NODE_ID((short) 1, "nodeId"),
     ADDRESS((short) 2, "address");

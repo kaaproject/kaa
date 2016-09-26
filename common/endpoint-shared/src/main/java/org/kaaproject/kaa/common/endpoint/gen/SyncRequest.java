@@ -19,6 +19,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
   private org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest eventSyncRequest;
   private org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest logSyncRequest;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncRequests;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -47,17 +48,23 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     return SCHEMA$;
   }
 
-  /** Creates a new SyncRequest RecordBuilder */
+  /**
+   * Creates a new SyncRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder();
   }
 
-  /** Creates a new SyncRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new SyncRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder(other);
   }
 
-  /** Creates a new SyncRequest RecordBuilder by copying an existing SyncRequest instance */
+  /**
+   * Creates a new SyncRequest RecordBuilder by copying an existing SyncRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder(other);
   }
@@ -142,6 +149,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -157,6 +165,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'syncRequestMetaData' field.
+   *
    * @param value the value to set.
    */
   public void setSyncRequestMetaData(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData value) {
@@ -172,6 +181,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'bootstrapSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setBootstrapSyncRequest(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest value) {
@@ -187,6 +197,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'profileSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setProfileSyncRequest(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest value) {
@@ -202,6 +213,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'configurationSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setConfigurationSyncRequest(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest value) {
@@ -217,6 +229,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'notificationSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setNotificationSyncRequest(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest value) {
@@ -232,6 +245,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'userSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setUserSyncRequest(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest value) {
@@ -247,6 +261,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'eventSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setEventSyncRequest(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest value) {
@@ -262,6 +277,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'logSyncRequest' field.
+   *
    * @param value the value to set.
    */
   public void setLogSyncRequest(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest value) {
@@ -277,6 +293,7 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'extensionSyncRequests' field.
+   *
    * @param value the value to set.
    */
   public void setExtensionSyncRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> value) {
@@ -300,12 +317,16 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
     private org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest logSyncRequest;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncRequests;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.SyncRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -350,7 +371,9 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Creates a Builder by copying an existing SyncRequest instance */
+    /**
+     * Creates a Builder by copying an existing SyncRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.SyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -395,12 +418,16 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -408,23 +435,31 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'syncRequestMetaData' field */
+    /**
+     * Gets the value of the 'syncRequestMetaData' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData getSyncRequestMetaData() {
       return syncRequestMetaData;
     }
 
-    /** Sets the value of the 'syncRequestMetaData' field */
+    /**
+     * Sets the value of the 'syncRequestMetaData' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setSyncRequestMetaData(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData value) {
       validate(fields()[1], value);
       this.syncRequestMetaData = value;
@@ -432,24 +467,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'syncRequestMetaData' field has been set */
+    /**
+     * Checks whether the 'syncRequestMetaData' field has been set
+     */
     public boolean hasSyncRequestMetaData() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'syncRequestMetaData' field */
+    /**
+     * Clears the value of the 'syncRequestMetaData' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearSyncRequestMetaData() {
       syncRequestMetaData = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'bootstrapSyncRequest' field */
+    /**
+     * Gets the value of the 'bootstrapSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest getBootstrapSyncRequest() {
       return bootstrapSyncRequest;
     }
 
-    /** Sets the value of the 'bootstrapSyncRequest' field */
+    /**
+     * Sets the value of the 'bootstrapSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setBootstrapSyncRequest(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest value) {
       validate(fields()[2], value);
       this.bootstrapSyncRequest = value;
@@ -457,24 +500,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'bootstrapSyncRequest' field has been set */
+    /**
+     * Checks whether the 'bootstrapSyncRequest' field has been set
+     */
     public boolean hasBootstrapSyncRequest() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'bootstrapSyncRequest' field */
+    /**
+     * Clears the value of the 'bootstrapSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearBootstrapSyncRequest() {
       bootstrapSyncRequest = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'profileSyncRequest' field */
+    /**
+     * Gets the value of the 'profileSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest getProfileSyncRequest() {
       return profileSyncRequest;
     }
 
-    /** Sets the value of the 'profileSyncRequest' field */
+    /**
+     * Sets the value of the 'profileSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setProfileSyncRequest(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest value) {
       validate(fields()[3], value);
       this.profileSyncRequest = value;
@@ -482,24 +533,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'profileSyncRequest' field has been set */
+    /**
+     * Checks whether the 'profileSyncRequest' field has been set
+     */
     public boolean hasProfileSyncRequest() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'profileSyncRequest' field */
+    /**
+     * Clears the value of the 'profileSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearProfileSyncRequest() {
       profileSyncRequest = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'configurationSyncRequest' field */
+    /**
+     * Gets the value of the 'configurationSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest getConfigurationSyncRequest() {
       return configurationSyncRequest;
     }
 
-    /** Sets the value of the 'configurationSyncRequest' field */
+    /**
+     * Sets the value of the 'configurationSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setConfigurationSyncRequest(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest value) {
       validate(fields()[4], value);
       this.configurationSyncRequest = value;
@@ -507,24 +566,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'configurationSyncRequest' field has been set */
+    /**
+     * Checks whether the 'configurationSyncRequest' field has been set
+     */
     public boolean hasConfigurationSyncRequest() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'configurationSyncRequest' field */
+    /**
+     * Clears the value of the 'configurationSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearConfigurationSyncRequest() {
       configurationSyncRequest = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'notificationSyncRequest' field */
+    /**
+     * Gets the value of the 'notificationSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest getNotificationSyncRequest() {
       return notificationSyncRequest;
     }
 
-    /** Sets the value of the 'notificationSyncRequest' field */
+    /**
+     * Sets the value of the 'notificationSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setNotificationSyncRequest(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest value) {
       validate(fields()[5], value);
       this.notificationSyncRequest = value;
@@ -532,24 +599,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'notificationSyncRequest' field has been set */
+    /**
+     * Checks whether the 'notificationSyncRequest' field has been set
+     */
     public boolean hasNotificationSyncRequest() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'notificationSyncRequest' field */
+    /**
+     * Clears the value of the 'notificationSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearNotificationSyncRequest() {
       notificationSyncRequest = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'userSyncRequest' field */
+    /**
+     * Gets the value of the 'userSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest getUserSyncRequest() {
       return userSyncRequest;
     }
 
-    /** Sets the value of the 'userSyncRequest' field */
+    /**
+     * Sets the value of the 'userSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setUserSyncRequest(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest value) {
       validate(fields()[6], value);
       this.userSyncRequest = value;
@@ -557,24 +632,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'userSyncRequest' field has been set */
+    /**
+     * Checks whether the 'userSyncRequest' field has been set
+     */
     public boolean hasUserSyncRequest() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'userSyncRequest' field */
+    /**
+     * Clears the value of the 'userSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearUserSyncRequest() {
       userSyncRequest = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventSyncRequest' field */
+    /**
+     * Gets the value of the 'eventSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest getEventSyncRequest() {
       return eventSyncRequest;
     }
 
-    /** Sets the value of the 'eventSyncRequest' field */
+    /**
+     * Sets the value of the 'eventSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setEventSyncRequest(org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest value) {
       validate(fields()[7], value);
       this.eventSyncRequest = value;
@@ -582,24 +665,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'eventSyncRequest' field has been set */
+    /**
+     * Checks whether the 'eventSyncRequest' field has been set
+     */
     public boolean hasEventSyncRequest() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'eventSyncRequest' field */
+    /**
+     * Clears the value of the 'eventSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearEventSyncRequest() {
       eventSyncRequest = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'logSyncRequest' field */
+    /**
+     * Gets the value of the 'logSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest getLogSyncRequest() {
       return logSyncRequest;
     }
 
-    /** Sets the value of the 'logSyncRequest' field */
+    /**
+     * Sets the value of the 'logSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setLogSyncRequest(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest value) {
       validate(fields()[8], value);
       this.logSyncRequest = value;
@@ -607,24 +698,32 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'logSyncRequest' field has been set */
+    /**
+     * Checks whether the 'logSyncRequest' field has been set
+     */
     public boolean hasLogSyncRequest() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'logSyncRequest' field */
+    /**
+     * Clears the value of the 'logSyncRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearLogSyncRequest() {
       logSyncRequest = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'extensionSyncRequests' field */
+    /**
+     * Gets the value of the 'extensionSyncRequests' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> getExtensionSyncRequests() {
       return extensionSyncRequests;
     }
 
-    /** Sets the value of the 'extensionSyncRequests' field */
+    /**
+     * Sets the value of the 'extensionSyncRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder setExtensionSyncRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> value) {
       validate(fields()[9], value);
       this.extensionSyncRequests = value;
@@ -632,12 +731,16 @@ public class SyncRequest extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'extensionSyncRequests' field has been set */
+    /**
+     * Checks whether the 'extensionSyncRequests' field has been set
+     */
     public boolean hasExtensionSyncRequests() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'extensionSyncRequests' field */
+    /**
+     * Clears the value of the 'extensionSyncRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequest.Builder clearExtensionSyncRequests() {
       extensionSyncRequests = null;
       fieldSetFlags()[9] = false;

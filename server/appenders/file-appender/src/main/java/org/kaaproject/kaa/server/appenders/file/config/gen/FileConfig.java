@@ -15,6 +15,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
   private int rollingMaxHistory;
   private java.lang.String triggerMaxFileSize;
   private java.lang.String encoderPattern;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -39,17 +40,23 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
     return SCHEMA$;
   }
 
-  /** Creates a new FileConfig RecordBuilder */
+  /**
+   * Creates a new FileConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder();
   }
 
-  /** Creates a new FileConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new FileConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder(other);
   }
 
-  /** Creates a new FileConfig RecordBuilder by copying an existing FileConfig instance */
+  /**
+   * Creates a new FileConfig RecordBuilder by copying an existing FileConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig other) {
     return new org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder(other);
   }
@@ -114,6 +121,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'publicKey' field.
+   *
    * @param value the value to set.
    */
   public void setPublicKey(java.lang.String value) {
@@ -129,6 +137,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'logsRootPath' field.
+   *
    * @param value the value to set.
    */
   public void setLogsRootPath(java.lang.String value) {
@@ -144,6 +153,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'rollingFileNamePatern' field.
+   *
    * @param value the value to set.
    */
   public void setRollingFileNamePatern(java.lang.String value) {
@@ -159,6 +169,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'rollingMaxHistory' field.
+   *
    * @param value the value to set.
    */
   public void setRollingMaxHistory(java.lang.Integer value) {
@@ -174,6 +185,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'triggerMaxFileSize' field.
+   *
    * @param value the value to set.
    */
   public void setTriggerMaxFileSize(java.lang.String value) {
@@ -189,6 +201,7 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'encoderPattern' field.
+   *
    * @param value the value to set.
    */
   public void setEncoderPattern(java.lang.String value) {
@@ -208,12 +221,16 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
     private java.lang.String triggerMaxFileSize;
     private java.lang.String encoderPattern;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.publicKey)) {
@@ -242,7 +259,9 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Creates a Builder by copying an existing FileConfig instance */
+    /**
+     * Creates a Builder by copying an existing FileConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig other) {
       super(org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.publicKey)) {
@@ -271,12 +290,16 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Gets the value of the 'publicKey' field */
+    /**
+     * Gets the value of the 'publicKey' field
+     */
     public java.lang.String getPublicKey() {
       return publicKey;
     }
 
-    /** Sets the value of the 'publicKey' field */
+    /**
+     * Sets the value of the 'publicKey' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder setPublicKey(java.lang.String value) {
       validate(fields()[0], value);
       this.publicKey = value;
@@ -284,24 +307,32 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'publicKey' field has been set */
+    /**
+     * Checks whether the 'publicKey' field has been set
+     */
     public boolean hasPublicKey() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'publicKey' field */
+    /**
+     * Clears the value of the 'publicKey' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder clearPublicKey() {
       publicKey = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'logsRootPath' field */
+    /**
+     * Gets the value of the 'logsRootPath' field
+     */
     public java.lang.String getLogsRootPath() {
       return logsRootPath;
     }
 
-    /** Sets the value of the 'logsRootPath' field */
+    /**
+     * Sets the value of the 'logsRootPath' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder setLogsRootPath(java.lang.String value) {
       validate(fields()[1], value);
       this.logsRootPath = value;
@@ -309,24 +340,32 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'logsRootPath' field has been set */
+    /**
+     * Checks whether the 'logsRootPath' field has been set
+     */
     public boolean hasLogsRootPath() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'logsRootPath' field */
+    /**
+     * Clears the value of the 'logsRootPath' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder clearLogsRootPath() {
       logsRootPath = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'rollingFileNamePatern' field */
+    /**
+     * Gets the value of the 'rollingFileNamePatern' field
+     */
     public java.lang.String getRollingFileNamePatern() {
       return rollingFileNamePatern;
     }
 
-    /** Sets the value of the 'rollingFileNamePatern' field */
+    /**
+     * Sets the value of the 'rollingFileNamePatern' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder setRollingFileNamePatern(java.lang.String value) {
       validate(fields()[2], value);
       this.rollingFileNamePatern = value;
@@ -334,24 +373,32 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'rollingFileNamePatern' field has been set */
+    /**
+     * Checks whether the 'rollingFileNamePatern' field has been set
+     */
     public boolean hasRollingFileNamePatern() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'rollingFileNamePatern' field */
+    /**
+     * Clears the value of the 'rollingFileNamePatern' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder clearRollingFileNamePatern() {
       rollingFileNamePatern = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'rollingMaxHistory' field */
+    /**
+     * Gets the value of the 'rollingMaxHistory' field
+     */
     public java.lang.Integer getRollingMaxHistory() {
       return rollingMaxHistory;
     }
 
-    /** Sets the value of the 'rollingMaxHistory' field */
+    /**
+     * Sets the value of the 'rollingMaxHistory' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder setRollingMaxHistory(int value) {
       validate(fields()[3], value);
       this.rollingMaxHistory = value;
@@ -359,23 +406,31 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'rollingMaxHistory' field has been set */
+    /**
+     * Checks whether the 'rollingMaxHistory' field has been set
+     */
     public boolean hasRollingMaxHistory() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'rollingMaxHistory' field */
+    /**
+     * Clears the value of the 'rollingMaxHistory' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder clearRollingMaxHistory() {
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'triggerMaxFileSize' field */
+    /**
+     * Gets the value of the 'triggerMaxFileSize' field
+     */
     public java.lang.String getTriggerMaxFileSize() {
       return triggerMaxFileSize;
     }
 
-    /** Sets the value of the 'triggerMaxFileSize' field */
+    /**
+     * Sets the value of the 'triggerMaxFileSize' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder setTriggerMaxFileSize(java.lang.String value) {
       validate(fields()[4], value);
       this.triggerMaxFileSize = value;
@@ -383,24 +438,32 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'triggerMaxFileSize' field has been set */
+    /**
+     * Checks whether the 'triggerMaxFileSize' field has been set
+     */
     public boolean hasTriggerMaxFileSize() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'triggerMaxFileSize' field */
+    /**
+     * Clears the value of the 'triggerMaxFileSize' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder clearTriggerMaxFileSize() {
       triggerMaxFileSize = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'encoderPattern' field */
+    /**
+     * Gets the value of the 'encoderPattern' field
+     */
     public java.lang.String getEncoderPattern() {
       return encoderPattern;
     }
 
-    /** Sets the value of the 'encoderPattern' field */
+    /**
+     * Sets the value of the 'encoderPattern' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder setEncoderPattern(java.lang.String value) {
       validate(fields()[5], value);
       this.encoderPattern = value;
@@ -408,12 +471,16 @@ public class FileConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'encoderPattern' field has been set */
+    /**
+     * Checks whether the 'encoderPattern' field has been set
+     */
     public boolean hasEncoderPattern() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'encoderPattern' field */
+    /**
+     * Clears the value of the 'encoderPattern' field
+     */
     public org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig.Builder clearEncoderPattern() {
       encoderPattern = null;
       fieldSetFlags()[5] = false;

@@ -37,57 +37,41 @@ public class OperationsThriftService {
 
     /**
      * Application Sequence Numbers
-     *
-     * @param notification
      */
     public void onNotification(Notification notification) throws org.apache.thrift.TException;
 
     /**
      * Set redirection rule for Operations server
-     *
-     * @param redirectionRule
      */
     public void setRedirectionRule(RedirectionRule redirectionRule) throws org.apache.thrift.TException;
 
     /**
      * Interface to send unified event messages
-     *
-     * @param messages
      */
     public void sendMessages(List<Message> messages) throws org.apache.thrift.TException;
 
     /**
      * Report user configuration update from control to operation servers
-     *
-     * @param updates
      */
     public void sendUserConfigurationUpdates(List<UserConfigurationUpdate> updates) throws org.apache.thrift.TException;
 
     /**
      * Interface to send unified entity route messages
-     *
-     * @param messages
      */
     public void onEntityRouteMessages(List<ThriftEntityRouteMessage> messages) throws org.apache.thrift.TException;
 
     /**
      * Interface to send unicast notification message
-     *
-     * @param message
      */
     public void onUnicastNotification(ThriftUnicastNotificationMessage message) throws org.apache.thrift.TException;
 
     /**
      * Interface to send server profile update message
-     *
-     * @param message
      */
     public void onServerProfileUpdate(ThriftServerProfileUpdateMessage message) throws org.apache.thrift.TException;
 
     /**
      * Interface to send server profile update message
-     *
-     * @param message
      */
     public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws org.apache.thrift.TException;
 
@@ -1238,7 +1222,9 @@ public class OperationsThriftService {
       this.notification = null;
     }
 
-    /** Returns true if field notification is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field notification is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetNotification() {
       return this.notification != null;
     }
@@ -1271,7 +1257,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -1394,7 +1383,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       NOTIFICATION((short) 1, "notification");
 
@@ -1584,7 +1576,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -1671,7 +1666,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -1849,7 +1847,9 @@ public class OperationsThriftService {
       this.redirectionRule = null;
     }
 
-    /** Returns true if field redirectionRule is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field redirectionRule is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetRedirectionRule() {
       return this.redirectionRule != null;
     }
@@ -1882,7 +1882,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -2005,7 +2008,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       REDIRECTION_RULE((short) 1, "redirectionRule");
 
@@ -2195,7 +2201,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -2282,7 +2291,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -2480,7 +2492,9 @@ public class OperationsThriftService {
       this.messages = null;
     }
 
-    /** Returns true if field messages is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field messages is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetMessages() {
       return this.messages != null;
     }
@@ -2513,7 +2527,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -2633,7 +2650,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       MESSAGES((short) 1, "messages");
 
@@ -2851,7 +2871,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -2938,7 +2961,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -3136,7 +3162,9 @@ public class OperationsThriftService {
       this.updates = null;
     }
 
-    /** Returns true if field updates is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field updates is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetUpdates() {
       return this.updates != null;
     }
@@ -3169,7 +3197,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -3289,7 +3320,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       UPDATES((short) 1, "updates");
 
@@ -3507,7 +3541,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -3594,7 +3631,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -3792,7 +3832,9 @@ public class OperationsThriftService {
       this.messages = null;
     }
 
-    /** Returns true if field messages is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field messages is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetMessages() {
       return this.messages != null;
     }
@@ -3825,7 +3867,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -3945,7 +3990,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       MESSAGES((short) 1, "messages");
 
@@ -4163,7 +4211,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -4250,7 +4301,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -4428,7 +4482,9 @@ public class OperationsThriftService {
       this.message = null;
     }
 
-    /** Returns true if field message is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field message is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetMessage() {
       return this.message != null;
     }
@@ -4461,7 +4517,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -4584,7 +4643,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       MESSAGE((short) 1, "message");
 
@@ -4774,7 +4836,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -4861,7 +4926,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -5039,7 +5107,9 @@ public class OperationsThriftService {
       this.message = null;
     }
 
-    /** Returns true if field message is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field message is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetMessage() {
       return this.message != null;
     }
@@ -5072,7 +5142,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -5195,7 +5268,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       MESSAGE((short) 1, "message");
 
@@ -5385,7 +5461,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -5472,7 +5551,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -5650,7 +5732,9 @@ public class OperationsThriftService {
       this.message = null;
     }
 
-    /** Returns true if field message is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field message is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetMessage() {
       return this.message != null;
     }
@@ -5683,7 +5767,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -5806,7 +5893,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       MESSAGE((short) 1, "message");
 
@@ -5996,7 +6086,10 @@ public class OperationsThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -6083,7 +6176,10 @@ public class OperationsThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 

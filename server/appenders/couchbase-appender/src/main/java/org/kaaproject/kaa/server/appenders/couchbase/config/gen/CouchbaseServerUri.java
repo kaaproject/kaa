@@ -30,17 +30,24 @@ public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordB
     return SCHEMA$;
   }
 
-  /** Creates a new CouchbaseServerUri RecordBuilder */
+  /**
+   * Creates a new CouchbaseServerUri RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder();
   }
 
-  /** Creates a new CouchbaseServerUri RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new CouchbaseServerUri RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder newBuilder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder other) {
     return new org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder(other);
   }
 
-  /** Creates a new CouchbaseServerUri RecordBuilder by copying an existing CouchbaseServerUri instance */
+  /**
+   * Creates a new CouchbaseServerUri RecordBuilder by copying an existing CouchbaseServerUri
+   * instance
+   */
   public static org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder newBuilder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri other) {
     return new org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder(other);
   }
@@ -80,6 +87,7 @@ public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'serverUri' field.
+   *
    * @param value the value to set.
    */
   public void setServerUri(java.lang.String value) {
@@ -94,12 +102,16 @@ public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordB
 
     private java.lang.String serverUri;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.serverUri)) {
@@ -108,7 +120,9 @@ public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Creates a Builder by copying an existing CouchbaseServerUri instance */
+    /**
+     * Creates a Builder by copying an existing CouchbaseServerUri instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri other) {
       super(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.SCHEMA$);
       if (isValidValue(fields()[0], other.serverUri)) {
@@ -117,12 +131,16 @@ public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Gets the value of the 'serverUri' field */
+    /**
+     * Gets the value of the 'serverUri' field
+     */
     public java.lang.String getServerUri() {
       return serverUri;
     }
 
-    /** Sets the value of the 'serverUri' field */
+    /**
+     * Sets the value of the 'serverUri' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder setServerUri(java.lang.String value) {
       validate(fields()[0], value);
       this.serverUri = value;
@@ -130,12 +148,16 @@ public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'serverUri' field has been set */
+    /**
+     * Checks whether the 'serverUri' field has been set
+     */
     public boolean hasServerUri() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'serverUri' field */
+    /**
+     * Clears the value of the 'serverUri' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri.Builder clearServerUri() {
       serverUri = null;
       fieldSetFlags()[0] = false;

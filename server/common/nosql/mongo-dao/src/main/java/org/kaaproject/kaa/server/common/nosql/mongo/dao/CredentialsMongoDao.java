@@ -34,7 +34,6 @@ import java.util.Optional;
 /**
  * @author Artur Joshi
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Repository

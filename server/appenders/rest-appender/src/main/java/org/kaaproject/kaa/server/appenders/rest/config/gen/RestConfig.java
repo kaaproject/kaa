@@ -20,6 +20,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
   private java.lang.String path;
   private org.kaaproject.kaa.server.appenders.rest.config.gen.MethodType method;
   private org.kaaproject.kaa.server.appenders.rest.config.gen.RequestType mimeType;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -49,17 +50,23 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
     return SCHEMA$;
   }
 
-  /** Creates a new RestConfig RecordBuilder */
+  /**
+   * Creates a new RestConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder();
   }
 
-  /** Creates a new RestConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new RestConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder(other);
   }
 
-  /** Creates a new RestConfig RecordBuilder by copying an existing RestConfig instance */
+  /**
+   * Creates a new RestConfig RecordBuilder by copying an existing RestConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig other) {
     return new org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder(other);
   }
@@ -149,6 +156,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'host' field.
+   *
    * @param value the value to set.
    */
   public void setHost(java.lang.String value) {
@@ -164,6 +172,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'port' field.
+   *
    * @param value the value to set.
    */
   public void setPort(java.lang.Integer value) {
@@ -179,6 +188,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'ssl' field.
+   *
    * @param value the value to set.
    */
   public void setSsl(java.lang.Boolean value) {
@@ -194,6 +204,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'verifySslCert' field.
+   *
    * @param value the value to set.
    */
   public void setVerifySslCert(java.lang.Boolean value) {
@@ -209,6 +220,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'username' field.
+   *
    * @param value the value to set.
    */
   public void setUsername(java.lang.String value) {
@@ -224,6 +236,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'password' field.
+   *
    * @param value the value to set.
    */
   public void setPassword(java.lang.String value) {
@@ -239,6 +252,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'connectionPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setConnectionPoolSize(java.lang.Integer value) {
@@ -254,6 +268,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'header' field.
+   *
    * @param value the value to set.
    */
   public void setHeader(java.lang.Boolean value) {
@@ -269,6 +284,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'path' field.
+   *
    * @param value the value to set.
    */
   public void setPath(java.lang.String value) {
@@ -284,6 +300,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'method' field.
+   *
    * @param value the value to set.
    */
   public void setMethod(org.kaaproject.kaa.server.appenders.rest.config.gen.MethodType value) {
@@ -299,6 +316,7 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'mimeType' field.
+   *
    * @param value the value to set.
    */
   public void setMimeType(org.kaaproject.kaa.server.appenders.rest.config.gen.RequestType value) {
@@ -323,12 +341,16 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
     private org.kaaproject.kaa.server.appenders.rest.config.gen.MethodType method;
     private org.kaaproject.kaa.server.appenders.rest.config.gen.RequestType mimeType;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.host)) {
@@ -377,7 +399,9 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Creates a Builder by copying an existing RestConfig instance */
+    /**
+     * Creates a Builder by copying an existing RestConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig other) {
       super(org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.host)) {
@@ -426,12 +450,16 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Gets the value of the 'host' field */
+    /**
+     * Gets the value of the 'host' field
+     */
     public java.lang.String getHost() {
       return host;
     }
 
-    /** Sets the value of the 'host' field */
+    /**
+     * Sets the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setHost(java.lang.String value) {
       validate(fields()[0], value);
       this.host = value;
@@ -439,24 +467,32 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'host' field has been set */
+    /**
+     * Checks whether the 'host' field has been set
+     */
     public boolean hasHost() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'host' field */
+    /**
+     * Clears the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearHost() {
       host = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'port' field */
+    /**
+     * Gets the value of the 'port' field
+     */
     public java.lang.Integer getPort() {
       return port;
     }
 
-    /** Sets the value of the 'port' field */
+    /**
+     * Sets the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setPort(int value) {
       validate(fields()[1], value);
       this.port = value;
@@ -464,23 +500,31 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'port' field has been set */
+    /**
+     * Checks whether the 'port' field has been set
+     */
     public boolean hasPort() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'port' field */
+    /**
+     * Clears the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearPort() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'ssl' field */
+    /**
+     * Gets the value of the 'ssl' field
+     */
     public java.lang.Boolean getSsl() {
       return ssl;
     }
 
-    /** Sets the value of the 'ssl' field */
+    /**
+     * Sets the value of the 'ssl' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setSsl(boolean value) {
       validate(fields()[2], value);
       this.ssl = value;
@@ -488,23 +532,31 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'ssl' field has been set */
+    /**
+     * Checks whether the 'ssl' field has been set
+     */
     public boolean hasSsl() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'ssl' field */
+    /**
+     * Clears the value of the 'ssl' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearSsl() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'verifySslCert' field */
+    /**
+     * Gets the value of the 'verifySslCert' field
+     */
     public java.lang.Boolean getVerifySslCert() {
       return verifySslCert;
     }
 
-    /** Sets the value of the 'verifySslCert' field */
+    /**
+     * Sets the value of the 'verifySslCert' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setVerifySslCert(boolean value) {
       validate(fields()[3], value);
       this.verifySslCert = value;
@@ -512,23 +564,31 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'verifySslCert' field has been set */
+    /**
+     * Checks whether the 'verifySslCert' field has been set
+     */
     public boolean hasVerifySslCert() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'verifySslCert' field */
+    /**
+     * Clears the value of the 'verifySslCert' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearVerifySslCert() {
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'username' field */
+    /**
+     * Gets the value of the 'username' field
+     */
     public java.lang.String getUsername() {
       return username;
     }
 
-    /** Sets the value of the 'username' field */
+    /**
+     * Sets the value of the 'username' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setUsername(java.lang.String value) {
       validate(fields()[4], value);
       this.username = value;
@@ -536,24 +596,32 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'username' field has been set */
+    /**
+     * Checks whether the 'username' field has been set
+     */
     public boolean hasUsername() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'username' field */
+    /**
+     * Clears the value of the 'username' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearUsername() {
       username = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'password' field */
+    /**
+     * Gets the value of the 'password' field
+     */
     public java.lang.String getPassword() {
       return password;
     }
 
-    /** Sets the value of the 'password' field */
+    /**
+     * Sets the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setPassword(java.lang.String value) {
       validate(fields()[5], value);
       this.password = value;
@@ -561,24 +629,32 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'password' field has been set */
+    /**
+     * Checks whether the 'password' field has been set
+     */
     public boolean hasPassword() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'password' field */
+    /**
+     * Clears the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearPassword() {
       password = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'connectionPoolSize' field */
+    /**
+     * Gets the value of the 'connectionPoolSize' field
+     */
     public java.lang.Integer getConnectionPoolSize() {
       return connectionPoolSize;
     }
 
-    /** Sets the value of the 'connectionPoolSize' field */
+    /**
+     * Sets the value of the 'connectionPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setConnectionPoolSize(int value) {
       validate(fields()[6], value);
       this.connectionPoolSize = value;
@@ -586,23 +662,31 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'connectionPoolSize' field has been set */
+    /**
+     * Checks whether the 'connectionPoolSize' field has been set
+     */
     public boolean hasConnectionPoolSize() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'connectionPoolSize' field */
+    /**
+     * Clears the value of the 'connectionPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearConnectionPoolSize() {
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'header' field */
+    /**
+     * Gets the value of the 'header' field
+     */
     public java.lang.Boolean getHeader() {
       return header;
     }
 
-    /** Sets the value of the 'header' field */
+    /**
+     * Sets the value of the 'header' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setHeader(boolean value) {
       validate(fields()[7], value);
       this.header = value;
@@ -610,23 +694,31 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'header' field has been set */
+    /**
+     * Checks whether the 'header' field has been set
+     */
     public boolean hasHeader() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'header' field */
+    /**
+     * Clears the value of the 'header' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearHeader() {
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'path' field */
+    /**
+     * Gets the value of the 'path' field
+     */
     public java.lang.String getPath() {
       return path;
     }
 
-    /** Sets the value of the 'path' field */
+    /**
+     * Sets the value of the 'path' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setPath(java.lang.String value) {
       validate(fields()[8], value);
       this.path = value;
@@ -634,24 +726,32 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'path' field has been set */
+    /**
+     * Checks whether the 'path' field has been set
+     */
     public boolean hasPath() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'path' field */
+    /**
+     * Clears the value of the 'path' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearPath() {
       path = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'method' field */
+    /**
+     * Gets the value of the 'method' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.MethodType getMethod() {
       return method;
     }
 
-    /** Sets the value of the 'method' field */
+    /**
+     * Sets the value of the 'method' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setMethod(org.kaaproject.kaa.server.appenders.rest.config.gen.MethodType value) {
       validate(fields()[9], value);
       this.method = value;
@@ -659,24 +759,32 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'method' field has been set */
+    /**
+     * Checks whether the 'method' field has been set
+     */
     public boolean hasMethod() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'method' field */
+    /**
+     * Clears the value of the 'method' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearMethod() {
       method = null;
       fieldSetFlags()[9] = false;
       return this;
     }
 
-    /** Gets the value of the 'mimeType' field */
+    /**
+     * Gets the value of the 'mimeType' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RequestType getMimeType() {
       return mimeType;
     }
 
-    /** Sets the value of the 'mimeType' field */
+    /**
+     * Sets the value of the 'mimeType' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder setMimeType(org.kaaproject.kaa.server.appenders.rest.config.gen.RequestType value) {
       validate(fields()[10], value);
       this.mimeType = value;
@@ -684,12 +792,16 @@ public class RestConfig extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'mimeType' field has been set */
+    /**
+     * Checks whether the 'mimeType' field has been set
+     */
     public boolean hasMimeType() {
       return fieldSetFlags()[10];
     }
 
-    /** Clears the value of the 'mimeType' field */
+    /**
+     * Clears the value of the 'mimeType' field
+     */
     public org.kaaproject.kaa.server.appenders.rest.config.gen.RestConfig.Builder clearMimeType() {
       mimeType = null;
       fieldSetFlags()[10] = false;

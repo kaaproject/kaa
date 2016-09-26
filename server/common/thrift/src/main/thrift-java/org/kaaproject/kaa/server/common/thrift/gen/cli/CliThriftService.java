@@ -719,7 +719,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -806,7 +809,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -994,7 +1000,9 @@ public class CliThriftService {
       this.success = null;
     }
 
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field success is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetSuccess() {
       return this.success != null;
     }
@@ -1018,7 +1026,9 @@ public class CliThriftService {
       this.cliException = null;
     }
 
-    /** Returns true if field cliException is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field cliException is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetCliException() {
       return this.cliException != null;
     }
@@ -1062,7 +1072,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -1216,7 +1229,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SUCCESS((short) 0, "success"),
       CLI_EXCEPTION((short) 1, "cliException");
@@ -1432,7 +1448,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -1519,7 +1538,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 
@@ -1697,7 +1719,9 @@ public class CliThriftService {
       this.cliException = null;
     }
 
-    /** Returns true if field cliException is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field cliException is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetCliException() {
       return this.cliException != null;
     }
@@ -1730,7 +1754,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -1850,7 +1877,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       CLI_EXCEPTION((short) 1, "cliException");
 
@@ -2062,7 +2092,9 @@ public class CliThriftService {
       __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FORCEGC_ISSET_ID);
     }
 
-    /** Returns true if field forceGC is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field forceGC is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetForceGC() {
       return EncodingUtils.testBit(__isset_bitfield, __FORCEGC_ISSET_ID);
     }
@@ -2093,7 +2125,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -2211,7 +2246,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       FORCE_GC((short) 1, "forceGC");
 
@@ -2425,7 +2463,9 @@ public class CliThriftService {
       this.success = null;
     }
 
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field success is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetSuccess() {
       return this.success != null;
     }
@@ -2449,7 +2489,9 @@ public class CliThriftService {
       this.cliException = null;
     }
 
-    /** Returns true if field cliException is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field cliException is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetCliException() {
       return this.cliException != null;
     }
@@ -2493,7 +2535,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -2650,7 +2695,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SUCCESS((short) 0, "success"),
       CLI_EXCEPTION((short) 1, "cliException");
@@ -2886,7 +2934,9 @@ public class CliThriftService {
       this.commandLine = null;
     }
 
-    /** Returns true if field commandLine is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field commandLine is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetCommandLine() {
       return this.commandLine != null;
     }
@@ -2919,7 +2969,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -3039,7 +3092,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       COMMAND_LINE((short) 1, "commandLine");
 
@@ -3255,7 +3311,9 @@ public class CliThriftService {
       this.success = null;
     }
 
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field success is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetSuccess() {
       return this.success != null;
     }
@@ -3279,7 +3337,9 @@ public class CliThriftService {
       this.cliException = null;
     }
 
-    /** Returns true if field cliException is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field cliException is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetCliException() {
       return this.cliException != null;
     }
@@ -3323,7 +3383,10 @@ public class CliThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -3480,7 +3543,10 @@ public class CliThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SUCCESS((short) 0, "success"),
       CLI_EXCEPTION((short) 1, "cliException");

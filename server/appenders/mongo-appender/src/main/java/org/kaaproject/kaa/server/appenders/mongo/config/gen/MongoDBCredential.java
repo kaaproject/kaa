@@ -11,6 +11,7 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MongoDBCredential\",\"namespace\":\"org.kaaproject.kaa.server.appenders.mongo.config.gen\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"User\",\"weight\":0.5,\"by_default\":\"user\"},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Password\",\"weight\":0.5,\"by_default\":\"password\"}]}");
   private java.lang.String user;
   private java.lang.String password;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new MongoDBCredential RecordBuilder */
+  /**
+   * Creates a new MongoDBCredential RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder();
   }
 
-  /** Creates a new MongoDBCredential RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new MongoDBCredential RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder newBuilder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder other) {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder(other);
   }
 
-  /** Creates a new MongoDBCredential RecordBuilder by copying an existing MongoDBCredential instance */
+  /**
+   * Creates a new MongoDBCredential RecordBuilder by copying an existing MongoDBCredential instance
+   */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder newBuilder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential other) {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder(other);
   }
@@ -86,6 +93,7 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'user' field.
+   *
    * @param value the value to set.
    */
   public void setUser(java.lang.String value) {
@@ -101,6 +109,7 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'password' field.
+   *
    * @param value the value to set.
    */
   public void setPassword(java.lang.String value) {
@@ -116,12 +125,16 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
     private java.lang.String user;
     private java.lang.String password;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.user)) {
@@ -134,7 +147,9 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing MongoDBCredential instance */
+    /**
+     * Creates a Builder by copying an existing MongoDBCredential instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential other) {
       super(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.SCHEMA$);
       if (isValidValue(fields()[0], other.user)) {
@@ -147,12 +162,16 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'user' field */
+    /**
+     * Gets the value of the 'user' field
+     */
     public java.lang.String getUser() {
       return user;
     }
 
-    /** Sets the value of the 'user' field */
+    /**
+     * Sets the value of the 'user' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder setUser(java.lang.String value) {
       validate(fields()[0], value);
       this.user = value;
@@ -160,24 +179,32 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'user' field has been set */
+    /**
+     * Checks whether the 'user' field has been set
+     */
     public boolean hasUser() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'user' field */
+    /**
+     * Clears the value of the 'user' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder clearUser() {
       user = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'password' field */
+    /**
+     * Gets the value of the 'password' field
+     */
     public java.lang.String getPassword() {
       return password;
     }
 
-    /** Sets the value of the 'password' field */
+    /**
+     * Sets the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder setPassword(java.lang.String value) {
       validate(fields()[1], value);
       this.password = value;
@@ -185,12 +212,16 @@ public class MongoDBCredential extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'password' field has been set */
+    /**
+     * Checks whether the 'password' field has been set
+     */
     public boolean hasPassword() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'password' field */
+    /**
+     * Clears the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential.Builder clearPassword() {
       password = null;
       fieldSetFlags()[1] = false;

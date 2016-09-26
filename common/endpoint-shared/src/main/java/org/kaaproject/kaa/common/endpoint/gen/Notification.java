@@ -14,6 +14,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
   private java.lang.String uid;
   private java.lang.Integer seqNumber;
   private java.nio.ByteBuffer body;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -37,17 +38,23 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
     return SCHEMA$;
   }
 
-  /** Creates a new Notification RecordBuilder */
+  /**
+   * Creates a new Notification RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Notification.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.Notification.Builder();
   }
 
-  /** Creates a new Notification RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new Notification RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Notification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.Notification.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.Notification.Builder(other);
   }
 
-  /** Creates a new Notification RecordBuilder by copying an existing Notification instance */
+  /**
+   * Creates a new Notification RecordBuilder by copying an existing Notification instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Notification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.Notification other) {
     return new org.kaaproject.kaa.common.endpoint.gen.Notification.Builder(other);
   }
@@ -107,6 +114,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'topicId' field.
+   *
    * @param value the value to set.
    */
   public void setTopicId(java.lang.Long value) {
@@ -122,6 +130,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'type' field.
+   *
    * @param value the value to set.
    */
   public void setType(org.kaaproject.kaa.common.endpoint.gen.NotificationType value) {
@@ -137,6 +146,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'uid' field.
+   *
    * @param value the value to set.
    */
   public void setUid(java.lang.String value) {
@@ -152,6 +162,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'seqNumber' field.
+   *
    * @param value the value to set.
    */
   public void setSeqNumber(java.lang.Integer value) {
@@ -167,6 +178,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'body' field.
+   *
    * @param value the value to set.
    */
   public void setBody(java.nio.ByteBuffer value) {
@@ -185,12 +197,16 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
     private java.lang.Integer seqNumber;
     private java.nio.ByteBuffer body;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.Notification.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.Notification.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.topicId)) {
@@ -215,7 +231,9 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Creates a Builder by copying an existing Notification instance */
+    /**
+     * Creates a Builder by copying an existing Notification instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.Notification other) {
       super(org.kaaproject.kaa.common.endpoint.gen.Notification.SCHEMA$);
       if (isValidValue(fields()[0], other.topicId)) {
@@ -240,12 +258,16 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Gets the value of the 'topicId' field */
+    /**
+     * Gets the value of the 'topicId' field
+     */
     public java.lang.Long getTopicId() {
       return topicId;
     }
 
-    /** Sets the value of the 'topicId' field */
+    /**
+     * Sets the value of the 'topicId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setTopicId(long value) {
       validate(fields()[0], value);
       this.topicId = value;
@@ -253,23 +275,31 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'topicId' field has been set */
+    /**
+     * Checks whether the 'topicId' field has been set
+     */
     public boolean hasTopicId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'topicId' field */
+    /**
+     * Clears the value of the 'topicId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder clearTopicId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'type' field */
+    /**
+     * Gets the value of the 'type' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationType getType() {
       return type;
     }
 
-    /** Sets the value of the 'type' field */
+    /**
+     * Sets the value of the 'type' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setType(org.kaaproject.kaa.common.endpoint.gen.NotificationType value) {
       validate(fields()[1], value);
       this.type = value;
@@ -277,24 +307,32 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'type' field has been set */
+    /**
+     * Checks whether the 'type' field has been set
+     */
     public boolean hasType() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'type' field */
+    /**
+     * Clears the value of the 'type' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder clearType() {
       type = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'uid' field */
+    /**
+     * Gets the value of the 'uid' field
+     */
     public java.lang.String getUid() {
       return uid;
     }
 
-    /** Sets the value of the 'uid' field */
+    /**
+     * Sets the value of the 'uid' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setUid(java.lang.String value) {
       validate(fields()[2], value);
       this.uid = value;
@@ -302,24 +340,32 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'uid' field has been set */
+    /**
+     * Checks whether the 'uid' field has been set
+     */
     public boolean hasUid() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'uid' field */
+    /**
+     * Clears the value of the 'uid' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder clearUid() {
       uid = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'seqNumber' field */
+    /**
+     * Gets the value of the 'seqNumber' field
+     */
     public java.lang.Integer getSeqNumber() {
       return seqNumber;
     }
 
-    /** Sets the value of the 'seqNumber' field */
+    /**
+     * Sets the value of the 'seqNumber' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setSeqNumber(java.lang.Integer value) {
       validate(fields()[3], value);
       this.seqNumber = value;
@@ -327,24 +373,32 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'seqNumber' field has been set */
+    /**
+     * Checks whether the 'seqNumber' field has been set
+     */
     public boolean hasSeqNumber() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'seqNumber' field */
+    /**
+     * Clears the value of the 'seqNumber' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder clearSeqNumber() {
       seqNumber = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'body' field */
+    /**
+     * Gets the value of the 'body' field
+     */
     public java.nio.ByteBuffer getBody() {
       return body;
     }
 
-    /** Sets the value of the 'body' field */
+    /**
+     * Sets the value of the 'body' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setBody(java.nio.ByteBuffer value) {
       validate(fields()[4], value);
       this.body = value;
@@ -352,12 +406,16 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'body' field has been set */
+    /**
+     * Checks whether the 'body' field has been set
+     */
     public boolean hasBody() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'body' field */
+    /**
+     * Clears the value of the 'body' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder clearBody() {
       body = null;
       fieldSetFlags()[4] = false;

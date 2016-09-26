@@ -48,6 +48,7 @@ abstract public class MqttFrame {
    * to clone all fileds.
    */
   private MessageType messageType;
+
   /**
    *
    */

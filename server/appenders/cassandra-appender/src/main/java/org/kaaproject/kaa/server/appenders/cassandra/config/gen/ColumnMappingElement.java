@@ -15,6 +15,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
   private org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType columnType;
   private boolean partitionKey;
   private boolean clusteringKey;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -39,17 +40,24 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
     return SCHEMA$;
   }
 
-  /** Creates a new ColumnMappingElement RecordBuilder */
+  /**
+   * Creates a new ColumnMappingElement RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder();
   }
 
-  /** Creates a new ColumnMappingElement RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ColumnMappingElement RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder(other);
   }
 
-  /** Creates a new ColumnMappingElement RecordBuilder by copying an existing ColumnMappingElement instance */
+  /**
+   * Creates a new ColumnMappingElement RecordBuilder by copying an existing ColumnMappingElement
+   * instance
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder(other);
   }
@@ -114,6 +122,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'type' field.
+   *
    * @param value the value to set.
    */
   public void setType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType value) {
@@ -129,6 +138,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'value' field.
+   *
    * @param value the value to set.
    */
   public void setValue(java.lang.String value) {
@@ -144,6 +154,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'columnName' field.
+   *
    * @param value the value to set.
    */
   public void setColumnName(java.lang.String value) {
@@ -159,6 +170,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'columnType' field.
+   *
    * @param value the value to set.
    */
   public void setColumnType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType value) {
@@ -174,6 +186,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'partitionKey' field.
+   *
    * @param value the value to set.
    */
   public void setPartitionKey(java.lang.Boolean value) {
@@ -189,6 +202,7 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'clusteringKey' field.
+   *
    * @param value the value to set.
    */
   public void setClusteringKey(java.lang.Boolean value) {
@@ -208,12 +222,16 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
     private boolean partitionKey;
     private boolean clusteringKey;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.type)) {
@@ -242,7 +260,9 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Creates a Builder by copying an existing ColumnMappingElement instance */
+    /**
+     * Creates a Builder by copying an existing ColumnMappingElement instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement other) {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.SCHEMA$);
       if (isValidValue(fields()[0], other.type)) {
@@ -271,12 +291,16 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Gets the value of the 'type' field */
+    /**
+     * Gets the value of the 'type' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType getType() {
       return type;
     }
 
-    /** Sets the value of the 'type' field */
+    /**
+     * Sets the value of the 'type' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder setType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType value) {
       validate(fields()[0], value);
       this.type = value;
@@ -284,24 +308,32 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'type' field has been set */
+    /**
+     * Checks whether the 'type' field has been set
+     */
     public boolean hasType() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'type' field */
+    /**
+     * Clears the value of the 'type' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder clearType() {
       type = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'value' field */
+    /**
+     * Gets the value of the 'value' field
+     */
     public java.lang.String getValue() {
       return value;
     }
 
-    /** Sets the value of the 'value' field */
+    /**
+     * Sets the value of the 'value' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder setValue(java.lang.String value) {
       validate(fields()[1], value);
       this.value = value;
@@ -309,24 +341,32 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'value' field has been set */
+    /**
+     * Checks whether the 'value' field has been set
+     */
     public boolean hasValue() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'value' field */
+    /**
+     * Clears the value of the 'value' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder clearValue() {
       value = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'columnName' field */
+    /**
+     * Gets the value of the 'columnName' field
+     */
     public java.lang.String getColumnName() {
       return columnName;
     }
 
-    /** Sets the value of the 'columnName' field */
+    /**
+     * Sets the value of the 'columnName' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder setColumnName(java.lang.String value) {
       validate(fields()[2], value);
       this.columnName = value;
@@ -334,24 +374,32 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'columnName' field has been set */
+    /**
+     * Checks whether the 'columnName' field has been set
+     */
     public boolean hasColumnName() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'columnName' field */
+    /**
+     * Clears the value of the 'columnName' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder clearColumnName() {
       columnName = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'columnType' field */
+    /**
+     * Gets the value of the 'columnType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType getColumnType() {
       return columnType;
     }
 
-    /** Sets the value of the 'columnType' field */
+    /**
+     * Sets the value of the 'columnType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder setColumnType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType value) {
       validate(fields()[3], value);
       this.columnType = value;
@@ -359,24 +407,32 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'columnType' field has been set */
+    /**
+     * Checks whether the 'columnType' field has been set
+     */
     public boolean hasColumnType() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'columnType' field */
+    /**
+     * Clears the value of the 'columnType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder clearColumnType() {
       columnType = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'partitionKey' field */
+    /**
+     * Gets the value of the 'partitionKey' field
+     */
     public java.lang.Boolean getPartitionKey() {
       return partitionKey;
     }
 
-    /** Sets the value of the 'partitionKey' field */
+    /**
+     * Sets the value of the 'partitionKey' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder setPartitionKey(boolean value) {
       validate(fields()[4], value);
       this.partitionKey = value;
@@ -384,23 +440,31 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'partitionKey' field has been set */
+    /**
+     * Checks whether the 'partitionKey' field has been set
+     */
     public boolean hasPartitionKey() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'partitionKey' field */
+    /**
+     * Clears the value of the 'partitionKey' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder clearPartitionKey() {
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'clusteringKey' field */
+    /**
+     * Gets the value of the 'clusteringKey' field
+     */
     public java.lang.Boolean getClusteringKey() {
       return clusteringKey;
     }
 
-    /** Sets the value of the 'clusteringKey' field */
+    /**
+     * Sets the value of the 'clusteringKey' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder setClusteringKey(boolean value) {
       validate(fields()[5], value);
       this.clusteringKey = value;
@@ -408,12 +472,16 @@ public class ColumnMappingElement extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'clusteringKey' field has been set */
+    /**
+     * Checks whether the 'clusteringKey' field has been set
+     */
     public boolean hasClusteringKey() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'clusteringKey' field */
+    /**
+     * Clears the value of the 'clusteringKey' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement.Builder clearClusteringKey() {
       fieldSetFlags()[5] = false;
       return this;

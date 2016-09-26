@@ -37,7 +37,6 @@ import java.util.Optional;
  * The default implementation of the {@link CredentialsService} interface.
  *
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Service

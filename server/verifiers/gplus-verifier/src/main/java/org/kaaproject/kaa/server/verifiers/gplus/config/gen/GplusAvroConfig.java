@@ -12,6 +12,7 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
   private int max_parallel_connections;
   private int min_parallel_connections;
   private long keep_alive_time_milliseconds;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /** Creates a new GplusAvroConfig RecordBuilder */
+  /**
+   * Creates a new GplusAvroConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder();
   }
 
-  /** Creates a new GplusAvroConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new GplusAvroConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder other) {
     return new org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder(other);
   }
 
-  /** Creates a new GplusAvroConfig RecordBuilder by copying an existing GplusAvroConfig instance */
+  /**
+   * Creates a new GplusAvroConfig RecordBuilder by copying an existing GplusAvroConfig instance
+   */
   public static org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig other) {
     return new org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder(other);
   }
@@ -93,6 +100,7 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'max_parallel_connections' field.
+   *
    * @param value the value to set.
    */
   public void setMaxParallelConnections(java.lang.Integer value) {
@@ -108,6 +116,7 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'min_parallel_connections' field.
+   *
    * @param value the value to set.
    */
   public void setMinParallelConnections(java.lang.Integer value) {
@@ -123,6 +132,7 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'keep_alive_time_milliseconds' field.
+   *
    * @param value the value to set.
    */
   public void setKeepAliveTimeMilliseconds(java.lang.Long value) {
@@ -139,12 +149,16 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
     private int min_parallel_connections;
     private long keep_alive_time_milliseconds;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.max_parallel_connections)) {
@@ -161,7 +175,9 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Creates a Builder by copying an existing GplusAvroConfig instance */
+    /**
+     * Creates a Builder by copying an existing GplusAvroConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig other) {
       super(org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.max_parallel_connections)) {
@@ -178,12 +194,16 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Gets the value of the 'max_parallel_connections' field */
+    /**
+     * Gets the value of the 'max_parallel_connections' field
+     */
     public java.lang.Integer getMaxParallelConnections() {
       return max_parallel_connections;
     }
 
-    /** Sets the value of the 'max_parallel_connections' field */
+    /**
+     * Sets the value of the 'max_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder setMaxParallelConnections(int value) {
       validate(fields()[0], value);
       this.max_parallel_connections = value;
@@ -191,23 +211,31 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'max_parallel_connections' field has been set */
+    /**
+     * Checks whether the 'max_parallel_connections' field has been set
+     */
     public boolean hasMaxParallelConnections() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'max_parallel_connections' field */
+    /**
+     * Clears the value of the 'max_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder clearMaxParallelConnections() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'min_parallel_connections' field */
+    /**
+     * Gets the value of the 'min_parallel_connections' field
+     */
     public java.lang.Integer getMinParallelConnections() {
       return min_parallel_connections;
     }
 
-    /** Sets the value of the 'min_parallel_connections' field */
+    /**
+     * Sets the value of the 'min_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder setMinParallelConnections(int value) {
       validate(fields()[1], value);
       this.min_parallel_connections = value;
@@ -215,23 +243,31 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'min_parallel_connections' field has been set */
+    /**
+     * Checks whether the 'min_parallel_connections' field has been set
+     */
     public boolean hasMinParallelConnections() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'min_parallel_connections' field */
+    /**
+     * Clears the value of the 'min_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder clearMinParallelConnections() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'keep_alive_time_milliseconds' field */
+    /**
+     * Gets the value of the 'keep_alive_time_milliseconds' field
+     */
     public java.lang.Long getKeepAliveTimeMilliseconds() {
       return keep_alive_time_milliseconds;
     }
 
-    /** Sets the value of the 'keep_alive_time_milliseconds' field */
+    /**
+     * Sets the value of the 'keep_alive_time_milliseconds' field
+     */
     public org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder setKeepAliveTimeMilliseconds(long value) {
       validate(fields()[2], value);
       this.keep_alive_time_milliseconds = value;
@@ -239,12 +275,16 @@ public class GplusAvroConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'keep_alive_time_milliseconds' field has been set */
+    /**
+     * Checks whether the 'keep_alive_time_milliseconds' field has been set
+     */
     public boolean hasKeepAliveTimeMilliseconds() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'keep_alive_time_milliseconds' field */
+    /**
+     * Clears the value of the 'keep_alive_time_milliseconds' field
+     */
     public org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig.Builder clearKeepAliveTimeMilliseconds() {
       fieldSetFlags()[2] = false;
       return this;

@@ -37,8 +37,6 @@ public class BootstrapThriftService {
 
     /**
      * Set Operations Servers List
-     *
-     * @param operationsServersList
      */
     public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws org.apache.thrift.TException;
 
@@ -329,7 +327,10 @@ public class BootstrapThriftService {
       this.operationsServersList = null;
     }
 
-    /** Returns true if field operationsServersList is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field operationsServersList is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSetOperationsServersList() {
       return this.operationsServersList != null;
     }
@@ -362,7 +363,10 @@ public class BootstrapThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -482,7 +486,10 @@ public class BootstrapThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       OPERATIONS_SERVERS_LIST((short) 1, "operationsServersList");
 
@@ -700,7 +707,10 @@ public class BootstrapThriftService {
       throw new IllegalStateException();
     }
 
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+     * otherwise
+     */
     public boolean isSet(_Fields field) {
       if (field == null) {
         throw new IllegalArgumentException();
@@ -787,7 +797,10 @@ public class BootstrapThriftService {
       }
     }
 
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    /**
+     * The set of fields this struct contains, along with convenience methods for finding and
+     * manipulating them.
+     */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       ;
 

@@ -12,6 +12,7 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
   private java.lang.String host;
   private int port;
   private int priority;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,24 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
     return SCHEMA$;
   }
 
-  /** Creates a new PrioritizedFlumeNode RecordBuilder */
+  /**
+   * Creates a new PrioritizedFlumeNode RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder();
   }
 
-  /** Creates a new PrioritizedFlumeNode RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new PrioritizedFlumeNode RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder(other);
   }
 
-  /** Creates a new PrioritizedFlumeNode RecordBuilder by copying an existing PrioritizedFlumeNode instance */
+  /**
+   * Creates a new PrioritizedFlumeNode RecordBuilder by copying an existing PrioritizedFlumeNode
+   * instance
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder(other);
   }
@@ -93,6 +101,7 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'host' field.
+   *
    * @param value the value to set.
    */
   public void setHost(java.lang.String value) {
@@ -108,6 +117,7 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'port' field.
+   *
    * @param value the value to set.
    */
   public void setPort(java.lang.Integer value) {
@@ -123,6 +133,7 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'priority' field.
+   *
    * @param value the value to set.
    */
   public void setPriority(java.lang.Integer value) {
@@ -139,12 +150,16 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
     private int port;
     private int priority;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.host)) {
@@ -161,7 +176,9 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Creates a Builder by copying an existing PrioritizedFlumeNode instance */
+    /**
+     * Creates a Builder by copying an existing PrioritizedFlumeNode instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode other) {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.SCHEMA$);
       if (isValidValue(fields()[0], other.host)) {
@@ -178,12 +195,16 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Gets the value of the 'host' field */
+    /**
+     * Gets the value of the 'host' field
+     */
     public java.lang.String getHost() {
       return host;
     }
 
-    /** Sets the value of the 'host' field */
+    /**
+     * Sets the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder setHost(java.lang.String value) {
       validate(fields()[0], value);
       this.host = value;
@@ -191,24 +212,32 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'host' field has been set */
+    /**
+     * Checks whether the 'host' field has been set
+     */
     public boolean hasHost() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'host' field */
+    /**
+     * Clears the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder clearHost() {
       host = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'port' field */
+    /**
+     * Gets the value of the 'port' field
+     */
     public java.lang.Integer getPort() {
       return port;
     }
 
-    /** Sets the value of the 'port' field */
+    /**
+     * Sets the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder setPort(int value) {
       validate(fields()[1], value);
       this.port = value;
@@ -216,23 +245,31 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'port' field has been set */
+    /**
+     * Checks whether the 'port' field has been set
+     */
     public boolean hasPort() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'port' field */
+    /**
+     * Clears the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder clearPort() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'priority' field */
+    /**
+     * Gets the value of the 'priority' field
+     */
     public java.lang.Integer getPriority() {
       return priority;
     }
 
-    /** Sets the value of the 'priority' field */
+    /**
+     * Sets the value of the 'priority' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder setPriority(int value) {
       validate(fields()[2], value);
       this.priority = value;
@@ -240,12 +277,16 @@ public class PrioritizedFlumeNode extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'priority' field has been set */
+    /**
+     * Checks whether the 'priority' field has been set
+     */
     public boolean hasPriority() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'priority' field */
+    /**
+     * Clears the value of the 'priority' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode.Builder clearPriority() {
       fieldSetFlags()[2] = false;
       return this;

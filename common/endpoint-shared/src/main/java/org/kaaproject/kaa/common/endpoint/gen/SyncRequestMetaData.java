@@ -13,6 +13,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
   private java.nio.ByteBuffer endpointPublicKeyHash;
   private java.nio.ByteBuffer profileHash;
   private java.lang.Long timeout;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -35,17 +36,24 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
     return SCHEMA$;
   }
 
-  /** Creates a new SyncRequestMetaData RecordBuilder */
+  /**
+   * Creates a new SyncRequestMetaData RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder();
   }
 
-  /** Creates a new SyncRequestMetaData RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new SyncRequestMetaData RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder(other);
   }
 
-  /** Creates a new SyncRequestMetaData RecordBuilder by copying an existing SyncRequestMetaData instance */
+  /**
+   * Creates a new SyncRequestMetaData RecordBuilder by copying an existing SyncRequestMetaData
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder(other);
   }
@@ -100,6 +108,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'sdkToken' field.
+   *
    * @param value the value to set.
    */
   public void setSdkToken(java.lang.String value) {
@@ -115,6 +124,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'endpointPublicKeyHash' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointPublicKeyHash(java.nio.ByteBuffer value) {
@@ -130,6 +140,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'profileHash' field.
+   *
    * @param value the value to set.
    */
   public void setProfileHash(java.nio.ByteBuffer value) {
@@ -145,6 +156,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'timeout' field.
+   *
    * @param value the value to set.
    */
   public void setTimeout(java.lang.Long value) {
@@ -162,12 +174,16 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
     private java.nio.ByteBuffer profileHash;
     private java.lang.Long timeout;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.sdkToken)) {
@@ -188,7 +204,9 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Creates a Builder by copying an existing SyncRequestMetaData instance */
+    /**
+     * Creates a Builder by copying an existing SyncRequestMetaData instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData other) {
       super(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.SCHEMA$);
       if (isValidValue(fields()[0], other.sdkToken)) {
@@ -209,12 +227,16 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Gets the value of the 'sdkToken' field */
+    /**
+     * Gets the value of the 'sdkToken' field
+     */
     public java.lang.String getSdkToken() {
       return sdkToken;
     }
 
-    /** Sets the value of the 'sdkToken' field */
+    /**
+     * Sets the value of the 'sdkToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder setSdkToken(java.lang.String value) {
       validate(fields()[0], value);
       this.sdkToken = value;
@@ -222,24 +244,32 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'sdkToken' field has been set */
+    /**
+     * Checks whether the 'sdkToken' field has been set
+     */
     public boolean hasSdkToken() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'sdkToken' field */
+    /**
+     * Clears the value of the 'sdkToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder clearSdkToken() {
       sdkToken = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointPublicKeyHash' field */
+    /**
+     * Gets the value of the 'endpointPublicKeyHash' field
+     */
     public java.nio.ByteBuffer getEndpointPublicKeyHash() {
       return endpointPublicKeyHash;
     }
 
-    /** Sets the value of the 'endpointPublicKeyHash' field */
+    /**
+     * Sets the value of the 'endpointPublicKeyHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder setEndpointPublicKeyHash(java.nio.ByteBuffer value) {
       validate(fields()[1], value);
       this.endpointPublicKeyHash = value;
@@ -247,24 +277,32 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'endpointPublicKeyHash' field has been set */
+    /**
+     * Checks whether the 'endpointPublicKeyHash' field has been set
+     */
     public boolean hasEndpointPublicKeyHash() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'endpointPublicKeyHash' field */
+    /**
+     * Clears the value of the 'endpointPublicKeyHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder clearEndpointPublicKeyHash() {
       endpointPublicKeyHash = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'profileHash' field */
+    /**
+     * Gets the value of the 'profileHash' field
+     */
     public java.nio.ByteBuffer getProfileHash() {
       return profileHash;
     }
 
-    /** Sets the value of the 'profileHash' field */
+    /**
+     * Sets the value of the 'profileHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder setProfileHash(java.nio.ByteBuffer value) {
       validate(fields()[2], value);
       this.profileHash = value;
@@ -272,24 +310,32 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'profileHash' field has been set */
+    /**
+     * Checks whether the 'profileHash' field has been set
+     */
     public boolean hasProfileHash() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'profileHash' field */
+    /**
+     * Clears the value of the 'profileHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder clearProfileHash() {
       profileHash = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'timeout' field */
+    /**
+     * Gets the value of the 'timeout' field
+     */
     public java.lang.Long getTimeout() {
       return timeout;
     }
 
-    /** Sets the value of the 'timeout' field */
+    /**
+     * Sets the value of the 'timeout' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder setTimeout(java.lang.Long value) {
       validate(fields()[3], value);
       this.timeout = value;
@@ -297,12 +343,16 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'timeout' field has been set */
+    /**
+     * Checks whether the 'timeout' field has been set
+     */
     public boolean hasTimeout() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'timeout' field */
+    /**
+     * Clears the value of the 'timeout' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder clearTimeout() {
       timeout = null;
       fieldSetFlags()[3] = false;

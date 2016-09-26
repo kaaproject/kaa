@@ -118,7 +118,9 @@ public class Event implements org.apache.thrift.TBase<Event, Event._Fields>, jav
     this.userId = null;
   }
 
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field userId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUserId() {
     return this.userId != null;
   }
@@ -142,7 +144,9 @@ public class Event implements org.apache.thrift.TBase<Event, Event._Fields>, jav
     this.tenantId = null;
   }
 
-  /** Returns true if field tenantId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field tenantId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTenantId() {
     return this.tenantId != null;
   }
@@ -166,7 +170,9 @@ public class Event implements org.apache.thrift.TBase<Event, Event._Fields>, jav
     this.endpointEvent = null;
   }
 
-  /** Returns true if field endpointEvent is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointEvent is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEndpointEvent() {
     return this.endpointEvent != null;
   }
@@ -190,7 +196,9 @@ public class Event implements org.apache.thrift.TBase<Event, Event._Fields>, jav
     this.routeAddress = null;
   }
 
-  /** Returns true if field routeAddress is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field routeAddress is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetRouteAddress() {
     return this.routeAddress != null;
   }
@@ -256,7 +264,10 @@ public class Event implements org.apache.thrift.TBase<Event, Event._Fields>, jav
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -484,7 +495,10 @@ public class Event implements org.apache.thrift.TBase<Event, Event._Fields>, jav
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     USER_ID((short) 1, "userId"),
     TENANT_ID((short) 2, "tenantId"),

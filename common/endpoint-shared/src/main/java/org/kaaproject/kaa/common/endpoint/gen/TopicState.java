@@ -11,6 +11,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TopicState\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":\"long\"},{\"name\":\"seqNumber\",\"type\":\"int\"}],\"direction\":\"out\"}");
   private long topicId;
   private int seqNumber;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
     return SCHEMA$;
   }
 
-  /** Creates a new TopicState RecordBuilder */
+  /**
+   * Creates a new TopicState RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder();
   }
 
-  /** Creates a new TopicState RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new TopicState RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder(other);
   }
 
-  /** Creates a new TopicState RecordBuilder by copying an existing TopicState instance */
+  /**
+   * Creates a new TopicState RecordBuilder by copying an existing TopicState instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.TopicState other) {
     return new org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder(other);
   }
@@ -86,6 +93,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'topicId' field.
+   *
    * @param value the value to set.
    */
   public void setTopicId(java.lang.Long value) {
@@ -101,6 +109,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'seqNumber' field.
+   *
    * @param value the value to set.
    */
   public void setSeqNumber(java.lang.Integer value) {
@@ -116,12 +125,16 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
     private long topicId;
     private int seqNumber;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.TopicState.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.topicId)) {
@@ -134,7 +147,9 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Creates a Builder by copying an existing TopicState instance */
+    /**
+     * Creates a Builder by copying an existing TopicState instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.TopicState other) {
       super(org.kaaproject.kaa.common.endpoint.gen.TopicState.SCHEMA$);
       if (isValidValue(fields()[0], other.topicId)) {
@@ -147,12 +162,16 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Gets the value of the 'topicId' field */
+    /**
+     * Gets the value of the 'topicId' field
+     */
     public java.lang.Long getTopicId() {
       return topicId;
     }
 
-    /** Sets the value of the 'topicId' field */
+    /**
+     * Sets the value of the 'topicId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder setTopicId(long value) {
       validate(fields()[0], value);
       this.topicId = value;
@@ -160,23 +179,31 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'topicId' field has been set */
+    /**
+     * Checks whether the 'topicId' field has been set
+     */
     public boolean hasTopicId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'topicId' field */
+    /**
+     * Clears the value of the 'topicId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder clearTopicId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'seqNumber' field */
+    /**
+     * Gets the value of the 'seqNumber' field
+     */
     public java.lang.Integer getSeqNumber() {
       return seqNumber;
     }
 
-    /** Sets the value of the 'seqNumber' field */
+    /**
+     * Sets the value of the 'seqNumber' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder setSeqNumber(int value) {
       validate(fields()[1], value);
       this.seqNumber = value;
@@ -184,12 +211,16 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'seqNumber' field has been set */
+    /**
+     * Checks whether the 'seqNumber' field has been set
+     */
     public boolean hasSeqNumber() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'seqNumber' field */
+    /**
+     * Clears the value of the 'seqNumber' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder clearSeqNumber() {
       fieldSetFlags()[1] = false;
       return this;

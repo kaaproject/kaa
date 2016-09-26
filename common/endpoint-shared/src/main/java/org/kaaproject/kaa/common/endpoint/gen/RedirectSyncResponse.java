@@ -30,17 +30,24 @@ public class RedirectSyncResponse extends org.apache.avro.specific.SpecificRecor
     return SCHEMA$;
   }
 
-  /** Creates a new RedirectSyncResponse RecordBuilder */
+  /**
+   * Creates a new RedirectSyncResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder();
   }
 
-  /** Creates a new RedirectSyncResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new RedirectSyncResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder(other);
   }
 
-  /** Creates a new RedirectSyncResponse RecordBuilder by copying an existing RedirectSyncResponse instance */
+  /**
+   * Creates a new RedirectSyncResponse RecordBuilder by copying an existing RedirectSyncResponse
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder(other);
   }
@@ -80,6 +87,7 @@ public class RedirectSyncResponse extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'accessPointId' field.
+   *
    * @param value the value to set.
    */
   public void setAccessPointId(java.lang.Integer value) {
@@ -94,12 +102,16 @@ public class RedirectSyncResponse extends org.apache.avro.specific.SpecificRecor
 
     private int accessPointId;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.accessPointId)) {
@@ -108,7 +120,9 @@ public class RedirectSyncResponse extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Creates a Builder by copying an existing RedirectSyncResponse instance */
+    /**
+     * Creates a Builder by copying an existing RedirectSyncResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.accessPointId)) {
@@ -117,12 +131,16 @@ public class RedirectSyncResponse extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Gets the value of the 'accessPointId' field */
+    /**
+     * Gets the value of the 'accessPointId' field
+     */
     public java.lang.Integer getAccessPointId() {
       return accessPointId;
     }
 
-    /** Sets the value of the 'accessPointId' field */
+    /**
+     * Sets the value of the 'accessPointId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder setAccessPointId(int value) {
       validate(fields()[0], value);
       this.accessPointId = value;
@@ -130,12 +148,16 @@ public class RedirectSyncResponse extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'accessPointId' field has been set */
+    /**
+     * Checks whether the 'accessPointId' field has been set
+     */
     public boolean hasAccessPointId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'accessPointId' field */
+    /**
+     * Clears the value of the 'accessPointId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse.Builder clearAccessPointId() {
       fieldSetFlags()[0] = false;
       return this;

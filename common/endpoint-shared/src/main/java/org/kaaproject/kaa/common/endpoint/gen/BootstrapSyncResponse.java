@@ -11,6 +11,7 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BootstrapSyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"supportedProtocols\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolVersionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}]}},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"in\"}}}],\"direction\":\"in\"}");
   private int requestId;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData> supportedProtocols;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new BootstrapSyncResponse RecordBuilder */
+  /**
+   * Creates a new BootstrapSyncResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder();
   }
 
-  /** Creates a new BootstrapSyncResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new BootstrapSyncResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder(other);
   }
 
-  /** Creates a new BootstrapSyncResponse RecordBuilder by copying an existing BootstrapSyncResponse instance */
+  /**
+   * Creates a new BootstrapSyncResponse RecordBuilder by copying an existing BootstrapSyncResponse
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder(other);
   }
@@ -86,6 +94,7 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -101,6 +110,7 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'supportedProtocols' field.
+   *
    * @param value the value to set.
    */
   public void setSupportedProtocols(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData> value) {
@@ -116,12 +126,16 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
     private int requestId;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData> supportedProtocols;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -134,7 +148,9 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing BootstrapSyncResponse instance */
+    /**
+     * Creates a Builder by copying an existing BootstrapSyncResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -147,12 +163,16 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -160,23 +180,31 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'supportedProtocols' field */
+    /**
+     * Gets the value of the 'supportedProtocols' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData> getSupportedProtocols() {
       return supportedProtocols;
     }
 
-    /** Sets the value of the 'supportedProtocols' field */
+    /**
+     * Sets the value of the 'supportedProtocols' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder setSupportedProtocols(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData> value) {
       validate(fields()[1], value);
       this.supportedProtocols = value;
@@ -184,12 +212,16 @@ public class BootstrapSyncResponse extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'supportedProtocols' field has been set */
+    /**
+     * Checks whether the 'supportedProtocols' field has been set
+     */
     public boolean hasSupportedProtocols() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'supportedProtocols' field */
+    /**
+     * Clears the value of the 'supportedProtocols' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse.Builder clearSupportedProtocols() {
       supportedProtocols = null;
       fieldSetFlags()[1] = false;

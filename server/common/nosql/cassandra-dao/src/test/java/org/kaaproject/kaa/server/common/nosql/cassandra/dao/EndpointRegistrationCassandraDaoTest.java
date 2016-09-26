@@ -27,7 +27,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)

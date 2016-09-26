@@ -60,7 +60,6 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
   public String tenantId; // required
   public String applicationToken; // required
   /**
-   *
    * @see ThriftClusterEntityType
    */
   public ThriftClusterEntityType entityType; // required
@@ -124,7 +123,9 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     this.tenantId = null;
   }
 
-  /** Returns true if field tenantId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field tenantId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTenantId() {
     return this.tenantId != null;
   }
@@ -148,7 +149,9 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     this.applicationToken = null;
   }
 
-  /** Returns true if field applicationToken is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field applicationToken is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetApplicationToken() {
     return this.applicationToken != null;
   }
@@ -160,7 +163,6 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
   }
 
   /**
-   *
    * @see ThriftClusterEntityType
    */
   public ThriftClusterEntityType getEntityType() {
@@ -168,7 +170,6 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
   }
 
   /**
-   *
    * @see ThriftClusterEntityType
    */
   public ThriftEntityAddress setEntityType(ThriftClusterEntityType entityType) {
@@ -180,7 +181,9 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     this.entityType = null;
   }
 
-  /** Returns true if field entityType is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field entityType is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEntityType() {
     return this.entityType != null;
   }
@@ -196,6 +199,11 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     return entityId == null ? null : entityId.array();
   }
 
+  public ThriftEntityAddress setEntityId(byte[] entityId) {
+    this.entityId = entityId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(entityId, entityId.length));
+    return this;
+  }
+
   public ThriftEntityAddress setEntityId(ByteBuffer entityId) {
     this.entityId = org.apache.thrift.TBaseHelper.copyBinary(entityId);
     return this;
@@ -205,16 +213,13 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     return org.apache.thrift.TBaseHelper.copyBinary(entityId);
   }
 
-  public ThriftEntityAddress setEntityId(byte[] entityId) {
-    this.entityId = entityId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(entityId, entityId.length));
-    return this;
-  }
-
   public void unsetEntityId() {
     this.entityId = null;
   }
 
-  /** Returns true if field entityId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field entityId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEntityId() {
     return this.entityId != null;
   }
@@ -280,7 +285,10 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -502,12 +510,14 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     TENANT_ID((short) 1, "tenantId"),
     APPLICATION_TOKEN((short) 2, "applicationToken"),
     /**
-     *
      * @see ThriftClusterEntityType
      */
     ENTITY_TYPE((short) 3, "entityType"),

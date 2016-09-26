@@ -11,6 +11,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EventListenersRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"eventClassFQNs\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}}],\"direction\":\"out\"}");
   private int requestId;
   private java.util.List<java.lang.String> eventClassFQNs;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new EventListenersRequest RecordBuilder */
+  /**
+   * Creates a new EventListenersRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder();
   }
 
-  /** Creates a new EventListenersRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EventListenersRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder(other);
   }
 
-  /** Creates a new EventListenersRequest RecordBuilder by copying an existing EventListenersRequest instance */
+  /**
+   * Creates a new EventListenersRequest RecordBuilder by copying an existing EventListenersRequest
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder(other);
   }
@@ -86,6 +94,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -101,6 +110,7 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'eventClassFQNs' field.
+   *
    * @param value the value to set.
    */
   public void setEventClassFQNs(java.util.List<java.lang.String> value) {
@@ -116,12 +126,16 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
     private int requestId;
     private java.util.List<java.lang.String> eventClassFQNs;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -134,7 +148,9 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing EventListenersRequest instance */
+    /**
+     * Creates a Builder by copying an existing EventListenersRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -147,12 +163,16 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -160,23 +180,31 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventClassFQNs' field */
+    /**
+     * Gets the value of the 'eventClassFQNs' field
+     */
     public java.util.List<java.lang.String> getEventClassFQNs() {
       return eventClassFQNs;
     }
 
-    /** Sets the value of the 'eventClassFQNs' field */
+    /**
+     * Sets the value of the 'eventClassFQNs' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder setEventClassFQNs(java.util.List<java.lang.String> value) {
       validate(fields()[1], value);
       this.eventClassFQNs = value;
@@ -184,12 +212,16 @@ public class EventListenersRequest extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'eventClassFQNs' field has been set */
+    /**
+     * Checks whether the 'eventClassFQNs' field has been set
+     */
     public boolean hasEventClassFQNs() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'eventClassFQNs' field */
+    /**
+     * Clears the value of the 'eventClassFQNs' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest.Builder clearEventClassFQNs() {
       eventClassFQNs = null;
       fieldSetFlags()[1] = false;

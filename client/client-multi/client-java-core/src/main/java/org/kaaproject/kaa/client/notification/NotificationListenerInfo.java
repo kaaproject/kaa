@@ -29,6 +29,7 @@ package org.kaaproject.kaa.client.notification;
 public class NotificationListenerInfo {
   private final NotificationListener listener;
   private final Action action;
+
   public NotificationListenerInfo(NotificationListener listener, Action action) {
     this.listener = listener;
     this.action = action;

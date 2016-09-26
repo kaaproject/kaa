@@ -16,6 +16,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
   private java.util.Map<java.lang.String, java.lang.Long> mapSimpleField;
   private java.util.Map<java.lang.String, org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> mapRecordField;
   private org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild nullableRecordField;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -41,17 +42,24 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
     return SCHEMA$;
   }
 
-  /** Creates a new ExtendedEndpointProfile RecordBuilder */
+  /**
+   * Creates a new ExtendedEndpointProfile RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder();
   }
 
-  /** Creates a new ExtendedEndpointProfile RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ExtendedEndpointProfile RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder(other);
   }
 
-  /** Creates a new ExtendedEndpointProfile RecordBuilder by copying an existing ExtendedEndpointProfile instance */
+  /**
+   * Creates a new ExtendedEndpointProfile RecordBuilder by copying an existing
+   * ExtendedEndpointProfile instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder(other);
   }
@@ -121,6 +129,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'simpleField' field.
+   *
    * @param value the value to set.
    */
   public void setSimpleField(java.lang.String value) {
@@ -136,6 +145,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'recordField' field.
+   *
    * @param value the value to set.
    */
   public void setRecordField(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild value) {
@@ -151,6 +161,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'arraySimpleField' field.
+   *
    * @param value the value to set.
    */
   public void setArraySimpleField(java.util.List<java.lang.String> value) {
@@ -166,6 +177,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'arrayRecordField' field.
+   *
    * @param value the value to set.
    */
   public void setArrayRecordField(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> value) {
@@ -181,6 +193,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'mapSimpleField' field.
+   *
    * @param value the value to set.
    */
   public void setMapSimpleField(java.util.Map<java.lang.String, java.lang.Long> value) {
@@ -196,6 +209,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'mapRecordField' field.
+   *
    * @param value the value to set.
    */
   public void setMapRecordField(java.util.Map<java.lang.String, org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> value) {
@@ -211,6 +225,7 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'nullableRecordField' field.
+   *
    * @param value the value to set.
    */
   public void setNullableRecordField(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild value) {
@@ -231,12 +246,16 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
     private java.util.Map<java.lang.String, org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> mapRecordField;
     private org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild nullableRecordField;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.simpleField)) {
@@ -269,7 +288,9 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       }
     }
 
-    /** Creates a Builder by copying an existing ExtendedEndpointProfile instance */
+    /**
+     * Creates a Builder by copying an existing ExtendedEndpointProfile instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.SCHEMA$);
       if (isValidValue(fields()[0], other.simpleField)) {
@@ -302,12 +323,16 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       }
     }
 
-    /** Gets the value of the 'simpleField' field */
+    /**
+     * Gets the value of the 'simpleField' field
+     */
     public java.lang.String getSimpleField() {
       return simpleField;
     }
 
-    /** Sets the value of the 'simpleField' field */
+    /**
+     * Sets the value of the 'simpleField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setSimpleField(java.lang.String value) {
       validate(fields()[0], value);
       this.simpleField = value;
@@ -315,24 +340,32 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'simpleField' field has been set */
+    /**
+     * Checks whether the 'simpleField' field has been set
+     */
     public boolean hasSimpleField() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'simpleField' field */
+    /**
+     * Clears the value of the 'simpleField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearSimpleField() {
       simpleField = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'recordField' field */
+    /**
+     * Gets the value of the 'recordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild getRecordField() {
       return recordField;
     }
 
-    /** Sets the value of the 'recordField' field */
+    /**
+     * Sets the value of the 'recordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setRecordField(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild value) {
       validate(fields()[1], value);
       this.recordField = value;
@@ -340,24 +373,32 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'recordField' field has been set */
+    /**
+     * Checks whether the 'recordField' field has been set
+     */
     public boolean hasRecordField() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'recordField' field */
+    /**
+     * Clears the value of the 'recordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearRecordField() {
       recordField = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'arraySimpleField' field */
+    /**
+     * Gets the value of the 'arraySimpleField' field
+     */
     public java.util.List<java.lang.String> getArraySimpleField() {
       return arraySimpleField;
     }
 
-    /** Sets the value of the 'arraySimpleField' field */
+    /**
+     * Sets the value of the 'arraySimpleField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setArraySimpleField(java.util.List<java.lang.String> value) {
       validate(fields()[2], value);
       this.arraySimpleField = value;
@@ -365,24 +406,32 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'arraySimpleField' field has been set */
+    /**
+     * Checks whether the 'arraySimpleField' field has been set
+     */
     public boolean hasArraySimpleField() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'arraySimpleField' field */
+    /**
+     * Clears the value of the 'arraySimpleField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearArraySimpleField() {
       arraySimpleField = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'arrayRecordField' field */
+    /**
+     * Gets the value of the 'arrayRecordField' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> getArrayRecordField() {
       return arrayRecordField;
     }
 
-    /** Sets the value of the 'arrayRecordField' field */
+    /**
+     * Sets the value of the 'arrayRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setArrayRecordField(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> value) {
       validate(fields()[3], value);
       this.arrayRecordField = value;
@@ -390,24 +439,32 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'arrayRecordField' field has been set */
+    /**
+     * Checks whether the 'arrayRecordField' field has been set
+     */
     public boolean hasArrayRecordField() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'arrayRecordField' field */
+    /**
+     * Clears the value of the 'arrayRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearArrayRecordField() {
       arrayRecordField = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'mapSimpleField' field */
+    /**
+     * Gets the value of the 'mapSimpleField' field
+     */
     public java.util.Map<java.lang.String, java.lang.Long> getMapSimpleField() {
       return mapSimpleField;
     }
 
-    /** Sets the value of the 'mapSimpleField' field */
+    /**
+     * Sets the value of the 'mapSimpleField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setMapSimpleField(java.util.Map<java.lang.String, java.lang.Long> value) {
       validate(fields()[4], value);
       this.mapSimpleField = value;
@@ -415,24 +472,32 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'mapSimpleField' field has been set */
+    /**
+     * Checks whether the 'mapSimpleField' field has been set
+     */
     public boolean hasMapSimpleField() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'mapSimpleField' field */
+    /**
+     * Clears the value of the 'mapSimpleField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearMapSimpleField() {
       mapSimpleField = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'mapRecordField' field */
+    /**
+     * Gets the value of the 'mapRecordField' field
+     */
     public java.util.Map<java.lang.String, org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> getMapRecordField() {
       return mapRecordField;
     }
 
-    /** Sets the value of the 'mapRecordField' field */
+    /**
+     * Sets the value of the 'mapRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setMapRecordField(java.util.Map<java.lang.String, org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild> value) {
       validate(fields()[5], value);
       this.mapRecordField = value;
@@ -440,24 +505,32 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'mapRecordField' field has been set */
+    /**
+     * Checks whether the 'mapRecordField' field has been set
+     */
     public boolean hasMapRecordField() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'mapRecordField' field */
+    /**
+     * Clears the value of the 'mapRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearMapRecordField() {
       mapRecordField = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'nullableRecordField' field */
+    /**
+     * Gets the value of the 'nullableRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild getNullableRecordField() {
       return nullableRecordField;
     }
 
-    /** Sets the value of the 'nullableRecordField' field */
+    /**
+     * Sets the value of the 'nullableRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder setNullableRecordField(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild value) {
       validate(fields()[6], value);
       this.nullableRecordField = value;
@@ -465,12 +538,16 @@ public class ExtendedEndpointProfile extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'nullableRecordField' field has been set */
+    /**
+     * Checks whether the 'nullableRecordField' field has been set
+     */
     public boolean hasNullableRecordField() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'nullableRecordField' field */
+    /**
+     * Clears the value of the 'nullableRecordField' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile.Builder clearNullableRecordField() {
       nullableRecordField = null;
       fieldSetFlags()[6] = false;

@@ -14,17 +14,24 @@ public class EventSequenceNumberRequest extends org.apache.avro.specific.Specifi
     return SCHEMA$;
   }
 
-  /** Creates a new EventSequenceNumberRequest RecordBuilder */
+  /**
+   * Creates a new EventSequenceNumberRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder();
   }
 
-  /** Creates a new EventSequenceNumberRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EventSequenceNumberRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder(other);
   }
 
-  /** Creates a new EventSequenceNumberRequest RecordBuilder by copying an existing EventSequenceNumberRequest instance */
+  /**
+   * Creates a new EventSequenceNumberRequest RecordBuilder by copying an existing
+   * EventSequenceNumberRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder(other);
   }
@@ -57,17 +64,23 @@ public class EventSequenceNumberRequest extends org.apache.avro.specific.Specifi
       implements org.apache.avro.data.RecordBuilder<EventSequenceNumberRequest> {
 
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.Builder other) {
       super(other);
     }
 
-    /** Creates a Builder by copying an existing EventSequenceNumberRequest instance */
+    /**
+     * Creates a Builder by copying an existing EventSequenceNumberRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest.SCHEMA$);
     }

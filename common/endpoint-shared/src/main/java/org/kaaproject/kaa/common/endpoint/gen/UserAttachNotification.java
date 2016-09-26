@@ -11,6 +11,7 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UserAttachNotification\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"userExternalId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"in\"}");
   private java.lang.String userExternalId;
   private java.lang.String endpointAccessToken;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
     return SCHEMA$;
   }
 
-  /** Creates a new UserAttachNotification RecordBuilder */
+  /**
+   * Creates a new UserAttachNotification RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder();
   }
 
-  /** Creates a new UserAttachNotification RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new UserAttachNotification RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder(other);
   }
 
-  /** Creates a new UserAttachNotification RecordBuilder by copying an existing UserAttachNotification instance */
+  /**
+   * Creates a new UserAttachNotification RecordBuilder by copying an existing
+   * UserAttachNotification instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder(other);
   }
@@ -86,6 +94,7 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
 
   /**
    * Sets the value of the 'userExternalId' field.
+   *
    * @param value the value to set.
    */
   public void setUserExternalId(java.lang.String value) {
@@ -101,6 +110,7 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
 
   /**
    * Sets the value of the 'endpointAccessToken' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointAccessToken(java.lang.String value) {
@@ -116,12 +126,16 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
     private java.lang.String userExternalId;
     private java.lang.String endpointAccessToken;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.userExternalId)) {
@@ -134,7 +148,9 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
       }
     }
 
-    /** Creates a Builder by copying an existing UserAttachNotification instance */
+    /**
+     * Creates a Builder by copying an existing UserAttachNotification instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification other) {
       super(org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.SCHEMA$);
       if (isValidValue(fields()[0], other.userExternalId)) {
@@ -147,12 +163,16 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
       }
     }
 
-    /** Gets the value of the 'userExternalId' field */
+    /**
+     * Gets the value of the 'userExternalId' field
+     */
     public java.lang.String getUserExternalId() {
       return userExternalId;
     }
 
-    /** Sets the value of the 'userExternalId' field */
+    /**
+     * Sets the value of the 'userExternalId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder setUserExternalId(java.lang.String value) {
       validate(fields()[0], value);
       this.userExternalId = value;
@@ -160,24 +180,32 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
       return this;
     }
 
-    /** Checks whether the 'userExternalId' field has been set */
+    /**
+     * Checks whether the 'userExternalId' field has been set
+     */
     public boolean hasUserExternalId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'userExternalId' field */
+    /**
+     * Clears the value of the 'userExternalId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder clearUserExternalId() {
       userExternalId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointAccessToken' field */
+    /**
+     * Gets the value of the 'endpointAccessToken' field
+     */
     public java.lang.String getEndpointAccessToken() {
       return endpointAccessToken;
     }
 
-    /** Sets the value of the 'endpointAccessToken' field */
+    /**
+     * Sets the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder setEndpointAccessToken(java.lang.String value) {
       validate(fields()[1], value);
       this.endpointAccessToken = value;
@@ -185,12 +213,16 @@ public class UserAttachNotification extends org.apache.avro.specific.SpecificRec
       return this;
     }
 
-    /** Checks whether the 'endpointAccessToken' field has been set */
+    /**
+     * Checks whether the 'endpointAccessToken' field has been set
+     */
     public boolean hasEndpointAccessToken() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'endpointAccessToken' field */
+    /**
+     * Clears the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification.Builder clearEndpointAccessToken() {
       endpointAccessToken = null;
       fieldSetFlags()[1] = false;

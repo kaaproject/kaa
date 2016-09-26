@@ -11,6 +11,7 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FlumeNode\",\"namespace\":\"org.kaaproject.kaa.server.appenders.flume.config.gen\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":7070}]}");
   private java.lang.String host;
   private int port;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
     return SCHEMA$;
   }
 
-  /** Creates a new FlumeNode RecordBuilder */
+  /**
+   * Creates a new FlumeNode RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder();
   }
 
-  /** Creates a new FlumeNode RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new FlumeNode RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder(other);
   }
 
-  /** Creates a new FlumeNode RecordBuilder by copying an existing FlumeNode instance */
+  /**
+   * Creates a new FlumeNode RecordBuilder by copying an existing FlumeNode instance
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder(other);
   }
@@ -86,6 +93,7 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Sets the value of the 'host' field.
+   *
    * @param value the value to set.
    */
   public void setHost(java.lang.String value) {
@@ -101,6 +109,7 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
 
   /**
    * Sets the value of the 'port' field.
+   *
    * @param value the value to set.
    */
   public void setPort(java.lang.Integer value) {
@@ -116,12 +125,16 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
     private java.lang.String host;
     private int port;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.host)) {
@@ -134,7 +147,9 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
       }
     }
 
-    /** Creates a Builder by copying an existing FlumeNode instance */
+    /**
+     * Creates a Builder by copying an existing FlumeNode instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode other) {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.SCHEMA$);
       if (isValidValue(fields()[0], other.host)) {
@@ -147,12 +162,16 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
       }
     }
 
-    /** Gets the value of the 'host' field */
+    /**
+     * Gets the value of the 'host' field
+     */
     public java.lang.String getHost() {
       return host;
     }
 
-    /** Sets the value of the 'host' field */
+    /**
+     * Sets the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder setHost(java.lang.String value) {
       validate(fields()[0], value);
       this.host = value;
@@ -160,24 +179,32 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
       return this;
     }
 
-    /** Checks whether the 'host' field has been set */
+    /**
+     * Checks whether the 'host' field has been set
+     */
     public boolean hasHost() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'host' field */
+    /**
+     * Clears the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder clearHost() {
       host = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'port' field */
+    /**
+     * Gets the value of the 'port' field
+     */
     public java.lang.Integer getPort() {
       return port;
     }
 
-    /** Sets the value of the 'port' field */
+    /**
+     * Sets the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder setPort(int value) {
       validate(fields()[1], value);
       this.port = value;
@@ -185,12 +212,16 @@ public class FlumeNode extends org.apache.avro.specific.SpecificRecordBase imple
       return this;
     }
 
-    /** Checks whether the 'port' field has been set */
+    /**
+     * Checks whether the 'port' field has been set
+     */
     public boolean hasPort() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'port' field */
+    /**
+     * Clears the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode.Builder clearPort() {
       fieldSetFlags()[1] = false;
       return this;

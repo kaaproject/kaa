@@ -134,7 +134,9 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     this.tenantId = null;
   }
 
-  /** Returns true if field tenantId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field tenantId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTenantId() {
     return this.tenantId != null;
   }
@@ -158,7 +160,9 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     this.userId = null;
   }
 
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field userId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUserId() {
     return this.userId != null;
   }
@@ -182,7 +186,9 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     this.applicationToken = null;
   }
 
-  /** Returns true if field applicationToken is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field applicationToken is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetApplicationToken() {
     return this.applicationToken != null;
   }
@@ -207,7 +213,9 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
   }
 
-  /** Returns true if field cfSchemaVersion is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field cfSchemaVersion is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetCfSchemaVersion() {
     return EncodingUtils.testBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
   }
@@ -221,6 +229,11 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return ucfHash == null ? null : ucfHash.array();
   }
 
+  public UserConfigurationUpdate setUcfHash(byte[] ucfHash) {
+    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
+    return this;
+  }
+
   public UserConfigurationUpdate setUcfHash(ByteBuffer ucfHash) {
     this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
     return this;
@@ -230,16 +243,13 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
   }
 
-  public UserConfigurationUpdate setUcfHash(byte[] ucfHash) {
-    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
-    return this;
-  }
-
   public void unsetUcfHash() {
     this.ucfHash = null;
   }
 
-  /** Returns true if field ucfHash is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field ucfHash is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUcfHash() {
     return this.ucfHash != null;
   }
@@ -316,7 +326,10 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -570,7 +583,10 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     TENANT_ID((short) 1, "tenantId"),
     USER_ID((short) 2, "userId"),

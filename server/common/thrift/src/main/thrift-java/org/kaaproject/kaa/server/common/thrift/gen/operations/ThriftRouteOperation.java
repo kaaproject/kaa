@@ -24,6 +24,7 @@ public enum ThriftRouteOperation implements org.apache.thrift.TEnum {
 
   /**
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
+   *
    * @return null if the value is not found.
    */
   public static ThriftRouteOperation findByValue(int value) {

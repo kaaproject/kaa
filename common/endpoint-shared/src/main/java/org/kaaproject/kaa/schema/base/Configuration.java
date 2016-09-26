@@ -14,17 +14,23 @@ public class Configuration extends org.apache.avro.specific.SpecificRecordBase i
     return SCHEMA$;
   }
 
-  /** Creates a new Configuration RecordBuilder */
+  /**
+   * Creates a new Configuration RecordBuilder
+   */
   public static org.kaaproject.kaa.schema.base.Configuration.Builder newBuilder() {
     return new org.kaaproject.kaa.schema.base.Configuration.Builder();
   }
 
-  /** Creates a new Configuration RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new Configuration RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.schema.base.Configuration.Builder newBuilder(org.kaaproject.kaa.schema.base.Configuration.Builder other) {
     return new org.kaaproject.kaa.schema.base.Configuration.Builder(other);
   }
 
-  /** Creates a new Configuration RecordBuilder by copying an existing Configuration instance */
+  /**
+   * Creates a new Configuration RecordBuilder by copying an existing Configuration instance
+   */
   public static org.kaaproject.kaa.schema.base.Configuration.Builder newBuilder(org.kaaproject.kaa.schema.base.Configuration other) {
     return new org.kaaproject.kaa.schema.base.Configuration.Builder(other);
   }
@@ -57,17 +63,23 @@ public class Configuration extends org.apache.avro.specific.SpecificRecordBase i
       implements org.apache.avro.data.RecordBuilder<Configuration> {
 
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.schema.base.Configuration.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.schema.base.Configuration.Builder other) {
       super(other);
     }
 
-    /** Creates a Builder by copying an existing Configuration instance */
+    /**
+     * Creates a Builder by copying an existing Configuration instance
+     */
     private Builder(org.kaaproject.kaa.schema.base.Configuration other) {
       super(org.kaaproject.kaa.schema.base.Configuration.SCHEMA$);
     }

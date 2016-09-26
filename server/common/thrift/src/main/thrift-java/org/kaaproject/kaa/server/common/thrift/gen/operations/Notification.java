@@ -98,7 +98,6 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
   public String notificationId; // required
   public String topicId; // required
   /**
-   *
    * @see Operation
    */
   public Operation op; // required
@@ -219,7 +218,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.appId = null;
   }
 
-  /** Returns true if field appId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field appId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAppId() {
     return this.appId != null;
   }
@@ -244,7 +245,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __APPSEQNUMBER_ISSET_ID);
   }
 
-  /** Returns true if field appSeqNumber is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field appSeqNumber is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAppSeqNumber() {
     return EncodingUtils.testBit(__isset_bitfield, __APPSEQNUMBER_ISSET_ID);
   }
@@ -266,7 +269,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.groupId = null;
   }
 
-  /** Returns true if field groupId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field groupId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetGroupId() {
     return this.groupId != null;
   }
@@ -291,7 +296,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __GROUPSEQNUMBER_ISSET_ID);
   }
 
-  /** Returns true if field groupSeqNumber is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field groupSeqNumber is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetGroupSeqNumber() {
     return EncodingUtils.testBit(__isset_bitfield, __GROUPSEQNUMBER_ISSET_ID);
   }
@@ -313,7 +320,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.profileFilterId = null;
   }
 
-  /** Returns true if field profileFilterId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field profileFilterId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetProfileFilterId() {
     return this.profileFilterId != null;
   }
@@ -338,7 +347,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PROFILEFILTERSEQNUMBER_ISSET_ID);
   }
 
-  /** Returns true if field profileFilterSeqNumber is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field profileFilterSeqNumber is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetProfileFilterSeqNumber() {
     return EncodingUtils.testBit(__isset_bitfield, __PROFILEFILTERSEQNUMBER_ISSET_ID);
   }
@@ -360,7 +372,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.configurationId = null;
   }
 
-  /** Returns true if field configurationId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field configurationId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetConfigurationId() {
     return this.configurationId != null;
   }
@@ -385,7 +399,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CONFIGURATIONSEQNUMBER_ISSET_ID);
   }
 
-  /** Returns true if field configurationSeqNumber is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field configurationSeqNumber is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetConfigurationSeqNumber() {
     return EncodingUtils.testBit(__isset_bitfield, __CONFIGURATIONSEQNUMBER_ISSET_ID);
   }
@@ -407,7 +424,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.notificationId = null;
   }
 
-  /** Returns true if field notificationId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field notificationId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetNotificationId() {
     return this.notificationId != null;
   }
@@ -431,7 +450,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.topicId = null;
   }
 
-  /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field topicId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTopicId() {
     return this.topicId != null;
   }
@@ -443,7 +464,6 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
   }
 
   /**
-   *
    * @see Operation
    */
   public Operation getOp() {
@@ -451,7 +471,6 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
   }
 
   /**
-   *
    * @see Operation
    */
   public Notification setOp(Operation op) {
@@ -463,7 +482,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.op = null;
   }
 
-  /** Returns true if field op is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field op is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetOp() {
     return this.op != null;
   }
@@ -487,7 +508,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.appenderId = null;
   }
 
-  /** Returns true if field appenderId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field appenderId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAppenderId() {
     return this.appenderId != null;
   }
@@ -511,7 +534,9 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     this.userVerifierToken = null;
   }
 
-  /** Returns true if field userVerifierToken is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field userVerifierToken is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUserVerifierToken() {
     return this.userVerifierToken != null;
   }
@@ -676,7 +701,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -1190,7 +1218,10 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     APP_ID((short) 1, "appId"),
     APP_SEQ_NUMBER((short) 2, "appSeqNumber"),
@@ -1203,7 +1234,6 @@ public class Notification implements org.apache.thrift.TBase<Notification, Notif
     NOTIFICATION_ID((short) 9, "notificationId"),
     TOPIC_ID((short) 10, "topicId"),
     /**
-     *
      * @see Operation
      */
     OP((short) 11, "op"),

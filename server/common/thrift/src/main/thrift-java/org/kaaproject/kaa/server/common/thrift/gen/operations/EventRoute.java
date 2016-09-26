@@ -123,7 +123,9 @@ public class EventRoute implements org.apache.thrift.TBase<EventRoute, EventRout
     this.userId = null;
   }
 
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field userId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUserId() {
     return this.userId != null;
   }
@@ -147,7 +149,9 @@ public class EventRoute implements org.apache.thrift.TBase<EventRoute, EventRout
     this.tenantId = null;
   }
 
-  /** Returns true if field tenantId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field tenantId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTenantId() {
     return this.tenantId != null;
   }
@@ -186,7 +190,9 @@ public class EventRoute implements org.apache.thrift.TBase<EventRoute, EventRout
     this.routeInfo = null;
   }
 
-  /** Returns true if field routeInfo is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field routeInfo is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetRouteInfo() {
     return this.routeInfo != null;
   }
@@ -210,7 +216,9 @@ public class EventRoute implements org.apache.thrift.TBase<EventRoute, EventRout
     this.operationsServerId = null;
   }
 
-  /** Returns true if field operationsServerId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field operationsServerId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetOperationsServerId() {
     return this.operationsServerId != null;
   }
@@ -276,7 +284,10 @@ public class EventRoute implements org.apache.thrift.TBase<EventRoute, EventRout
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -498,7 +509,10 @@ public class EventRoute implements org.apache.thrift.TBase<EventRoute, EventRout
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     USER_ID((short) 1, "userId"),
     TENANT_ID((short) 2, "tenantId"),

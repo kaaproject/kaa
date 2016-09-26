@@ -44,6 +44,7 @@ public class HeaderViewImpl extends Composite implements HeaderView {
   @UiField
   Label title;
   private Presenter presenter;
+
   public HeaderViewImpl() {
     settingsLabel = new ActionsLabel(Utils.constants.settings());
     kaaAdminStyle = Utils.kaaAdminStyle;

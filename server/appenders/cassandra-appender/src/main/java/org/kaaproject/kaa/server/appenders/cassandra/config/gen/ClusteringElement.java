@@ -11,6 +11,7 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ClusteringElement\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"fields\":[{\"name\":\"columnName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Name\",\"weight\":0.2,\"by_default\":\"application_token\"},{\"name\":\"order\",\"type\":{\"type\":\"enum\",\"name\":\"OrderType\",\"symbols\":[\"DESC\",\"ASC\"]},\"displayName\":\"Order\",\"weight\":0.2,\"by_default\":\"DESC\"}]}");
   private java.lang.String columnName;
   private org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType order;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new ClusteringElement RecordBuilder */
+  /**
+   * Creates a new ClusteringElement RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder();
   }
 
-  /** Creates a new ClusteringElement RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ClusteringElement RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder(other);
   }
 
-  /** Creates a new ClusteringElement RecordBuilder by copying an existing ClusteringElement instance */
+  /**
+   * Creates a new ClusteringElement RecordBuilder by copying an existing ClusteringElement instance
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder(other);
   }
@@ -86,6 +93,7 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'columnName' field.
+   *
    * @param value the value to set.
    */
   public void setColumnName(java.lang.String value) {
@@ -101,6 +109,7 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'order' field.
+   *
    * @param value the value to set.
    */
   public void setOrder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType value) {
@@ -116,12 +125,16 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
     private java.lang.String columnName;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType order;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.columnName)) {
@@ -134,7 +147,9 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing ClusteringElement instance */
+    /**
+     * Creates a Builder by copying an existing ClusteringElement instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement other) {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.SCHEMA$);
       if (isValidValue(fields()[0], other.columnName)) {
@@ -147,12 +162,16 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'columnName' field */
+    /**
+     * Gets the value of the 'columnName' field
+     */
     public java.lang.String getColumnName() {
       return columnName;
     }
 
-    /** Sets the value of the 'columnName' field */
+    /**
+     * Sets the value of the 'columnName' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder setColumnName(java.lang.String value) {
       validate(fields()[0], value);
       this.columnName = value;
@@ -160,24 +179,32 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'columnName' field has been set */
+    /**
+     * Checks whether the 'columnName' field has been set
+     */
     public boolean hasColumnName() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'columnName' field */
+    /**
+     * Clears the value of the 'columnName' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder clearColumnName() {
       columnName = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'order' field */
+    /**
+     * Gets the value of the 'order' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType getOrder() {
       return order;
     }
 
-    /** Sets the value of the 'order' field */
+    /**
+     * Sets the value of the 'order' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder setOrder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType value) {
       validate(fields()[1], value);
       this.order = value;
@@ -185,12 +212,16 @@ public class ClusteringElement extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'order' field has been set */
+    /**
+     * Checks whether the 'order' field has been set
+     */
     public boolean hasOrder() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'order' field */
+    /**
+     * Clears the value of the 'order' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement.Builder clearOrder() {
       order = null;
       fieldSetFlags()[1] = false;

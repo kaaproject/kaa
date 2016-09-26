@@ -30,17 +30,23 @@ public class FlumeNodes extends org.apache.avro.specific.SpecificRecordBase impl
     return SCHEMA$;
   }
 
-  /** Creates a new FlumeNodes RecordBuilder */
+  /**
+   * Creates a new FlumeNodes RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder();
   }
 
-  /** Creates a new FlumeNodes RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new FlumeNodes RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder(other);
   }
 
-  /** Creates a new FlumeNodes RecordBuilder by copying an existing FlumeNodes instance */
+  /**
+   * Creates a new FlumeNodes RecordBuilder by copying an existing FlumeNodes instance
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder(other);
   }
@@ -80,6 +86,7 @@ public class FlumeNodes extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'flumeNodes' field.
+   *
    * @param value the value to set.
    */
   public void setFlumeNodes(java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode> value) {
@@ -94,12 +101,16 @@ public class FlumeNodes extends org.apache.avro.specific.SpecificRecordBase impl
 
     private java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode> flumeNodes;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.flumeNodes)) {
@@ -108,7 +119,9 @@ public class FlumeNodes extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Creates a Builder by copying an existing FlumeNodes instance */
+    /**
+     * Creates a Builder by copying an existing FlumeNodes instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes other) {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.SCHEMA$);
       if (isValidValue(fields()[0], other.flumeNodes)) {
@@ -117,12 +130,16 @@ public class FlumeNodes extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Gets the value of the 'flumeNodes' field */
+    /**
+     * Gets the value of the 'flumeNodes' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode> getFlumeNodes() {
       return flumeNodes;
     }
 
-    /** Sets the value of the 'flumeNodes' field */
+    /**
+     * Sets the value of the 'flumeNodes' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder setFlumeNodes(java.util.List<org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode> value) {
       validate(fields()[0], value);
       this.flumeNodes = value;
@@ -130,12 +147,16 @@ public class FlumeNodes extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'flumeNodes' field has been set */
+    /**
+     * Checks whether the 'flumeNodes' field has been set
+     */
     public boolean hasFlumeNodes() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'flumeNodes' field */
+    /**
+     * Clears the value of the 'flumeNodes' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes.Builder clearFlumeNodes() {
       flumeNodes = null;
       fieldSetFlags()[0] = false;

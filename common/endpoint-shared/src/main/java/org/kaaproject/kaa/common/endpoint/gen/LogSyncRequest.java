@@ -11,6 +11,7 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"logEntries\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogEntry\",\"fields\":[{\"name\":\"data\",\"type\":\"bytes\"}],\"direction\":\"out\"}},\"null\"]}],\"direction\":\"out\"}");
   private int requestId;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogEntry> logEntries;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
     return SCHEMA$;
   }
 
-  /** Creates a new LogSyncRequest RecordBuilder */
+  /**
+   * Creates a new LogSyncRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder();
   }
 
-  /** Creates a new LogSyncRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new LogSyncRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder(other);
   }
 
-  /** Creates a new LogSyncRequest RecordBuilder by copying an existing LogSyncRequest instance */
+  /**
+   * Creates a new LogSyncRequest RecordBuilder by copying an existing LogSyncRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder(other);
   }
@@ -86,6 +93,7 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -101,6 +109,7 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'logEntries' field.
+   *
    * @param value the value to set.
    */
   public void setLogEntries(java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogEntry> value) {
@@ -116,12 +125,16 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
     private int requestId;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogEntry> logEntries;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -134,7 +147,9 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
       }
     }
 
-    /** Creates a Builder by copying an existing LogSyncRequest instance */
+    /**
+     * Creates a Builder by copying an existing LogSyncRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -147,12 +162,16 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -160,23 +179,31 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'logEntries' field */
+    /**
+     * Gets the value of the 'logEntries' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogEntry> getLogEntries() {
       return logEntries;
     }
 
-    /** Sets the value of the 'logEntries' field */
+    /**
+     * Sets the value of the 'logEntries' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder setLogEntries(java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogEntry> value) {
       validate(fields()[1], value);
       this.logEntries = value;
@@ -184,12 +211,16 @@ public class LogSyncRequest extends org.apache.avro.specific.SpecificRecordBase 
       return this;
     }
 
-    /** Checks whether the 'logEntries' field has been set */
+    /**
+     * Checks whether the 'logEntries' field has been set
+     */
     public boolean hasLogEntries() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'logEntries' field */
+    /**
+     * Clears the value of the 'logEntries' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest.Builder clearLogEntries() {
       logEntries = null;
       fieldSetFlags()[1] = false;

@@ -35,7 +35,6 @@ import javax.annotation.Resource;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Service("rootCredentialsServiceLocator")

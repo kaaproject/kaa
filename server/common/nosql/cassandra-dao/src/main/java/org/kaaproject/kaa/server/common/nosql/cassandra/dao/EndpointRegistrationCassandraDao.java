@@ -39,7 +39,6 @@ import java.util.Optional;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Repository("endpointRegistrationDao")

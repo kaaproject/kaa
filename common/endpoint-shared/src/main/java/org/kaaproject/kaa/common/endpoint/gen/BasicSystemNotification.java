@@ -12,6 +12,7 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
   private java.lang.String notificationBody;
   private int systemNotificationParam1;
   private int systemNotificationParam2;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,24 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
     return SCHEMA$;
   }
 
-  /** Creates a new BasicSystemNotification RecordBuilder */
+  /**
+   * Creates a new BasicSystemNotification RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder();
   }
 
-  /** Creates a new BasicSystemNotification RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new BasicSystemNotification RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder(other);
   }
 
-  /** Creates a new BasicSystemNotification RecordBuilder by copying an existing BasicSystemNotification instance */
+  /**
+   * Creates a new BasicSystemNotification RecordBuilder by copying an existing
+   * BasicSystemNotification instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder(other);
   }
@@ -93,6 +101,7 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'notificationBody' field.
+   *
    * @param value the value to set.
    */
   public void setNotificationBody(java.lang.String value) {
@@ -108,6 +117,7 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'systemNotificationParam1' field.
+   *
    * @param value the value to set.
    */
   public void setSystemNotificationParam1(java.lang.Integer value) {
@@ -123,6 +133,7 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
 
   /**
    * Sets the value of the 'systemNotificationParam2' field.
+   *
    * @param value the value to set.
    */
   public void setSystemNotificationParam2(java.lang.Integer value) {
@@ -139,12 +150,16 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
     private int systemNotificationParam1;
     private int systemNotificationParam2;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.notificationBody)) {
@@ -161,7 +176,9 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
       }
     }
 
-    /** Creates a Builder by copying an existing BasicSystemNotification instance */
+    /**
+     * Creates a Builder by copying an existing BasicSystemNotification instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification other) {
       super(org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.SCHEMA$);
       if (isValidValue(fields()[0], other.notificationBody)) {
@@ -178,12 +195,16 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
       }
     }
 
-    /** Gets the value of the 'notificationBody' field */
+    /**
+     * Gets the value of the 'notificationBody' field
+     */
     public java.lang.String getNotificationBody() {
       return notificationBody;
     }
 
-    /** Sets the value of the 'notificationBody' field */
+    /**
+     * Sets the value of the 'notificationBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder setNotificationBody(java.lang.String value) {
       validate(fields()[0], value);
       this.notificationBody = value;
@@ -191,24 +212,32 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'notificationBody' field has been set */
+    /**
+     * Checks whether the 'notificationBody' field has been set
+     */
     public boolean hasNotificationBody() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'notificationBody' field */
+    /**
+     * Clears the value of the 'notificationBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder clearNotificationBody() {
       notificationBody = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'systemNotificationParam1' field */
+    /**
+     * Gets the value of the 'systemNotificationParam1' field
+     */
     public java.lang.Integer getSystemNotificationParam1() {
       return systemNotificationParam1;
     }
 
-    /** Sets the value of the 'systemNotificationParam1' field */
+    /**
+     * Sets the value of the 'systemNotificationParam1' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder setSystemNotificationParam1(int value) {
       validate(fields()[1], value);
       this.systemNotificationParam1 = value;
@@ -216,23 +245,31 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'systemNotificationParam1' field has been set */
+    /**
+     * Checks whether the 'systemNotificationParam1' field has been set
+     */
     public boolean hasSystemNotificationParam1() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'systemNotificationParam1' field */
+    /**
+     * Clears the value of the 'systemNotificationParam1' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder clearSystemNotificationParam1() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'systemNotificationParam2' field */
+    /**
+     * Gets the value of the 'systemNotificationParam2' field
+     */
     public java.lang.Integer getSystemNotificationParam2() {
       return systemNotificationParam2;
     }
 
-    /** Sets the value of the 'systemNotificationParam2' field */
+    /**
+     * Sets the value of the 'systemNotificationParam2' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder setSystemNotificationParam2(int value) {
       validate(fields()[2], value);
       this.systemNotificationParam2 = value;
@@ -240,12 +277,16 @@ public class BasicSystemNotification extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Checks whether the 'systemNotificationParam2' field has been set */
+    /**
+     * Checks whether the 'systemNotificationParam2' field has been set
+     */
     public boolean hasSystemNotificationParam2() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'systemNotificationParam2' field */
+    /**
+     * Clears the value of the 'systemNotificationParam2' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicSystemNotification.Builder clearSystemNotificationParam2() {
       fieldSetFlags()[2] = false;
       return this;

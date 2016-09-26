@@ -30,17 +30,24 @@ public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecord
     return SCHEMA$;
   }
 
-  /** Creates a new ProfileSyncResponse RecordBuilder */
+  /**
+   * Creates a new ProfileSyncResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder();
   }
 
-  /** Creates a new ProfileSyncResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ProfileSyncResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder(other);
   }
 
-  /** Creates a new ProfileSyncResponse RecordBuilder by copying an existing ProfileSyncResponse instance */
+  /**
+   * Creates a new ProfileSyncResponse RecordBuilder by copying an existing ProfileSyncResponse
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder(other);
   }
@@ -80,6 +87,7 @@ public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'responseStatus' field.
+   *
    * @param value the value to set.
    */
   public void setResponseStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus value) {
@@ -94,12 +102,16 @@ public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecord
 
     private org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus responseStatus;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.responseStatus)) {
@@ -108,7 +120,9 @@ public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Creates a Builder by copying an existing ProfileSyncResponse instance */
+    /**
+     * Creates a Builder by copying an existing ProfileSyncResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.responseStatus)) {
@@ -117,12 +131,16 @@ public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Gets the value of the 'responseStatus' field */
+    /**
+     * Gets the value of the 'responseStatus' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus getResponseStatus() {
       return responseStatus;
     }
 
-    /** Sets the value of the 'responseStatus' field */
+    /**
+     * Sets the value of the 'responseStatus' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder setResponseStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus value) {
       validate(fields()[0], value);
       this.responseStatus = value;
@@ -130,12 +148,16 @@ public class ProfileSyncResponse extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'responseStatus' field has been set */
+    /**
+     * Checks whether the 'responseStatus' field has been set
+     */
     public boolean hasResponseStatus() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'responseStatus' field */
+    /**
+     * Clears the value of the 'responseStatus' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse.Builder clearResponseStatus() {
       responseStatus = null;
       fieldSetFlags()[0] = false;

@@ -59,7 +59,6 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
   }
 
   /**
-   *
    * @see EventRouteUpdateType
    */
   public EventRouteUpdateType updateType; // required
@@ -117,7 +116,6 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
   }
 
   /**
-   *
    * @see EventRouteUpdateType
    */
   public EventRouteUpdateType getUpdateType() {
@@ -125,7 +123,6 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
   }
 
   /**
-   *
    * @see EventRouteUpdateType
    */
   public RouteInfo setUpdateType(EventRouteUpdateType updateType) {
@@ -137,7 +134,9 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     this.updateType = null;
   }
 
-  /** Returns true if field updateType is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field updateType is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUpdateType() {
     return this.updateType != null;
   }
@@ -176,7 +175,10 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     this.eventClassFamilyVersion = null;
   }
 
-  /** Returns true if field eventClassFamilyVersion is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field eventClassFamilyVersion is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetEventClassFamilyVersion() {
     return this.eventClassFamilyVersion != null;
   }
@@ -200,7 +202,9 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     this.applicationToken = null;
   }
 
-  /** Returns true if field applicationToken is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field applicationToken is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetApplicationToken() {
     return this.applicationToken != null;
   }
@@ -216,6 +220,11 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     return endpointId == null ? null : endpointId.array();
   }
 
+  public RouteInfo setEndpointId(byte[] endpointId) {
+    this.endpointId = endpointId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointId, endpointId.length));
+    return this;
+  }
+
   public RouteInfo setEndpointId(ByteBuffer endpointId) {
     this.endpointId = org.apache.thrift.TBaseHelper.copyBinary(endpointId);
     return this;
@@ -225,16 +234,13 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     return org.apache.thrift.TBaseHelper.copyBinary(endpointId);
   }
 
-  public RouteInfo setEndpointId(byte[] endpointId) {
-    this.endpointId = endpointId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointId, endpointId.length));
-    return this;
-  }
-
   public void unsetEndpointId() {
     this.endpointId = null;
   }
 
-  /** Returns true if field endpointId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEndpointId() {
     return this.endpointId != null;
   }
@@ -300,7 +306,10 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -522,10 +531,12 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     /**
-     *
      * @see EventRouteUpdateType
      */
     UPDATE_TYPE((short) 1, "updateType"),

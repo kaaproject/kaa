@@ -30,17 +30,24 @@ public class UserDetachNotification extends org.apache.avro.specific.SpecificRec
     return SCHEMA$;
   }
 
-  /** Creates a new UserDetachNotification RecordBuilder */
+  /**
+   * Creates a new UserDetachNotification RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder();
   }
 
-  /** Creates a new UserDetachNotification RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new UserDetachNotification RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder(other);
   }
 
-  /** Creates a new UserDetachNotification RecordBuilder by copying an existing UserDetachNotification instance */
+  /**
+   * Creates a new UserDetachNotification RecordBuilder by copying an existing
+   * UserDetachNotification instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder(other);
   }
@@ -80,6 +87,7 @@ public class UserDetachNotification extends org.apache.avro.specific.SpecificRec
 
   /**
    * Sets the value of the 'endpointAccessToken' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointAccessToken(java.lang.String value) {
@@ -94,12 +102,16 @@ public class UserDetachNotification extends org.apache.avro.specific.SpecificRec
 
     private java.lang.String endpointAccessToken;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.endpointAccessToken)) {
@@ -108,7 +120,9 @@ public class UserDetachNotification extends org.apache.avro.specific.SpecificRec
       }
     }
 
-    /** Creates a Builder by copying an existing UserDetachNotification instance */
+    /**
+     * Creates a Builder by copying an existing UserDetachNotification instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification other) {
       super(org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.SCHEMA$);
       if (isValidValue(fields()[0], other.endpointAccessToken)) {
@@ -117,12 +131,16 @@ public class UserDetachNotification extends org.apache.avro.specific.SpecificRec
       }
     }
 
-    /** Gets the value of the 'endpointAccessToken' field */
+    /**
+     * Gets the value of the 'endpointAccessToken' field
+     */
     public java.lang.String getEndpointAccessToken() {
       return endpointAccessToken;
     }
 
-    /** Sets the value of the 'endpointAccessToken' field */
+    /**
+     * Sets the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder setEndpointAccessToken(java.lang.String value) {
       validate(fields()[0], value);
       this.endpointAccessToken = value;
@@ -130,12 +148,16 @@ public class UserDetachNotification extends org.apache.avro.specific.SpecificRec
       return this;
     }
 
-    /** Checks whether the 'endpointAccessToken' field has been set */
+    /**
+     * Checks whether the 'endpointAccessToken' field has been set
+     */
     public boolean hasEndpointAccessToken() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'endpointAccessToken' field */
+    /**
+     * Clears the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification.Builder clearEndpointAccessToken() {
       endpointAccessToken = null;
       fieldSetFlags()[0] = false;

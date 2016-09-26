@@ -30,17 +30,24 @@ public class BasicEndpointProfile extends org.apache.avro.specific.SpecificRecor
     return SCHEMA$;
   }
 
-  /** Creates a new BasicEndpointProfile RecordBuilder */
+  /**
+   * Creates a new BasicEndpointProfile RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder();
   }
 
-  /** Creates a new BasicEndpointProfile RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new BasicEndpointProfile RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder(other);
   }
 
-  /** Creates a new BasicEndpointProfile RecordBuilder by copying an existing BasicEndpointProfile instance */
+  /**
+   * Creates a new BasicEndpointProfile RecordBuilder by copying an existing BasicEndpointProfile
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder(other);
   }
@@ -80,6 +87,7 @@ public class BasicEndpointProfile extends org.apache.avro.specific.SpecificRecor
 
   /**
    * Sets the value of the 'profileBody' field.
+   *
    * @param value the value to set.
    */
   public void setProfileBody(java.lang.String value) {
@@ -94,12 +102,16 @@ public class BasicEndpointProfile extends org.apache.avro.specific.SpecificRecor
 
     private java.lang.String profileBody;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.profileBody)) {
@@ -108,7 +120,9 @@ public class BasicEndpointProfile extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Creates a Builder by copying an existing BasicEndpointProfile instance */
+    /**
+     * Creates a Builder by copying an existing BasicEndpointProfile instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile other) {
       super(org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.SCHEMA$);
       if (isValidValue(fields()[0], other.profileBody)) {
@@ -117,12 +131,16 @@ public class BasicEndpointProfile extends org.apache.avro.specific.SpecificRecor
       }
     }
 
-    /** Gets the value of the 'profileBody' field */
+    /**
+     * Gets the value of the 'profileBody' field
+     */
     public java.lang.String getProfileBody() {
       return profileBody;
     }
 
-    /** Sets the value of the 'profileBody' field */
+    /**
+     * Sets the value of the 'profileBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder setProfileBody(java.lang.String value) {
       validate(fields()[0], value);
       this.profileBody = value;
@@ -130,12 +148,16 @@ public class BasicEndpointProfile extends org.apache.avro.specific.SpecificRecor
       return this;
     }
 
-    /** Checks whether the 'profileBody' field has been set */
+    /**
+     * Checks whether the 'profileBody' field has been set
+     */
     public boolean hasProfileBody() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'profileBody' field */
+    /**
+     * Clears the value of the 'profileBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile.Builder clearProfileBody() {
       profileBody = null;
       fieldSetFlags()[0] = false;

@@ -14,17 +14,23 @@ public class Log extends org.apache.avro.specific.SpecificRecordBase implements 
     return SCHEMA$;
   }
 
-  /** Creates a new Log RecordBuilder */
+  /**
+   * Creates a new Log RecordBuilder
+   */
   public static org.kaaproject.kaa.schema.base.Log.Builder newBuilder() {
     return new org.kaaproject.kaa.schema.base.Log.Builder();
   }
 
-  /** Creates a new Log RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new Log RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.schema.base.Log.Builder newBuilder(org.kaaproject.kaa.schema.base.Log.Builder other) {
     return new org.kaaproject.kaa.schema.base.Log.Builder(other);
   }
 
-  /** Creates a new Log RecordBuilder by copying an existing Log instance */
+  /**
+   * Creates a new Log RecordBuilder by copying an existing Log instance
+   */
   public static org.kaaproject.kaa.schema.base.Log.Builder newBuilder(org.kaaproject.kaa.schema.base.Log other) {
     return new org.kaaproject.kaa.schema.base.Log.Builder(other);
   }
@@ -57,17 +63,23 @@ public class Log extends org.apache.avro.specific.SpecificRecordBase implements 
       implements org.apache.avro.data.RecordBuilder<Log> {
 
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.schema.base.Log.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.schema.base.Log.Builder other) {
       super(other);
     }
 
-    /** Creates a Builder by copying an existing Log instance */
+    /**
+     * Creates a Builder by copying an existing Log instance
+     */
     private Builder(org.kaaproject.kaa.schema.base.Log other) {
       super(org.kaaproject.kaa.schema.base.Log.SCHEMA$);
     }

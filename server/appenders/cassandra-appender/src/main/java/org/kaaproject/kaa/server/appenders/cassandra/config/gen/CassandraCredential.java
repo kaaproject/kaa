@@ -11,6 +11,7 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CassandraCredential\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"User\",\"weight\":0.5,\"by_default\":\"user\"},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Password\",\"weight\":0.5,\"by_default\":\"password\"}],\"optional\":true}");
   private java.lang.String user;
   private java.lang.String password;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
     return SCHEMA$;
   }
 
-  /** Creates a new CassandraCredential RecordBuilder */
+  /**
+   * Creates a new CassandraCredential RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder();
   }
 
-  /** Creates a new CassandraCredential RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new CassandraCredential RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder(other);
   }
 
-  /** Creates a new CassandraCredential RecordBuilder by copying an existing CassandraCredential instance */
+  /**
+   * Creates a new CassandraCredential RecordBuilder by copying an existing CassandraCredential
+   * instance
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder(other);
   }
@@ -86,6 +94,7 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'user' field.
+   *
    * @param value the value to set.
    */
   public void setUser(java.lang.String value) {
@@ -101,6 +110,7 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'password' field.
+   *
    * @param value the value to set.
    */
   public void setPassword(java.lang.String value) {
@@ -116,12 +126,16 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
     private java.lang.String user;
     private java.lang.String password;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.user)) {
@@ -134,7 +148,9 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Creates a Builder by copying an existing CassandraCredential instance */
+    /**
+     * Creates a Builder by copying an existing CassandraCredential instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential other) {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.SCHEMA$);
       if (isValidValue(fields()[0], other.user)) {
@@ -147,12 +163,16 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Gets the value of the 'user' field */
+    /**
+     * Gets the value of the 'user' field
+     */
     public java.lang.String getUser() {
       return user;
     }
 
-    /** Sets the value of the 'user' field */
+    /**
+     * Sets the value of the 'user' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder setUser(java.lang.String value) {
       validate(fields()[0], value);
       this.user = value;
@@ -160,24 +180,32 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'user' field has been set */
+    /**
+     * Checks whether the 'user' field has been set
+     */
     public boolean hasUser() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'user' field */
+    /**
+     * Clears the value of the 'user' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder clearUser() {
       user = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'password' field */
+    /**
+     * Gets the value of the 'password' field
+     */
     public java.lang.String getPassword() {
       return password;
     }
 
-    /** Sets the value of the 'password' field */
+    /**
+     * Sets the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder setPassword(java.lang.String value) {
       validate(fields()[1], value);
       this.password = value;
@@ -185,12 +213,16 @@ public class CassandraCredential extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'password' field has been set */
+    /**
+     * Checks whether the 'password' field has been set
+     */
     public boolean hasPassword() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'password' field */
+    /**
+     * Clears the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential.Builder clearPassword() {
       password = null;
       fieldSetFlags()[1] = false;

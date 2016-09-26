@@ -20,6 +20,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
   private org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse redirectSyncResponse;
   private org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse logSyncResponse;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncResponses;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -49,17 +50,23 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     return SCHEMA$;
   }
 
-  /** Creates a new SyncResponse RecordBuilder */
+  /**
+   * Creates a new SyncResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder();
   }
 
-  /** Creates a new SyncResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new SyncResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder(other);
   }
 
-  /** Creates a new SyncResponse RecordBuilder by copying an existing SyncResponse instance */
+  /**
+   * Creates a new SyncResponse RecordBuilder by copying an existing SyncResponse instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder(other);
   }
@@ -149,6 +156,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -164,6 +172,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'status' field.
+   *
    * @param value the value to set.
    */
   public void setStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
@@ -179,6 +188,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'bootstrapSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setBootstrapSyncResponse(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse value) {
@@ -194,6 +204,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'profileSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setProfileSyncResponse(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse value) {
@@ -209,6 +220,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'configurationSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setConfigurationSyncResponse(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse value) {
@@ -224,6 +236,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'notificationSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setNotificationSyncResponse(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse value) {
@@ -239,6 +252,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'userSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setUserSyncResponse(org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse value) {
@@ -254,6 +268,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'eventSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setEventSyncResponse(org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse value) {
@@ -269,6 +284,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'redirectSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setRedirectSyncResponse(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse value) {
@@ -284,6 +300,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'logSyncResponse' field.
+   *
    * @param value the value to set.
    */
   public void setLogSyncResponse(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse value) {
@@ -299,6 +316,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'extensionSyncResponses' field.
+   *
    * @param value the value to set.
    */
   public void setExtensionSyncResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> value) {
@@ -323,12 +341,16 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     private org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse logSyncResponse;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncResponses;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.SyncResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -377,7 +399,9 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Creates a Builder by copying an existing SyncResponse instance */
+    /**
+     * Creates a Builder by copying an existing SyncResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.SyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -426,12 +450,16 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -439,23 +467,31 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'status' field */
+    /**
+     * Gets the value of the 'status' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType getStatus() {
       return status;
     }
 
-    /** Sets the value of the 'status' field */
+    /**
+     * Sets the value of the 'status' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
       validate(fields()[1], value);
       this.status = value;
@@ -463,24 +499,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'status' field has been set */
+    /**
+     * Checks whether the 'status' field has been set
+     */
     public boolean hasStatus() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'status' field */
+    /**
+     * Clears the value of the 'status' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearStatus() {
       status = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'bootstrapSyncResponse' field */
+    /**
+     * Gets the value of the 'bootstrapSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse getBootstrapSyncResponse() {
       return bootstrapSyncResponse;
     }
 
-    /** Sets the value of the 'bootstrapSyncResponse' field */
+    /**
+     * Sets the value of the 'bootstrapSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setBootstrapSyncResponse(org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse value) {
       validate(fields()[2], value);
       this.bootstrapSyncResponse = value;
@@ -488,24 +532,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'bootstrapSyncResponse' field has been set */
+    /**
+     * Checks whether the 'bootstrapSyncResponse' field has been set
+     */
     public boolean hasBootstrapSyncResponse() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'bootstrapSyncResponse' field */
+    /**
+     * Clears the value of the 'bootstrapSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearBootstrapSyncResponse() {
       bootstrapSyncResponse = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'profileSyncResponse' field */
+    /**
+     * Gets the value of the 'profileSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse getProfileSyncResponse() {
       return profileSyncResponse;
     }
 
-    /** Sets the value of the 'profileSyncResponse' field */
+    /**
+     * Sets the value of the 'profileSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setProfileSyncResponse(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse value) {
       validate(fields()[3], value);
       this.profileSyncResponse = value;
@@ -513,24 +565,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'profileSyncResponse' field has been set */
+    /**
+     * Checks whether the 'profileSyncResponse' field has been set
+     */
     public boolean hasProfileSyncResponse() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'profileSyncResponse' field */
+    /**
+     * Clears the value of the 'profileSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearProfileSyncResponse() {
       profileSyncResponse = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'configurationSyncResponse' field */
+    /**
+     * Gets the value of the 'configurationSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse getConfigurationSyncResponse() {
       return configurationSyncResponse;
     }
 
-    /** Sets the value of the 'configurationSyncResponse' field */
+    /**
+     * Sets the value of the 'configurationSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setConfigurationSyncResponse(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse value) {
       validate(fields()[4], value);
       this.configurationSyncResponse = value;
@@ -538,24 +598,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'configurationSyncResponse' field has been set */
+    /**
+     * Checks whether the 'configurationSyncResponse' field has been set
+     */
     public boolean hasConfigurationSyncResponse() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'configurationSyncResponse' field */
+    /**
+     * Clears the value of the 'configurationSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearConfigurationSyncResponse() {
       configurationSyncResponse = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'notificationSyncResponse' field */
+    /**
+     * Gets the value of the 'notificationSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse getNotificationSyncResponse() {
       return notificationSyncResponse;
     }
 
-    /** Sets the value of the 'notificationSyncResponse' field */
+    /**
+     * Sets the value of the 'notificationSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setNotificationSyncResponse(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse value) {
       validate(fields()[5], value);
       this.notificationSyncResponse = value;
@@ -563,24 +631,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'notificationSyncResponse' field has been set */
+    /**
+     * Checks whether the 'notificationSyncResponse' field has been set
+     */
     public boolean hasNotificationSyncResponse() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'notificationSyncResponse' field */
+    /**
+     * Clears the value of the 'notificationSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearNotificationSyncResponse() {
       notificationSyncResponse = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'userSyncResponse' field */
+    /**
+     * Gets the value of the 'userSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse getUserSyncResponse() {
       return userSyncResponse;
     }
 
-    /** Sets the value of the 'userSyncResponse' field */
+    /**
+     * Sets the value of the 'userSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setUserSyncResponse(org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse value) {
       validate(fields()[6], value);
       this.userSyncResponse = value;
@@ -588,24 +664,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'userSyncResponse' field has been set */
+    /**
+     * Checks whether the 'userSyncResponse' field has been set
+     */
     public boolean hasUserSyncResponse() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'userSyncResponse' field */
+    /**
+     * Clears the value of the 'userSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearUserSyncResponse() {
       userSyncResponse = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventSyncResponse' field */
+    /**
+     * Gets the value of the 'eventSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse getEventSyncResponse() {
       return eventSyncResponse;
     }
 
-    /** Sets the value of the 'eventSyncResponse' field */
+    /**
+     * Sets the value of the 'eventSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setEventSyncResponse(org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse value) {
       validate(fields()[7], value);
       this.eventSyncResponse = value;
@@ -613,24 +697,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'eventSyncResponse' field has been set */
+    /**
+     * Checks whether the 'eventSyncResponse' field has been set
+     */
     public boolean hasEventSyncResponse() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'eventSyncResponse' field */
+    /**
+     * Clears the value of the 'eventSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearEventSyncResponse() {
       eventSyncResponse = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'redirectSyncResponse' field */
+    /**
+     * Gets the value of the 'redirectSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse getRedirectSyncResponse() {
       return redirectSyncResponse;
     }
 
-    /** Sets the value of the 'redirectSyncResponse' field */
+    /**
+     * Sets the value of the 'redirectSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setRedirectSyncResponse(org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse value) {
       validate(fields()[8], value);
       this.redirectSyncResponse = value;
@@ -638,24 +730,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'redirectSyncResponse' field has been set */
+    /**
+     * Checks whether the 'redirectSyncResponse' field has been set
+     */
     public boolean hasRedirectSyncResponse() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'redirectSyncResponse' field */
+    /**
+     * Clears the value of the 'redirectSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearRedirectSyncResponse() {
       redirectSyncResponse = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'logSyncResponse' field */
+    /**
+     * Gets the value of the 'logSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse getLogSyncResponse() {
       return logSyncResponse;
     }
 
-    /** Sets the value of the 'logSyncResponse' field */
+    /**
+     * Sets the value of the 'logSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setLogSyncResponse(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse value) {
       validate(fields()[9], value);
       this.logSyncResponse = value;
@@ -663,24 +763,32 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'logSyncResponse' field has been set */
+    /**
+     * Checks whether the 'logSyncResponse' field has been set
+     */
     public boolean hasLogSyncResponse() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'logSyncResponse' field */
+    /**
+     * Clears the value of the 'logSyncResponse' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearLogSyncResponse() {
       logSyncResponse = null;
       fieldSetFlags()[9] = false;
       return this;
     }
 
-    /** Gets the value of the 'extensionSyncResponses' field */
+    /**
+     * Gets the value of the 'extensionSyncResponses' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> getExtensionSyncResponses() {
       return extensionSyncResponses;
     }
 
-    /** Sets the value of the 'extensionSyncResponses' field */
+    /**
+     * Sets the value of the 'extensionSyncResponses' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setExtensionSyncResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> value) {
       validate(fields()[10], value);
       this.extensionSyncResponses = value;
@@ -688,12 +796,16 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'extensionSyncResponses' field has been set */
+    /**
+     * Checks whether the 'extensionSyncResponses' field has been set
+     */
     public boolean hasExtensionSyncResponses() {
       return fieldSetFlags()[10];
     }
 
-    /** Clears the value of the 'extensionSyncResponses' field */
+    /**
+     * Clears the value of the 'extensionSyncResponses' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearExtensionSyncResponses() {
       extensionSyncResponses = null;
       fieldSetFlags()[10] = false;

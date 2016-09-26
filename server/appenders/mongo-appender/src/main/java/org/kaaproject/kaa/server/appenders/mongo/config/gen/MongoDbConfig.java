@@ -19,6 +19,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
   private java.lang.Boolean socketKeepalive;
   private java.lang.Boolean includeClientProfile;
   private java.lang.Boolean includeServerProfile;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -47,17 +48,23 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     return SCHEMA$;
   }
 
-  /** Creates a new MongoDbConfig RecordBuilder */
+  /**
+   * Creates a new MongoDbConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder();
   }
 
-  /** Creates a new MongoDbConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new MongoDbConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder(other);
   }
 
-  /** Creates a new MongoDbConfig RecordBuilder by copying an existing MongoDbConfig instance */
+  /**
+   * Creates a new MongoDbConfig RecordBuilder by copying an existing MongoDbConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig other) {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder(other);
   }
@@ -142,6 +149,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'mongoServers' field.
+   *
    * @param value the value to set.
    */
   public void setMongoServers(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> value) {
@@ -157,6 +165,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'mongoCredentials' field.
+   *
    * @param value the value to set.
    */
   public void setMongoCredentials(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> value) {
@@ -172,6 +181,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'dbName' field.
+   *
    * @param value the value to set.
    */
   public void setDbName(java.lang.String value) {
@@ -187,6 +197,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'connectionsPerHost' field.
+   *
    * @param value the value to set.
    */
   public void setConnectionsPerHost(java.lang.Integer value) {
@@ -202,6 +213,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'maxWaitTime' field.
+   *
    * @param value the value to set.
    */
   public void setMaxWaitTime(java.lang.Integer value) {
@@ -217,6 +229,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'connectionTimeout' field.
+   *
    * @param value the value to set.
    */
   public void setConnectionTimeout(java.lang.Integer value) {
@@ -232,6 +245,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'socketTimeout' field.
+   *
    * @param value the value to set.
    */
   public void setSocketTimeout(java.lang.Integer value) {
@@ -247,6 +261,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'socketKeepalive' field.
+   *
    * @param value the value to set.
    */
   public void setSocketKeepalive(java.lang.Boolean value) {
@@ -262,6 +277,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'includeClientProfile' field.
+   *
    * @param value the value to set.
    */
   public void setIncludeClientProfile(java.lang.Boolean value) {
@@ -277,6 +293,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'includeServerProfile' field.
+   *
    * @param value the value to set.
    */
   public void setIncludeServerProfile(java.lang.Boolean value) {
@@ -300,12 +317,16 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     private java.lang.Boolean includeClientProfile;
     private java.lang.Boolean includeServerProfile;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.mongoServers)) {
@@ -350,7 +371,9 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       }
     }
 
-    /** Creates a Builder by copying an existing MongoDbConfig instance */
+    /**
+     * Creates a Builder by copying an existing MongoDbConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig other) {
       super(org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.mongoServers)) {
@@ -395,12 +418,16 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       }
     }
 
-    /** Gets the value of the 'mongoServers' field */
+    /**
+     * Gets the value of the 'mongoServers' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> getMongoServers() {
       return mongoServers;
     }
 
-    /** Sets the value of the 'mongoServers' field */
+    /**
+     * Sets the value of the 'mongoServers' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setMongoServers(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> value) {
       validate(fields()[0], value);
       this.mongoServers = value;
@@ -408,24 +435,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'mongoServers' field has been set */
+    /**
+     * Checks whether the 'mongoServers' field has been set
+     */
     public boolean hasMongoServers() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'mongoServers' field */
+    /**
+     * Clears the value of the 'mongoServers' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearMongoServers() {
       mongoServers = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'mongoCredentials' field */
+    /**
+     * Gets the value of the 'mongoCredentials' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> getMongoCredentials() {
       return mongoCredentials;
     }
 
-    /** Sets the value of the 'mongoCredentials' field */
+    /**
+     * Sets the value of the 'mongoCredentials' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setMongoCredentials(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> value) {
       validate(fields()[1], value);
       this.mongoCredentials = value;
@@ -433,24 +468,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'mongoCredentials' field has been set */
+    /**
+     * Checks whether the 'mongoCredentials' field has been set
+     */
     public boolean hasMongoCredentials() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'mongoCredentials' field */
+    /**
+     * Clears the value of the 'mongoCredentials' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearMongoCredentials() {
       mongoCredentials = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'dbName' field */
+    /**
+     * Gets the value of the 'dbName' field
+     */
     public java.lang.String getDbName() {
       return dbName;
     }
 
-    /** Sets the value of the 'dbName' field */
+    /**
+     * Sets the value of the 'dbName' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setDbName(java.lang.String value) {
       validate(fields()[2], value);
       this.dbName = value;
@@ -458,24 +501,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'dbName' field has been set */
+    /**
+     * Checks whether the 'dbName' field has been set
+     */
     public boolean hasDbName() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'dbName' field */
+    /**
+     * Clears the value of the 'dbName' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearDbName() {
       dbName = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'connectionsPerHost' field */
+    /**
+     * Gets the value of the 'connectionsPerHost' field
+     */
     public java.lang.Integer getConnectionsPerHost() {
       return connectionsPerHost;
     }
 
-    /** Sets the value of the 'connectionsPerHost' field */
+    /**
+     * Sets the value of the 'connectionsPerHost' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setConnectionsPerHost(java.lang.Integer value) {
       validate(fields()[3], value);
       this.connectionsPerHost = value;
@@ -483,24 +534,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'connectionsPerHost' field has been set */
+    /**
+     * Checks whether the 'connectionsPerHost' field has been set
+     */
     public boolean hasConnectionsPerHost() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'connectionsPerHost' field */
+    /**
+     * Clears the value of the 'connectionsPerHost' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearConnectionsPerHost() {
       connectionsPerHost = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'maxWaitTime' field */
+    /**
+     * Gets the value of the 'maxWaitTime' field
+     */
     public java.lang.Integer getMaxWaitTime() {
       return maxWaitTime;
     }
 
-    /** Sets the value of the 'maxWaitTime' field */
+    /**
+     * Sets the value of the 'maxWaitTime' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setMaxWaitTime(java.lang.Integer value) {
       validate(fields()[4], value);
       this.maxWaitTime = value;
@@ -508,24 +567,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'maxWaitTime' field has been set */
+    /**
+     * Checks whether the 'maxWaitTime' field has been set
+     */
     public boolean hasMaxWaitTime() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'maxWaitTime' field */
+    /**
+     * Clears the value of the 'maxWaitTime' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearMaxWaitTime() {
       maxWaitTime = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'connectionTimeout' field */
+    /**
+     * Gets the value of the 'connectionTimeout' field
+     */
     public java.lang.Integer getConnectionTimeout() {
       return connectionTimeout;
     }
 
-    /** Sets the value of the 'connectionTimeout' field */
+    /**
+     * Sets the value of the 'connectionTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setConnectionTimeout(java.lang.Integer value) {
       validate(fields()[5], value);
       this.connectionTimeout = value;
@@ -533,24 +600,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'connectionTimeout' field has been set */
+    /**
+     * Checks whether the 'connectionTimeout' field has been set
+     */
     public boolean hasConnectionTimeout() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'connectionTimeout' field */
+    /**
+     * Clears the value of the 'connectionTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearConnectionTimeout() {
       connectionTimeout = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'socketTimeout' field */
+    /**
+     * Gets the value of the 'socketTimeout' field
+     */
     public java.lang.Integer getSocketTimeout() {
       return socketTimeout;
     }
 
-    /** Sets the value of the 'socketTimeout' field */
+    /**
+     * Sets the value of the 'socketTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setSocketTimeout(java.lang.Integer value) {
       validate(fields()[6], value);
       this.socketTimeout = value;
@@ -558,24 +633,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'socketTimeout' field has been set */
+    /**
+     * Checks whether the 'socketTimeout' field has been set
+     */
     public boolean hasSocketTimeout() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'socketTimeout' field */
+    /**
+     * Clears the value of the 'socketTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearSocketTimeout() {
       socketTimeout = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'socketKeepalive' field */
+    /**
+     * Gets the value of the 'socketKeepalive' field
+     */
     public java.lang.Boolean getSocketKeepalive() {
       return socketKeepalive;
     }
 
-    /** Sets the value of the 'socketKeepalive' field */
+    /**
+     * Sets the value of the 'socketKeepalive' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setSocketKeepalive(java.lang.Boolean value) {
       validate(fields()[7], value);
       this.socketKeepalive = value;
@@ -583,24 +666,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'socketKeepalive' field has been set */
+    /**
+     * Checks whether the 'socketKeepalive' field has been set
+     */
     public boolean hasSocketKeepalive() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'socketKeepalive' field */
+    /**
+     * Clears the value of the 'socketKeepalive' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearSocketKeepalive() {
       socketKeepalive = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'includeClientProfile' field */
+    /**
+     * Gets the value of the 'includeClientProfile' field
+     */
     public java.lang.Boolean getIncludeClientProfile() {
       return includeClientProfile;
     }
 
-    /** Sets the value of the 'includeClientProfile' field */
+    /**
+     * Sets the value of the 'includeClientProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setIncludeClientProfile(java.lang.Boolean value) {
       validate(fields()[8], value);
       this.includeClientProfile = value;
@@ -608,24 +699,32 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'includeClientProfile' field has been set */
+    /**
+     * Checks whether the 'includeClientProfile' field has been set
+     */
     public boolean hasIncludeClientProfile() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'includeClientProfile' field */
+    /**
+     * Clears the value of the 'includeClientProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearIncludeClientProfile() {
       includeClientProfile = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'includeServerProfile' field */
+    /**
+     * Gets the value of the 'includeServerProfile' field
+     */
     public java.lang.Boolean getIncludeServerProfile() {
       return includeServerProfile;
     }
 
-    /** Sets the value of the 'includeServerProfile' field */
+    /**
+     * Sets the value of the 'includeServerProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setIncludeServerProfile(java.lang.Boolean value) {
       validate(fields()[9], value);
       this.includeServerProfile = value;
@@ -633,12 +732,16 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'includeServerProfile' field has been set */
+    /**
+     * Checks whether the 'includeServerProfile' field has been set
+     */
     public boolean hasIncludeServerProfile() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'includeServerProfile' field */
+    /**
+     * Clears the value of the 'includeServerProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearIncludeServerProfile() {
       includeServerProfile = null;
       fieldSetFlags()[9] = false;

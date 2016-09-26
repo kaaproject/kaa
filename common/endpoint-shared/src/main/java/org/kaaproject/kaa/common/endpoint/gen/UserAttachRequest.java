@@ -12,6 +12,7 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
   private java.lang.String userVerifierId;
   private java.lang.String userExternalId;
   private java.lang.String userAccessToken;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new UserAttachRequest RecordBuilder */
+  /**
+   * Creates a new UserAttachRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder();
   }
 
-  /** Creates a new UserAttachRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new UserAttachRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder(other);
   }
 
-  /** Creates a new UserAttachRequest RecordBuilder by copying an existing UserAttachRequest instance */
+  /**
+   * Creates a new UserAttachRequest RecordBuilder by copying an existing UserAttachRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder(other);
   }
@@ -93,6 +100,7 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'userVerifierId' field.
+   *
    * @param value the value to set.
    */
   public void setUserVerifierId(java.lang.String value) {
@@ -108,6 +116,7 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'userExternalId' field.
+   *
    * @param value the value to set.
    */
   public void setUserExternalId(java.lang.String value) {
@@ -123,6 +132,7 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'userAccessToken' field.
+   *
    * @param value the value to set.
    */
   public void setUserAccessToken(java.lang.String value) {
@@ -139,12 +149,16 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
     private java.lang.String userExternalId;
     private java.lang.String userAccessToken;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.userVerifierId)) {
@@ -161,7 +175,9 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing UserAttachRequest instance */
+    /**
+     * Creates a Builder by copying an existing UserAttachRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.userVerifierId)) {
@@ -178,12 +194,16 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'userVerifierId' field */
+    /**
+     * Gets the value of the 'userVerifierId' field
+     */
     public java.lang.String getUserVerifierId() {
       return userVerifierId;
     }
 
-    /** Sets the value of the 'userVerifierId' field */
+    /**
+     * Sets the value of the 'userVerifierId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder setUserVerifierId(java.lang.String value) {
       validate(fields()[0], value);
       this.userVerifierId = value;
@@ -191,24 +211,32 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'userVerifierId' field has been set */
+    /**
+     * Checks whether the 'userVerifierId' field has been set
+     */
     public boolean hasUserVerifierId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'userVerifierId' field */
+    /**
+     * Clears the value of the 'userVerifierId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder clearUserVerifierId() {
       userVerifierId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'userExternalId' field */
+    /**
+     * Gets the value of the 'userExternalId' field
+     */
     public java.lang.String getUserExternalId() {
       return userExternalId;
     }
 
-    /** Sets the value of the 'userExternalId' field */
+    /**
+     * Sets the value of the 'userExternalId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder setUserExternalId(java.lang.String value) {
       validate(fields()[1], value);
       this.userExternalId = value;
@@ -216,24 +244,32 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'userExternalId' field has been set */
+    /**
+     * Checks whether the 'userExternalId' field has been set
+     */
     public boolean hasUserExternalId() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'userExternalId' field */
+    /**
+     * Clears the value of the 'userExternalId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder clearUserExternalId() {
       userExternalId = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'userAccessToken' field */
+    /**
+     * Gets the value of the 'userAccessToken' field
+     */
     public java.lang.String getUserAccessToken() {
       return userAccessToken;
     }
 
-    /** Sets the value of the 'userAccessToken' field */
+    /**
+     * Sets the value of the 'userAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder setUserAccessToken(java.lang.String value) {
       validate(fields()[2], value);
       this.userAccessToken = value;
@@ -241,12 +277,16 @@ public class UserAttachRequest extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'userAccessToken' field has been set */
+    /**
+     * Checks whether the 'userAccessToken' field has been set
+     */
     public boolean hasUserAccessToken() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'userAccessToken' field */
+    /**
+     * Clears the value of the 'userAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest.Builder clearUserAccessToken() {
       userAccessToken = null;
       fieldSetFlags()[2] = false;

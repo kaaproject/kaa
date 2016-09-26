@@ -23,7 +23,6 @@ import java.io.Serializable;
 /**
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public final class EndpointRegistrationDto implements HasId, Serializable {

@@ -100,7 +100,9 @@ public class DataStruct implements org.apache.thrift.TBase<DataStruct, DataStruc
     this.key = null;
   }
 
-  /** Returns true if field key is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field key is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetKey() {
     return this.key != null;
   }
@@ -116,6 +118,11 @@ public class DataStruct implements org.apache.thrift.TBase<DataStruct, DataStruc
     return data == null ? null : data.array();
   }
 
+  public DataStruct setData(byte[] data) {
+    this.data = data == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(data, data.length));
+    return this;
+  }
+
   public DataStruct setData(ByteBuffer data) {
     this.data = org.apache.thrift.TBaseHelper.copyBinary(data);
     return this;
@@ -125,16 +132,13 @@ public class DataStruct implements org.apache.thrift.TBase<DataStruct, DataStruc
     return org.apache.thrift.TBaseHelper.copyBinary(data);
   }
 
-  public DataStruct setData(byte[] data) {
-    this.data = data == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(data, data.length));
-    return this;
-  }
-
   public void unsetData() {
     this.data = null;
   }
 
-  /** Returns true if field data is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field data is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetData() {
     return this.data != null;
   }
@@ -178,7 +182,10 @@ public class DataStruct implements org.apache.thrift.TBase<DataStruct, DataStruc
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -332,7 +339,10 @@ public class DataStruct implements org.apache.thrift.TBase<DataStruct, DataStruc
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     KEY((short) 1, "key"),
     DATA((short) 2, "data");

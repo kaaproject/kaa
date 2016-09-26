@@ -34,7 +34,6 @@ import java.io.Serializable;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Table(name = CassandraModelConstants.EP_REGISTRATION_COLUMN_FAMILY_NAME)

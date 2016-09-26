@@ -24,6 +24,7 @@ public class GenerationContext {
   private final String parentName;
   private final String fieldName;
   private DirectionType direction;
+
   public GenerationContext(String parentName, String fieldName, String direction) {
     this.parentName = parentName;
     this.fieldName = fieldName;

@@ -10,7 +10,6 @@ package org.kaaproject.kaa.server.common.thrift.gen.operations;
 
 /**
  * This is enum of changes type. The same as org.kaaproject.kaa.common.dto.ChangeType
- *
  */
 public enum Operation implements org.apache.thrift.TEnum {
   UPDATE(1),
@@ -43,6 +42,7 @@ public enum Operation implements org.apache.thrift.TEnum {
 
   /**
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
+   *
    * @return null if the value is not found.
    */
   public static Operation findByValue(int value) {

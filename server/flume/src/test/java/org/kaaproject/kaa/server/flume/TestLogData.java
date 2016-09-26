@@ -15,6 +15,7 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
   public java.lang.CharSequence tag;
   @Deprecated
   public java.lang.CharSequence message;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -36,17 +37,23 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
     return SCHEMA$;
   }
 
-  /** Creates a new TestLogData RecordBuilder */
+  /**
+   * Creates a new TestLogData RecordBuilder
+   */
   public static org.kaaproject.kaa.server.flume.TestLogData.Builder newBuilder() {
     return new org.kaaproject.kaa.server.flume.TestLogData.Builder();
   }
 
-  /** Creates a new TestLogData RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new TestLogData RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.flume.TestLogData.Builder newBuilder(org.kaaproject.kaa.server.flume.TestLogData.Builder other) {
     return new org.kaaproject.kaa.server.flume.TestLogData.Builder(other);
   }
 
-  /** Creates a new TestLogData RecordBuilder by copying an existing TestLogData instance */
+  /**
+   * Creates a new TestLogData RecordBuilder by copying an existing TestLogData instance
+   */
   public static org.kaaproject.kaa.server.flume.TestLogData.Builder newBuilder(org.kaaproject.kaa.server.flume.TestLogData other) {
     return new org.kaaproject.kaa.server.flume.TestLogData.Builder(other);
   }
@@ -96,6 +103,7 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'level' field.
+   *
    * @param value the value to set.
    */
   public void setLevel(org.kaaproject.kaa.server.flume.Level value) {
@@ -111,6 +119,7 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'tag' field.
+   *
    * @param value the value to set.
    */
   public void setTag(java.lang.CharSequence value) {
@@ -126,6 +135,7 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'message' field.
+   *
    * @param value the value to set.
    */
   public void setMessage(java.lang.CharSequence value) {
@@ -142,12 +152,16 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.CharSequence tag;
     private java.lang.CharSequence message;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.flume.TestLogData.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.flume.TestLogData.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.level)) {
@@ -164,7 +178,9 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Creates a Builder by copying an existing TestLogData instance */
+    /**
+     * Creates a Builder by copying an existing TestLogData instance
+     */
     private Builder(org.kaaproject.kaa.server.flume.TestLogData other) {
       super(org.kaaproject.kaa.server.flume.TestLogData.SCHEMA$);
       if (isValidValue(fields()[0], other.level)) {
@@ -181,12 +197,16 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Gets the value of the 'level' field */
+    /**
+     * Gets the value of the 'level' field
+     */
     public org.kaaproject.kaa.server.flume.Level getLevel() {
       return level;
     }
 
-    /** Sets the value of the 'level' field */
+    /**
+     * Sets the value of the 'level' field
+     */
     public org.kaaproject.kaa.server.flume.TestLogData.Builder setLevel(org.kaaproject.kaa.server.flume.Level value) {
       validate(fields()[0], value);
       this.level = value;
@@ -194,24 +214,32 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'level' field has been set */
+    /**
+     * Checks whether the 'level' field has been set
+     */
     public boolean hasLevel() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'level' field */
+    /**
+     * Clears the value of the 'level' field
+     */
     public org.kaaproject.kaa.server.flume.TestLogData.Builder clearLevel() {
       level = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'tag' field */
+    /**
+     * Gets the value of the 'tag' field
+     */
     public java.lang.CharSequence getTag() {
       return tag;
     }
 
-    /** Sets the value of the 'tag' field */
+    /**
+     * Sets the value of the 'tag' field
+     */
     public org.kaaproject.kaa.server.flume.TestLogData.Builder setTag(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.tag = value;
@@ -219,24 +247,32 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'tag' field has been set */
+    /**
+     * Checks whether the 'tag' field has been set
+     */
     public boolean hasTag() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'tag' field */
+    /**
+     * Clears the value of the 'tag' field
+     */
     public org.kaaproject.kaa.server.flume.TestLogData.Builder clearTag() {
       tag = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'message' field */
+    /**
+     * Gets the value of the 'message' field
+     */
     public java.lang.CharSequence getMessage() {
       return message;
     }
 
-    /** Sets the value of the 'message' field */
+    /**
+     * Sets the value of the 'message' field
+     */
     public org.kaaproject.kaa.server.flume.TestLogData.Builder setMessage(java.lang.CharSequence value) {
       validate(fields()[2], value);
       this.message = value;
@@ -244,12 +280,16 @@ public class TestLogData extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'message' field has been set */
+    /**
+     * Checks whether the 'message' field has been set
+     */
     public boolean hasMessage() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'message' field */
+    /**
+     * Clears the value of the 'message' field
+     */
     public org.kaaproject.kaa.server.flume.TestLogData.Builder clearMessage() {
       message = null;
       fieldSetFlags()[2] = false;

@@ -12,6 +12,7 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
   private java.lang.String app_id;
   private java.lang.String app_secret;
   private int max_parallel_connections;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,24 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
     return SCHEMA$;
   }
 
-  /** Creates a new FacebookAvroConfig RecordBuilder */
+  /**
+   * Creates a new FacebookAvroConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder();
   }
 
-  /** Creates a new FacebookAvroConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new FacebookAvroConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder other) {
     return new org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder(other);
   }
 
-  /** Creates a new FacebookAvroConfig RecordBuilder by copying an existing FacebookAvroConfig instance */
+  /**
+   * Creates a new FacebookAvroConfig RecordBuilder by copying an existing FacebookAvroConfig
+   * instance
+   */
   public static org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig other) {
     return new org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder(other);
   }
@@ -93,6 +101,7 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'app_id' field.
+   *
    * @param value the value to set.
    */
   public void setAppId(java.lang.String value) {
@@ -108,6 +117,7 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'app_secret' field.
+   *
    * @param value the value to set.
    */
   public void setAppSecret(java.lang.String value) {
@@ -123,6 +133,7 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'max_parallel_connections' field.
+   *
    * @param value the value to set.
    */
   public void setMaxParallelConnections(java.lang.Integer value) {
@@ -139,12 +150,16 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
     private java.lang.String app_secret;
     private int max_parallel_connections;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.app_id)) {
@@ -161,7 +176,9 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Creates a Builder by copying an existing FacebookAvroConfig instance */
+    /**
+     * Creates a Builder by copying an existing FacebookAvroConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig other) {
       super(org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.app_id)) {
@@ -178,12 +195,16 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Gets the value of the 'app_id' field */
+    /**
+     * Gets the value of the 'app_id' field
+     */
     public java.lang.String getAppId() {
       return app_id;
     }
 
-    /** Sets the value of the 'app_id' field */
+    /**
+     * Sets the value of the 'app_id' field
+     */
     public org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder setAppId(java.lang.String value) {
       validate(fields()[0], value);
       this.app_id = value;
@@ -191,24 +212,32 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'app_id' field has been set */
+    /**
+     * Checks whether the 'app_id' field has been set
+     */
     public boolean hasAppId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'app_id' field */
+    /**
+     * Clears the value of the 'app_id' field
+     */
     public org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder clearAppId() {
       app_id = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'app_secret' field */
+    /**
+     * Gets the value of the 'app_secret' field
+     */
     public java.lang.String getAppSecret() {
       return app_secret;
     }
 
-    /** Sets the value of the 'app_secret' field */
+    /**
+     * Sets the value of the 'app_secret' field
+     */
     public org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder setAppSecret(java.lang.String value) {
       validate(fields()[1], value);
       this.app_secret = value;
@@ -216,24 +245,32 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'app_secret' field has been set */
+    /**
+     * Checks whether the 'app_secret' field has been set
+     */
     public boolean hasAppSecret() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'app_secret' field */
+    /**
+     * Clears the value of the 'app_secret' field
+     */
     public org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder clearAppSecret() {
       app_secret = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'max_parallel_connections' field */
+    /**
+     * Gets the value of the 'max_parallel_connections' field
+     */
     public java.lang.Integer getMaxParallelConnections() {
       return max_parallel_connections;
     }
 
-    /** Sets the value of the 'max_parallel_connections' field */
+    /**
+     * Sets the value of the 'max_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder setMaxParallelConnections(int value) {
       validate(fields()[2], value);
       this.max_parallel_connections = value;
@@ -241,12 +278,16 @@ public class FacebookAvroConfig extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'max_parallel_connections' field has been set */
+    /**
+     * Checks whether the 'max_parallel_connections' field has been set
+     */
     public boolean hasMaxParallelConnections() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'max_parallel_connections' field */
+    /**
+     * Clears the value of the 'max_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfig.Builder clearMaxParallelConnections() {
       fieldSetFlags()[2] = false;
       return this;

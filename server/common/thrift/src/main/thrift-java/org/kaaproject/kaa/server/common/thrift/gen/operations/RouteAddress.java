@@ -102,6 +102,11 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     return endpointKey == null ? null : endpointKey.array();
   }
 
+  public RouteAddress setEndpointKey(byte[] endpointKey) {
+    this.endpointKey = endpointKey == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointKey, endpointKey.length));
+    return this;
+  }
+
   public RouteAddress setEndpointKey(ByteBuffer endpointKey) {
     this.endpointKey = org.apache.thrift.TBaseHelper.copyBinary(endpointKey);
     return this;
@@ -111,16 +116,13 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     return org.apache.thrift.TBaseHelper.copyBinary(endpointKey);
   }
 
-  public RouteAddress setEndpointKey(byte[] endpointKey) {
-    this.endpointKey = endpointKey == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointKey, endpointKey.length));
-    return this;
-  }
-
   public void unsetEndpointKey() {
     this.endpointKey = null;
   }
 
-  /** Returns true if field endpointKey is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointKey is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEndpointKey() {
     return this.endpointKey != null;
   }
@@ -144,7 +146,9 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     this.applicationToken = null;
   }
 
-  /** Returns true if field applicationToken is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field applicationToken is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetApplicationToken() {
     return this.applicationToken != null;
   }
@@ -168,7 +172,9 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     this.operationsServerId = null;
   }
 
-  /** Returns true if field operationsServerId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field operationsServerId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetOperationsServerId() {
     return this.operationsServerId != null;
   }
@@ -223,7 +229,10 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -411,7 +420,10 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ENDPOINT_KEY((short) 1, "endpointKey"),
     APPLICATION_TOKEN((short) 2, "applicationToken"),

@@ -50,7 +50,6 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
   }
 
   /**
-   *
    * @see CommandStatus
    */
   public CommandStatus status; // required
@@ -90,7 +89,6 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
   }
 
   /**
-   *
    * @see CommandStatus
    */
   public CommandStatus getStatus() {
@@ -98,7 +96,6 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
   }
 
   /**
-   *
    * @see CommandStatus
    */
   public CommandResult setStatus(CommandStatus status) {
@@ -110,7 +107,9 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
     this.status = null;
   }
 
-  /** Returns true if field status is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field status is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetStatus() {
     return this.status != null;
   }
@@ -134,7 +133,9 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
     this.message = null;
   }
 
-  /** Returns true if field message is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field message is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetMessage() {
     return this.message != null;
   }
@@ -178,7 +179,10 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -332,10 +336,12 @@ public class CommandResult implements org.apache.thrift.TBase<CommandResult, Com
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     /**
-     *
      * @see CommandStatus
      */
     STATUS((short) 1, "status"),

@@ -14,17 +14,23 @@ public class EmptyData extends org.apache.avro.specific.SpecificRecordBase imple
     return SCHEMA$;
   }
 
-  /** Creates a new EmptyData RecordBuilder */
+  /**
+   * Creates a new EmptyData RecordBuilder
+   */
   public static org.kaaproject.kaa.schema.system.EmptyData.Builder newBuilder() {
     return new org.kaaproject.kaa.schema.system.EmptyData.Builder();
   }
 
-  /** Creates a new EmptyData RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EmptyData RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.schema.system.EmptyData.Builder newBuilder(org.kaaproject.kaa.schema.system.EmptyData.Builder other) {
     return new org.kaaproject.kaa.schema.system.EmptyData.Builder(other);
   }
 
-  /** Creates a new EmptyData RecordBuilder by copying an existing EmptyData instance */
+  /**
+   * Creates a new EmptyData RecordBuilder by copying an existing EmptyData instance
+   */
   public static org.kaaproject.kaa.schema.system.EmptyData.Builder newBuilder(org.kaaproject.kaa.schema.system.EmptyData other) {
     return new org.kaaproject.kaa.schema.system.EmptyData.Builder(other);
   }
@@ -57,17 +63,23 @@ public class EmptyData extends org.apache.avro.specific.SpecificRecordBase imple
       implements org.apache.avro.data.RecordBuilder<EmptyData> {
 
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.schema.system.EmptyData.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.schema.system.EmptyData.Builder other) {
       super(other);
     }
 
-    /** Creates a Builder by copying an existing EmptyData instance */
+    /**
+     * Creates a Builder by copying an existing EmptyData instance
+     */
     private Builder(org.kaaproject.kaa.schema.system.EmptyData other) {
       super(org.kaaproject.kaa.schema.system.EmptyData.SCHEMA$);
     }

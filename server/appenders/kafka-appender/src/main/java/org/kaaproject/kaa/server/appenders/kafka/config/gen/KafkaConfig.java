@@ -19,6 +19,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
   private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression kafkaCompression;
   private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement kafkaAcknowledgement;
   private int retries;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -47,17 +48,23 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     return SCHEMA$;
   }
 
-  /** Creates a new KafkaConfig RecordBuilder */
+  /**
+   * Creates a new KafkaConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder();
   }
 
-  /** Creates a new KafkaConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new KafkaConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder(other);
   }
 
-  /** Creates a new KafkaConfig RecordBuilder by copying an existing KafkaConfig instance */
+  /**
+   * Creates a new KafkaConfig RecordBuilder by copying an existing KafkaConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig other) {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder(other);
   }
@@ -142,6 +149,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'kafkaServers' field.
+   *
    * @param value the value to set.
    */
   public void setKafkaServers(java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> value) {
@@ -157,6 +165,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'topic' field.
+   *
    * @param value the value to set.
    */
   public void setTopic(java.lang.String value) {
@@ -172,6 +181,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'useDefaultPartitioner' field.
+   *
    * @param value the value to set.
    */
   public void setUseDefaultPartitioner(java.lang.Boolean value) {
@@ -187,6 +197,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'partitionCount' field.
+   *
    * @param value the value to set.
    */
   public void setPartitionCount(java.lang.Integer value) {
@@ -202,6 +213,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'kafkaKeyType' field.
+   *
    * @param value the value to set.
    */
   public void setKafkaKeyType(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType value) {
@@ -217,6 +229,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'executorThreadPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setExecutorThreadPoolSize(java.lang.Integer value) {
@@ -232,6 +245,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'bufferMemorySize' field.
+   *
    * @param value the value to set.
    */
   public void setBufferMemorySize(java.lang.Long value) {
@@ -247,6 +261,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'kafkaCompression' field.
+   *
    * @param value the value to set.
    */
   public void setKafkaCompression(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression value) {
@@ -262,6 +277,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'kafkaAcknowledgement' field.
+   *
    * @param value the value to set.
    */
   public void setKafkaAcknowledgement(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement value) {
@@ -277,6 +293,7 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'retries' field.
+   *
    * @param value the value to set.
    */
   public void setRetries(java.lang.Integer value) {
@@ -300,12 +317,16 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement kafkaAcknowledgement;
     private int retries;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.kafkaServers)) {
@@ -350,7 +371,9 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Creates a Builder by copying an existing KafkaConfig instance */
+    /**
+     * Creates a Builder by copying an existing KafkaConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig other) {
       super(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.kafkaServers)) {
@@ -395,12 +418,16 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Gets the value of the 'kafkaServers' field */
+    /**
+     * Gets the value of the 'kafkaServers' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> getKafkaServers() {
       return kafkaServers;
     }
 
-    /** Sets the value of the 'kafkaServers' field */
+    /**
+     * Sets the value of the 'kafkaServers' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaServers(java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> value) {
       validate(fields()[0], value);
       this.kafkaServers = value;
@@ -408,24 +435,32 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'kafkaServers' field has been set */
+    /**
+     * Checks whether the 'kafkaServers' field has been set
+     */
     public boolean hasKafkaServers() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'kafkaServers' field */
+    /**
+     * Clears the value of the 'kafkaServers' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaServers() {
       kafkaServers = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'topic' field */
+    /**
+     * Gets the value of the 'topic' field
+     */
     public java.lang.String getTopic() {
       return topic;
     }
 
-    /** Sets the value of the 'topic' field */
+    /**
+     * Sets the value of the 'topic' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setTopic(java.lang.String value) {
       validate(fields()[1], value);
       this.topic = value;
@@ -433,24 +468,32 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'topic' field has been set */
+    /**
+     * Checks whether the 'topic' field has been set
+     */
     public boolean hasTopic() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'topic' field */
+    /**
+     * Clears the value of the 'topic' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearTopic() {
       topic = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'useDefaultPartitioner' field */
+    /**
+     * Gets the value of the 'useDefaultPartitioner' field
+     */
     public java.lang.Boolean getUseDefaultPartitioner() {
       return useDefaultPartitioner;
     }
 
-    /** Sets the value of the 'useDefaultPartitioner' field */
+    /**
+     * Sets the value of the 'useDefaultPartitioner' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setUseDefaultPartitioner(boolean value) {
       validate(fields()[2], value);
       this.useDefaultPartitioner = value;
@@ -458,23 +501,31 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'useDefaultPartitioner' field has been set */
+    /**
+     * Checks whether the 'useDefaultPartitioner' field has been set
+     */
     public boolean hasUseDefaultPartitioner() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'useDefaultPartitioner' field */
+    /**
+     * Clears the value of the 'useDefaultPartitioner' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearUseDefaultPartitioner() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'partitionCount' field */
+    /**
+     * Gets the value of the 'partitionCount' field
+     */
     public java.lang.Integer getPartitionCount() {
       return partitionCount;
     }
 
-    /** Sets the value of the 'partitionCount' field */
+    /**
+     * Sets the value of the 'partitionCount' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setPartitionCount(int value) {
       validate(fields()[3], value);
       this.partitionCount = value;
@@ -482,23 +533,31 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'partitionCount' field has been set */
+    /**
+     * Checks whether the 'partitionCount' field has been set
+     */
     public boolean hasPartitionCount() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'partitionCount' field */
+    /**
+     * Clears the value of the 'partitionCount' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearPartitionCount() {
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'kafkaKeyType' field */
+    /**
+     * Gets the value of the 'kafkaKeyType' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType getKafkaKeyType() {
       return kafkaKeyType;
     }
 
-    /** Sets the value of the 'kafkaKeyType' field */
+    /**
+     * Sets the value of the 'kafkaKeyType' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaKeyType(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType value) {
       validate(fields()[4], value);
       this.kafkaKeyType = value;
@@ -506,24 +565,32 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'kafkaKeyType' field has been set */
+    /**
+     * Checks whether the 'kafkaKeyType' field has been set
+     */
     public boolean hasKafkaKeyType() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'kafkaKeyType' field */
+    /**
+     * Clears the value of the 'kafkaKeyType' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaKeyType() {
       kafkaKeyType = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'executorThreadPoolSize' field */
+    /**
+     * Gets the value of the 'executorThreadPoolSize' field
+     */
     public java.lang.Integer getExecutorThreadPoolSize() {
       return executorThreadPoolSize;
     }
 
-    /** Sets the value of the 'executorThreadPoolSize' field */
+    /**
+     * Sets the value of the 'executorThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setExecutorThreadPoolSize(int value) {
       validate(fields()[5], value);
       this.executorThreadPoolSize = value;
@@ -531,23 +598,31 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'executorThreadPoolSize' field has been set */
+    /**
+     * Checks whether the 'executorThreadPoolSize' field has been set
+     */
     public boolean hasExecutorThreadPoolSize() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'executorThreadPoolSize' field */
+    /**
+     * Clears the value of the 'executorThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearExecutorThreadPoolSize() {
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'bufferMemorySize' field */
+    /**
+     * Gets the value of the 'bufferMemorySize' field
+     */
     public java.lang.Long getBufferMemorySize() {
       return bufferMemorySize;
     }
 
-    /** Sets the value of the 'bufferMemorySize' field */
+    /**
+     * Sets the value of the 'bufferMemorySize' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setBufferMemorySize(long value) {
       validate(fields()[6], value);
       this.bufferMemorySize = value;
@@ -555,23 +630,31 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'bufferMemorySize' field has been set */
+    /**
+     * Checks whether the 'bufferMemorySize' field has been set
+     */
     public boolean hasBufferMemorySize() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'bufferMemorySize' field */
+    /**
+     * Clears the value of the 'bufferMemorySize' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearBufferMemorySize() {
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'kafkaCompression' field */
+    /**
+     * Gets the value of the 'kafkaCompression' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression getKafkaCompression() {
       return kafkaCompression;
     }
 
-    /** Sets the value of the 'kafkaCompression' field */
+    /**
+     * Sets the value of the 'kafkaCompression' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaCompression(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression value) {
       validate(fields()[7], value);
       this.kafkaCompression = value;
@@ -579,24 +662,32 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'kafkaCompression' field has been set */
+    /**
+     * Checks whether the 'kafkaCompression' field has been set
+     */
     public boolean hasKafkaCompression() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'kafkaCompression' field */
+    /**
+     * Clears the value of the 'kafkaCompression' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaCompression() {
       kafkaCompression = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'kafkaAcknowledgement' field */
+    /**
+     * Gets the value of the 'kafkaAcknowledgement' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement getKafkaAcknowledgement() {
       return kafkaAcknowledgement;
     }
 
-    /** Sets the value of the 'kafkaAcknowledgement' field */
+    /**
+     * Sets the value of the 'kafkaAcknowledgement' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaAcknowledgement(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement value) {
       validate(fields()[8], value);
       this.kafkaAcknowledgement = value;
@@ -604,24 +695,32 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'kafkaAcknowledgement' field has been set */
+    /**
+     * Checks whether the 'kafkaAcknowledgement' field has been set
+     */
     public boolean hasKafkaAcknowledgement() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'kafkaAcknowledgement' field */
+    /**
+     * Clears the value of the 'kafkaAcknowledgement' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaAcknowledgement() {
       kafkaAcknowledgement = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'retries' field */
+    /**
+     * Gets the value of the 'retries' field
+     */
     public java.lang.Integer getRetries() {
       return retries;
     }
 
-    /** Sets the value of the 'retries' field */
+    /**
+     * Sets the value of the 'retries' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setRetries(int value) {
       validate(fields()[9], value);
       this.retries = value;
@@ -629,12 +728,16 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'retries' field has been set */
+    /**
+     * Checks whether the 'retries' field has been set
+     */
     public boolean hasRetries() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'retries' field */
+    /**
+     * Clears the value of the 'retries' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearRetries() {
       fieldSetFlags()[9] = false;
       return this;

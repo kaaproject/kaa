@@ -12,6 +12,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
   private int requestId;
   private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
   private org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode errorCode;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new LogDeliveryStatus RecordBuilder */
+  /**
+   * Creates a new LogDeliveryStatus RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder();
   }
 
-  /** Creates a new LogDeliveryStatus RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new LogDeliveryStatus RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder(other);
   }
 
-  /** Creates a new LogDeliveryStatus RecordBuilder by copying an existing LogDeliveryStatus instance */
+  /**
+   * Creates a new LogDeliveryStatus RecordBuilder by copying an existing LogDeliveryStatus instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder(other);
   }
@@ -93,6 +100,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -108,6 +116,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'result' field.
+   *
    * @param value the value to set.
    */
   public void setResult(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
@@ -123,6 +132,7 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'errorCode' field.
+   *
    * @param value the value to set.
    */
   public void setErrorCode(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode value) {
@@ -139,12 +149,16 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
     private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
     private org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode errorCode;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -161,7 +175,9 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing LogDeliveryStatus instance */
+    /**
+     * Creates a Builder by copying an existing LogDeliveryStatus instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus other) {
       super(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -178,12 +194,16 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -191,23 +211,31 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'result' field */
+    /**
+     * Gets the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType getResult() {
       return result;
     }
 
-    /** Sets the value of the 'result' field */
+    /**
+     * Sets the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder setResult(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
       validate(fields()[1], value);
       this.result = value;
@@ -215,24 +243,32 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'result' field has been set */
+    /**
+     * Checks whether the 'result' field has been set
+     */
     public boolean hasResult() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'result' field */
+    /**
+     * Clears the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder clearResult() {
       result = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'errorCode' field */
+    /**
+     * Gets the value of the 'errorCode' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode getErrorCode() {
       return errorCode;
     }
 
-    /** Sets the value of the 'errorCode' field */
+    /**
+     * Sets the value of the 'errorCode' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder setErrorCode(org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode value) {
       validate(fields()[2], value);
       this.errorCode = value;
@@ -240,12 +276,16 @@ public class LogDeliveryStatus extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'errorCode' field has been set */
+    /**
+     * Checks whether the 'errorCode' field has been set
+     */
     public boolean hasErrorCode() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'errorCode' field */
+    /**
+     * Clears the value of the 'errorCode' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus.Builder clearErrorCode() {
       errorCode = null;
       fieldSetFlags()[2] = false;

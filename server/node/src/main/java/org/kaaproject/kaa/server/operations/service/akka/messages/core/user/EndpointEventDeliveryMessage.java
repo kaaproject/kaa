@@ -20,6 +20,7 @@ public class EndpointEventDeliveryMessage implements UserAwareMessage {
 
   private final EndpointEventReceiveMessage message;
   private final EventDeliveryStatus status;
+
   public EndpointEventDeliveryMessage(EndpointEventReceiveMessage message,
                                       EventDeliveryStatus status) {
     this.message = message;

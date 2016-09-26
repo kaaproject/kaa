@@ -202,6 +202,7 @@ public class CassandraModelConstants {
   public static final String CREDENTIALS_ID_PROPERTY = "creds_id";
   public static final String CREDENTIALS_BODY_PROPERTY = "creds_body";
   public static final String CREDENTIALS_STATUS_PROPERTY = "creds_status";
+
   private CassandraModelConstants() {
   }
 }

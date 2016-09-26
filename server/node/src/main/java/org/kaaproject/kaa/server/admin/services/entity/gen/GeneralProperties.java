@@ -11,6 +11,7 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GeneralProperties\",\"namespace\":\"org.kaaproject.kaa.server.admin.services.entity.gen\",\"fields\":[{\"name\":\"appTitle\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Application title\",\"maxLength\":1000,\"by_default\":\"Kaa\"},{\"name\":\"baseUrl\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Base URL\",\"by_default\":\"http://localhost:8080\"}]}");
   private java.lang.String appTitle;
   private java.lang.String baseUrl;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new GeneralProperties RecordBuilder */
+  /**
+   * Creates a new GeneralProperties RecordBuilder
+   */
   public static org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder newBuilder() {
     return new org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder();
   }
 
-  /** Creates a new GeneralProperties RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new GeneralProperties RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder newBuilder(org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder other) {
     return new org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder(other);
   }
 
-  /** Creates a new GeneralProperties RecordBuilder by copying an existing GeneralProperties instance */
+  /**
+   * Creates a new GeneralProperties RecordBuilder by copying an existing GeneralProperties instance
+   */
   public static org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder newBuilder(org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties other) {
     return new org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder(other);
   }
@@ -86,6 +93,7 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'appTitle' field.
+   *
    * @param value the value to set.
    */
   public void setAppTitle(java.lang.String value) {
@@ -101,6 +109,7 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'baseUrl' field.
+   *
    * @param value the value to set.
    */
   public void setBaseUrl(java.lang.String value) {
@@ -116,12 +125,16 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
     private java.lang.String appTitle;
     private java.lang.String baseUrl;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.appTitle)) {
@@ -134,7 +147,9 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing GeneralProperties instance */
+    /**
+     * Creates a Builder by copying an existing GeneralProperties instance
+     */
     private Builder(org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties other) {
       super(org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.SCHEMA$);
       if (isValidValue(fields()[0], other.appTitle)) {
@@ -147,12 +162,16 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'appTitle' field */
+    /**
+     * Gets the value of the 'appTitle' field
+     */
     public java.lang.String getAppTitle() {
       return appTitle;
     }
 
-    /** Sets the value of the 'appTitle' field */
+    /**
+     * Sets the value of the 'appTitle' field
+     */
     public org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder setAppTitle(java.lang.String value) {
       validate(fields()[0], value);
       this.appTitle = value;
@@ -160,24 +179,32 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'appTitle' field has been set */
+    /**
+     * Checks whether the 'appTitle' field has been set
+     */
     public boolean hasAppTitle() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'appTitle' field */
+    /**
+     * Clears the value of the 'appTitle' field
+     */
     public org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder clearAppTitle() {
       appTitle = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'baseUrl' field */
+    /**
+     * Gets the value of the 'baseUrl' field
+     */
     public java.lang.String getBaseUrl() {
       return baseUrl;
     }
 
-    /** Sets the value of the 'baseUrl' field */
+    /**
+     * Sets the value of the 'baseUrl' field
+     */
     public org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder setBaseUrl(java.lang.String value) {
       validate(fields()[1], value);
       this.baseUrl = value;
@@ -185,12 +212,16 @@ public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'baseUrl' field has been set */
+    /**
+     * Checks whether the 'baseUrl' field has been set
+     */
     public boolean hasBaseUrl() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'baseUrl' field */
+    /**
+     * Clears the value of the 'baseUrl' field
+     */
     public org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties.Builder clearBaseUrl() {
       baseUrl = null;
       fieldSetFlags()[1] = false;

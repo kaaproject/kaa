@@ -32,7 +32,6 @@ import java.io.IOException;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)

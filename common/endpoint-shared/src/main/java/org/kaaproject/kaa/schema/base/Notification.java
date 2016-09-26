@@ -14,17 +14,23 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
     return SCHEMA$;
   }
 
-  /** Creates a new Notification RecordBuilder */
+  /**
+   * Creates a new Notification RecordBuilder
+   */
   public static org.kaaproject.kaa.schema.base.Notification.Builder newBuilder() {
     return new org.kaaproject.kaa.schema.base.Notification.Builder();
   }
 
-  /** Creates a new Notification RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new Notification RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.schema.base.Notification.Builder newBuilder(org.kaaproject.kaa.schema.base.Notification.Builder other) {
     return new org.kaaproject.kaa.schema.base.Notification.Builder(other);
   }
 
-  /** Creates a new Notification RecordBuilder by copying an existing Notification instance */
+  /**
+   * Creates a new Notification RecordBuilder by copying an existing Notification instance
+   */
   public static org.kaaproject.kaa.schema.base.Notification.Builder newBuilder(org.kaaproject.kaa.schema.base.Notification other) {
     return new org.kaaproject.kaa.schema.base.Notification.Builder(other);
   }
@@ -57,17 +63,23 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       implements org.apache.avro.data.RecordBuilder<Notification> {
 
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.schema.base.Notification.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.schema.base.Notification.Builder other) {
       super(other);
     }
 
-    /** Creates a Builder by copying an existing Notification instance */
+    /**
+     * Creates a Builder by copying an existing Notification instance
+     */
     private Builder(org.kaaproject.kaa.schema.base.Notification other) {
       super(org.kaaproject.kaa.schema.base.Notification.SCHEMA$);
     }

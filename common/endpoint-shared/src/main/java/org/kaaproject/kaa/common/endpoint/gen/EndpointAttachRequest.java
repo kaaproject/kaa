@@ -11,6 +11,7 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EndpointAttachRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"out\"}");
   private int requestId;
   private java.lang.String endpointAccessToken;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new EndpointAttachRequest RecordBuilder */
+  /**
+   * Creates a new EndpointAttachRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder();
   }
 
-  /** Creates a new EndpointAttachRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EndpointAttachRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder(other);
   }
 
-  /** Creates a new EndpointAttachRequest RecordBuilder by copying an existing EndpointAttachRequest instance */
+  /**
+   * Creates a new EndpointAttachRequest RecordBuilder by copying an existing EndpointAttachRequest
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder(other);
   }
@@ -86,6 +94,7 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -101,6 +110,7 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'endpointAccessToken' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointAccessToken(java.lang.String value) {
@@ -116,12 +126,16 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
     private int requestId;
     private java.lang.String endpointAccessToken;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -134,7 +148,9 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing EndpointAttachRequest instance */
+    /**
+     * Creates a Builder by copying an existing EndpointAttachRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -147,12 +163,16 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -160,23 +180,31 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointAccessToken' field */
+    /**
+     * Gets the value of the 'endpointAccessToken' field
+     */
     public java.lang.String getEndpointAccessToken() {
       return endpointAccessToken;
     }
 
-    /** Sets the value of the 'endpointAccessToken' field */
+    /**
+     * Sets the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder setEndpointAccessToken(java.lang.String value) {
       validate(fields()[1], value);
       this.endpointAccessToken = value;
@@ -184,12 +212,16 @@ public class EndpointAttachRequest extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'endpointAccessToken' field has been set */
+    /**
+     * Checks whether the 'endpointAccessToken' field has been set
+     */
     public boolean hasEndpointAccessToken() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'endpointAccessToken' field */
+    /**
+     * Clears the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest.Builder clearEndpointAccessToken() {
       endpointAccessToken = null;
       fieldSetFlags()[1] = false;

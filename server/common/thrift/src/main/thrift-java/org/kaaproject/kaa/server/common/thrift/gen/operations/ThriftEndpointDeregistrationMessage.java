@@ -51,7 +51,6 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
 
   public ThriftEntityAddress address; // required
   /**
-   *
    * @see ThriftActorClassifier
    */
   public ThriftActorClassifier actorClassifier; // required
@@ -102,7 +101,9 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
     this.address = null;
   }
 
-  /** Returns true if field address is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field address is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAddress() {
     return this.address != null;
   }
@@ -114,7 +115,6 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
   }
 
   /**
-   *
    * @see ThriftActorClassifier
    */
   public ThriftActorClassifier getActorClassifier() {
@@ -122,7 +122,6 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
   }
 
   /**
-   *
    * @see ThriftActorClassifier
    */
   public ThriftEndpointDeregistrationMessage setActorClassifier(ThriftActorClassifier actorClassifier) {
@@ -134,7 +133,9 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
     this.actorClassifier = null;
   }
 
-  /** Returns true if field actorClassifier is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field actorClassifier is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetActorClassifier() {
     return this.actorClassifier != null;
   }
@@ -178,7 +179,10 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -335,11 +339,13 @@ public class ThriftEndpointDeregistrationMessage implements org.apache.thrift.TB
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ADDRESS((short) 1, "address"),
     /**
-     *
      * @see ThriftActorClassifier
      */
     ACTOR_CLASSIFIER((short) 2, "actorClassifier");

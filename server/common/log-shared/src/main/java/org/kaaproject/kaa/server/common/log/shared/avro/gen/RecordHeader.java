@@ -30,6 +30,7 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
   private java.lang.Integer headerVersion;
   private java.lang.Long timestamp;
   private java.lang.Integer logSchemaVersion;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -53,17 +54,23 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
     return SCHEMA$;
   }
 
-  /** Creates a new RecordHeader RecordBuilder */
+  /**
+   * Creates a new RecordHeader RecordBuilder
+   */
   public static org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder();
   }
 
-  /** Creates a new RecordHeader RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new RecordHeader RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder newBuilder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder other) {
     return new org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder(other);
   }
 
-  /** Creates a new RecordHeader RecordBuilder by copying an existing RecordHeader instance */
+  /**
+   * Creates a new RecordHeader RecordBuilder by copying an existing RecordHeader instance
+   */
   public static org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder newBuilder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader other) {
     return new org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder(other);
   }
@@ -123,6 +130,7 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'endpointKeyHash' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointKeyHash(java.lang.String value) {
@@ -138,6 +146,7 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'applicationToken' field.
+   *
    * @param value the value to set.
    */
   public void setApplicationToken(java.lang.String value) {
@@ -153,6 +162,7 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'headerVersion' field.
+   *
    * @param value the value to set.
    */
   public void setHeaderVersion(java.lang.Integer value) {
@@ -168,6 +178,7 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'timestamp' field.
+   *
    * @param value the value to set.
    */
   public void setTimestamp(java.lang.Long value) {
@@ -183,6 +194,7 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
 
   /**
    * Sets the value of the 'logSchemaVersion' field.
+   *
    * @param value the value to set.
    */
   public void setLogSchemaVersion(java.lang.Integer value) {
@@ -201,12 +213,16 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
     private java.lang.Long timestamp;
     private java.lang.Integer logSchemaVersion;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.endpointKeyHash)) {
@@ -231,7 +247,9 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Creates a Builder by copying an existing RecordHeader instance */
+    /**
+     * Creates a Builder by copying an existing RecordHeader instance
+     */
     private Builder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader other) {
       super(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.SCHEMA$);
       if (isValidValue(fields()[0], other.endpointKeyHash)) {
@@ -256,12 +274,16 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Gets the value of the 'endpointKeyHash' field */
+    /**
+     * Gets the value of the 'endpointKeyHash' field
+     */
     public java.lang.String getEndpointKeyHash() {
       return endpointKeyHash;
     }
 
-    /** Sets the value of the 'endpointKeyHash' field */
+    /**
+     * Sets the value of the 'endpointKeyHash' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder setEndpointKeyHash(java.lang.String value) {
       validate(fields()[0], value);
       this.endpointKeyHash = value;
@@ -269,24 +291,32 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'endpointKeyHash' field has been set */
+    /**
+     * Checks whether the 'endpointKeyHash' field has been set
+     */
     public boolean hasEndpointKeyHash() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'endpointKeyHash' field */
+    /**
+     * Clears the value of the 'endpointKeyHash' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder clearEndpointKeyHash() {
       endpointKeyHash = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'applicationToken' field */
+    /**
+     * Gets the value of the 'applicationToken' field
+     */
     public java.lang.String getApplicationToken() {
       return applicationToken;
     }
 
-    /** Sets the value of the 'applicationToken' field */
+    /**
+     * Sets the value of the 'applicationToken' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder setApplicationToken(java.lang.String value) {
       validate(fields()[1], value);
       this.applicationToken = value;
@@ -294,24 +324,32 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'applicationToken' field has been set */
+    /**
+     * Checks whether the 'applicationToken' field has been set
+     */
     public boolean hasApplicationToken() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'applicationToken' field */
+    /**
+     * Clears the value of the 'applicationToken' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder clearApplicationToken() {
       applicationToken = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'headerVersion' field */
+    /**
+     * Gets the value of the 'headerVersion' field
+     */
     public java.lang.Integer getHeaderVersion() {
       return headerVersion;
     }
 
-    /** Sets the value of the 'headerVersion' field */
+    /**
+     * Sets the value of the 'headerVersion' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder setHeaderVersion(java.lang.Integer value) {
       validate(fields()[2], value);
       this.headerVersion = value;
@@ -319,24 +357,32 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'headerVersion' field has been set */
+    /**
+     * Checks whether the 'headerVersion' field has been set
+     */
     public boolean hasHeaderVersion() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'headerVersion' field */
+    /**
+     * Clears the value of the 'headerVersion' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder clearHeaderVersion() {
       headerVersion = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'timestamp' field */
+    /**
+     * Gets the value of the 'timestamp' field
+     */
     public java.lang.Long getTimestamp() {
       return timestamp;
     }
 
-    /** Sets the value of the 'timestamp' field */
+    /**
+     * Sets the value of the 'timestamp' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder setTimestamp(java.lang.Long value) {
       validate(fields()[3], value);
       this.timestamp = value;
@@ -344,24 +390,32 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'timestamp' field has been set */
+    /**
+     * Checks whether the 'timestamp' field has been set
+     */
     public boolean hasTimestamp() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'timestamp' field */
+    /**
+     * Clears the value of the 'timestamp' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder clearTimestamp() {
       timestamp = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'logSchemaVersion' field */
+    /**
+     * Gets the value of the 'logSchemaVersion' field
+     */
     public java.lang.Integer getLogSchemaVersion() {
       return logSchemaVersion;
     }
 
-    /** Sets the value of the 'logSchemaVersion' field */
+    /**
+     * Sets the value of the 'logSchemaVersion' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder setLogSchemaVersion(java.lang.Integer value) {
       validate(fields()[4], value);
       this.logSchemaVersion = value;
@@ -369,12 +423,16 @@ public class RecordHeader extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
-    /** Checks whether the 'logSchemaVersion' field has been set */
+    /**
+     * Checks whether the 'logSchemaVersion' field has been set
+     */
     public boolean hasLogSchemaVersion() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'logSchemaVersion' field */
+    /**
+     * Clears the value of the 'logSchemaVersion' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader.Builder clearLogSchemaVersion() {
       logSchemaVersion = null;
       fieldSetFlags()[4] = false;

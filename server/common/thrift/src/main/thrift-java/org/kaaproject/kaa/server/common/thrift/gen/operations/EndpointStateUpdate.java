@@ -130,7 +130,9 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     this.tenantId = null;
   }
 
-  /** Returns true if field tenantId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field tenantId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetTenantId() {
     return this.tenantId != null;
   }
@@ -154,7 +156,9 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     this.userId = null;
   }
 
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field userId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUserId() {
     return this.userId != null;
   }
@@ -178,7 +182,9 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     this.applicationToken = null;
   }
 
-  /** Returns true if field applicationToken is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field applicationToken is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetApplicationToken() {
     return this.applicationToken != null;
   }
@@ -194,6 +200,11 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     return endpointKey == null ? null : endpointKey.array();
   }
 
+  public EndpointStateUpdate setEndpointKey(byte[] endpointKey) {
+    this.endpointKey = endpointKey == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointKey, endpointKey.length));
+    return this;
+  }
+
   public EndpointStateUpdate setEndpointKey(ByteBuffer endpointKey) {
     this.endpointKey = org.apache.thrift.TBaseHelper.copyBinary(endpointKey);
     return this;
@@ -203,16 +214,13 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     return org.apache.thrift.TBaseHelper.copyBinary(endpointKey);
   }
 
-  public EndpointStateUpdate setEndpointKey(byte[] endpointKey) {
-    this.endpointKey = endpointKey == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointKey, endpointKey.length));
-    return this;
-  }
-
   public void unsetEndpointKey() {
     this.endpointKey = null;
   }
 
-  /** Returns true if field endpointKey is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointKey is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEndpointKey() {
     return this.endpointKey != null;
   }
@@ -228,6 +236,11 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     return ucfHash == null ? null : ucfHash.array();
   }
 
+  public EndpointStateUpdate setUcfHash(byte[] ucfHash) {
+    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
+    return this;
+  }
+
   public EndpointStateUpdate setUcfHash(ByteBuffer ucfHash) {
     this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
     return this;
@@ -237,16 +250,13 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     return org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
   }
 
-  public EndpointStateUpdate setUcfHash(byte[] ucfHash) {
-    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
-    return this;
-  }
-
   public void unsetUcfHash() {
     this.ucfHash = null;
   }
 
-  /** Returns true if field ucfHash is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field ucfHash is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUcfHash() {
     return this.ucfHash != null;
   }
@@ -323,7 +333,10 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -579,7 +592,10 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     TENANT_ID((short) 1, "tenantId"),
     USER_ID((short) 2, "userId"),

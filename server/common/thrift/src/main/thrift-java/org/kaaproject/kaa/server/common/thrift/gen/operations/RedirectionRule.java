@@ -137,7 +137,9 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ACCESSPOINTID_ISSET_ID);
   }
 
-  /** Returns true if field accessPointId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field accessPointId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAccessPointId() {
     return EncodingUtils.testBit(__isset_bitfield, __ACCESSPOINTID_ISSET_ID);
   }
@@ -160,7 +162,9 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __RULEID_ISSET_ID);
   }
 
-  /** Returns true if field ruleId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field ruleId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetRuleId() {
     return EncodingUtils.testBit(__isset_bitfield, __RULEID_ISSET_ID);
   }
@@ -183,7 +187,10 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __INITREDIRECTPROBABILITY_ISSET_ID);
   }
 
-  /** Returns true if field initRedirectProbability is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field initRedirectProbability is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetInitRedirectProbability() {
     return EncodingUtils.testBit(__isset_bitfield, __INITREDIRECTPROBABILITY_ISSET_ID);
   }
@@ -206,7 +213,10 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SESSIONREDIRECTPROBABILITY_ISSET_ID);
   }
 
-  /** Returns true if field sessionRedirectProbability is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field sessionRedirectProbability is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetSessionRedirectProbability() {
     return EncodingUtils.testBit(__isset_bitfield, __SESSIONREDIRECTPROBABILITY_ISSET_ID);
   }
@@ -229,7 +239,9 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __RULETTL_ISSET_ID);
   }
 
-  /** Returns true if field ruleTTL is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field ruleTTL is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetRuleTTL() {
     return EncodingUtils.testBit(__isset_bitfield, __RULETTL_ISSET_ID);
   }
@@ -304,7 +316,10 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -542,7 +557,10 @@ public class RedirectionRule implements org.apache.thrift.TBase<RedirectionRule,
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ACCESS_POINT_ID((short) 1, "accessPointId"),
     RULE_ID((short) 2, "ruleId"),

@@ -32,6 +32,7 @@ public class MemBucket {
   private final List<LogRecord> records;
   protected long size;
   private MemBucketState state;
+
   public MemBucket(int id, long maxSize, int maxRecordCount) {
     super();
     this.id = id;

@@ -54,7 +54,6 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
 
   public ThriftEntityAddress address; // required
   /**
-   *
    * @see ThriftActorClassifier
    */
   public ThriftActorClassifier actorClassifier; // required
@@ -112,7 +111,9 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
     this.address = null;
   }
 
-  /** Returns true if field address is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field address is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetAddress() {
     return this.address != null;
   }
@@ -124,7 +125,6 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
   }
 
   /**
-   *
    * @see ThriftActorClassifier
    */
   public ThriftActorClassifier getActorClassifier() {
@@ -132,7 +132,6 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
   }
 
   /**
-   *
    * @see ThriftActorClassifier
    */
   public ThriftUnicastNotificationMessage setActorClassifier(ThriftActorClassifier actorClassifier) {
@@ -144,7 +143,9 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
     this.actorClassifier = null;
   }
 
-  /** Returns true if field actorClassifier is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field actorClassifier is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetActorClassifier() {
     return this.actorClassifier != null;
   }
@@ -168,7 +169,9 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
     this.notificationId = null;
   }
 
-  /** Returns true if field notificationId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field notificationId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetNotificationId() {
     return this.notificationId != null;
   }
@@ -223,7 +226,10 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -414,11 +420,13 @@ public class ThriftUnicastNotificationMessage implements org.apache.thrift.TBase
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ADDRESS((short) 1, "address"),
     /**
-     *
      * @see ThriftActorClassifier
      */
     ACTOR_CLASSIFIER((short) 2, "actorClassifier"),

@@ -22,6 +22,7 @@ public enum ThriftClusterEntityType implements org.apache.thrift.TEnum {
 
   /**
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
+   *
    * @return null if the value is not found.
    */
   public static ThriftClusterEntityType findByValue(int value) {

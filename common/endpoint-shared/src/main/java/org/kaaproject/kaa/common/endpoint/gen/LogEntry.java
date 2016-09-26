@@ -30,17 +30,23 @@ public class LogEntry extends org.apache.avro.specific.SpecificRecordBase implem
     return SCHEMA$;
   }
 
-  /** Creates a new LogEntry RecordBuilder */
+  /**
+   * Creates a new LogEntry RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder();
   }
 
-  /** Creates a new LogEntry RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new LogEntry RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder(other);
   }
 
-  /** Creates a new LogEntry RecordBuilder by copying an existing LogEntry instance */
+  /**
+   * Creates a new LogEntry RecordBuilder by copying an existing LogEntry instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogEntry other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder(other);
   }
@@ -80,6 +86,7 @@ public class LogEntry extends org.apache.avro.specific.SpecificRecordBase implem
 
   /**
    * Sets the value of the 'data' field.
+   *
    * @param value the value to set.
    */
   public void setData(java.nio.ByteBuffer value) {
@@ -94,12 +101,16 @@ public class LogEntry extends org.apache.avro.specific.SpecificRecordBase implem
 
     private java.nio.ByteBuffer data;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.LogEntry.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.data)) {
@@ -108,7 +119,9 @@ public class LogEntry extends org.apache.avro.specific.SpecificRecordBase implem
       }
     }
 
-    /** Creates a Builder by copying an existing LogEntry instance */
+    /**
+     * Creates a Builder by copying an existing LogEntry instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogEntry other) {
       super(org.kaaproject.kaa.common.endpoint.gen.LogEntry.SCHEMA$);
       if (isValidValue(fields()[0], other.data)) {
@@ -117,12 +130,16 @@ public class LogEntry extends org.apache.avro.specific.SpecificRecordBase implem
       }
     }
 
-    /** Gets the value of the 'data' field */
+    /**
+     * Gets the value of the 'data' field
+     */
     public java.nio.ByteBuffer getData() {
       return data;
     }
 
-    /** Sets the value of the 'data' field */
+    /**
+     * Sets the value of the 'data' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder setData(java.nio.ByteBuffer value) {
       validate(fields()[0], value);
       this.data = value;
@@ -130,12 +147,16 @@ public class LogEntry extends org.apache.avro.specific.SpecificRecordBase implem
       return this;
     }
 
-    /** Checks whether the 'data' field has been set */
+    /**
+     * Checks whether the 'data' field has been set
+     */
     public boolean hasData() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'data' field */
+    /**
+     * Clears the value of the 'data' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogEntry.Builder clearData() {
       data = null;
       fieldSetFlags()[0] = false;

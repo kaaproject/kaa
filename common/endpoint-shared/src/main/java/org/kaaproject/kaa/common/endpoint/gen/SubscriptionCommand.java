@@ -11,6 +11,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SubscriptionCommand\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":\"long\"},{\"name\":\"command\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionCommandType\",\"symbols\":[\"ADD\",\"REMOVE\"]}}],\"direction\":\"out\"}");
   private long topicId;
   private org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType command;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
     return SCHEMA$;
   }
 
-  /** Creates a new SubscriptionCommand RecordBuilder */
+  /**
+   * Creates a new SubscriptionCommand RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder();
   }
 
-  /** Creates a new SubscriptionCommand RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new SubscriptionCommand RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder(other);
   }
 
-  /** Creates a new SubscriptionCommand RecordBuilder by copying an existing SubscriptionCommand instance */
+  /**
+   * Creates a new SubscriptionCommand RecordBuilder by copying an existing SubscriptionCommand
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand other) {
     return new org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder(other);
   }
@@ -86,6 +94,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'topicId' field.
+   *
    * @param value the value to set.
    */
   public void setTopicId(java.lang.Long value) {
@@ -101,6 +110,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'command' field.
+   *
    * @param value the value to set.
    */
   public void setCommand(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType value) {
@@ -116,12 +126,16 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
     private long topicId;
     private org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType command;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.topicId)) {
@@ -134,7 +148,9 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Creates a Builder by copying an existing SubscriptionCommand instance */
+    /**
+     * Creates a Builder by copying an existing SubscriptionCommand instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand other) {
       super(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.SCHEMA$);
       if (isValidValue(fields()[0], other.topicId)) {
@@ -147,12 +163,16 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Gets the value of the 'topicId' field */
+    /**
+     * Gets the value of the 'topicId' field
+     */
     public java.lang.Long getTopicId() {
       return topicId;
     }
 
-    /** Sets the value of the 'topicId' field */
+    /**
+     * Sets the value of the 'topicId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder setTopicId(long value) {
       validate(fields()[0], value);
       this.topicId = value;
@@ -160,23 +180,31 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'topicId' field has been set */
+    /**
+     * Checks whether the 'topicId' field has been set
+     */
     public boolean hasTopicId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'topicId' field */
+    /**
+     * Clears the value of the 'topicId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder clearTopicId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'command' field */
+    /**
+     * Gets the value of the 'command' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType getCommand() {
       return command;
     }
 
-    /** Sets the value of the 'command' field */
+    /**
+     * Sets the value of the 'command' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder setCommand(org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType value) {
       validate(fields()[1], value);
       this.command = value;
@@ -184,12 +212,16 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'command' field has been set */
+    /**
+     * Checks whether the 'command' field has been set
+     */
     public boolean hasCommand() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'command' field */
+    /**
+     * Clears the value of the 'command' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder clearCommand() {
       command = null;
       fieldSetFlags()[1] = false;

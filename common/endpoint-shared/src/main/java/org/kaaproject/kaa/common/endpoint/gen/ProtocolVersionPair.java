@@ -11,6 +11,7 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}]}");
   private int id;
   private int version;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
     return SCHEMA$;
   }
 
-  /** Creates a new ProtocolVersionPair RecordBuilder */
+  /**
+   * Creates a new ProtocolVersionPair RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder();
   }
 
-  /** Creates a new ProtocolVersionPair RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ProtocolVersionPair RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder(other);
   }
 
-  /** Creates a new ProtocolVersionPair RecordBuilder by copying an existing ProtocolVersionPair instance */
+  /**
+   * Creates a new ProtocolVersionPair RecordBuilder by copying an existing ProtocolVersionPair
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder(other);
   }
@@ -86,6 +94,7 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'id' field.
+   *
    * @param value the value to set.
    */
   public void setId(java.lang.Integer value) {
@@ -101,6 +110,7 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
 
   /**
    * Sets the value of the 'version' field.
+   *
    * @param value the value to set.
    */
   public void setVersion(java.lang.Integer value) {
@@ -116,12 +126,16 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
     private int id;
     private int version;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
@@ -134,7 +148,9 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Creates a Builder by copying an existing ProtocolVersionPair instance */
+    /**
+     * Creates a Builder by copying an existing ProtocolVersionPair instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.SCHEMA$);
       if (isValidValue(fields()[0], other.id)) {
@@ -147,12 +163,16 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Gets the value of the 'id' field */
+    /**
+     * Gets the value of the 'id' field
+     */
     public java.lang.Integer getId() {
       return id;
     }
 
-    /** Sets the value of the 'id' field */
+    /**
+     * Sets the value of the 'id' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder setId(int value) {
       validate(fields()[0], value);
       this.id = value;
@@ -160,23 +180,31 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'id' field has been set */
+    /**
+     * Checks whether the 'id' field has been set
+     */
     public boolean hasId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'id' field */
+    /**
+     * Clears the value of the 'id' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder clearId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'version' field */
+    /**
+     * Gets the value of the 'version' field
+     */
     public java.lang.Integer getVersion() {
       return version;
     }
 
-    /** Sets the value of the 'version' field */
+    /**
+     * Sets the value of the 'version' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder setVersion(int value) {
       validate(fields()[1], value);
       this.version = value;
@@ -184,12 +212,16 @@ public class ProtocolVersionPair extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Checks whether the 'version' field has been set */
+    /**
+     * Checks whether the 'version' field has been set
+     */
     public boolean hasVersion() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'version' field */
+    /**
+     * Clears the value of the 'version' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair.Builder clearVersion() {
       fieldSetFlags()[1] = false;
       return this;

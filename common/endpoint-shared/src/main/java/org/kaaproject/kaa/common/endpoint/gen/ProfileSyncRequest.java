@@ -12,6 +12,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
   private java.nio.ByteBuffer endpointPublicKey;
   private java.nio.ByteBuffer profileBody;
   private java.lang.String endpointAccessToken;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,24 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
     return SCHEMA$;
   }
 
-  /** Creates a new ProfileSyncRequest RecordBuilder */
+  /**
+   * Creates a new ProfileSyncRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder();
   }
 
-  /** Creates a new ProfileSyncRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ProfileSyncRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder(other);
   }
 
-  /** Creates a new ProfileSyncRequest RecordBuilder by copying an existing ProfileSyncRequest instance */
+  /**
+   * Creates a new ProfileSyncRequest RecordBuilder by copying an existing ProfileSyncRequest
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder(other);
   }
@@ -93,6 +101,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'endpointPublicKey' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointPublicKey(java.nio.ByteBuffer value) {
@@ -108,6 +117,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'profileBody' field.
+   *
    * @param value the value to set.
    */
   public void setProfileBody(java.nio.ByteBuffer value) {
@@ -123,6 +133,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'endpointAccessToken' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointAccessToken(java.lang.String value) {
@@ -139,12 +150,16 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
     private java.nio.ByteBuffer profileBody;
     private java.lang.String endpointAccessToken;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.endpointPublicKey)) {
@@ -161,7 +176,9 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Creates a Builder by copying an existing ProfileSyncRequest instance */
+    /**
+     * Creates a Builder by copying an existing ProfileSyncRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.endpointPublicKey)) {
@@ -178,12 +195,16 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Gets the value of the 'endpointPublicKey' field */
+    /**
+     * Gets the value of the 'endpointPublicKey' field
+     */
     public java.nio.ByteBuffer getEndpointPublicKey() {
       return endpointPublicKey;
     }
 
-    /** Sets the value of the 'endpointPublicKey' field */
+    /**
+     * Sets the value of the 'endpointPublicKey' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder setEndpointPublicKey(java.nio.ByteBuffer value) {
       validate(fields()[0], value);
       this.endpointPublicKey = value;
@@ -191,24 +212,32 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'endpointPublicKey' field has been set */
+    /**
+     * Checks whether the 'endpointPublicKey' field has been set
+     */
     public boolean hasEndpointPublicKey() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'endpointPublicKey' field */
+    /**
+     * Clears the value of the 'endpointPublicKey' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder clearEndpointPublicKey() {
       endpointPublicKey = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'profileBody' field */
+    /**
+     * Gets the value of the 'profileBody' field
+     */
     public java.nio.ByteBuffer getProfileBody() {
       return profileBody;
     }
 
-    /** Sets the value of the 'profileBody' field */
+    /**
+     * Sets the value of the 'profileBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder setProfileBody(java.nio.ByteBuffer value) {
       validate(fields()[1], value);
       this.profileBody = value;
@@ -216,24 +245,32 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'profileBody' field has been set */
+    /**
+     * Checks whether the 'profileBody' field has been set
+     */
     public boolean hasProfileBody() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'profileBody' field */
+    /**
+     * Clears the value of the 'profileBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder clearProfileBody() {
       profileBody = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointAccessToken' field */
+    /**
+     * Gets the value of the 'endpointAccessToken' field
+     */
     public java.lang.String getEndpointAccessToken() {
       return endpointAccessToken;
     }
 
-    /** Sets the value of the 'endpointAccessToken' field */
+    /**
+     * Sets the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder setEndpointAccessToken(java.lang.String value) {
       validate(fields()[2], value);
       this.endpointAccessToken = value;
@@ -241,12 +278,16 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'endpointAccessToken' field has been set */
+    /**
+     * Checks whether the 'endpointAccessToken' field has been set
+     */
     public boolean hasEndpointAccessToken() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'endpointAccessToken' field */
+    /**
+     * Clears the value of the 'endpointAccessToken' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder clearEndpointAccessToken() {
       endpointAccessToken = null;
       fieldSetFlags()[2] = false;

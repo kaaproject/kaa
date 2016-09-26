@@ -12,6 +12,7 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
   private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
   private org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode errorCode;
   private java.lang.String errorReason;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,24 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
     return SCHEMA$;
   }
 
-  /** Creates a new UserAttachResponse RecordBuilder */
+  /**
+   * Creates a new UserAttachResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder();
   }
 
-  /** Creates a new UserAttachResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new UserAttachResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder(other);
   }
 
-  /** Creates a new UserAttachResponse RecordBuilder by copying an existing UserAttachResponse instance */
+  /**
+   * Creates a new UserAttachResponse RecordBuilder by copying an existing UserAttachResponse
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder(other);
   }
@@ -93,6 +101,7 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'result' field.
+   *
    * @param value the value to set.
    */
   public void setResult(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
@@ -108,6 +117,7 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'errorCode' field.
+   *
    * @param value the value to set.
    */
   public void setErrorCode(org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode value) {
@@ -123,6 +133,7 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'errorReason' field.
+   *
    * @param value the value to set.
    */
   public void setErrorReason(java.lang.String value) {
@@ -139,12 +150,16 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
     private org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode errorCode;
     private java.lang.String errorReason;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.result)) {
@@ -161,7 +176,9 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Creates a Builder by copying an existing UserAttachResponse instance */
+    /**
+     * Creates a Builder by copying an existing UserAttachResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.result)) {
@@ -178,12 +195,16 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /** Gets the value of the 'result' field */
+    /**
+     * Gets the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType getResult() {
       return result;
     }
 
-    /** Sets the value of the 'result' field */
+    /**
+     * Sets the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder setResult(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
       validate(fields()[0], value);
       this.result = value;
@@ -191,24 +212,32 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'result' field has been set */
+    /**
+     * Checks whether the 'result' field has been set
+     */
     public boolean hasResult() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'result' field */
+    /**
+     * Clears the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder clearResult() {
       result = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'errorCode' field */
+    /**
+     * Gets the value of the 'errorCode' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode getErrorCode() {
       return errorCode;
     }
 
-    /** Sets the value of the 'errorCode' field */
+    /**
+     * Sets the value of the 'errorCode' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder setErrorCode(org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode value) {
       validate(fields()[1], value);
       this.errorCode = value;
@@ -216,24 +245,32 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'errorCode' field has been set */
+    /**
+     * Checks whether the 'errorCode' field has been set
+     */
     public boolean hasErrorCode() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'errorCode' field */
+    /**
+     * Clears the value of the 'errorCode' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder clearErrorCode() {
       errorCode = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'errorReason' field */
+    /**
+     * Gets the value of the 'errorReason' field
+     */
     public java.lang.String getErrorReason() {
       return errorReason;
     }
 
-    /** Sets the value of the 'errorReason' field */
+    /**
+     * Sets the value of the 'errorReason' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder setErrorReason(java.lang.String value) {
       validate(fields()[2], value);
       this.errorReason = value;
@@ -241,12 +278,16 @@ public class UserAttachResponse extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Checks whether the 'errorReason' field has been set */
+    /**
+     * Checks whether the 'errorReason' field has been set
+     */
     public boolean hasErrorReason() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'errorReason' field */
+    /**
+     * Clears the value of the 'errorReason' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse.Builder clearErrorReason() {
       errorReason = null;
       fieldSetFlags()[2] = false;

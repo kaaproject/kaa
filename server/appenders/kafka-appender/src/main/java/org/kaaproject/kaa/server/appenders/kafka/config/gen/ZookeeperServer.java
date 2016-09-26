@@ -11,6 +11,7 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ZookeeperServer\",\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":9092}]}");
   private java.lang.String host;
   private int port;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /** Creates a new ZookeeperServer RecordBuilder */
+  /**
+   * Creates a new ZookeeperServer RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder();
   }
 
-  /** Creates a new ZookeeperServer RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ZookeeperServer RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder newBuilder(org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder other) {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder(other);
   }
 
-  /** Creates a new ZookeeperServer RecordBuilder by copying an existing ZookeeperServer instance */
+  /**
+   * Creates a new ZookeeperServer RecordBuilder by copying an existing ZookeeperServer instance
+   */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder newBuilder(org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer other) {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder(other);
   }
@@ -86,6 +93,7 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'host' field.
+   *
    * @param value the value to set.
    */
   public void setHost(java.lang.String value) {
@@ -101,6 +109,7 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'port' field.
+   *
    * @param value the value to set.
    */
   public void setPort(java.lang.Integer value) {
@@ -116,12 +125,16 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
     private java.lang.String host;
     private int port;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.host)) {
@@ -134,7 +147,9 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Creates a Builder by copying an existing ZookeeperServer instance */
+    /**
+     * Creates a Builder by copying an existing ZookeeperServer instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer other) {
       super(org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.SCHEMA$);
       if (isValidValue(fields()[0], other.host)) {
@@ -147,12 +162,16 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Gets the value of the 'host' field */
+    /**
+     * Gets the value of the 'host' field
+     */
     public java.lang.String getHost() {
       return host;
     }
 
-    /** Sets the value of the 'host' field */
+    /**
+     * Sets the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder setHost(java.lang.String value) {
       validate(fields()[0], value);
       this.host = value;
@@ -160,24 +179,32 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'host' field has been set */
+    /**
+     * Checks whether the 'host' field has been set
+     */
     public boolean hasHost() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'host' field */
+    /**
+     * Clears the value of the 'host' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder clearHost() {
       host = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'port' field */
+    /**
+     * Gets the value of the 'port' field
+     */
     public java.lang.Integer getPort() {
       return port;
     }
 
-    /** Sets the value of the 'port' field */
+    /**
+     * Sets the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder setPort(int value) {
       validate(fields()[1], value);
       this.port = value;
@@ -185,12 +212,16 @@ public class ZookeeperServer extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'port' field has been set */
+    /**
+     * Checks whether the 'port' field has been set
+     */
     public boolean hasPort() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'port' field */
+    /**
+     * Clears the value of the 'port' field
+     */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.ZookeeperServer.Builder clearPort() {
       fieldSetFlags()[1] = false;
       return this;

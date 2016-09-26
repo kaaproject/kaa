@@ -102,7 +102,9 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     this.id = null;
   }
 
-  /** Returns true if field id is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field id is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetId() {
     return this.id != null;
   }
@@ -127,7 +129,9 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PRIORITY_ISSET_ID);
   }
 
-  /** Returns true if field priority is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field priority is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetPriority() {
     return EncodingUtils.testBit(__isset_bitfield, __PRIORITY_ISSET_ID);
   }
@@ -169,7 +173,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -321,7 +328,10 @@ public class ThriftOperationsServer implements org.apache.thrift.TBase<ThriftOpe
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short) 1, "id"),
     PRIORITY((short) 2, "priority");

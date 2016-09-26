@@ -102,7 +102,10 @@ public class EventClassFamilyVersion implements org.apache.thrift.TBase<EventCla
     this.endpointClassFamilyId = null;
   }
 
-  /** Returns true if field endpointClassFamilyId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointClassFamilyId is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetEndpointClassFamilyId() {
     return this.endpointClassFamilyId != null;
   }
@@ -127,7 +130,10 @@ public class EventClassFamilyVersion implements org.apache.thrift.TBase<EventCla
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ENDPOINTCLASSFAMILYVERSION_ISSET_ID);
   }
 
-  /** Returns true if field endpointClassFamilyVersion is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointClassFamilyVersion is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetEndpointClassFamilyVersion() {
     return EncodingUtils.testBit(__isset_bitfield, __ENDPOINTCLASSFAMILYVERSION_ISSET_ID);
   }
@@ -169,7 +175,10 @@ public class EventClassFamilyVersion implements org.apache.thrift.TBase<EventCla
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -321,7 +330,10 @@ public class EventClassFamilyVersion implements org.apache.thrift.TBase<EventCla
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ENDPOINT_CLASS_FAMILY_ID((short) 1, "endpointClassFamilyId"),
     ENDPOINT_CLASS_FAMILY_VERSION((short) 2, "endpointClassFamilyVersion");

@@ -135,7 +135,9 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     this.uuid = null;
   }
 
-  /** Returns true if field uuid is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field uuid is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUuid() {
     return this.uuid != null;
   }
@@ -151,6 +153,11 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     return sender == null ? null : sender.array();
   }
 
+  public EndpointEvent setSender(byte[] sender) {
+    this.sender = sender == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(sender, sender.length));
+    return this;
+  }
+
   public EndpointEvent setSender(ByteBuffer sender) {
     this.sender = org.apache.thrift.TBaseHelper.copyBinary(sender);
     return this;
@@ -160,16 +167,13 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     return org.apache.thrift.TBaseHelper.copyBinary(sender);
   }
 
-  public EndpointEvent setSender(byte[] sender) {
-    this.sender = sender == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(sender, sender.length));
-    return this;
-  }
-
   public void unsetSender() {
     this.sender = null;
   }
 
-  /** Returns true if field sender is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field sender is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetSender() {
     return this.sender != null;
   }
@@ -185,6 +189,11 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     return eventData == null ? null : eventData.array();
   }
 
+  public EndpointEvent setEventData(byte[] eventData) {
+    this.eventData = eventData == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(eventData, eventData.length));
+    return this;
+  }
+
   public EndpointEvent setEventData(ByteBuffer eventData) {
     this.eventData = org.apache.thrift.TBaseHelper.copyBinary(eventData);
     return this;
@@ -194,16 +203,13 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     return org.apache.thrift.TBaseHelper.copyBinary(eventData);
   }
 
-  public EndpointEvent setEventData(byte[] eventData) {
-    this.eventData = eventData == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(eventData, eventData.length));
-    return this;
-  }
-
   public void unsetEventData() {
     this.eventData = null;
   }
 
-  /** Returns true if field eventData is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field eventData is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEventData() {
     return this.eventData != null;
   }
@@ -228,7 +234,9 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CREATETIME_ISSET_ID);
   }
 
-  /** Returns true if field createTime is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field createTime is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetCreateTime() {
     return EncodingUtils.testBit(__isset_bitfield, __CREATETIME_ISSET_ID);
   }
@@ -251,7 +259,9 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __VERSION_ISSET_ID);
   }
 
-  /** Returns true if field version is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field version is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetVersion() {
     return EncodingUtils.testBit(__isset_bitfield, __VERSION_ISSET_ID);
   }
@@ -326,7 +336,10 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -576,7 +589,10 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     UUID((short) 1, "uuid"),
     SENDER((short) 2, "sender"),

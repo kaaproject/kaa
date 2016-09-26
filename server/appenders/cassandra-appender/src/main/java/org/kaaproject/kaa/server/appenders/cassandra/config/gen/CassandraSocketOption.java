@@ -17,6 +17,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
   private java.lang.Boolean reuseAddress;
   private java.lang.Boolean keepAlive;
   private java.lang.Boolean tcpNoDelay;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -43,17 +44,24 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new CassandraSocketOption RecordBuilder */
+  /**
+   * Creates a new CassandraSocketOption RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder();
   }
 
-  /** Creates a new CassandraSocketOption RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new CassandraSocketOption RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder(other);
   }
 
-  /** Creates a new CassandraSocketOption RecordBuilder by copying an existing CassandraSocketOption instance */
+  /**
+   * Creates a new CassandraSocketOption RecordBuilder by copying an existing CassandraSocketOption
+   * instance
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder(other);
   }
@@ -128,6 +136,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'sendBufferSize' field.
+   *
    * @param value the value to set.
    */
   public void setSendBufferSize(java.lang.Integer value) {
@@ -143,6 +152,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'receiveBufferSize' field.
+   *
    * @param value the value to set.
    */
   public void setReceiveBufferSize(java.lang.Integer value) {
@@ -158,6 +168,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'soLinger' field.
+   *
    * @param value the value to set.
    */
   public void setSoLinger(java.lang.Integer value) {
@@ -173,6 +184,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'connectionTimeout' field.
+   *
    * @param value the value to set.
    */
   public void setConnectionTimeout(java.lang.Integer value) {
@@ -188,6 +200,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'readTimeout' field.
+   *
    * @param value the value to set.
    */
   public void setReadTimeout(java.lang.Integer value) {
@@ -203,6 +216,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'reuseAddress' field.
+   *
    * @param value the value to set.
    */
   public void setReuseAddress(java.lang.Boolean value) {
@@ -218,6 +232,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'keepAlive' field.
+   *
    * @param value the value to set.
    */
   public void setKeepAlive(java.lang.Boolean value) {
@@ -233,6 +248,7 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'tcpNoDelay' field.
+   *
    * @param value the value to set.
    */
   public void setTcpNoDelay(java.lang.Boolean value) {
@@ -254,12 +270,16 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
     private java.lang.Boolean keepAlive;
     private java.lang.Boolean tcpNoDelay;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.sendBufferSize)) {
@@ -296,7 +316,9 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing CassandraSocketOption instance */
+    /**
+     * Creates a Builder by copying an existing CassandraSocketOption instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption other) {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.SCHEMA$);
       if (isValidValue(fields()[0], other.sendBufferSize)) {
@@ -333,12 +355,16 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'sendBufferSize' field */
+    /**
+     * Gets the value of the 'sendBufferSize' field
+     */
     public java.lang.Integer getSendBufferSize() {
       return sendBufferSize;
     }
 
-    /** Sets the value of the 'sendBufferSize' field */
+    /**
+     * Sets the value of the 'sendBufferSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setSendBufferSize(java.lang.Integer value) {
       validate(fields()[0], value);
       this.sendBufferSize = value;
@@ -346,24 +372,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'sendBufferSize' field has been set */
+    /**
+     * Checks whether the 'sendBufferSize' field has been set
+     */
     public boolean hasSendBufferSize() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'sendBufferSize' field */
+    /**
+     * Clears the value of the 'sendBufferSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearSendBufferSize() {
       sendBufferSize = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'receiveBufferSize' field */
+    /**
+     * Gets the value of the 'receiveBufferSize' field
+     */
     public java.lang.Integer getReceiveBufferSize() {
       return receiveBufferSize;
     }
 
-    /** Sets the value of the 'receiveBufferSize' field */
+    /**
+     * Sets the value of the 'receiveBufferSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setReceiveBufferSize(java.lang.Integer value) {
       validate(fields()[1], value);
       this.receiveBufferSize = value;
@@ -371,24 +405,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'receiveBufferSize' field has been set */
+    /**
+     * Checks whether the 'receiveBufferSize' field has been set
+     */
     public boolean hasReceiveBufferSize() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'receiveBufferSize' field */
+    /**
+     * Clears the value of the 'receiveBufferSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearReceiveBufferSize() {
       receiveBufferSize = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'soLinger' field */
+    /**
+     * Gets the value of the 'soLinger' field
+     */
     public java.lang.Integer getSoLinger() {
       return soLinger;
     }
 
-    /** Sets the value of the 'soLinger' field */
+    /**
+     * Sets the value of the 'soLinger' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setSoLinger(java.lang.Integer value) {
       validate(fields()[2], value);
       this.soLinger = value;
@@ -396,24 +438,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'soLinger' field has been set */
+    /**
+     * Checks whether the 'soLinger' field has been set
+     */
     public boolean hasSoLinger() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'soLinger' field */
+    /**
+     * Clears the value of the 'soLinger' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearSoLinger() {
       soLinger = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'connectionTimeout' field */
+    /**
+     * Gets the value of the 'connectionTimeout' field
+     */
     public java.lang.Integer getConnectionTimeout() {
       return connectionTimeout;
     }
 
-    /** Sets the value of the 'connectionTimeout' field */
+    /**
+     * Sets the value of the 'connectionTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setConnectionTimeout(java.lang.Integer value) {
       validate(fields()[3], value);
       this.connectionTimeout = value;
@@ -421,24 +471,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'connectionTimeout' field has been set */
+    /**
+     * Checks whether the 'connectionTimeout' field has been set
+     */
     public boolean hasConnectionTimeout() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'connectionTimeout' field */
+    /**
+     * Clears the value of the 'connectionTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearConnectionTimeout() {
       connectionTimeout = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'readTimeout' field */
+    /**
+     * Gets the value of the 'readTimeout' field
+     */
     public java.lang.Integer getReadTimeout() {
       return readTimeout;
     }
 
-    /** Sets the value of the 'readTimeout' field */
+    /**
+     * Sets the value of the 'readTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setReadTimeout(java.lang.Integer value) {
       validate(fields()[4], value);
       this.readTimeout = value;
@@ -446,24 +504,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'readTimeout' field has been set */
+    /**
+     * Checks whether the 'readTimeout' field has been set
+     */
     public boolean hasReadTimeout() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'readTimeout' field */
+    /**
+     * Clears the value of the 'readTimeout' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearReadTimeout() {
       readTimeout = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'reuseAddress' field */
+    /**
+     * Gets the value of the 'reuseAddress' field
+     */
     public java.lang.Boolean getReuseAddress() {
       return reuseAddress;
     }
 
-    /** Sets the value of the 'reuseAddress' field */
+    /**
+     * Sets the value of the 'reuseAddress' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setReuseAddress(java.lang.Boolean value) {
       validate(fields()[5], value);
       this.reuseAddress = value;
@@ -471,24 +537,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'reuseAddress' field has been set */
+    /**
+     * Checks whether the 'reuseAddress' field has been set
+     */
     public boolean hasReuseAddress() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'reuseAddress' field */
+    /**
+     * Clears the value of the 'reuseAddress' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearReuseAddress() {
       reuseAddress = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'keepAlive' field */
+    /**
+     * Gets the value of the 'keepAlive' field
+     */
     public java.lang.Boolean getKeepAlive() {
       return keepAlive;
     }
 
-    /** Sets the value of the 'keepAlive' field */
+    /**
+     * Sets the value of the 'keepAlive' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setKeepAlive(java.lang.Boolean value) {
       validate(fields()[6], value);
       this.keepAlive = value;
@@ -496,24 +570,32 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'keepAlive' field has been set */
+    /**
+     * Checks whether the 'keepAlive' field has been set
+     */
     public boolean hasKeepAlive() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'keepAlive' field */
+    /**
+     * Clears the value of the 'keepAlive' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearKeepAlive() {
       keepAlive = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'tcpNoDelay' field */
+    /**
+     * Gets the value of the 'tcpNoDelay' field
+     */
     public java.lang.Boolean getTcpNoDelay() {
       return tcpNoDelay;
     }
 
-    /** Sets the value of the 'tcpNoDelay' field */
+    /**
+     * Sets the value of the 'tcpNoDelay' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder setTcpNoDelay(java.lang.Boolean value) {
       validate(fields()[7], value);
       this.tcpNoDelay = value;
@@ -521,12 +603,16 @@ public class CassandraSocketOption extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'tcpNoDelay' field has been set */
+    /**
+     * Checks whether the 'tcpNoDelay' field has been set
+     */
     public boolean hasTcpNoDelay() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'tcpNoDelay' field */
+    /**
+     * Clears the value of the 'tcpNoDelay' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption.Builder clearTcpNoDelay() {
       tcpNoDelay = null;
       fieldSetFlags()[7] = false;

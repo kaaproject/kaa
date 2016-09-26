@@ -11,6 +11,7 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EndpointDetachResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}}],\"direction\":\"in\"}");
   private int requestId;
   private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
     return SCHEMA$;
   }
 
-  /** Creates a new EndpointDetachResponse RecordBuilder */
+  /**
+   * Creates a new EndpointDetachResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder();
   }
 
-  /** Creates a new EndpointDetachResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EndpointDetachResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder(other);
   }
 
-  /** Creates a new EndpointDetachResponse RecordBuilder by copying an existing EndpointDetachResponse instance */
+  /**
+   * Creates a new EndpointDetachResponse RecordBuilder by copying an existing
+   * EndpointDetachResponse instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder(other);
   }
@@ -86,6 +94,7 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -101,6 +110,7 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
 
   /**
    * Sets the value of the 'result' field.
+   *
    * @param value the value to set.
    */
   public void setResult(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
@@ -116,12 +126,16 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
     private int requestId;
     private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -134,7 +148,9 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
       }
     }
 
-    /** Creates a Builder by copying an existing EndpointDetachResponse instance */
+    /**
+     * Creates a Builder by copying an existing EndpointDetachResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -147,12 +163,16 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -160,23 +180,31 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'result' field */
+    /**
+     * Gets the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType getResult() {
       return result;
     }
 
-    /** Sets the value of the 'result' field */
+    /**
+     * Sets the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder setResult(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType value) {
       validate(fields()[1], value);
       this.result = value;
@@ -184,12 +212,16 @@ public class EndpointDetachResponse extends org.apache.avro.specific.SpecificRec
       return this;
     }
 
-    /** Checks whether the 'result' field has been set */
+    /**
+     * Checks whether the 'result' field has been set
+     */
     public boolean hasResult() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'result' field */
+    /**
+     * Clears the value of the 'result' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse.Builder clearResult() {
       result = null;
       fieldSetFlags()[1] = false;

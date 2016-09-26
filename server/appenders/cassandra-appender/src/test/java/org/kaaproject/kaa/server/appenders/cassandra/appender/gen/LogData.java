@@ -11,6 +11,7 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LogData\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.appender.gen\",\"fields\":[{\"name\":\"level\",\"type\":{\"type\":\"enum\",\"name\":\"Level\",\"symbols\":[\"DEBUG\",\"ERROR\",\"FATAL\",\"INFO\",\"TRACE\",\"WARN\"]}},{\"name\":\"message\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
   private org.kaaproject.kaa.server.appenders.cassandra.appender.gen.Level level;
   private java.lang.String message;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
     return SCHEMA$;
   }
 
-  /** Creates a new LogData RecordBuilder */
+  /**
+   * Creates a new LogData RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder();
   }
 
-  /** Creates a new LogData RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new LogData RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder(other);
   }
 
-  /** Creates a new LogData RecordBuilder by copying an existing LogData instance */
+  /**
+   * Creates a new LogData RecordBuilder by copying an existing LogData instance
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder(other);
   }
@@ -86,6 +93,7 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
 
   /**
    * Sets the value of the 'level' field.
+   *
    * @param value the value to set.
    */
   public void setLevel(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.Level value) {
@@ -101,6 +109,7 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
 
   /**
    * Sets the value of the 'message' field.
+   *
    * @param value the value to set.
    */
   public void setMessage(java.lang.String value) {
@@ -116,12 +125,16 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
     private org.kaaproject.kaa.server.appenders.cassandra.appender.gen.Level level;
     private java.lang.String message;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.level)) {
@@ -134,7 +147,9 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
       }
     }
 
-    /** Creates a Builder by copying an existing LogData instance */
+    /**
+     * Creates a Builder by copying an existing LogData instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData other) {
       super(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.SCHEMA$);
       if (isValidValue(fields()[0], other.level)) {
@@ -147,12 +162,16 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
       }
     }
 
-    /** Gets the value of the 'level' field */
+    /**
+     * Gets the value of the 'level' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.appender.gen.Level getLevel() {
       return level;
     }
 
-    /** Sets the value of the 'level' field */
+    /**
+     * Sets the value of the 'level' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder setLevel(org.kaaproject.kaa.server.appenders.cassandra.appender.gen.Level value) {
       validate(fields()[0], value);
       this.level = value;
@@ -160,24 +179,32 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
       return this;
     }
 
-    /** Checks whether the 'level' field has been set */
+    /**
+     * Checks whether the 'level' field has been set
+     */
     public boolean hasLevel() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'level' field */
+    /**
+     * Clears the value of the 'level' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder clearLevel() {
       level = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'message' field */
+    /**
+     * Gets the value of the 'message' field
+     */
     public java.lang.String getMessage() {
       return message;
     }
 
-    /** Sets the value of the 'message' field */
+    /**
+     * Sets the value of the 'message' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder setMessage(java.lang.String value) {
       validate(fields()[1], value);
       this.message = value;
@@ -185,12 +212,16 @@ public class LogData extends org.apache.avro.specific.SpecificRecordBase impleme
       return this;
     }
 
-    /** Checks whether the 'message' field has been set */
+    /**
+     * Checks whether the 'message' field has been set
+     */
     public boolean hasMessage() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'message' field */
+    /**
+     * Clears the value of the 'message' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.appender.gen.LogData.Builder clearMessage() {
       message = null;
       fieldSetFlags()[1] = false;

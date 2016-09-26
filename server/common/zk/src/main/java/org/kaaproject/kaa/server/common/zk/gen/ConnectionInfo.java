@@ -12,6 +12,7 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
   private java.lang.CharSequence thriftHost;
   private int thriftPort;
   private java.nio.ByteBuffer publicKey;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
     return SCHEMA$;
   }
 
-  /** Creates a new ConnectionInfo RecordBuilder */
+  /**
+   * Creates a new ConnectionInfo RecordBuilder
+   */
   public static org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder();
   }
 
-  /** Creates a new ConnectionInfo RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ConnectionInfo RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder other) {
     return new org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder(other);
   }
 
-  /** Creates a new ConnectionInfo RecordBuilder by copying an existing ConnectionInfo instance */
+  /**
+   * Creates a new ConnectionInfo RecordBuilder by copying an existing ConnectionInfo instance
+   */
   public static org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo other) {
     return new org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder(other);
   }
@@ -93,6 +100,7 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'thriftHost' field.
+   *
    * @param value the value to set.
    */
   public void setThriftHost(java.lang.CharSequence value) {
@@ -108,6 +116,7 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'thriftPort' field.
+   *
    * @param value the value to set.
    */
   public void setThriftPort(java.lang.Integer value) {
@@ -123,6 +132,7 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'publicKey' field.
+   *
    * @param value the value to set.
    */
   public void setPublicKey(java.nio.ByteBuffer value) {
@@ -139,12 +149,16 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
     private int thriftPort;
     private java.nio.ByteBuffer publicKey;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.thriftHost)) {
@@ -161,7 +175,9 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
       }
     }
 
-    /** Creates a Builder by copying an existing ConnectionInfo instance */
+    /**
+     * Creates a Builder by copying an existing ConnectionInfo instance
+     */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo other) {
       super(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.SCHEMA$);
       if (isValidValue(fields()[0], other.thriftHost)) {
@@ -178,12 +194,16 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
       }
     }
 
-    /** Gets the value of the 'thriftHost' field */
+    /**
+     * Gets the value of the 'thriftHost' field
+     */
     public java.lang.CharSequence getThriftHost() {
       return thriftHost;
     }
 
-    /** Sets the value of the 'thriftHost' field */
+    /**
+     * Sets the value of the 'thriftHost' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder setThriftHost(java.lang.CharSequence value) {
       validate(fields()[0], value);
       this.thriftHost = value;
@@ -191,24 +211,32 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
       return this;
     }
 
-    /** Checks whether the 'thriftHost' field has been set */
+    /**
+     * Checks whether the 'thriftHost' field has been set
+     */
     public boolean hasThriftHost() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'thriftHost' field */
+    /**
+     * Clears the value of the 'thriftHost' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder clearThriftHost() {
       thriftHost = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'thriftPort' field */
+    /**
+     * Gets the value of the 'thriftPort' field
+     */
     public java.lang.Integer getThriftPort() {
       return thriftPort;
     }
 
-    /** Sets the value of the 'thriftPort' field */
+    /**
+     * Sets the value of the 'thriftPort' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder setThriftPort(int value) {
       validate(fields()[1], value);
       this.thriftPort = value;
@@ -216,23 +244,31 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
       return this;
     }
 
-    /** Checks whether the 'thriftPort' field has been set */
+    /**
+     * Checks whether the 'thriftPort' field has been set
+     */
     public boolean hasThriftPort() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'thriftPort' field */
+    /**
+     * Clears the value of the 'thriftPort' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder clearThriftPort() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'publicKey' field */
+    /**
+     * Gets the value of the 'publicKey' field
+     */
     public java.nio.ByteBuffer getPublicKey() {
       return publicKey;
     }
 
-    /** Sets the value of the 'publicKey' field */
+    /**
+     * Sets the value of the 'publicKey' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder setPublicKey(java.nio.ByteBuffer value) {
       validate(fields()[2], value);
       this.publicKey = value;
@@ -240,12 +276,16 @@ public class ConnectionInfo extends org.apache.avro.specific.SpecificRecordBase 
       return this;
     }
 
-    /** Checks whether the 'publicKey' field has been set */
+    /**
+     * Checks whether the 'publicKey' field has been set
+     */
     public boolean hasPublicKey() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'publicKey' field */
+    /**
+     * Clears the value of the 'publicKey' field
+     */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo.Builder clearPublicKey() {
       publicKey = null;
       fieldSetFlags()[2] = false;

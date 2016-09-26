@@ -23,6 +23,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
   private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel cassandraWriteConsistencyLevel;
   private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression cassandraCompression;
   private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType cassandraExecuteRequestType;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -55,17 +56,23 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /** Creates a new CassandraConfig RecordBuilder */
+  /**
+   * Creates a new CassandraConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder();
   }
 
-  /** Creates a new CassandraConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new CassandraConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder(other);
   }
 
-  /** Creates a new CassandraConfig RecordBuilder by copying an existing CassandraConfig instance */
+  /**
+   * Creates a new CassandraConfig RecordBuilder by copying an existing CassandraConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig other) {
     return new org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder(other);
   }
@@ -170,6 +177,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraServers' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraServers(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer> value) {
@@ -185,6 +193,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraCredential' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraCredential(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential value) {
@@ -200,6 +209,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'keySpace' field.
+   *
    * @param value the value to set.
    */
   public void setKeySpace(java.lang.String value) {
@@ -215,6 +225,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'tableNamePattern' field.
+   *
    * @param value the value to set.
    */
   public void setTableNamePattern(java.lang.String value) {
@@ -230,6 +241,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'columnMapping' field.
+   *
    * @param value the value to set.
    */
   public void setColumnMapping(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement> value) {
@@ -245,6 +257,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'clusteringMapping' field.
+   *
    * @param value the value to set.
    */
   public void setClusteringMapping(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> value) {
@@ -260,6 +273,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraBatchType' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraBatchType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType value) {
@@ -275,6 +289,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraSocketOption' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraSocketOption(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption value) {
@@ -290,6 +305,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'executorThreadPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setExecutorThreadPoolSize(java.lang.Integer value) {
@@ -305,6 +321,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'callbackThreadPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setCallbackThreadPoolSize(java.lang.Integer value) {
@@ -320,6 +337,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'dataTTL' field.
+   *
    * @param value the value to set.
    */
   public void setDataTTL(java.lang.Integer value) {
@@ -335,6 +353,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraWriteConsistencyLevel' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraWriteConsistencyLevel(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel value) {
@@ -350,6 +369,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraCompression' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraCompression(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression value) {
@@ -365,6 +385,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'cassandraExecuteRequestType' field.
+   *
    * @param value the value to set.
    */
   public void setCassandraExecuteRequestType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType value) {
@@ -392,12 +413,16 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression cassandraCompression;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType cassandraExecuteRequestType;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.cassandraServers)) {
@@ -458,7 +483,9 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Creates a Builder by copying an existing CassandraConfig instance */
+    /**
+     * Creates a Builder by copying an existing CassandraConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig other) {
       super(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.cassandraServers)) {
@@ -519,12 +546,16 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Gets the value of the 'cassandraServers' field */
+    /**
+     * Gets the value of the 'cassandraServers' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer> getCassandraServers() {
       return cassandraServers;
     }
 
-    /** Sets the value of the 'cassandraServers' field */
+    /**
+     * Sets the value of the 'cassandraServers' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraServers(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer> value) {
       validate(fields()[0], value);
       this.cassandraServers = value;
@@ -532,24 +563,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraServers' field has been set */
+    /**
+     * Checks whether the 'cassandraServers' field has been set
+     */
     public boolean hasCassandraServers() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'cassandraServers' field */
+    /**
+     * Clears the value of the 'cassandraServers' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraServers() {
       cassandraServers = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'cassandraCredential' field */
+    /**
+     * Gets the value of the 'cassandraCredential' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential getCassandraCredential() {
       return cassandraCredential;
     }
 
-    /** Sets the value of the 'cassandraCredential' field */
+    /**
+     * Sets the value of the 'cassandraCredential' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraCredential(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential value) {
       validate(fields()[1], value);
       this.cassandraCredential = value;
@@ -557,24 +596,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraCredential' field has been set */
+    /**
+     * Checks whether the 'cassandraCredential' field has been set
+     */
     public boolean hasCassandraCredential() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'cassandraCredential' field */
+    /**
+     * Clears the value of the 'cassandraCredential' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraCredential() {
       cassandraCredential = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'keySpace' field */
+    /**
+     * Gets the value of the 'keySpace' field
+     */
     public java.lang.String getKeySpace() {
       return keySpace;
     }
 
-    /** Sets the value of the 'keySpace' field */
+    /**
+     * Sets the value of the 'keySpace' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setKeySpace(java.lang.String value) {
       validate(fields()[2], value);
       this.keySpace = value;
@@ -582,24 +629,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'keySpace' field has been set */
+    /**
+     * Checks whether the 'keySpace' field has been set
+     */
     public boolean hasKeySpace() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'keySpace' field */
+    /**
+     * Clears the value of the 'keySpace' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearKeySpace() {
       keySpace = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'tableNamePattern' field */
+    /**
+     * Gets the value of the 'tableNamePattern' field
+     */
     public java.lang.String getTableNamePattern() {
       return tableNamePattern;
     }
 
-    /** Sets the value of the 'tableNamePattern' field */
+    /**
+     * Sets the value of the 'tableNamePattern' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setTableNamePattern(java.lang.String value) {
       validate(fields()[3], value);
       this.tableNamePattern = value;
@@ -607,24 +662,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'tableNamePattern' field has been set */
+    /**
+     * Checks whether the 'tableNamePattern' field has been set
+     */
     public boolean hasTableNamePattern() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'tableNamePattern' field */
+    /**
+     * Clears the value of the 'tableNamePattern' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearTableNamePattern() {
       tableNamePattern = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'columnMapping' field */
+    /**
+     * Gets the value of the 'columnMapping' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement> getColumnMapping() {
       return columnMapping;
     }
 
-    /** Sets the value of the 'columnMapping' field */
+    /**
+     * Sets the value of the 'columnMapping' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setColumnMapping(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement> value) {
       validate(fields()[4], value);
       this.columnMapping = value;
@@ -632,24 +695,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'columnMapping' field has been set */
+    /**
+     * Checks whether the 'columnMapping' field has been set
+     */
     public boolean hasColumnMapping() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'columnMapping' field */
+    /**
+     * Clears the value of the 'columnMapping' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearColumnMapping() {
       columnMapping = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'clusteringMapping' field */
+    /**
+     * Gets the value of the 'clusteringMapping' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> getClusteringMapping() {
       return clusteringMapping;
     }
 
-    /** Sets the value of the 'clusteringMapping' field */
+    /**
+     * Sets the value of the 'clusteringMapping' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setClusteringMapping(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> value) {
       validate(fields()[5], value);
       this.clusteringMapping = value;
@@ -657,24 +728,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'clusteringMapping' field has been set */
+    /**
+     * Checks whether the 'clusteringMapping' field has been set
+     */
     public boolean hasClusteringMapping() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'clusteringMapping' field */
+    /**
+     * Clears the value of the 'clusteringMapping' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearClusteringMapping() {
       clusteringMapping = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'cassandraBatchType' field */
+    /**
+     * Gets the value of the 'cassandraBatchType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType getCassandraBatchType() {
       return cassandraBatchType;
     }
 
-    /** Sets the value of the 'cassandraBatchType' field */
+    /**
+     * Sets the value of the 'cassandraBatchType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraBatchType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType value) {
       validate(fields()[6], value);
       this.cassandraBatchType = value;
@@ -682,24 +761,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraBatchType' field has been set */
+    /**
+     * Checks whether the 'cassandraBatchType' field has been set
+     */
     public boolean hasCassandraBatchType() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'cassandraBatchType' field */
+    /**
+     * Clears the value of the 'cassandraBatchType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraBatchType() {
       cassandraBatchType = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'cassandraSocketOption' field */
+    /**
+     * Gets the value of the 'cassandraSocketOption' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption getCassandraSocketOption() {
       return cassandraSocketOption;
     }
 
-    /** Sets the value of the 'cassandraSocketOption' field */
+    /**
+     * Sets the value of the 'cassandraSocketOption' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraSocketOption(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption value) {
       validate(fields()[7], value);
       this.cassandraSocketOption = value;
@@ -707,24 +794,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraSocketOption' field has been set */
+    /**
+     * Checks whether the 'cassandraSocketOption' field has been set
+     */
     public boolean hasCassandraSocketOption() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'cassandraSocketOption' field */
+    /**
+     * Clears the value of the 'cassandraSocketOption' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraSocketOption() {
       cassandraSocketOption = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'executorThreadPoolSize' field */
+    /**
+     * Gets the value of the 'executorThreadPoolSize' field
+     */
     public java.lang.Integer getExecutorThreadPoolSize() {
       return executorThreadPoolSize;
     }
 
-    /** Sets the value of the 'executorThreadPoolSize' field */
+    /**
+     * Sets the value of the 'executorThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setExecutorThreadPoolSize(int value) {
       validate(fields()[8], value);
       this.executorThreadPoolSize = value;
@@ -732,23 +827,31 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'executorThreadPoolSize' field has been set */
+    /**
+     * Checks whether the 'executorThreadPoolSize' field has been set
+     */
     public boolean hasExecutorThreadPoolSize() {
       return fieldSetFlags()[8];
     }
 
-    /** Clears the value of the 'executorThreadPoolSize' field */
+    /**
+     * Clears the value of the 'executorThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearExecutorThreadPoolSize() {
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'callbackThreadPoolSize' field */
+    /**
+     * Gets the value of the 'callbackThreadPoolSize' field
+     */
     public java.lang.Integer getCallbackThreadPoolSize() {
       return callbackThreadPoolSize;
     }
 
-    /** Sets the value of the 'callbackThreadPoolSize' field */
+    /**
+     * Sets the value of the 'callbackThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCallbackThreadPoolSize(int value) {
       validate(fields()[9], value);
       this.callbackThreadPoolSize = value;
@@ -756,23 +859,31 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'callbackThreadPoolSize' field has been set */
+    /**
+     * Checks whether the 'callbackThreadPoolSize' field has been set
+     */
     public boolean hasCallbackThreadPoolSize() {
       return fieldSetFlags()[9];
     }
 
-    /** Clears the value of the 'callbackThreadPoolSize' field */
+    /**
+     * Clears the value of the 'callbackThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCallbackThreadPoolSize() {
       fieldSetFlags()[9] = false;
       return this;
     }
 
-    /** Gets the value of the 'dataTTL' field */
+    /**
+     * Gets the value of the 'dataTTL' field
+     */
     public java.lang.Integer getDataTTL() {
       return dataTTL;
     }
 
-    /** Sets the value of the 'dataTTL' field */
+    /**
+     * Sets the value of the 'dataTTL' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setDataTTL(int value) {
       validate(fields()[10], value);
       this.dataTTL = value;
@@ -780,23 +891,31 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'dataTTL' field has been set */
+    /**
+     * Checks whether the 'dataTTL' field has been set
+     */
     public boolean hasDataTTL() {
       return fieldSetFlags()[10];
     }
 
-    /** Clears the value of the 'dataTTL' field */
+    /**
+     * Clears the value of the 'dataTTL' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearDataTTL() {
       fieldSetFlags()[10] = false;
       return this;
     }
 
-    /** Gets the value of the 'cassandraWriteConsistencyLevel' field */
+    /**
+     * Gets the value of the 'cassandraWriteConsistencyLevel' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel getCassandraWriteConsistencyLevel() {
       return cassandraWriteConsistencyLevel;
     }
 
-    /** Sets the value of the 'cassandraWriteConsistencyLevel' field */
+    /**
+     * Sets the value of the 'cassandraWriteConsistencyLevel' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraWriteConsistencyLevel(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel value) {
       validate(fields()[11], value);
       this.cassandraWriteConsistencyLevel = value;
@@ -804,24 +923,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraWriteConsistencyLevel' field has been set */
+    /**
+     * Checks whether the 'cassandraWriteConsistencyLevel' field has been set
+     */
     public boolean hasCassandraWriteConsistencyLevel() {
       return fieldSetFlags()[11];
     }
 
-    /** Clears the value of the 'cassandraWriteConsistencyLevel' field */
+    /**
+     * Clears the value of the 'cassandraWriteConsistencyLevel' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraWriteConsistencyLevel() {
       cassandraWriteConsistencyLevel = null;
       fieldSetFlags()[11] = false;
       return this;
     }
 
-    /** Gets the value of the 'cassandraCompression' field */
+    /**
+     * Gets the value of the 'cassandraCompression' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression getCassandraCompression() {
       return cassandraCompression;
     }
 
-    /** Sets the value of the 'cassandraCompression' field */
+    /**
+     * Sets the value of the 'cassandraCompression' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraCompression(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression value) {
       validate(fields()[12], value);
       this.cassandraCompression = value;
@@ -829,24 +956,32 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraCompression' field has been set */
+    /**
+     * Checks whether the 'cassandraCompression' field has been set
+     */
     public boolean hasCassandraCompression() {
       return fieldSetFlags()[12];
     }
 
-    /** Clears the value of the 'cassandraCompression' field */
+    /**
+     * Clears the value of the 'cassandraCompression' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraCompression() {
       cassandraCompression = null;
       fieldSetFlags()[12] = false;
       return this;
     }
 
-    /** Gets the value of the 'cassandraExecuteRequestType' field */
+    /**
+     * Gets the value of the 'cassandraExecuteRequestType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType getCassandraExecuteRequestType() {
       return cassandraExecuteRequestType;
     }
 
-    /** Sets the value of the 'cassandraExecuteRequestType' field */
+    /**
+     * Sets the value of the 'cassandraExecuteRequestType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraExecuteRequestType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType value) {
       validate(fields()[13], value);
       this.cassandraExecuteRequestType = value;
@@ -854,12 +989,16 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'cassandraExecuteRequestType' field has been set */
+    /**
+     * Checks whether the 'cassandraExecuteRequestType' field has been set
+     */
     public boolean hasCassandraExecuteRequestType() {
       return fieldSetFlags()[13];
     }
 
-    /** Clears the value of the 'cassandraExecuteRequestType' field */
+    /**
+     * Clears the value of the 'cassandraExecuteRequestType' field
+     */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraExecuteRequestType() {
       cassandraExecuteRequestType = null;
       fieldSetFlags()[13] = false;

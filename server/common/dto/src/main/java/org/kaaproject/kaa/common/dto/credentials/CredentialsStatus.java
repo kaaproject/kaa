@@ -18,7 +18,6 @@ package org.kaaproject.kaa.common.dto.credentials;
 
 /**
  * @author Andrew Shvayka
- *
  * @since v0.9.0
  */
 public enum CredentialsStatus {

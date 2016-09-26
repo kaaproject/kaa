@@ -12,6 +12,7 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
   private org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest userAttachRequest;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest> endpointAttachRequests;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest> endpointDetachRequests;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /** Creates a new UserSyncRequest RecordBuilder */
+  /**
+   * Creates a new UserSyncRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder();
   }
 
-  /** Creates a new UserSyncRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new UserSyncRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder(other);
   }
 
-  /** Creates a new UserSyncRequest RecordBuilder by copying an existing UserSyncRequest instance */
+  /**
+   * Creates a new UserSyncRequest RecordBuilder by copying an existing UserSyncRequest instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder(other);
   }
@@ -93,6 +100,7 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'userAttachRequest' field.
+   *
    * @param value the value to set.
    */
   public void setUserAttachRequest(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest value) {
@@ -108,6 +116,7 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'endpointAttachRequests' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointAttachRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest> value) {
@@ -123,6 +132,7 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'endpointDetachRequests' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointDetachRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest> value) {
@@ -139,12 +149,16 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest> endpointAttachRequests;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest> endpointDetachRequests;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.userAttachRequest)) {
@@ -161,7 +175,9 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Creates a Builder by copying an existing UserSyncRequest instance */
+    /**
+     * Creates a Builder by copying an existing UserSyncRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.userAttachRequest)) {
@@ -178,12 +194,16 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Gets the value of the 'userAttachRequest' field */
+    /**
+     * Gets the value of the 'userAttachRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest getUserAttachRequest() {
       return userAttachRequest;
     }
 
-    /** Sets the value of the 'userAttachRequest' field */
+    /**
+     * Sets the value of the 'userAttachRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder setUserAttachRequest(org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest value) {
       validate(fields()[0], value);
       this.userAttachRequest = value;
@@ -191,24 +211,32 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'userAttachRequest' field has been set */
+    /**
+     * Checks whether the 'userAttachRequest' field has been set
+     */
     public boolean hasUserAttachRequest() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'userAttachRequest' field */
+    /**
+     * Clears the value of the 'userAttachRequest' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder clearUserAttachRequest() {
       userAttachRequest = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointAttachRequests' field */
+    /**
+     * Gets the value of the 'endpointAttachRequests' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest> getEndpointAttachRequests() {
       return endpointAttachRequests;
     }
 
-    /** Sets the value of the 'endpointAttachRequests' field */
+    /**
+     * Sets the value of the 'endpointAttachRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder setEndpointAttachRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest> value) {
       validate(fields()[1], value);
       this.endpointAttachRequests = value;
@@ -216,24 +244,32 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'endpointAttachRequests' field has been set */
+    /**
+     * Checks whether the 'endpointAttachRequests' field has been set
+     */
     public boolean hasEndpointAttachRequests() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'endpointAttachRequests' field */
+    /**
+     * Clears the value of the 'endpointAttachRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder clearEndpointAttachRequests() {
       endpointAttachRequests = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointDetachRequests' field */
+    /**
+     * Gets the value of the 'endpointDetachRequests' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest> getEndpointDetachRequests() {
       return endpointDetachRequests;
     }
 
-    /** Sets the value of the 'endpointDetachRequests' field */
+    /**
+     * Sets the value of the 'endpointDetachRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder setEndpointDetachRequests(java.util.List<org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest> value) {
       validate(fields()[2], value);
       this.endpointDetachRequests = value;
@@ -241,12 +277,16 @@ public class UserSyncRequest extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'endpointDetachRequests' field has been set */
+    /**
+     * Checks whether the 'endpointDetachRequests' field has been set
+     */
     public boolean hasEndpointDetachRequests() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'endpointDetachRequests' field */
+    /**
+     * Clears the value of the 'endpointDetachRequests' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest.Builder clearEndpointDetachRequests() {
       endpointDetachRequests = null;
       fieldSetFlags()[2] = false;

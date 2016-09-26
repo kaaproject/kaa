@@ -12,6 +12,7 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
   private java.util.List<org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri> couchbaseServerUris;
   private java.lang.String bucket;
   private java.lang.String password;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -33,17 +34,23 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /** Creates a new CouchbaseConfig RecordBuilder */
+  /**
+   * Creates a new CouchbaseConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder();
   }
 
-  /** Creates a new CouchbaseConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new CouchbaseConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder(other);
   }
 
-  /** Creates a new CouchbaseConfig RecordBuilder by copying an existing CouchbaseConfig instance */
+  /**
+   * Creates a new CouchbaseConfig RecordBuilder by copying an existing CouchbaseConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig other) {
     return new org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder(other);
   }
@@ -93,6 +100,7 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'couchbaseServerUris' field.
+   *
    * @param value the value to set.
    */
   public void setCouchbaseServerUris(java.util.List<org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri> value) {
@@ -108,6 +116,7 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'bucket' field.
+   *
    * @param value the value to set.
    */
   public void setBucket(java.lang.String value) {
@@ -123,6 +132,7 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'password' field.
+   *
    * @param value the value to set.
    */
   public void setPassword(java.lang.String value) {
@@ -139,12 +149,16 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
     private java.lang.String bucket;
     private java.lang.String password;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.couchbaseServerUris)) {
@@ -161,7 +175,9 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Creates a Builder by copying an existing CouchbaseConfig instance */
+    /**
+     * Creates a Builder by copying an existing CouchbaseConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig other) {
       super(org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.couchbaseServerUris)) {
@@ -178,12 +194,16 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Gets the value of the 'couchbaseServerUris' field */
+    /**
+     * Gets the value of the 'couchbaseServerUris' field
+     */
     public java.util.List<org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri> getCouchbaseServerUris() {
       return couchbaseServerUris;
     }
 
-    /** Sets the value of the 'couchbaseServerUris' field */
+    /**
+     * Sets the value of the 'couchbaseServerUris' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder setCouchbaseServerUris(java.util.List<org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri> value) {
       validate(fields()[0], value);
       this.couchbaseServerUris = value;
@@ -191,24 +211,32 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'couchbaseServerUris' field has been set */
+    /**
+     * Checks whether the 'couchbaseServerUris' field has been set
+     */
     public boolean hasCouchbaseServerUris() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'couchbaseServerUris' field */
+    /**
+     * Clears the value of the 'couchbaseServerUris' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder clearCouchbaseServerUris() {
       couchbaseServerUris = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'bucket' field */
+    /**
+     * Gets the value of the 'bucket' field
+     */
     public java.lang.String getBucket() {
       return bucket;
     }
 
-    /** Sets the value of the 'bucket' field */
+    /**
+     * Sets the value of the 'bucket' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder setBucket(java.lang.String value) {
       validate(fields()[1], value);
       this.bucket = value;
@@ -216,24 +244,32 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'bucket' field has been set */
+    /**
+     * Checks whether the 'bucket' field has been set
+     */
     public boolean hasBucket() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'bucket' field */
+    /**
+     * Clears the value of the 'bucket' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder clearBucket() {
       bucket = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'password' field */
+    /**
+     * Gets the value of the 'password' field
+     */
     public java.lang.String getPassword() {
       return password;
     }
 
-    /** Sets the value of the 'password' field */
+    /**
+     * Sets the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder setPassword(java.lang.String value) {
       validate(fields()[2], value);
       this.password = value;
@@ -241,12 +277,16 @@ public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'password' field has been set */
+    /**
+     * Checks whether the 'password' field has been set
+     */
     public boolean hasPassword() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'password' field */
+    /**
+     * Clears the value of the 'password' field
+     */
     public org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig.Builder clearPassword() {
       password = null;
       fieldSetFlags()[2] = false;

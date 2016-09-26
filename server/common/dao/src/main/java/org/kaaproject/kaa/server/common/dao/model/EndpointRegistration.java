@@ -23,7 +23,6 @@ import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public interface EndpointRegistration extends ToDto<EndpointRegistrationDto> {

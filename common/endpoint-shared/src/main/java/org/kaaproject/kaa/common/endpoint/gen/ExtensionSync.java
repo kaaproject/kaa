@@ -11,6 +11,7 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ExtensionSync\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"extensionId\",\"type\":\"int\"},{\"name\":\"payload\",\"type\":\"bytes\"}]}");
   private int extensionId;
   private java.nio.ByteBuffer payload;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,23 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
     return SCHEMA$;
   }
 
-  /** Creates a new ExtensionSync RecordBuilder */
+  /**
+   * Creates a new ExtensionSync RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder();
   }
 
-  /** Creates a new ExtensionSync RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new ExtensionSync RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder(other);
   }
 
-  /** Creates a new ExtensionSync RecordBuilder by copying an existing ExtensionSync instance */
+  /**
+   * Creates a new ExtensionSync RecordBuilder by copying an existing ExtensionSync instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ExtensionSync other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder(other);
   }
@@ -86,6 +93,7 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'extensionId' field.
+   *
    * @param value the value to set.
    */
   public void setExtensionId(java.lang.Integer value) {
@@ -101,6 +109,7 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'payload' field.
+   *
    * @param value the value to set.
    */
   public void setPayload(java.nio.ByteBuffer value) {
@@ -116,12 +125,16 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
     private int extensionId;
     private java.nio.ByteBuffer payload;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.extensionId)) {
@@ -134,7 +147,9 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
       }
     }
 
-    /** Creates a Builder by copying an existing ExtensionSync instance */
+    /**
+     * Creates a Builder by copying an existing ExtensionSync instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ExtensionSync other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.SCHEMA$);
       if (isValidValue(fields()[0], other.extensionId)) {
@@ -147,12 +162,16 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
       }
     }
 
-    /** Gets the value of the 'extensionId' field */
+    /**
+     * Gets the value of the 'extensionId' field
+     */
     public java.lang.Integer getExtensionId() {
       return extensionId;
     }
 
-    /** Sets the value of the 'extensionId' field */
+    /**
+     * Sets the value of the 'extensionId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder setExtensionId(int value) {
       validate(fields()[0], value);
       this.extensionId = value;
@@ -160,23 +179,31 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'extensionId' field has been set */
+    /**
+     * Checks whether the 'extensionId' field has been set
+     */
     public boolean hasExtensionId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'extensionId' field */
+    /**
+     * Clears the value of the 'extensionId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder clearExtensionId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'payload' field */
+    /**
+     * Gets the value of the 'payload' field
+     */
     public java.nio.ByteBuffer getPayload() {
       return payload;
     }
 
-    /** Sets the value of the 'payload' field */
+    /**
+     * Sets the value of the 'payload' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder setPayload(java.nio.ByteBuffer value) {
       validate(fields()[1], value);
       this.payload = value;
@@ -184,12 +211,16 @@ public class ExtensionSync extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'payload' field has been set */
+    /**
+     * Checks whether the 'payload' field has been set
+     */
     public boolean hasPayload() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'payload' field */
+    /**
+     * Clears the value of the 'payload' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.ExtensionSync.Builder clearPayload() {
       payload = null;
       fieldSetFlags()[1] = false;

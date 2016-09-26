@@ -14,17 +14,24 @@ public class TrustfulAvroConfig extends org.apache.avro.specific.SpecificRecordB
     return SCHEMA$;
   }
 
-  /** Creates a new TrustfulAvroConfig RecordBuilder */
+  /**
+   * Creates a new TrustfulAvroConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder();
   }
 
-  /** Creates a new TrustfulAvroConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new TrustfulAvroConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder other) {
     return new org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder(other);
   }
 
-  /** Creates a new TrustfulAvroConfig RecordBuilder by copying an existing TrustfulAvroConfig instance */
+  /**
+   * Creates a new TrustfulAvroConfig RecordBuilder by copying an existing TrustfulAvroConfig
+   * instance
+   */
   public static org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig other) {
     return new org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder(other);
   }
@@ -57,17 +64,23 @@ public class TrustfulAvroConfig extends org.apache.avro.specific.SpecificRecordB
       implements org.apache.avro.data.RecordBuilder<TrustfulAvroConfig> {
 
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.Builder other) {
       super(other);
     }
 
-    /** Creates a Builder by copying an existing TrustfulAvroConfig instance */
+    /**
+     * Creates a Builder by copying an existing TrustfulAvroConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig other) {
       super(org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfig.SCHEMA$);
     }

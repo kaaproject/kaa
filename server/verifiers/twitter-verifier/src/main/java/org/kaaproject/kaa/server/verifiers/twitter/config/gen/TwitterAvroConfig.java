@@ -13,6 +13,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
   private java.lang.String consumer_secret;
   private int max_parallel_connections;
   private java.lang.String twitter_verify_url;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -35,17 +36,23 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /** Creates a new TwitterAvroConfig RecordBuilder */
+  /**
+   * Creates a new TwitterAvroConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder();
   }
 
-  /** Creates a new TwitterAvroConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new TwitterAvroConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder other) {
     return new org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder(other);
   }
 
-  /** Creates a new TwitterAvroConfig RecordBuilder by copying an existing TwitterAvroConfig instance */
+  /**
+   * Creates a new TwitterAvroConfig RecordBuilder by copying an existing TwitterAvroConfig instance
+   */
   public static org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder newBuilder(org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig other) {
     return new org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder(other);
   }
@@ -100,6 +107,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'consumer_key' field.
+   *
    * @param value the value to set.
    */
   public void setConsumerKey(java.lang.String value) {
@@ -115,6 +123,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'consumer_secret' field.
+   *
    * @param value the value to set.
    */
   public void setConsumerSecret(java.lang.String value) {
@@ -130,6 +139,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'max_parallel_connections' field.
+   *
    * @param value the value to set.
    */
   public void setMaxParallelConnections(java.lang.Integer value) {
@@ -145,6 +155,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'twitter_verify_url' field.
+   *
    * @param value the value to set.
    */
   public void setTwitterVerifyUrl(java.lang.String value) {
@@ -162,12 +173,16 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
     private int max_parallel_connections;
     private java.lang.String twitter_verify_url;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.consumer_key)) {
@@ -188,7 +203,9 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Creates a Builder by copying an existing TwitterAvroConfig instance */
+    /**
+     * Creates a Builder by copying an existing TwitterAvroConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig other) {
       super(org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.consumer_key)) {
@@ -209,12 +226,16 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /** Gets the value of the 'consumer_key' field */
+    /**
+     * Gets the value of the 'consumer_key' field
+     */
     public java.lang.String getConsumerKey() {
       return consumer_key;
     }
 
-    /** Sets the value of the 'consumer_key' field */
+    /**
+     * Sets the value of the 'consumer_key' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder setConsumerKey(java.lang.String value) {
       validate(fields()[0], value);
       this.consumer_key = value;
@@ -222,24 +243,32 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'consumer_key' field has been set */
+    /**
+     * Checks whether the 'consumer_key' field has been set
+     */
     public boolean hasConsumerKey() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'consumer_key' field */
+    /**
+     * Clears the value of the 'consumer_key' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder clearConsumerKey() {
       consumer_key = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'consumer_secret' field */
+    /**
+     * Gets the value of the 'consumer_secret' field
+     */
     public java.lang.String getConsumerSecret() {
       return consumer_secret;
     }
 
-    /** Sets the value of the 'consumer_secret' field */
+    /**
+     * Sets the value of the 'consumer_secret' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder setConsumerSecret(java.lang.String value) {
       validate(fields()[1], value);
       this.consumer_secret = value;
@@ -247,24 +276,32 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'consumer_secret' field has been set */
+    /**
+     * Checks whether the 'consumer_secret' field has been set
+     */
     public boolean hasConsumerSecret() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'consumer_secret' field */
+    /**
+     * Clears the value of the 'consumer_secret' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder clearConsumerSecret() {
       consumer_secret = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'max_parallel_connections' field */
+    /**
+     * Gets the value of the 'max_parallel_connections' field
+     */
     public java.lang.Integer getMaxParallelConnections() {
       return max_parallel_connections;
     }
 
-    /** Sets the value of the 'max_parallel_connections' field */
+    /**
+     * Sets the value of the 'max_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder setMaxParallelConnections(int value) {
       validate(fields()[2], value);
       this.max_parallel_connections = value;
@@ -272,23 +309,31 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'max_parallel_connections' field has been set */
+    /**
+     * Checks whether the 'max_parallel_connections' field has been set
+     */
     public boolean hasMaxParallelConnections() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'max_parallel_connections' field */
+    /**
+     * Clears the value of the 'max_parallel_connections' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder clearMaxParallelConnections() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'twitter_verify_url' field */
+    /**
+     * Gets the value of the 'twitter_verify_url' field
+     */
     public java.lang.String getTwitterVerifyUrl() {
       return twitter_verify_url;
     }
 
-    /** Sets the value of the 'twitter_verify_url' field */
+    /**
+     * Sets the value of the 'twitter_verify_url' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder setTwitterVerifyUrl(java.lang.String value) {
       validate(fields()[3], value);
       this.twitter_verify_url = value;
@@ -296,12 +341,16 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Checks whether the 'twitter_verify_url' field has been set */
+    /**
+     * Checks whether the 'twitter_verify_url' field has been set
+     */
     public boolean hasTwitterVerifyUrl() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'twitter_verify_url' field */
+    /**
+     * Clears the value of the 'twitter_verify_url' field
+     */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder clearTwitterVerifyUrl() {
       twitter_verify_url = null;
       fieldSetFlags()[3] = false;

@@ -30,17 +30,23 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /** Creates a new LogSyncResponse RecordBuilder */
+  /**
+   * Creates a new LogSyncResponse RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder();
   }
 
-  /** Creates a new LogSyncResponse RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new LogSyncResponse RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder(other);
   }
 
-  /** Creates a new LogSyncResponse RecordBuilder by copying an existing LogSyncResponse instance */
+  /**
+   * Creates a new LogSyncResponse RecordBuilder by copying an existing LogSyncResponse instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder(other);
   }
@@ -80,6 +86,7 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'deliveryStatuses' field.
+   *
    * @param value the value to set.
    */
   public void setDeliveryStatuses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> value) {
@@ -94,12 +101,16 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
 
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> deliveryStatuses;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.deliveryStatuses)) {
@@ -108,7 +119,9 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Creates a Builder by copying an existing LogSyncResponse instance */
+    /**
+     * Creates a Builder by copying an existing LogSyncResponse instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.deliveryStatuses)) {
@@ -117,12 +130,16 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /** Gets the value of the 'deliveryStatuses' field */
+    /**
+     * Gets the value of the 'deliveryStatuses' field
+     */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> getDeliveryStatuses() {
       return deliveryStatuses;
     }
 
-    /** Sets the value of the 'deliveryStatuses' field */
+    /**
+     * Sets the value of the 'deliveryStatuses' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder setDeliveryStatuses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> value) {
       validate(fields()[0], value);
       this.deliveryStatuses = value;
@@ -130,12 +147,16 @@ public class LogSyncResponse extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /** Checks whether the 'deliveryStatuses' field has been set */
+    /**
+     * Checks whether the 'deliveryStatuses' field has been set
+     */
     public boolean hasDeliveryStatuses() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'deliveryStatuses' field */
+    /**
+     * Clears the value of the 'deliveryStatuses' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse.Builder clearDeliveryStatuses() {
       deliveryStatuses = null;
       fieldSetFlags()[0] = false;

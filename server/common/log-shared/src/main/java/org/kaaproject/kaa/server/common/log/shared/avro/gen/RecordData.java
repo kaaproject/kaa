@@ -33,6 +33,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
   private java.lang.String clientSchemaId;
   private java.lang.String serverProfileBody;
   private java.lang.String serverSchemaId;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -59,17 +60,23 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
     return SCHEMA$;
   }
 
-  /** Creates a new RecordData RecordBuilder */
+  /**
+   * Creates a new RecordData RecordBuilder
+   */
   public static org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder();
   }
 
-  /** Creates a new RecordData RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new RecordData RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder newBuilder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder other) {
     return new org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder(other);
   }
 
-  /** Creates a new RecordData RecordBuilder by copying an existing RecordData instance */
+  /**
+   * Creates a new RecordData RecordBuilder by copying an existing RecordData instance
+   */
   public static org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder newBuilder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData other) {
     return new org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder(other);
   }
@@ -144,6 +151,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'recordHeader' field.
+   *
    * @param value the value to set.
    */
   public void setRecordHeader(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader value) {
@@ -159,6 +167,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'schemaVersion' field.
+   *
    * @param value the value to set.
    */
   public void setSchemaVersion(java.lang.Integer value) {
@@ -174,6 +183,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'applicationToken' field.
+   *
    * @param value the value to set.
    */
   public void setApplicationToken(java.lang.String value) {
@@ -189,6 +199,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'eventRecords' field.
+   *
    * @param value the value to set.
    */
   public void setEventRecords(java.util.List<java.nio.ByteBuffer> value) {
@@ -204,6 +215,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'clientProfileBody' field.
+   *
    * @param value the value to set.
    */
   public void setClientProfileBody(java.lang.String value) {
@@ -219,6 +231,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'clientSchemaId' field.
+   *
    * @param value the value to set.
    */
   public void setClientSchemaId(java.lang.String value) {
@@ -234,6 +247,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'serverProfileBody' field.
+   *
    * @param value the value to set.
    */
   public void setServerProfileBody(java.lang.String value) {
@@ -249,6 +263,7 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * Sets the value of the 'serverSchemaId' field.
+   *
    * @param value the value to set.
    */
   public void setServerSchemaId(java.lang.String value) {
@@ -270,12 +285,16 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
     private java.lang.String serverProfileBody;
     private java.lang.String serverSchemaId;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.recordHeader)) {
@@ -312,7 +331,9 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Creates a Builder by copying an existing RecordData instance */
+    /**
+     * Creates a Builder by copying an existing RecordData instance
+     */
     private Builder(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData other) {
       super(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.SCHEMA$);
       if (isValidValue(fields()[0], other.recordHeader)) {
@@ -349,12 +370,16 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
 
-    /** Gets the value of the 'recordHeader' field */
+    /**
+     * Gets the value of the 'recordHeader' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader getRecordHeader() {
       return recordHeader;
     }
 
-    /** Sets the value of the 'recordHeader' field */
+    /**
+     * Sets the value of the 'recordHeader' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setRecordHeader(org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader value) {
       validate(fields()[0], value);
       this.recordHeader = value;
@@ -362,24 +387,32 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'recordHeader' field has been set */
+    /**
+     * Checks whether the 'recordHeader' field has been set
+     */
     public boolean hasRecordHeader() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'recordHeader' field */
+    /**
+     * Clears the value of the 'recordHeader' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearRecordHeader() {
       recordHeader = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'schemaVersion' field */
+    /**
+     * Gets the value of the 'schemaVersion' field
+     */
     public java.lang.Integer getSchemaVersion() {
       return schemaVersion;
     }
 
-    /** Sets the value of the 'schemaVersion' field */
+    /**
+     * Sets the value of the 'schemaVersion' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setSchemaVersion(int value) {
       validate(fields()[1], value);
       this.schemaVersion = value;
@@ -387,23 +420,31 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'schemaVersion' field has been set */
+    /**
+     * Checks whether the 'schemaVersion' field has been set
+     */
     public boolean hasSchemaVersion() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'schemaVersion' field */
+    /**
+     * Clears the value of the 'schemaVersion' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearSchemaVersion() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'applicationToken' field */
+    /**
+     * Gets the value of the 'applicationToken' field
+     */
     public java.lang.String getApplicationToken() {
       return applicationToken;
     }
 
-    /** Sets the value of the 'applicationToken' field */
+    /**
+     * Sets the value of the 'applicationToken' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setApplicationToken(java.lang.String value) {
       validate(fields()[2], value);
       this.applicationToken = value;
@@ -411,24 +452,32 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'applicationToken' field has been set */
+    /**
+     * Checks whether the 'applicationToken' field has been set
+     */
     public boolean hasApplicationToken() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'applicationToken' field */
+    /**
+     * Clears the value of the 'applicationToken' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearApplicationToken() {
       applicationToken = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventRecords' field */
+    /**
+     * Gets the value of the 'eventRecords' field
+     */
     public java.util.List<java.nio.ByteBuffer> getEventRecords() {
       return eventRecords;
     }
 
-    /** Sets the value of the 'eventRecords' field */
+    /**
+     * Sets the value of the 'eventRecords' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setEventRecords(java.util.List<java.nio.ByteBuffer> value) {
       validate(fields()[3], value);
       this.eventRecords = value;
@@ -436,24 +485,32 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'eventRecords' field has been set */
+    /**
+     * Checks whether the 'eventRecords' field has been set
+     */
     public boolean hasEventRecords() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'eventRecords' field */
+    /**
+     * Clears the value of the 'eventRecords' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearEventRecords() {
       eventRecords = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'clientProfileBody' field */
+    /**
+     * Gets the value of the 'clientProfileBody' field
+     */
     public java.lang.String getClientProfileBody() {
       return clientProfileBody;
     }
 
-    /** Sets the value of the 'clientProfileBody' field */
+    /**
+     * Sets the value of the 'clientProfileBody' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setClientProfileBody(java.lang.String value) {
       validate(fields()[4], value);
       this.clientProfileBody = value;
@@ -461,24 +518,32 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'clientProfileBody' field has been set */
+    /**
+     * Checks whether the 'clientProfileBody' field has been set
+     */
     public boolean hasClientProfileBody() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'clientProfileBody' field */
+    /**
+     * Clears the value of the 'clientProfileBody' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearClientProfileBody() {
       clientProfileBody = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'clientSchemaId' field */
+    /**
+     * Gets the value of the 'clientSchemaId' field
+     */
     public java.lang.String getClientSchemaId() {
       return clientSchemaId;
     }
 
-    /** Sets the value of the 'clientSchemaId' field */
+    /**
+     * Sets the value of the 'clientSchemaId' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setClientSchemaId(java.lang.String value) {
       validate(fields()[5], value);
       this.clientSchemaId = value;
@@ -486,24 +551,32 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'clientSchemaId' field has been set */
+    /**
+     * Checks whether the 'clientSchemaId' field has been set
+     */
     public boolean hasClientSchemaId() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'clientSchemaId' field */
+    /**
+     * Clears the value of the 'clientSchemaId' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearClientSchemaId() {
       clientSchemaId = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'serverProfileBody' field */
+    /**
+     * Gets the value of the 'serverProfileBody' field
+     */
     public java.lang.String getServerProfileBody() {
       return serverProfileBody;
     }
 
-    /** Sets the value of the 'serverProfileBody' field */
+    /**
+     * Sets the value of the 'serverProfileBody' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setServerProfileBody(java.lang.String value) {
       validate(fields()[6], value);
       this.serverProfileBody = value;
@@ -511,24 +584,32 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'serverProfileBody' field has been set */
+    /**
+     * Checks whether the 'serverProfileBody' field has been set
+     */
     public boolean hasServerProfileBody() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'serverProfileBody' field */
+    /**
+     * Clears the value of the 'serverProfileBody' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearServerProfileBody() {
       serverProfileBody = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'serverSchemaId' field */
+    /**
+     * Gets the value of the 'serverSchemaId' field
+     */
     public java.lang.String getServerSchemaId() {
       return serverSchemaId;
     }
 
-    /** Sets the value of the 'serverSchemaId' field */
+    /**
+     * Sets the value of the 'serverSchemaId' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder setServerSchemaId(java.lang.String value) {
       validate(fields()[7], value);
       this.serverSchemaId = value;
@@ -536,12 +617,16 @@ public class RecordData extends org.apache.avro.specific.SpecificRecordBase impl
       return this;
     }
 
-    /** Checks whether the 'serverSchemaId' field has been set */
+    /**
+     * Checks whether the 'serverSchemaId' field has been set
+     */
     public boolean hasServerSchemaId() {
       return fieldSetFlags()[7];
     }
 
-    /** Clears the value of the 'serverSchemaId' field */
+    /**
+     * Clears the value of the 'serverSchemaId' field
+     */
     public org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData.Builder clearServerSchemaId() {
       serverSchemaId = null;
       fieldSetFlags()[7] = false;

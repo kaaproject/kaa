@@ -11,6 +11,7 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EndpointDetachRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"endpointKeyHash\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"out\"}");
   private int requestId;
   private java.lang.String endpointKeyHash;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new EndpointDetachRequest RecordBuilder */
+  /**
+   * Creates a new EndpointDetachRequest RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder();
   }
 
-  /** Creates a new EndpointDetachRequest RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new EndpointDetachRequest RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder(other);
   }
 
-  /** Creates a new EndpointDetachRequest RecordBuilder by copying an existing EndpointDetachRequest instance */
+  /**
+   * Creates a new EndpointDetachRequest RecordBuilder by copying an existing EndpointDetachRequest
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder(other);
   }
@@ -86,6 +94,7 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'requestId' field.
+   *
    * @param value the value to set.
    */
   public void setRequestId(java.lang.Integer value) {
@@ -101,6 +110,7 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'endpointKeyHash' field.
+   *
    * @param value the value to set.
    */
   public void setEndpointKeyHash(java.lang.String value) {
@@ -116,12 +126,16 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
     private int requestId;
     private java.lang.String endpointKeyHash;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -134,7 +148,9 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing EndpointDetachRequest instance */
+    /**
+     * Creates a Builder by copying an existing EndpointDetachRequest instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.requestId)) {
@@ -147,12 +163,16 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'requestId' field */
+    /**
+     * Gets the value of the 'requestId' field
+     */
     public java.lang.Integer getRequestId() {
       return requestId;
     }
 
-    /** Sets the value of the 'requestId' field */
+    /**
+     * Sets the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder setRequestId(int value) {
       validate(fields()[0], value);
       this.requestId = value;
@@ -160,23 +180,31 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'requestId' field has been set */
+    /**
+     * Checks whether the 'requestId' field has been set
+     */
     public boolean hasRequestId() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'requestId' field */
+    /**
+     * Clears the value of the 'requestId' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder clearRequestId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'endpointKeyHash' field */
+    /**
+     * Gets the value of the 'endpointKeyHash' field
+     */
     public java.lang.String getEndpointKeyHash() {
       return endpointKeyHash;
     }
 
-    /** Sets the value of the 'endpointKeyHash' field */
+    /**
+     * Sets the value of the 'endpointKeyHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder setEndpointKeyHash(java.lang.String value) {
       validate(fields()[1], value);
       this.endpointKeyHash = value;
@@ -184,12 +212,16 @@ public class EndpointDetachRequest extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'endpointKeyHash' field has been set */
+    /**
+     * Checks whether the 'endpointKeyHash' field has been set
+     */
     public boolean hasEndpointKeyHash() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'endpointKeyHash' field */
+    /**
+     * Clears the value of the 'endpointKeyHash' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest.Builder clearEndpointKeyHash() {
       endpointKeyHash = null;
       fieldSetFlags()[1] = false;

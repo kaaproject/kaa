@@ -14,6 +14,7 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
   private java.nio.ByteBuffer eventData;
   private java.lang.String source;
   private java.lang.String target;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -37,17 +38,23 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
     return SCHEMA$;
   }
 
-  /** Creates a new Event RecordBuilder */
+  /**
+   * Creates a new Event RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Event.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.Event.Builder();
   }
 
-  /** Creates a new Event RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new Event RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Event.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.Event.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.Event.Builder(other);
   }
 
-  /** Creates a new Event RecordBuilder by copying an existing Event instance */
+  /**
+   * Creates a new Event RecordBuilder by copying an existing Event instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.Event.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.Event other) {
     return new org.kaaproject.kaa.common.endpoint.gen.Event.Builder(other);
   }
@@ -107,6 +114,7 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'seqNum' field.
+   *
    * @param value the value to set.
    */
   public void setSeqNum(java.lang.Integer value) {
@@ -122,6 +130,7 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'eventClassFQN' field.
+   *
    * @param value the value to set.
    */
   public void setEventClassFQN(java.lang.String value) {
@@ -137,6 +146,7 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'eventData' field.
+   *
    * @param value the value to set.
    */
   public void setEventData(java.nio.ByteBuffer value) {
@@ -152,6 +162,7 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'source' field.
+   *
    * @param value the value to set.
    */
   public void setSource(java.lang.String value) {
@@ -167,6 +178,7 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
 
   /**
    * Sets the value of the 'target' field.
+   *
    * @param value the value to set.
    */
   public void setTarget(java.lang.String value) {
@@ -185,12 +197,16 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
     private java.lang.String source;
     private java.lang.String target;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.Event.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.Event.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.seqNum)) {
@@ -215,7 +231,9 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       }
     }
 
-    /** Creates a Builder by copying an existing Event instance */
+    /**
+     * Creates a Builder by copying an existing Event instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.Event other) {
       super(org.kaaproject.kaa.common.endpoint.gen.Event.SCHEMA$);
       if (isValidValue(fields()[0], other.seqNum)) {
@@ -240,12 +258,16 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       }
     }
 
-    /** Gets the value of the 'seqNum' field */
+    /**
+     * Gets the value of the 'seqNum' field
+     */
     public java.lang.Integer getSeqNum() {
       return seqNum;
     }
 
-    /** Sets the value of the 'seqNum' field */
+    /**
+     * Sets the value of the 'seqNum' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder setSeqNum(int value) {
       validate(fields()[0], value);
       this.seqNum = value;
@@ -253,23 +275,31 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'seqNum' field has been set */
+    /**
+     * Checks whether the 'seqNum' field has been set
+     */
     public boolean hasSeqNum() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'seqNum' field */
+    /**
+     * Clears the value of the 'seqNum' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder clearSeqNum() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventClassFQN' field */
+    /**
+     * Gets the value of the 'eventClassFQN' field
+     */
     public java.lang.String getEventClassFQN() {
       return eventClassFQN;
     }
 
-    /** Sets the value of the 'eventClassFQN' field */
+    /**
+     * Sets the value of the 'eventClassFQN' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder setEventClassFQN(java.lang.String value) {
       validate(fields()[1], value);
       this.eventClassFQN = value;
@@ -277,24 +307,32 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'eventClassFQN' field has been set */
+    /**
+     * Checks whether the 'eventClassFQN' field has been set
+     */
     public boolean hasEventClassFQN() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'eventClassFQN' field */
+    /**
+     * Clears the value of the 'eventClassFQN' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder clearEventClassFQN() {
       eventClassFQN = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'eventData' field */
+    /**
+     * Gets the value of the 'eventData' field
+     */
     public java.nio.ByteBuffer getEventData() {
       return eventData;
     }
 
-    /** Sets the value of the 'eventData' field */
+    /**
+     * Sets the value of the 'eventData' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder setEventData(java.nio.ByteBuffer value) {
       validate(fields()[2], value);
       this.eventData = value;
@@ -302,24 +340,32 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'eventData' field has been set */
+    /**
+     * Checks whether the 'eventData' field has been set
+     */
     public boolean hasEventData() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'eventData' field */
+    /**
+     * Clears the value of the 'eventData' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder clearEventData() {
       eventData = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'source' field */
+    /**
+     * Gets the value of the 'source' field
+     */
     public java.lang.String getSource() {
       return source;
     }
 
-    /** Sets the value of the 'source' field */
+    /**
+     * Sets the value of the 'source' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder setSource(java.lang.String value) {
       validate(fields()[3], value);
       this.source = value;
@@ -327,24 +373,32 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'source' field has been set */
+    /**
+     * Checks whether the 'source' field has been set
+     */
     public boolean hasSource() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'source' field */
+    /**
+     * Clears the value of the 'source' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder clearSource() {
       source = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'target' field */
+    /**
+     * Gets the value of the 'target' field
+     */
     public java.lang.String getTarget() {
       return target;
     }
 
-    /** Sets the value of the 'target' field */
+    /**
+     * Sets the value of the 'target' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder setTarget(java.lang.String value) {
       validate(fields()[4], value);
       this.target = value;
@@ -352,12 +406,16 @@ public class Event extends org.apache.avro.specific.SpecificRecordBase implement
       return this;
     }
 
-    /** Checks whether the 'target' field has been set */
+    /**
+     * Checks whether the 'target' field has been set
+     */
     public boolean hasTarget() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'target' field */
+    /**
+     * Clears the value of the 'target' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.Event.Builder clearTarget() {
       target = null;
       fieldSetFlags()[4] = false;

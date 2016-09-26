@@ -13,6 +13,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
   private int bindPort;
   private java.lang.String publicInterface;
   private java.lang.String publicPorts;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -35,17 +36,23 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
     return SCHEMA$;
   }
 
-  /** Creates a new AvroTcpConfig RecordBuilder */
+  /**
+   * Creates a new AvroTcpConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder();
   }
 
-  /** Creates a new AvroTcpConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new AvroTcpConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder newBuilder(org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder other) {
     return new org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder(other);
   }
 
-  /** Creates a new AvroTcpConfig RecordBuilder by copying an existing AvroTcpConfig instance */
+  /**
+   * Creates a new AvroTcpConfig RecordBuilder by copying an existing AvroTcpConfig instance
+   */
   public static org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder newBuilder(org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig other) {
     return new org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder(other);
   }
@@ -100,6 +107,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'bindInterface' field.
+   *
    * @param value the value to set.
    */
   public void setBindInterface(java.lang.String value) {
@@ -115,6 +123,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'bindPort' field.
+   *
    * @param value the value to set.
    */
   public void setBindPort(java.lang.Integer value) {
@@ -130,6 +139,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'publicInterface' field.
+   *
    * @param value the value to set.
    */
   public void setPublicInterface(java.lang.String value) {
@@ -145,6 +155,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
 
   /**
    * Sets the value of the 'publicPorts' field.
+   *
    * @param value the value to set.
    */
   public void setPublicPorts(java.lang.String value) {
@@ -162,12 +173,16 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
     private java.lang.String publicInterface;
     private java.lang.String publicPorts;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.bindInterface)) {
@@ -188,7 +203,9 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       }
     }
 
-    /** Creates a Builder by copying an existing AvroTcpConfig instance */
+    /**
+     * Creates a Builder by copying an existing AvroTcpConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig other) {
       super(org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.bindInterface)) {
@@ -209,12 +226,16 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       }
     }
 
-    /** Gets the value of the 'bindInterface' field */
+    /**
+     * Gets the value of the 'bindInterface' field
+     */
     public java.lang.String getBindInterface() {
       return bindInterface;
     }
 
-    /** Sets the value of the 'bindInterface' field */
+    /**
+     * Sets the value of the 'bindInterface' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder setBindInterface(java.lang.String value) {
       validate(fields()[0], value);
       this.bindInterface = value;
@@ -222,24 +243,32 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'bindInterface' field has been set */
+    /**
+     * Checks whether the 'bindInterface' field has been set
+     */
     public boolean hasBindInterface() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'bindInterface' field */
+    /**
+     * Clears the value of the 'bindInterface' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder clearBindInterface() {
       bindInterface = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'bindPort' field */
+    /**
+     * Gets the value of the 'bindPort' field
+     */
     public java.lang.Integer getBindPort() {
       return bindPort;
     }
 
-    /** Sets the value of the 'bindPort' field */
+    /**
+     * Sets the value of the 'bindPort' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder setBindPort(int value) {
       validate(fields()[1], value);
       this.bindPort = value;
@@ -247,23 +276,31 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'bindPort' field has been set */
+    /**
+     * Checks whether the 'bindPort' field has been set
+     */
     public boolean hasBindPort() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'bindPort' field */
+    /**
+     * Clears the value of the 'bindPort' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder clearBindPort() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'publicInterface' field */
+    /**
+     * Gets the value of the 'publicInterface' field
+     */
     public java.lang.String getPublicInterface() {
       return publicInterface;
     }
 
-    /** Sets the value of the 'publicInterface' field */
+    /**
+     * Sets the value of the 'publicInterface' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder setPublicInterface(java.lang.String value) {
       validate(fields()[2], value);
       this.publicInterface = value;
@@ -271,24 +308,32 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'publicInterface' field has been set */
+    /**
+     * Checks whether the 'publicInterface' field has been set
+     */
     public boolean hasPublicInterface() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'publicInterface' field */
+    /**
+     * Clears the value of the 'publicInterface' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder clearPublicInterface() {
       publicInterface = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'publicPorts' field */
+    /**
+     * Gets the value of the 'publicPorts' field
+     */
     public java.lang.String getPublicPorts() {
       return publicPorts;
     }
 
-    /** Sets the value of the 'publicPorts' field */
+    /**
+     * Sets the value of the 'publicPorts' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder setPublicPorts(java.lang.String value) {
       validate(fields()[3], value);
       this.publicPorts = value;
@@ -296,12 +341,16 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Checks whether the 'publicPorts' field has been set */
+    /**
+     * Checks whether the 'publicPorts' field has been set
+     */
     public boolean hasPublicPorts() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'publicPorts' field */
+    /**
+     * Clears the value of the 'publicPorts' field
+     */
     public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder clearPublicPorts() {
       publicPorts = null;
       fieldSetFlags()[3] = false;

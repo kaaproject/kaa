@@ -26,7 +26,6 @@ import java.util.Optional;
 /**
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Service

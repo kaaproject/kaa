@@ -26,7 +26,6 @@ import java.util.Arrays;
 /**
  * @author Bohdan Khablenko
  * @author Andrew Shvayka
- *
  * @since v0.9.0
  */
 public class CredentialsDto implements HasId, Serializable {

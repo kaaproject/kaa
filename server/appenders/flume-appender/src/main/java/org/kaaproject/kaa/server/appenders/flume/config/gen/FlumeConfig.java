@@ -16,6 +16,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
   private java.lang.Boolean includeServerProfile;
   private org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat flumeEventFormat;
   private java.lang.Object hostsBalancing;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -41,17 +42,23 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     return SCHEMA$;
   }
 
-  /** Creates a new FlumeConfig RecordBuilder */
+  /**
+   * Creates a new FlumeConfig RecordBuilder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder();
   }
 
-  /** Creates a new FlumeConfig RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new FlumeConfig RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder(other);
   }
 
-  /** Creates a new FlumeConfig RecordBuilder by copying an existing FlumeConfig instance */
+  /**
+   * Creates a new FlumeConfig RecordBuilder by copying an existing FlumeConfig instance
+   */
   public static org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder newBuilder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig other) {
     return new org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder(other);
   }
@@ -121,6 +128,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'executorThreadPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setExecutorThreadPoolSize(java.lang.Integer value) {
@@ -136,6 +144,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'callbackThreadPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setCallbackThreadPoolSize(java.lang.Integer value) {
@@ -151,6 +160,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'clientsThreadPoolSize' field.
+   *
    * @param value the value to set.
    */
   public void setClientsThreadPoolSize(java.lang.Integer value) {
@@ -166,6 +176,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'includeClientProfile' field.
+   *
    * @param value the value to set.
    */
   public void setIncludeClientProfile(java.lang.Boolean value) {
@@ -181,6 +192,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'includeServerProfile' field.
+   *
    * @param value the value to set.
    */
   public void setIncludeServerProfile(java.lang.Boolean value) {
@@ -196,6 +208,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'flumeEventFormat' field.
+   *
    * @param value the value to set.
    */
   public void setFlumeEventFormat(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat value) {
@@ -211,6 +224,7 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'hostsBalancing' field.
+   *
    * @param value the value to set.
    */
   public void setHostsBalancing(java.lang.Object value) {
@@ -231,12 +245,16 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     private org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat flumeEventFormat;
     private java.lang.Object hostsBalancing;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.executorThreadPoolSize)) {
@@ -269,7 +287,9 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Creates a Builder by copying an existing FlumeConfig instance */
+    /**
+     * Creates a Builder by copying an existing FlumeConfig instance
+     */
     private Builder(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig other) {
       super(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.SCHEMA$);
       if (isValidValue(fields()[0], other.executorThreadPoolSize)) {
@@ -302,12 +322,16 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       }
     }
 
-    /** Gets the value of the 'executorThreadPoolSize' field */
+    /**
+     * Gets the value of the 'executorThreadPoolSize' field
+     */
     public java.lang.Integer getExecutorThreadPoolSize() {
       return executorThreadPoolSize;
     }
 
-    /** Sets the value of the 'executorThreadPoolSize' field */
+    /**
+     * Sets the value of the 'executorThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setExecutorThreadPoolSize(int value) {
       validate(fields()[0], value);
       this.executorThreadPoolSize = value;
@@ -315,23 +339,31 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'executorThreadPoolSize' field has been set */
+    /**
+     * Checks whether the 'executorThreadPoolSize' field has been set
+     */
     public boolean hasExecutorThreadPoolSize() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'executorThreadPoolSize' field */
+    /**
+     * Clears the value of the 'executorThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearExecutorThreadPoolSize() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'callbackThreadPoolSize' field */
+    /**
+     * Gets the value of the 'callbackThreadPoolSize' field
+     */
     public java.lang.Integer getCallbackThreadPoolSize() {
       return callbackThreadPoolSize;
     }
 
-    /** Sets the value of the 'callbackThreadPoolSize' field */
+    /**
+     * Sets the value of the 'callbackThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setCallbackThreadPoolSize(int value) {
       validate(fields()[1], value);
       this.callbackThreadPoolSize = value;
@@ -339,23 +371,31 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'callbackThreadPoolSize' field has been set */
+    /**
+     * Checks whether the 'callbackThreadPoolSize' field has been set
+     */
     public boolean hasCallbackThreadPoolSize() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'callbackThreadPoolSize' field */
+    /**
+     * Clears the value of the 'callbackThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearCallbackThreadPoolSize() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'clientsThreadPoolSize' field */
+    /**
+     * Gets the value of the 'clientsThreadPoolSize' field
+     */
     public java.lang.Integer getClientsThreadPoolSize() {
       return clientsThreadPoolSize;
     }
 
-    /** Sets the value of the 'clientsThreadPoolSize' field */
+    /**
+     * Sets the value of the 'clientsThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setClientsThreadPoolSize(int value) {
       validate(fields()[2], value);
       this.clientsThreadPoolSize = value;
@@ -363,23 +403,31 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'clientsThreadPoolSize' field has been set */
+    /**
+     * Checks whether the 'clientsThreadPoolSize' field has been set
+     */
     public boolean hasClientsThreadPoolSize() {
       return fieldSetFlags()[2];
     }
 
-    /** Clears the value of the 'clientsThreadPoolSize' field */
+    /**
+     * Clears the value of the 'clientsThreadPoolSize' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearClientsThreadPoolSize() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'includeClientProfile' field */
+    /**
+     * Gets the value of the 'includeClientProfile' field
+     */
     public java.lang.Boolean getIncludeClientProfile() {
       return includeClientProfile;
     }
 
-    /** Sets the value of the 'includeClientProfile' field */
+    /**
+     * Sets the value of the 'includeClientProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setIncludeClientProfile(java.lang.Boolean value) {
       validate(fields()[3], value);
       this.includeClientProfile = value;
@@ -387,24 +435,32 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'includeClientProfile' field has been set */
+    /**
+     * Checks whether the 'includeClientProfile' field has been set
+     */
     public boolean hasIncludeClientProfile() {
       return fieldSetFlags()[3];
     }
 
-    /** Clears the value of the 'includeClientProfile' field */
+    /**
+     * Clears the value of the 'includeClientProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearIncludeClientProfile() {
       includeClientProfile = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'includeServerProfile' field */
+    /**
+     * Gets the value of the 'includeServerProfile' field
+     */
     public java.lang.Boolean getIncludeServerProfile() {
       return includeServerProfile;
     }
 
-    /** Sets the value of the 'includeServerProfile' field */
+    /**
+     * Sets the value of the 'includeServerProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setIncludeServerProfile(java.lang.Boolean value) {
       validate(fields()[4], value);
       this.includeServerProfile = value;
@@ -412,24 +468,32 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'includeServerProfile' field has been set */
+    /**
+     * Checks whether the 'includeServerProfile' field has been set
+     */
     public boolean hasIncludeServerProfile() {
       return fieldSetFlags()[4];
     }
 
-    /** Clears the value of the 'includeServerProfile' field */
+    /**
+     * Clears the value of the 'includeServerProfile' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearIncludeServerProfile() {
       includeServerProfile = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'flumeEventFormat' field */
+    /**
+     * Gets the value of the 'flumeEventFormat' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat getFlumeEventFormat() {
       return flumeEventFormat;
     }
 
-    /** Sets the value of the 'flumeEventFormat' field */
+    /**
+     * Sets the value of the 'flumeEventFormat' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setFlumeEventFormat(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat value) {
       validate(fields()[5], value);
       this.flumeEventFormat = value;
@@ -437,24 +501,32 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'flumeEventFormat' field has been set */
+    /**
+     * Checks whether the 'flumeEventFormat' field has been set
+     */
     public boolean hasFlumeEventFormat() {
       return fieldSetFlags()[5];
     }
 
-    /** Clears the value of the 'flumeEventFormat' field */
+    /**
+     * Clears the value of the 'flumeEventFormat' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearFlumeEventFormat() {
       flumeEventFormat = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'hostsBalancing' field */
+    /**
+     * Gets the value of the 'hostsBalancing' field
+     */
     public java.lang.Object getHostsBalancing() {
       return hostsBalancing;
     }
 
-    /** Sets the value of the 'hostsBalancing' field */
+    /**
+     * Sets the value of the 'hostsBalancing' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setHostsBalancing(java.lang.Object value) {
       validate(fields()[6], value);
       this.hostsBalancing = value;
@@ -462,12 +534,16 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
-    /** Checks whether the 'hostsBalancing' field has been set */
+    /**
+     * Checks whether the 'hostsBalancing' field has been set
+     */
     public boolean hasHostsBalancing() {
       return fieldSetFlags()[6];
     }
 
-    /** Clears the value of the 'hostsBalancing' field */
+    /**
+     * Clears the value of the 'hostsBalancing' field
+     */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearHostsBalancing() {
       hostsBalancing = null;
       fieldSetFlags()[6] = false;

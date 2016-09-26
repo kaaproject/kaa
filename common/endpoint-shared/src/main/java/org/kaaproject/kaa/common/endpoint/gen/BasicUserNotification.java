@@ -11,6 +11,7 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BasicUserNotification\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"notificationBody\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"userNotificationParam\",\"type\":\"int\"}]}");
   private java.lang.String notificationBody;
   private int userNotificationParam;
+
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -31,17 +32,24 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
     return SCHEMA$;
   }
 
-  /** Creates a new BasicUserNotification RecordBuilder */
+  /**
+   * Creates a new BasicUserNotification RecordBuilder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder();
   }
 
-  /** Creates a new BasicUserNotification RecordBuilder by copying an existing Builder */
+  /**
+   * Creates a new BasicUserNotification RecordBuilder by copying an existing Builder
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder(other);
   }
 
-  /** Creates a new BasicUserNotification RecordBuilder by copying an existing BasicUserNotification instance */
+  /**
+   * Creates a new BasicUserNotification RecordBuilder by copying an existing BasicUserNotification
+   * instance
+   */
   public static org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification other) {
     return new org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder(other);
   }
@@ -86,6 +94,7 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'notificationBody' field.
+   *
    * @param value the value to set.
    */
   public void setNotificationBody(java.lang.String value) {
@@ -101,6 +110,7 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'userNotificationParam' field.
+   *
    * @param value the value to set.
    */
   public void setUserNotificationParam(java.lang.Integer value) {
@@ -116,12 +126,16 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
     private java.lang.String notificationBody;
     private int userNotificationParam;
 
-    /** Creates a new Builder */
+    /**
+     * Creates a new Builder
+     */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.SCHEMA$);
     }
 
-    /** Creates a Builder by copying an existing Builder */
+    /**
+     * Creates a Builder by copying an existing Builder
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.notificationBody)) {
@@ -134,7 +148,9 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Creates a Builder by copying an existing BasicUserNotification instance */
+    /**
+     * Creates a Builder by copying an existing BasicUserNotification instance
+     */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification other) {
       super(org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.SCHEMA$);
       if (isValidValue(fields()[0], other.notificationBody)) {
@@ -147,12 +163,16 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
       }
     }
 
-    /** Gets the value of the 'notificationBody' field */
+    /**
+     * Gets the value of the 'notificationBody' field
+     */
     public java.lang.String getNotificationBody() {
       return notificationBody;
     }
 
-    /** Sets the value of the 'notificationBody' field */
+    /**
+     * Sets the value of the 'notificationBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder setNotificationBody(java.lang.String value) {
       validate(fields()[0], value);
       this.notificationBody = value;
@@ -160,24 +180,32 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'notificationBody' field has been set */
+    /**
+     * Checks whether the 'notificationBody' field has been set
+     */
     public boolean hasNotificationBody() {
       return fieldSetFlags()[0];
     }
 
-    /** Clears the value of the 'notificationBody' field */
+    /**
+     * Clears the value of the 'notificationBody' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder clearNotificationBody() {
       notificationBody = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'userNotificationParam' field */
+    /**
+     * Gets the value of the 'userNotificationParam' field
+     */
     public java.lang.Integer getUserNotificationParam() {
       return userNotificationParam;
     }
 
-    /** Sets the value of the 'userNotificationParam' field */
+    /**
+     * Sets the value of the 'userNotificationParam' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder setUserNotificationParam(int value) {
       validate(fields()[1], value);
       this.userNotificationParam = value;
@@ -185,12 +213,16 @@ public class BasicUserNotification extends org.apache.avro.specific.SpecificReco
       return this;
     }
 
-    /** Checks whether the 'userNotificationParam' field has been set */
+    /**
+     * Checks whether the 'userNotificationParam' field has been set
+     */
     public boolean hasUserNotificationParam() {
       return fieldSetFlags()[1];
     }
 
-    /** Clears the value of the 'userNotificationParam' field */
+    /**
+     * Clears the value of the 'userNotificationParam' field
+     */
     public org.kaaproject.kaa.common.endpoint.gen.BasicUserNotification.Builder clearUserNotificationParam() {
       fieldSetFlags()[1] = false;
       return this;

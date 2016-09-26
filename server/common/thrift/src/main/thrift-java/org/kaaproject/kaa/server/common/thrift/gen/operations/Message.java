@@ -67,7 +67,6 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   /**
-   *
    * @see EventMessageType
    */
   public EventMessageType type; // required
@@ -144,7 +143,6 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   /**
-   *
    * @see EventMessageType
    */
   public EventMessageType getType() {
@@ -152,7 +150,6 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   /**
-   *
    * @see EventMessageType
    */
   public Message setType(EventMessageType type) {
@@ -164,7 +161,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.type = null;
   }
 
-  /** Returns true if field type is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field type is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetType() {
     return this.type != null;
   }
@@ -189,7 +188,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __EVENTID_ISSET_ID);
   }
 
-  /** Returns true if field eventId is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field eventId is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEventId() {
     return EncodingUtils.testBit(__isset_bitfield, __EVENTID_ISSET_ID);
   }
@@ -211,7 +212,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.event = null;
   }
 
-  /** Returns true if field event is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field event is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetEvent() {
     return this.event != null;
   }
@@ -235,7 +238,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.route = null;
   }
 
-  /** Returns true if field route is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field route is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetRoute() {
     return this.route != null;
   }
@@ -259,7 +264,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.userRoute = null;
   }
 
-  /** Returns true if field userRoute is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field userRoute is set (has been assigned a value) and false otherwise
+   */
   public boolean isSetUserRoute() {
     return this.userRoute != null;
   }
@@ -283,7 +290,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.endpointRouteUpdate = null;
   }
 
-  /** Returns true if field endpointRouteUpdate is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointRouteUpdate is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetEndpointRouteUpdate() {
     return this.endpointRouteUpdate != null;
   }
@@ -307,7 +317,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.endpointStateUpdate = null;
   }
 
-  /** Returns true if field endpointStateUpdate is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field endpointStateUpdate is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSetEndpointStateUpdate() {
     return this.endpointStateUpdate != null;
   }
@@ -406,7 +419,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     throw new IllegalStateException();
   }
 
-  /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+  /**
+   * Returns true if field corresponding to fieldID is set (has been assigned a value) and false
+   * otherwise
+   */
   public boolean isSet(_Fields field) {
     if (field == null) {
       throw new IllegalArgumentException();
@@ -743,10 +759,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /**
+   * The set of fields this struct contains, along with convenience methods for finding and
+   * manipulating them.
+   */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     /**
-     *
      * @see EventMessageType
      */
     TYPE((short) 1, "type"),

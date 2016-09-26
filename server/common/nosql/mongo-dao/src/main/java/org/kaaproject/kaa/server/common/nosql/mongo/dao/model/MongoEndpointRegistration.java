@@ -31,7 +31,6 @@ import java.io.Serializable;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 @Document(collection = MongoModelConstants.ENDPOINT_REGISTRATION)
