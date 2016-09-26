@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
     private int waitSeconds;
 
     @Autowired(required = false)
-    private int ttl = 7 * 24 * 3600;
+    private int ttl = 7 * 24 * 3600 * 1000;
 
     @Autowired
     private TopicDao<Topic> topicDao;
