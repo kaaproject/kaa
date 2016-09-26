@@ -34,6 +34,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.annotation.Resource;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -71,6 +72,10 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Value("#{sql_dao[dao_max_wait_time]}")
     private int waitSeconds;
+
+    @Autowired(required = false)
+    private int ttl = 7 * 24 * 3600 * 1000;
+
     @Autowired
     private TopicDao<Topic> topicDao;
     @Autowired
@@ -79,9 +84,6 @@ public class NotificationServiceImpl implements NotificationService {
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private NotificationDao<Notification> notificationDao;
     private EndpointNotificationDao<EndpointNotification> unicastNotificationDao;
-
-    // 7 days
-    private static final int TTL = 7 * 24 * 3600 * 1000;
 
     @Override
     public NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchemaDto) {
@@ -141,7 +143,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
             Date expiredAt = dto.getExpiredAt();
-            dto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
+            dto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + ttl));
             dto.setLastTimeModify(new Date(currentTime));
             NotificationDto notificationDto = saveNotificationAndIncTopicSecNum(dto);
             if (notificationDto != null) {
@@ -305,7 +307,7 @@ public class NotificationServiceImpl implements NotificationService {
             }
             long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
             Date expiredAt = notificationDto.getExpiredAt();
-            notificationDto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
+            notificationDto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + ttl));
             notificationDto.setLastTimeModify(new Date(currentTime));
 
             EndpointNotificationDto unicast = getDto(unicastNotificationDao.save(dto));
