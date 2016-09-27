@@ -45,15 +45,14 @@ To refresh the key files, stop the kaa-node service, replace the key files, and 
 The Kaa node service requires some third party dependencies, such as SQL and NoSQL databases, and Apache Zookeeper service.
 For more information, see [Architecture overview]({{root_url}}Architecture-overview/).
 A choice of databases (for example, MongoDB + PostgreSQL) depends on your particular use case.
-For database cluster installation, refer to the official [Cassandra](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation.
+For database cluster installation, refer to the official [Cassandra](http://cassandra.apache.org/), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation.
 
-MariaDB comes with the master-master replication support out of the box, therefore it is recommended that you use this database in your Kaa cluster.
-See [MariaDB cluster setup guide]({{root_url}}Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/).
+See also [MariaDB cluster setup guide]({{root_url}}Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/).
 
 To allow connections to the databases from external hosts, configure the corresponding database security settings and set up the firewall rules for the database host machine.
 For security configuration settings, refer to the database official documentation.
 
-In addition to the firewall rules set up during the Kaa node service installation process, you need to add some rules for the databases (depending on the choice of databases in the cluster) and Zookeeper ports.
+In addition to the firewall rules set up during the Kaa node service installation process, you need to add some rules for the databases (depending on the choice of databases in the cluster), Kaa node thrift and Zookeeper ports.
 
 >**NOTE:** This configuration will not affect AWS deployment or any other cloud provider and must be applied only if you are setting up a Kaa cluster on VMs or separate Linux machines.
 >The following instructions can vary depending on a chosen cloud provider.
@@ -88,6 +87,10 @@ $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 4567 -j ACCEPT
 # PostgreSQL port
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT
 $ sudo iptables -I OUTPUT -p tcp -m tcp --dport 5432 -j ACCEPT
+
+# Kaa node thrift
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9090 -j ACCEPT
+$ sudo iptables -I OUTPUT -p tcp -m tcp --dport 9090 -j ACCEPT
 
 # Zookeeper port
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 2181 -j ACCEPT
