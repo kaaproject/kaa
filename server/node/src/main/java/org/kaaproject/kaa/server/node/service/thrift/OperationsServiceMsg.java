@@ -16,16 +16,17 @@
 
 package org.kaaproject.kaa.server.node.service.thrift;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OperationsServiceMsg {
     private final ThriftUnicastNotificationMessage unicastNotificationMsg;
@@ -33,36 +34,43 @@ public class OperationsServiceMsg {
     private final ThriftEntityRouteMessage entityRouteMsg;
     private final ThriftEndpointDeregistrationMessage endpointDeregistrationMsg;
     private final UserConfigurationUpdate userConfigurationUpdateMsg;
+    private final ThriftEndpointConfigurationRefreshMessage endpointConfigurationRefreshMessage;
 
     private OperationsServiceMsg(ThriftUnicastNotificationMessage unicastNotificationMsg,
-            ThriftServerProfileUpdateMessage serverProfileUpdateMsg, ThriftEntityRouteMessage entityRouteMsg,
-            UserConfigurationUpdate userConfigurationUpdateMsg, ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
+                                 ThriftServerProfileUpdateMessage serverProfileUpdateMsg, ThriftEntityRouteMessage entityRouteMsg,
+                                 UserConfigurationUpdate userConfigurationUpdateMsg, ThriftEndpointDeregistrationMessage endpointDeregistrationMsg,
+                                 ThriftEndpointConfigurationRefreshMessage endpointConfigurationRefreshMessage) {
         super();
         this.unicastNotificationMsg = unicastNotificationMsg;
         this.serverProfileUpdateMsg = serverProfileUpdateMsg;
         this.entityRouteMsg = entityRouteMsg;
         this.endpointDeregistrationMsg = endpointDeregistrationMsg;
         this.userConfigurationUpdateMsg = userConfigurationUpdateMsg;
+        this.endpointConfigurationRefreshMessage = endpointConfigurationRefreshMessage;
     }
 
     public static OperationsServiceMsg fromServerProfileUpdateMessage(ThriftServerProfileUpdateMessage serverProfileUpdateMsg) {
-        return new OperationsServiceMsg(null, serverProfileUpdateMsg, null, null, null);
+        return new OperationsServiceMsg(null, serverProfileUpdateMsg, null, null, null, null);
     }
 
     public static OperationsServiceMsg fromNotification(ThriftUnicastNotificationMessage unicastNotificationMsg) {
-        return new OperationsServiceMsg(unicastNotificationMsg, null, null, null, null);
+        return new OperationsServiceMsg(unicastNotificationMsg, null, null, null, null, null);
     }
 
     public static OperationsServiceMsg fromRoute(ThriftEntityRouteMessage entityRouteMsg) {
-        return new OperationsServiceMsg(null, null, entityRouteMsg, null, null);
+        return new OperationsServiceMsg(null, null, entityRouteMsg, null, null, null);
     }
 
     public static OperationsServiceMsg fromUpdate(UserConfigurationUpdate userConfigurationUpdateMsg) {
-        return new OperationsServiceMsg(null, null, null, userConfigurationUpdateMsg, null);
+        return new OperationsServiceMsg(null, null, null, userConfigurationUpdateMsg, null, null);
     }
 
     public static OperationsServiceMsg fromDeregistration(ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
-        return new OperationsServiceMsg(null, null, null, null, endpointDeregistrationMsg);
+        return new OperationsServiceMsg(null, null, null, null, endpointDeregistrationMsg, null);
+    }
+
+    public static OperationsServiceMsg fromEndpointConfigurationRefresh(ThriftEndpointConfigurationRefreshMessage endpointConfigurationRefreshMessage) {
+        return new OperationsServiceMsg(null, null, null, null, null, endpointConfigurationRefreshMessage);
     }
 
     public ThriftUnicastNotificationMessage getUnicastNotificationMsg() {
@@ -101,6 +109,9 @@ public class OperationsServiceMsg {
             if (msg.getUserConfigurationUpdateMsg() != null) {
                 updates.add(msg.getUserConfigurationUpdateMsg());
             }
+            if (msg.getEndpointConfigurationRefreshMessage() != null) {
+                client.sendEndpointConfigurationRefreshMessage(msg.getEndpointConfigurationRefreshMessage());
+            }
             if (msg.getEntityRouteMsg() != null) {
                 routes.add(msg.getEntityRouteMsg());
             }
@@ -111,6 +122,10 @@ public class OperationsServiceMsg {
         if (routes.size() > 0) {
             client.onEntityRouteMessages(routes);
         }
+    }
+
+    public ThriftEndpointConfigurationRefreshMessage getEndpointConfigurationRefreshMessage() {
+        return endpointConfigurationRefreshMessage;
     }
 
 }

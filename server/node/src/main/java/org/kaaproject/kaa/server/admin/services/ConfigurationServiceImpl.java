@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
@@ -228,6 +229,42 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         try {
             checkApplicationToken(endpointUserConfiguration.getAppToken());
             controlService.editUserConfiguration(endpointUserConfiguration);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkEndpointProfile(configuration.getEndpointKeyHash());
+            return controlService.editEndpointSpecificConfiguration(configuration);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkEndpointProfile(endpointKeyHash);
+            EndpointSpecificConfigurationDto configuration = controlService.findEndpointSpecificConfiguration(endpointKeyHash);
+            Utils.checkNotNull(configuration);
+            return configuration;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException {
+        try {
+            checkEndpointProfile(endpointKeyHash);
+            EndpointSpecificConfigurationDto configuration = controlService.deleteEndpointSpecificConfiguration(endpointKeyHash);
+            Utils.checkNotNull(configuration);
+            return configuration;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

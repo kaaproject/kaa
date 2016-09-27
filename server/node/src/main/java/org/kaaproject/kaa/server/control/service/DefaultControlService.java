@@ -16,24 +16,6 @@
 
 package org.kaaproject.kaa.server.control.service;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.PreDestroy;
-
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -77,6 +59,7 @@ import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EndpointSpecificConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
@@ -99,6 +82,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
@@ -130,6 +114,22 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
+
+import javax.annotation.PreDestroy;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 /**
  * The Class DefaultControlService.
@@ -285,6 +285,9 @@ public class DefaultControlService implements ControlService {
 
     @Autowired
     private EndpointRegistrationService endpointRegistrationService;
+
+    @Autowired
+    private EndpointSpecificConfigurationService endpointSpecificConfigurationService;
 
     /**
      * The neighbor connections size.
@@ -878,6 +881,48 @@ public class DefaultControlService implements ControlService {
             neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromUpdate(msg));
         } else {
             LOG.warn("Can't find server for user [{}]", configuration.getUserId());
+        }
+    }
+
+    @Override
+    public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) {
+        configuration = endpointSpecificConfigurationService.save(configuration);
+        sendEndpointConfigurationRefreshMessage(configuration.getEndpointKeyHash());
+        return configuration;
+    }
+
+    @Override
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) {
+        return endpointSpecificConfigurationService.findByEndpointKeyHash(endpointKeyHash)
+                .orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
+    }
+
+    @Override
+    public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash) {
+        EndpointSpecificConfigurationDto configuration = endpointSpecificConfigurationService.deleteByEndpointKeyHash(endpointKeyHash)
+                .orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
+        sendEndpointConfigurationRefreshMessage(endpointKeyHash);
+        return configuration;
+    }
+
+    private void sendEndpointConfigurationRefreshMessage(String endpointKeyHash) {
+        checkNeighbors();
+        byte[] endpointKeyHashBytes = Base64Util.decode(endpointKeyHash);
+        EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(endpointKeyHashBytes);
+        ApplicationDto appDto = applicationService.findAppById(endpointProfile.getApplicationId());
+        OperationsNodeInfo server = resolve(endpointKeyHash);
+
+        if (server != null) {
+            ThriftEndpointConfigurationRefreshMessage nf = new ThriftEndpointConfigurationRefreshMessage();
+            nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
+                    ByteBuffer.wrap(endpointKeyHashBytes)));
+            nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Sending message {} to [{}]", nf, Neighbors.getServerID(server.getConnectionInfo()));
+            }
+            neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromEndpointConfigurationRefresh(nf));
+        } else {
+            LOG.warn("Can't find server for endpoint [{}]", endpointKeyHash);
         }
     }
 

@@ -31,6 +31,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -525,6 +526,18 @@ public class AdminClient {
 
     public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws Exception {
         restTemplate.postForLocation(restTemplate.getUrl() + "userConfiguration", endpointUserConfiguration);
+    }
+
+    public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws Exception {
+        return restTemplate.postForObject(restTemplate.getUrl() + "endpointConfiguration", configuration, EndpointSpecificConfigurationDto.class);
+    }
+
+    public void deleteEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
+        restTemplate.delete(restTemplate.getUrl() + "endpointConfiguration/" + endpointKeyHash);
+    }
+
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "endpointConfiguration/" + endpointKeyHash, EndpointSpecificConfigurationDto.class);
     }
 
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {

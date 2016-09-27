@@ -16,14 +16,34 @@
 
 package org.kaaproject.kaa.server.control.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -43,6 +63,11 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * The Interface ControlService.
@@ -556,6 +581,30 @@ public interface ControlService {
      *             the control service exception
      */
     void editUserConfiguration(EndpointUserConfigurationDto configuration) throws ControlServiceException;
+
+    /**
+     * Creates endpoint specific configuration.
+     *
+     * @param configuration endpoint specific configuration
+     * @return saved endpoint specific configuration
+     */
+    EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration);
+
+    /**
+     * Retrieves endpoint specific configuration by endpoint key hash.
+     *
+     * @param endpointKeyHash endpoint key hash
+     * @return endpoint specific configuration
+     */
+    EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash);
+
+    /**
+     * Deletes endpoint specific configuration by endpoint key hash.
+     *
+     * @param endpointKeyHash endpoint key hash
+     * @return deleted endpoint specific configuration
+     */
+    EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash);
 
     /**
      * Activate configuration.
