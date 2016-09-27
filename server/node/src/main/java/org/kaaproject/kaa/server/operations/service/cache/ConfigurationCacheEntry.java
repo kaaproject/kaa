@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.cache;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
+
+import java.io.Serializable;
 
 /**
  * The Class DeltaCacheEntry is used to model cache entry for delta calculation.
@@ -44,6 +44,8 @@ public class ConfigurationCacheEntry implements Serializable {
     /** The hash. */
     private final EndpointObjectHash userConfigurationHash;
 
+    private final EndpointObjectHash epsConfigurationHash;
+
     /**
      * Instantiates a new delta cache entry.
      *
@@ -51,13 +53,17 @@ public class ConfigurationCacheEntry implements Serializable {
      * @param delta the delta
      * @param hash the hash
      * @param userConfigurationHash  the user configuration hash
+     * @param epsConfigurationHash  endpoint specific configuration hash
      */
-    public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
+    public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta,
+                                   EndpointObjectHash hash, EndpointObjectHash userConfigurationHash,
+                                   EndpointObjectHash epsConfigurationHash) {
         super();
         this.configuration = configuration;
         this.delta = delta;
         this.hash = hash;
         this.userConfigurationHash = userConfigurationHash;
+        this.epsConfigurationHash = epsConfigurationHash;
     }
 
     /**
@@ -94,5 +100,9 @@ public class ConfigurationCacheEntry implements Serializable {
      */
     public EndpointObjectHash getUserConfigurationHash() {
         return userConfigurationHash;
+    }
+
+    public EndpointObjectHash getEpsConfigurationHash() {
+        return epsConfigurationHash;
     }
 }

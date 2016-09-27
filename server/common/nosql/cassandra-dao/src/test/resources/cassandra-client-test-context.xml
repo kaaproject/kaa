@@ -49,5 +49,7 @@
     <bean id="endpointRegistrationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointRegistrationCassandraDao"/>
     <bean id="notificationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.NotificationCassandraDao"/>
     <bean id="endpointUserConfigurationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointUserConfigurationCassandraDao"/>
+    <bean id="endpointSpecificConfigurationDao"
+          class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointSpecificConfigurationCassandraDao"/>
 
 </beans>

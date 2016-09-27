@@ -16,31 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemAlreadyExistsException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import javax.sql.DataSource;
-
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -66,8 +41,6 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
-import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -79,32 +52,30 @@ import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
-import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
-import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
-import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
+import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.MariaDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
@@ -136,10 +107,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 @ActiveProfiles({"h2"})
 public class AbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
+    private static final byte[] EPS_CONFIG_HASH = "eps_hash_conf".getBytes();
 
     protected static final Random RANDOM = new Random(0);
     protected static final String SUPER_TENANT = "SuperTenant";
@@ -747,6 +743,7 @@ public class AbstractTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
+        profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
         try {
             profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
         } catch (IOException e) {
@@ -761,6 +758,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setServerProfileVersion(schemaVersion);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
         try {
             profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
         } catch (IOException e) {

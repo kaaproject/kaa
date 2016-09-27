@@ -16,23 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.common.dto.UpdateStatus.ACTIVE;
-import static org.kaaproject.kaa.common.dto.UpdateStatus.INACTIVE;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToString;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -58,6 +41,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
+import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
@@ -81,6 +65,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.common.dto.UpdateStatus.ACTIVE;
+import static org.kaaproject.kaa.common.dto.UpdateStatus.INACTIVE;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToString;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 
 @Service
 @Transactional
@@ -464,6 +465,34 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             LOG.warn("Configuration schema object is null");
         }
         return savedConfigSchema;
+    }
+
+    @Override
+    public String validateConfiguration(String appId, int schemaVersion, String configurationBody) {
+        ConfigurationSchemaDto schemaDto = this.findConfSchemaByAppIdAndVersion(appId, schemaVersion);
+        if (schemaDto != null) {
+            OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());
+            LOG.debug("Create default UUID validator with override schema: {}", overrideSchema.getRawSchema());
+            UuidValidator<OverrideData> uuidValidator = new DefaultUuidValidator<>(overrideSchema, new OverrideDataFactory());
+            GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(overrideSchema.getRawSchema());
+            try {
+                GenericRecord configRecord = avroConverter.decodeJson(configurationBody);
+                // TODO: Need to use last active configuration instead of null. Will be changed after supporting delta configuration
+                KaaData<OverrideSchema> body = uuidValidator.validateUuidFields(configRecord, null);
+                if (body != null) {
+                    return body.getRawData();
+                } else {
+                    LOG.warn("Validated configuration body is empty");
+                    throw new IncorrectParameterException("Validated configuration body is empty");
+                }
+            } catch (IOException e) {
+                LOG.error("Invalid configuration for override schema.", e);
+                throw new IncorrectParameterException("Invalid configuration for override schema.");
+            }
+        } else {
+            LOG.warn("Can't find configuration schema with version {}.", schemaVersion);
+            throw new IncorrectParameterException("Can't find configuration schema for specified version.");
+        }
     }
 
     @Override
