@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification;
 
-import java.util.UUID;
-
 import akka.actor.ActorRef;
+
+import java.util.UUID;
 
 public class UserVerificationRequestMessage {
 

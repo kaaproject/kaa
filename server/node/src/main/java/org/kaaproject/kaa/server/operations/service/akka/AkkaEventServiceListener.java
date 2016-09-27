@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
@@ -29,8 +31,6 @@ import org.kaaproject.kaa.server.operations.service.event.RouteInfo;
 import org.kaaproject.kaa.server.operations.service.event.UserRouteInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.ActorRef;
 
 final class AkkaEventServiceListener implements EventServiceListener {
 

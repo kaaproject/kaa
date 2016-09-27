@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
@@ -45,9 +48,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
 public class ApplicationLogActorMessageProcessor {
   /**

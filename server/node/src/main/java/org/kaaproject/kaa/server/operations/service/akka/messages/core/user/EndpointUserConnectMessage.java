@@ -16,13 +16,13 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 
 import java.util.List;
-
-import akka.actor.ActorRef;
 
 /**
  * Represents intent of endpoint to connect to local user actor

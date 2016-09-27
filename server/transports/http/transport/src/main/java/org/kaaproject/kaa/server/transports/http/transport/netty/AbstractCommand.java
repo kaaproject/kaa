@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.netty;
 
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
-
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 
 /**
  * AbstractCommand abstract Class.

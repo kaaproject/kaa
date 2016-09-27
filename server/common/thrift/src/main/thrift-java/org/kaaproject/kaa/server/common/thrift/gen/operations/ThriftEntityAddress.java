@@ -199,13 +199,13 @@ public class ThriftEntityAddress implements org.apache.thrift.TBase<ThriftEntity
     return entityId == null ? null : entityId.array();
   }
 
-  public ThriftEntityAddress setEntityId(byte[] entityId) {
-    this.entityId = entityId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(entityId, entityId.length));
+  public ThriftEntityAddress setEntityId(ByteBuffer entityId) {
+    this.entityId = org.apache.thrift.TBaseHelper.copyBinary(entityId);
     return this;
   }
 
-  public ThriftEntityAddress setEntityId(ByteBuffer entityId) {
-    this.entityId = org.apache.thrift.TBaseHelper.copyBinary(entityId);
+  public ThriftEntityAddress setEntityId(byte[] entityId) {
+    this.entityId = entityId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(entityId, entityId.length));
     return this;
   }
 

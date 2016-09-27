@@ -153,13 +153,13 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     return sender == null ? null : sender.array();
   }
 
-  public EndpointEvent setSender(byte[] sender) {
-    this.sender = sender == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(sender, sender.length));
+  public EndpointEvent setSender(ByteBuffer sender) {
+    this.sender = org.apache.thrift.TBaseHelper.copyBinary(sender);
     return this;
   }
 
-  public EndpointEvent setSender(ByteBuffer sender) {
-    this.sender = org.apache.thrift.TBaseHelper.copyBinary(sender);
+  public EndpointEvent setSender(byte[] sender) {
+    this.sender = sender == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(sender, sender.length));
     return this;
   }
 
@@ -189,13 +189,13 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     return eventData == null ? null : eventData.array();
   }
 
-  public EndpointEvent setEventData(byte[] eventData) {
-    this.eventData = eventData == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(eventData, eventData.length));
+  public EndpointEvent setEventData(ByteBuffer eventData) {
+    this.eventData = org.apache.thrift.TBaseHelper.copyBinary(eventData);
     return this;
   }
 
-  public EndpointEvent setEventData(ByteBuffer eventData) {
-    this.eventData = org.apache.thrift.TBaseHelper.copyBinary(eventData);
+  public EndpointEvent setEventData(byte[] eventData) {
+    this.eventData = eventData == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(eventData, eventData.length));
     return this;
   }
 

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
@@ -33,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.UUID;
-
-import akka.actor.ActorRef;
 
 /**
  * The Class SyncRequestMessage.

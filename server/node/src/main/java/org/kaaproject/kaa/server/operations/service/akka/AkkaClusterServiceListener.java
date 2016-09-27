@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.operations.service.cluster.ClusterServiceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.ActorRef;
 
 public class AkkaClusterServiceListener implements ClusterServiceListener {
 

@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 /**
  * This actor is responsible for handling and efficient routing of different

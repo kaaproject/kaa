@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
+import akka.actor.ActorRef;
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+import scala.concurrent.duration.Duration;
+
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.RuleTimeoutMessage;
@@ -31,11 +36,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
-import scala.concurrent.duration.Duration;
 
 /**
  * The Class EncDecActor.

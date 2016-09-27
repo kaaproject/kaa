@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport;
 
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.SocketChannel;
+
 import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
 import org.kaaproject.kaa.server.transport.AbstractKaaTransport;
 import org.kaaproject.kaa.server.transport.RangeExpressionParser;
@@ -33,10 +37,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.socket.SocketChannel;
 
 /**
  * Implementation of Kaa TCP transport

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.verifier.UserVerifier;
@@ -33,8 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
-import akka.actor.ActorRef;
 
 public class ApplicationUserVerifierActorMessageProcessor {
 

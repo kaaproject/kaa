@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.controller;
 
+import io.swagger.annotations.Api;
+
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
@@ -46,8 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-
-import io.swagger.annotations.Api;
 
 /**
  * The Class AbstractAdminController.

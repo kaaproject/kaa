@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
@@ -24,8 +26,6 @@ import org.kaaproject.kaa.server.sync.Event;
 
 import java.util.Collections;
 import java.util.List;
-
-import akka.actor.ActorRef;
 
 /**
  * Represents message with events.

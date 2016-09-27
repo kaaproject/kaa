@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global;
 
+import akka.actor.ActorContext;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
@@ -34,8 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.BiConsumer;
-
-import akka.actor.ActorContext;
 
 public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMessageProcessor<GlobalEndpointActorState> {
 

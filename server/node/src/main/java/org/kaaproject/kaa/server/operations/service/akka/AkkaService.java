@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import akka.actor.ActorSystem;
+
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
-
-import akka.actor.ActorSystem;
 
 /**
  * The Interface AkkaService.

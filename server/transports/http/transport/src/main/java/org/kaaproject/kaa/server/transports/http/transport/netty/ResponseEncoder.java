@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.netty;
 
-import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,6 +24,12 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.Attribute;
+
+import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 
 /**

@@ -19,12 +19,12 @@ package org.kaaproject.kaa.server.transports.http.transport.commands;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static org.kaaproject.kaa.common.Constants.RESPONSE_CONTENT_TYPE;
 
+import io.netty.handler.codec.http.HttpResponse;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand;
-
-import io.netty.handler.codec.http.HttpResponse;
 
 public class SyncCommandTest {
 

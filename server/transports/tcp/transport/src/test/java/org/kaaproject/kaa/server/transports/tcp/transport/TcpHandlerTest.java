@@ -18,6 +18,10 @@ package org.kaaproject.kaa.server.transports.tcp.transport;
 
 import static org.junit.Assert.assertEquals;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.Constants;
@@ -48,10 +52,6 @@ import org.mockito.Mockito;
 
 import java.security.GeneralSecurityException;
 import java.util.UUID;
-
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
 
 public class TcpHandlerTest {
 

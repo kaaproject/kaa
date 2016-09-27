@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport.netty;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageFactory;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
@@ -24,9 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * KaaTcpDecoder Class.

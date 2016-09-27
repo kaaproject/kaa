@@ -22,15 +22,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
-import org.kaaproject.kaa.server.common.server.BadRequestException;
-import org.kaaproject.kaa.server.common.server.CommandFactory;
-
-import java.util.UUID;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderResult;
@@ -39,6 +30,15 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.Attribute;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
+import org.kaaproject.kaa.server.common.server.BadRequestException;
+import org.kaaproject.kaa.server.common.server.CommandFactory;
+
+import java.util.UUID;
 
 public class RequestDecoderTest {
   private static RequestDecoder requestDecoder;

@@ -18,6 +18,11 @@ package org.kaaproject.kaa.server.transports.http.transport;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
 import org.kaaproject.kaa.server.transport.EndpointRevocationException;
 import org.kaaproject.kaa.server.transport.EndpointVerificationException;
@@ -34,11 +39,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
-
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * The Class AkkaHandler.

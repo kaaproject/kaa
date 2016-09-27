@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 /**
  * The Class ApplicationLogActor

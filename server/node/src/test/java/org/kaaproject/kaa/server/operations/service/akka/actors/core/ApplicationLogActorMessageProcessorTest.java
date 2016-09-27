@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +55,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
 /**
  * @author Bohdan Khablenko

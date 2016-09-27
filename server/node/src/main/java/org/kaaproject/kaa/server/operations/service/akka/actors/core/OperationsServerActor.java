@@ -18,6 +18,12 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.CORE_DISPATCHER_NAME;
 
+import akka.actor.ActorRef;
+import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaServiceStatus;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
@@ -37,12 +43,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 /**
  * The Class OperationsServerActor.

@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
@@ -64,9 +67,6 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
 public class EncDecActorMessageProcessor {
 

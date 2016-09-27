@@ -16,13 +16,13 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
 import java.util.List;
-
-import akka.actor.ActorRef;
 
 /**
  * The Class LogEventPackMessage.

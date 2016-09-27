@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global;
 
+import akka.actor.UntypedActor;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
@@ -23,8 +25,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.End
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.UntypedActor;
 
 public class GlobalEndpointActor extends UntypedActor {
 

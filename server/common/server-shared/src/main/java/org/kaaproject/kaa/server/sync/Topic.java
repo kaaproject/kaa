@@ -45,8 +45,8 @@ public final class Topic {
    *
    * @param value the value to set.
    */
-  public void setId(String value) {
-    this.id = value;
+  public void setId(Long value) {
+    this.id = Long.toString(value);
   }
 
   /**
@@ -54,8 +54,8 @@ public final class Topic {
    *
    * @param value the value to set.
    */
-  public void setId(Long value) {
-    this.id = Long.toString(value);
+  public void setId(String value) {
+    this.id = value;
   }
 
   /**

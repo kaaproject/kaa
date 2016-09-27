@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
@@ -24,9 +27,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.Thr
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
 public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEndpointActorState> {
 

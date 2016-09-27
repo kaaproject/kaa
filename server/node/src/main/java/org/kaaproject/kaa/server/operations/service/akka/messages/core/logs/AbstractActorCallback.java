@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
-
-import akka.actor.ActorRef;
 
 public abstract class AbstractActorCallback implements LogDeliveryCallback {
 

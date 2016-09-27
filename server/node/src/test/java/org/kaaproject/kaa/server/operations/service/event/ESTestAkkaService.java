@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import akka.actor.ActorSystem;
+
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
@@ -23,8 +25,6 @@ import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
-
-import akka.actor.ActorSystem;
 
 /**
  * @author Andrey Panasenko

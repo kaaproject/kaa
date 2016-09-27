@@ -21,6 +21,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,9 +33,6 @@ import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Arrays;
-
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
 
 public class KaaTcpExceptionHandlerTest {
   private KaaTcpExceptionHandler kaaTcpExceptionHandler = new KaaTcpExceptionHandler();

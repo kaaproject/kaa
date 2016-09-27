@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.transports.http.transport.commands;
 
 import static org.mockito.Mockito.mock;
 
+import io.netty.handler.codec.http.HttpRequest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
@@ -26,8 +28,6 @@ import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand
 import org.mockito.Mockito;
 
 import java.util.UUID;
-
-import io.netty.handler.codec.http.HttpRequest;
 
 public class HttpCommandsTest {
   @Test

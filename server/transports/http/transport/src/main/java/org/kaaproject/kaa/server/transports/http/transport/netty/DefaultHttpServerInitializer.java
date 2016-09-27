@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.netty;
 
-import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
-
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -30,6 +24,12 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.util.Attribute;
+
+import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 /**
  * DefaultServerInitializer Class. Used to initialize Netty Server.

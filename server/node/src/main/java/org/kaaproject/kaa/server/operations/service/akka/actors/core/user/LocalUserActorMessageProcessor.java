@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+import akka.actor.LocalActorRef;
+import akka.actor.Terminated;
+import scala.concurrent.duration.Duration;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
@@ -62,12 +68,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
-import akka.actor.LocalActorRef;
-import akka.actor.Terminated;
-import scala.concurrent.duration.Duration;
 
 public class LocalUserActorMessageProcessor {
 

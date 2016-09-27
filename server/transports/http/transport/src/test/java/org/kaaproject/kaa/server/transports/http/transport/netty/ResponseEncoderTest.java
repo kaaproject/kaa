@@ -24,10 +24,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -36,6 +32,10 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.Attribute;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
 
 public class ResponseEncoderTest {
   public static final String CONNECTION = "close";

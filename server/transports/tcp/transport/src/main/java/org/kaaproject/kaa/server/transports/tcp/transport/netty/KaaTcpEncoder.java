@@ -16,17 +16,17 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport.netty;
 
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
+
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  * KaaTcpEncoder Class.

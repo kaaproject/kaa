@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint;
 
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 
 import java.util.UUID;
-
-import akka.japi.Creator;
 
 /**
  * The Class ActorCreator.

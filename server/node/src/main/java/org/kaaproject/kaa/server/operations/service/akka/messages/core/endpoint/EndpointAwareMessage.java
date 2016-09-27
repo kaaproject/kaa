@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 import java.util.Random;
 import java.util.UUID;
-
-import akka.actor.ActorRef;
 
 
 /**

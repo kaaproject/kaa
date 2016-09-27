@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
 
 public class CallbacksTest {
 

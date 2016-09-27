@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
-
 import akka.actor.ActorRef;
+
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 
 public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage implements TenantAwareMessage {
 

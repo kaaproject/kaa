@@ -229,13 +229,13 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return ucfHash == null ? null : ucfHash.array();
   }
 
-  public UserConfigurationUpdate setUcfHash(byte[] ucfHash) {
-    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
+  public UserConfigurationUpdate setUcfHash(ByteBuffer ucfHash) {
+    this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
     return this;
   }
 
-  public UserConfigurationUpdate setUcfHash(ByteBuffer ucfHash) {
-    this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
+  public UserConfigurationUpdate setUcfHash(byte[] ucfHash) {
+    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
     return this;
   }
 

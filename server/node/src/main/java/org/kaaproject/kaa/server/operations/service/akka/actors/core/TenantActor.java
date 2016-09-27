@@ -19,6 +19,14 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.CORE_DISPATCHER_NAME;
 import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.USER_DISPATCHER_NAME;
 
+import akka.actor.ActorRef;
+import akka.actor.LocalActorRef;
+import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.GlobalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
@@ -48,14 +56,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
-import akka.actor.ActorRef;
-import akka.actor.LocalActorRef;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 public class TenantActor extends UntypedActor {
 

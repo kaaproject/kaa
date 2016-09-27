@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
+import akka.actor.ActorRef;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
@@ -25,8 +27,6 @@ import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPac
 
 import java.util.ArrayList;
 import java.util.List;
-
-import akka.actor.ActorRef;
 
 public class LogEventPackMessageTest {
 

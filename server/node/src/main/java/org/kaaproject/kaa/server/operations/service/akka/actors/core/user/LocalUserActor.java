@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
@@ -28,10 +32,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Rout
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 public class LocalUserActor extends UntypedActor {
 

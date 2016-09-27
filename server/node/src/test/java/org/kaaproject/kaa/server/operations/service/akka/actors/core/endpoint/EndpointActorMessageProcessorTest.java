@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -26,9 +29,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.A
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.mockito.Mockito;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
 public class EndpointActorMessageProcessorTest {
 

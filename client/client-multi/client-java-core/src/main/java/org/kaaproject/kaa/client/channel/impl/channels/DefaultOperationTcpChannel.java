@@ -144,12 +144,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
   private volatile Future<?> pingTaskFuture;
   private volatile Future<?> readTaskFuture;
   private volatile boolean isOpenConnectionScheduled;
-  private final Runnable openConnectionTask = new Runnable() {
-    @Override
-    public void run() {
-      openConnection();
-    }
-  };
   private final ConnAckListener connAckListener = new ConnAckListener() {
 
     @Override
@@ -211,6 +205,12 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       } else {
         LOG.info("Can't execute ping task for channel [{}]. Task was interrupted", getId());
       }
+    }
+  };
+  private final Runnable openConnectionTask = new Runnable() {
+    @Override
+    public void run() {
+      openConnection();
     }
   };
 

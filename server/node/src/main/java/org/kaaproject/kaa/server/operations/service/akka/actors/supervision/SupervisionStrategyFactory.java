@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.supervision;
 
-import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import akka.actor.OneForOneStrategy;
 import akka.actor.SupervisorStrategy;
 import akka.actor.SupervisorStrategy.Directive;
 import akka.japi.Function;
 import scala.concurrent.duration.Duration;
+
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SupervisionStrategyFactory {
 

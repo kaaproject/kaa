@@ -220,13 +220,13 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     return endpointId == null ? null : endpointId.array();
   }
 
-  public RouteInfo setEndpointId(byte[] endpointId) {
-    this.endpointId = endpointId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointId, endpointId.length));
+  public RouteInfo setEndpointId(ByteBuffer endpointId) {
+    this.endpointId = org.apache.thrift.TBaseHelper.copyBinary(endpointId);
     return this;
   }
 
-  public RouteInfo setEndpointId(ByteBuffer endpointId) {
-    this.endpointId = org.apache.thrift.TBaseHelper.copyBinary(endpointId);
+  public RouteInfo setEndpointId(byte[] endpointId) {
+    this.endpointId = endpointId == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointId, endpointId.length));
     return this;
   }
 

@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import akka.actor.ActorRef;
+import akka.actor.LocalActorRef;
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
@@ -38,12 +44,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TimeZone;
 import java.util.TreeMap;
-
-import akka.actor.ActorRef;
-import akka.actor.LocalActorRef;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 /**
  * The Class TopicActor.

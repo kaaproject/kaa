@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-
 import akka.actor.ActorRef;
+
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 
 public class EndpointStopMessage {

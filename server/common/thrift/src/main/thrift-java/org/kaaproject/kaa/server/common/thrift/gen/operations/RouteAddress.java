@@ -102,13 +102,13 @@ public class RouteAddress implements org.apache.thrift.TBase<RouteAddress, Route
     return endpointKey == null ? null : endpointKey.array();
   }
 
-  public RouteAddress setEndpointKey(byte[] endpointKey) {
-    this.endpointKey = endpointKey == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointKey, endpointKey.length));
+  public RouteAddress setEndpointKey(ByteBuffer endpointKey) {
+    this.endpointKey = org.apache.thrift.TBaseHelper.copyBinary(endpointKey);
     return this;
   }
 
-  public RouteAddress setEndpointKey(ByteBuffer endpointKey) {
-    this.endpointKey = org.apache.thrift.TBaseHelper.copyBinary(endpointKey);
+  public RouteAddress setEndpointKey(byte[] endpointKey) {
+    this.endpointKey = endpointKey == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(endpointKey, endpointKey.length));
     return this;
   }
 

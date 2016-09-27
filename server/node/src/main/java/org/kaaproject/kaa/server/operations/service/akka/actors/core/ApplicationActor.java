@@ -21,6 +21,14 @@ import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaServi
 import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.TOPIC_DISPATCHER_NAME;
 import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.VERIFIER_DISPATCHER_NAME;
 
+import akka.actor.ActorRef;
+import akka.actor.LocalActorRef;
+import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
+import akka.actor.Terminated;
+import akka.actor.UntypedActor;
+import akka.japi.Creator;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
@@ -60,14 +68,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import akka.actor.ActorRef;
-import akka.actor.LocalActorRef;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 /**
  * The Class ApplicationActor.

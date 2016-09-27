@@ -22,16 +22,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 
 import java.nio.ByteBuffer;
-
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
 
 public class KaaTcpEncoderTest {
   private KaaTcpEncoder encoder = new KaaTcpEncoder();

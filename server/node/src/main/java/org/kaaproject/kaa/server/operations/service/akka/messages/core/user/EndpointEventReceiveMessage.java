@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
@@ -24,8 +26,6 @@ import org.kaaproject.kaa.server.sync.Event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import akka.actor.ActorRef;
 
 public class EndpointEventReceiveMessage extends EndpointAwareMessage implements UserAwareMessage {
 

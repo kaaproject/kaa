@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import akka.actor.ActorRef;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MultiLogDeliveryCallback extends AbstractActorCallback {
 

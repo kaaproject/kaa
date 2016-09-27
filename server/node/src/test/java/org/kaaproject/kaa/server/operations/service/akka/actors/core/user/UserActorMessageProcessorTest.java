@@ -23,6 +23,9 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -58,9 +61,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
 public class UserActorMessageProcessorTest {
 

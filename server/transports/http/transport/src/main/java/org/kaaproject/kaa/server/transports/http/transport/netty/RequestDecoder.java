@@ -16,14 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.netty;
 
-import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
-import org.kaaproject.kaa.server.common.server.BadRequestException;
-import org.kaaproject.kaa.server.common.server.CommandFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderResult;
@@ -32,6 +24,14 @@ import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.Attribute;
+
+import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
+import org.kaaproject.kaa.server.common.server.BadRequestException;
+import org.kaaproject.kaa.server.common.server.CommandFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 /**
  * RequestDecoder Class. ChannelInboundHandler for HttpObject in Netty pipeline.

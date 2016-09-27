@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
+import akka.actor.UntypedActor;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
@@ -36,8 +38,6 @@ import org.kaaproject.kaa.server.transport.message.SessionDisconnectMessage;
 import org.kaaproject.kaa.server.transport.message.SessionPingMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.UntypedActor;
 
 /**
  * The Class EndpointActor.

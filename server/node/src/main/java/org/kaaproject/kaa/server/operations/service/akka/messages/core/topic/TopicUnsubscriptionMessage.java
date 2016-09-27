@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.topic;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
-
-import akka.actor.ActorRef;
 
 
 /**

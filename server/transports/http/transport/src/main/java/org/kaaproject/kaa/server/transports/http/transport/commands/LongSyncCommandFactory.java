@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.commands;
 
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
-import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
-
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+
+import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 
 public class LongSyncCommandFactory extends SyncCommandFactory {
 
