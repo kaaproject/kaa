@@ -111,8 +111,7 @@ to change it for development or debug process.
 <br> Interface that will be reported by all transports.
 * *metrics_enabled*
 <br> Default: _true_
-<br> Specify if metrics collections are enabled. See
-[performance monitoring]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/#performance-monitoring) for details.
+<br> Specify if metrics collections are enabled.
 * *logs_root_dir*
 <br> Default: _/kaa_log_uploads_
 <br> Path to logs root directory.
