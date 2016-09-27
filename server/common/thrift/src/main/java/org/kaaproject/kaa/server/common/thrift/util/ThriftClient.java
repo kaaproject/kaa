@@ -62,12 +62,12 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
   /**
    * The t class.
    */
-  private Class<T> tClass;
+  private Class<T> clazz;
 
   /**
    * The t constructor.
    */
-  private Constructor<T> tConstructor;
+  private Constructor<T> constructor;
 
   /**
    * The client.
@@ -103,15 +103,15 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
       InstantiationException,
       IllegalAccessException,
       InvocationTargetException {
-    this.tClass = clazz;
+    this.clazz = clazz;
     this.endpointHost = endpointHost;
     this.endpointPort = endpointPort;
-    tConstructor = tClass.getConstructor(TProtocol.class, TProtocol.class);
+    constructor = this.clazz.getConstructor(TProtocol.class, TProtocol.class);
     transport = new TSocket(endpointHost, endpointPort);
     LOG.debug("ThriftClient sokcet to " + endpointHost + ":" + endpointPort + " created.");
     TProtocol protocol = new TBinaryProtocol(transport);
     TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, kaaThriftService.getServiceName());
-    client = tConstructor.newInstance(mp, mp);
+    client = constructor.newInstance(mp, mp);
     LOG.debug("ThriftClient new Client to " + endpointHost + ":" + endpointPort + " created.");
   }
 

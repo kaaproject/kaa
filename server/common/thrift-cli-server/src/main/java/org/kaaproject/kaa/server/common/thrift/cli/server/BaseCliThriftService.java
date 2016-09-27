@@ -468,7 +468,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
     for (Thread t : gThreads) {
       if (t != null) {
         ThreadStruct ts = threadsMap.get(t.getId());
-        ts.t = t;
+        ts.thread = t;
       }
     }
     for (ThreadGroup tg : tGroups) {
@@ -546,7 +546,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
     /**
      * The thread.
      */
-    public Thread t;
+    public Thread thread;
 
     /**
      * The thread info.
@@ -559,7 +559,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      * @return the group name
      */
     public String getGroupName() {
-      return t != null ? t.getThreadGroup().getName() : "";
+      return thread != null ? thread.getThreadGroup().getName() : "";
     }
 
     /**
@@ -568,7 +568,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      * @return the priority
      */
     public String getPriority() {
-      return t != null ? t.getPriority() + "" : "";
+      return thread != null ? thread.getPriority() + "" : "";
     }
 
     /**
@@ -577,7 +577,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      * @return the "daemon" string if thread is daemon otherwise empty string
      */
     public String isDaemon() {
-      return t != null && t.isDaemon() ? "daemon" : "";
+      return thread != null && thread.isDaemon() ? "daemon" : "";
     }
 
     /**
@@ -586,7 +586,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      * @return the "alive" string if thread is alive otherwise empty string
      */
     public String isAlive() {
-      return t != null && t.isAlive() ? "alive" : "";
+      return thread != null && thread.isAlive() ? "alive" : "";
     }
 
     /*
@@ -595,10 +595,10 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
-    public int compareTo(ThreadStruct o) {
-      int result = getGroupName().compareTo(o.getGroupName());
+    public int compareTo(ThreadStruct obj) {
+      int result = getGroupName().compareTo(obj.getGroupName());
       if (result == 0) {
-        result = (int) (ti.getThreadId() - o.ti.getThreadId());
+        result = (int) (ti.getThreadId() - obj.ti.getThreadId());
       }
       return result;
     }
@@ -609,17 +609,17 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object o) {
-      if (this == o) {
+    public boolean equals(Object obj) {
+      if (this == obj) {
         return true;
       }
-      if (!(o instanceof ThreadStruct)) {
+      if (!(obj instanceof ThreadStruct)) {
         return false;
       }
 
-      ThreadStruct that = (ThreadStruct) o;
+      ThreadStruct that = (ThreadStruct) obj;
 
-      if (t != null ? !t.equals(that.t) : that.t != null) {
+      if (thread != null ? !thread.equals(that.thread) : that.thread != null) {
         return false;
       }
       if (ti != null ? !ti.equals(that.ti) : that.ti != null) {
@@ -636,7 +636,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
      */
     @Override
     public int hashCode() {
-      int result = t != null ? t.hashCode() : 0;
+      int result = thread != null ? thread.hashCode() : 0;
       result = 31 * result + (ti != null ? ti.hashCode() : 0);
       return result;
     }
