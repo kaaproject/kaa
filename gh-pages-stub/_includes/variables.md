@@ -21,7 +21,7 @@
 {% endif %}
 {% assign github_url = "" %}
 {% if version == "current" %}
-	{% assign github_url = "http://github.com/kaaproject/kaa/tree/develop/" %}
+	{% assign github_url = "http://github.com/kaaproject/kaa/tree/master/" %}
 {% else %}
 	{% capture github_url %}http://github.com/kaaproject/kaa/tree/{{version}}/{% endcapture %}
 {% endif %}
