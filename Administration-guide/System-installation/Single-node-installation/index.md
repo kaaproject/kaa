@@ -866,7 +866,7 @@ cqlsh>
 
 ### Kaa server components
 
-To install Kaa you will need to [download](http://www.kaaproject.org/download-kaa/) pre-built packages or [build](../Planning-your-deployment#building-kaa-from-source) them from the [source code](https://github.com/kaaproject/kaa). We will use pre-built packages in this guide.
+To install Kaa you will need to [download](http://www.kaaproject.org/download-kaa/) pre-built packages or build them from the [source code](https://github.com/kaaproject/kaa). We will use pre-built packages in this guide.
 
 
 <ul>
