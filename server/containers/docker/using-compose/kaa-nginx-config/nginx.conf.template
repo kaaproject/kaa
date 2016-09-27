@@ -26,8 +26,8 @@ http {
     keepalive_timeout  65;
 
     #gzip  on;
-
     upstream kaa_servers {
+        ip_hash;
         server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};
     }
 

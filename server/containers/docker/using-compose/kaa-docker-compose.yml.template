@@ -32,16 +32,6 @@ services:
     networks:
       - back-tier
       - front-tier
-  kaa_thrift_lb:
-    image: nginx:1.7
-    volumes:
-      - ./kaa-nginx-config/kaa-thrift-nginx.conf:/etc/nginx/nginx.conf
-      - ./kaa-nginx-config/kaa-thrift-default.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "9090:9090"
-    networks:
-      - back-tier
-      - front-tier
 networks:
   back-tier:
     driver: bridge

@@ -125,7 +125,7 @@ configureClusterNodesKaa() {
         KAA_ADMIN_UI_PORT+=( $(( DEFAULT_ADMIN_PORT + $i * 100 )) )
         STRING_NAMES_NODES_KAA+=(${DEFAULT_KAA_SERVICE_NAME}${i})
         KAA_ADMIN_UI_PORTS+=(${KAA_ADMIN_UI_PORT})
-        ex -sc "25i|`cat kaa-docker-compose.yml.template | tail -47 | head -22 | sed \
+        ex -sc "25i|`cat kaa-docker-compose.yml.template | tail -37 | head -22 | sed \
         -e "s|{{KAA_SERVICE_NAME}}|${DEFAULT_KAA_SERVICE_NAME}${i} |g" \
         -e "s|{{ADMIN_PORT}}|${KAA_ADMIN_UI_PORT}|g" \
         -e "s|{{BOOTSTRAP_TCP}}|$(( DEFAULT_BOOTSTRAP_TCP + $i * 100 ))|g" \
@@ -147,33 +147,22 @@ createNginxConfFiles() {
         -e "s|{{NGINX_PORT}}|${DEFAULT_INTERNAL_ADMIN_PORT}|g" \
         -e "s|{{NGINX_HOST}}|${INTERNAL_LOCALHOST}|g" \
     > kaa-nginx-config/kaa-default.conf
-
-    cat kaa-nginx-config/nginx.conf.template | sed \
-        -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
-        -e "s|{{PROXY_PORT}}|${DEFAULT_THRIFT_PORT}|g" \
-    > kaa-nginx-config/kaa-thrift-nginx.conf
-    cat kaa-nginx-config/default.conf.template | sed \
-        -e "s|{{NGINX_PORT}}|${DEFAULT_THRIFT_PORT}|g" \
-        -e "s|{{NGINX_HOST}}|${INTERNAL_LOCALHOST}|g" \
-    > kaa-nginx-config/kaa-thrift-default.conf
 }
 
 stopRunningContainers
-removeAvailableContainers
 
 isValidDatabases
 configureAndStartThirdPartyComponents
 
 [ -n "$INTERNAL_LOCALHOST" ] || INTERNAL_LOCALHOST=`ip route get 8.8.8.8 | awk '{print $NF; exit}'`
 echo "TRANSPORT_PUBLIC_INTERFACE =" $INTERNAL_LOCALHOST
-echo "THRIFT_HOST =" $INTERNAL_LOCALHOST
 sed -i "s/\(TRANSPORT_PUBLIC_INTERFACE *= *\).*/\1${INTERNAL_LOCALHOST}/" kaa-example.env
 
 if [ -z "$KAA_NODE_SCALE" ]; then
     configureOneNodeKaa
     docker-compose -f kaa-docker-compose.yml up -d "${DEFAULT_KAA_SERVICE_NAME}0"
     createNginxConfFiles
-    docker-compose -f kaa-docker-compose.yml up -d kaa_lb kaa_thrift_lb
+    docker-compose -f kaa-docker-compose.yml up -d kaa_lb
 else
     configureClusterNodesKaa
     docker-compose -f kaa-docker-compose.yml up -d ${STRING_NAMES_NODES_KAA[@]}
@@ -190,11 +179,6 @@ else
             -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
             -e "s|{{PROXY_PORT}}|${i}|g" \
             `" -cx kaa-nginx-config/kaa-nginx.conf
-
-            ex -sc "31i|`cat kaa-nginx-config/nginx.conf.template | tail -5 | head -1 | sed \
-            -e "s|{{PROXY_HOST_KAA}}|${INTERNAL_HOST_KAA}|g" \
-            -e "s|{{PROXY_PORT}}|${DEFAULT_THRIFT_PORT}|g" \
-            `" -cx kaa-nginx-config/kaa-thrift-nginx.conf
         fi
     done
     docker-compose -f kaa-docker-compose.yml up -d kaa_lb
