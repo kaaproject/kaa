@@ -39,9 +39,9 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
  *         bit4-bit7 - KAASYNC subcomand id
  *
  *
- *         KAASYNC subcomand id table Mnemonic   Enumeration   Description UNUSED     0 reserved
- *         value SYNC       1             Sync request/response BOOTSTRAP  2 Bootstrap
- *         resolve/response
+ *         KAASYNC subcomand id table Mnemonic   Enumeration   Description UNUSED     0
+ *         reserved value SYNC       1             Sync request/response BOOTSTRAP  2
+ *         Bootstrap resolve/response
  */
 public class KaaSync extends MqttFrame {
 

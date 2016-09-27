@@ -27,7 +27,7 @@ import java.util.List;
 public interface LogSchemaDao<T> extends SqlDao<T> {
 
   /**
-   * Find all Log Schemas for Application with specific id
+   * Find all Log Schemas for Application with specific id.
    *
    * @param applicationId the id of Application
    * @return List of Log Schemas

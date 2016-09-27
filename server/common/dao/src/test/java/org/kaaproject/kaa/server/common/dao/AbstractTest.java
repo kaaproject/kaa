@@ -59,7 +59,7 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
-import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
@@ -216,7 +216,7 @@ public class AbstractTest {
   @Autowired
   protected SdkProfileDao<SdkProfile> sdkProfileDao;
   @Autowired
-  protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
+  protected CtlSchemaDao<CTLSchema> ctlSchemaDao;
   @Autowired
   protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
   @Autowired
@@ -262,7 +262,7 @@ public class AbstractTest {
         FileSystem fs;
         try {
           fs = FileSystems.newFileSystem(URI.create(array[0]), new HashMap<String, String>());
-        } catch (FileSystemAlreadyExistsException ex) {
+        } catch (FileSystemAlreadyExistsException e) {
           fs = FileSystems.getFileSystem(URI.create(array[0]));
         }
         path = fs.getPath(array[1]);
@@ -270,8 +270,8 @@ public class AbstractTest {
         path = Paths.get(uri);
       }
       return new String(Files.readAllBytes(path));
-    } catch (URISyntaxException ex) {
-      LOG.error("Can't generate configs {}", ex);
+    } catch (URISyntaxException e) {
+      LOG.error("Can't generate configs {}", e);
     }
     return null;
   }
@@ -339,9 +339,9 @@ public class AbstractTest {
         schemas.add(schemaDto);
       }
 
-    } catch (Exception ex) {
-      LOG.error("Can't generate configs {}", ex);
-      Assert.fail("Can't generate configuration schemas." + ex.getMessage());
+    } catch (Exception e) {
+      LOG.error("Can't generate configs {}", e);
+      Assert.fail("Can't generate configuration schemas." + e.getMessage());
     }
     return schemas;
   }
@@ -382,9 +382,9 @@ public class AbstractTest {
         }
         ids.add(saved);
       }
-    } catch (Exception ex) {
-      LOG.error("Can't generate configs {}", ex);
-      Assert.fail("Can't generate configurations. " + ex.getMessage());
+    } catch (Exception e) {
+      LOG.error("Can't generate configs {}", e);
+      Assert.fail("Can't generate configurations. " + e.getMessage());
     }
     return ids;
   }
@@ -411,8 +411,8 @@ public class AbstractTest {
         Assert.assertNotNull(schemaDto);
         schemas.add(schemaDto);
       }
-    } catch (Exception ex) {
-      LOG.error("Can't generate configs {}", ex);
+    } catch (Exception e) {
+      LOG.error("Can't generate configs {}", e);
       Assert.fail("Can't generate configurations.");
     }
     return schemas;
@@ -459,8 +459,8 @@ public class AbstractTest {
         }
         filters.add(saved);
       }
-    } catch (Exception ex) {
-      LOG.error("Can't generate configs {}", ex);
+    } catch (Exception e) {
+      LOG.error("Can't generate configs {}", e);
       Assert.fail("Can't generate configurations.");
     }
     return filters;
@@ -494,7 +494,7 @@ public class AbstractTest {
         CTLSchemaDto ctlSchema = null;
         try {
           ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
-        } catch (DatabaseProcessingException ex) {
+        } catch (DatabaseProcessingException e) {
           ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
         }
@@ -505,8 +505,8 @@ public class AbstractTest {
         Assert.assertNotNull(schemaDto);
         schemas.add(schemaDto);
       }
-    } catch (Exception ex) {
-      LOG.error("Can't generate log schemas {}", ex);
+    } catch (Exception e) {
+      LOG.error("Can't generate log schemas {}", e);
       Assert.fail("Can't generate log schemas.");
     }
     return schemas;
@@ -589,7 +589,7 @@ public class AbstractTest {
     CTLSchemaDto ctlSchema = null;
     try {
       ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
-    } catch (DatabaseProcessingException ex) {
+    } catch (DatabaseProcessingException e) {
       ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
     }
@@ -618,9 +618,9 @@ public class AbstractTest {
       byte[] body = null;
       try {
         body = readSchemaFileAsString("dao/schema/testBaseData.json").getBytes(Charset.forName("UTF-8"));
-      } catch (IOException ex) {
-        ex.printStackTrace();
-        Assert.fail(ex.getMessage());
+      } catch (IOException e) {
+        e.printStackTrace();
+        Assert.fail(e.getMessage());
       }
       notification.setBody(body);
       UpdateNotificationDto<NotificationDto> update = notificationService.saveNotification(notification);
@@ -649,9 +649,9 @@ public class AbstractTest {
     byte[] body = null;
     try {
       body = readSchemaFileAsString("dao/schema/testBaseData.json").getBytes(Charset.forName("UTF-8"));
-    } catch (IOException ex) {
-      ex.printStackTrace();
-      Assert.fail(ex.getMessage());
+    } catch (IOException e) {
+      e.printStackTrace();
+      Assert.fail(e.getMessage());
     }
     notification.setBody(body);
     endpointNotification.setNotificationDto(notification);
@@ -742,8 +742,8 @@ public class AbstractTest {
     profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
     try {
       profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
-    } catch (IOException ex) {
-      LOG.error("Can't set client-side EP body {}", ex);
+    } catch (IOException e) {
+      LOG.error("Can't set client-side EP body {}", e);
     }
     profileDto.setSdkToken(UUID.randomUUID().toString());
     return endpointService.saveEndpointProfile(profileDto);
@@ -756,8 +756,8 @@ public class AbstractTest {
     profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
     try {
       profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
-    } catch (IOException ex) {
-      LOG.error("Can't set client-side EP body {}", ex);
+    } catch (IOException e) {
+      LOG.error("Can't set client-side EP body {}", e);
     }
     profileDto.setSdkToken(UUID.randomUUID().toString());
     profileDto.setServerProfileBody(srvProfileBody);
@@ -774,8 +774,8 @@ public class AbstractTest {
     profileDto.setGroupState(groupState);
     try {
       profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
-    } catch (IOException ex) {
-      LOG.error("Can't set client-side EP body {}", ex);
+    } catch (IOException e) {
+      LOG.error("Can't set client-side EP body {}", e);
     }
     profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
     profileDto.setSdkToken(UUID.randomUUID().toString());

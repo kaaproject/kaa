@@ -118,12 +118,12 @@ public class ControlNode extends WorkerNodeTracker {
       nodePath = zkClient.create().withMode(CreateMode.EPHEMERAL)
           .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
       LOG.info("Created node with path: " + nodePath);
-    } catch (NodeExistsException ex) {
-      LOG.info("master already exists ", ex);
-    } catch (Exception ex) {
-      LOG.error("Unknown Error", ex);
+    } catch (NodeExistsException e) {
+      LOG.info("master already exists ", e);
+    } catch (Exception e) {
+      LOG.error("Unknown Error", e);
       close();
-      throw new IOException(ex);
+      throw new IOException(e);
     }
     return true;
   }

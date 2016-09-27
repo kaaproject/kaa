@@ -55,5 +55,8 @@ public interface NotificationDao<T extends Notification> extends Dao<T, String> 
    * @param userNfVersion the user notification version
    * @return the list of notifications
    */
-  List<T> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNum, int sysNfVersion, int userNfVersion);
+  List<T> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId,
+                                                             int seqNum,
+                                                             int sysNfVersion,
+                                                             int userNfVersion);
 }

@@ -68,14 +68,18 @@ import java.util.TimeZone;
 public class NotificationServiceImpl implements NotificationService {
 
   private static final Logger LOG = LoggerFactory.getLogger(NotificationServiceImpl.class);
-  // 7 days
-  private static final int TTL = 7 * 24 * 3600 * 1000;
+
   @Value("#{sql_dao[dao_max_wait_time]}")
   private int waitSeconds;
+
+  @Autowired(required = false)
+  private int ttl = 7 * 24 * 3600 * 1000;
+
   @Autowired
   private TopicDao<Topic> topicDao;
   @Autowired
   private NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
+
   private EndpointProfileDao<EndpointProfile> endpointProfileDao;
   private NotificationDao<Notification> notificationDao;
   private EndpointNotificationDao<EndpointNotification> unicastNotificationDao;
@@ -138,7 +142,7 @@ public class NotificationServiceImpl implements NotificationService {
 
       long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
       Date expiredAt = dto.getExpiredAt();
-      dto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
+      dto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + ttl));
       dto.setLastTimeModify(new Date(currentTime));
       NotificationDto notificationDto = saveNotificationAndIncTopicSecNum(dto);
       if (notificationDto != null) {
@@ -302,7 +306,7 @@ public class NotificationServiceImpl implements NotificationService {
       }
       long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
       Date expiredAt = notificationDto.getExpiredAt();
-      notificationDto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + TTL));
+      notificationDto.setExpiredAt(expiredAt != null ? expiredAt : new Date(currentTime + ttl));
       notificationDto.setLastTimeModify(new Date(currentTime));
 
       EndpointNotificationDto unicast = getDto(unicastNotificationDao.save(dto));

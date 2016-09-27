@@ -46,8 +46,8 @@ public class PingConnectivityChecker implements ConnectivityChecker {
   public boolean checkConnectivity() {
     try {
       return InetAddress.getByName(host).isReachable(CONNECTION_TIMEOUT_MS);
-    } catch (IOException ex) {
-      LOG.warn(MessageFormat.format("Host {0} is unreachable", host), ex);
+    } catch (IOException e) {
+      LOG.warn(MessageFormat.format("Host {0} is unreachable", host), e);
       return false;
     }
   }

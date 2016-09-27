@@ -54,8 +54,8 @@ public class DefaultLogTransport extends AbstractKaaTransport implements
     if (processor != null) {
       try {
         processor.onLogResponse(response);
-      } catch (IOException ex) {
-        LOG.error("Failed to process Log response: {}", ex);
+      } catch (IOException e) {
+        LOG.error("Failed to process Log response: {}", e);
       }
     } else {
       LOG.error("Can't process response. LogProcessor is null");

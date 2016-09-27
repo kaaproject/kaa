@@ -62,6 +62,8 @@ public interface EventClassDao<T> extends SqlDao<T> {
   List<T> findByTenantIdAndFqn(String tenantId, String fqn);
 
   /**
+   * Find Event Class by Tenant id, FQN and version.
+   *
    * @param tenantId the tenant id
    * @param fqn      the FQN
    * @param version  the version

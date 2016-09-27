@@ -301,8 +301,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             notifyListeners(mandatoryListeners, topic, notification);
           }
         }
-      } catch (UnavailableTopicException ex) {
-        LOG.warn("Received notification for an unknown topic (id={}), exception catched: {}", notification.getTopicId(), ex);
+      } catch (UnavailableTopicException e) {
+        LOG.warn("Received notification for an unknown topic (id={}), exception catched: {}", notification.getTopicId(), e);
       }
     }
   }
@@ -315,8 +315,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         public void run() {
           try {
             deserializer.notify(Collections.unmodifiableCollection(listenersCopy), topic, notification.getBody().array());
-          } catch (IOException ex) {
-            LOG.error("Failed to process notification for topic {}", topic.getId(), ex);
+          } catch (IOException e) {
+            LOG.error("Failed to process notification for topic {}", topic.getId(), e);
           }
         }
       });

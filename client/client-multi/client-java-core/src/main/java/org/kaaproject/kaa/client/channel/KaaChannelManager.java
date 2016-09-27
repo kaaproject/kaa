@@ -105,8 +105,7 @@ public interface KaaChannelManager {
    * @throws KaaInvalidChannelException the kaa invalid channel exception
    * @see KaaDataChannel
    */
-  void setChannel(TransportType transport, KaaDataChannel channel)
-      throws KaaInvalidChannelException;
+  void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException;
 
   /**
    * Updates the manager by adding the channel.

@@ -103,8 +103,8 @@ public class DefaultCommonTest {
   public void testCommonEnum() {
     EqualsVerifier.forClass(DefaultCommonEnum.class).verify();
     Schema schema = mock(Schema.class);
-    CommonEnum commonEnum = new DefaultCommonEnum(schema, "enum");
-    assertEquals(schema, commonEnum.getSchema());
+    CommonEnum e = new DefaultCommonEnum(schema, "enum");
+    assertEquals(schema, e.getSchema());
   }
 
   @Test

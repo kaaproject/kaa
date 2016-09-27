@@ -57,8 +57,8 @@ public class EventSchemaProcessorImpl implements EventSchemaProcessor {
         EventClassType classType = null;
         try { //NOSONAR
           classType = EventClassType.valueOf(strClassType.toUpperCase());
-        } catch (Exception ex) {
-          LOG.error("Can't process provided event class family schema. Invalid classType [{}]. Exception catched: {}", strClassType, ex);
+        } catch (Exception e) {
+          LOG.error("Can't process provided event class family schema. Invalid classType [{}]. Exception catched: {}", strClassType, e);
           throw new EventSchemaException("Can't process provided event class family schema. Invalid classType: " + strClassType);
         }
         String ctlSchemaId = parsedEventClassSchema.getProp(CTL_SCHEMA_ID);
@@ -66,9 +66,9 @@ public class EventSchemaProcessorImpl implements EventSchemaProcessor {
         eventClassSchema.setType(classType);
         eventClassSchemas.add(eventClassSchema);
       }
-    } catch (Exception ex) {
-      LOG.error("Invalid event class family schema.", ex);
-      throw new EventSchemaException("Can't process provided event class family schema.", ex);
+    } catch (Exception e) {
+      LOG.error("Invalid event class family schema.", e);
+      throw new EventSchemaException("Can't process provided event class family schema.", e);
     }
     return eventClassSchemas;
   }

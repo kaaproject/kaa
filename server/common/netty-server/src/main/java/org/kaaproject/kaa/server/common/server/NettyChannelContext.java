@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.common.server;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Implementation of {@link ChannelContext} that is based on Netty channels.

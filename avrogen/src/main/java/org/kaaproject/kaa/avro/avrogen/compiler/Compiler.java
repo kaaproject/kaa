@@ -106,16 +106,16 @@ public abstract class Compiler {
       String headerPath = outputPath + File.separator + generatedSourceName + ".h";
       String sourcePath = outputPath + File.separator + generatedSourceName + getSourceExtension();
 
-      Files.move(new File(headerTemplateGen()).toPath(),
-          new File(headerPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
-      Files.move(new File(sourceTemplateGen()).toPath(),
-          new File(sourcePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+      Files.move(new File(headerTemplateGen()).toPath()
+          , new File(headerPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+      Files.move(new File(sourceTemplateGen()).toPath()
+          , new File(sourcePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
       this.headerWriter = new PrintWriter(new BufferedWriter(new FileWriter(headerPath, true)));
       this.sourceWriter = new PrintWriter(new BufferedWriter(new FileWriter(sourcePath, true)));
-    } catch (Exception ex) {
-      LOG.error("Failed to create ouput path: ", ex);
-      throw new KaaGeneratorException("Failed to create output path: " + ex.toString());
+    } catch (Exception e) {
+      LOG.error("Failed to create ouput path: ", e);
+      throw new KaaGeneratorException("Failed to create output path: " + e.toString());
     }
   }
 
@@ -158,9 +158,9 @@ public abstract class Compiler {
       } else {
         writeToStream(hdrWriter, srcWriter);
       }
-    } catch (Exception ex) {
-      LOG.error("Failed to prepare source templates: ", ex);
-      throw new KaaGeneratorException("Failed to prepare source templates: " + ex.toString());
+    } catch (Exception e) {
+      LOG.error("Failed to prepare source templates: ", e);
+      throw new KaaGeneratorException("Failed to prepare source templates: " + e.toString());
     }
   }
 
@@ -199,9 +199,9 @@ public abstract class Compiler {
 
       LOG.debug("Sources were successfully generated");
       return schemaGenerationQueue.keySet();
-    } catch (Exception ex) {
-      LOG.error("Failed to generate C sources: ", ex);
-      throw new KaaGeneratorException("Failed to generate sources: " + ex.toString());
+    } catch (Exception e) {
+      LOG.error("Failed to generate C sources: ", e);
+      throw new KaaGeneratorException("Failed to generate sources: " + e.toString());
     } finally {
       headerWriter.close();
       sourceWriter.close();

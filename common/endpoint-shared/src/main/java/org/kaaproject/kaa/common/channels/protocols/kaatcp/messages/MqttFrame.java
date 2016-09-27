@@ -48,7 +48,6 @@ abstract public class MqttFrame {
    * to clone all fileds.
    */
   private MessageType messageType;
-
   /**
    *
    */
@@ -153,8 +152,7 @@ abstract public class MqttFrame {
       }
       dst[size] = digit;
       ++size;
-    }
-    while (remainingLegth > 0);
+    } while (remainingLegth > 0);
     return size;
   }
 
@@ -171,11 +169,11 @@ abstract public class MqttFrame {
     frameDecodeComplete = true;
   }
 
-  private void processByte(byte value) throws KaaTcpProtocolException {
+  private void processByte(byte b) throws KaaTcpProtocolException {
     if (currentState.equals(FrameParsingState.PROCESSING_LENGTH)) {
-      remainingLength += ((value & 0xFF) & 127) * multiplier;
+      remainingLength += ((b & 0xFF) & 127) * multiplier;
       multiplier *= 128;
-      if (((value & 0xFF) & 128) == 0) {
+      if (((b & 0xFF) & 128) == 0) {
         LOG.trace("Frame ({}): payload length = {}", getMessageType(), remainingLength);
         if (remainingLength != 0) {
           buffer = ByteBuffer.allocate(remainingLength);

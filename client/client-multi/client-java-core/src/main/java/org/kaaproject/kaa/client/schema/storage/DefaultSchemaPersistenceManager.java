@@ -61,8 +61,8 @@ public class DefaultSchemaPersistenceManager implements
         if (storage != null) {
           storage.saveSchema(buffer);
         }
-      } catch (UnsupportedEncodingException ex) {
-        LOG.error("Failed to save schema: ", ex);
+      } catch (UnsupportedEncodingException e) {
+        LOG.error("Failed to save schema: ", e);
         throw new SchemaRuntimeException("Failed to save schema");
       }
     } else {

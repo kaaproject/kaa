@@ -47,11 +47,19 @@ public interface SqlDao<T> extends Dao<T, String> {
   /**
    * Save object. Will be returned object with id.
    *
-   * @param o     the domain object
+   * @param object     the domain object
    * @param flush specify if session flush needed.
    * @return the saved object
    */
-  T save(T o, boolean flush);
+  T save(T object, boolean flush);
+
+  /**
+   * @param object     the o
+   * @param clazz the clazz
+   * @param <V>   the V
+   * @return the saved object
+   */
+  <V> V save(V object, Class<?> clazz);
 
   /**
    * Build lock request with the given {@link org.hibernate.LockOptions} object
@@ -72,18 +80,10 @@ public interface SqlDao<T> extends Dao<T, String> {
   T findById(String id, boolean lazy);
 
   /**
-   * Persist model object
+   * Persist model object.
    *
-   * @param o the model object
+   * @param object the model object
    * @return the persisted object
    */
-  T persist(T o);
-
-  /**
-   * @param o     the o
-   * @param clazz the clazz
-   * @param <V>   the V
-   * @return the saved object
-   */
-  <V> V save(V o, Class<?> clazz);
+  T persist(T object);
 }

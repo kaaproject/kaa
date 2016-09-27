@@ -41,8 +41,8 @@ public class ResyncConfigurationManager extends AbstractConfigurationManager imp
   public Configuration getConfiguration() {
     try {
       return deserializer.fromByteArray(getConfigurationData());
-    } catch (IOException ex) {
-      LOG.error("Failed to decode configuration data {}, exception catched: {}", Arrays.toString(getConfigurationData()), ex);
+    } catch (IOException e) {
+      LOG.error("Failed to decode configuration data {}, exception catched: {}", Arrays.toString(getConfigurationData()), e);
       try {
         return deserializer.fromByteArray(getDefaultConfigurationData());
       } catch (IOException e1) {

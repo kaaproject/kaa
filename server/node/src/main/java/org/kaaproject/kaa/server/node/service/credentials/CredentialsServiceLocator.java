@@ -21,6 +21,7 @@ package org.kaaproject.kaa.server.node.service.credentials;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
+ *
  * @since v0.9.0
  */
 public interface CredentialsServiceLocator {
@@ -30,7 +31,9 @@ public interface CredentialsServiceLocator {
    * specified application.
    *
    * @param applicationId The application ID
-   * @return The service that is responsible for managing credentials for the specified application.
+   *
+   * @return The service that is responsible for managing credentials for the
+   *         specified application.
    */
   CredentialsService getCredentialsService(String applicationId);
 }

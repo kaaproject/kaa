@@ -12,7 +12,6 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
   private org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus responseStatus;
   private java.nio.ByteBuffer confSchemaBody;
   private java.nio.ByteBuffer confDeltaBody;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -34,24 +33,17 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new ConfigurationSyncResponse RecordBuilder
-   */
+  /** Creates a new ConfigurationSyncResponse RecordBuilder */
   public static org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder();
   }
 
-  /**
-   * Creates a new ConfigurationSyncResponse RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new ConfigurationSyncResponse RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder(other);
   }
 
-  /**
-   * Creates a new ConfigurationSyncResponse RecordBuilder by copying an existing
-   * ConfigurationSyncResponse instance
-   */
+  /** Creates a new ConfigurationSyncResponse RecordBuilder by copying an existing ConfigurationSyncResponse instance */
   public static org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder(other);
   }
@@ -101,7 +93,6 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'responseStatus' field.
-   *
    * @param value the value to set.
    */
   public void setResponseStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus value) {
@@ -117,7 +108,6 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'confSchemaBody' field.
-   *
    * @param value the value to set.
    */
   public void setConfSchemaBody(java.nio.ByteBuffer value) {
@@ -133,7 +123,6 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'confDeltaBody' field.
-   *
    * @param value the value to set.
    */
   public void setConfDeltaBody(java.nio.ByteBuffer value) {
@@ -150,16 +139,12 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
     private java.nio.ByteBuffer confSchemaBody;
     private java.nio.ByteBuffer confDeltaBody;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.responseStatus)) {
@@ -176,9 +161,7 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing ConfigurationSyncResponse instance
-     */
+    /** Creates a Builder by copying an existing ConfigurationSyncResponse instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.responseStatus)) {
@@ -195,16 +178,12 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
       }
     }
 
-    /**
-     * Gets the value of the 'responseStatus' field
-     */
+    /** Gets the value of the 'responseStatus' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus getResponseStatus() {
       return responseStatus;
     }
 
-    /**
-     * Sets the value of the 'responseStatus' field
-     */
+    /** Sets the value of the 'responseStatus' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder setResponseStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus value) {
       validate(fields()[0], value);
       this.responseStatus = value;
@@ -212,32 +191,24 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'responseStatus' field has been set
-     */
+    /** Checks whether the 'responseStatus' field has been set */
     public boolean hasResponseStatus() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'responseStatus' field
-     */
+    /** Clears the value of the 'responseStatus' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder clearResponseStatus() {
       responseStatus = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'confSchemaBody' field
-     */
+    /** Gets the value of the 'confSchemaBody' field */
     public java.nio.ByteBuffer getConfSchemaBody() {
       return confSchemaBody;
     }
 
-    /**
-     * Sets the value of the 'confSchemaBody' field
-     */
+    /** Sets the value of the 'confSchemaBody' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder setConfSchemaBody(java.nio.ByteBuffer value) {
       validate(fields()[1], value);
       this.confSchemaBody = value;
@@ -245,32 +216,24 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'confSchemaBody' field has been set
-     */
+    /** Checks whether the 'confSchemaBody' field has been set */
     public boolean hasConfSchemaBody() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'confSchemaBody' field
-     */
+    /** Clears the value of the 'confSchemaBody' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder clearConfSchemaBody() {
       confSchemaBody = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'confDeltaBody' field
-     */
+    /** Gets the value of the 'confDeltaBody' field */
     public java.nio.ByteBuffer getConfDeltaBody() {
       return confDeltaBody;
     }
 
-    /**
-     * Sets the value of the 'confDeltaBody' field
-     */
+    /** Sets the value of the 'confDeltaBody' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder setConfDeltaBody(java.nio.ByteBuffer value) {
       validate(fields()[2], value);
       this.confDeltaBody = value;
@@ -278,16 +241,12 @@ public class ConfigurationSyncResponse extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'confDeltaBody' field has been set
-     */
+    /** Checks whether the 'confDeltaBody' field has been set */
     public boolean hasConfDeltaBody() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'confDeltaBody' field
-     */
+    /** Clears the value of the 'confDeltaBody' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse.Builder clearConfDeltaBody() {
       confDeltaBody = null;
       fieldSetFlags()[2] = false;

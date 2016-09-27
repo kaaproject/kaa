@@ -11,7 +11,6 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ConfigurationSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"configurationHash\",\"type\":\"bytes\"},{\"name\":\"resyncOnly\",\"type\":[\"boolean\",\"null\"]}],\"direction\":\"out\"}");
   private java.nio.ByteBuffer configurationHash;
   private java.lang.Boolean resyncOnly;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -32,24 +31,17 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new ConfigurationSyncRequest RecordBuilder
-   */
+  /** Creates a new ConfigurationSyncRequest RecordBuilder */
   public static org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder();
   }
 
-  /**
-   * Creates a new ConfigurationSyncRequest RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new ConfigurationSyncRequest RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder(other);
   }
 
-  /**
-   * Creates a new ConfigurationSyncRequest RecordBuilder by copying an existing
-   * ConfigurationSyncRequest instance
-   */
+  /** Creates a new ConfigurationSyncRequest RecordBuilder by copying an existing ConfigurationSyncRequest instance */
   public static org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder(other);
   }
@@ -94,7 +86,6 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'configurationHash' field.
-   *
    * @param value the value to set.
    */
   public void setConfigurationHash(java.nio.ByteBuffer value) {
@@ -110,7 +101,6 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'resyncOnly' field.
-   *
    * @param value the value to set.
    */
   public void setResyncOnly(java.lang.Boolean value) {
@@ -126,16 +116,12 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
     private java.nio.ByteBuffer configurationHash;
     private java.lang.Boolean resyncOnly;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.configurationHash)) {
@@ -148,9 +134,7 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing ConfigurationSyncRequest instance
-     */
+    /** Creates a Builder by copying an existing ConfigurationSyncRequest instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.SCHEMA$);
       if (isValidValue(fields()[0], other.configurationHash)) {
@@ -163,16 +147,12 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
       }
     }
 
-    /**
-     * Gets the value of the 'configurationHash' field
-     */
+    /** Gets the value of the 'configurationHash' field */
     public java.nio.ByteBuffer getConfigurationHash() {
       return configurationHash;
     }
 
-    /**
-     * Sets the value of the 'configurationHash' field
-     */
+    /** Sets the value of the 'configurationHash' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder setConfigurationHash(java.nio.ByteBuffer value) {
       validate(fields()[0], value);
       this.configurationHash = value;
@@ -180,32 +160,24 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
       return this;
     }
 
-    /**
-     * Checks whether the 'configurationHash' field has been set
-     */
+    /** Checks whether the 'configurationHash' field has been set */
     public boolean hasConfigurationHash() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'configurationHash' field
-     */
+    /** Clears the value of the 'configurationHash' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder clearConfigurationHash() {
       configurationHash = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'resyncOnly' field
-     */
+    /** Gets the value of the 'resyncOnly' field */
     public java.lang.Boolean getResyncOnly() {
       return resyncOnly;
     }
 
-    /**
-     * Sets the value of the 'resyncOnly' field
-     */
+    /** Sets the value of the 'resyncOnly' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder setResyncOnly(java.lang.Boolean value) {
       validate(fields()[1], value);
       this.resyncOnly = value;
@@ -213,16 +185,12 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
       return this;
     }
 
-    /**
-     * Checks whether the 'resyncOnly' field has been set
-     */
+    /** Checks whether the 'resyncOnly' field has been set */
     public boolean hasResyncOnly() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'resyncOnly' field
-     */
+    /** Clears the value of the 'resyncOnly' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder clearResyncOnly() {
       resyncOnly = null;
       fieldSetFlags()[1] = false;

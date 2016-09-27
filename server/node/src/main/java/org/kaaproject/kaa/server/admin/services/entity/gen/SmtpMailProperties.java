@@ -17,7 +17,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
   private java.lang.Boolean enableTls;
   private java.lang.String username;
   private java.lang.String password;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -44,24 +43,17 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new SmtpMailProperties RecordBuilder
-   */
+  /** Creates a new SmtpMailProperties RecordBuilder */
   public static org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder newBuilder() {
     return new org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder();
   }
 
-  /**
-   * Creates a new SmtpMailProperties RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new SmtpMailProperties RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder newBuilder(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder other) {
     return new org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder(other);
   }
 
-  /**
-   * Creates a new SmtpMailProperties RecordBuilder by copying an existing SmtpMailProperties
-   * instance
-   */
+  /** Creates a new SmtpMailProperties RecordBuilder by copying an existing SmtpMailProperties instance */
   public static org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder newBuilder(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties other) {
     return new org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder(other);
   }
@@ -136,7 +128,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'mailFrom' field.
-   *
    * @param value the value to set.
    */
   public void setMailFrom(java.lang.String value) {
@@ -152,7 +143,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'smtpProtocol' field.
-   *
    * @param value the value to set.
    */
   public void setSmtpProtocol(org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol value) {
@@ -168,7 +158,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'smtpHost' field.
-   *
    * @param value the value to set.
    */
   public void setSmtpHost(java.lang.String value) {
@@ -184,7 +173,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'smtpPort' field.
-   *
    * @param value the value to set.
    */
   public void setSmtpPort(java.lang.Integer value) {
@@ -200,7 +188,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'timeout' field.
-   *
    * @param value the value to set.
    */
   public void setTimeout(java.lang.Integer value) {
@@ -216,7 +203,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'enableTls' field.
-   *
    * @param value the value to set.
    */
   public void setEnableTls(java.lang.Boolean value) {
@@ -232,7 +218,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'username' field.
-   *
    * @param value the value to set.
    */
   public void setUsername(java.lang.String value) {
@@ -248,7 +233,6 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
 
   /**
    * Sets the value of the 'password' field.
-   *
    * @param value the value to set.
    */
   public void setPassword(java.lang.String value) {
@@ -270,16 +254,12 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
     private java.lang.String username;
     private java.lang.String password;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.mailFrom)) {
@@ -316,9 +296,7 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing SmtpMailProperties instance
-     */
+    /** Creates a Builder by copying an existing SmtpMailProperties instance */
     private Builder(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties other) {
       super(org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.SCHEMA$);
       if (isValidValue(fields()[0], other.mailFrom)) {
@@ -355,16 +333,12 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       }
     }
 
-    /**
-     * Gets the value of the 'mailFrom' field
-     */
+    /** Gets the value of the 'mailFrom' field */
     public java.lang.String getMailFrom() {
       return mailFrom;
     }
 
-    /**
-     * Sets the value of the 'mailFrom' field
-     */
+    /** Sets the value of the 'mailFrom' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setMailFrom(java.lang.String value) {
       validate(fields()[0], value);
       this.mailFrom = value;
@@ -372,32 +346,24 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'mailFrom' field has been set
-     */
+    /** Checks whether the 'mailFrom' field has been set */
     public boolean hasMailFrom() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'mailFrom' field
-     */
+    /** Clears the value of the 'mailFrom' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearMailFrom() {
       mailFrom = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'smtpProtocol' field
-     */
+    /** Gets the value of the 'smtpProtocol' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol getSmtpProtocol() {
       return smtpProtocol;
     }
 
-    /**
-     * Sets the value of the 'smtpProtocol' field
-     */
+    /** Sets the value of the 'smtpProtocol' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setSmtpProtocol(org.kaaproject.kaa.server.admin.services.entity.gen.smtp.SmtpProtocol value) {
       validate(fields()[1], value);
       this.smtpProtocol = value;
@@ -405,32 +371,24 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'smtpProtocol' field has been set
-     */
+    /** Checks whether the 'smtpProtocol' field has been set */
     public boolean hasSmtpProtocol() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'smtpProtocol' field
-     */
+    /** Clears the value of the 'smtpProtocol' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearSmtpProtocol() {
       smtpProtocol = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'smtpHost' field
-     */
+    /** Gets the value of the 'smtpHost' field */
     public java.lang.String getSmtpHost() {
       return smtpHost;
     }
 
-    /**
-     * Sets the value of the 'smtpHost' field
-     */
+    /** Sets the value of the 'smtpHost' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setSmtpHost(java.lang.String value) {
       validate(fields()[2], value);
       this.smtpHost = value;
@@ -438,32 +396,24 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'smtpHost' field has been set
-     */
+    /** Checks whether the 'smtpHost' field has been set */
     public boolean hasSmtpHost() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'smtpHost' field
-     */
+    /** Clears the value of the 'smtpHost' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearSmtpHost() {
       smtpHost = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'smtpPort' field
-     */
+    /** Gets the value of the 'smtpPort' field */
     public java.lang.Integer getSmtpPort() {
       return smtpPort;
     }
 
-    /**
-     * Sets the value of the 'smtpPort' field
-     */
+    /** Sets the value of the 'smtpPort' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setSmtpPort(int value) {
       validate(fields()[3], value);
       this.smtpPort = value;
@@ -471,31 +421,23 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'smtpPort' field has been set
-     */
+    /** Checks whether the 'smtpPort' field has been set */
     public boolean hasSmtpPort() {
       return fieldSetFlags()[3];
     }
 
-    /**
-     * Clears the value of the 'smtpPort' field
-     */
+    /** Clears the value of the 'smtpPort' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearSmtpPort() {
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'timeout' field
-     */
+    /** Gets the value of the 'timeout' field */
     public java.lang.Integer getTimeout() {
       return timeout;
     }
 
-    /**
-     * Sets the value of the 'timeout' field
-     */
+    /** Sets the value of the 'timeout' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setTimeout(java.lang.Integer value) {
       validate(fields()[4], value);
       this.timeout = value;
@@ -503,32 +445,24 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'timeout' field has been set
-     */
+    /** Checks whether the 'timeout' field has been set */
     public boolean hasTimeout() {
       return fieldSetFlags()[4];
     }
 
-    /**
-     * Clears the value of the 'timeout' field
-     */
+    /** Clears the value of the 'timeout' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearTimeout() {
       timeout = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'enableTls' field
-     */
+    /** Gets the value of the 'enableTls' field */
     public java.lang.Boolean getEnableTls() {
       return enableTls;
     }
 
-    /**
-     * Sets the value of the 'enableTls' field
-     */
+    /** Sets the value of the 'enableTls' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setEnableTls(java.lang.Boolean value) {
       validate(fields()[5], value);
       this.enableTls = value;
@@ -536,32 +470,24 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'enableTls' field has been set
-     */
+    /** Checks whether the 'enableTls' field has been set */
     public boolean hasEnableTls() {
       return fieldSetFlags()[5];
     }
 
-    /**
-     * Clears the value of the 'enableTls' field
-     */
+    /** Clears the value of the 'enableTls' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearEnableTls() {
       enableTls = null;
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'username' field
-     */
+    /** Gets the value of the 'username' field */
     public java.lang.String getUsername() {
       return username;
     }
 
-    /**
-     * Sets the value of the 'username' field
-     */
+    /** Sets the value of the 'username' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setUsername(java.lang.String value) {
       validate(fields()[6], value);
       this.username = value;
@@ -569,32 +495,24 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'username' field has been set
-     */
+    /** Checks whether the 'username' field has been set */
     public boolean hasUsername() {
       return fieldSetFlags()[6];
     }
 
-    /**
-     * Clears the value of the 'username' field
-     */
+    /** Clears the value of the 'username' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearUsername() {
       username = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'password' field
-     */
+    /** Gets the value of the 'password' field */
     public java.lang.String getPassword() {
       return password;
     }
 
-    /**
-     * Sets the value of the 'password' field
-     */
+    /** Sets the value of the 'password' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder setPassword(java.lang.String value) {
       validate(fields()[7], value);
       this.password = value;
@@ -602,16 +520,12 @@ public class SmtpMailProperties extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /**
-     * Checks whether the 'password' field has been set
-     */
+    /** Checks whether the 'password' field has been set */
     public boolean hasPassword() {
       return fieldSetFlags()[7];
     }
 
-    /**
-     * Clears the value of the 'password' field
-     */
+    /** Clears the value of the 'password' field */
     public org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties.Builder clearPassword() {
       password = null;
       fieldSetFlags()[7] = false;

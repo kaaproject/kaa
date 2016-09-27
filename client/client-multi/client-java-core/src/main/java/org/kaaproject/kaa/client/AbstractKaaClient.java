@@ -246,15 +246,15 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
           if (stateListener != null) {
             stateListener.onStarted();
           }
-        } catch (TransportException ex) {
-          LOG.error("Start failed", ex);
+        } catch (TransportException e) {
+          LOG.error("Start failed", e);
           if (stateListener != null) {
-            stateListener.onStartFailure(new KaaClusterConnectionException(ex));
+            stateListener.onStartFailure(new KaaClusterConnectionException(e));
           }
-        } catch (KaaRuntimeException ex) {
-          LOG.error("Start failed", ex);
+        } catch (KaaRuntimeException e) {
+          LOG.error("Start failed", e);
           if (stateListener != null) {
-            stateListener.onStartFailure(new KaaException(ex));
+            stateListener.onStartFailure(new KaaException(e));
           }
         }
       }
@@ -317,10 +317,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
           if (stateListener != null) {
             stateListener.onPaused();
           }
-        } catch (Exception ex) {
-          LOG.error("Pause failed", ex);
+        } catch (Exception e) {
+          LOG.error("Pause failed", e);
           if (stateListener != null) {
-            stateListener.onPauseFailure(new KaaException(ex));
+            stateListener.onPauseFailure(new KaaException(e));
           }
         }
       }
@@ -342,10 +342,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
           if (stateListener != null) {
             stateListener.onResume();
           }
-        } catch (Exception ex) {
-          LOG.error("Resume failed", ex);
+        } catch (Exception e) {
+          LOG.error("Resume failed", e);
           if (stateListener != null) {
-            stateListener.onResumeFailure(new KaaException(ex));
+            stateListener.onResumeFailure(new KaaException(e));
           }
         }
       }

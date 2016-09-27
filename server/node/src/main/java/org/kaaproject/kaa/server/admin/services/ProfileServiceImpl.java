@@ -89,8 +89,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
     try {
       checkApplicationId(applicationId);
       return controlService.getProfileSchemasByApplicationId(applicationId);
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -102,8 +102,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       Utils.checkNotNull(profileSchema);
       checkApplicationId(profileSchema.getApplicationId());
       return profileSchema;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -120,8 +120,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         checkApplicationId(storedProfileSchema.getApplicationId());
       }
       return controlService.editProfileSchema(profileSchema);
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -136,8 +136,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
     try {
       checkApplicationId(applicationId);
       return controlService.getServerProfileSchemasByApplicationId(applicationId);
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -149,8 +149,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       Utils.checkNotNull(profileSchema);
       checkApplicationId(profileSchema.getApplicationId());
       return profileSchema;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -167,8 +167,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         checkApplicationId(storedServerProfileSchema.getApplicationId());
       }
       return controlService.saveServerProfileSchema(serverProfileSchema);
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -188,18 +188,18 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       try {
         record = createRecordFieldFromCtlSchemaAndBody(serverProfileSchema.getCtlSchemaId(),
             serverProfileBody);
-      } catch (Exception ex) {
-        LOG.error("Provided server profile body is not valid: ", ex);
+      } catch (Exception e) {
+        LOG.error("Provided server profile body is not valid: ", e);
         throw new KaaAdminServiceException("Provided server profile body is not valid: "
-            + ex.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
+            + e.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
       }
       if (!record.isValid()) {
         throw new KaaAdminServiceException("Provided server profile body is not valid!", ServiceErrorCode.BAD_REQUEST_PARAMS);
       }
       profileDto = controlService.updateServerProfile(endpointKeyHash, serverProfileVersion, serverProfileBody);
       return profileDto;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -213,8 +213,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       }
       checkApplicationId(profileDto.getApplicationId());
       return profileDto;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -226,8 +226,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       Utils.checkNotNull(profileBodyDto);
       checkApplicationId(profileBodyDto.getAppId());
       return profileBodyDto;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -282,8 +282,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       }
       EndpointProfileSchemaDto savedProfileSchema = saveProfileSchema(profileSchema);
       return getProfileSchemaView(savedProfileSchema.getId());
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -301,8 +301,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       profileSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       EndpointProfileSchemaDto savedProfileSchema = saveProfileSchema(profileSchema);
       return getProfileSchemaView(savedProfileSchema.getId());
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -313,8 +313,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       EndpointProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
       CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(profileSchema.getCtlSchemaId());
       return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -333,8 +333,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         schemaInfos.add(schemaInfo);
       }
       return schemaInfos;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -358,8 +358,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       }
       Collections.sort(schemaInfos, Collections.reverseOrder());
       return schemaInfos;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -370,8 +370,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       ServerProfileSchemaDto serverProfileSchema = getServerProfileSchema(serverProfileSchemaId);
       CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
       return new ServerProfileSchemaViewDto(serverProfileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -398,8 +398,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       }
       ServerProfileSchemaDto savedServerProfileSchema = saveServerProfileSchema(serverProfileSchema);
       return getServerProfileSchemaView(savedServerProfileSchema.getId());
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -417,8 +417,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       serverProfileSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       ServerProfileSchemaDto savedServerProfileSchema = saveServerProfileSchema(serverProfileSchema);
       return getServerProfileSchemaView(savedServerProfileSchema.getId());
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -432,8 +432,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       schemaInfo.setSchemaName(endpointProfileSchema.getName());
       schemaInfo.setSchemaForm(schemaForm);
       return schemaInfo;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -447,8 +447,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       schemaInfo.setSchemaName(serverProfileSchema.getName());
       schemaInfo.setSchemaForm(schemaForm);
       return schemaInfo;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -465,8 +465,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         if (serverProfile != null) {
           serverProfileRecord = FormAvroConverter.createGenericRecordFromRecordField(serverProfile);
         }
-      } catch (Exception ex) {
-        throw Utils.handleException(ex);
+      } catch (Exception e) {
+        throw Utils.handleException(e);
       }
       try {
         Expression expression = new SpelExpressionParser().parseExpression(filterBody);
@@ -483,11 +483,11 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
           evaluationContext.setVariable(DefaultFilterEvaluator.SERVER_PROFILE_VARIABLE_NAME, serverProfileRecord);
         }
         return expression.getValue(evaluationContext, Boolean.class);
-      } catch (Exception ex) {
-        throw new KaaAdminServiceException("Invalid profile filter: " + ex.getMessage(), ex, ServiceErrorCode.BAD_REQUEST_PARAMS);
+      } catch (Exception e) {
+        throw new KaaAdminServiceException("Invalid profile filter: " + e.getMessage(), e, ServiceErrorCode.BAD_REQUEST_PARAMS);
       }
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -550,8 +550,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       List<EndpointGroupDto> endpointGroups = new ArrayList<EndpointGroupDto>(endpointGroupsSet);
       endpointProfileView.setEndpointGroups(endpointGroups);
       return endpointProfileView;
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 
@@ -565,8 +565,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(record.getSchema());
       String serverProfileBody = converter.encodeToJson(record);
       return updateServerProfile(endpointKeyHash, serverProfileVersion, serverProfileBody);
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    } catch (Exception e) {
+      throw Utils.handleException(e);
     }
   }
 

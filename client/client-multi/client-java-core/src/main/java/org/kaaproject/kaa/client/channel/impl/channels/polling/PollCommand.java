@@ -56,9 +56,9 @@ public class PollCommand implements Command {
       } else {
         LOG.warn("Unable to execute http request, http client is null.");
       }
-    } catch (Exception ex) {
+    } catch (Exception e) {
       if (!canceled) {
-        LOG.error("Server failed {}", ex);
+        LOG.error("Server failed {}", e);
       } else {
         LOG.debug("PollCommand execution aborted");
       }

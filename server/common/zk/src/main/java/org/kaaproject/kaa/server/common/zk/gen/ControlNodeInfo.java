@@ -12,7 +12,6 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
   private org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo;
   private int operationsServerCount;
   private int bootstrapServerCount;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -34,23 +33,17 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new ControlNodeInfo RecordBuilder
-   */
+  /** Creates a new ControlNodeInfo RecordBuilder */
   public static org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder();
   }
 
-  /**
-   * Creates a new ControlNodeInfo RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new ControlNodeInfo RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder other) {
     return new org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder(other);
   }
 
-  /**
-   * Creates a new ControlNodeInfo RecordBuilder by copying an existing ControlNodeInfo instance
-   */
+  /** Creates a new ControlNodeInfo RecordBuilder by copying an existing ControlNodeInfo instance */
   public static org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo other) {
     return new org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder(other);
   }
@@ -100,7 +93,6 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'connectionInfo' field.
-   *
    * @param value the value to set.
    */
   public void setConnectionInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo value) {
@@ -116,7 +108,6 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'operationsServerCount' field.
-   *
    * @param value the value to set.
    */
   public void setOperationsServerCount(java.lang.Integer value) {
@@ -132,7 +123,6 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
 
   /**
    * Sets the value of the 'bootstrapServerCount' field.
-   *
    * @param value the value to set.
    */
   public void setBootstrapServerCount(java.lang.Integer value) {
@@ -149,16 +139,12 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
     private int operationsServerCount;
     private int bootstrapServerCount;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.connectionInfo)) {
@@ -175,9 +161,7 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing ControlNodeInfo instance
-     */
+    /** Creates a Builder by copying an existing ControlNodeInfo instance */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo other) {
       super(org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.SCHEMA$);
       if (isValidValue(fields()[0], other.connectionInfo)) {
@@ -194,16 +178,12 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
       }
     }
 
-    /**
-     * Gets the value of the 'connectionInfo' field
-     */
+    /** Gets the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo getConnectionInfo() {
       return connectionInfo;
     }
 
-    /**
-     * Sets the value of the 'connectionInfo' field
-     */
+    /** Sets the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder setConnectionInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo value) {
       validate(fields()[0], value);
       this.connectionInfo = value;
@@ -211,32 +191,24 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /**
-     * Checks whether the 'connectionInfo' field has been set
-     */
+    /** Checks whether the 'connectionInfo' field has been set */
     public boolean hasConnectionInfo() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'connectionInfo' field
-     */
+    /** Clears the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder clearConnectionInfo() {
       connectionInfo = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'operationsServerCount' field
-     */
+    /** Gets the value of the 'operationsServerCount' field */
     public java.lang.Integer getOperationsServerCount() {
       return operationsServerCount;
     }
 
-    /**
-     * Sets the value of the 'operationsServerCount' field
-     */
+    /** Sets the value of the 'operationsServerCount' field */
     public org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder setOperationsServerCount(int value) {
       validate(fields()[1], value);
       this.operationsServerCount = value;
@@ -244,31 +216,23 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /**
-     * Checks whether the 'operationsServerCount' field has been set
-     */
+    /** Checks whether the 'operationsServerCount' field has been set */
     public boolean hasOperationsServerCount() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'operationsServerCount' field
-     */
+    /** Clears the value of the 'operationsServerCount' field */
     public org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder clearOperationsServerCount() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'bootstrapServerCount' field
-     */
+    /** Gets the value of the 'bootstrapServerCount' field */
     public java.lang.Integer getBootstrapServerCount() {
       return bootstrapServerCount;
     }
 
-    /**
-     * Sets the value of the 'bootstrapServerCount' field
-     */
+    /** Sets the value of the 'bootstrapServerCount' field */
     public org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder setBootstrapServerCount(int value) {
       validate(fields()[2], value);
       this.bootstrapServerCount = value;
@@ -276,16 +240,12 @@ public class ControlNodeInfo extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /**
-     * Checks whether the 'bootstrapServerCount' field has been set
-     */
+    /** Checks whether the 'bootstrapServerCount' field has been set */
     public boolean hasBootstrapServerCount() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'bootstrapServerCount' field
-     */
+    /** Clears the value of the 'bootstrapServerCount' field */
     public org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo.Builder clearBootstrapServerCount() {
       fieldSetFlags()[2] = false;
       return this;

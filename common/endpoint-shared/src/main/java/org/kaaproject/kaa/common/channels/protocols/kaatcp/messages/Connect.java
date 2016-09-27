@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Connect message Class. When a TCP/IP socket connection is established from a client to a server,
  * a protocol level session must be created using a CONNECT flow. Variable header Protocol Name byte
  * 1  Length MSB (0) byte 2  Length LSB (6) byte 3  K byte 4  a byte 5  a byte 6  t byte 7  c byte 8
- * p Protocol version byte 9  Version (1) Connect Flags byte 10 User name flag (0) Password flag
+ *  p Protocol version byte 9  Version (1) Connect Flags byte 10 User name flag (0) Password flag
  * (0) Will RETAIN (0) Will QoS (00) Will flag (0) Clean Session (1) 0x02 - value Keep Alive timer
  * byte 11 Keep alive MSB (0) byte 12 Keep alive LSB (200) Keep Alive timer - default value 200
  * seconds.

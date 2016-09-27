@@ -13,7 +13,6 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
   private int minSupportedVersion;
   private int maxSupportedVersion;
   private java.util.List<org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair> connectionInfo;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -36,23 +35,17 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new TransportMetaData RecordBuilder
-   */
+  /** Creates a new TransportMetaData RecordBuilder */
   public static org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder();
   }
 
-  /**
-   * Creates a new TransportMetaData RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new TransportMetaData RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder other) {
     return new org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder(other);
   }
 
-  /**
-   * Creates a new TransportMetaData RecordBuilder by copying an existing TransportMetaData instance
-   */
+  /** Creates a new TransportMetaData RecordBuilder by copying an existing TransportMetaData instance */
   public static org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.TransportMetaData other) {
     return new org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder(other);
   }
@@ -107,7 +100,6 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'id' field.
-   *
    * @param value the value to set.
    */
   public void setId(java.lang.Integer value) {
@@ -123,7 +115,6 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'minSupportedVersion' field.
-   *
    * @param value the value to set.
    */
   public void setMinSupportedVersion(java.lang.Integer value) {
@@ -139,7 +130,6 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'maxSupportedVersion' field.
-   *
    * @param value the value to set.
    */
   public void setMaxSupportedVersion(java.lang.Integer value) {
@@ -155,7 +145,6 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
 
   /**
    * Sets the value of the 'connectionInfo' field.
-   *
    * @param value the value to set.
    */
   public void setConnectionInfo(java.util.List<org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair> value) {
@@ -173,16 +162,12 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
     private int maxSupportedVersion;
     private java.util.List<org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair> connectionInfo;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
@@ -203,9 +188,7 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing TransportMetaData instance
-     */
+    /** Creates a Builder by copying an existing TransportMetaData instance */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.TransportMetaData other) {
       super(org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.SCHEMA$);
       if (isValidValue(fields()[0], other.id)) {
@@ -226,16 +209,12 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
       }
     }
 
-    /**
-     * Gets the value of the 'id' field
-     */
+    /** Gets the value of the 'id' field */
     public java.lang.Integer getId() {
       return id;
     }
 
-    /**
-     * Sets the value of the 'id' field
-     */
+    /** Sets the value of the 'id' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder setId(int value) {
       validate(fields()[0], value);
       this.id = value;
@@ -243,31 +222,23 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /**
-     * Checks whether the 'id' field has been set
-     */
+    /** Checks whether the 'id' field has been set */
     public boolean hasId() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'id' field
-     */
+    /** Clears the value of the 'id' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder clearId() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'minSupportedVersion' field
-     */
+    /** Gets the value of the 'minSupportedVersion' field */
     public java.lang.Integer getMinSupportedVersion() {
       return minSupportedVersion;
     }
 
-    /**
-     * Sets the value of the 'minSupportedVersion' field
-     */
+    /** Sets the value of the 'minSupportedVersion' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder setMinSupportedVersion(int value) {
       validate(fields()[1], value);
       this.minSupportedVersion = value;
@@ -275,31 +246,23 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /**
-     * Checks whether the 'minSupportedVersion' field has been set
-     */
+    /** Checks whether the 'minSupportedVersion' field has been set */
     public boolean hasMinSupportedVersion() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'minSupportedVersion' field
-     */
+    /** Clears the value of the 'minSupportedVersion' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder clearMinSupportedVersion() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'maxSupportedVersion' field
-     */
+    /** Gets the value of the 'maxSupportedVersion' field */
     public java.lang.Integer getMaxSupportedVersion() {
       return maxSupportedVersion;
     }
 
-    /**
-     * Sets the value of the 'maxSupportedVersion' field
-     */
+    /** Sets the value of the 'maxSupportedVersion' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder setMaxSupportedVersion(int value) {
       validate(fields()[2], value);
       this.maxSupportedVersion = value;
@@ -307,31 +270,23 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /**
-     * Checks whether the 'maxSupportedVersion' field has been set
-     */
+    /** Checks whether the 'maxSupportedVersion' field has been set */
     public boolean hasMaxSupportedVersion() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'maxSupportedVersion' field
-     */
+    /** Clears the value of the 'maxSupportedVersion' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder clearMaxSupportedVersion() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'connectionInfo' field
-     */
+    /** Gets the value of the 'connectionInfo' field */
     public java.util.List<org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair> getConnectionInfo() {
       return connectionInfo;
     }
 
-    /**
-     * Sets the value of the 'connectionInfo' field
-     */
+    /** Sets the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder setConnectionInfo(java.util.List<org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair> value) {
       validate(fields()[3], value);
       this.connectionInfo = value;
@@ -339,16 +294,12 @@ public class TransportMetaData extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /**
-     * Checks whether the 'connectionInfo' field has been set
-     */
+    /** Checks whether the 'connectionInfo' field has been set */
     public boolean hasConnectionInfo() {
       return fieldSetFlags()[3];
     }
 
-    /**
-     * Clears the value of the 'connectionInfo' field
-     */
+    /** Clears the value of the 'connectionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.TransportMetaData.Builder clearConnectionInfo() {
       connectionInfo = null;
       fieldSetFlags()[3] = false;

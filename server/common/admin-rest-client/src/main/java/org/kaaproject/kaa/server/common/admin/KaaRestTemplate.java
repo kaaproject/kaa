@@ -121,15 +121,15 @@ public class KaaRestTemplate extends RestTemplate {
           }
           try {
             setNewRequestFactory(index);
-          } catch (Exception exp) {
-            logger.info("Failed to initialize new request factory ({}:{})", getCurHost(), getCurPort(), exp);
+          } catch (Exception e) {
+            logger.info("Failed to initialize new request factory ({}:{})", getCurHost(), getCurPort(), e);
             continue;
           }
           url = updateURL(url);
           isRequestFactorySet = true;
         }
-      } catch (RestClientException exp) {
-        throw exp;
+      } catch (RestClientException e) {
+        throw e;
       }
     }
   }

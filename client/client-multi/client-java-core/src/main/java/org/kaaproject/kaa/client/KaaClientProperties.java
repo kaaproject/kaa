@@ -118,8 +118,8 @@ public class KaaClientProperties extends Properties {
         updateDigest(digest, SDK_TOKEN);
 
         propertiesHash = digest.digest();
-      } catch (NoSuchAlgorithmException ex) {
-        LOG.warn("Failed to calculate hash for SDK properties: {}", ex);
+      } catch (NoSuchAlgorithmException e) {
+        LOG.warn("Failed to calculate hash for SDK properties: {}", e);
       }
     }
 

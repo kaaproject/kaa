@@ -58,7 +58,6 @@ public class AppLayout extends Composite {
   @UiField
   HTMLPanel footerPanel;
   private int clickCount = 1;
-
   public AppLayout() {
     kaaAdminStyle = Utils.kaaAdminStyle;
     avroUiStyle = Utils.avroUiStyle;

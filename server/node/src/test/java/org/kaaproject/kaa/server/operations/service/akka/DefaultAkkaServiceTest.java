@@ -20,14 +20,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.actor.UntypedActor;
-import akka.testkit.JavaTestKit;
-import akka.testkit.TestActorRef;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -158,6 +150,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.UntypedActor;
+import akka.testkit.JavaTestKit;
+import akka.testkit.TestActorRef;
 
 public class DefaultAkkaServiceTest {
 

@@ -226,8 +226,8 @@ public class DefaultOperationsChannelTest {
         Field field = DefaultOperationsChannel.class.getDeclaredField("stopped");
         field.setAccessible(true);
         field.setBoolean(this, true);
-      } catch (Exception ex) {
-        throw new AssertionError(ex.getMessage());
+      } catch (Exception e) {
+        throw new AssertionError(e.getMessage());
       }
     }
 

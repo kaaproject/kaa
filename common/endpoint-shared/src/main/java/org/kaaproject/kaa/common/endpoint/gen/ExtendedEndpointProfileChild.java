@@ -12,7 +12,6 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
   private int otherSimpleField;
   private java.lang.String stringField;
   private java.util.Map<java.lang.String, java.lang.Long> otherMapSimpleField;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -34,24 +33,17 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new ExtendedEndpointProfileChild RecordBuilder
-   */
+  /** Creates a new ExtendedEndpointProfileChild RecordBuilder */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder();
   }
 
-  /**
-   * Creates a new ExtendedEndpointProfileChild RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new ExtendedEndpointProfileChild RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder(other);
   }
 
-  /**
-   * Creates a new ExtendedEndpointProfileChild RecordBuilder by copying an existing
-   * ExtendedEndpointProfileChild instance
-   */
+  /** Creates a new ExtendedEndpointProfileChild RecordBuilder by copying an existing ExtendedEndpointProfileChild instance */
   public static org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild other) {
     return new org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder(other);
   }
@@ -101,7 +93,6 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
 
   /**
    * Sets the value of the 'otherSimpleField' field.
-   *
    * @param value the value to set.
    */
   public void setOtherSimpleField(java.lang.Integer value) {
@@ -117,7 +108,6 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
 
   /**
    * Sets the value of the 'stringField' field.
-   *
    * @param value the value to set.
    */
   public void setStringField(java.lang.String value) {
@@ -133,7 +123,6 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
 
   /**
    * Sets the value of the 'otherMapSimpleField' field.
-   *
    * @param value the value to set.
    */
   public void setOtherMapSimpleField(java.util.Map<java.lang.String, java.lang.Long> value) {
@@ -150,16 +139,12 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
     private java.lang.String stringField;
     private java.util.Map<java.lang.String, java.lang.Long> otherMapSimpleField;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.otherSimpleField)) {
@@ -176,9 +161,7 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing ExtendedEndpointProfileChild instance
-     */
+    /** Creates a Builder by copying an existing ExtendedEndpointProfileChild instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild other) {
       super(org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.SCHEMA$);
       if (isValidValue(fields()[0], other.otherSimpleField)) {
@@ -195,16 +178,12 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
       }
     }
 
-    /**
-     * Gets the value of the 'otherSimpleField' field
-     */
+    /** Gets the value of the 'otherSimpleField' field */
     public java.lang.Integer getOtherSimpleField() {
       return otherSimpleField;
     }
 
-    /**
-     * Sets the value of the 'otherSimpleField' field
-     */
+    /** Sets the value of the 'otherSimpleField' field */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder setOtherSimpleField(int value) {
       validate(fields()[0], value);
       this.otherSimpleField = value;
@@ -212,31 +191,23 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
       return this;
     }
 
-    /**
-     * Checks whether the 'otherSimpleField' field has been set
-     */
+    /** Checks whether the 'otherSimpleField' field has been set */
     public boolean hasOtherSimpleField() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'otherSimpleField' field
-     */
+    /** Clears the value of the 'otherSimpleField' field */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder clearOtherSimpleField() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'stringField' field
-     */
+    /** Gets the value of the 'stringField' field */
     public java.lang.String getStringField() {
       return stringField;
     }
 
-    /**
-     * Sets the value of the 'stringField' field
-     */
+    /** Sets the value of the 'stringField' field */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder setStringField(java.lang.String value) {
       validate(fields()[1], value);
       this.stringField = value;
@@ -244,32 +215,24 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
       return this;
     }
 
-    /**
-     * Checks whether the 'stringField' field has been set
-     */
+    /** Checks whether the 'stringField' field has been set */
     public boolean hasStringField() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'stringField' field
-     */
+    /** Clears the value of the 'stringField' field */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder clearStringField() {
       stringField = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'otherMapSimpleField' field
-     */
+    /** Gets the value of the 'otherMapSimpleField' field */
     public java.util.Map<java.lang.String, java.lang.Long> getOtherMapSimpleField() {
       return otherMapSimpleField;
     }
 
-    /**
-     * Sets the value of the 'otherMapSimpleField' field
-     */
+    /** Sets the value of the 'otherMapSimpleField' field */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder setOtherMapSimpleField(java.util.Map<java.lang.String, java.lang.Long> value) {
       validate(fields()[2], value);
       this.otherMapSimpleField = value;
@@ -277,16 +240,12 @@ public class ExtendedEndpointProfileChild extends org.apache.avro.specific.Speci
       return this;
     }
 
-    /**
-     * Checks whether the 'otherMapSimpleField' field has been set
-     */
+    /** Checks whether the 'otherMapSimpleField' field has been set */
     public boolean hasOtherMapSimpleField() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'otherMapSimpleField' field
-     */
+    /** Clears the value of the 'otherMapSimpleField' field */
     public org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfileChild.Builder clearOtherMapSimpleField() {
       otherMapSimpleField = null;
       fieldSetFlags()[2] = false;

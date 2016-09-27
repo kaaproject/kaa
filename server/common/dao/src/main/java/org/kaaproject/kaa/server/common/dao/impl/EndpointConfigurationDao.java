@@ -26,10 +26,11 @@ import java.nio.ByteBuffer;
  *
  * @param <T> the type parameter
  */
-public interface EndpointConfigurationDao<T extends EndpointConfiguration> extends Dao<T, ByteBuffer> {
+public interface EndpointConfigurationDao<T extends EndpointConfiguration>
+    extends Dao<T, ByteBuffer> {
 
   /**
-   * Save endpoint configuration
+   * Save endpoint configuration.
    *
    * @param dto endpoint configuration
    * @return saved endpoint configuration

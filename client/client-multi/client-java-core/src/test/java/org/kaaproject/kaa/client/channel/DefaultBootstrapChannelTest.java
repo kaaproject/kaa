@@ -157,9 +157,9 @@ public class DefaultBootstrapChannelTest {
       MessageEncoderDecoder crypt = Mockito.mock(MessageEncoderDecoder.class);
       try {
         Mockito.when(crypt.decodeData(Mockito.any(byte[].class))).thenReturn(new byte[]{5, 5, 5});
-      } catch (GeneralSecurityException ex) {
+      } catch (GeneralSecurityException e) {
         // TODO Auto-generated catch block
-        ex.printStackTrace();
+        e.printStackTrace();
       }
       Mockito.when(client.getEncoderDecoder()).thenReturn(crypt);
 

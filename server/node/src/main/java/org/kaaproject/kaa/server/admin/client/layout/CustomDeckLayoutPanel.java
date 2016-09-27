@@ -43,7 +43,6 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
   private Widget hidingWidget;
   private Widget lastVisibleWidget;
   private Widget visibleWidget;
-
   /**
    * Creates an empty deck panel.
    */

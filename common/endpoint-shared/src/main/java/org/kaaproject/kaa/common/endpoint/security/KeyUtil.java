@@ -64,8 +64,7 @@ public abstract class KeyUtil {
    * @param publicKeyFile  the public key file
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  public static void saveKeyPair(KeyPair keyPair, String privateKeyFile,
-                                 String publicKeyFile) throws IOException {
+  public static void saveKeyPair(KeyPair keyPair, String privateKeyFile, String publicKeyFile) throws IOException {
     File privateFile = makeDirs(privateKeyFile);
     File publicFile = makeDirs(publicKeyFile);
     OutputStream privateKeyOutput = null;
@@ -88,8 +87,7 @@ public abstract class KeyUtil {
    * @param publicKeyOutput  the public key output stream
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  public static void saveKeyPair(KeyPair keyPair, OutputStream privateKeyOutput,
-                                 OutputStream publicKeyOutput) throws IOException {
+  public static void saveKeyPair(KeyPair keyPair, OutputStream privateKeyOutput, OutputStream publicKeyOutput) throws IOException {
     PrivateKey privateKey = keyPair.getPrivate();
     PublicKey publicKey = keyPair.getPublic();
 
@@ -112,11 +110,8 @@ public abstract class KeyUtil {
    */
   private static File makeDirs(String privateKeyFile) {
     File privateFile = new File(privateKeyFile);
-    if (privateFile.getParentFile() != null
-        && !privateFile.getParentFile().exists()
-        && !privateFile.getParentFile().mkdirs()) {
-      LOG.warn("Failed to create required directories: {}",
-          privateFile.getParentFile().getAbsolutePath());
+    if (privateFile.getParentFile() != null && !privateFile.getParentFile().exists() && !privateFile.getParentFile().mkdirs()) {
+      LOG.warn("Failed to create required directories: {}", privateFile.getParentFile().getAbsolutePath());
     }
     return privateFile;
   }
@@ -133,8 +128,8 @@ public abstract class KeyUtil {
       KeyPair clientKeyPair = generateKeyPair();
       saveKeyPair(clientKeyPair, privateKeyLocation, publicKeyLocation);
       return clientKeyPair;
-    } catch (Exception ex) {
-      LOG.error("Error generating client key pair", ex);
+    } catch (Exception e) {
+      LOG.error("Error generating client key pair", e);
     }
     return null;
   }
@@ -146,14 +141,13 @@ public abstract class KeyUtil {
    * @param publicKeyOutput  the public key output stream
    * @return the key pair
    */
-  public static KeyPair generateKeyPair(OutputStream privateKeyOutput,
-                                        OutputStream publicKeyOutput) {
+  public static KeyPair generateKeyPair(OutputStream privateKeyOutput, OutputStream publicKeyOutput) {
     try {
       KeyPair clientKeyPair = generateKeyPair();
       saveKeyPair(clientKeyPair, privateKeyOutput, publicKeyOutput);
       return clientKeyPair;
-    } catch (Exception ex) {
-      LOG.error("Error generating client key pair", ex);
+    } catch (Exception e) {
+      LOG.error("Error generating client key pair", e);
     }
     return null;
   }
@@ -167,13 +161,17 @@ public abstract class KeyUtil {
   /**
    * Gets the public key from file.
    *
+   * @param f the f
+   * @return the public
+   * @throws IOException         the i/o exception
+   * @throws InvalidKeyException invalid key exception
    */
-  public static PublicKey getPublic(File file) throws IOException, InvalidKeyException {
+  public static PublicKey getPublic(File f) throws IOException, InvalidKeyException {
     DataInputStream dis = null;
     try {
-      FileInputStream fis = new FileInputStream(file);
+      FileInputStream fis = new FileInputStream(f);
       dis = new DataInputStream(fis);
-      byte[] keyBytes = new byte[(int) file.length()];
+      byte[] keyBytes = new byte[(int) f.length()];
       dis.readFully(keyBytes);
       return getPublic(keyBytes);
     } finally {
@@ -213,25 +211,25 @@ public abstract class KeyUtil {
       X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
       KeyFactory kf = KeyFactory.getInstance(RSA);
       return kf.generatePublic(spec);
-    } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-      throw new InvalidKeyException(ex);
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+      throw new InvalidKeyException(e);
     }
   }
 
   /**
    * Gets the private key from file.
    *
-   * @param file the file
+   * @param f the f
    * @return the private
    * @throws IOException         the i/o exception
    * @throws InvalidKeyException invalid key exception
    */
-  public static PrivateKey getPrivate(File file) throws IOException, InvalidKeyException {
+  public static PrivateKey getPrivate(File f) throws IOException, InvalidKeyException {
     DataInputStream dis = null;
     try {
-      FileInputStream fis = new FileInputStream(file);
+      FileInputStream fis = new FileInputStream(f);
       dis = new DataInputStream(fis);
-      byte[] keyBytes = new byte[(int) file.length()];
+      byte[] keyBytes = new byte[(int) f.length()];
       dis.readFully(keyBytes);
       return getPrivate(keyBytes);
     } finally {
@@ -271,8 +269,8 @@ public abstract class KeyUtil {
       PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
       KeyFactory kf = KeyFactory.getInstance(RSA);
       return kf.generatePrivate(spec);
-    } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-      throw new InvalidKeyException(ex);
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+      throw new InvalidKeyException(e);
     }
   }
 
@@ -300,8 +298,8 @@ public abstract class KeyUtil {
     try {
       encodedPayload = encDec.encodeData(rawPayload);
       decodedPayload = encDec.decodeData(encodedPayload);
-    } catch (GeneralSecurityException ex) {
-      LOG.error("Validation keypair error ", ex);
+    } catch (GeneralSecurityException e) {
+      LOG.error("Validation keypair error ", e);
       return false;
     }
     return Arrays.equals(rawPayload, decodedPayload);

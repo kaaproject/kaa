@@ -28,7 +28,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 public interface EndpointUserDao<T extends EndpointUser> extends Dao<T, String> {
 
   /**
-   * Save or update endpoint user object
+   * Save or update endpoint user object.
    *
    * @param dto the endpoint user object
    * @return save endpoint user object

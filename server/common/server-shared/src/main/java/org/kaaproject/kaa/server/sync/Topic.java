@@ -50,19 +50,19 @@ public final class Topic {
   }
 
   /**
+   * Gets the value of the 'id' field.
+   */
+  public long getIdAsLong() {
+    return Long.parseLong(id);
+  }
+
+  /**
    * Sets the value of the 'id' field.
    *
    * @param value the value to set.
    */
   public void setId(String value) {
     this.id = value;
-  }
-
-  /**
-   * Gets the value of the 'id' field.
-   */
-  public long getIdAsLong() {
-    return Long.parseLong(id);
   }
 
   /**

@@ -29,7 +29,7 @@ import java.util.List;
 public interface EndpointNotificationDao<T extends EndpointNotification> extends Dao<T, String> {
 
   /**
-   * Save notification object
+   * Save notification object.
    *
    * @param dto the notification object
    * @return saved notification object

@@ -57,19 +57,19 @@ public final class Notification {
   }
 
   /**
+   * Gets the value of the 'topicId' field.
+   */
+  public long getTopicIdAsLong() {
+    return Long.parseLong(topicId);
+  }
+
+  /**
    * Sets the value of the 'topicId' field.
    *
    * @param value the value to set.
    */
   public void setTopicId(String value) {
     this.topicId = value;
-  }
-
-  /**
-   * Gets the value of the 'topicId' field.
-   */
-  public long getTopicIdAsLong() {
-    return Long.parseLong(topicId);
   }
 
   /**

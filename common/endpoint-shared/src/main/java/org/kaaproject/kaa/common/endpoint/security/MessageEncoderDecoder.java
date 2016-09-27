@@ -106,8 +106,8 @@ public class MessageEncoderDecoder {
   static Cipher cipherForAlgorithm(String algorithm) {
     try {
       return Cipher.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
-      LOG.error("Cipher init error", ex);
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+      LOG.error("Cipher init error", e);
       return null;
     }
   }
@@ -117,8 +117,8 @@ public class MessageEncoderDecoder {
       KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
       keyGen.init(size);
       return keyGen;
-    } catch (NoSuchAlgorithmException ex) {
-      LOG.error("Key generator init error", ex);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.error("Key generator init error", e);
       return null;
     }
   }
@@ -126,8 +126,8 @@ public class MessageEncoderDecoder {
   static Signature signatureForAlgorithm(String algorithm) {
     try {
       return Signature.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException ex) {
-      LOG.error("Signature init error", ex);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.error("Signature init error", e);
       return null;
     }
   }
@@ -272,6 +272,19 @@ public class MessageEncoderDecoder {
   }
 
   /**
+   * Gets the session key.
+   *
+   * @return the session key
+   * @throws NoSuchAlgorithmException the no such algorithm exception
+   */
+  private SecretKey getSessionKey() throws NoSuchAlgorithmException {
+    if (sessionKey == null) {
+      sessionKey = SESSION_KEY_GENERATOR.get().generateKey();
+    }
+    return sessionKey;
+  }
+
+  /**
    * Sets the remote public key.
    *
    * @param remotePublicKey the new remote public key
@@ -283,19 +296,6 @@ public class MessageEncoderDecoder {
       LOG.trace("RemotePublicKey {}",
           this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
     }
-  }
-
-  /**
-   * Gets the session key.
-   *
-   * @return the session key
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   */
-  private SecretKey getSessionKey() throws NoSuchAlgorithmException {
-    if (sessionKey == null) {
-      sessionKey = SESSION_KEY_GENERATOR.get().generateKey();
-    }
-    return sessionKey;
   }
 
   public CipherPair getSessionCipherPair() {

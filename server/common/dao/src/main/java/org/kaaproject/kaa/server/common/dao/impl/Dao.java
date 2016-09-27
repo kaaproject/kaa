@@ -28,10 +28,10 @@ public interface Dao<T, K> {
   /**
    * Save object. Will be returned object with id
    *
-   * @param o the domain object
+   * @param object the domain object
    * @return the saved object
    */
-  T save(T o);
+  T save(T object);
 
   /**
    * Find all objects.

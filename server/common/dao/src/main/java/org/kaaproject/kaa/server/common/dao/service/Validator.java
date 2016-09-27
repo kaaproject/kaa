@@ -131,8 +131,8 @@ public class Validator {
   public static void validateSqlId(String id, String errorMessage) {
     try {
       Long.valueOf(id);
-    } catch (NumberFormatException ex) {
-      throw new IncorrectParameterException(errorMessage, ex);
+    } catch (NumberFormatException e) {
+      throw new IncorrectParameterException(errorMessage, e);
     }
   }
 

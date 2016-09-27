@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
+ *
  * @since v0.9.0
  */
 public class EndpointRegistrationServiceException extends Exception {
@@ -42,7 +43,7 @@ public class EndpointRegistrationServiceException extends Exception {
    * Constructs a new exception with the specified cause and detail message.
    *
    * @param message The detail message
-   * @param cause   The exception cause
+   * @param cause The exception cause
    */
   public EndpointRegistrationServiceException(String message, Throwable cause) {
     super(message, cause);

@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <T> the model type parameter
  */
-public interface CTLSchemaDao<T> extends SqlDao<T> {
+public interface CtlSchemaDao<T> extends SqlDao<T> {
 
   /**
    * Find CTL schemas available in the database.
@@ -41,8 +41,8 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
   List<T> findAvailableSchemasForTenant(String tenantId);
 
   /**
-   * Find available for application(include system and tenant scope) CTL schemas by given tenant and
-   * application identifier.
+   * Find available for application(include system and tenant scope) CTL schemas by given tenant
+   *     and application identifier.
    *
    * @param tenantId the tenant identifier.
    * @param appId    the application identifier.
@@ -62,40 +62,46 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
 
   /**
    * Find CTL schema with the given fully qualified name, version, tenant and application
-   * identifiers.
+   *     identifiers.
    *
    * @param fqn           the fully qualified name.
    * @param version       the schema version.
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the CTL schema with the given fully qualified name, version, tenant and application
-   * identifiers.
+   *     identifiers.
    */
 
-  T findByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
+  T findByFqnAndVerAndTenantIdAndApplicationId(String fqn,
+                                               Integer version,
+                                               String tenantId,
+                                               String applicationId);
 
   /**
    * Find any CTL schema with the given fully qualified name, version, tenant and application
-   * identifiers.
+   *     identifiers.
    *
    * @param fqn           the fully qualified name.
    * @param version       the schema version.
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
-   * @return the any CTL schema with the given fully qualified name, version, tenant and application
-   * identifiers.
+   * @return the any CTL schema with the given fully qualified name, version, tenant
+   *     and application identifiers.
    */
-  T findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
+  T findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn,
+                                                  Integer version,
+                                                  String tenantId,
+                                                  String applicationId);
 
   /**
-   * Find the last version of CTL schema with the given fully qualified name, tenant and application
-   * identifiers.
+   * Find the last version of CTL schema with the given fully qualified name, tenant
+   *  and application identifiers.
    *
    * @param fqn           the qualified name.
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the latest version of CTL schema with the given fully qualified name, tenant and
-   * application identifiers.
+   *     application identifiers.
    */
   T findLatestByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
 
@@ -116,9 +122,11 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the list of available versions of CTL schema with the given fully qualified name,
-   * tenant and application identifiers.
+   *     tenant and application identifiers.
    */
-  List<T> findAllByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+  List<T> findAllByFqnAndTenantIdAndApplicationId(String fqn,
+                                                  String tenantId,
+                                                  String applicationId);
 
   /**
    * Find all available versions of CTL schema with the given meta info id.

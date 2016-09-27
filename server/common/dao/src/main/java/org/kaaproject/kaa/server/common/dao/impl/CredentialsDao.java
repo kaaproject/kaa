@@ -24,9 +24,10 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 /**
- * @param <T> A specific security credentials type
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
+ *
+ * @param <T> A specific security credentials type
  */
 public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer> {
 
@@ -34,7 +35,8 @@ public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer
    * Saves the given security credentials for the given application.
    *
    * @param applicationId The application ID
-   * @param credentials   The security credentials to save
+   * @param credentials The security credentials to save
+   *
    * @return The security credentials saved
    */
   T save(String applicationId, CredentialsDto credentials);
@@ -44,6 +46,7 @@ public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer
    *
    * @param applicationId The application ID to search credentials for
    * @param credentialsId The security credentials ID
+   *
    * @return The security credentials with the given ID
    */
   Optional<T> find(String applicationId, String credentialsId);
@@ -53,7 +56,8 @@ public interface CredentialsDao<T extends Credentials> extends Dao<T, ByteBuffer
    *
    * @param applicationId The application ID to update credentials for
    * @param credentialsId The security credentials ID
-   * @param status        The credentials status to set
+   * @param status The credentials status to set
+   *
    * @return The security credentials with the status updated
    */
   Optional<T> updateStatus(String applicationId, String credentialsId, CredentialsStatus status);

@@ -96,11 +96,11 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
       try {
         processTypes(typesToProcess);
         connectionFailed(false);
-      } catch (TransportException ex) {
-        LOG.error("Failed to receive response from the operation {}", ex);
-        connectionFailed(true, ex.getStatus());
-      } catch (Exception ex) {
-        LOG.error("Failed to receive response from the operation {}", ex);
+      } catch (TransportException e) {
+        LOG.error("Failed to receive response from the operation {}", e);
+        connectionFailed(true, e.getStatus());
+      } catch (Exception e) {
+        LOG.error("Failed to receive response from the operation {}", e);
         connectionFailed(true);
       }
     }

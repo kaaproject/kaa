@@ -83,9 +83,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       if (insertStatement == null) {
         try {
           insertStatement = database.compileStatement(PersistentLogStorageConstants.KAA_INSERT_NEW_RECORD);
-        } catch (SQLiteException ex) {
-          Log.e(TAG, "Can't create row insert statement", ex);
-          throw new RuntimeException(ex);
+        } catch (SQLiteException e) {
+          Log.e(TAG, "Can't create row insert statement", e);
+          throw new RuntimeException(e);
         }
       }
       long leftConsumedSize = maxBucketSize - currentBucketSize;
@@ -136,13 +136,13 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         if (cursor.moveToFirst()) {
           bucketId = cursor.getInt(0);
         }
-      } catch (SQLiteException ex) {
-        Log.e(TAG, "Can't retrieve min bucket ID", ex);
+      } catch (SQLiteException e) {
+        Log.e(TAG, "Can't retrieve min bucket ID", e);
       } finally {
         try {
           tryCloseCursor(cursor);
-        } catch (SQLiteException ex) {
-          Log.e(TAG, "Unable to close cursor", ex);
+        } catch (SQLiteException e) {
+          Log.e(TAG, "Unable to close cursor", e);
         }
       }
 
@@ -178,13 +178,13 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Log.i(TAG, "No unmarked log records found");
           }
         }
-      } catch (SQLiteException ex) {
-        Log.e(TAG, "Can't retrieve unmarked records from storage", ex);
+      } catch (SQLiteException e) {
+        Log.e(TAG, "Can't retrieve unmarked records from storage", e);
       } finally {
         try {
           tryCloseCursor(cursor);
-        } catch (SQLiteException ex) {
-          Log.e(TAG, "Unable to close cursor", ex);
+        } catch (SQLiteException e) {
+          Log.e(TAG, "Unable to close cursor", e);
         }
       }
       return logBlock;
@@ -210,8 +210,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
           Log.w(TAG, "No log records were updated");
         }
 
-      } catch (SQLiteException ex) {
-        Log.e(TAG, "Failed to update state for bucket [" + bucketId + "]", ex);
+      } catch (SQLiteException e) {
+        Log.e(TAG, "Failed to update state for bucket [" + bucketId + "]", e);
       }
     }
   }
@@ -223,9 +223,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       if (deleteByBucketIdStatement == null) {
         try {
           deleteByBucketIdStatement = database.compileStatement(PersistentLogStorageConstants.KAA_DELETE_BY_BUCKET_ID);
-        } catch (SQLiteException ex) {
-          Log.e(TAG, "Can't create record block deletion statement", ex);
-          throw new RuntimeException(ex);
+        } catch (SQLiteException e) {
+          Log.e(TAG, "Can't create record block deletion statement", e);
+          throw new RuntimeException(e);
         }
       }
 
@@ -241,8 +241,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         } else {
           Log.i(TAG, "No records were removed from storage");
         }
-      } catch (SQLiteException ex) {
-        Log.e(TAG, "Failed to remove record block with id [" + recordBlockId + "]", ex);
+      } catch (SQLiteException e) {
+        Log.e(TAG, "Failed to remove record block with id [" + recordBlockId + "]", e);
       }
     }
   }
@@ -254,9 +254,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       if (resetBucketIdStatement == null) {
         try {
           resetBucketIdStatement = database.compileStatement(PersistentLogStorageConstants.KAA_RESET_BY_BUCKET_ID);
-        } catch (SQLiteException ex) {
-          Log.e(TAG, "Can't create bucket id reset statement", ex);
-          throw new RuntimeException(ex);
+        } catch (SQLiteException e) {
+          Log.e(TAG, "Can't create bucket id reset statement", e);
+          throw new RuntimeException(e);
         }
       }
 
@@ -274,8 +274,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
           Log.i(TAG, "No log records for bucket with id: [" + bucketId + "]");
         }
 
-      } catch (SQLiteException ex) {
-        Log.e(TAG, "Failed to reset bucket with id [" + bucketId + "]", ex);
+      } catch (SQLiteException e) {
+        Log.e(TAG, "Failed to reset bucket with id [" + bucketId + "]", e);
       }
     }
   }
@@ -325,14 +325,14 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
         this.currentBucketId = ++currentBucketId;
       }
-    } catch (SQLiteException ex) {
-      Log.e(TAG, "Can't create select max bucket ID statement", ex);
+    } catch (SQLiteException e) {
+      Log.e(TAG, "Can't create select max bucket ID statement", e);
       throw new RuntimeException("Can't create select max bucket ID statement");
     } finally {
       try {
         tryCloseCursor(cursor);
-      } catch (SQLiteException ex) {
-        Log.e(TAG, "Unable to close cursor", ex);
+      } catch (SQLiteException e) {
+        Log.e(TAG, "Unable to close cursor", e);
       }
     }
   }
@@ -366,8 +366,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       if (cursor.moveToFirst()) {
         lastSavedBucketSize = cursor.getInt(0);
       }
-    } catch (SQLiteException ex) {
-      Log.e(TAG, "Cannot retrieve storage param: bucketSize", ex);
+    } catch (SQLiteException e) {
+      Log.e(TAG, "Cannot retrieve storage param: bucketSize", e);
       throw new RuntimeException("Cannot retrieve storage param: bucketSize");
     } finally {
       tryCloseCursor(cursor);
@@ -379,8 +379,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       if (cursor.moveToFirst()) {
         lastSavedRecordCount = cursor.getInt(0);
       }
-    } catch (SQLiteException ex) {
-      Log.e(TAG, "Cannot retrieve storage param: recordCount", ex);
+    } catch (SQLiteException e) {
+      Log.e(TAG, "Cannot retrieve storage param: recordCount", e);
       throw new RuntimeException("Cannot retrieve storage param: recordCount");
     } finally {
       tryCloseCursor(cursor);
@@ -390,8 +390,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       if (lastSavedBucketSize != maxBucketSize || lastSavedRecordCount != maxRecordCount) {
         database.execSQL(PersistentLogStorageConstants.KAA_DELETE_ALL_DATA);
       }
-    } catch (SQLiteException ex) {
-      Log.e(TAG, "Can't prepare delete statement", ex);
+    } catch (SQLiteException e) {
+      Log.e(TAG, "Can't prepare delete statement", e);
       throw new RuntimeException("Can't prepare delete statement");
     } finally {
       tryCloseCursor(cursor);
@@ -411,8 +411,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
       updateInfoStatement.bindString(1, PersistentLogStorageConstants.STORAGE_RECORD_COUNT);
       updateInfoStatement.bindLong(2, maxRecordCount);
       updateInfoStatement.execute();
-    } catch (SQLiteException ex) {
-      Log.e(TAG, "Can't prepare update storage info statement", ex);
+    } catch (SQLiteException e) {
+      Log.e(TAG, "Can't prepare update storage info statement", e);
       throw new RuntimeException("Can't prepare update storage info statement");
     } finally {
       tryCloseStatement(updateInfoStatement);

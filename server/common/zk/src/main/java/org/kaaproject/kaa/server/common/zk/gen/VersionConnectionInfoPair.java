@@ -11,7 +11,6 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VersionConnectionInfoPair\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"version\",\"type\":\"int\"},{\"name\":\"conenctionInfo\",\"type\":\"bytes\"}]}");
   private int version;
   private java.nio.ByteBuffer conenctionInfo;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -32,24 +31,17 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new VersionConnectionInfoPair RecordBuilder
-   */
+  /** Creates a new VersionConnectionInfoPair RecordBuilder */
   public static org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder();
   }
 
-  /**
-   * Creates a new VersionConnectionInfoPair RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new VersionConnectionInfoPair RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder other) {
     return new org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder(other);
   }
 
-  /**
-   * Creates a new VersionConnectionInfoPair RecordBuilder by copying an existing
-   * VersionConnectionInfoPair instance
-   */
+  /** Creates a new VersionConnectionInfoPair RecordBuilder by copying an existing VersionConnectionInfoPair instance */
   public static org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder newBuilder(org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair other) {
     return new org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder(other);
   }
@@ -94,7 +86,6 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'version' field.
-   *
    * @param value the value to set.
    */
   public void setVersion(java.lang.Integer value) {
@@ -110,7 +101,6 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'conenctionInfo' field.
-   *
    * @param value the value to set.
    */
   public void setConenctionInfo(java.nio.ByteBuffer value) {
@@ -126,16 +116,12 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
     private int version;
     private java.nio.ByteBuffer conenctionInfo;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.version)) {
@@ -148,9 +134,7 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing VersionConnectionInfoPair instance
-     */
+    /** Creates a Builder by copying an existing VersionConnectionInfoPair instance */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair other) {
       super(org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.SCHEMA$);
       if (isValidValue(fields()[0], other.version)) {
@@ -163,16 +147,12 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
       }
     }
 
-    /**
-     * Gets the value of the 'version' field
-     */
+    /** Gets the value of the 'version' field */
     public java.lang.Integer getVersion() {
       return version;
     }
 
-    /**
-     * Sets the value of the 'version' field
-     */
+    /** Sets the value of the 'version' field */
     public org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder setVersion(int value) {
       validate(fields()[0], value);
       this.version = value;
@@ -180,31 +160,23 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'version' field has been set
-     */
+    /** Checks whether the 'version' field has been set */
     public boolean hasVersion() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'version' field
-     */
+    /** Clears the value of the 'version' field */
     public org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder clearVersion() {
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'conenctionInfo' field
-     */
+    /** Gets the value of the 'conenctionInfo' field */
     public java.nio.ByteBuffer getConenctionInfo() {
       return conenctionInfo;
     }
 
-    /**
-     * Sets the value of the 'conenctionInfo' field
-     */
+    /** Sets the value of the 'conenctionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder setConenctionInfo(java.nio.ByteBuffer value) {
       validate(fields()[1], value);
       this.conenctionInfo = value;
@@ -212,16 +184,12 @@ public class VersionConnectionInfoPair extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'conenctionInfo' field has been set
-     */
+    /** Checks whether the 'conenctionInfo' field has been set */
     public boolean hasConenctionInfo() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'conenctionInfo' field
-     */
+    /** Clears the value of the 'conenctionInfo' field */
     public org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair.Builder clearConenctionInfo() {
       conenctionInfo = null;
       fieldSetFlags()[1] = false;

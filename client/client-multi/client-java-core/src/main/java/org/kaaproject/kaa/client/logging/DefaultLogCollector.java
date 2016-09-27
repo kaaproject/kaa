@@ -53,8 +53,8 @@ public class DefaultLogCollector extends AbstractLogCollector {
           BucketInfo bucketInfo = storage.addLogRecord(new LogRecord(record));
           bucketInfoMap.put(bucketInfo.getBucketId(), bucketInfo);
           addDeliveryFuture(bucketInfo, future);
-        } catch (IOException ex) {
-          LOG.warn("Can't serialize log record {}, exception catched: {}", record, ex);
+        } catch (IOException e) {
+          LOG.warn("Can't serialize log record {}, exception catched: {}", record, e);
         }
 
         uploadIfNeeded();

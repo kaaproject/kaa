@@ -49,7 +49,7 @@ public abstract class DaoUtil {
   }
 
   /**
-   * This method take string id from <code>GenericModel</code> object
+   * This method take string id from <code>GenericModel</code> object.
    *
    * @param model <code>GenericModel</code> object
    * @return the id as string type
@@ -160,8 +160,8 @@ public abstract class DaoUtil {
           if (arrayData != null) {
             data = new String(arrayData, Charset.forName("UTF-8"));
           }
-        } catch (IOException ex) {
-          LOG.error("Can't read data from file", ex);
+        } catch (IOException exception) {
+          LOG.error("Can't read data from file", exception);
         }
       }
     }

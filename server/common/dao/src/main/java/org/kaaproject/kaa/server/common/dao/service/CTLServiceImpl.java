@@ -48,7 +48,7 @@ import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
@@ -102,7 +102,7 @@ public class CTLServiceImpl implements CTLService {
   private static final ObjectMapper FORMATTER = new ObjectMapper();
   private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
   @Autowired
-  private CTLSchemaDao<CTLSchema> ctlSchemaDao;
+  private CtlSchemaDao<CTLSchema> ctlSchemaDao;
 
   @Autowired
   private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
@@ -171,9 +171,9 @@ public class CTLServiceImpl implements CTLService {
       String schemaBody = flatExportAsString(unSavedSchema);
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schemaBody);
       converter.decodeJson(unSavedSchema.getDefaultRecord());
-    } catch (IOException | RuntimeException ex) {
-      LOG.error("Invalid default record for CTL schema with body: {}", unSavedSchema.getBody(), ex);
-      throw new RuntimeException("An unexpected exception occured: " + ex.toString());
+    } catch (IOException | RuntimeException e) {
+      LOG.error("Invalid default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
+      throw new RuntimeException("An unexpected exception occured: " + e.toString());
     }
   }
 
@@ -186,13 +186,13 @@ public class CTLServiceImpl implements CTLService {
           dataSchema, new RawDataFactory());
       unSavedSchema.setDefaultRecord(dataProcessor.getRootData().getRawData());
       return unSavedSchema;
-    } catch (StackOverflowError ex) {
-      LOG.error("Failed to generate default record. An endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), ex);
+    } catch (StackOverflowError e) {
+      LOG.error("Failed to generate default record. An endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), e);
       throw new RuntimeException("Unable to generate default record. An endless recursion is detected! "
           + "Please check non-optional references to nested types.");
-    } catch (ConfigurationGenerationException | IOException | RuntimeException ex) {
-      LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), ex);
-      throw new RuntimeException("An unexpected exception occured: " + ex.toString());
+    } catch (ConfigurationGenerationException | IOException | RuntimeException e) {
+      LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
+      throw new RuntimeException("An unexpected exception occured: " + e.toString());
     }
   }
 

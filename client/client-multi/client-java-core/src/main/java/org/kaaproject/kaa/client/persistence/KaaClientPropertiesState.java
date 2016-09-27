@@ -172,7 +172,7 @@ public class KaaClientPropertiesState implements KaaClientState {
           Integer eventSeqNum = 0;
           try { // NOSONAR
             eventSeqNum = Integer.parseInt(eventSeqNumStr);
-          } catch (NumberFormatException ex) {
+          } catch (NumberFormatException e) {
             LOG.error("Unexpected exception while parsing event sequence number. Can not parse String: {} to Integer",
                 eventSeqNumStr);
           }
@@ -182,14 +182,14 @@ public class KaaClientPropertiesState implements KaaClientState {
         if (topicListHashStr != null) {
           try { // NOSONAR
             this.topicListHash = Integer.parseInt(topicListHashStr);
-          } catch (NumberFormatException ex) {
+          } catch (NumberFormatException e) {
             LOG.error("Unexpected exception while parsing topic list hash. Can not parse String: {} to Integer",
                 topicListHashStr);
           }
         }
 
-      } catch (Exception ex) {
-        LOG.error("Can't load state file", ex);
+      } catch (Exception e) {
+        LOG.error("Can't load state file", e);
       } finally {
         IOUtils.closeQuietly(stream);
       }
@@ -211,8 +211,8 @@ public class KaaClientPropertiesState implements KaaClientState {
           LOG.debug("Loaded {}", decodedTopic);
           topicMap.put(decodedTopic.getId(), decodedTopic);
         }
-      } catch (Exception ex) {
-        LOG.error("Unexpected exception occurred while reading information from decoder", ex);
+      } catch (Exception e) {
+        LOG.error("Unexpected exception occurred while reading information from decoder", e);
       }
     } else {
       LOG.info("No topic list found in state");
@@ -226,8 +226,8 @@ public class KaaClientPropertiesState implements KaaClientState {
       ByteArrayInputStream is = new ByteArrayInputStream(data);
       try (ObjectInputStream ois = new ObjectInputStream(is)) {
         nfSubscriptions.putAll((Map<Long, Integer>) ois.readObject());
-      } catch (Exception ex) {
-        LOG.error("Unexpected exception occurred while reading subscription information from state", ex);
+      } catch (Exception e) {
+        LOG.error("Unexpected exception occurred while reading subscription information from state", e);
       }
     } else {
       LOG.info("No subscription info found in state");
@@ -297,8 +297,8 @@ public class KaaClientPropertiesState implements KaaClientState {
         encoder.flush();
         String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
         state.setProperty(TOPIC_LIST, base64Str);
-      } catch (IOException ex) {
-        LOG.error("Can't persist topic list info", ex);
+      } catch (IOException e) {
+        LOG.error("Can't persist topic list info", e);
       }
 
       baos = new ByteArrayOutputStream();
@@ -306,8 +306,8 @@ public class KaaClientPropertiesState implements KaaClientState {
         oos.writeObject(nfSubscriptions);
         String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
         state.setProperty(NF_SUBSCRIPTIONS, base64Str);
-      } catch (IOException ex) {
-        LOG.error("Can't persist notification subscription info", ex);
+      } catch (IOException e) {
+        LOG.error("Can't persist notification subscription info", e);
       }
 
       StringBuilder attachedEndpointsString = new StringBuilder();
@@ -326,8 +326,8 @@ public class KaaClientPropertiesState implements KaaClientState {
         os = storage.openForWrite(stateFileLocation);
         state.store(os, null);
         hasUpdate = false;
-      } catch (IOException ex) {
-        LOG.error("Can't persist state file", ex);
+      } catch (IOException e) {
+        LOG.error("Can't persist state file", e);
       } finally {
         IOUtils.closeQuietly(os);
       }
@@ -374,12 +374,12 @@ public class KaaClientPropertiesState implements KaaClientState {
 
           return keyPair;
         }
-      } catch (InvalidKeyException ex) {
+      } catch (InvalidKeyException e) {
         keyPair = null;
-        LOG.error("Unable to parse client RSA keypair. Generating new keys.. Reason {}", ex);
-      } catch (Exception ex) {
-        LOG.error("Error loading client RSA keypair. Reason {}", ex);
-        throw new RuntimeException(ex); // NOSONAR
+        LOG.error("Unable to parse client RSA keypair. Generating new keys.. Reason {}", e);
+      } catch (Exception e) {
+        LOG.error("Error loading client RSA keypair. Reason {}", e);
+        throw new RuntimeException(e); // NOSONAR
       } finally {
         IOUtils.closeQuietly(publicKeyInput);
         IOUtils.closeQuietly(privateKeyInput);
@@ -393,9 +393,9 @@ public class KaaClientPropertiesState implements KaaClientState {
         privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
         publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
         keyPair = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
-      } catch (IOException ex) {
-        LOG.error("Error generating Client Key pair", ex);
-        throw new RuntimeException(ex);
+      } catch (IOException e) {
+        LOG.error("Error generating Client Key pair", e);
+        throw new RuntimeException(e);
       } finally {
         IOUtils.closeQuietly(privateKeyOutput);
         IOUtils.closeQuietly(publicKeyOutput);
@@ -586,10 +586,10 @@ public class KaaClientPropertiesState implements KaaClientState {
   private void saveFileDelete(String fileName) {
     try {
       FileUtils.forceDelete(new File(fileName));
-    } catch (FileNotFoundException ex) {
-      LOG.trace("File {} wasn't deleted, as it hadn't existed :", fileName, ex);
-    } catch (IOException ex) {
-      LOG.debug("An error occurred during deletion of the file [{}] :", fileName, ex);
+    } catch (FileNotFoundException e) {
+      LOG.trace("File {} wasn't deleted, as it hadn't existed :", fileName, e);
+    } catch (IOException e) {
+      LOG.debug("An error occurred during deletion of the file [{}] :", fileName, e);
     }
   }
 

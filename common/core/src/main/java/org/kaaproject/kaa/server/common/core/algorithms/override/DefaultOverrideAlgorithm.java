@@ -69,8 +69,8 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
 
     try {
       confGenerator = new DefaultRecordGenerationAlgorithmImpl(baseConfiguration.getSchema(), new BaseDataFactory());
-    } catch (ConfigurationGenerationException ex) {
-      throw new OverrideException(ex);
+    } catch (ConfigurationGenerationException e) {
+      throw new OverrideException(e);
     }
 
     baseSchemaParser = new Schema.Parser();
@@ -94,8 +94,8 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
         applyNode(mergedConfiguration, nodeToApply, arrayMergeStrategyResolver);
       }
       return new BaseData(baseConfiguration.getSchema(), baseConverter.encodeToJson(mergedConfiguration));
-    } catch (IOException | ConfigurationGenerationException ex) {
-      throw new OverrideException(ex);
+    } catch (IOException | ConfigurationGenerationException e) {
+      throw new OverrideException(e);
     }
   }
 

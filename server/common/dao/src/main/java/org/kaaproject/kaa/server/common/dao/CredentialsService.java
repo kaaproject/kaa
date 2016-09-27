@@ -33,6 +33,7 @@ import java.util.Optional;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
+ *
  * @since v0.9.0
  */
 public interface CredentialsService {
@@ -41,8 +42,10 @@ public interface CredentialsService {
    * Provides credentials information to the internal system.
    *
    * @param applicationId The application ID
-   * @param credentials   The credentials to provision
+   * @param credentials The credentials to provision
+   *
    * @return The credentials provided
+   *
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
   CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials) throws CredentialsServiceException;
@@ -52,7 +55,9 @@ public interface CredentialsService {
    *
    * @param applicationId The application ID
    * @param credentialsId The credentials ID
+   *
    * @return The credentials with the given ID
+   *
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
   Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId) throws CredentialsServiceException;
@@ -63,7 +68,9 @@ public interface CredentialsService {
    *
    * @param applicationId The application ID
    * @param credentialsId The credentials ID
-   * @throws CredentialsServiceException - if the credentials are not {@link CredentialsStatus#AVAILABLE}.
+   *
+   * @throws CredentialsServiceException - if the credentials are not
+   *             {@link CredentialsStatus#AVAILABLE}.
    */
   void markCredentialsInUse(String applicationId, String credentialsId) throws CredentialsServiceException;
 
@@ -73,6 +80,7 @@ public interface CredentialsService {
    *
    * @param applicationId The application ID
    * @param credentialsId The credentials ID
+   *
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
   void markCredentialsRevoked(String applicationId, String credentialsId) throws CredentialsServiceException;

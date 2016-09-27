@@ -12,7 +12,6 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
   private org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus responseStatus;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Notification> notifications;
   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Topic> availableTopics;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -34,24 +33,17 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new NotificationSyncResponse RecordBuilder
-   */
+  /** Creates a new NotificationSyncResponse RecordBuilder */
   public static org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder();
   }
 
-  /**
-   * Creates a new NotificationSyncResponse RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new NotificationSyncResponse RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder(other);
   }
 
-  /**
-   * Creates a new NotificationSyncResponse RecordBuilder by copying an existing
-   * NotificationSyncResponse instance
-   */
+  /** Creates a new NotificationSyncResponse RecordBuilder by copying an existing NotificationSyncResponse instance */
   public static org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder(other);
   }
@@ -101,7 +93,6 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'responseStatus' field.
-   *
    * @param value the value to set.
    */
   public void setResponseStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus value) {
@@ -117,7 +108,6 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'notifications' field.
-   *
    * @param value the value to set.
    */
   public void setNotifications(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Notification> value) {
@@ -133,7 +123,6 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'availableTopics' field.
-   *
    * @param value the value to set.
    */
   public void setAvailableTopics(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Topic> value) {
@@ -150,16 +139,12 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Notification> notifications;
     private java.util.List<org.kaaproject.kaa.common.endpoint.gen.Topic> availableTopics;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.responseStatus)) {
@@ -176,9 +161,7 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing NotificationSyncResponse instance
-     */
+    /** Creates a Builder by copying an existing NotificationSyncResponse instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.responseStatus)) {
@@ -195,16 +178,12 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
       }
     }
 
-    /**
-     * Gets the value of the 'responseStatus' field
-     */
+    /** Gets the value of the 'responseStatus' field */
     public org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus getResponseStatus() {
       return responseStatus;
     }
 
-    /**
-     * Sets the value of the 'responseStatus' field
-     */
+    /** Sets the value of the 'responseStatus' field */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder setResponseStatus(org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus value) {
       validate(fields()[0], value);
       this.responseStatus = value;
@@ -212,32 +191,24 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
       return this;
     }
 
-    /**
-     * Checks whether the 'responseStatus' field has been set
-     */
+    /** Checks whether the 'responseStatus' field has been set */
     public boolean hasResponseStatus() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'responseStatus' field
-     */
+    /** Clears the value of the 'responseStatus' field */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder clearResponseStatus() {
       responseStatus = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'notifications' field
-     */
+    /** Gets the value of the 'notifications' field */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.Notification> getNotifications() {
       return notifications;
     }
 
-    /**
-     * Sets the value of the 'notifications' field
-     */
+    /** Sets the value of the 'notifications' field */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder setNotifications(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Notification> value) {
       validate(fields()[1], value);
       this.notifications = value;
@@ -245,32 +216,24 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
       return this;
     }
 
-    /**
-     * Checks whether the 'notifications' field has been set
-     */
+    /** Checks whether the 'notifications' field has been set */
     public boolean hasNotifications() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'notifications' field
-     */
+    /** Clears the value of the 'notifications' field */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder clearNotifications() {
       notifications = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'availableTopics' field
-     */
+    /** Gets the value of the 'availableTopics' field */
     public java.util.List<org.kaaproject.kaa.common.endpoint.gen.Topic> getAvailableTopics() {
       return availableTopics;
     }
 
-    /**
-     * Sets the value of the 'availableTopics' field
-     */
+    /** Sets the value of the 'availableTopics' field */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder setAvailableTopics(java.util.List<org.kaaproject.kaa.common.endpoint.gen.Topic> value) {
       validate(fields()[2], value);
       this.availableTopics = value;
@@ -278,16 +241,12 @@ public class NotificationSyncResponse extends org.apache.avro.specific.SpecificR
       return this;
     }
 
-    /**
-     * Checks whether the 'availableTopics' field has been set
-     */
+    /** Checks whether the 'availableTopics' field has been set */
     public boolean hasAvailableTopics() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'availableTopics' field
-     */
+    /** Clears the value of the 'availableTopics' field */
     public org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse.Builder clearAvailableTopics() {
       availableTopics = null;
       fieldSetFlags()[2] = false;

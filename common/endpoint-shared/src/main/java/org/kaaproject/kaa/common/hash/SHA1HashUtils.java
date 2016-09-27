@@ -46,8 +46,8 @@ public abstract class SHA1HashUtils {
   static MessageDigest forAlgorithm(String algorithm) {
     try {
       return MessageDigest.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException ex) {
-      LOG.error("No such algorithm: {}, exception catched: {}", algorithm, ex);
+    } catch (NoSuchAlgorithmException e) {
+      LOG.error("No such algorithm: {}, exception catched: {}", algorithm, e);
       return null;
     }
   }

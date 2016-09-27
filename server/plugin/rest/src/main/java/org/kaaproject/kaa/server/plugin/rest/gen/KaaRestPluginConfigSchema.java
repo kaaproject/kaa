@@ -14,7 +14,6 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
   private org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType httpSchema;
   private java.lang.String keyStoreFileName;
   private java.lang.String keyStorePass;
-
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
@@ -38,24 +37,17 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new KaaRestPluginConfigSchema RecordBuilder
-   */
+  /** Creates a new KaaRestPluginConfigSchema RecordBuilder */
   public static org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder newBuilder() {
     return new org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder();
   }
 
-  /**
-   * Creates a new KaaRestPluginConfigSchema RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new KaaRestPluginConfigSchema RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder newBuilder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder other) {
     return new org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder(other);
   }
 
-  /**
-   * Creates a new KaaRestPluginConfigSchema RecordBuilder by copying an existing
-   * KaaRestPluginConfigSchema instance
-   */
+  /** Creates a new KaaRestPluginConfigSchema RecordBuilder by copying an existing KaaRestPluginConfigSchema instance */
   public static org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder newBuilder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema other) {
     return new org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder(other);
   }
@@ -115,7 +107,6 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'host' field.
-   *
    * @param value the value to set.
    */
   public void setHost(java.lang.String value) {
@@ -131,7 +122,6 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'port' field.
-   *
    * @param value the value to set.
    */
   public void setPort(java.lang.Integer value) {
@@ -147,7 +137,6 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'httpSchema' field.
-   *
    * @param value the value to set.
    */
   public void setHttpSchema(org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType value) {
@@ -163,7 +152,6 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'keyStoreFileName' field.
-   *
    * @param value the value to set.
    */
   public void setKeyStoreFileName(java.lang.String value) {
@@ -179,7 +167,6 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
 
   /**
    * Sets the value of the 'keyStorePass' field.
-   *
    * @param value the value to set.
    */
   public void setKeyStorePass(java.lang.String value) {
@@ -198,16 +185,12 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
     private java.lang.String keyStoreFileName;
     private java.lang.String keyStorePass;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.host)) {
@@ -232,9 +215,7 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing KaaRestPluginConfigSchema instance
-     */
+    /** Creates a Builder by copying an existing KaaRestPluginConfigSchema instance */
     private Builder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema other) {
       super(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.SCHEMA$);
       if (isValidValue(fields()[0], other.host)) {
@@ -259,16 +240,12 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       }
     }
 
-    /**
-     * Gets the value of the 'host' field
-     */
+    /** Gets the value of the 'host' field */
     public java.lang.String getHost() {
       return host;
     }
 
-    /**
-     * Sets the value of the 'host' field
-     */
+    /** Sets the value of the 'host' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder setHost(java.lang.String value) {
       validate(fields()[0], value);
       this.host = value;
@@ -276,32 +253,24 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'host' field has been set
-     */
+    /** Checks whether the 'host' field has been set */
     public boolean hasHost() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'host' field
-     */
+    /** Clears the value of the 'host' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder clearHost() {
       host = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'port' field
-     */
+    /** Gets the value of the 'port' field */
     public java.lang.Integer getPort() {
       return port;
     }
 
-    /**
-     * Sets the value of the 'port' field
-     */
+    /** Sets the value of the 'port' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder setPort(int value) {
       validate(fields()[1], value);
       this.port = value;
@@ -309,31 +278,23 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'port' field has been set
-     */
+    /** Checks whether the 'port' field has been set */
     public boolean hasPort() {
       return fieldSetFlags()[1];
     }
 
-    /**
-     * Clears the value of the 'port' field
-     */
+    /** Clears the value of the 'port' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder clearPort() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'httpSchema' field
-     */
+    /** Gets the value of the 'httpSchema' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType getHttpSchema() {
       return httpSchema;
     }
 
-    /**
-     * Sets the value of the 'httpSchema' field
-     */
+    /** Sets the value of the 'httpSchema' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder setHttpSchema(org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType value) {
       validate(fields()[2], value);
       this.httpSchema = value;
@@ -341,32 +302,24 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'httpSchema' field has been set
-     */
+    /** Checks whether the 'httpSchema' field has been set */
     public boolean hasHttpSchema() {
       return fieldSetFlags()[2];
     }
 
-    /**
-     * Clears the value of the 'httpSchema' field
-     */
+    /** Clears the value of the 'httpSchema' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder clearHttpSchema() {
       httpSchema = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'keyStoreFileName' field
-     */
+    /** Gets the value of the 'keyStoreFileName' field */
     public java.lang.String getKeyStoreFileName() {
       return keyStoreFileName;
     }
 
-    /**
-     * Sets the value of the 'keyStoreFileName' field
-     */
+    /** Sets the value of the 'keyStoreFileName' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder setKeyStoreFileName(java.lang.String value) {
       validate(fields()[3], value);
       this.keyStoreFileName = value;
@@ -374,32 +327,24 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'keyStoreFileName' field has been set
-     */
+    /** Checks whether the 'keyStoreFileName' field has been set */
     public boolean hasKeyStoreFileName() {
       return fieldSetFlags()[3];
     }
 
-    /**
-     * Clears the value of the 'keyStoreFileName' field
-     */
+    /** Clears the value of the 'keyStoreFileName' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder clearKeyStoreFileName() {
       keyStoreFileName = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /**
-     * Gets the value of the 'keyStorePass' field
-     */
+    /** Gets the value of the 'keyStorePass' field */
     public java.lang.String getKeyStorePass() {
       return keyStorePass;
     }
 
-    /**
-     * Sets the value of the 'keyStorePass' field
-     */
+    /** Sets the value of the 'keyStorePass' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder setKeyStorePass(java.lang.String value) {
       validate(fields()[4], value);
       this.keyStorePass = value;
@@ -407,16 +352,12 @@ public class KaaRestPluginConfigSchema extends org.apache.avro.specific.Specific
       return this;
     }
 
-    /**
-     * Checks whether the 'keyStorePass' field has been set
-     */
+    /** Checks whether the 'keyStorePass' field has been set */
     public boolean hasKeyStorePass() {
       return fieldSetFlags()[4];
     }
 
-    /**
-     * Clears the value of the 'keyStorePass' field
-     */
+    /** Clears the value of the 'keyStorePass' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema.Builder clearKeyStorePass() {
       keyStorePass = null;
       fieldSetFlags()[4] = false;

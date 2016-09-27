@@ -108,8 +108,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
    */
   private final UnhandledErrorListener errorsListener = new UnhandledErrorListener() {
     @Override
-    public void unhandledError(String message, Throwable ex) {
-      LOG.error("Unrecoverable error: " + message, ex);
+    public void unhandledError(String message, Throwable e) {
+      LOG.error("Unrecoverable error: " + message, e);
       try {
         close();
       } catch (IOException ioe) {
@@ -234,8 +234,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
       try {
         zkClient.delete().forPath(nodePath);
         LOG.debug("Node with path {} successfully deleted", nodePath);
-      } catch (Exception ex) {
-        LOG.debug("Failed to delete node", ex);
+      } catch (Exception e) {
+        LOG.debug("Failed to delete node", e);
       }
     }
   }
@@ -266,8 +266,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     ControlNodeInfo controlServerInfo = null;
     try {
       controlServerInfo = controlNodeAvroConverter.get().fromByteArray(currentData.getData(), controlServerInfo);
-    } catch (IOException ex) {
-      LOG.error("error reading control service info", ex);
+    } catch (IOException e) {
+      LOG.error("error reading control service info", e);
     }
     return controlServerInfo;
   }
@@ -280,11 +280,11 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     try {
       action.doWithZkClient(zkClient);
       return true;
-    } catch (Exception ex) {
-      LOG.error("Unknown Error", ex);
+    } catch (Exception e) {
+      LOG.error("Unknown Error", e);
       close();
       if (throwIOException) {
-        throw new IOException(ex);
+        throw new IOException(e);
       } else {
         return false;
       }

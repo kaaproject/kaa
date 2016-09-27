@@ -351,10 +351,9 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
   private OperationsNodeInfo extractOperationServerInfo(ChildData currentData) {
     OperationsNodeInfo endpointServerInfo = null;
     try {
-      endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(
-          currentData.getData(), null);
-    } catch (IOException ex) {
-      LOG.error("error reading control service info", ex);
+      endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
+    } catch (IOException e) {
+      LOG.error("error reading control service info", e);
     }
     return endpointServerInfo;
   }
@@ -368,22 +367,21 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
   private BootstrapNodeInfo extractBootstrapServerInfo(ChildData currentData) {
     BootstrapNodeInfo bootstrapServerInfo = null;
     try {
-      bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(
-          currentData.getData(), null);
-    } catch (IOException ex) {
-      LOG.error("error reading control service info", ex);
+      bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
+    } catch (IOException e) {
+      LOG.error("error reading control service info", e);
     }
     return bootstrapServerInfo;
   }
 
   private String constructEndpointAddress(OperationsNodeInfo nodeInfo) {
-    return nodeInfo.getConnectionInfo().getThriftHost() + ":"
-        + String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+    return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
+        String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
   }
 
   private String constructBootstrapAddress(BootstrapNodeInfo nodeInfo) {
-    return nodeInfo.getConnectionInfo().getThriftHost() + ":"
-        + String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+    return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
+        String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
   }
 
   /*

@@ -44,9 +44,9 @@ public class IPTransportInfo extends GenericTransportInfo {
     buf.get(publicKeyData);
     try {
       this.publicKey = KeyUtil.getPublic(publicKeyData);
-    } catch (InvalidKeyException ex) {
-      LOG.error("Can't initialize public key", ex);
-      throw new RuntimeException(ex);
+    } catch (InvalidKeyException e) {
+      LOG.error("Can't initialize public key", e);
+      throw new RuntimeException(e);
     }
     byte[] hostData = new byte[buf.getInt()];
     buf.get(hostData);

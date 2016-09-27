@@ -56,7 +56,6 @@ public class LoginView extends Composite implements HasErrorMessage {
   private PasswordTextBox passwordBox;
   private Button loginButton;
   private Label forgotPasswordLabel;
-
   public LoginView() {
 
     errorPanel = new AlertPanel(Type.ERROR);

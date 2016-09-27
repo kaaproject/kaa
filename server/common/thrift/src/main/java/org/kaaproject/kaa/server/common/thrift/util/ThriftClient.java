@@ -62,12 +62,12 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
   /**
    * The t class.
    */
-  private Class<T> clazz;
+  private Class<T> tClass;
 
   /**
    * The t constructor.
    */
-  private Constructor<T> constructor;
+  private Constructor<T> tConstructor;
 
   /**
    * The client.
@@ -103,15 +103,15 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
       InstantiationException,
       IllegalAccessException,
       InvocationTargetException {
-    this.clazz = clazz;
+    this.tClass = clazz;
     this.endpointHost = endpointHost;
     this.endpointPort = endpointPort;
-    constructor = this.clazz.getConstructor(TProtocol.class, TProtocol.class);
+    tConstructor = tClass.getConstructor(TProtocol.class, TProtocol.class);
     transport = new TSocket(endpointHost, endpointPort);
     LOG.debug("ThriftClient sokcet to " + endpointHost + ":" + endpointPort + " created.");
     TProtocol protocol = new TBinaryProtocol(transport);
     TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, kaaThriftService.getServiceName());
-    client = constructor.newInstance(mp, mp);
+    client = tConstructor.newInstance(mp, mp);
     LOG.debug("ThriftClient new Client to " + endpointHost + ":" + endpointPort + " created.");
   }
 
@@ -145,10 +145,10 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
       }
     } catch (TException
         | IllegalArgumentException
-        | SecurityException ex) {
+        | SecurityException e) {
       LOG.error(
           "Unexpected error occurred while invoke thrift object " + endpointHost + ":" + endpointPort,
-          ex);
+          e);
       if (activity != null) {
         activity.isSuccess(false);
       }

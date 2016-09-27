@@ -30,24 +30,17 @@ public class EventSequenceNumberResponse extends org.apache.avro.specific.Specif
     return SCHEMA$;
   }
 
-  /**
-   * Creates a new EventSequenceNumberResponse RecordBuilder
-   */
+  /** Creates a new EventSequenceNumberResponse RecordBuilder */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder();
   }
 
-  /**
-   * Creates a new EventSequenceNumberResponse RecordBuilder by copying an existing Builder
-   */
+  /** Creates a new EventSequenceNumberResponse RecordBuilder by copying an existing Builder */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder(other);
   }
 
-  /**
-   * Creates a new EventSequenceNumberResponse RecordBuilder by copying an existing
-   * EventSequenceNumberResponse instance
-   */
+  /** Creates a new EventSequenceNumberResponse RecordBuilder by copying an existing EventSequenceNumberResponse instance */
   public static org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder newBuilder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse other) {
     return new org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder(other);
   }
@@ -87,7 +80,6 @@ public class EventSequenceNumberResponse extends org.apache.avro.specific.Specif
 
   /**
    * Sets the value of the 'seqNum' field.
-   *
    * @param value the value to set.
    */
   public void setSeqNum(java.lang.Integer value) {
@@ -102,16 +94,12 @@ public class EventSequenceNumberResponse extends org.apache.avro.specific.Specif
 
     private int seqNum;
 
-    /**
-     * Creates a new Builder
-     */
+    /** Creates a new Builder */
     private Builder() {
       super(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.SCHEMA$);
     }
 
-    /**
-     * Creates a Builder by copying an existing Builder
-     */
+    /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.seqNum)) {
@@ -120,9 +108,7 @@ public class EventSequenceNumberResponse extends org.apache.avro.specific.Specif
       }
     }
 
-    /**
-     * Creates a Builder by copying an existing EventSequenceNumberResponse instance
-     */
+    /** Creates a Builder by copying an existing EventSequenceNumberResponse instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse other) {
       super(org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.SCHEMA$);
       if (isValidValue(fields()[0], other.seqNum)) {
@@ -131,16 +117,12 @@ public class EventSequenceNumberResponse extends org.apache.avro.specific.Specif
       }
     }
 
-    /**
-     * Gets the value of the 'seqNum' field
-     */
+    /** Gets the value of the 'seqNum' field */
     public java.lang.Integer getSeqNum() {
       return seqNum;
     }
 
-    /**
-     * Sets the value of the 'seqNum' field
-     */
+    /** Sets the value of the 'seqNum' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder setSeqNum(int value) {
       validate(fields()[0], value);
       this.seqNum = value;
@@ -148,16 +130,12 @@ public class EventSequenceNumberResponse extends org.apache.avro.specific.Specif
       return this;
     }
 
-    /**
-     * Checks whether the 'seqNum' field has been set
-     */
+    /** Checks whether the 'seqNum' field has been set */
     public boolean hasSeqNum() {
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Clears the value of the 'seqNum' field
-     */
+    /** Clears the value of the 'seqNum' field */
     public org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse.Builder clearSeqNum() {
       fieldSetFlags()[0] = false;
       return this;

@@ -199,8 +199,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
           public void run() {
             try {
               receiveOperationsServerList();
-            } catch (TransportException ex) {
-              LOG.error("Error while receiving operations service list", ex);
+            } catch (TransportException e) {
+              LOG.error("Error while receiving operations service list", e);
             }
           }
         }, retryPeriod, TimeUnit.MILLISECONDS);
@@ -214,8 +214,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
           public void run() {
             try {
               receiveOperationsServerList();
-            } catch (TransportException ex) {
-              LOG.error("Error while receiving operations service list", ex);
+            } catch (TransportException e) {
+              LOG.error("Error while receiving operations service list", e);
             }
           }
         }, retryPeriod, TimeUnit.MILLISECONDS);

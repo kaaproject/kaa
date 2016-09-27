@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.routing.Broadcast;
-import akka.routing.RoundRobinPool;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
@@ -44,6 +38,12 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.routing.Broadcast;
+import akka.routing.RoundRobinPool;
 
 /**
  * The Class DefaultAkkaService.

@@ -26,6 +26,7 @@ import java.util.Optional;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
+ *
  * @since v0.9.0
  */
 public interface RegistrationService {
@@ -34,7 +35,9 @@ public interface RegistrationService {
    * Saves the given endpoint registration.
    *
    * @param endpointRegistration The endpoint registration to save
+   *
    * @return The endpoint registration saved
+   *
    * @throws EndpointRegistrationServiceException - if an exception occures.
    */
   EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException;
@@ -43,7 +46,9 @@ public interface RegistrationService {
    * Returns the endpoint registration by the endpoint ID specified.
    *
    * @param endpointId The endpoint ID
+   *
    * @return The endpoint registration found
+   *
    * @throws EndpointRegistrationServiceException - if an exception occures.
    */
   Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException;
@@ -52,7 +57,9 @@ public interface RegistrationService {
    * Returns the endpoint registration by the credentials ID specified.
    *
    * @param credentialsId The credentials ID
+   *
    * @return The endpoint registration found
+   *
    * @throws EndpointRegistrationServiceException - if an exception occures.
    */
   Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId) throws EndpointRegistrationServiceException;
@@ -61,6 +68,7 @@ public interface RegistrationService {
    * Removes the endpoint registration by the endpoint ID specified.
    *
    * @param endpointId The endpoint ID
+   *
    * @throws EndpointRegistrationServiceException - if an exception occures.
    */
   void removeEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException;
