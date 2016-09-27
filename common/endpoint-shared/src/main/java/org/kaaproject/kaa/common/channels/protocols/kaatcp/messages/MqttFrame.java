@@ -153,7 +153,8 @@ abstract public class MqttFrame {
       }
       dst[size] = digit;
       ++size;
-    } while (remainingLegth > 0);
+    }
+    while (remainingLegth > 0);
     return size;
   }
 
