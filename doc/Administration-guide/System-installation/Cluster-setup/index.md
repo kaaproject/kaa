@@ -44,7 +44,7 @@ In order to set up Kaa cluster you need to have at least 3 Linux nodes with ```k
 
 Also ```kaa-node``` service requires some third party dependencies like SQL and NoSQL databases and Apache Zookeeper service, more details you can find in [Architecture overview]({{root_url}}Architecture-overview/). 
 You can find detailed instructions on how to install and configure Zookeeper service and one of supported SQL and NoSQL databases in [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/#installation-steps) guide. 
-A set of databases (for example MongoDB + PostgreSQL) depends on your particular use case and some useful recommendations you can find in [Planning your deployment]({{root_url}}Administration-guide/System-installation/Planning-your-deployment/) guide.
+A set of databases (for example MongoDB + PostgreSQL) depends on your particular use case.
 
 In this guide we assume that you had already set up your SQL and NoSQL database clusters, so this tutorial doesn't cover such themes like setting up ones for Cassandra, MongoDB or PostgreSQL. 
 Refer to official [Cassandra](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html), [MongoDB](https://docs.mongodb.com/manual/) and [PostgreSQL](https://www.postgresql.org/docs/) documentation in order to setup corresponding database cluster.
