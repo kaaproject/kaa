@@ -172,8 +172,8 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
         try {
           ThriftExecutor.shutdown();
           System.exit(0); //NOSONAR
-        } catch (Exception e) {
-          LOG.error("Catch exception when execute shutdown command", e);
+        } catch (Exception ex) {
+          LOG.error("Catch exception when execute shutdown command", ex);
         }
       }
     };
@@ -230,7 +230,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
         } else {
           command.runCommand(commandLine, writer);
         }
-      } catch (ParseException e) {
+      } catch (ParseException ex) {
         writer.println("Unable to parse command arguments.");
         writer.println();
         printHelp(command, writer);
@@ -300,8 +300,8 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
       writer.println("Used           : "
           + format.format((float) (memUsage.total - memUsage.free)
           / (float) MBYTE) + " MBytes");
-    } catch (TException e) {
-      LOG.error("Catch exception when execute print memory command", e);
+    } catch (TException ex) {
+      LOG.error("Catch exception when execute print memory command", ex);
     }
   }
 
@@ -485,8 +485,8 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
     writer.println("Server shutdown initiated.");
     try {
       shutdown();
-    } catch (TException e) {
-      LOG.error("Catch exception when execute shutdown command", e);
+    } catch (TException ex) {
+      LOG.error("Catch exception when execute shutdown command", ex);
     }
   }
 
@@ -510,14 +510,14 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
    * Creates the padding using specified character.
    *
    * @param len length of the padding
-   * @param c   the character to use for padding
+   * @param character   the character to use for padding
    * @return the resulting padding string
    */
-  protected String createPadding(int len, char c) {
+  protected String createPadding(int len, char character) {
     StringBuffer sb = new StringBuffer(len);
 
     for (int i = 0; i < len; ++i) {
-      sb.append(c);
+      sb.append(character);
     }
 
     return sb.toString();

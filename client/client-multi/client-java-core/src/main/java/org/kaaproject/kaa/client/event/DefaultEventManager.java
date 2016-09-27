@@ -209,9 +209,9 @@ public class DefaultEventManager implements EventManager {
     synchronized (trxGuard) {
       List<Event> eventsToCommit = transactions.remove(trxId);
       synchronized (eventsGuard) {
-        for (Event e : eventsToCommit) {
-          e.setSeqNum(state.getAndIncrementEventSeqNum());
-          currentEvents.add(e);
+        for (Event event : eventsToCommit) {
+          event.setSeqNum(state.getAndIncrementEventSeqNum());
+          currentEvents.add(event);
         }
       }
       if (!isEngaged) {
@@ -227,8 +227,8 @@ public class DefaultEventManager implements EventManager {
     synchronized (trxGuard) {
       List<Event> eventsToRemove = transactions.remove(trxId);
       if (eventsToRemove != null) {
-        for (Event e : eventsToRemove) {
-          LOG.trace("Removing event {}", e);
+        for (Event event : eventsToRemove) {
+          LOG.trace("Removing event {}", event);
         }
       } else {
         LOG.debug("Transaction with id {} was not created", trxId);

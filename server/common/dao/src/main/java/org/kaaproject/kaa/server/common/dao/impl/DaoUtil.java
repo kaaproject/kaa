@@ -160,8 +160,8 @@ public abstract class DaoUtil {
           if (arrayData != null) {
             data = new String(arrayData, Charset.forName("UTF-8"));
           }
-        } catch (IOException e) {
-          LOG.error("Can't read data from file", e);
+        } catch (IOException ex) {
+          LOG.error("Can't read data from file", ex);
         }
       }
     }

@@ -67,7 +67,7 @@ public class DefaultBootstrapManagerTest {
     try {
       manager.receiveOperationsServerList();
       manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
-    } catch (BootstrapRuntimeException e) {
+    } catch (BootstrapRuntimeException ex) {
       exception = true;
     }
     assertTrue(exception);
@@ -85,7 +85,7 @@ public class DefaultBootstrapManagerTest {
     boolean exception = false;
     try {
       manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
-    } catch (BootstrapRuntimeException e) {
+    } catch (BootstrapRuntimeException ex) {
       exception = true;
     }
     assertTrue(exception);

@@ -145,10 +145,10 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
       }
     } catch (TException
         | IllegalArgumentException
-        | SecurityException e) {
+        | SecurityException ex) {
       LOG.error(
           "Unexpected error occurred while invoke thrift object " + endpointHost + ":" + endpointPort,
-          e);
+          ex);
       if (activity != null) {
         activity.isSuccess(false);
       }

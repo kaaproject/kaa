@@ -171,9 +171,9 @@ public class CTLServiceImpl implements CTLService {
       String schemaBody = flatExportAsString(unSavedSchema);
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schemaBody);
       converter.decodeJson(unSavedSchema.getDefaultRecord());
-    } catch (IOException | RuntimeException e) {
-      LOG.error("Invalid default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
-      throw new RuntimeException("An unexpected exception occured: " + e.toString());
+    } catch (IOException | RuntimeException ex) {
+      LOG.error("Invalid default record for CTL schema with body: {}", unSavedSchema.getBody(), ex);
+      throw new RuntimeException("An unexpected exception occured: " + ex.toString());
     }
   }
 
@@ -186,13 +186,13 @@ public class CTLServiceImpl implements CTLService {
           dataSchema, new RawDataFactory());
       unSavedSchema.setDefaultRecord(dataProcessor.getRootData().getRawData());
       return unSavedSchema;
-    } catch (StackOverflowError e) {
-      LOG.error("Failed to generate default record. An endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), e);
+    } catch (StackOverflowError ex) {
+      LOG.error("Failed to generate default record. An endless recursion is detected. CTL schema body: {}", unSavedSchema.getBody(), ex);
       throw new RuntimeException("Unable to generate default record. An endless recursion is detected! "
           + "Please check non-optional references to nested types.");
-    } catch (ConfigurationGenerationException | IOException | RuntimeException e) {
-      LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
-      throw new RuntimeException("An unexpected exception occured: " + e.toString());
+    } catch (ConfigurationGenerationException | IOException | RuntimeException ex) {
+      LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), ex);
+      throw new RuntimeException("An unexpected exception occured: " + ex.toString());
     }
   }
 

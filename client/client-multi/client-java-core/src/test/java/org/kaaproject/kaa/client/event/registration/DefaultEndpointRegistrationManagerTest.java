@@ -169,8 +169,8 @@ public class DefaultEndpointRegistrationManagerTest {
 
       verify(manager, times(2)).onUpdate(anyListOf(EndpointAttachResponse.class), anyListOf(EndpointDetachResponse.class), any(UserAttachResponse.class), any(UserAttachNotification.class), any(UserDetachNotification.class));
       verify(listListener, times(1)).onAttachedEndpointListChanged(anyMapOf(EndpointAccessToken.class, EndpointKeyHash.class));
-    } catch (IOException e) {
-      assertTrue("Unexpected exception " + e.getMessage(), false);
+    } catch (IOException ex) {
+      assertTrue("Unexpected exception " + ex.getMessage(), false);
     }
   }
 

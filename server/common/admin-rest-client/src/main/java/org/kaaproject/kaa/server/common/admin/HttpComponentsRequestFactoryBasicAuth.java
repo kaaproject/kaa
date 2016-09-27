@@ -111,7 +111,7 @@ public class HttpComponentsRequestFactoryBasicAuth extends
         try {
           LOG.warn("IOException '{}'. Wait for {} before next attempt to connect...", exception.getMessage(), connectRetryInterval);
           Thread.sleep(connectRetryInterval);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
         }
         return true;
       } else {

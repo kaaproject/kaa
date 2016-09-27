@@ -96,7 +96,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         try {
           Long lid = Long.parseLong(id);
           lids.add(lid);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
           LOG.warn("Can't convert string id {} to Long id", id);
         }
       }

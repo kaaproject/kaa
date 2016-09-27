@@ -295,11 +295,11 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
     GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(root.getSchema());
     try {
       return dataFactory.createData(rootSchema, converter.encodeToJson(root));
-    } catch (RuntimeException e) {
+    } catch (RuntimeException ex) {
       // NPE is thrown if "null" was written into a field that is not nullable
       // CGE is thrown if value of wrong type was written into a field
-      LOG.error("Unexpected exception occurred while generating configuration.", e);
-      throw new ConfigurationGenerationException(e);
+      LOG.error("Unexpected exception occurred while generating configuration.", ex);
+      throw new ConfigurationGenerationException(ex);
     }
   }
 

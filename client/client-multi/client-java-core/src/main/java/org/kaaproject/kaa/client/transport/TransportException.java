@@ -28,8 +28,8 @@ public class TransportException extends Exception {
     super(message);
   }
 
-  public TransportException(Exception e) {
-    super(e);
+  public TransportException(Exception ex) {
+    super(ex);
   }
 
   public TransportException(int status) {

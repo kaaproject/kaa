@@ -116,9 +116,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         synchronized (this) {
           try {
             resultBody = encDec.decodeData(message.getAvroObject());
-          } catch (GeneralSecurityException e) {
+          } catch (GeneralSecurityException ex) {
             LOG.error("Failed to decrypt message body for channel [{}]: {}", getId());
-            LOG.error("Stack Trace: ", e);
+            LOG.error("Stack Trace: ", ex);
           }
         }
       } else {
@@ -129,8 +129,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
           demultiplexer.preProcess();
           demultiplexer.processResponse(resultBody);
           demultiplexer.postProcess();
-        } catch (Exception e) {
-          LOG.error("Failed to process response for channel [{}]", getId(), e);
+        } catch (Exception ex) {
+          LOG.error("Failed to process response for channel [{}]", getId(), ex);
         }
 
         synchronized (DefaultOperationTcpChannel.this) {
@@ -198,8 +198,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
           } else {
             LOG.info("Can't schedule ping task for channel [{}]. Task was interrupted", getId());
           }
-        } catch (IOException e) {
-          LOG.error("Failed to send ping request for channel [{}]. Stack trace: ", getId(), e);
+        } catch (IOException ex) {
+          LOG.error("Failed to send ping request for channel [{}]. Stack trace: ", getId(), ex);
           onServerFailed();
         }
       } else {
@@ -271,13 +271,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       LOG.info("Channel \"{}\": closing current connection", getId());
       try {
         sendDisconnect();
-      } catch (IOException e) {
-        LOG.error("Failed to send Disconnect to server: {}", e);
+      } catch (IOException ex) {
+        LOG.error("Failed to send Disconnect to server: {}", ex);
       } finally {
         try {
           socket.close();
-        } catch (IOException e) {
-          LOG.error("Failed to close socket: {}", e);
+        } catch (IOException ex) {
+          LOG.error("Failed to close socket: {}", ex);
         }
         socket = null;
         messageFactory.getFramer().flush();
@@ -304,8 +304,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       sendConnect();
       scheduleReadTask(socket);
       schedulePingTask();
-    } catch (Exception e) {
-      LOG.error("Failed to create a socket for server {}:{}. Stack trace: ", currentServer.getHost(), currentServer.getPort(), e);
+    } catch (Exception ex) {
+      LOG.error("Failed to create a socket for server {}:{}. Stack trace: ", currentServer.getHost(), currentServer.getPort(), ex);
       onServerFailed();
     }
   }
@@ -429,8 +429,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
     try {
       sendKaaSyncRequest(typeMap);
-    } catch (Exception e) {
-      LOG.error("Failed to sync channel [{}]", getId(), e);
+    } catch (Exception ex) {
+      LOG.error("Failed to sync channel [{}]", getId(), ex);
     }
   }
 
@@ -630,10 +630,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             onServerFailed();
           }
 
-        } catch (IOException | KaaTcpProtocolException | RuntimeException e) {
+        } catch (IOException | KaaTcpProtocolException | RuntimeException ex) {
           if (Thread.currentThread().isInterrupted()) {
             if (channelState != State.SHUTDOWN) {
-              LOG.warn("Socket connection for channel [{}] was interrupted: ", getId(), e);
+              LOG.warn("Socket connection for channel [{}] was interrupted: ", getId(), ex);
             } else {
               LOG.debug("Socket connection for channel [{}] was interrupted.", getId());
             }

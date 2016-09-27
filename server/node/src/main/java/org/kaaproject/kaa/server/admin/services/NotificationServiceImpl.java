@@ -76,8 +76,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     try {
       checkApplicationId(applicationId);
       return controlService.findNotificationSchemasByAppIdAndType(applicationId, NotificationTypeDto.USER);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -92,8 +92,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     try {
       checkApplicationId(applicationId);
       return controlService.getUserNotificationSchemasByAppId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -104,8 +104,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(notificationSchema);
       checkApplicationId(notificationSchema.getApplicationId());
       return notificationSchema;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -124,8 +124,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       }
       notificationSchema.setType(NotificationTypeDto.USER);
       return controlService.saveNotificationSchema(notificationSchema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -140,8 +140,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     try {
       checkApplicationId(applicationId);
       return controlService.getTopicByAppId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -151,8 +151,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getTopicByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -162,8 +162,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getVacantTopicByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -175,8 +175,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       return topic;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -191,8 +191,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
         throw new KaaAdminServiceException("Unable to edit existing topic!", ServiceErrorCode.INVALID_ARGUMENTS);
       }
       return controlService.editTopic(topic);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -205,8 +205,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.deleteTopicById(topicId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -220,8 +220,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.addTopicsToEndpointGroup(endpointGroupId, topicId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -235,8 +235,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.removeTopicsFromEndpointGroup(endpointGroupId, topicId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -251,8 +251,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       return controlService.editNotification(notification);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -271,8 +271,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       unicastNotification.setEndpointKeyHash(Base64.decode(clientKeyHash.getBytes(Charsets.UTF_8)));
       unicastNotification.setNotificationDto(notification);
       return controlService.editUnicastNotification(unicastNotification);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -303,8 +303,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
         schemaInfos.add(schemaInfo);
       }
       return schemaInfos;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -317,8 +317,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto,
           ConverterType.FORM_AVRO_CONVERTER));
       return notificationSchemaViewDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -345,8 +345,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       }
       NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
       return getNotificationSchemaView(savedNotificationSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -364,8 +364,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
       return getNotificationSchemaView(savedNotificationSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -383,8 +383,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.editNotification(notification);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -397,8 +397,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
       byte[] body = converter.encodeToJsonBytes(record);
       return sendUnicastNotification(notification, clientKeyHash, body);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

@@ -179,8 +179,8 @@ public class DefaultEventTransportTest {
     Assert.assertTrue(eventRequest2.getEvents().size() == events.size());
 
     int expectedEventSN = lastEventSN + 1;
-    for (Event e : eventRequest2.getEvents()) {
-      Assert.assertTrue(e.getSeqNum() == expectedEventSN++);
+    for (Event event : eventRequest2.getEvents()) {
+      Assert.assertTrue(event.getSeqNum() == expectedEventSN++);
     }
   }
 
@@ -217,8 +217,8 @@ public class DefaultEventTransportTest {
     Assert.assertTrue(eventRequest2.getEvents().size() == events1.size());
 
     int synchronizedSN = lastReceivedSN + 1;
-    for (Event e : eventRequest2.getEvents()) {
-      Assert.assertEquals(synchronizedSN++, e.getSeqNum().intValue());
+    for (Event event : eventRequest2.getEvents()) {
+      Assert.assertEquals(synchronizedSN++, event.getSeqNum().intValue());
     }
 
     transport.onSyncResposeIdReceived(requestId++);

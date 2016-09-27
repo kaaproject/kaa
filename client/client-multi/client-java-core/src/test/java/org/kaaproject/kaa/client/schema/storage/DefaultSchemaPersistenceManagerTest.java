@@ -46,7 +46,7 @@ public class DefaultSchemaPersistenceManagerTest {
         byte[] expected = null;
         try {
           expected = schema.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException ex) {
 
         }
         assertArrayEquals(expected, buffer.array());
@@ -75,7 +75,7 @@ public class DefaultSchemaPersistenceManagerTest {
         byte[] rawBuffer = null;
         try {
           rawBuffer = schema.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException ex) {
 
         }
         assertArrayEquals(rawBuffer, buffer.array());
@@ -99,7 +99,7 @@ public class DefaultSchemaPersistenceManagerTest {
         byte[] rawBuffer = null;
         try {
           rawBuffer = schema.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException ex) {
 
         }
         ByteBuffer buffer = ByteBuffer.wrap(rawBuffer);

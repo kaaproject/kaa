@@ -73,7 +73,7 @@ public class ModelUtils {
     if (isNotBlank(id)) {
       try {
         longId = Long.valueOf(id);
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException ex) {
         LOG.error("Can't convert to Long id. Incorrect String id {} ", id);
       }
     }
@@ -175,8 +175,8 @@ public class ModelUtils {
     if (data != null) {
       try {
         body = new String(data, UTF8);
-      } catch (UnsupportedEncodingException e) {
-        LOG.warn("Can't convert binary data to string. ", e);
+      } catch (UnsupportedEncodingException ex) {
+        LOG.warn("Can't convert binary data to string. ", ex);
       }
     }
     return body;
@@ -187,8 +187,8 @@ public class ModelUtils {
     if (body != null) {
       try {
         data = body.getBytes(UTF8);
-      } catch (UnsupportedEncodingException e) {
-        LOG.warn("Can't convert string data to binary. ", e);
+      } catch (UnsupportedEncodingException ex) {
+        LOG.warn("Can't convert string data to binary. ", ex);
       }
     }
     return data;
@@ -306,8 +306,8 @@ public class ModelUtils {
           if (arrayData != null) {
             data = new String(arrayData, Charset.forName("UTF-8"));
           }
-        } catch (IOException e) {
-          LOG.error("Can't read data from file", e);
+        } catch (IOException ex) {
+          LOG.error("Can't read data from file", ex);
         }
       }
     }

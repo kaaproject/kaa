@@ -74,8 +74,8 @@ public class BaseCliThriftClient {
     try {
       ss.out = new PrintStream(System.out, true, "UTF-8"); //NOSONAR
       ss.err = new PrintStream(System.err, true, "UTF-8"); //NOSONAR
-    } catch (UnsupportedEncodingException e) {
-      LOG.error("Exception catched: ", e);
+    } catch (UnsupportedEncodingException ex) {
+      LOG.error("Exception catched: ", ex);
       System.exit(3); //NOSONAR
     }
 
@@ -168,11 +168,11 @@ public class BaseCliThriftClient {
           }
           err.println("[Thrift CLI Error]: " + errMsg);
         }
-      } catch (TException e) {
-        LOG.error("Exception catched: ", e);
-        String errMsg = e.getMessage();
+      } catch (TException ex) {
+        LOG.error("Exception catched: ", ex);
+        String errMsg = ex.getMessage();
         if (errMsg == null) {
-          errMsg = e.toString();
+          errMsg = ex.toString();
         }
         ret = -10002;
         err.println("[Thrift Error]: " + errMsg);
@@ -197,8 +197,8 @@ public class BaseCliThriftClient {
             int port = 0;
             try {
               port = Integer.valueOf(strPort);
-            } catch (Exception e) {
-              LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer, exception catched {}", strPort, e);
+            } catch (Exception ex) {
+              LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer, exception catched {}", strPort, ex);
             }
             if (port > 0) {
               parsed = true;
@@ -206,10 +206,10 @@ public class BaseCliThriftClient {
               ss.port = port;
               try {
                 ss.connect();
-              } catch (TException e) {
-                String errMsg = e.getMessage();
+              } catch (TException ex) {
+                String errMsg = ex.getMessage();
                 if (errMsg == null) {
-                  errMsg = e.toString();
+                  errMsg = ex.toString();
                 }
                 err.println("[Thrift Error]: " + errMsg);
               }

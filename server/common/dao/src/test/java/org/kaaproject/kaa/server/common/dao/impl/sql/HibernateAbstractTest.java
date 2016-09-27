@@ -174,9 +174,9 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         Assert.assertNotNull(schema);
         schemas.add(schema);
       }
-    } catch (Exception e) {
-      LOG.error("Can't generate configuration schemas {}", e);
-      Assert.fail("Can't generate configuration schemas." + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Can't generate configuration schemas {}", ex);
+      Assert.fail("Can't generate configuration schemas." + ex.getMessage());
     }
     return schemas;
   }
@@ -206,9 +206,9 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         Assert.assertNotNull(saved);
         configs.add(saved);
       }
-    } catch (Exception e) {
-      LOG.error("Can't generate configs {}", e);
-      Assert.fail("Can't generate configurations." + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Can't generate configs {}", ex);
+      Assert.fail("Can't generate configurations." + ex.getMessage());
     }
     return configs;
   }
@@ -282,9 +282,9 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         Assert.assertNotNull(schemaDto);
         schemas.add(schemaDto);
       }
-    } catch (Exception e) {
-      LOG.error("Can't generate profile schema {}", e);
-      Assert.fail("Can't generate profile schema." + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Can't generate profile schema {}", ex);
+      Assert.fail("Can't generate profile schema." + ex.getMessage());
     }
     return schemas;
   }
@@ -500,8 +500,8 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         Assert.assertNotNull(schema);
         schemas.add(schema);
       }
-    } catch (Exception e) {
-      LOG.error("Can't generate log schemas {}", e);
+    } catch (Exception ex) {
+      LOG.error("Can't generate log schemas {}", ex);
       Assert.fail("Can't generate log schemas.");
     }
     return schemas;

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.avro.avrogen;
 
 
 import org.kaaproject.kaa.avro.avrogen.compiler.ObjectiveCCompiler;
+import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
 
 public class Main {
   public static void main(String[] args) {
@@ -27,10 +28,10 @@ public class Main {
             + "Need {FULL_PATH_TO_SCHEMA} {OUTPUT_PATH} {SOURCE_NAME}");
       }
 
-      org.kaaproject.kaa.avro.avrogen.compiler.Compiler compiler = new ObjectiveCCompiler(args[0], args[1], args[2]);
+      Compiler compiler = new ObjectiveCCompiler(args[0], args[1], args[2]);
       compiler.generate();
-    } catch (Exception e) {
-      System.err.println("Compilation failure: " + e.toString());
+    } catch (Exception ex) {
+      System.err.println("Compilation failure: " + ex.toString());
     }
   }
 }

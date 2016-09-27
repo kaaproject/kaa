@@ -42,7 +42,7 @@ public abstract class CancelableCommandRunnable implements CancelableRunnable {
       synchronized (this) {
         try {
           this.wait();
-        } catch (InterruptedException e) { //NOSONAR
+        } catch (InterruptedException ex) { //NOSONAR
         }
       }
     }

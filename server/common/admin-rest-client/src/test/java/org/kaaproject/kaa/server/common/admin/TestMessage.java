@@ -51,10 +51,10 @@ public class TestMessage {
         }
       }
 
-    } catch (HttpStatusCodeException e) {
-      result = "Get FAILED with HttpStatusCode: " + e.getStatusCode() + "|" + e.getStatusText();
-    } catch (RuntimeException e) {
-      result = "Get FAILED\n" + ExceptionUtils.getFullStackTrace(e);
+    } catch (HttpStatusCodeException ex) {
+      result = "Get FAILED with HttpStatusCode: " + ex.getStatusCode() + "|" + ex.getStatusText();
+    } catch (RuntimeException ex) {
+      result = "Get FAILED\n" + ExceptionUtils.getFullStackTrace(ex);
     }
     return result;
   }

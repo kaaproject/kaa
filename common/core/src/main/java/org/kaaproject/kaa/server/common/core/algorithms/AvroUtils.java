@@ -136,7 +136,7 @@ public class AvroUtils {
             .forEach(s -> injectUuidsFromJsonNodes(json.get(s.getName()), s));
         break;
       case ARRAY:
-        json.getElements().forEachRemaining((e) -> injectUuids(e, schema.getElementType()));
+        json.getElements().forEachRemaining((el) -> injectUuids(el, schema.getElementType()));
         break;
       default:
         return json;

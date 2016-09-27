@@ -535,11 +535,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             LOG.debug("[{}] Going to invoke sync method", channel.getId());
             channel.sync(task.getTypes());
           }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
           if (stop) {
             LOG.debug("[{}] Worker is interrupted.", channel.getId());
           } else {
-            LOG.warn("[{}] Worker is interrupted.", channel.getId(), e);
+            LOG.warn("[{}] Worker is interrupted.", channel.getId(), ex);
           }
         }
       }

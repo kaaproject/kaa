@@ -120,8 +120,8 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
           if (!events.isEmpty() && events.get(0).getSeqNum() != startEventSN.get()) {
             LOG.info("Put in order event sequence numbers (expected: {}, actual: {})", startEventSN, events.get(0).getSeqNum());
 
-            for (Event e : events) {
-              e.setSeqNum(startEventSN.getAndIncrement());
+            for (Event event : events) {
+              event.setSeqNum(startEventSN.getAndIncrement());
             }
           } else {
             startEventSN.getAndAdd(events.size());

@@ -132,15 +132,15 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
         LOG.info("Clearing old configuration data from storage {}", storage);
         try {
           storage.clearConfiguration();
-        } catch (IOException e) {
-          LOG.error("Failed to clear configuration from storage", e);
+        } catch (IOException ex) {
+          LOG.error("Failed to clear configuration from storage", ex);
         }
       } else {
         LOG.debug("Loading configuration data from storage {}", storage);
         try {
           configurationData = toByteArray(storage.loadConfiguration());
-        } catch (IOException e) {
-          LOG.error("Failed to load configuration from storage", e);
+        } catch (IOException ex) {
+          LOG.error("Failed to load configuration from storage", ex);
         }
       }
     }

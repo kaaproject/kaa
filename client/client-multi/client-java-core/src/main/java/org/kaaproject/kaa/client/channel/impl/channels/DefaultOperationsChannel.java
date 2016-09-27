@@ -92,7 +92,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
           while (httpClient == null && !stopped && !Thread.currentThread().isInterrupted()) {
             try {
               httpClientSetLock.wait();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ex) {
               break;
             }
           }
@@ -173,8 +173,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
       synchronized (httpClientLock) {
         request = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, httpClient.getEncoderDecoder());
       }
-    } catch (Exception e) {
-      LOG.error("Failed to create request {}", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to create request {}", ex);
     }
     return request;
   }
@@ -191,9 +191,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
       demultiplexer.processResponse(decodedResponse);
       processingResponse = false;
       failoverManager.onServerConnected(currentServer);
-    } catch (Exception e) {
+    } catch (Exception ex) {
       LOG.error("Failed to process response {}", Arrays.toString(response));
-      LOG.error("Exception stack trace: ", e);
+      LOG.error("Exception stack trace: ", ex);
     }
   }
 

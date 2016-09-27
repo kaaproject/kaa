@@ -18,21 +18,21 @@ package org.kaaproject.kaa.client.logging.future;
 
 public class ExecutionResult<T> {
 
-  private final T t;
-  private final Exception e;
+  private final T value;
+  private final Exception exception;
 
-  public ExecutionResult(T t, Exception e) {
+  public ExecutionResult(T value, Exception exception) {
     super();
-    this.t = t;
-    this.e = e;
+    this.value = value;
+    this.exception = exception;
   }
 
   public T get() {
-    return t;
+    return value;
   }
 
   public Exception getE() {
-    return e;
+    return exception;
   }
 
 }

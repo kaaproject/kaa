@@ -93,9 +93,9 @@ public class GenericAvroConverter<T extends GenericContainer> {
     try {
       GenericContainer record = converter.decodeBinary(rawData);
       json = converter.encodeToJson(record);
-    } catch (IOException e) {
-      LOG.warn("Can't parse json data", e);
-      throw new RuntimeException(e); //NOSONAR
+    } catch (IOException ex) {
+      LOG.warn("Can't parse json data", ex);
+      throw new RuntimeException(ex); //NOSONAR
     }
     return json;
   }
@@ -116,9 +116,9 @@ public class GenericAvroConverter<T extends GenericContainer> {
     try {
       GenericContainer record = converter.decodeJson(json);
       rawData = converter.encode(record);
-    } catch (IOException e) {
-      LOG.warn("Can't parse json data", e);
-      throw new RuntimeException(e); //NOSONAR
+    } catch (IOException ex) {
+      LOG.warn("Can't parse json data", ex);
+      throw new RuntimeException(ex); //NOSONAR
     }
     return rawData;
   }

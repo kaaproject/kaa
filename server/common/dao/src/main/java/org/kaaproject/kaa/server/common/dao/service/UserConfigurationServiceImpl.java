@@ -89,8 +89,8 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                 LOG.warn("Validated endpoint user configuration body is empty");
                 throw new IncorrectParameterException("Validated endpoint user configuration body is empty");
               }
-            } catch (IOException e) {
-              LOG.error("Invalid endpoint user configuration for override schema.", e);
+            } catch (IOException ex) {
+              LOG.error("Invalid endpoint user configuration for override schema.", ex);
               throw new IncorrectParameterException("Invalid endpoint user configuration for override schema.");
             }
           } else {

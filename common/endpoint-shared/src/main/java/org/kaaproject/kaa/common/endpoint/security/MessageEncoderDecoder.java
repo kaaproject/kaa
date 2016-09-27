@@ -106,8 +106,8 @@ public class MessageEncoderDecoder {
   static Cipher cipherForAlgorithm(String algorithm) {
     try {
       return Cipher.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-      LOG.error("Cipher init error", e);
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
+      LOG.error("Cipher init error", ex);
       return null;
     }
   }
@@ -117,8 +117,8 @@ public class MessageEncoderDecoder {
       KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
       keyGen.init(size);
       return keyGen;
-    } catch (NoSuchAlgorithmException e) {
-      LOG.error("Key generator init error", e);
+    } catch (NoSuchAlgorithmException ex) {
+      LOG.error("Key generator init error", ex);
       return null;
     }
   }
@@ -126,8 +126,8 @@ public class MessageEncoderDecoder {
   static Signature signatureForAlgorithm(String algorithm) {
     try {
       return Signature.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException e) {
-      LOG.error("Signature init error", e);
+    } catch (NoSuchAlgorithmException ex) {
+      LOG.error("Signature init error", ex);
       return null;
     }
   }

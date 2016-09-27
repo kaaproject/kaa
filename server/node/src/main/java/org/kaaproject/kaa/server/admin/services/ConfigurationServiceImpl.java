@@ -84,8 +84,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     try {
       checkApplicationId(applicationId);
       return controlService.getConfigurationSchemasByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -95,8 +95,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -108,8 +108,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       Utils.checkNotNull(configurationSchema);
       checkApplicationId(configurationSchema.getApplicationId());
       return configurationSchema;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -126,8 +126,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         checkApplicationId(storedConfSchema.getApplicationId());
       }
       return controlService.editConfigurationSchema(confSchema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -156,8 +156,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
 
       ConfigurationSchemaDto savedConfSchema = saveConfigurationSchema(confSchema);
       return getConfigurationSchemaView(savedConfSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -168,8 +168,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       ConfigurationSchemaDto confSchema = getConfigurationSchema(configurationSchemaId);
       CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(confSchema.getCtlSchemaId());
       return new ConfigurationSchemaViewDto(confSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER));
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -180,8 +180,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -193,8 +193,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkEndpointGroupId(endpointGroupId);
       ConfigurationRecordDto record = controlService.getConfigurationRecord(schemaId, endpointGroupId);
       return record;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -213,12 +213,12 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
       }
       return controlService.editConfiguration(configuration);
-    } catch (StaleObjectStateException e) {
-      LOG.error("Someone has already updated the configuration. Reload page to be able to edit it. ", e);
+    } catch (StaleObjectStateException ex) {
+      LOG.error("Someone has already updated the configuration. Reload page to be able to edit it. ", ex);
       throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
           ServiceErrorCode.GENERAL_ERROR);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -228,8 +228,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     try {
       checkApplicationToken(endpointUserConfiguration.getAppToken());
       controlService.editUserConfiguration(endpointUserConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -242,8 +242,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       return controlService.activateConfiguration(configurationId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -256,8 +256,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       return controlService.deactivateConfiguration(configurationId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -269,8 +269,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkEndpointGroupId(record.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       controlService.deleteConfigurationRecord(schemaId, endpointGroupId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -282,8 +282,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       Schema schema = new Schema.Parser().parse(avroSchema);
       validateRecordSchema(schema);
       return configurationSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -295,8 +295,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkSchemaId(schemaId);
       ConfigurationRecordDto record = getConfigurationRecord(schemaId, endpointGroupId);
       return toConfigurationRecordView(record);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -307,8 +307,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       ConfigurationDto toSave = toConfigurationDto(configuration);
       ConfigurationDto stored = editConfiguration(toSave);
       return toConfigurationRecordFormDto(stored);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -318,8 +318,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     try {
       ConfigurationDto storedConfiguration = activateConfiguration(configurationId);
       return toConfigurationRecordFormDto(storedConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -329,8 +329,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     try {
       ConfigurationDto storedConfiguration = deactivateConfiguration(configurationId);
       return toConfigurationRecordFormDto(storedConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -344,8 +344,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
       GenericRecord record = converter.decodeJson(body);
       return FormAvroConverter.createRecordFieldFromGenericRecord(record);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -364,8 +364,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         schemaInfos.add(schemaInfo);
       }
       return schemaInfos;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -381,8 +381,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       String body = converter.encodeToJson(record);
       endpointUserConfiguration.setBody(body);
       controlService.editUserConfiguration(endpointUserConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -393,8 +393,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       EndpointGroupDto endpointGroup = checkEndpointGroupId(endpointGroupId);
       List<VersionDto> schemas = getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
       return toConfigurationSchemaInfos(schemas, endpointGroup);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -411,8 +411,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       confSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       ConfigurationSchemaDto savedConfSchema = saveConfigurationSchema(confSchema);
       return getConfigurationSchemaView(savedConfSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -432,8 +432,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         throw Utils.handleException(new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
       }
       return userConfigurationDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -447,8 +447,8 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         throw Utils.handleException(new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
       }
       return userConfigurationDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

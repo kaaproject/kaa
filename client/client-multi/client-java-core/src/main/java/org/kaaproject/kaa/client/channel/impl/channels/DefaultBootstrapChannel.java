@@ -90,12 +90,12 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
       try {
         processTypes(SUPPORTED_TYPES);
         connectionFailed(false);
-      } catch (Exception e) {
+      } catch (Exception ex) {
         if (!isShutdown()) {
-          LOG.error("Failed to receive operation servers list {}", e);
+          LOG.error("Failed to receive operation servers list {}", ex);
           connectionFailed(true);
         } else {
-          LOG.debug("Failed to receive operation servers list {}", e);
+          LOG.debug("Failed to receive operation servers list {}", ex);
         }
       }
     }
