@@ -27,6 +27,8 @@
         <property name="eachLine" value="true"/>
     </module>
 
+    <module name="SuppressionCommentFilter"/>
+
     <module name="TreeWalker">
         <module name="OuterTypeFilename"/>
         <module name="IllegalTokenText">
