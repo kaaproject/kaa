@@ -31,46 +31,6 @@ public class OperationsServerLoadHistory {
   private final List<OperationsServerLoad> history;
   private long maxHistoryTimeLive = 600 * 1000;
 
-  /**
-   * The Class OperationsServerLoad.
-   */
-  public class OperationsServerLoad {
-    private final long time;
-    private LoadInfo loadInfo;
-
-    protected OperationsServerLoad(LoadInfo load) {
-      time = System.currentTimeMillis();
-      this.loadInfo = load;
-    }
-
-    /**
-     * Gets the time.
-     *
-     * @return the time
-     */
-    public long getTime() {
-      return time;
-    }
-
-    /**
-     * Gets the registered users count.
-     *
-     * @return the registeredUsersCount
-     */
-    public LoadInfo getLoadInfo() {
-      return loadInfo;
-    }
-
-    /**
-     * Sets the registered users count.
-     *
-     * @param loadInfo the load info to set
-     */
-    public void setLoadInfo(LoadInfo loadInfo) {
-      this.loadInfo = loadInfo;
-    }
-  }
-
   public OperationsServerLoadHistory(long maxHistoryTimeLiv) {
     setMaxHistoryTimeLive(maxHistoryTimeLiv);
     history = new CopyOnWriteArrayList<OperationsServerLoad>();
