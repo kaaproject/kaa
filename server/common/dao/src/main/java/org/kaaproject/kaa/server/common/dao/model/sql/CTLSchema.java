@@ -203,45 +203,61 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     CTLSchema other = (CTLSchema) obj;
     if (body == null) {
-      if (other.body != null)
+      if (other.body != null) {
         return false;
-    } else if (!body.equals(other.body))
+      }
+    } else if (!body.equals(other.body)) {
       return false;
-    if (createdTime != other.createdTime)
+    }
+    if (createdTime != other.createdTime) {
       return false;
+    }
     if (createdUsername == null) {
-      if (other.createdUsername != null)
+      if (other.createdUsername != null) {
         return false;
-    } else if (!createdUsername.equals(other.createdUsername))
+      }
+    } else if (!createdUsername.equals(other.createdUsername)) {
       return false;
+    }
     if (defaultRecord == null) {
-      if (other.defaultRecord != null)
+      if (other.defaultRecord != null) {
         return false;
-    } else if (!defaultRecord.equals(other.defaultRecord))
+      }
+    } else if (!defaultRecord.equals(other.defaultRecord)) {
       return false;
+    }
     if (dependencySet == null) {
-      if (other.dependencySet != null)
+      if (other.dependencySet != null) {
         return false;
-    } else if (!dependencySet.equals(other.dependencySet))
+      }
+    } else if (!dependencySet.equals(other.dependencySet)) {
       return false;
+    }
     if (metaInfo == null) {
-      if (other.metaInfo != null)
+      if (other.metaInfo != null) {
         return false;
-    } else if (!metaInfo.equals(other.metaInfo))
+      }
+    } else if (!metaInfo.equals(other.metaInfo)) {
       return false;
+    }
     if (version == null) {
-      if (other.version != null)
+      if (other.version != null) {
         return false;
-    } else if (!version.equals(other.version))
+      }
+    } else if (!version.equals(other.version)) {
       return false;
+    }
     return true;
   }
 

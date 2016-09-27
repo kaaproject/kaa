@@ -204,11 +204,14 @@ public class EventClassServiceImpl implements EventClassService {
     ecfvList.forEach(ecfv -> ecfv.getRecords().forEach(ec -> ec.setEcfv(ecfv)));
   }
 
+
   @Override
   public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
     Set<String> storedFQNs = getFqnSetForECF(eventClassFamilyId);
     for (String fqn : fqns) {
-      if (storedFQNs.contains(fqn)) return false;
+      if (storedFQNs.contains(fqn)) {
+        return false;
+      }
     }
     return true;
   }
@@ -278,7 +281,9 @@ public class EventClassServiceImpl implements EventClassService {
           .findFirst();
       if (optEcfv.isPresent()) {
         for (EventClass ec : optEcfv.get().getRecords()) {
-          if (!ecList.add(ec)) return false;
+          if (!ecList.add(ec)) {
+            return false;
+          }
         }
       }
     }
@@ -291,7 +296,8 @@ public class EventClassServiceImpl implements EventClassService {
       LOG.debug("Get fqn list for event class family by id [{}] ", ecfId);
       Set<String> storedFQNs = new HashSet<>();
       EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
-      ecf.getSchemas().forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
+      ecf.getSchemas()
+          .forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
       return storedFQNs;
     } else {
       throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);

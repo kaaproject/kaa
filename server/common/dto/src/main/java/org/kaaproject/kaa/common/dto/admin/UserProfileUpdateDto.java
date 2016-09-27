@@ -67,13 +67,21 @@ public class UserProfileUpdateDto implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     UserProfileUpdateDto that = (UserProfileUpdateDto) o;
 
-    if (!firstName.equals(that.firstName)) return false;
-    if (!lastName.equals(that.lastName)) return false;
+    if (!firstName.equals(that.firstName)) {
+      return false;
+    }
+    if (!lastName.equals(that.lastName)) {
+      return false;
+    }
     return mail.equals(that.mail);
 
   }
@@ -88,10 +96,11 @@ public class UserProfileUpdateDto implements Serializable {
 
   @Override
   public String toString() {
-    return "UserProfileUpdateDto{" +
-        "firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", mail='" + mail + '\'' +
-        '}';
+    final StringBuilder sb = new StringBuilder("UserProfileUpdateDto{");
+    sb.append("firstName='").append(firstName).append('\'');
+    sb.append(", lastName='").append(lastName).append('\'');
+    sb.append(", mail='").append(mail).append('\'');
+    sb.append('}');
+    return sb.toString();
   }
 }

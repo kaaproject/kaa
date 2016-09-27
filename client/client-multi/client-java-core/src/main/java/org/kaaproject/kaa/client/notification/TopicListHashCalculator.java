@@ -45,8 +45,9 @@ public class TopicListHashCalculator {
    * @return the integer
    */
   public static Integer calculateTopicListHash(List<Topic> topics) {
-    if (topics == null)
+    if (topics == null) {
       return NULL_LIST_HASH;
+    }
 
     int result = EMPTRY_LIST_HASH;
     if (!topics.isEmpty()) {

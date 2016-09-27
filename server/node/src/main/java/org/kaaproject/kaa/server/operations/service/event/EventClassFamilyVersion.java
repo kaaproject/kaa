@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.io.Serializable;
 
 public final class EventClassFamilyVersion implements Serializable {
+
   /**
    *
    */

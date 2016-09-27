@@ -122,7 +122,11 @@ public class AvroUtils {
             .filter(f -> !f.name().equals(UUID_FIELD))
             .forEach(f -> injectUuidsFromJsonNodes(json.get(f.name()), f.schema()));
 
-        boolean addressable = schema.getFields().stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst().isPresent();
+        boolean addressable = schema.getFields().stream()
+            .filter(f -> f.name().equals(UUID_FIELD))
+            .findFirst()
+            .isPresent();
+
         if (addressable) {
           ((ObjectNode) json).put(UUID_FIELD, (Integer) null);
         }
@@ -151,8 +155,10 @@ public class AvroUtils {
     }
 
     for (JsonNode node : json) {
-      if (node.isContainerNode())
+      if (node.isContainerNode()) {
         removeUuids(node);
+      }
     }
   }
+
 }

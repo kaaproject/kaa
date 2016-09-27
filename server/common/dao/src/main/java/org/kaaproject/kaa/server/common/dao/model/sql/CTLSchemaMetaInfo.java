@@ -152,28 +152,37 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     CTLSchemaMetaInfo other = (CTLSchemaMetaInfo) obj;
     if (application == null) {
-      if (other.application != null)
+      if (other.application != null) {
         return false;
-    } else if (!application.equals(other.application))
+      }
+    } else if (!application.equals(other.application)) {
       return false;
+    }
     if (fqn == null) {
-      if (other.fqn != null)
+      if (other.fqn != null) {
         return false;
-    } else if (!fqn.equals(other.fqn))
+      }
+    } else if (!fqn.equals(other.fqn)) {
       return false;
+    }
     if (tenant == null) {
-      if (other.tenant != null)
+      if (other.tenant != null) {
         return false;
-    } else if (!tenant.equals(other.tenant))
+      }
+    } else if (!tenant.equals(other.tenant)) {
       return false;
+    }
     return true;
   }
 
