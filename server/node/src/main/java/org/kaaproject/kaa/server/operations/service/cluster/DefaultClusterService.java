@@ -195,26 +195,26 @@ public class DefaultClusterService implements ClusterService {
     @Override
     public String sendRouteMessage(EndpointRouteMessage msg) {
         String serverId = getEntityNode(msg.getAddress().getEndpointKey());
-        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromRoute(toThriftMsg(msg)));
+        sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromRoute(toThriftMsg(msg)));
         return serverId;
     }
 
     @Override
     public void sendUnicastNotificationMessage(String serverId, ThriftUnicastNotificationMessage msg) {
-        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromNotification(msg));
+        sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromNotification(msg));
     }
 
     @Override
     public void sendServerProfileUpdateMessage(String serverId, ThriftServerProfileUpdateMessage msg) {
-        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
+        sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
     }
 
     @Override
     public void sendEndpointConfigurationRefreshMessage(String serverId, ThriftEndpointConfigurationRefreshMessage msg) {
-        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromEndpointConfigurationRefresh(msg));
+        sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromEndpointConfigurationRefresh(msg));
     }
 
-    private void sendServerProfileUpdateMessage(String serverId, OperationsServiceMsg msg) {
+    private void sendOperationsServiceMessage(String serverId, OperationsServiceMsg msg) {
         NeighborConnection<MessageTemplate, OperationsServiceMsg> server = neighbors.getNeghborConnection(serverId);
         if (server == null) {
             LOG.warn("Specified server {} not found in neighbors list", serverId);

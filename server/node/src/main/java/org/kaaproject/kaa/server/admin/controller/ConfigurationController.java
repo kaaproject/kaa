@@ -290,7 +290,7 @@ public class ConfigurationController extends AbstractAdminController {
      */
     @ApiOperation(value = "Create or update endpoint specific configuration",
             notes = "Creates or updates endpoint specific configuration. If a configuration for target endpoint does not " +
-                    "exist, then it will be created. If a configuration for target endpoint, it is updated. Only users " +
+                    "exist, then it will be created. If a configuration for target endpoint exists, then it is updated. Only users " +
                     "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Endpoint specific configuration created"),
@@ -321,7 +321,7 @@ public class ConfigurationController extends AbstractAdminController {
                     "exist, then request is rejected. Only users " +
                     "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "Endpoint specific configuration successfully retrieved"),
+            @ApiResponse(code = 200, message = "Endpoint specific configuration successfully retrieved"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
                     "of the application does not match the Tenant ID of the authenticated user"),

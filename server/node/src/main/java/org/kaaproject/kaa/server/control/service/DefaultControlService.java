@@ -913,14 +913,14 @@ public class DefaultControlService implements ControlService {
         OperationsNodeInfo server = resolve(endpointKeyHash);
 
         if (server != null) {
-            ThriftEndpointConfigurationRefreshMessage nf = new ThriftEndpointConfigurationRefreshMessage();
-            nf.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
+            ThriftEndpointConfigurationRefreshMessage msg = new ThriftEndpointConfigurationRefreshMessage();
+            msg.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
                     ByteBuffer.wrap(endpointKeyHashBytes)));
-            nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
+            msg.setActorClassifier(ThriftActorClassifier.GLOBAL);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Sending message {} to [{}]", nf, Neighbors.getServerID(server.getConnectionInfo()));
+                LOG.trace("Sending message {} to [{}]", msg, Neighbors.getServerID(server.getConnectionInfo()));
             }
-            neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromEndpointConfigurationRefresh(nf));
+            neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromEndpointConfigurationRefresh(msg));
         } else {
             LOG.warn("Can't find server for endpoint [{}]", endpointKeyHash);
         }

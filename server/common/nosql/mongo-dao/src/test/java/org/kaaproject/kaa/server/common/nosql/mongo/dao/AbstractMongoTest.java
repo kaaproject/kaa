@@ -103,7 +103,7 @@ public class AbstractMongoTest extends AbstractTest {
      * @param configurationVersion The endpoint configuration version
      * @param configuration        The configuration body
      * @param version              The endpoint specific configuration version
-     * @return Saved endpoint specific configuration
+     * @return saved endpoint specific configuration
      */
     protected EndpointSpecificConfigurationDto generateEndpointSpecificConfigurationDto(String endpointKeyHash, Integer configurationVersion, String configuration, Long version) {
         EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto(endpointKeyHash, configurationVersion, configuration, version);

@@ -41,10 +41,10 @@ public class EndpointSpecificConfigurationServiceImplTest {
     private static final byte[] DECODED_KEY = Base64Utils.decodeFromString(KEY);
     private static final int CONF_VERSION = 7;
     private static final EndpointSpecificConfigurationServiceImpl SERVICE = new EndpointSpecificConfigurationServiceImpl();
-    EndpointSpecificConfigurationDao daoMock = mock(EndpointSpecificConfigurationDao.class);
-    EndpointService endpointServiceMock = mock(EndpointService.class);
-    ConfigurationService configurationServiceMock = mock(ConfigurationService.class);
-    EndpointSpecificConfiguration configuration = mock(EndpointSpecificConfiguration.class);
+    private EndpointSpecificConfigurationDao daoMock = mock(EndpointSpecificConfigurationDao.class);
+    private EndpointService endpointServiceMock = mock(EndpointService.class);
+    private ConfigurationService configurationServiceMock = mock(ConfigurationService.class);
+    private EndpointSpecificConfiguration configuration = mock(EndpointSpecificConfiguration.class);
 
     @Before
     public void setUp() throws Exception {

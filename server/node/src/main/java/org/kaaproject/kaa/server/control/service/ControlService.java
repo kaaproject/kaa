@@ -583,7 +583,7 @@ public interface ControlService {
     void editUserConfiguration(EndpointUserConfigurationDto configuration) throws ControlServiceException;
 
     /**
-     * Creates endpoint specific configuration.
+     * Edits endpoint specific configuration.
      *
      * @param configuration endpoint specific configuration
      * @return saved endpoint specific configuration

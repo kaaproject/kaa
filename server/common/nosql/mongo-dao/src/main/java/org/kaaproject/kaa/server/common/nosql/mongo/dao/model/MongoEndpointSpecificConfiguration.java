@@ -65,7 +65,6 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
         generateId();
     }
 
-
     @Override
     public EndpointSpecificConfigurationDto toDto() {
         EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto();
