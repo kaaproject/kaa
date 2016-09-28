@@ -32,7 +32,7 @@ import java.nio.ByteBuffer;
  *
  * @author Andrey Panasenko
  */
-abstract public class MqttFrame {
+public abstract class MqttFrame {
 
   public static final Logger LOG = LoggerFactory //NOSONAR
       .getLogger(MqttFrame.class);
@@ -48,16 +48,12 @@ abstract public class MqttFrame {
    * to clone all fileds.
    */
   private MessageType messageType;
-  /**
-   *
-   */
-  protected MqttFrame() {
 
+
+  protected MqttFrame() {
   }
 
-  /**
-   * @param old te old
-   */
+
   protected MqttFrame(MqttFrame old) {
     this.messageType = old.getMessageType();
     this.buffer = old.getBuffer();
@@ -67,16 +63,11 @@ abstract public class MqttFrame {
     this.currentState = old.currentState;
   }
 
-  /**
-   * @return the messageType
-   */
+
   public MessageType getMessageType() {
     return messageType;
   }
 
-  /**
-   * @param messageType the messageType to set
-   */
   protected void setMessageType(MessageType messageType) {
     this.messageType = messageType;
   }
@@ -102,12 +93,12 @@ abstract public class MqttFrame {
   }
 
   /**
-   * Pack message into mqtt frame
+   * Pack message into mqtt frame.
    */
-  abstract protected void pack();
+  protected abstract  void pack();
 
   /**
-   * Return remaining length of mqtt frame, necessary for ByteBuffer size calculation
+   * Return remaining length of mqtt frame, necessary for ByteBuffer size calculation.
    *
    * @return remaining length of mqtt frame
    */
@@ -116,21 +107,21 @@ abstract public class MqttFrame {
   }
 
   /**
-   * Decode message from mqttFrame ByteBuffer
+   * Decode message from mqttFrame ByteBuffer.
    *
    * @throws KaaTcpProtocolException the kaa tcp protocol exception
    */
-  abstract protected void decode() throws KaaTcpProtocolException;
+  protected abstract void decode() throws KaaTcpProtocolException;
 
   /**
    * Check if this Mqtt frame should be last frame on connection and connection should be closed.
    *
    * @return boolean 'true' if connection should be closed after frame transmition.
    */
-  abstract public boolean isNeedCloseConnection();
+  public abstract  boolean isNeedCloseConnection();
 
   /**
-   * Fill mqtt frame fixed header
+   * Fill mqtt frame fixed header.
    *
    * @param remainingLegth the remaining legth
    * @param dst            the dst
@@ -152,7 +143,8 @@ abstract public class MqttFrame {
       }
       dst[size] = digit;
       ++size;
-    } while (remainingLegth > 0);
+    }
+    while (remainingLegth > 0);
     return size;
   }
 
@@ -169,11 +161,11 @@ abstract public class MqttFrame {
     frameDecodeComplete = true;
   }
 
-  private void processByte(byte b) throws KaaTcpProtocolException {
+  private void processByte(byte value) throws KaaTcpProtocolException {
     if (currentState.equals(FrameParsingState.PROCESSING_LENGTH)) {
-      remainingLength += ((b & 0xFF) & 127) * multiplier;
+      remainingLength += ((value & 0xFF) & 127) * multiplier;
       multiplier *= 128;
-      if (((b & 0xFF) & 128) == 0) {
+      if (((value & 0xFF) & 128) == 0) {
         LOG.trace("Frame ({}): payload length = {}", getMessageType(), remainingLength);
         if (remainingLength != 0) {
           buffer = ByteBuffer.allocate(remainingLength);
@@ -186,7 +178,7 @@ abstract public class MqttFrame {
   }
 
   /**
-   * Push bytes of frame
+   * Push bytes of frame.
    *
    * @param bytes    the bytes array
    * @param position the position in buffer
@@ -201,11 +193,13 @@ abstract public class MqttFrame {
     }
     while (pos < bytes.length && !frameDecodeComplete) {
       if (currentState.equals(FrameParsingState.PROCESSING_PAYLOAD)) {
-        int bytesToCopy = (remainingLength > bytes.length - pos) ? bytes.length - pos : remainingLength;
+        int bytesToCopy = (remainingLength > bytes.length - pos) ? bytes.length - pos :
+            remainingLength;
         buffer.put(bytes, pos, bytesToCopy);
         pos += bytesToCopy;
         remainingLength -= bytesToCopy;
-        LOG.trace("Frame ({}): copied {} bytes of payload. {} bytes left", getMessageType(), bytesToCopy, remainingLength);
+        LOG.trace("Frame ({}): copied {} bytes of payload. {} bytes left", getMessageType(),
+            bytesToCopy, remainingLength);
         if (remainingLength == 0) {
           onFrameDone();
         }
@@ -218,7 +212,7 @@ abstract public class MqttFrame {
   }
 
   /**
-   * Test if Mqtt frame decode complete
+   * Test if Mqtt frame decode complete.
    *
    * @return boolean 'true' if decode complete
    */
