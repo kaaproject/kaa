@@ -25,9 +25,9 @@ Any endpoint can be a member of unlimited number of groups at the same time.
 
 ## Prerequisites
 
-To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
-After that, you need to create a tenant and an application.
-To do this, you can use the [tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant) and [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application) APIs or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
+To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox), or a [single Kaa node]({{root_url}}Administration-guide/System-installation/Single-node-installation/), or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
+After that, you need to create a tenant, tenant admin, application, and user (if you use Sandbox, you don't need to create a tenant and application).
+To do this, you can use the [users management]({{root_url}}Administration-guide/Users-management/) guide or [tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [user]({{root_url}}Programming-guide/Server-REST-APIs/#/User) and [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application) APIs.
 
 It is strongly recommended that you first read the [Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) section before you proceed.
 
