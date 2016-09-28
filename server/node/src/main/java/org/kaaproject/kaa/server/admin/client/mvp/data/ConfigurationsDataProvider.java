@@ -27,7 +27,8 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigRecordKey;
 
 import java.util.List;
 
-public class ConfigurationsDataProvider extends AbstractDataProvider<ConfigurationRecordDto, ConfigRecordKey> {
+public class ConfigurationsDataProvider
+    extends AbstractDataProvider<ConfigurationRecordDto, ConfigRecordKey> {
 
   private String endpointGroupId;
   private boolean includeDeprecated = false;
@@ -47,18 +48,19 @@ public class ConfigurationsDataProvider extends AbstractDataProvider<Configurati
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadConfigurationRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<ConfigurationRecordDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadConfigurationRecords(
+        endpointGroupId, includeDeprecated, new AsyncCallback<List<ConfigurationRecordDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<ConfigurationRecordDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<ConfigurationRecordDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

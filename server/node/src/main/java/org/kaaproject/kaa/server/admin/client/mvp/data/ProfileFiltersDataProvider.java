@@ -27,14 +27,16 @@ import org.kaaproject.kaa.server.admin.shared.profile.ProfileFilterRecordKey;
 
 import java.util.List;
 
-public class ProfileFiltersDataProvider extends AbstractDataProvider<ProfileFilterRecordDto, ProfileFilterRecordKey> {
+public class ProfileFiltersDataProvider
+    extends AbstractDataProvider<ProfileFilterRecordDto, ProfileFilterRecordKey> {
 
   private String endpointGroupId;
   private boolean includeDeprecated = false;
 
-  public ProfileFiltersDataProvider(AbstractGrid<ProfileFilterRecordDto, ProfileFilterRecordKey> dataGrid,
-                                    HasErrorMessage hasErrorMessage,
-                                    String endpointGroupId, boolean includeDeprecated) {
+  public ProfileFiltersDataProvider(
+      AbstractGrid<ProfileFilterRecordDto, ProfileFilterRecordKey> dataGrid,
+      HasErrorMessage hasErrorMessage,
+      String endpointGroupId, boolean includeDeprecated) {
     super(dataGrid, hasErrorMessage, false);
     this.endpointGroupId = endpointGroupId;
     this.includeDeprecated = includeDeprecated;
@@ -47,18 +49,19 @@ public class ProfileFiltersDataProvider extends AbstractDataProvider<ProfileFilt
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadProfileFilterRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<ProfileFilterRecordDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadProfileFilterRecords(
+        endpointGroupId, includeDeprecated, new AsyncCallback<List<ProfileFilterRecordDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<ProfileFilterRecordDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<ProfileFilterRecordDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

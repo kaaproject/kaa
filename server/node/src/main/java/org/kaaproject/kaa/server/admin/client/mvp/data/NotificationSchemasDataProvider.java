@@ -26,7 +26,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
 
-public class NotificationSchemasDataProvider extends AbstractDataProvider<NotificationSchemaDto, String> {
+public class NotificationSchemasDataProvider
+    extends AbstractDataProvider<NotificationSchemaDto, String> {
 
   private String applicationId;
 
@@ -40,18 +41,19 @@ public class NotificationSchemasDataProvider extends AbstractDataProvider<Notifi
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadNotificationSchemas(applicationId, new AsyncCallback<List<NotificationSchemaDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadNotificationSchemas(
+        applicationId, new AsyncCallback<List<NotificationSchemaDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<NotificationSchemaDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<NotificationSchemaDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

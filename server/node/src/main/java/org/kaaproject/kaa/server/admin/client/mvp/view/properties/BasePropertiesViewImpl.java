@@ -27,7 +27,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class BasePropertiesViewImpl extends BaseDetailsViewImpl implements BasePropertiesView, ValueChangeHandler<RecordField> {
+public abstract class BasePropertiesViewImpl
+    extends BaseDetailsViewImpl
+    implements BasePropertiesView, ValueChangeHandler<RecordField> {
 
   private RecordFieldWidget configuration;
 

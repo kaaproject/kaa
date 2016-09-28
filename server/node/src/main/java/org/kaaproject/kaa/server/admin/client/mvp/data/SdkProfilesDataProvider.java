@@ -35,7 +35,8 @@ public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto,
 
   private final String applicationId;
 
-  public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid, HasErrorMessage hasErrorMessage, String applicationId) {
+  public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid,
+                                 HasErrorMessage hasErrorMessage, String applicationId) {
     super(dataGrid, hasErrorMessage, false);
     this.applicationId = applicationId;
     this.addDataDisplay();
@@ -44,18 +45,19 @@ public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto,
   @Override
   protected void loadData(final LoadCallback callback) {
     if (!Utils.isEmpty(applicationId)) {
-      KaaAdmin.getDataSource().loadSdkProfiles(applicationId, new AsyncCallback<List<SdkProfileDto>>() {
+      KaaAdmin.getDataSource().loadSdkProfiles(
+          applicationId, new AsyncCallback<List<SdkProfileDto>>() {
 
-        @Override
-        public void onSuccess(List<SdkProfileDto> result) {
-          callback.onSuccess(result);
-        }
+            @Override
+            public void onSuccess(List<SdkProfileDto> result) {
+              callback.onSuccess(result);
+            }
 
-        @Override
-        public void onFailure(Throwable cause) {
-          callback.onFailure(cause);
-        }
-      });
+            @Override
+            public void onFailure(Throwable cause) {
+              callback.onFailure(cause);
+            }
+          });
     }
   }
 }

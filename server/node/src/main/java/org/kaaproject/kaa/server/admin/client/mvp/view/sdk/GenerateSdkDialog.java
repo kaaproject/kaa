@@ -56,8 +56,6 @@ public class GenerateSdkDialog extends AvroUiDialog {
     grid.getColumnFormatter().setWidth(0, "115px");
     grid.getColumnFormatter().setWidth(1, "115px");
 
-    Label label = new Label(Utils.constants.targetPlatform());
-
     this.targetPlatform = new ValueListBox<>(new Renderer<SdkPlatform>() {
 
       @Override
@@ -85,7 +83,7 @@ public class GenerateSdkDialog extends AvroUiDialog {
     }
 
     targetPlatform.setValue(SdkPlatform.ANDROID);
-
+    Label label = new Label(Utils.constants.targetPlatform());
     grid.setWidget(0, 0, label);
     grid.setWidget(0, 1, targetPlatform);
     root.add(grid);

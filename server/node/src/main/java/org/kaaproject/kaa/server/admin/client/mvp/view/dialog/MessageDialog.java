@@ -53,7 +53,8 @@ public class MessageDialog extends AvroUiDialog {
     AlertPanel messageLabel = new AlertPanel(type);
     messageLabel.getElement().getStyle().setWhiteSpace(WhiteSpace.PRE_WRAP);
     messageLabel.getElement().getStyle().setProperty("maxHeight", "400px");
-    messageLabel.getElement().getStyle().setProperty("maxWidth", Window.getClientWidth() * 2 / 3 + "px");
+    messageLabel.getElement().getStyle()
+        .setProperty("maxWidth", Window.getClientWidth() * 2 / 3 + "px");
     messageLabel.getElement().getStyle().setOverflowY(Overflow.AUTO);
     messageLabel.setMessage(message);
     dialogContents.add(messageLabel);
@@ -81,11 +82,15 @@ public class MessageDialog extends AvroUiDialog {
     return showMessageDialog(AlertPanel.Type.INFO, title, message);
   }
 
-  public static MessageDialog showMessageDialog(AlertPanel.Type type, String title, String message) {
+  public static MessageDialog showMessageDialog(AlertPanel.Type type,
+                                                String title, String message) {
     return showMessageDialog(null, type, title, message);
   }
 
-  public static MessageDialog showMessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
+  public static MessageDialog showMessageDialog(Listener listener,
+                                                AlertPanel.Type type,
+                                                String title,
+                                                String message) {
     MessageDialog dialog = new MessageDialog(listener, type, title, message);
     dialog.center();
     dialog.show();

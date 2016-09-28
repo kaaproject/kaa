@@ -102,7 +102,9 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
   protected float constructActions(DataGrid<TopicDto> table, float prefWidth) {
     if (enableActions) {
       float result = 0;
-      if (!embedded && (sendNotificationColumn == null || table.getColumnIndex(sendNotificationColumn) == -1)) {
+      if (!embedded
+          && (sendNotificationColumn == null
+          || table.getColumnIndex(sendNotificationColumn) == -1)) {
         Header<SafeHtml> sendNotificationHeader = new SafeHtmlHeader(
             SafeHtmlUtils.fromSafeConstant(Utils.constants.sendNotification()));
 
@@ -113,7 +115,9 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
       }
       if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
         Header<SafeHtml> deleteHeader = new SafeHtmlHeader(
-            SafeHtmlUtils.fromSafeConstant(embedded ? Utils.constants.remove() : Utils.constants.delete()));
+            SafeHtmlUtils.fromSafeConstant(embedded
+                ? Utils.constants.remove()
+                : Utils.constants.delete()));
 
         deleteColumn = constructDeleteColumn("");
         table.addColumn(deleteColumn, deleteHeader);

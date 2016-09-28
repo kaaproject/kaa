@@ -64,6 +64,8 @@ public class NavigationTreeViewModel implements TreeViewModel {
         nodes.add(new ApplicationsPlace());
         nodes.add(new TenantCtlSchemasPlace());
         break;
+      default:
+        break;
     }
   }
 

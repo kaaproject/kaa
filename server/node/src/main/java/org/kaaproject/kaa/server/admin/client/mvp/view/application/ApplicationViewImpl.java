@@ -73,13 +73,6 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
     applicationName.addInputHandler(this);
     applicationName.setFocus(true);
 
-//        applicationKey = new SizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
-//        applicationKey.setWidth("100%");
-//
-//        Label keyLabel = new Label(Utils.constants.publicKey());
-//        detailsTable.setWidget(1, 0, keyLabel);
-//        detailsTable.setWidget(1, 1, applicationKey);
-
     if (!create) {
       applicationToken = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
       applicationToken.setWidth("100%");
@@ -89,8 +82,6 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
       detailsTable.setWidget(2, 0, tokenLabel);
       detailsTable.setWidget(2, 1, applicationToken);
     }
-
-//        applicationKey.addInputHandler(this);
 
     if (KaaAdmin.isDevMode()) {
       generateSdkButton = new Button(Utils.constants.generateSdk());
@@ -124,7 +115,8 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
 
   @Override
   protected boolean validate() {
-    return applicationName.getValue().length() > 0 && credentialsServiceName.getValue().length() > 0;
+    return applicationName.getValue().length() > 0
+        && credentialsServiceName.getValue().length() > 0;
   }
 
   @Override
@@ -141,11 +133,6 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
   public HasClickHandlers getGenerateSdkButton() {
     return generateSdkButton;
   }
-
-//    @Override
-//    public HasValue<String> getApplicationKey() {
-//        return applicationKey;
-//    }
 
   @Override
   public HasValue<String> getApplicationToken() {

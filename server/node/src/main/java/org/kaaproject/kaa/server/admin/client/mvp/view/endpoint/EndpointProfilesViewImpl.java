@@ -31,7 +31,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.EndpointGroupsInfoListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
+public class EndpointProfilesViewImpl
+    extends BaseListViewImpl<EndpointProfileDto>
+    implements EndpointProfilesView {
 
   private static final int DEFAULT_PAGE_SIZE = 10;
 

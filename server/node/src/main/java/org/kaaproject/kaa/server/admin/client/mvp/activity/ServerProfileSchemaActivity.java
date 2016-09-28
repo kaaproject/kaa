@@ -66,7 +66,7 @@ public class ServerProfileSchemaActivity
 
   @Override
   protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-    KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null,
         null,
         applicationId,
         ConverterType.FORM_AVRO_CONVERTER,

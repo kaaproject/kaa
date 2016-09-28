@@ -24,7 +24,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractStructGrid
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.profile.ProfileFilterRecordKey;
 
-public class ProfileFilterStructGrid extends AbstractStructGrid<ProfileFilterDto, ProfileFilterRecordDto, ProfileFilterRecordKey> {
+public class ProfileFilterStructGrid
+    extends AbstractStructGrid<ProfileFilterDto, ProfileFilterRecordDto, ProfileFilterRecordKey> {
 
   @Override
   protected float constructColumnsImpl(DataGrid<ProfileFilterRecordDto> table) {
@@ -34,8 +35,9 @@ public class ProfileFilterStructGrid extends AbstractStructGrid<ProfileFilterDto
         new StringValueProvider<ProfileFilterRecordDto>() {
           @Override
           public String getValue(ProfileFilterRecordDto item) {
-            return item.getEndpointProfileSchemaVersion() != null ?
-                item.getEndpointProfileSchemaVersion() + "" : "";
+            return item.getEndpointProfileSchemaVersion() != null
+                ? item.getEndpointProfileSchemaVersion() + ""
+                : "";
           }
         }, 60);
     prefWidth += constructStringColumn(table,
@@ -43,8 +45,9 @@ public class ProfileFilterStructGrid extends AbstractStructGrid<ProfileFilterDto
         new StringValueProvider<ProfileFilterRecordDto>() {
           @Override
           public String getValue(ProfileFilterRecordDto item) {
-            return item.getServerProfileSchemaVersion() != null ?
-                item.getServerProfileSchemaVersion() + "" : "";
+            return item.getServerProfileSchemaVersion() != null
+                ? item.getServerProfileSchemaVersion() + ""
+                : "";
           }
         }, 60);
 

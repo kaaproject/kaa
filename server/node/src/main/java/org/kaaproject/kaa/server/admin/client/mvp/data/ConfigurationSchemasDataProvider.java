@@ -26,7 +26,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
 
-public class ConfigurationSchemasDataProvider extends AbstractDataProvider<ConfigurationSchemaDto, String> {
+public class ConfigurationSchemasDataProvider
+    extends AbstractDataProvider<ConfigurationSchemaDto, String> {
 
   private String applicationId;
 
@@ -40,18 +41,19 @@ public class ConfigurationSchemasDataProvider extends AbstractDataProvider<Confi
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadConfigurationSchemas(applicationId, new AsyncCallback<List<ConfigurationSchemaDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadConfigurationSchemas(
+        applicationId, new AsyncCallback<List<ConfigurationSchemaDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<ConfigurationSchemaDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<ConfigurationSchemaDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

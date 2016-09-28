@@ -43,7 +43,9 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseStructView<T extends AbstractStructureDto, V> extends FlexTable implements InputEventHandler {
+public abstract class BaseStructView<T extends AbstractStructureDto, V>
+    extends FlexTable
+    implements InputEventHandler {
 
   private static final String REQUIRED = Utils.avroUiStyle.requiredField();
   protected HasValue<V> body;

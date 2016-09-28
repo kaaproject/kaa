@@ -48,8 +48,8 @@ import java.util.List;
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
   private SizedTextBox endpointKeyHash;
-  private SizedTextBox userID;
-  private SizedTextBox userExternalID;
+  private SizedTextBox userId;
+  private SizedTextBox userExternalId;
   private List<Widget> userInfoList;
 
   private Anchor sdkAnchor;
@@ -108,27 +108,28 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     detailsTable.setWidget(row, 1, endpointKeyHash);
 
     userInfoList = new ArrayList<>();
-    Label userIDLabel = new Label(Utils.constants.userId());
-    userID = new KaaAdminSizedTextBox(-1, false);
-    userID.setWidth("100%");
-    detailsTable.setWidget(++row, 0, userIDLabel);
-    detailsTable.setWidget(row, 1, userID);
-    userInfoList.add(userIDLabel);
-    userInfoList.add(userID);
+    Label userIdLabel = new Label(Utils.constants.userId());
+    userId = new KaaAdminSizedTextBox(-1, false);
+    userId.setWidth("100%");
+    detailsTable.setWidget(++row, 0, userIdLabel);
+    detailsTable.setWidget(row, 1, userId);
+    userInfoList.add(userIdLabel);
+    userInfoList.add(userId);
 
-    Label userExternalIDLabel = new Label(Utils.constants.userExternalId());
-    userExternalID = new KaaAdminSizedTextBox(-1, false);
-    userExternalID.setWidth("100%");
-    detailsTable.setWidget(++row, 0, userExternalIDLabel);
-    detailsTable.setWidget(row, 1, userExternalID);
-    userInfoList.add(userExternalIDLabel);
-    userInfoList.add(userExternalID);
+    Label userExternalIdLabel = new Label(Utils.constants.userExternalId());
+    userExternalId = new KaaAdminSizedTextBox(-1, false);
+    userExternalId.setWidth("100%");
+    detailsTable.setWidget(++row, 0, userExternalIdLabel);
+    detailsTable.setWidget(row, 1, userExternalId);
+    userInfoList.add(userExternalIdLabel);
+    userInfoList.add(userExternalId);
 
-    Label sdkLabel = new Label(Utils.constants.sdkProfile());
     sdkAnchor = new Anchor();
     sdkAnchor.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     sdkAnchor.setWidth("100%");
     detailsTable.getFlexCellFormatter().setHeight(row, 0, "40px");
+
+    Label sdkLabel = new Label(Utils.constants.sdkProfile());
     detailsTable.setWidget(row, 0, sdkLabel);
     detailsTable.setWidget(row++, 1, sdkAnchor);
 
@@ -136,17 +137,16 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     span.appendChild(Document.get().createTextNode(Utils.constants.endpointProfile()));
     span.addClassName("gwt-Label");
 
-    CaptionPanel formPanel = new CaptionPanel(span.getString(), true);
     FlexTable recordTable = new FlexTable();
     recordTable.setWidth("100%");
 
-    Label endpointProfSchemaLabel = new Label(Utils.constants.schemaName());
     endpointProfSchemaName = new Anchor();
     endpointProfSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
 
     HorizontalPanel schemaNamePanel = new HorizontalPanel();
     schemaNamePanel.setHeight("40px");
     schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+    Label endpointProfSchemaLabel = new Label(Utils.constants.schemaName());
     schemaNamePanel.add(endpointProfSchemaLabel);
     schemaNamePanel.add(endpointProfSchemaName);
     schemaNamePanel.setCellWidth(endpointProfSchemaName, "200px");
@@ -154,20 +154,24 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     HorizontalPanel schemaButtonsPanel = new HorizontalPanel();
     schemaButtonsPanel.setSpacing(6);
-    downloadEndpointProfileJsonButton = new ImageTextButton(Utils.resources.download(), Utils.constants.downloadJson());
+    downloadEndpointProfileJsonButton = new ImageTextButton(
+        Utils.resources.download(), Utils.constants.downloadJson());
     schemaButtonsPanel.add(downloadEndpointProfileJsonButton);
     schemaNamePanel.add(schemaButtonsPanel);
     schemaButtonsPanel.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
 
     recordTable.setWidget(0, 0, schemaNamePanel);
 
-    endpointProfForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.profile(),
+    endpointProfForm = new RecordPanel(
+        new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(),
+        Utils.constants.profile(),
         this, true, true);
     endpointProfForm.getRecordWidget().setForceNavigation(true);
     endpointProfForm.setPreferredHeightPx(200);
     recordTable.setWidget(1, 0, endpointProfForm);
     recordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 
+    CaptionPanel formPanel = new CaptionPanel(span.getString(), true);
     formPanel.add(recordTable);
 
     detailsTable.setWidget(++row, 0, formPanel);
@@ -179,17 +183,16 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     span.appendChild(Document.get().createTextNode(Utils.constants.serverProfile()));
     span.addClassName("gwt-Label");
 
-    CaptionPanel serverFormPanel = new CaptionPanel(span.getString(), true);
     FlexTable serverRecordTable = new FlexTable();
     serverRecordTable.setWidth("100%");
 
-    Label serverProfSchemaLabel = new Label(Utils.constants.schemaName());
     serverProfSchemaName = new Anchor();
     serverProfSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
 
     schemaNamePanel = new HorizontalPanel();
     schemaNamePanel.setHeight("40px");
     schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+    Label serverProfSchemaLabel = new Label(Utils.constants.schemaName());
     schemaNamePanel.add(serverProfSchemaLabel);
     schemaNamePanel.add(serverProfSchemaName);
     schemaNamePanel.setCellWidth(serverProfSchemaName, "200px");
@@ -197,7 +200,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     schemaButtonsPanel = new HorizontalPanel();
     schemaButtonsPanel.setSpacing(6);
-    downloadServerProfileJsonButton = new ImageTextButton(Utils.resources.download(), Utils.constants.downloadJson());
+    downloadServerProfileJsonButton = new ImageTextButton(
+        Utils.resources.download(), Utils.constants.downloadJson());
     schemaButtonsPanel.add(downloadServerProfileJsonButton);
     editServerProfileButton = new Button(Utils.constants.edit());
     schemaButtonsPanel.add(editServerProfileButton);
@@ -205,13 +209,18 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     schemaButtonsPanel.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
 
     serverRecordTable.setWidget(0, 0, schemaNamePanel);
-    serverProfForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.profile(),
+    serverProfForm = new RecordPanel(
+        new AvroWidgetsConfig.Builder()
+            .recordPanelWidth(700)
+            .createConfig(),
+        Utils.constants.profile(),
         this, true, true);
     serverProfForm.getRecordWidget().setForceNavigation(true);
     serverProfForm.setPreferredHeightPx(200);
     serverRecordTable.setWidget(1, 0, serverProfForm);
     serverRecordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 
+    CaptionPanel serverFormPanel = new CaptionPanel(span.getString(), true);
     serverFormPanel.add(serverRecordTable);
 
     detailsTable.setWidget(++row, 0, serverFormPanel);
@@ -222,13 +231,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     span.appendChild(Document.get().createTextNode(Utils.constants.endpointConfiguration()));
     span.addClassName("gwt-Label");
 
-    CaptionPanel endpointConfigurationFormPanel = new CaptionPanel(span.getString(), true);
     FlexTable endpointConfigurationRecordTable = new FlexTable();
     endpointConfigurationRecordTable.setWidth("100%");
 
     schemaNamePanel.setSpacing(6);
 
-    Label endpointConfSchemaLabel = new Label(Utils.constants.schemaName());
     endpointConfigSchemaName = new Anchor();
     endpointConfigSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     endpointConfigSchemaName.setWidth("100%");
@@ -236,12 +243,14 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     schemaNamePanel = new HorizontalPanel();
     schemaNamePanel.setHeight("40px");
     schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+    Label endpointConfSchemaLabel = new Label(Utils.constants.schemaName());
     schemaNamePanel.add(endpointConfSchemaLabel);
     schemaNamePanel.add(endpointConfigSchemaName);
     schemaNamePanel.setCellWidth(endpointConfigSchemaName, "200px");
     schemaButtonsPanel = new HorizontalPanel();
     schemaButtonsPanel.setSpacing(6);
-    downloadEndpointConfigurationButton = new ImageTextButton(Utils.resources.download(), Utils.constants.downloadJson());
+    downloadEndpointConfigurationButton = new ImageTextButton(
+        Utils.resources.download(), Utils.constants.downloadJson());
     schemaButtonsPanel.add(downloadEndpointConfigurationButton);
 
     schemaNamePanel.add(schemaButtonsPanel);
@@ -250,14 +259,18 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     schemaNamePanel.setSpacing(6);
 
     endpointConfigurationRecordTable.setWidget(0, 0, schemaNamePanel);
-    endpointConfigurationForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.configuration(),
+    endpointConfigurationForm = new RecordPanel(
+        new AvroWidgetsConfig.Builder()
+            .recordPanelWidth(700)
+            .createConfig(),
+        Utils.constants.configuration(),
         this, true, true);
     endpointConfigurationForm.getRecordWidget().setForceNavigation(true);
     endpointConfigurationForm.setPreferredHeightPx(200);
     endpointConfigurationRecordTable.setWidget(1, 0, endpointConfigurationForm);
     endpointConfigurationRecordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 
-
+    CaptionPanel endpointConfigurationFormPanel = new CaptionPanel(span.getString(), true);
     endpointConfigurationFormPanel.add(endpointConfigurationRecordTable);
 
     detailsTable.setWidget(++row, 0, endpointConfigurationFormPanel);
@@ -293,8 +306,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
   @Override
   protected void resetImpl() {
     endpointKeyHash.setValue("");
-    userID.setValue("");
-    userExternalID.setValue("");
+    userId.setValue("");
+    userExternalId.setValue("");
     sdkAnchor.setText("");
     endpointProfSchemaName.setText("");
     serverProfSchemaName.setText("");
@@ -317,14 +330,12 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     return endpointKeyHash;
   }
 
-  @Override
-  public SizedTextBox getUserID() {
-    return userID;
+  public SizedTextBox getUserId() {
+    return userId;
   }
 
-  @Override
-  public SizedTextBox getUserExternalID() {
-    return userExternalID;
+  public SizedTextBox getUserExternalId() {
+    return userExternalId;
   }
 
   @Override

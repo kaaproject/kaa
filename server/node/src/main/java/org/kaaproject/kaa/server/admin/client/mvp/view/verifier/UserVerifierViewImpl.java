@@ -35,10 +35,10 @@ public class UserVerifierViewImpl extends BasePluginViewImpl implements UserVeri
 
   @Override
   protected int initPluginDetails(int idx) {
-    Label verifierTokenLabel = new Label(Utils.constants.verifierToken());
     verifierToken = new KaaAdminSizedTextBox(-1, false);
     verifierToken.setWidth(FULL_WIDTH);
     idx++;
+    Label verifierTokenLabel = new Label(Utils.constants.verifierToken());
     detailsTable.setWidget(idx, 0, verifierTokenLabel);
     detailsTable.setWidget(idx, 1, verifierToken);
 

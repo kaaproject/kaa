@@ -32,7 +32,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, ValueChangeHandler<Boolean> {
+public class TopicViewImpl
+    extends BaseDetailsViewImpl
+    implements TopicView, ValueChangeHandler<Boolean> {
 
   private SizedTextBox name;
   private CheckBox mandatory;

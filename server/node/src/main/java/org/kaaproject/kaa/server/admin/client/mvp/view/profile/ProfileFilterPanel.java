@@ -43,7 +43,8 @@ public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto, St
   }
 
   @Override
-  protected BaseStructView<ProfileFilterDto, String> createStructView(HasErrorMessage hasErrorMessage) {
+  protected BaseStructView<ProfileFilterDto, String> createStructView(
+      HasErrorMessage hasErrorMessage) {
     return new ProfileFilterStructView(hasErrorMessage);
   }
 

@@ -108,8 +108,8 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
 
     getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
 
-    schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900).createConfig(),
+    schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(900).createConfig(),
         Utils.constants.schema(), this, !create, !create);
 
     if (create) {

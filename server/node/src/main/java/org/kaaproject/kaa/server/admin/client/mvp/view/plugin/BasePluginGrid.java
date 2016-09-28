@@ -65,7 +65,8 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
   protected float constructActions(DataGrid<T> table, float prefWidth) {
 
     float result = 0;
-    if (!embedded && (downloadPropsColumn == null || table.getColumnIndex(downloadPropsColumn) == -1)) {
+    if (!embedded
+        && (downloadPropsColumn == null || table.getColumnIndex(downloadPropsColumn) == -1)) {
       Header<SafeHtml> downloadRecordSchemaHeader = new SafeHtmlHeader(
           SafeHtmlUtils.fromSafeConstant(Utils.constants.configuration()));
       downloadPropsColumn = constructDownloadSchemaColumn("");
@@ -78,11 +79,13 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
   }
 
   protected Column<T, T> constructDownloadSchemaColumn(String text) {
-    ActionButtonCell<T> cell = new ActionButtonCell<T>(Utils.resources.download_grey(), text, embedded,
+    ActionButtonCell<T> cell = new ActionButtonCell<T>(
+        Utils.resources.download_grey(), text, embedded,
         new ActionButtonCell.ActionListener<T>() {
           @Override
           public void onItemAction(T value) {
-            RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(value.getId(), KaaRowAction.DOWNLOAD_SCHEMA);
+            RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(
+                value.getId(), KaaRowAction.DOWNLOAD_SCHEMA);
             fireEvent(rowDownloadSchemaEvent);
           }
         }, new ActionButtonCell.ActionValidator<T>() {

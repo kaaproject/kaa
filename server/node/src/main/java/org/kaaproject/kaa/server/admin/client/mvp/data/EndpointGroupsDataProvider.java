@@ -40,18 +40,19 @@ public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGro
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadEndpointGroups(
+        applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<EndpointGroupDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<EndpointGroupDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

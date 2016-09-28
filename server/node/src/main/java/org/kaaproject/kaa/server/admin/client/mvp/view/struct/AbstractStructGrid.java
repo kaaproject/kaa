@@ -24,7 +24,9 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class AbstractStructGrid<R extends AbstractStructureDto, T extends StructureRecordDto<R>, K> extends AbstractKaaGrid<T, K> {
+public abstract class AbstractStructGrid
+    <R extends AbstractStructureDto, T extends StructureRecordDto<R>, K>
+    extends AbstractKaaGrid<T, K> {
 
   public AbstractStructGrid() {
     super(Unit.PX, true, true);

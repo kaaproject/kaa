@@ -131,7 +131,8 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
     if (enableActions) {
       if (generateSdkColumn == null || table.getColumnIndex(generateSdkColumn) == -1) {
         Header<SafeHtml> generateSdkHeader;
-        generateSdkHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(Utils.constants.generateSdk()));
+        generateSdkHeader = new SafeHtmlHeader(
+            SafeHtmlUtils.fromSafeConstant(Utils.constants.generateSdk()));
 
         generateSdkColumn = constructGenerateSdkColumn("");
         table.addColumn(generateSdkColumn, generateSdkHeader);
@@ -142,9 +143,11 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
       if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
         Header<SafeHtml> deleteHeader;
         if (embedded) {
-          deleteHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(Utils.constants.remove()));
+          deleteHeader = new SafeHtmlHeader(
+              SafeHtmlUtils.fromSafeConstant(Utils.constants.remove()));
         } else {
-          deleteHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(Utils.constants.delete()));
+          deleteHeader = new SafeHtmlHeader(
+              SafeHtmlUtils.fromSafeConstant(Utils.constants.delete()));
         }
 
         deleteColumn = constructDeleteColumn("");
@@ -173,7 +176,8 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
     };
 
     ActionButtonCell<SdkProfileDto> cell;
-    cell = new ActionButtonCell<SdkProfileDto>(Utils.resources.download_grey(), label, embedded, actionListener, actionValidator);
+    cell = new ActionButtonCell<SdkProfileDto>(
+        Utils.resources.download_grey(), label, embedded, actionListener, actionValidator);
 
     return new Column<SdkProfileDto, SdkProfileDto>(cell) {
       @Override
@@ -184,7 +188,8 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
   }
 
   private void generateSdk(SdkProfileDto value) {
-    RowActionEvent<String> rowGenerateSdkEvent = new RowActionEvent<>(value.getId(), KaaRowAction.GENERATE_SDK);
+    RowActionEvent<String> rowGenerateSdkEvent = new RowActionEvent<>(
+        value.getId(), KaaRowAction.GENERATE_SDK);
     this.fireEvent(rowGenerateSdkEvent);
   }
 }

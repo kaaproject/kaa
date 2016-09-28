@@ -34,8 +34,11 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
   private int ecfVersion;
   private List<EventClassViewDto> eventClassViewDtoList;
 
-  public EcfVersionDataProvider(AbstractGrid<EventClassDto, String> dataGrid, HasErrorMessage hasErrorMessage, String eventClassFamilyId,
-                                int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
+  public EcfVersionDataProvider(AbstractGrid<EventClassDto, String> dataGrid,
+                                HasErrorMessage hasErrorMessage,
+                                String eventClassFamilyId,
+                                int ecfVersion,
+                                List<EventClassViewDto> eventClassViewDtoList) {
     super(dataGrid, hasErrorMessage, false);
     this.eventClassFamilyId = eventClassFamilyId;
     this.ecfVersion = ecfVersion;
@@ -47,7 +50,10 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
   protected void loadData(final LoadCallback callback) {
 
     if (ecfVersion > 0) {
-      KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, ecfVersion, null,
+      KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(
+          eventClassFamilyId,
+          ecfVersion,
+          null,
           new AsyncCallback<List<EventClassDto>>() {
             @Override
             public void onFailure(Throwable cause) {
@@ -61,15 +67,15 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
           });
     } else {
       if (eventClassViewDtoList != null) {
-        List<EventClassDto> eventClassDtoList = new ArrayList<EventClassDto>();
-        int i = 1;
+        List<EventClassDto> eventClassDtoList = new ArrayList<>();
+        int cnt = 1;
         for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
           if (eventClassViewDto.getSchema() != null) {
             EventClassDto eventClassDto = eventClassViewDto.getSchema();
             eventClassDto.setCreatedTime(System.currentTimeMillis());
             eventClassDto.setFqn(eventClassViewDto.getCtlSchemaForm().getMetaInfo().getFqn());
             eventClassDto.setVersion(eventClassViewDto.getCtlSchemaForm().getVersion());
-            eventClassDto.setId(String.valueOf(i++));
+            eventClassDto.setId(String.valueOf(cnt++));
             eventClassDtoList.add(eventClassDto);
           }
         }

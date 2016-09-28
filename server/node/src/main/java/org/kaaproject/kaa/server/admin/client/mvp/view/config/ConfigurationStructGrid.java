@@ -24,7 +24,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractStructGrid
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigRecordKey;
 
-public class ConfigurationStructGrid extends AbstractStructGrid<ConfigurationDto, ConfigurationRecordDto, ConfigRecordKey> {
+public class ConfigurationStructGrid
+    extends AbstractStructGrid<ConfigurationDto, ConfigurationRecordDto, ConfigRecordKey> {
 
   @Override
   protected float constructColumnsImpl(DataGrid<ConfigurationRecordDto> table) {

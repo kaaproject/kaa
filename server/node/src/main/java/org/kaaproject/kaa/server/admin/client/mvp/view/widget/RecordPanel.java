@@ -60,15 +60,18 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
   private boolean optional;
   private boolean showCaption;
 
-  public RecordPanel(String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+  public RecordPanel(String title, HasErrorMessage hasErrorMessage,
+                     boolean optional, boolean readOnly) {
     this(null, title, hasErrorMessage, optional, readOnly);
   }
 
-  public RecordPanel(AvroWidgetsConfig config, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+  public RecordPanel(AvroWidgetsConfig config, String title, HasErrorMessage hasErrorMessage,
+                     boolean optional, boolean readOnly) {
     this(config, true, title, hasErrorMessage, optional, readOnly);
   }
 
-  public RecordPanel(AvroWidgetsConfig config, boolean showCaption, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+  public RecordPanel(AvroWidgetsConfig config, boolean showCaption, String title,
+                     HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
     this.showCaption = showCaption;
     this.optional = optional;
     this.readOnly = readOnly;
@@ -89,7 +92,6 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
       table.setWidget(0, 0, recordFieldWidget);
     }
 
-    Label uploadLabel = new Label(Utils.constants.uploadFromFile());
     recordFileUpload = new FileUploadForm();
     recordFileUpload.addSubmitCompleteHandler(new SubmitCompleteHandler() {
       @Override
@@ -108,11 +110,14 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     uploadButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
     uploadButton.setEnabled(false);
     uploadTable = new FlexTable();
+    Label uploadLabel = new Label(Utils.constants.uploadFromFile());
     uploadTable.setWidget(0, 0, uploadLabel);
     uploadTable.setWidget(0, 1, recordFileUpload);
     uploadTable.setWidget(0, 2, uploadButton);
-    uploadTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
-    uploadTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_MIDDLE);
+    uploadTable.getFlexCellFormatter()
+        .setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
+    uploadTable.getFlexCellFormatter()
+        .setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_MIDDLE);
     table.setWidget(1, 0, uploadTable);
     setWidget(table);
     setUploadVisible(!readOnly);
@@ -209,8 +214,8 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
 
   @Override
   public void onChange(ChangeEvent event) {
-    boolean enabled = recordFileUpload.getFileName().length() > 0 &&
-        recordFieldWidget.getValue() != null;
+    boolean enabled = recordFileUpload.getFileName().length() > 0
+        && recordFieldWidget.getValue() != null;
     uploadButton.setEnabled(enabled);
   }
 

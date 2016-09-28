@@ -174,11 +174,10 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
 
     titleLabelWidget = titleLabel;
 
-    int horizontalMargin = 15;
-
     scope = new Label();
     scope.getElement().getStyle().setFontSize(16, Unit.PX);
     scope.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+    int horizontalMargin = 15;
     scope.getElement().getStyle().setMarginLeft(horizontalMargin, Unit.PX);
 
     firstRowPanel.add(scope);
@@ -287,8 +286,8 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
 
     getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
 
-    schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900).createConfig(), false,
+    schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(900).createConfig(), false,
         null, this, !create, !create);
 
     if (create) {

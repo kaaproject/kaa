@@ -24,7 +24,8 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 
-public abstract class BaseRecordViewImpl<T extends AbstractStructureDto, V> extends BaseDetailsViewImpl
+public abstract class BaseRecordViewImpl<T extends AbstractStructureDto, V>
+    extends BaseDetailsViewImpl
     implements BaseRecordView<T, V>, ValueChangeHandler<VersionDto> {
 
   protected AbstractRecordPanel<T, V> recordPanel;

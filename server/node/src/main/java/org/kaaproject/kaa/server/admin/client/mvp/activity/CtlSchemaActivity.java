@@ -136,7 +136,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
         ServletHelper.exportCtlSchema(key);
       }
     };
-    KaaAdmin.getDataSource().prepareCTLSchemaExport(entity.getId(), method, schemaExportCallback);
+    KaaAdmin.getDataSource().prepareCtlSchemaExport(entity.getId(), method, schemaExportCallback);
   }
 
   @Override
@@ -174,9 +174,9 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
   protected void getEntity(String id,
                            AsyncCallback<CtlSchemaFormDto> callback) {
     if (version == null) {
-      KaaAdmin.getDataSource().getLatestCTLSchemaForm(id, callback);
+      KaaAdmin.getDataSource().getLatestCtlSchemaForm(id, callback);
     } else {
-      KaaAdmin.getDataSource().getCTLSchemaFormByMetaInfoIdAndVer(id, version, callback);
+      KaaAdmin.getDataSource().getCtlSchemaFormByMetaInfoIdAndVer(id, version, callback);
     }
   }
 
@@ -296,7 +296,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
 
             @Override
             public void onYes() {
-              KaaAdmin.getDataSource().deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version,
+              KaaAdmin.getDataSource().deleteCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, version,
                   entity.getMetaInfo().getTenantId(), place.getApplicationId(), new BusyAsyncCallback<Void>() {
                     @Override
                     public void onSuccessImpl(Void result) {
@@ -344,7 +344,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
         converterType = ConverterType.FORM_AVRO_CONVERTER;
       }
 
-      KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getMetaInfoId(),
+      KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(place.getMetaInfoId(),
           place.getVersion(), place.getApplicationId(), converterType,
           new BusyAsyncCallback<CtlSchemaFormDto>() {
             @Override
@@ -515,7 +515,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
             });
       }
     } else {
-      KaaAdmin.getDataSource().editCTLSchemaForm(entity, ConverterType.FORM_AVRO_CONVERTER, callback);
+      KaaAdmin.getDataSource().editCtlSchemaForm(entity, ConverterType.FORM_AVRO_CONVERTER, callback);
     }
   }
 

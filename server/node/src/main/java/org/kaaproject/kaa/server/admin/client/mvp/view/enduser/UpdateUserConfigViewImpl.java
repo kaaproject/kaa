@@ -33,7 +33,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaInfoListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-public class UpdateUserConfigViewImpl extends BaseDetailsViewImpl implements UpdateUserConfigView, ValueChangeHandler<RecordField> {
+public class UpdateUserConfigViewImpl
+    extends BaseDetailsViewImpl
+    implements UpdateUserConfigView, ValueChangeHandler<RecordField> {
 
   private SizedTextBox userId;
   private SchemaInfoListBox configurationSchemaInfo;
@@ -45,23 +47,19 @@ public class UpdateUserConfigViewImpl extends BaseDetailsViewImpl implements Upd
 
   @Override
   protected void initDetailsTable() {
-
-    int row = 0;
-
     Label label = new Label(Utils.constants.userId());
     label.addStyleName(Utils.avroUiStyle.requiredField());
     userId = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
     userId.setWidth(FULL_WIDTH);
     userId.addInputHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, userId);
-    row++;
+    detailsTable.setWidget(0, 0, label);
+    detailsTable.setWidget(0, 1, userId);
 
     label = new Label(Utils.constants.configurationSchema());
     label.addStyleName(Utils.avroUiStyle.requiredField());
     configurationSchemaInfo = new SchemaInfoListBox();
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, configurationSchemaInfo);
+    detailsTable.setWidget(1, 0, label);
+    detailsTable.setWidget(1, 1, configurationSchemaInfo);
     configurationSchemaInfo.addValueChangeHandler(new ValueChangeHandler<SchemaInfoDto>() {
       @Override
       public void onValueChange(ValueChangeEvent<SchemaInfoDto> event) {
@@ -72,7 +70,10 @@ public class UpdateUserConfigViewImpl extends BaseDetailsViewImpl implements Upd
     getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
 
     configurationData = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900).gridHeight(250).tableHeight(230).createConfig(),
+        recordPanelWidth(900)
+        .gridHeight(250)
+        .tableHeight(230)
+        .createConfig(),
         Utils.constants.configurationBody(), this, false, false);
 
     configurationData.addValueChangeHandler(this);

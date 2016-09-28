@@ -171,7 +171,7 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
     final SdkProfileDto sdkProfileDto = entity;
 
 
-    KaaAdmin.getDataSource().validateECFListInSdkProfile(aefMaps, new AsyncCallback<Void>() {
+    KaaAdmin.getDataSource().validateEcfListInSdkProfile(aefMaps, new AsyncCallback<Void>() {
       @Override
       public void onFailure(Throwable caught) {
         Utils.handleException(caught, detailsView);

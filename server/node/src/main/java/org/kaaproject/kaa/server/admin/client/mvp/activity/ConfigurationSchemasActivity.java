@@ -34,11 +34,13 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ConfigurationSchemasActivity extends AbstractBaseCtlSchemasActivity<ConfigurationSchemaDto, ConfigurationSchemasPlace> {
+public class ConfigurationSchemasActivity
+    extends AbstractBaseCtlSchemasActivity<ConfigurationSchemaDto, ConfigurationSchemasPlace> {
 
   private String applicationId;
 
-  public ConfigurationSchemasActivity(ConfigurationSchemasPlace place, ClientFactory clientFactory) {
+  public ConfigurationSchemasActivity(ConfigurationSchemasPlace place,
+                                      ClientFactory clientFactory) {
     super(place, ConfigurationSchemaDto.class, clientFactory);
     this.applicationId = place.getApplicationId();
   }
@@ -88,13 +90,16 @@ public class ConfigurationSchemasActivity extends AbstractBaseCtlSchemasActivity
 
     switch (action) {
       case KaaRowAction.DOWNLOAD_SCHEMA:
-        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.CONFIGURATION_SCHEMA, callback);
+        KaaAdmin.getDataSource().getRecordData(
+            applicationId, schemaVersion, RecordFiles.CONFIGURATION_SCHEMA, callback);
         break;
       case KaaRowAction.DOWNLOAD_BASE_SCHEMA:
-        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.CONFIGURATION_BASE_SCHEMA, callback);
+        KaaAdmin.getDataSource().getRecordData(
+            applicationId, schemaVersion, RecordFiles.CONFIGURATION_BASE_SCHEMA, callback);
         break;
       case KaaRowAction.DOWNLOAD_OVERRIDE_SCHEMA:
-        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA, callback);
+        KaaAdmin.getDataSource().getRecordData(
+            applicationId, schemaVersion, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA, callback);
         break;
       default:
         break;

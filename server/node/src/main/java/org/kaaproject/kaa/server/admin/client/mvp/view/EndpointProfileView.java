@@ -33,9 +33,9 @@ public interface EndpointProfileView extends BaseDetailsView {
 
   SizedTextBox getKeyHash();
 
-  SizedTextBox getUserID();
+  SizedTextBox getUserId();
 
-  SizedTextBox getUserExternalID();
+  SizedTextBox getUserExternalId();
 
   List<Widget> getUserInfoList();
 

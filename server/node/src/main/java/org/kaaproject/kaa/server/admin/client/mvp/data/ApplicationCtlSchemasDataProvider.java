@@ -28,7 +28,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
 
-public class ApplicationCtlSchemasDataProvider extends AbstractDataProvider<CTLSchemaMetaInfoDto, String> {
+public class ApplicationCtlSchemasDataProvider
+    extends AbstractDataProvider<CTLSchemaMetaInfoDto, String> {
 
   private String applicationId;
 
@@ -43,7 +44,7 @@ public class ApplicationCtlSchemasDataProvider extends AbstractDataProvider<CTLS
   @Override
   protected void loadData(final LoadCallback callback) {
     if (!isEmpty(applicationId)) {
-      KaaAdmin.getDataSource().getApplicationLevelCTLSchemas(applicationId,
+      KaaAdmin.getDataSource().getApplicationLevelCtlSchemas(applicationId,
           new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
             @Override
             public void onFailure(Throwable caught) {

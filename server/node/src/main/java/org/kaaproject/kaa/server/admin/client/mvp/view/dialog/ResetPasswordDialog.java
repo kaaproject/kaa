@@ -92,7 +92,8 @@ public class ResetPasswordDialog extends AvroUiDialog implements HasErrorMessage
 
     dialogContents.add(table);
 
-    sendResetPasswordLinkButton = new Button(Utils.constants.sendResetPasswordLink(), new ClickHandler() {
+    sendResetPasswordLinkButton = new Button(
+        Utils.constants.sendResetPasswordLink(), new ClickHandler() {
       @Override
       public void onClick(ClickEvent event) {
         validateUsernameOrEmail();

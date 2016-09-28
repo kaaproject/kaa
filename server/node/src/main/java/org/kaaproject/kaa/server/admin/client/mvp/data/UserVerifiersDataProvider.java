@@ -42,17 +42,18 @@ public class UserVerifiersDataProvider extends AbstractDataProvider<UserVerifier
   @Override
   protected void loadData(final LoadCallback callback) {
     if (!isEmpty(applicationId)) {
-      KaaAdmin.getDataSource().loadUserVerifiers(applicationId, new AsyncCallback<List<UserVerifierDto>>() {
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
-        }
+      KaaAdmin.getDataSource().loadUserVerifiers(
+          applicationId, new AsyncCallback<List<UserVerifierDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
+            }
 
-        @Override
-        public void onSuccess(List<UserVerifierDto> result) {
-          callback.onSuccess(result);
-        }
-      });
+            @Override
+            public void onSuccess(List<UserVerifierDto> result) {
+              callback.onSuccess(result);
+            }
+          });
     }
   }
 }
