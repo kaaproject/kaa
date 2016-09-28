@@ -89,15 +89,15 @@ public final class CassandraTopicListEntry implements TopicListEntry, Serializab
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (!(o instanceof CassandraTopicListEntry)) {
+    if (!(object instanceof CassandraTopicListEntry)) {
       return false;
     }
 
-    CassandraTopicListEntry that = (CassandraTopicListEntry) o;
+    CassandraTopicListEntry that = (CassandraTopicListEntry) object;
 
     if (simpleHash != that.simpleHash) {
       return false;

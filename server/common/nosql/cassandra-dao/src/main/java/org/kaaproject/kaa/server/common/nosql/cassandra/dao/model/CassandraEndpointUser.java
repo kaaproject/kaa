@@ -185,7 +185,8 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
 
   @Override
   public String toString() {
-    return "EndpointUser [id=" + id + ", username=" + username + ", externalId=" + externalId + ", tenantId=" + tenantId + ", accessToken=" + accessToken
+    return "EndpointUser [id=" + id + ", username=" + username + ", externalId="
+        + externalId + ", tenantId=" + tenantId + ", accessToken=" + accessToken
         + ", endpointIds=" + endpointIds + "]";
   }
 

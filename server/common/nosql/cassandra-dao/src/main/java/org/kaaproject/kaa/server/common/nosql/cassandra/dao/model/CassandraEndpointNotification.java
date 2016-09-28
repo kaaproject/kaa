@@ -50,7 +50,8 @@ public final class CassandraEndpointNotification implements EndpointNotification
   private Integer seqNum;
   @Column(name = CassandraModelConstants.ET_NF_ID_PROPERTY)
   private String id;
-  @Column(name = CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY, codec = NotificationTypeCodec.class)
+  @Column(name = CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY,
+      codec = NotificationTypeCodec.class)
   private NotificationTypeDto type;
   @Column(name = CassandraModelConstants.ET_NF_APPLICATION_ID_PROPERTY)
   private String applicationId;
@@ -201,26 +202,62 @@ public final class CassandraEndpointNotification implements EndpointNotification
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
 
-    CassandraEndpointNotification that = (CassandraEndpointNotification) o;
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
 
-    if (nfVersion != that.nfVersion) return false;
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+    CassandraEndpointNotification that = (CassandraEndpointNotification) object;
+
+    if (nfVersion != that.nfVersion) {
       return false;
-    if (body != null ? !body.equals(that.body) : that.body != null) return false;
-    if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null)
+    }
+
+    if (applicationId != null
+        ? !applicationId.equals(that.applicationId)
+        : that.applicationId != null) {
       return false;
-    if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null)
+    }
+
+    if (body != null ? !body.equals(that.body) : that.body != null) {
       return false;
-    if (id != null ? !id.equals(that.id) : that.id != null) return false;
-    if (lastModifyTime != null ? !lastModifyTime.equals(that.lastModifyTime) : that.lastModifyTime != null)
+    }
+
+    if (endpointKeyHash != null
+        ? !endpointKeyHash.equals(that.endpointKeyHash)
+        : that.endpointKeyHash != null) {
       return false;
-    if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) return false;
-    if (seqNum != null ? !seqNum.equals(that.seqNum) : that.seqNum != null) return false;
-    if (type != that.type) return false;
+    }
+
+    if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null) {
+      return false;
+    }
+
+    if (id != null ? !id.equals(that.id) : that.id != null) {
+      return false;
+    }
+
+    if (lastModifyTime != null
+        ? !lastModifyTime.equals(that.lastModifyTime)
+        : that.lastModifyTime != null) {
+      return false;
+    }
+
+    if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
+      return false;
+    }
+
+    if (seqNum != null ? !seqNum.equals(that.seqNum) : that.seqNum != null)  {
+      return false;
+    }
+
+    if (type != that.type) {
+      return false;
+    }
 
     return true;
   }
@@ -242,18 +279,18 @@ public final class CassandraEndpointNotification implements EndpointNotification
 
   @Override
   public String toString() {
-    return "CassandraEndpointNotification{" +
-        "endpointKeyHash=" + endpointKeyHash +
-        ", seqNum=" + seqNum +
-        ", id='" + id + '\'' +
-        ", type=" + type +
-        ", applicationId='" + applicationId + '\'' +
-        ", schemaId='" + schemaId + '\'' +
-        ", nfVersion=" + nfVersion +
-        ", lastModifyTime=" + lastModifyTime +
-        ", body=" + body +
-        ", expiredAt=" + expiredAt +
-        '}';
+    return "CassandraEndpointNotification{"
+        + "endpointKeyHash=" + endpointKeyHash
+        + ", seqNum=" + seqNum
+        + ", id='" + id + '\''
+        + ", type=" + type
+        + ", applicationId='" + applicationId + '\''
+        + ", schemaId='" + schemaId + '\''
+        + ", nfVersion=" + nfVersion
+        + ", lastModifyTime=" + lastModifyTime
+        + ", body=" + body
+        + ", expiredAt=" + expiredAt
+        + '}';
   }
 
   @Override

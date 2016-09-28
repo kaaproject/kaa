@@ -149,7 +149,8 @@ public final class CassandraEndpointRegistration implements EndpointRegistration
 
   @Override
   public boolean equals(Object other) {
-    return EqualsBuilder.reflectionEquals(this, other, CassandraEndpointRegistration.EXCLUDE_FIELDS);
+    return EqualsBuilder.reflectionEquals(
+        this, other, CassandraEndpointRegistration.EXCLUDE_FIELDS);
   }
 
   @Override

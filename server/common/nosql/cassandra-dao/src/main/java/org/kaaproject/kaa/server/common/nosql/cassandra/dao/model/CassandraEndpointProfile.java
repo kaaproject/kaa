@@ -375,42 +375,151 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
 
-        CassandraEndpointProfile that = (CassandraEndpointProfile) o;
-
-        if (sequenceNumber != that.sequenceNumber) return false;
-        if (profileVersion != that.profileVersion) return false;
-        if (serverProfileVersion != that.serverProfileVersion) return false;
-        if (configurationVersion != that.configurationVersion) return false;
-        if (notificationVersion != that.notificationVersion) return false;
-        if (systemNfVersion != that.systemNfVersion) return false;
-        if (userNfVersion != that.userNfVersion) return false;
-        if (logSchemaVersion != that.logSchemaVersion) return false;
-        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (endpointProfileKey != null ? !endpointProfileKey.equals(that.endpointProfileKey) : that.endpointProfileKey != null)
-            return false;
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) return false;
-        if (endpointUserId != null ? !endpointUserId.equals(that.endpointUserId) : that.endpointUserId != null) return false;
-        if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) return false;
-        if (groupStates != null ? !groupStates.equals(that.groupStates) : that.groupStates != null) return false;
-        if (profile != null ? !profile.equals(that.profile) : that.profile != null) return false;
-        if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) return false;
-        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) return false;
-        if (userConfigurationHash != null ? !userConfigurationHash.equals(that.userConfigurationHash) : that.userConfigurationHash != null)
-            return false;
-        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) return false;
-        if (topicHash != null ? !topicHash.equals(that.topicHash) : that.topicHash != null) return false;
-        if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null) return false;
-        if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
-        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) return false;
-        if (useConfigurationRawSchema != null ? !useConfigurationRawSchema.equals(that.useConfigurationRawSchema) : that.useConfigurationRawSchema != null) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        return serverProfile != null ? serverProfile.equals(that.serverProfile) : that.serverProfile == null;
+
+        CassandraEndpointProfile that = (CassandraEndpointProfile) object;
+
+        if (sequenceNumber != that.sequenceNumber) {
+            return false;
+        }
+
+        if (profileVersion != that.profileVersion) {
+            return false;
+        }
+
+        if (serverProfileVersion != that.serverProfileVersion) {
+            return false;
+        }
+
+        if (configurationVersion != that.configurationVersion) {
+            return false;
+        }
+
+        if (notificationVersion != that.notificationVersion) {
+            return false;
+        }
+
+        if (systemNfVersion != that.systemNfVersion) {
+            return false;
+        }
+
+        if (userNfVersion != that.userNfVersion) {
+            return false;
+        }
+
+        if (logSchemaVersion != that.logSchemaVersion) {
+            return false;
+        }
+
+        if (endpointKeyHash != null
+            ? !endpointKeyHash.equals(that.endpointKeyHash)
+            : that.endpointKeyHash != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+
+        if (endpointProfileKey != null
+            ? !endpointProfileKey.equals(that.endpointProfileKey)
+            : that.endpointProfileKey != null) {
+            return false;
+        }
+
+        if (applicationId != null
+            ? !applicationId.equals(that.applicationId)
+            : that.applicationId != null) {
+            return false;
+        }
+
+        if (endpointUserId != null
+            ? !endpointUserId.equals(that.endpointUserId)
+            : that.endpointUserId != null) {
+            return false;
+        }
+
+        if (accessToken != null
+            ? !accessToken.equals(that.accessToken)
+            : that.accessToken != null) {
+            return false;
+        }
+
+        if (groupStates != null
+            ? !groupStates.equals(that.groupStates)
+            : that.groupStates != null) {
+            return false;
+        }
+
+        if (profile != null
+            ? !profile.equals(that.profile)
+            : that.profile != null) {
+            return false;
+        }
+
+        if (profileHash != null
+            ? !profileHash.equals(that.profileHash)
+            : that.profileHash != null) {
+            return false;
+        }
+
+        if (configurationHash != null
+            ? !configurationHash.equals(that.configurationHash)
+            : that.configurationHash != null) {
+            return false;
+        }
+
+        if (userConfigurationHash != null
+            ? !userConfigurationHash.equals(that.userConfigurationHash)
+            : that.userConfigurationHash != null) {
+            return false;
+        }
+
+        if (subscriptions != null
+            ? !subscriptions.equals(that.subscriptions)
+            : that.subscriptions != null) {
+            return false;
+        }
+
+        if (topicHash != null
+            ? !topicHash.equals(that.topicHash)
+            : that.topicHash != null) {
+            return false;
+        }
+
+        if (ecfVersionStates != null
+            ? !ecfVersionStates.equals(that.ecfVersionStates)
+            : that.ecfVersionStates != null) {
+            return false;
+        }
+
+        if (serverHash != null
+            ? !serverHash.equals(that.serverHash)
+            : that.serverHash != null) {
+            return false;
+        }
+
+        if (sdkToken != null
+            ? !sdkToken.equals(that.sdkToken)
+            : that.sdkToken != null) {
+            return false;
+        }
+
+        if (useConfigurationRawSchema != null
+            ? !useConfigurationRawSchema.equals(that.useConfigurationRawSchema)
+            : that.useConfigurationRawSchema != null) {
+            return false;
+        }
+
+        return serverProfile != null
+            ? serverProfile.equals(that.serverProfile)
+            : that.serverProfile == null;
 
     }
 
@@ -429,7 +538,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + profileVersion;
         result = 31 * result + serverProfileVersion;
         result = 31 * result + (configurationHash != null ? configurationHash.hashCode() : 0);
-        result = 31 * result + (userConfigurationHash != null ? userConfigurationHash.hashCode() : 0);
+        result = 31 * result
+            + (userConfigurationHash != null ? userConfigurationHash.hashCode() : 0);
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
@@ -440,42 +550,43 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (ecfVersionStates != null ? ecfVersionStates.hashCode() : 0);
         result = 31 * result + (serverHash != null ? serverHash.hashCode() : 0);
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
-        result = 31 * result + (useConfigurationRawSchema != null ? useConfigurationRawSchema.hashCode() : 0);
+        result = 31 * result
+            + (useConfigurationRawSchema != null ? useConfigurationRawSchema.hashCode() : 0);
         result = 31 * result + (serverProfile != null ? serverProfile.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "CassandraEndpointProfile{" +
-                "endpointKeyHash=" + endpointKeyHash +
-                ", id='" + id + '\'' +
-                ", endpointProfileKey=" + endpointProfileKey +
-                ", applicationId='" + applicationId + '\'' +
-                ", endpointUserId='" + endpointUserId + '\'' +
-                ", accessToken='" + accessToken + '\'' +
-                ", groupStates=" + groupStates +
-                ", sequenceNumber=" + sequenceNumber +
-                ", profile='" + profile + '\'' +
-                ", profileHash=" + profileHash +
-                ", profileVersion=" + profileVersion +
-                ", serverProfileVersion=" + serverProfileVersion +
-                ", configurationHash=" + configurationHash +
-                ", userConfigurationHash=" + userConfigurationHash +
-                ", configurationVersion=" + configurationVersion +
-                ", notificationVersion=" + notificationVersion +
-                ", subscriptions=" + subscriptions +
-                ", topicHash=" + topicHash +
-                ", simpleTopicHash=" + simpleTopicHash +
-                ", systemNfVersion=" + systemNfVersion +
-                ", userNfVersion=" + userNfVersion +
-                ", logSchemaVersion=" + logSchemaVersion +
-                ", ecfVersionStates=" + ecfVersionStates +
-                ", serverHash='" + serverHash + '\'' +
-                ", sdkToken='" + sdkToken + '\'' +
-                ", useRawSchema=" + useConfigurationRawSchema +
-                ", serverProfile='" + serverProfile + '\'' +
-                '}';
+        return "CassandraEndpointProfile{"
+            + "endpointKeyHash=" + endpointKeyHash
+            + ", id='" + id + '\''
+            + ", endpointProfileKey=" + endpointProfileKey
+            + ", applicationId='" + applicationId + '\''
+            + ", endpointUserId='" + endpointUserId + '\''
+            + ", accessToken='" + accessToken + '\''
+            + ", groupStates=" + groupStates
+            + ", sequenceNumber=" + sequenceNumber
+            + ", profile='" + profile + '\''
+            + ", profileHash=" + profileHash
+            + ", profileVersion=" + profileVersion
+            + ", serverProfileVersion=" + serverProfileVersion
+            + ", configurationHash=" + configurationHash
+            + ", userConfigurationHash=" + userConfigurationHash
+            + ", configurationVersion=" + configurationVersion
+            + ", notificationVersion=" + notificationVersion
+            + ", subscriptions=" + subscriptions
+            + ", topicHash=" + topicHash
+            + ", simpleTopicHash=" + simpleTopicHash
+            + ", systemNfVersion=" + systemNfVersion
+            + ", userNfVersion=" + userNfVersion
+            + ", logSchemaVersion=" + logSchemaVersion
+            + ", ecfVersionStates=" + ecfVersionStates
+            + ", serverHash='" + serverHash + '\''
+            + ", sdkToken='" + sdkToken + '\''
+            + ", useRawSchema=" + useConfigurationRawSchema
+            + ", serverProfile='" + serverProfile + '\''
+            + '}';
     }
 
     @Override

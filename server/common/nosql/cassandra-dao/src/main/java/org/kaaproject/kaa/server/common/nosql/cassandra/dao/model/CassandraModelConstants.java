@@ -76,7 +76,8 @@ public class CassandraModelConstants {
      * Cassandra endpoint configuration constants.
      */
     public static final String ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME = "ep_conf";
-    public static final String ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY = CONFIGURATION_HASH_PROPERTY;
+    public static final String ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY =
+        CONFIGURATION_HASH_PROPERTY;
     public static final String ENDPOINT_CONFIGURATION_CONF_PROPERTY = "cf";
     public static final String ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY = "cf_id";
 
@@ -127,46 +128,52 @@ public class CassandraModelConstants {
      * CassandraEPByAccessToken constants.
      */
     public static final String EP_BY_ACCESS_TOKEN_COLUMN_FAMILY_NAME = "access_token_eps";
-    public static final String EP_BY_ACCESS_TOKEN_ACCESS_TOKEN_PROPERTY = ACCESS_TOKEN_PROPERTY;
-    public static final String EP_BY_ACCESS_TOKEN_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String EP_BY_ACCESS_TOKEN_ACCESS_TOKEN_PROPERTY =
+        ACCESS_TOKEN_PROPERTY;
+    public static final String EP_BY_ACCESS_TOKEN_ENDPOINT_KEY_HASH_PROPERTY =
+        ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
-     * CassandraEPByAppId constants
+     * CassandraEPByAppId constants.
      */
     public static final String EP_BY_APP_ID_COLUMN_FAMILY_NAME = "app_eps";
     public static final String EP_BY_APP_ID_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
-    public static final String EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY =
+        ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
      * CassandraEpBySdkToken constants.
      */
     public static final String EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME = "sdk_token_eps";
     public static final String EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
-    public static final String EP_BY_SDK_TOKEN_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String EP_BY_SDK_TOKEN_ENDPOINT_KEY_HASH_PROPERTY =
+        ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
-     * CassandraEPByEndpointGroupId constants
+     * CassandraEPByEndpointGroupId constants.
      */
-    public static final String EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME = "endpoint_group_id_eps";
+    public static final String EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME =
+        "endpoint_group_id_eps";
     public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY = "ep_group_id";
-    public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY =
+        ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
-     * CassandraTopicLastSecNum constants
+     * CassandraTopicLastSecNum constants.
      */
     public static final String TOPIC_ID_SEQ_NUMBER_COLUMN_FAMILY_NAME = "topic_seq";
     public static final String TOPIC_ID_SEQ_NUMBER_TOPIC_ID_PROPERTY = TOPIC_ID_PROPERTY;
     public static final String TOPIC_ID_SEQ_NUMBER_SEQUENCE_NUMBER_PROPERTY = "seq_num";
 
     /**
-     * CassandraTopicLastSecNum constants
+     * CassandraTopicLastSecNum constants.
      */
     public static final String TOPIC_IDS_COLUMN_FAMILY_NAME = "topics";
     public static final String TOPIC_IDS_TOPIC_ID_PROPERTY = TOPIC_ID_PROPERTY;
     public static final String TOPIC_IDS_VER_TYPE_PROPERTY = "schema_ver";
 
     /**
-     * CassandraEndpointUserConfiguration constants
+     * CassandraEndpointUserConfiguration constants.
      */
     public static final String EP_USER_CONF_COLUMN_FAMILY_NAME = "user_conf";
     public static final String EP_USER_CONF_USER_ID_PROPERTY = "user_id";
@@ -205,18 +212,23 @@ public class CassandraModelConstants {
     public static final String EP_REGISTRATION_APPLICATION_ID_PROPERTY = EP_APP_ID_PROPERTY;
     public static final String EP_REGISTRATION_ENDPOINT_ID_PROPERTY = "ep_id";
     public static final String EP_REGISTRATION_CREDENTIALS_ID_PROPERTY = "creds_id";
-    public static final String EP_REGISTRATION_SERVER_PROFILE_VERSION_PROPERTY = EP_SERVER_PROFILE_VERSION_PROPERTY;
-    public static final String EP_REGISTRATION_SERVER_PROFILE_BODY_PROPERTY = EP_SERVER_PROFILE_PROPERTY;
+    public static final String EP_REGISTRATION_SERVER_PROFILE_VERSION_PROPERTY =
+        EP_SERVER_PROFILE_VERSION_PROPERTY;
+    public static final String EP_REGISTRATION_SERVER_PROFILE_BODY_PROPERTY =
+        EP_SERVER_PROFILE_PROPERTY;
 
     /**
      * {@link CassandraEpRegistrationByEndpointId}
      */
-    public static final String EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME = "creds_id_ep_registration";
-    public static final String EP_REGISTRATION_BY_ENDPOINT_ID_CREDENTIALS_ID_PROPERTY = EP_REGISTRATION_CREDENTIALS_ID_PROPERTY;
-    public static final String EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY = EP_REGISTRATION_ENDPOINT_ID_PROPERTY;
+    public static final String EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME =
+        "creds_id_ep_registration";
+    public static final String EP_REGISTRATION_BY_ENDPOINT_ID_CREDENTIALS_ID_PROPERTY =
+        EP_REGISTRATION_CREDENTIALS_ID_PROPERTY;
+    public static final String EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY =
+        EP_REGISTRATION_ENDPOINT_ID_PROPERTY;
 
     /**
-     * Cassandra Credentials constants
+     * Cassandra Credentials constants.
      */
     public static final String CREDENTIALS_COLUMN_FAMILY_NAME = "credentials";
     public static final String CREDENTIALS_APPLICATION_ID_PROPERTY = "creds_application_id";

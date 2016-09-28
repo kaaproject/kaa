@@ -197,25 +197,60 @@ public final class CassandraNotification implements Notification, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
 
-    CassandraNotification that = (CassandraNotification) o;
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
 
-    if (seqNum != that.seqNum) return false;
-    if (nfVersion != that.nfVersion) return false;
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+    CassandraNotification that = (CassandraNotification) object;
+
+    if (seqNum != that.seqNum) {
       return false;
-    if (body != null ? !body.equals(that.body) : that.body != null) return false;
-    if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null)
+    }
+
+    if (nfVersion != that.nfVersion) {
       return false;
-    if (id != null ? !id.equals(that.id) : that.id != null) return false;
-    if (lastModifyTime != null ? !lastModifyTime.equals(that.lastModifyTime) : that.lastModifyTime != null)
+    }
+
+    if (applicationId != null
+        ? !applicationId.equals(that.applicationId)
+        : that.applicationId != null) {
       return false;
-    if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) return false;
-    if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) return false;
-    if (type != that.type) return false;
+    }
+
+    if (body != null ? !body.equals(that.body) : that.body != null) {
+      return false;
+    }
+
+    if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null) {
+      return false;
+    }
+
+    if (id != null ? !id.equals(that.id) : that.id != null) {
+      return false;
+    }
+
+    if (lastModifyTime != null
+        ? !lastModifyTime.equals(that.lastModifyTime)
+        : that.lastModifyTime != null) {
+      return false;
+    }
+
+    if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
+      return false;
+    }
+
+    if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) {
+      return false;
+    }
+
+    if (type != that.type) {
+      return false;
+    }
 
     return true;
   }
@@ -223,17 +258,17 @@ public final class CassandraNotification implements Notification, Serializable {
   @Override
   public String toString() {
     return "CassandraNotification{" +
-        "topicId='" + topicId + '\'' +
-        ", type=" + type +
-        ", id='" + id + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", schemaId='" + schemaId + '\'' +
-        ", nfVersion=" + nfVersion +
-        ", seqNum=" + seqNum +
-        ", lastModifyTime=" + lastModifyTime +
-        ", body=" + body +
-        ", expiredAt=" + expiredAt +
-        '}';
+        "topicId='" + topicId + '\''
+        + ", type=" + type
+        + ", id='" + id + '\''
+        + ", applicationId='" + applicationId + '\''
+        + ", schemaId='" + schemaId + '\''
+        + ", nfVersion=" + nfVersion
+        + ", seqNum=" + seqNum
+        + ", lastModifyTime=" + lastModifyTime
+        + ", body=" + body
+        + ", expiredAt=" + expiredAt
+        + '}';
   }
 
   @Override

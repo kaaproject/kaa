@@ -83,20 +83,20 @@ public class CassandraEpBySdkToken implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
 
-        if (o == null) {
+        if (object == null) {
             return false;
         }
 
-        if (!(o instanceof CassandraEpBySdkToken)) {
+        if (!(object instanceof CassandraEpBySdkToken)) {
             return false;
         }
 
-        CassandraEpBySdkToken other = (CassandraEpBySdkToken) o;
+        CassandraEpBySdkToken other = (CassandraEpBySdkToken) object;
 
         if (endpointKeyHash == null) {
             if (other.endpointKeyHash != null) {
