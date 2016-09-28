@@ -36,61 +36,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * The Class WorkerNodeTracker.
- */
+
 public abstract class WorkerNodeTracker extends ControlNodeTracker {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(WorkerNodeTracker.class);
 
-  /**
-   * The endpoint cache.
-   */
+
   private PathChildrenCache endpointCache;
 
-  /**
-   * The bootstrap cache.
-   */
+
   private PathChildrenCache bootstrapCache;
 
-  /**
-   * The endpoint listeners.
-   */
+
   private List<OperationsNodeListener> endpointListeners;
 
-  /**
-   * The bootstrap listeners.
-   */
+
   private List<BootstrapNodeListener> bootstrapListeners;
 
   /**
    * Correspondence between each functioning operation node's thriftHost+thriftPort
-   * string and its start time
+   * string and its start time.
    */
   private Map<String, Long> operationNodesStartTimes;
 
   /**
    * Correspondence between each functioning bootstrap node's thriftHost+thriftPort
-   * string and its start time
+   * string and its start time.
    */
   private Map<String, Long> bootstrapNodesStartTimes;
 
-  /**
-   * Instantiates a new worker node tracker.
-   */
+
   public WorkerNodeTracker() {
     super();
     init();
   }
 
-  /**
-   * Instantiates a new worker node tracker.
-   *
-   * @param zkClient Zookeeper client
-   */
   public WorkerNodeTracker(CuratorFramework zkClient) {
     super();
     this.zkClient = zkClient;
@@ -301,6 +281,17 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
   }
 
   /**
+   * Adds the listener.
+   *
+   * @param listener the listener
+   */
+  public void addListener(BootstrapNodeListener listener) {
+    LOG.debug("Listener registered: " + listener);
+    bootstrapListeners.add(listener);
+  }
+
+
+  /**
    * Removes the listener.
    *
    * @param listener the listener
@@ -314,16 +305,6 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
       LOG.debug("Listener not found: " + listener);
       return false;
     }
-  }
-
-  /**
-   * Adds the listener.
-   *
-   * @param listener the listener
-   */
-  public void addListener(BootstrapNodeListener listener) {
-    LOG.debug("Listener registered: " + listener);
-    bootstrapListeners.add(listener);
   }
 
   /**
@@ -342,6 +323,7 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     }
   }
 
+
   /**
    * Extract endpoint server info.
    *
@@ -351,9 +333,10 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
   private OperationsNodeInfo extractOperationServerInfo(ChildData currentData) {
     OperationsNodeInfo endpointServerInfo = null;
     try {
-      endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
-    } catch (IOException e) {
-      LOG.error("error reading control service info", e);
+      endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(),
+          null);
+    } catch (IOException ex) {
+      LOG.error("error reading control service info", ex);
     }
     return endpointServerInfo;
   }
@@ -367,21 +350,22 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
   private BootstrapNodeInfo extractBootstrapServerInfo(ChildData currentData) {
     BootstrapNodeInfo bootstrapServerInfo = null;
     try {
-      bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
-    } catch (IOException e) {
-      LOG.error("error reading control service info", e);
+      bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(),
+          null);
+    } catch (IOException ex) {
+      LOG.error("error reading control service info", ex);
     }
     return bootstrapServerInfo;
   }
 
   private String constructEndpointAddress(OperationsNodeInfo nodeInfo) {
-    return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
-        String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+    return nodeInfo.getConnectionInfo().getThriftHost() + ":"
+        + String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
   }
 
   private String constructBootstrapAddress(BootstrapNodeInfo nodeInfo) {
-    return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
-        String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+    return nodeInfo.getConnectionInfo().getThriftHost() + ":"
+        + String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
   }
 
   /*

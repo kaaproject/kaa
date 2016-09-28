@@ -135,9 +135,9 @@ public class MessageEncoderDecoder {
   public static String bytesToHex(byte[] bytes) {
     char[] hexChars = new char[bytes.length * 3];
     for (int j = 0; j < bytes.length; j++) {
-      int v = bytes[j] & 0xFF;
-      hexChars[j * 3] = HEX_ARRAY[v >>> 4];
-      hexChars[j * 3 + 1] = HEX_ARRAY[v & 0x0F];
+      int value = bytes[j] & 0xFF;
+      hexChars[j * 3] = HEX_ARRAY[value >>> 4];
+      hexChars[j * 3 + 1] = HEX_ARRAY[value & 0x0F];
       hexChars[j * 3 + 2] = ' ';
     }
     return new String(hexChars);
@@ -170,21 +170,10 @@ public class MessageEncoderDecoder {
     return sessionCipherPair.encCipher.doFinal(message);
   }
 
-  /**
-   * Decode data using session key then is decoded using private key.
-   *
-   * @param message    the message
-   * @param encodedKey the encoded key
-   * @return the byte[]
-   * @throws GeneralSecurityException the general security exception
-   */
-  public byte[] decodeData(byte[] message, byte[] encodedKey) throws GeneralSecurityException {
-    sessionCipherPair = null;
-    decodeSessionKey(encodedKey);
-    return decodeData(message);
-  }
 
-  private void decodeSessionKey(byte[] encodedKey) throws InvalidKeyException, IllegalBlockSizeException,
+  private void decodeSessionKey(byte[] encodedKey) throws
+      InvalidKeyException,
+      IllegalBlockSizeException,
       BadPaddingException {
     Cipher sessionKeyCipher = RSA_CIPHER.get();
     sessionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -204,6 +193,21 @@ public class MessageEncoderDecoder {
       sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, getSessionKey());
     }
     return sessionCipherPair.decCipher.doFinal(message);
+  }
+
+
+  /**
+   * Decode data using session key then is decoded using private key.
+   *
+   * @param message    the message
+   * @param encodedKey the encoded key
+   * @return the byte[]
+   * @throws GeneralSecurityException the general security exception
+   */
+  public byte[] decodeData(byte[] message, byte[] encodedKey) throws GeneralSecurityException {
+    sessionCipherPair = null;
+    decodeSessionKey(encodedKey);
+    return decodeData(message);
   }
 
   /**

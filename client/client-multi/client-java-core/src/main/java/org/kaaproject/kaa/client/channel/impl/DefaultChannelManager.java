@@ -232,8 +232,30 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   }
 
   @Override
+  public synchronized KaaDataChannel getChannel(String id) {
+    for (KaaDataChannel channel : channels) {
+      if (channel.getId().equals(id)) {
+        return channel;
+      }
+    }
+    return null;
+  }
+
+
+  @Override
   public void sync(TransportType type) {
     sync(type, false, false);
+  }
+
+  private void sync(TransportType type, boolean ack, boolean all) {
+    LOG.debug("Lookup channel by type {}", type);
+    KaaDataChannel channel = getChannel(type);
+    BlockingQueue<SyncTask> queue = syncTaskQueueMap.get(channel.getId());
+    if (queue != null) {
+      queue.offer(new SyncTask(type, ack, all));
+    } else {
+      LOG.warn("Can't find queue for channel [{}]", channel.getId());
+    }
   }
 
   @Override
@@ -246,15 +268,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     sync(type, false, true);
   }
 
-  @Override
-  public synchronized KaaDataChannel getChannel(String id) {
-    for (KaaDataChannel channel : channels) {
-      if (channel.getId().equals(id)) {
-        return channel;
-      }
-    }
-    return null;
-  }
+
 
   @Override
   public synchronized void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
@@ -270,8 +284,10 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     for (KaaDataChannel channel : channels) {
-      if (channel.getServerType() == newServer.getServerType() && channel.getTransportProtocolId().equals(newServer.getTransportId())) {
-        LOG.debug("Applying server {} for channel [{}] type {}", newServer, channel.getId(), channel.getTransportProtocolId());
+      if (channel.getServerType() == newServer.getServerType()
+          && channel.getTransportProtocolId().equals(newServer.getTransportId())) {
+        LOG.debug("Applying server {} for channel [{}] type {}",
+            newServer, channel.getId(), channel.getTransportProtocolId());
         channel.setServer(newServer);
         if (failoverManager != null) {
           failoverManager.onServerChanged(newServer);
@@ -467,16 +483,6 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     this.bootstrapDemultiplexer = demultiplexer;
   }
 
-  private void sync(TransportType type, boolean ack, boolean all) {
-    LOG.debug("Lookup channel by type {}", type);
-    KaaDataChannel channel = getChannel(type);
-    BlockingQueue<SyncTask> queue = syncTaskQueueMap.get(channel.getId());
-    if (queue != null) {
-      queue.offer(new SyncTask(type, ack, all));
-    } else {
-      LOG.warn("Can't find queue for channel [{}]", channel.getId());
-    }
-  }
 
   private void startWorker(KaaDataChannel channel) {
     stopWorker(channel);
