@@ -23,10 +23,7 @@ RUN apt-get update && apt-get -yqq install \
 		ca-certificates \
 		netcat \
 		nano \
-		vim  \
-		curl \
 		net-tools \
-		mc \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -50,7 +47,9 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 # Copy compiled/downloaded Kaa .DEB file and install
 ARG setupfile
 COPY ["$setupfile", "/kaa-node.deb"]
-RUN dpkg -i /kaa-node.deb
+RUN dpkg -i /kaa-node.deb \
+	&& rm -R /kaa-node.deb \
+	&& apt-get autoremove -y && apt-get clean
 
 RUN touch /var/log/kaa/kaa-node.log \
 	&& chown kaa:kaa /var/log/kaa/kaa-node.log
@@ -59,8 +58,5 @@ RUN touch /var/log/kaa/kaa-node.log \
 COPY kaa/ /kaa
 
 EXPOSE 9090
-
-# Make kaa sudoer
-RUN echo 'kaa     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
 ENTRYPOINT ["/kaa/docker-entry.sh"]
