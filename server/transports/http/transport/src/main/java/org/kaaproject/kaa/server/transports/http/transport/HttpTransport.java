@@ -118,7 +118,7 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
     RangeExpressionParser rangeExpressionParser = new RangeExpressionParser();
     List<Integer> publicPorts = rangeExpressionParser.getNumbersFromRanges(context.getConfiguration().getPublicPorts());
     for (int publicPort : publicPorts) {
-      byte[] interfaceData = toUTF8Bytes(context.getConfiguration().getPublicInterface());
+      byte[] interfaceData = toUtf8Bytes(context.getConfiguration().getPublicInterface());
       byte[] publicKeyData = context.getServerKey().getEncoded();
       ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
       buf.putInt(publicKeyData.length);

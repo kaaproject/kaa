@@ -102,6 +102,19 @@ public class ModelUtils {
     return dataSet;
   }
 
+  public static Set<String> getGenericModelIds(Set<? extends GenericModel<?>> set) {
+    Set<String> ids;
+    if (set == null || set.isEmpty()) {
+      ids = Collections.emptySet();
+    } else {
+      ids = new HashSet<>(set.size());
+      for (GenericModel<?> model : set) {
+        ids.add(model.getStringId());
+      }
+    }
+    return ids;
+  }
+
   public static List<String> getDtoIds(Set<HasId> set) {
     List<String> ids;
     if (set == null || set.isEmpty()) {
@@ -115,18 +128,6 @@ public class ModelUtils {
     return ids;
   }
 
-  public static Set<String> getGenericModelIds(Set<? extends GenericModel<?>> set) {
-    Set<String> ids;
-    if (set == null || set.isEmpty()) {
-      ids = Collections.emptySet();
-    } else {
-      ids = new HashSet<>(set.size());
-      for (GenericModel<?> model : set) {
-        ids.add(model.getStringId());
-      }
-    }
-    return ids;
-  }
 
   public static Set<Integer> getGenericModelVersions(Set<? extends HasVersion> set) {
     Set<Integer> ids;
@@ -195,7 +196,7 @@ public class ModelUtils {
   }
 
   /**
-   * This method take string id from <code>GenericModel</code> object
+   * This method take string id from <code>GenericModel</code> object.
    *
    * @param model <code>GenericModel</code> object
    * @return the id as string type

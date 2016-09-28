@@ -85,6 +85,28 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   }
 
   @Override
+  public void addNotificationListener(Long topicId, NotificationListener listener)
+      throws UnavailableTopicException {
+    if (listener == null) {
+      LOG.warn("Failed to add listener: id={}, listener={}", topicId, null);
+      throw new IllegalArgumentException("Bad listener data");
+    }
+
+    findTopicById(topicId);
+
+    synchronized (optionalListeners) {
+      List<NotificationListener> listeners = optionalListeners.get(topicId);
+
+      if (listeners == null) {
+        listeners = new LinkedList<>();
+        optionalListeners.put(topicId, listeners);
+      }
+
+      listeners.add(listener);
+    }
+  }
+
+  @Override
   public void removeNotificationListener(NotificationListener listener) {
     if (listener == null) {
       LOG.warn("Failed to remove notification listener: null");
@@ -93,6 +115,25 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     synchronized (mandatoryListeners) {
       mandatoryListeners.remove(listener);
+    }
+  }
+
+  @Override
+  public void removeNotificationListener(Long topicId, NotificationListener listener)
+      throws UnavailableTopicException {
+    if (topicId == null || listener == null) {
+      LOG.warn("Failed to remove listener: id={}, listener={}", topicId, listener);
+      throw new IllegalArgumentException("Bad listener data");
+    }
+
+    findTopicById(topicId);
+
+    synchronized (optionalListeners) {
+      List<NotificationListener> listeners = optionalListeners.get(topicId);
+
+      if (listeners != null) {
+        listeners.remove(listener);
+      }
     }
   }
 
@@ -119,6 +160,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
       topicsListeners.remove(listener);
     }
   }
+
+
 
   @Override
   public List<Topic> getTopics() {
@@ -149,7 +192,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   }
 
   @Override
-  public void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException {
+  public void subscribeToTopics(List<Long> topicIds, boolean forceSync)
+      throws UnavailableTopicException {
     List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
 
     for (Long id : topicIds) {
@@ -170,7 +214,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   }
 
   @Override
-  public void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException {
+  public void unsubscribeFromTopic(Long topicId, boolean forceSync)
+      throws UnavailableTopicException {
     Topic topic = findTopicById(topicId);
     if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
       LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", topicId);
@@ -185,7 +230,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   }
 
   @Override
-  public void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException {
+  public void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync)
+      throws UnavailableTopicException {
     List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
 
     for (Long id : topicIds) {
@@ -205,44 +251,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
   }
 
-  @Override
-  public void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException {
-    if (listener == null) {
-      LOG.warn("Failed to add listener: id={}, listener={}", topicId, listener);
-      throw new IllegalArgumentException("Bad listener data");
-    }
 
-    findTopicById(topicId);
-
-    synchronized (optionalListeners) {
-      List<NotificationListener> listeners = optionalListeners.get(topicId);
-
-      if (listeners == null) {
-        listeners = new LinkedList<>();
-        optionalListeners.put(topicId, listeners);
-      }
-
-      listeners.add(listener);
-    }
-  }
-
-  @Override
-  public void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException {
-    if (topicId == null || listener == null) {
-      LOG.warn("Failed to remove listener: id={}, listener={}", topicId, listener);
-      throw new IllegalArgumentException("Bad listener data");
-    }
-
-    findTopicById(topicId);
-
-    synchronized (optionalListeners) {
-      List<NotificationListener> listeners = optionalListeners.get(topicId);
-
-      if (listeners != null) {
-        listeners.remove(listener);
-      }
-    }
-  }
 
   @Override
   public void sync() {
@@ -301,22 +310,27 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             notifyListeners(mandatoryListeners, topic, notification);
           }
         }
-      } catch (UnavailableTopicException e) {
-        LOG.warn("Received notification for an unknown topic (id={}), exception catched: {}", notification.getTopicId(), e);
+      } catch (UnavailableTopicException ex) {
+        LOG.warn("Received notification for an unknown topic (id={}), exception catched: {}",
+            notification.getTopicId(), ex);
       }
     }
   }
 
-  private void notifyListeners(Collection<NotificationListener> listeners, final Topic topic, final Notification notification) {
+  private void notifyListeners(Collection<NotificationListener> listeners, final Topic topic,
+                               final Notification notification) {
     final Collection<NotificationListener> listenersCopy = new ArrayList<NotificationListener>(listeners);
     if (notification.getBody() != null) {
       executorContext.getCallbackExecutor().submit(new Runnable() {
         @Override
         public void run() {
           try {
-            deserializer.notify(Collections.unmodifiableCollection(listenersCopy), topic, notification.getBody().array());
-          } catch (IOException e) {
-            LOG.error("Failed to process notification for topic {}", topic.getId(), e);
+            deserializer.notify(
+                Collections.unmodifiableCollection(listenersCopy),
+                topic,
+                notification.getBody().array());
+          } catch (IOException ex) {
+            LOG.error("Failed to process notification for topic {}", topic.getId(), ex);
           }
         }
       });

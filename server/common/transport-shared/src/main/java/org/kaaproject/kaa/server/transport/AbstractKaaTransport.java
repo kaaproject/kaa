@@ -42,9 +42,7 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
   protected static final String LOCALHOST = "localhost";
   private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTransport.class);
   private static final Charset UTF8 = Charset.forName("UTF-8");
-  /**
-   * A message handler
-   */
+
   protected MessageHandler handler;
 
   protected SpecificTransportContext<T> context;
@@ -64,11 +62,20 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
       this.context = new SpecificTransportContext<T>(context, config);
       init(this.context);
       LOG.info("Transport {} initialized with {}", getClassName(), this.context.getConfiguration());
-    } catch (IOException e) {
-      LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), e);
-      throw new TransportLifecycleException(e);
+    } catch (IOException ex) {
+      LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), ex);
+      throw new TransportLifecycleException(ex);
     }
   }
+
+  /**
+   * Initializes the transport with specified context.
+   *
+   * @param context the initialization context
+   */
+  protected abstract void init(SpecificTransportContext<T> context)
+      throws TransportLifecycleException;
+
 
   @Override
   public TransportMetaData getConnectionInfo() {
@@ -80,12 +87,6 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
     return new TransportMetaData(getMinSupportedVersion(), getMaxSupportedVersion(), buffs);
   }
 
-  /**
-   * Initializes the transport with specified context.
-   *
-   * @param context the initialization context
-   */
-  protected abstract void init(SpecificTransportContext<T> context) throws TransportLifecycleException;
 
   /**
    * Gets the configuration class.
@@ -108,7 +109,7 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
     return source.replace("${" + propertyName + "}", propertyValue);
   }
 
-  protected byte[] toUTF8Bytes(String str) {
+  protected byte[] toUtf8Bytes(String str) {
     return str.getBytes(UTF8);
   }
 }

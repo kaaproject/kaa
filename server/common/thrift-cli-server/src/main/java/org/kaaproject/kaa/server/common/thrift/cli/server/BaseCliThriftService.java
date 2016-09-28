@@ -180,6 +180,20 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
     new Thread(shutdownCommand).start();
   }
 
+  /**
+   * Shutdown server.
+   *
+   * @param writer the writer to output shutdown information.
+   */
+  private void shutdown(PrintWriter writer) {
+    writer.println("Server shutdown initiated.");
+    try {
+      shutdown();
+    } catch (TException ex) {
+      LOG.error("Catch exception when execute shutdown command", ex);
+    }
+  }
+
   /*
    * (non-Javadoc)
    *
@@ -188,9 +202,9 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
    * .Iface#getMemoryUsage(boolean)
    */
   @Override
-  public MemoryUsage getMemoryUsage(boolean forceGC)
+  public MemoryUsage getMemoryUsage(boolean forceGc)
       throws TException {
-    if (forceGC) {
+    if (forceGc) {
       System.gc(); //NOSONAR
     }
     MemoryUsage memUsage = new MemoryUsage();
@@ -476,19 +490,7 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
     }
   }
 
-  /**
-   * Shutdown server.
-   *
-   * @param writer the writer to output shutdown information.
-   */
-  private void shutdown(PrintWriter writer) {
-    writer.println("Server shutdown initiated.");
-    try {
-      shutdown();
-    } catch (TException ex) {
-      LOG.error("Catch exception when execute shutdown command", ex);
-    }
-  }
+
 
   /**
    * Creates the string padding.

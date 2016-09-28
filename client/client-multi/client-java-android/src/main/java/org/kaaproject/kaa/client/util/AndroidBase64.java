@@ -33,13 +33,15 @@ public class AndroidBase64 implements Base64 {
   }
 
   @Override
+  public byte[] decodeBase64(String base64String) {
+    return android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+  }
+
+  @Override
   public byte[] encodeBase64(byte[] binaryData) {
     return android.util.Base64.encode(binaryData, android.util.Base64.DEFAULT);
   }
 
-  @Override
-  public byte[] decodeBase64(String base64String) {
-    return android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
-  }
+
 
 }
