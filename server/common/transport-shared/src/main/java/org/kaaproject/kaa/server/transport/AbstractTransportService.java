@@ -50,7 +50,8 @@ import java.util.Set;
  * @author Andrew Shvayka
  */
 public abstract class AbstractTransportService implements TransportService {
-  protected static final String TRANSPORT_CONFIGURATION_SCAN_PACKAGE = "org.kaaproject.kaa.server.transport";
+  protected static final String TRANSPORT_CONFIGURATION_SCAN_PACKAGE =
+      "org.kaaproject.kaa.server.transport";
 
   /**
    * The Constant LOG.
@@ -68,15 +69,18 @@ public abstract class AbstractTransportService implements TransportService {
     this.listeners = new HashSet<TransportUpdateListener>();
   }
 
-  private static List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> toTransportMDList(Map<Integer, Transport> transportMap) {
-    List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> mdList = new ArrayList<>(transportMap.size());
+  private static List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> toTransportMdList(
+      Map<Integer, Transport> transportMap) {
+    List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> mdList =
+        new ArrayList<>(transportMap.size());
     for (Entry<Integer, Transport> entry : transportMap.entrySet()) {
       TransportMetaData source = entry.getValue().getConnectionInfo();
-      org.kaaproject.kaa.server.common.zk.gen.TransportMetaData md = new org.kaaproject.kaa.server.common.zk.gen.TransportMetaData();
+      org.kaaproject.kaa.server.common.zk.gen.TransportMetaData md =
+          new org.kaaproject.kaa.server.common.zk.gen.TransportMetaData();
       md.setId(entry.getKey());
       md.setMinSupportedVersion(source.getMinSupportedVersion());
       md.setMaxSupportedVersion(source.getMaxSupportedVersion());
-      List<VersionConnectionInfoPair> connectionInfoList = new ArrayList<VersionConnectionInfoPair>();
+      List<VersionConnectionInfoPair> connectionInfoList = new ArrayList<>();
       for (int i = md.getMinSupportedVersion(); i <= md.getMaxSupportedVersion(); i++) {
         for (byte[] connectionInfo : source.getConnectionInfoList(i)) {
           connectionInfoList.add(new VersionConnectionInfoPair(i, ByteBuffer.wrap(connectionInfo)));
@@ -90,44 +94,55 @@ public abstract class AbstractTransportService implements TransportService {
 
   @Override
   public void lookupAndInit() {
-    LOG.info("Lookup of available transport configurations started in package {}.", TRANSPORT_CONFIGURATION_SCAN_PACKAGE);
+    LOG.info("Lookup of available transport configurations started in package {}.",
+        TRANSPORT_CONFIGURATION_SCAN_PACKAGE);
     configs.clear();
     transports.clear();
-    ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+    ClassPathScanningCandidateComponentProvider scanner =
+        new ClassPathScanningCandidateComponentProvider(false);
     scanner.addIncludeFilter(new AnnotationTypeFilter(KaaTransportConfig.class));
-    Set<BeanDefinition> beans = scanner.findCandidateComponents(TRANSPORT_CONFIGURATION_SCAN_PACKAGE);
+    Set<BeanDefinition> beans = scanner.findCandidateComponents(
+        TRANSPORT_CONFIGURATION_SCAN_PACKAGE);
     for (BeanDefinition bean : beans) {
       LOG.info("Found transport configuration {}", bean.getBeanClassName());
       try {
         Class<?> clazz = Class.forName(bean.getBeanClassName());
         TransportConfig transportConfig = (TransportConfig) clazz.newInstance();
         configs.put(transportConfig.getId(), transportConfig);
-      } catch (ReflectiveOperationException e) {
-        LOG.error(MessageFormat.format("Failed to init transport configuration for {0}", bean.getBeanClassName()), e);
+      } catch (ReflectiveOperationException exception) {
+        LOG.error(MessageFormat.format("Failed to init transport configuration for {0}",
+            bean.getBeanClassName()), exception);
       }
     }
-    LOG.info("Lookup of available transport configurations found {} configurations.", configs.size());
+    LOG.info("Lookup of available transport configurations found {} configurations.",
+        configs.size());
 
     LOG.info("Lookup of transport properties started");
     TransportProperties transportProperties = new TransportProperties(getServiceProperties());
     LOG.info("Lookup of transport properties found {} properties", transportProperties.size());
 
     for (TransportConfig config : configs.values()) {
-      LOG.info("Initializing transport with name {} and class {}", config.getName(), config.getTransportClass());
+      LOG.info("Initializing transport with name {} and class {}",
+          config.getName(), config.getTransportClass());
       try {
         Class<?> clazz = Class.forName(config.getTransportClass());
         Transport transport = (Transport) clazz.newInstance();
         String transportConfigFile = getTransportConfigPrefix() + "-" + config.getConfigFileName();
         LOG.info("Lookup of transport configuration file {}", transportConfigFile);
-        URL configFileURL = this.getClass().getClassLoader().getResource(transportConfigFile);
-        GenericAvroConverter<GenericRecord> configConverter = new GenericAvroConverter<GenericRecord>(config.getConfigSchema());
-        GenericRecord configRecord = configConverter.decodeJson(Files.readAllBytes(Paths.get(configFileURL.toURI())));
+        URL configFileUrl = this.getClass().getClassLoader().getResource(transportConfigFile);
+        GenericAvroConverter<GenericRecord> configConverter =
+            new GenericAvroConverter<>(config.getConfigSchema());
+        GenericRecord configRecord = configConverter.decodeJson(
+            Files.readAllBytes(Paths.get(configFileUrl.toURI())));
         LOG.info("Lookup of transport configuration file {}", transportConfigFile);
-        TransportContext context = new TransportContext(transportProperties, getPublicKey(), getMessageHandler());
+        TransportContext context = new TransportContext(
+            transportProperties, getPublicKey(), getMessageHandler());
         transport.init(new GenericTransportContext(context, configConverter.encode(configRecord)));
         transports.put(config.getId(), transport);
-      } catch (ReflectiveOperationException | IOException | URISyntaxException | TransportLifecycleException e) {
-        LOG.error(MessageFormat.format("Failed to init transport for {0}", config.getTransportClass()), e);
+      } catch (ReflectiveOperationException | IOException
+          | URISyntaxException | TransportLifecycleException exception) {
+        LOG.error(MessageFormat.format("Failed to init transport for {0}",
+            config.getTransportClass()), exception);
       }
     }
   }
@@ -174,7 +189,8 @@ public abstract class AbstractTransportService implements TransportService {
   ;
 
   private void notifyListeners() {
-    List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> mdList = toTransportMDList(transports);
+    List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> mdList = toTransportMdList(
+        transports);
     for (TransportUpdateListener listener : listeners) {
       listener.onTransportsStarted(mdList);
     }

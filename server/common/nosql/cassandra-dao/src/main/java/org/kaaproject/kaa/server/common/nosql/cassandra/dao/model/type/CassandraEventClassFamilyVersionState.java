@@ -30,7 +30,8 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import java.io.Serializable;
 
 @UDT(name = EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME)
-public final class CassandraEventClassFamilyVersionState implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
+public final class CassandraEventClassFamilyVersionState
+    implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
 
   @Transient
   private static final long serialVersionUID = 3766947955702551264L;

@@ -43,9 +43,12 @@ public final class TransportContext {
   private final RedirectionTransport redirectionTransport;
   private final LogTransport logTransport;
 
-  public TransportContext(MetaDataTransport mdTransport, BootstrapTransport bootstrapTransport, ProfileTransport profileTransport,
-                          EventTransport eventTransport, NotificationTransport notificationTransport, ConfigurationTransport configurationTransport,
-                          UserTransport userTransport, RedirectionTransport redirectionTransport, LogTransport logTransport) {
+  public TransportContext(MetaDataTransport mdTransport, BootstrapTransport bootstrapTransport,
+                          ProfileTransport profileTransport, EventTransport eventTransport,
+                          NotificationTransport notificationTransport,
+                          ConfigurationTransport configurationTransport,
+                          UserTransport userTransport, RedirectionTransport redirectionTransport,
+                          LogTransport logTransport) {
     super();
     this.mdTransport = mdTransport;
     this.bootstrapTransport = bootstrapTransport;

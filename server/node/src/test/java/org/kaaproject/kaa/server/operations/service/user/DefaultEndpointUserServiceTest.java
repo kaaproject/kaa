@@ -276,7 +276,7 @@ public class DefaultEndpointUserServiceTest {
   @Test
   public void getEventListenersTest() {
     EventListenersRequest request = new EventListenersRequest();
-    request.setEventClassFQNs(Arrays.asList("fqn2", "fqn3"));
+    request.setEventClassFqns(Arrays.asList("fqn2", "fqn3"));
     request.setRequestId(REQUEST_ID);
 
     EndpointProfileDto profileMock = mock(EndpointProfileDto.class);
@@ -347,7 +347,7 @@ public class DefaultEndpointUserServiceTest {
   @Test
   public void getEventListenersFailure1Test() {
     EventListenersRequest request = new EventListenersRequest();
-    request.setEventClassFQNs(Arrays.asList("fqn2", "fqn3"));
+    request.setEventClassFqns(Arrays.asList("fqn2", "fqn3"));
     request.setRequestId(REQUEST_ID);
 
     EndpointProfileDto profileMock = mock(EndpointProfileDto.class);
@@ -366,7 +366,7 @@ public class DefaultEndpointUserServiceTest {
   @Test
   public void getEventListenersEmptyTest() {
     EventListenersRequest request = new EventListenersRequest();
-    request.setEventClassFQNs(Arrays.asList("fqn2", "fqn3"));
+    request.setEventClassFqns(Arrays.asList("fqn2", "fqn3"));
     request.setRequestId(REQUEST_ID);
 
     EndpointProfileDto profileMock = mock(EndpointProfileDto.class);

@@ -26,7 +26,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
 import org.kaaproject.kaa.server.transport.EndpointRevocationException;
 import org.kaaproject.kaa.server.transport.EndpointVerificationException;
-import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
+import org.kaaproject.kaa.server.transport.InvalidSdkTokenException;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
@@ -86,14 +86,14 @@ public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand> im
   }
 
   @Override
-  public Object[] build(Exception e) {
+  public Object[] build(Exception exception) {
     HttpResponseStatus status;
-    if (e instanceof EndpointVerificationException) {
+    if (exception instanceof EndpointVerificationException) {
       status = HttpResponseStatus.UNAUTHORIZED;
-    } else if (e instanceof EndpointRevocationException) {
+    } else if (exception instanceof EndpointRevocationException) {
       status = HttpResponseStatus.FORBIDDEN;
-    } else if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException
-        || e instanceof InvalidSDKTokenException) {
+    } else if (exception instanceof GeneralSecurityException || exception instanceof IOException || exception instanceof IllegalArgumentException
+        || exception instanceof InvalidSdkTokenException) {
       status = HttpResponseStatus.BAD_REQUEST;
     } else {
       status = HttpResponseStatus.INTERNAL_SERVER_ERROR;

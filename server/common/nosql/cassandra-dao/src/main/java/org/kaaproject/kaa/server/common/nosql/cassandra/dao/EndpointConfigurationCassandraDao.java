@@ -30,10 +30,12 @@ import org.springframework.stereotype.Repository;
 import java.nio.ByteBuffer;
 
 @Repository(value = "endpointConfigurationDao")
-public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer>
+public class EndpointConfigurationCassandraDao
+    extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer>
     implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
 
   @Override
   protected Class<CassandraEndpointConfiguration> getColumnFamilyClass() {

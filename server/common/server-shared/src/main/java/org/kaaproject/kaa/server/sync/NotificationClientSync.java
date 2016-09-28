@@ -103,8 +103,10 @@ public final class NotificationClientSync {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((acceptedUnicastNotifications == null) ? 0 : acceptedUnicastNotifications.hashCode());
-    result = prime * result + ((subscriptionCommands == null) ? 0 : subscriptionCommands.hashCode());
+    result = prime * result
+        + ((acceptedUnicastNotifications == null) ? 0 : acceptedUnicastNotifications.hashCode());
+    result = prime * result
+        + ((subscriptionCommands == null) ? 0 : subscriptionCommands.hashCode());
     result = prime * result + topicListHash;
     result = prime * result + ((topicStates == null) ? 0 : topicStates.hashCode());
     return result;

@@ -27,7 +27,9 @@ public final class UserAttachResponse {
   /**
    * All-args constructor.
    */
-  public UserAttachResponse(SyncStatus result, UserVerifierErrorCode errorCode, String errorReason) {
+  public UserAttachResponse(SyncStatus result,
+                            UserVerifierErrorCode errorCode,
+                            String errorReason) {
     this.result = result;
     this.errorCode = errorCode;
     this.errorReason = errorReason;
@@ -58,15 +60,15 @@ public final class UserAttachResponse {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    UserAttachResponse that = (UserAttachResponse) o;
+    UserAttachResponse that = (UserAttachResponse) object;
 
     if (errorCode != that.errorCode) {
       return false;

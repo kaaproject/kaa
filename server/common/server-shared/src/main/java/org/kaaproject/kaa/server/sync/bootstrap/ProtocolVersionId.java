@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.sync.bootstrap;
 
 /**
- * Simple immutable object that
+ * Simple immutable object that.
  *
  * @author Andrey Shvayka
  */

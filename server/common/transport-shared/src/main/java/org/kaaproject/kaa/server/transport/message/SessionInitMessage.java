@@ -47,7 +47,7 @@ public interface SessionInitMessage extends Message, SessionCreateListener {
   byte[] getSessionKeySignature();
 
   /**
-   * Returns a keep alive interval for this session
+   * Returns a keep alive interval for this session.
    *
    * @return a keep alive interval
    */

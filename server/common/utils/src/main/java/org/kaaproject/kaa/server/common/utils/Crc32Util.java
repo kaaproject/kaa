@@ -20,15 +20,15 @@ import java.nio.charset.Charset;
 import java.util.zip.CRC32;
 
 /**
- * An util class that provides convenient methods to get crc32 checksum from {@link String}
+ * An util class that provides convenient methods to get crc32 checksum from {@link String}.
  *
  * @author Andrew Shvayka
  */
-public class CRC32Util {
+public class Crc32Util {
 
   private static final Charset UTF8 = Charset.forName("UTF-8");
 
-  private CRC32Util() {
+  private Crc32Util() {
   }
 
   /**

@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.transport.message;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 
 /**
- * Represents {@link SessionAware} {@link Message}
+ * Represents {@link SessionAware} {@link Message}.
  *
  * @author Andrew Shvayka
  */

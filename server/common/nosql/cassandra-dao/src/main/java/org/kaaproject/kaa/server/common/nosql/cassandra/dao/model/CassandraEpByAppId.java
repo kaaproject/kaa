@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 @Table(name = CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME)
-public class CassandraEPByAppId implements Serializable {
+public class CassandraEpByAppId implements Serializable {
 
   @Transient
   private static final long serialVersionUID = 4620788066149588088L;
@@ -38,10 +38,10 @@ public class CassandraEPByAppId implements Serializable {
   @Column(name = CassandraModelConstants.EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY)
   private ByteBuffer endpointKeyHash;
 
-  public CassandraEPByAppId() {
+  public CassandraEpByAppId() {
   }
 
-  public CassandraEPByAppId(String appId, ByteBuffer endpointKeyHash) {
+  public CassandraEpByAppId(String appId, ByteBuffer endpointKeyHash) {
     this.appId = appId;
     this.endpointKeyHash = endpointKeyHash;
   }
@@ -63,20 +63,23 @@ public class CassandraEPByAppId implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    CassandraEPByAppId that = (CassandraEPByAppId) o;
+    CassandraEpByAppId that = (CassandraEpByAppId) object;
 
     if (appId != null ? !appId.equals(that.appId) : that.appId != null) {
       return false;
     }
-    if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) {
+
+    if (endpointKeyHash != null
+        ? !endpointKeyHash.equals(that.endpointKeyHash)
+        : that.endpointKeyHash != null) {
       return false;
     }
 
@@ -92,9 +95,9 @@ public class CassandraEPByAppId implements Serializable {
 
   @Override
   public String toString() {
-    return "CassandraEPByAppId{" +
-        "appId='" + appId + '\'' +
-        ", endpointKeyHash=" + endpointKeyHash +
-        '}';
+    return "CassandraEpByAppId{"
+        + "appId='" + appId + '\''
+        + ", endpointKeyHash=" + endpointKeyHash
+        + '}';
   }
 }

@@ -25,7 +25,7 @@ package org.kaaproject.kaa.server.transport.platform;
 public interface PlatformAware {
 
   /**
-   * Returns the platform layer id
+   * Returns the platform layer id.
    *
    * @return the platform layer id
    */

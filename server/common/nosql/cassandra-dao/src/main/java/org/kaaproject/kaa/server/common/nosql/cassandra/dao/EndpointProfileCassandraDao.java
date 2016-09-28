@@ -37,9 +37,9 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpBy
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpbyAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByEndpointGroupIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpBySdkTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByAccessToken;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByAppId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByEndpointGroupId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpBySdkToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
@@ -135,12 +135,12 @@ public class EndpointProfileCassandraDao
         ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         List<Statement> statementList = new ArrayList<>();
         statementList.add(cassandraEpByAppIdDao.getSaveQuery(
-            new CassandraEPByAppId(profile.getApplicationId(), epKeyHash)));
+            new CassandraEpByAppId(profile.getApplicationId(), epKeyHash)));
         String accessToken = profile.getAccessToken();
         if (accessToken != null) {
             statementList.add(
                 cassandraEpByAccessTokenDao.getSaveQuery(
-                    new CassandraEPByAccessToken(accessToken, epKeyHash)));
+                    new CassandraEpByAccessToken(accessToken, epKeyHash)));
         }
         statementList.add(getSaveQuery(profile));
         Statement saveBySdkTokenId = cassandraEpBySdkTokenDao.getSaveQuery(
@@ -150,7 +150,7 @@ public class EndpointProfileCassandraDao
         for (String groupId : groupIdSet) {
             statementList.add(
                 cassandraEpByEndpointGroupIdDao.getSaveQuery(
-                    new CassandraEPByEndpointGroupId(groupId, epKeyHash)));
+                    new CassandraEpByEndpointGroupId(groupId, epKeyHash)));
         }
         executeBatch(statementList.toArray(new Statement[statementList.size()]));
         LOG.debug("[{}] Endpoint profile saved", profile.getId());
@@ -177,7 +177,7 @@ public class EndpointProfileCassandraDao
             if (addEndpointGroupIds != null) {
                 for (String id : addEndpointGroupIds) {
                     statementList.add(cassandraEpByEndpointGroupIdDao.getSaveQuery(
-                        new CassandraEPByEndpointGroupId(id, epKeyHash)));
+                        new CassandraEpByEndpointGroupId(id, epKeyHash)));
                 }
 
                 if (removeEndpointGroupIds != null) {
@@ -205,7 +205,7 @@ public class EndpointProfileCassandraDao
             }
             if (accessToken != null) {
                 statementList.add(cassandraEpByAccessTokenDao.getSaveQuery(
-                    new CassandraEPByAccessToken(accessToken, epKeyHash)));
+                    new CassandraEpByAccessToken(accessToken, epKeyHash)));
             } 
             executeBatch(statementList.toArray(new Statement[statementList.size()]));
             LOG.debug("[{}] Endpoint profile updated", profile.getId());

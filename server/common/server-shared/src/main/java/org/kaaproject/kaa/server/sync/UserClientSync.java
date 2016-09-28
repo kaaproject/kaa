@@ -29,7 +29,8 @@ public final class UserClientSync {
   /**
    * All-args constructor.
    */
-  public UserClientSync(UserAttachRequest userAttachRequest, List<EndpointAttachRequest> endpointAttachRequests,
+  public UserClientSync(UserAttachRequest userAttachRequest,
+                        List<EndpointAttachRequest> endpointAttachRequests,
                         List<EndpointDetachRequest> endpointDetachRequests) {
     this.userAttachRequest = userAttachRequest;
     this.endpointAttachRequests = endpointAttachRequests;
@@ -88,9 +89,12 @@ public final class UserClientSync {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((endpointAttachRequests == null) ? 0 : endpointAttachRequests.hashCode());
-    result = prime * result + ((endpointDetachRequests == null) ? 0 : endpointDetachRequests.hashCode());
-    result = prime * result + ((userAttachRequest == null) ? 0 : userAttachRequest.hashCode());
+    result = prime * result
+        + ((endpointAttachRequests == null) ? 0 : endpointAttachRequests.hashCode());
+    result = prime * result
+        + ((endpointDetachRequests == null) ? 0 : endpointDetachRequests.hashCode());
+    result = prime * result
+        + ((userAttachRequest == null) ? 0 : userAttachRequest.hashCode());
     return result;
   }
 

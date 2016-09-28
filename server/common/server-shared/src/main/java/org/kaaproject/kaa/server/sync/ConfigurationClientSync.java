@@ -59,7 +59,7 @@ public final class ConfigurationClientSync {
   }
 
   /**
-   * Sets that client is interested only in resync delta encoded using base schema
+   * Sets that client is interested only in resync delta encoded using base schema.
    */
   public void setResyncOnly(boolean resyncOnly) {
     this.resyncOnly = resyncOnly;

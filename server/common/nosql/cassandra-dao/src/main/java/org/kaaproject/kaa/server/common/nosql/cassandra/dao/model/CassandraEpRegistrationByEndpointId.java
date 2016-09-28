@@ -48,7 +48,8 @@ public final class CassandraEpRegistrationByEndpointId implements Serializable {
     private String credentialsId;
 
 
-    public static CassandraEpRegistrationByEndpointId fromEndpointRegistration(EndpointRegistration endpointRegistration) {
+    public static CassandraEpRegistrationByEndpointId fromEndpointRegistration(
+        EndpointRegistration endpointRegistration) {
         String endpointId = endpointRegistration.getEndpointId();
         String credentialsId = endpointRegistration.getCredentialsId();
         return new CassandraEpRegistrationByEndpointId(endpointId, credentialsId);

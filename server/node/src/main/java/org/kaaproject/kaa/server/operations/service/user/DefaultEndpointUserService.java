@@ -175,7 +175,7 @@ public class DefaultEndpointUserService implements EndpointUserService {
 
     String tenantId = cacheService.getTenantIdByAppToken(appToken);
     Set<EndpointObjectHash> eventClassIntersectionSet = null;
-    for (String eventClassFqn : request.getEventClassFQNs()) {
+    for (String eventClassFqn : request.getEventClassFqns()) {
       Set<EndpointObjectHash> eventClassSet = new HashSet<>();
       LOG.debug("Lookup event class family id using tenant [{}] and event class fqn {}", tenantId, eventClassFqn);
       String ecfId = cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(tenantId, eventClassFqn));

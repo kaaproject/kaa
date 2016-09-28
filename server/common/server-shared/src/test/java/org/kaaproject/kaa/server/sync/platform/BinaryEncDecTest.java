@@ -207,7 +207,7 @@ public class BinaryEncDecTest {
     EventServerSync eSync = new EventServerSync();
     eSync.setEventSequenceNumberResponse(new EventSequenceNumberResponse(MAGIC_NUMBER));
     Event event = new Event();
-    event.setEventClassFQN("fqn");
+    event.setEventClassFqn("fqn");
     event.setSource(Base64Util.encode(new byte[SHA_1_LENGTH]));
     eSync.setEvents(Collections.singletonList(event));
     sync.setEventSync(eSync);
@@ -499,12 +499,12 @@ public class BinaryEncDecTest {
     Assert.assertNotNull(eSync.getEventListenersRequests());
     Assert.assertEquals(1, eSync.getEventListenersRequests().size());
     Assert.assertEquals(MAGIC_NUMBER, eSync.getEventListenersRequests().get(0).getRequestId());
-    Assert.assertNotNull(eSync.getEventListenersRequests().get(0).getEventClassFQNs());
-    Assert.assertEquals("name", eSync.getEventListenersRequests().get(0).getEventClassFQNs().get(0));
+    Assert.assertNotNull(eSync.getEventListenersRequests().get(0).getEventClassFqns());
+    Assert.assertEquals("name", eSync.getEventListenersRequests().get(0).getEventClassFqns().get(0));
     Assert.assertNotNull(eSync.getEvents());
     Assert.assertEquals(1, eSync.getEvents().size());
     Assert.assertEquals(MAGIC_NUMBER, eSync.getEvents().get(0).getSeqNum());
-    Assert.assertEquals("name", eSync.getEvents().get(0).getEventClassFQN());
+    Assert.assertEquals("name", eSync.getEvents().get(0).getEventClassFqn());
     Assert.assertEquals(Base64Util.encode(hash), eSync.getEvents().get(0).getTarget());
     Assert.assertEquals(MAGIC_NUMBER, eSync.getEvents().get(0).getEventData().array()[MAGIC_INDEX]);
   }

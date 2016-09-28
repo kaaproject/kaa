@@ -98,15 +98,15 @@ public final class Topic {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    Topic topic = (Topic) o;
+    Topic topic = (Topic) object;
 
     if (id != null ? !id.equals(topic.id) : topic.id != null) {
       return false;

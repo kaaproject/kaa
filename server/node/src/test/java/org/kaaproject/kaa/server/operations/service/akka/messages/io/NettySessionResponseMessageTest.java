@@ -35,7 +35,7 @@ public class NettySessionResponseMessageTest {
     ChannelContext channelContext = new NettyChannelContext(null);
     ErrorBuilder errorBuilder = new ErrorBuilder() {
       @Override
-      public Object[] build(Exception e) {
+      public Object[] build(Exception exception) {
         return new Object[0];
       }
     };

@@ -20,7 +20,7 @@ import java.util.List;
 
 public final class EventListenersRequest {
   private int requestId;
-  private List<String> eventClassFQNs;
+  private List<String> eventClassFqns;
 
   public EventListenersRequest() {
   }
@@ -28,9 +28,9 @@ public final class EventListenersRequest {
   /**
    * All-args constructor.
    */
-  public EventListenersRequest(int requestId, List<String> eventClassFQNs) {
+  public EventListenersRequest(int requestId, List<String> eventClassFqns) {
     this.requestId = requestId;
-    this.eventClassFQNs = eventClassFQNs;
+    this.eventClassFqns = eventClassFqns;
   }
 
   /**
@@ -50,26 +50,26 @@ public final class EventListenersRequest {
   }
 
   /**
-   * Gets the value of the 'eventClassFQNs' field.
+   * Gets the value of the 'eventClassFqns' field.
    */
-  public List<String> getEventClassFQNs() {
-    return eventClassFQNs;
+  public List<String> getEventClassFqns() {
+    return eventClassFqns;
   }
 
   /**
-   * Sets the value of the 'eventClassFQNs' field.
+   * Sets the value of the 'eventClassFqns' field.
    *
    * @param value the value to set.
    */
-  public void setEventClassFQNs(List<String> value) {
-    this.eventClassFQNs = value;
+  public void setEventClassFqns(List<String> value) {
+    this.eventClassFqns = value;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((eventClassFQNs == null) ? 0 : eventClassFQNs.hashCode());
+    result = prime * result + ((eventClassFqns == null) ? 0 : eventClassFqns.hashCode());
     result = prime * result + requestId;
     return result;
   }
@@ -86,11 +86,11 @@ public final class EventListenersRequest {
       return false;
     }
     EventListenersRequest other = (EventListenersRequest) obj;
-    if (eventClassFQNs == null) {
-      if (other.eventClassFQNs != null) {
+    if (eventClassFqns == null) {
+      if (other.eventClassFqns != null) {
         return false;
       }
-    } else if (!eventClassFQNs.equals(other.eventClassFQNs)) {
+    } else if (!eventClassFqns.equals(other.eventClassFqns)) {
       return false;
     }
     if (requestId != other.requestId) {
@@ -104,8 +104,8 @@ public final class EventListenersRequest {
     StringBuilder builder = new StringBuilder();
     builder.append("EventListenersRequest [requestId=");
     builder.append(requestId);
-    builder.append(", eventClassFQNs=");
-    builder.append(eventClassFQNs);
+    builder.append(", eventClassFqns=");
+    builder.append(eventClassFqns);
     builder.append("]");
     return builder.toString();
   }

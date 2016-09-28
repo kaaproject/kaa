@@ -46,17 +46,19 @@ public final class UserDetachNotification {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    UserDetachNotification that = (UserDetachNotification) o;
+    UserDetachNotification that = (UserDetachNotification) object;
 
-    if (endpointAccessToken != null ? !endpointAccessToken.equals(that.endpointAccessToken) : that.endpointAccessToken != null) {
+    if (endpointAccessToken != null
+        ? !endpointAccessToken.equals(that.endpointAccessToken)
+        : that.endpointAccessToken != null) {
       return false;
     }
 

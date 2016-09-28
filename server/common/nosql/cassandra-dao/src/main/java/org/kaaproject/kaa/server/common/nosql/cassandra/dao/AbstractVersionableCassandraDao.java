@@ -38,13 +38,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public abstract class AbstractVersionableCassandraDao<T extends HasVersion, K> extends AbstractCassandraDao<T, K> {
+public abstract class AbstractVersionableCassandraDao<T extends HasVersion, K>
+    extends AbstractCassandraDao<T, K> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractVersionableCassandraDao.class);
 
   public T save(T entity) {
     if (entity.getVersion() == null) {
-      entity.setVersion(0l);
+      entity.setVersion(0L);
       LOG.debug("Save entity {}", entity);
       return insertLocked(entity);
     } else {
@@ -58,18 +59,23 @@ public abstract class AbstractVersionableCassandraDao<T extends HasVersion, K> e
     Clause[] clauses = new Clause[keyColumns.size()];
     for (int i = 0; i < keyColumns.size(); i++) {
       String columnName = keyColumns.get(i);
-      clauses[i] = eq(columnName, entityMapper.getColumnValueForName(columnName, entity, cassandraClient));
+      clauses[i] = eq(
+          columnName, entityMapper.getColumnValueForName(columnName, entity, cassandraClient));
     }
     return clauses;
   }
 
   private T updateLocked(T entity) {
-    long version = (entity.getVersion() == null) ? 0l : entity.getVersion();
-    Assignments assigns = update(getColumnFamilyName()).onlyIf(eq(OPT_LOCK, version)).with(set(OPT_LOCK, version + 1));
-    CassandraEntityMapper<T> entityMapper = CassandraEntityMapper.getEntityMapperForClass(getColumnFamilyClass(), cassandraClient);
+    long version = (entity.getVersion() == null) ? 0L : entity.getVersion();
+    Assignments assigns = update(getColumnFamilyName())
+        .onlyIf(eq(OPT_LOCK, version))
+        .with(set(OPT_LOCK, version + 1));
+    CassandraEntityMapper<T> entityMapper = CassandraEntityMapper.getEntityMapperForClass(
+        getColumnFamilyClass(), cassandraClient);
     for (String name : entityMapper.getNonKeyColumnNames()) {
       if (!name.equals(OPT_LOCK)) {
-        Assignment assignment = set(name, entityMapper.getColumnValueForName(name, entity, cassandraClient));
+        Assignment assignment = set(
+            name, entityMapper.getColumnValueForName(name, entity, cassandraClient));
         assigns = assigns.and(assignment);
       }
     }
@@ -83,8 +89,10 @@ public abstract class AbstractVersionableCassandraDao<T extends HasVersion, K> e
     query.setConsistencyLevel(getWriteConsistencyLevel());
     ResultSet res = execute(query);
     if (!res.wasApplied()) {
-      LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getColumnFamilyClass(), version);
-      throw new KaaOptimisticLockingFailureException("Can't update entity with version " + version + ". Entity already changed!");
+      LOG.error("[{}] Can't update entity with version {}. Entity already changed!",
+          getColumnFamilyClass(), version);
+      throw new KaaOptimisticLockingFailureException("Can't update entity with version "
+          + version + ". Entity already changed!");
     } else {
       Select.Where where = select().from(getColumnFamilyName()).where(whereClauses[0]);
       if (whereClauses.length > 1) {
@@ -98,7 +106,8 @@ public abstract class AbstractVersionableCassandraDao<T extends HasVersion, K> e
 
   private T insertLocked(T entity) {
     Insert insert = insertInto(getColumnFamilyName()).ifNotExists();
-    CassandraEntityMapper<T> entityMapper = CassandraEntityMapper.getEntityMapperForClass(getColumnFamilyClass(), cassandraClient);
+    CassandraEntityMapper<T> entityMapper = CassandraEntityMapper.getEntityMapperForClass(
+        getColumnFamilyClass(), cassandraClient);
     for (String name : entityMapper.getKeyColumnNames()) {
       insert.value(name, entityMapper.getColumnValueForName(name, entity, cassandraClient));
     }

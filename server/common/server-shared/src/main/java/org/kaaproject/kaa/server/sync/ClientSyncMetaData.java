@@ -31,7 +31,11 @@ public class ClientSyncMetaData {
   /**
    * All-args constructor.
    */
-  public ClientSyncMetaData(String applicationToken, String sdkToken, ByteBuffer endpointPublicKeyHash, ByteBuffer profileHash, Long timeout) {
+  public ClientSyncMetaData(String applicationToken,
+                            String sdkToken,
+                            ByteBuffer endpointPublicKeyHash,
+                            ByteBuffer profileHash,
+                            Long timeout) {
     this.applicationToken = applicationToken;
     this.sdkToken = sdkToken;
     this.endpointPublicKeyHash = endpointPublicKeyHash;
@@ -112,23 +116,27 @@ public class ClientSyncMetaData {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    ClientSyncMetaData that = (ClientSyncMetaData) o;
+    ClientSyncMetaData that = (ClientSyncMetaData) object;
 
     if (timeout != that.timeout) {
       return false;
     }
-    if (applicationToken != null ? !applicationToken.equals(that.applicationToken) : that.applicationToken != null) {
+    if (applicationToken != null
+        ? !applicationToken.equals(that.applicationToken)
+        : that.applicationToken != null) {
       return false;
     }
-    if (endpointPublicKeyHash != null ? !endpointPublicKeyHash.equals(that.endpointPublicKeyHash) : that.endpointPublicKeyHash != null) {
+    if (endpointPublicKeyHash != null
+        ? !endpointPublicKeyHash.equals(that.endpointPublicKeyHash)
+        : that.endpointPublicKeyHash != null) {
       return false;
     }
     if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) {

@@ -49,7 +49,7 @@ import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.EndpointVerificationError;
 import org.kaaproject.kaa.server.transport.EndpointVerificationException;
-import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
+import org.kaaproject.kaa.server.transport.InvalidSdkTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.Message;
@@ -201,7 +201,7 @@ public class EncDecActorMessageProcessor {
   }
 
   private void processSessionInitRequest(ActorContext context, SessionInitMessage message)
-      throws GeneralSecurityException, PlatformEncDecException, InvalidSDKTokenException, EndpointVerificationException {
+      throws GeneralSecurityException, PlatformEncDecException, InvalidSdkTokenException, EndpointVerificationException {
     ClientSync request = decodeRequest(message);
     EndpointObjectHash key = getEndpointObjectHash(request);
     String sdkToken = getSdkToken(request);
@@ -215,7 +215,7 @@ public class EncDecActorMessageProcessor {
       forwardToOpsActor(context, session, request, message);
     } else {
       LOG.info("Invalid sdk token received: {}", sdkToken);
-      throw new InvalidSDKTokenException();
+      throw new InvalidSdkTokenException();
     }
   }
 
@@ -276,13 +276,13 @@ public class EncDecActorMessageProcessor {
   }
 
   private void processSessionRequest(ActorContext context, SessionAwareMessage message)
-      throws GeneralSecurityException, PlatformEncDecException, InvalidSDKTokenException {
+      throws GeneralSecurityException, PlatformEncDecException, InvalidSdkTokenException {
     ClientSync request = decodeRequest(message);
     if (isSDKTokenValid(message.getSessionInfo().getSdkToken())) {
       forwardToOpsActor(context, message.getSessionInfo(), request, message);
     } else {
       LOG.info("Invalid sdk token received: {}", message.getSessionInfo().getSdkToken());
-      throw new InvalidSDKTokenException();
+      throw new InvalidSdkTokenException();
     }
   }
 

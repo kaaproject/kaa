@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Provides ability to lookup and init {@link PlatformEncDec} instances
+ * Provides ability to lookup and init {@link PlatformEncDec} instances.
  *
  * @author Andrew Shvayka
  */
@@ -43,9 +43,10 @@ public class PlatformLookup {
   }
 
   public static Set<String> lookupPlatformProtocols(String... packageNames) {
-    ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+    ClassPathScanningCandidateComponentProvider scanner =
+        new ClassPathScanningCandidateComponentProvider(false);
     scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
-    Set<BeanDefinition> beans = new HashSet<BeanDefinition>();
+    Set<BeanDefinition> beans = new HashSet<>();
     for (String packageName : packageNames) {
       beans.addAll(scanner.findCandidateComponents(packageName));
     }
@@ -56,7 +57,8 @@ public class PlatformLookup {
     return protocols;
   }
 
-  public static Map<Integer, PlatformEncDec> initPlatformProtocolMap(Set<String> platformProtocols) {
+  public static Map<Integer, PlatformEncDec> initPlatformProtocolMap(
+      Set<String> platformProtocols) {
     Map<Integer, PlatformEncDec> platformEncDecMap = new HashMap<>();
     for (String platformProtocol : platformProtocols) {
       try {
@@ -64,8 +66,8 @@ public class PlatformLookup {
         PlatformEncDec protocol = (PlatformEncDec) clazz.newInstance();
         platformEncDecMap.put(protocol.getId(), protocol);
         LOG.info("Successfully initialized platform protocol {}", platformProtocol);
-      } catch (ReflectiveOperationException e) {
-        LOG.error("Error during instantiation of platform protocol", e);
+      } catch (ReflectiveOperationException exception) {
+        LOG.error("Error during instantiation of platform protocol", exception);
       }
     }
     return platformEncDecMap;

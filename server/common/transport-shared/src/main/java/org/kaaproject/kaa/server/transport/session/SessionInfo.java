@@ -41,8 +41,10 @@ public final class SessionInfo implements PlatformAware {
   private final int keepAlive;
   private final boolean isEncrypted;
 
-  public SessionInfo(UUID uuid, int platformId, ChannelContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
-                     String applicationToken, String sdkToken, int keepAlive, boolean isEncrypted) {
+  public SessionInfo(UUID uuid, int platformId, ChannelContext ctx, ChannelType channelType,
+                     CipherPair cipherPair, EndpointObjectHash key,
+                     String applicationToken, String sdkToken,
+                     int keepAlive, boolean isEncrypted) {
     super();
     this.uuid = uuid;
     this.platformId = platformId;

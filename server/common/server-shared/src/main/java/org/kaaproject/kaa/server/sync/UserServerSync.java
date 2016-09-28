@@ -31,8 +31,10 @@ public final class UserServerSync {
   /**
    * All-args constructor.
    */
-  public UserServerSync(UserAttachResponse userAttachResponse, UserAttachNotification userAttachNotification,
-                        UserDetachNotification userDetachNotification, List<EndpointAttachResponse> endpointAttachResponses,
+  public UserServerSync(UserAttachResponse userAttachResponse,
+                        UserAttachNotification userAttachNotification,
+                        UserDetachNotification userDetachNotification,
+                        List<EndpointAttachResponse> endpointAttachResponses,
                         List<EndpointDetachResponse> endpointDetachResponses) {
     this.userAttachResponse = userAttachResponse;
     this.userAttachNotification = userAttachNotification;
@@ -127,29 +129,39 @@ public final class UserServerSync {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    UserServerSync that = (UserServerSync) o;
+    UserServerSync that = (UserServerSync) object;
 
-    if (endpointAttachResponses != null ? !endpointAttachResponses.equals(that.endpointAttachResponses) : that.endpointAttachResponses != null) {
+    if (endpointAttachResponses != null
+        ? !endpointAttachResponses.equals(that.endpointAttachResponses)
+        : that.endpointAttachResponses != null) {
       return false;
     }
-    if (endpointDetachResponses != null ? !endpointDetachResponses.equals(that.endpointDetachResponses) : that.endpointDetachResponses != null) {
+    if (endpointDetachResponses != null
+        ? !endpointDetachResponses.equals(that.endpointDetachResponses)
+        : that.endpointDetachResponses != null) {
       return false;
     }
-    if (userAttachNotification != null ? !userAttachNotification.equals(that.userAttachNotification) : that.userAttachNotification != null) {
+    if (userAttachNotification != null
+        ? !userAttachNotification.equals(that.userAttachNotification)
+        : that.userAttachNotification != null) {
       return false;
     }
-    if (userAttachResponse != null ? !userAttachResponse.equals(that.userAttachResponse) : that.userAttachResponse != null) {
+    if (userAttachResponse != null
+        ? !userAttachResponse.equals(that.userAttachResponse)
+        : that.userAttachResponse != null) {
       return false;
     }
-    if (userDetachNotification != null ? !userDetachNotification.equals(that.userDetachNotification) : that.userDetachNotification != null) {
+    if (userDetachNotification != null
+        ? !userDetachNotification.equals(that.userDetachNotification)
+        : that.userDetachNotification != null) {
       return false;
     }
 
@@ -159,10 +171,14 @@ public final class UserServerSync {
   @Override
   public int hashCode() {
     int result = userAttachResponse != null ? userAttachResponse.hashCode() : 0;
-    result = 31 * result + (userAttachNotification != null ? userAttachNotification.hashCode() : 0);
-    result = 31 * result + (userDetachNotification != null ? userDetachNotification.hashCode() : 0);
-    result = 31 * result + (endpointAttachResponses != null ? endpointAttachResponses.hashCode() : 0);
-    result = 31 * result + (endpointDetachResponses != null ? endpointDetachResponses.hashCode() : 0);
+    result = 31 * result + (userAttachNotification != null
+        ? userAttachNotification.hashCode() : 0);
+    result = 31 * result + (userDetachNotification != null
+        ? userDetachNotification.hashCode() : 0);
+    result = 31 * result + (endpointAttachResponses != null
+        ? endpointAttachResponses.hashCode() : 0);
+    result = 31 * result + (endpointDetachResponses != null
+        ? endpointDetachResponses.hashCode() : 0);
     return result;
   }
 

@@ -43,7 +43,9 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select.Where;
 
 @Repository
-public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNotification, String> implements NotificationDao<CassandraNotification> {
+public class NotificationCassandraDao
+    extends AbstractCassandraDao<CassandraNotification, String>
+    implements NotificationDao<CassandraNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationCassandraDao.class);
 
@@ -61,10 +63,11 @@ public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNoti
     public CassandraNotification findById(String id) {
         LOG.debug("Try to find notification by id {}", id);
         CassandraNotification nf = new CassandraNotification(id);
-        Where query = select().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, nf.getTopicId()))
-                .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, nf.getType().name()))
-                .and(eq(NF_VERSION_PROPERTY, nf.getNfVersion()))
-                .and(eq(NF_SEQ_NUM_PROPERTY, nf.getSeqNum()));
+        Where query = select().from(getColumnFamilyName())
+            .where(eq(NF_TOPIC_ID_PROPERTY, nf.getTopicId()))
+            .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, nf.getType().name()))
+            .and(eq(NF_VERSION_PROPERTY, nf.getNfVersion()))
+            .and(eq(NF_SEQ_NUM_PROPERTY, nf.getSeqNum()));
         LOG.trace("Execute query {}", query);
         nf = findOneByStatement(query);
         LOG.trace("Found notification {} by id {}", nf, id);
@@ -75,10 +78,11 @@ public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNoti
     public void removeById(String id) {
         LOG.debug("Remove notification by id {}", id);
         CassandraNotification nf = new CassandraNotification(id);
-        Delete.Where deleteQuery = delete().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, nf.getTopicId()))
-                .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, nf.getType().name()))
-                .and(eq(NF_VERSION_PROPERTY, nf.getNfVersion()))
-                .and(eq(NF_SEQ_NUM_PROPERTY, nf.getSeqNum()));
+        Delete.Where deleteQuery = delete().from(getColumnFamilyName())
+            .where(eq(NF_TOPIC_ID_PROPERTY, nf.getTopicId()))
+            .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, nf.getType().name()))
+            .and(eq(NF_VERSION_PROPERTY, nf.getNfVersion()))
+            .and(eq(NF_SEQ_NUM_PROPERTY, nf.getSeqNum()));
         LOG.trace("Remove notification by id {}", deleteQuery);
         execute(deleteQuery);
     }
@@ -101,7 +105,8 @@ public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNoti
     public List<CassandraNotification> findNotificationsByTopicId(String topicId) {
         LOG.debug("Try to find notifications by topic id {}", topicId);
         Where query = select().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, topicId))
-                .and(QueryBuilder.in(NF_NOTIFICATION_TYPE_PROPERTY, getStringTypes(NotificationTypeDto.values())));
+                .and(QueryBuilder.in(
+                    NF_NOTIFICATION_TYPE_PROPERTY, getStringTypes(NotificationTypeDto.values())));
         LOG.trace("Execute query {}", query);
         List<CassandraNotification> notifications = findListByStatement(query);
         if (LOG.isTraceEnabled()) {
@@ -113,31 +118,41 @@ public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNoti
     @Override
     public void removeNotificationsByTopicId(String topicId) {
         LOG.debug("Remove notifications by topic id {}", topicId);
-        Delete.Where query = delete().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, topicId))
-                .and(QueryBuilder.in(NF_NOTIFICATION_TYPE_PROPERTY, getStringTypes(NotificationTypeDto.values())));
+        Delete.Where query = delete().from(getColumnFamilyName())
+            .where(eq(NF_TOPIC_ID_PROPERTY, topicId))
+                .and(QueryBuilder.in(
+                    NF_NOTIFICATION_TYPE_PROPERTY, getStringTypes(NotificationTypeDto.values())));
         execute(query);
         LOG.trace("Execute query {}", query);
     }
 
     @Override
-    public List<CassandraNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNum, int sysNfVersion, int userNfVersion) {
-        LOG.debug("Try to find notifications by topic id {} start sequence number {} system schema version {} user schema version {}", topicId, seqNum, sysNfVersion, userNfVersion);
+    public List<CassandraNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId,
+                                                                                          int seqNum,
+                                                                                          int sysNfVersion,
+                                                                                          int userNfVersion) {
+        LOG.debug("Try to find notifications by topic id {} start sequence number {} "
+            + "system schema version {} user schema version {}",
+            topicId, seqNum, sysNfVersion, userNfVersion);
         List<CassandraNotification> resultList = new ArrayList<>();
-        Where systemQuery = select().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, topicId))
+        Where systemQuery = select().from(getColumnFamilyName())
+            .where(eq(NF_TOPIC_ID_PROPERTY, topicId))
                 .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, NotificationTypeDto.SYSTEM.name()))
                 .and(eq(NF_VERSION_PROPERTY, sysNfVersion))
                 .and(QueryBuilder.gt(NF_SEQ_NUM_PROPERTY, seqNum));
-        Where userQuery = select().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, topicId))
-                .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, NotificationTypeDto.USER.name()))
-                .and(eq(NF_VERSION_PROPERTY, userNfVersion))
-                .and(QueryBuilder.gt(NF_SEQ_NUM_PROPERTY, seqNum));
+        Where userQuery = select().from(getColumnFamilyName())
+            .where(eq(NF_TOPIC_ID_PROPERTY, topicId))
+            .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, NotificationTypeDto.USER.name()))
+            .and(eq(NF_VERSION_PROPERTY, userNfVersion))
+            .and(QueryBuilder.gt(NF_SEQ_NUM_PROPERTY, seqNum));
         List<CassandraNotification> systemList = findListByStatement(systemQuery);
         List<CassandraNotification> userList = findListByStatement(userQuery);
         resultList.addAll(systemList);
         resultList.addAll(userList);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Found notifications {} by topic id {}, seqNum {}, sysVer {}, userVer {} ",
-                    Arrays.toString(resultList.toArray()), topicId, seqNum, sysNfVersion, userNfVersion);
+                    Arrays.toString(
+                        resultList.toArray()), topicId, seqNum, sysNfVersion, userNfVersion);
         }
         return resultList;
     }

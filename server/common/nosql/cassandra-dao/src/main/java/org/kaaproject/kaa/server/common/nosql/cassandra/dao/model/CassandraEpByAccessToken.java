@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 @Table(name = CassandraModelConstants.EP_BY_ACCESS_TOKEN_COLUMN_FAMILY_NAME)
-public class CassandraEPByAccessToken implements Serializable {
+public class CassandraEpByAccessToken implements Serializable {
 
   @Transient
   private static final long serialVersionUID = -8826203709978813176L;
@@ -36,10 +36,10 @@ public class CassandraEPByAccessToken implements Serializable {
   @Column(name = CassandraModelConstants.EP_BY_ACCESS_TOKEN_ENDPOINT_KEY_HASH_PROPERTY)
   private ByteBuffer endpointKeyHash;
 
-  public CassandraEPByAccessToken() {
+  public CassandraEpByAccessToken() {
   }
 
-  public CassandraEPByAccessToken(String accessToken, ByteBuffer endpointKeyHash) {
+  public CassandraEpByAccessToken(String accessToken, ByteBuffer endpointKeyHash) {
     this.accessToken = accessToken;
     this.endpointKeyHash = endpointKeyHash;
   }
@@ -61,20 +61,23 @@ public class CassandraEPByAccessToken implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    CassandraEPByAccessToken that = (CassandraEPByAccessToken) o;
+    CassandraEpByAccessToken that = (CassandraEpByAccessToken) object;
 
     if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) {
       return false;
     }
-    if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) {
+
+    if (endpointKeyHash != null
+        ? !endpointKeyHash.equals(that.endpointKeyHash)
+        : that.endpointKeyHash != null) {
       return false;
     }
 
@@ -90,7 +93,7 @@ public class CassandraEPByAccessToken implements Serializable {
 
   @Override
   public String toString() {
-    return "CassandraEPByAccessToken{" +
+    return "CassandraEpByAccessToken{" +
         "accessToken='" + accessToken + '\'' +
         ", endpointKeyHash=" + endpointKeyHash +
         '}';

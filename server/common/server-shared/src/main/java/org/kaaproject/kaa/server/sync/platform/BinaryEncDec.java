@@ -177,11 +177,11 @@ public class BinaryEncDec implements PlatformEncDec {
     return (options & option) > 0;
   }
 
-  private static String getUTF8String(ByteBuffer buf) {
-    return getUTF8String(buf, getIntFromUnsignedShort(buf));
+  private static String getUtf8String(ByteBuffer buf) {
+    return getUtf8String(buf, getIntFromUnsignedShort(buf));
   }
 
-  private static String getUTF8String(ByteBuffer buf, int size) {
+  private static String getUtf8String(ByteBuffer buf, int size) {
     return new String(getNewByteArray(buf, size), UTF8);
   }
 
@@ -194,13 +194,6 @@ public class BinaryEncDec implements PlatformEncDec {
     return array;
   }
 
-  private static void handlePadding(ByteBuffer buf, int size) {
-    int padding = size % PADDING_SIZE;
-    if (padding > 0) {
-      buf.position(buf.position() + (PADDING_SIZE - padding));
-    }
-  }
-
   private static byte[] getNewByteArray(ByteBuffer buf, int size) {
     return getNewByteArray(buf, size, true);
   }
@@ -211,6 +204,13 @@ public class BinaryEncDec implements PlatformEncDec {
 
   private static ByteBuffer getNewByteBuffer(ByteBuffer buf, int size, boolean withPadding) {
     return ByteBuffer.wrap(getNewByteArray(buf, size, withPadding));
+  }
+
+  private static void handlePadding(ByteBuffer buf, int size) {
+    int padding = size % PADDING_SIZE;
+    if (padding > 0) {
+      buf.position(buf.position() + (PADDING_SIZE - padding));
+    }
   }
 
   /*
@@ -232,23 +232,26 @@ public class BinaryEncDec implements PlatformEncDec {
     }
     ByteBuffer buf = ByteBuffer.wrap(data);
     if (buf.remaining() < MIN_SIZE_OF_MESSAGE_HEADER) {
-      throw new PlatformEncDecException(MessageFormat.format("Message header is to small {0} to be kaa binary message!",
+      throw new PlatformEncDecException(
+          MessageFormat.format("Message header is to small {0} to be kaa binary message!",
           buf.capacity()));
     }
 
     int protocolId = buf.getInt();
     if (protocolId != getId()) {
-      throw new PlatformEncDecException(MessageFormat.format("Unknown protocol id {0}!", protocolId));
+      throw new PlatformEncDecException(
+          MessageFormat.format("Unknown protocol id {0}!", protocolId));
     }
 
     int protocolVersion = getIntFromUnsignedShort(buf);
     if (protocolVersion < MIN_SUPPORTED_VERSION || protocolVersion > MAX_SUPPORTED_VERSION) {
-      throw new PlatformEncDecException(MessageFormat.format("Can't decode data using protocol version {0}!", protocolVersion));
+      throw new PlatformEncDecException(
+          MessageFormat.format("Can't decode data using protocol version {0}!", protocolVersion));
     }
 
     int extensionsCount = getIntFromUnsignedShort(buf);
-    LOG.trace("received data for protocol id {} and version {} that contain {} extensions", protocolId, protocolVersion,
-        extensionsCount);
+    LOG.trace("received data for protocol id {} and version {} that contain {} extensions",
+        protocolId, protocolVersion, extensionsCount);
     ClientSync sync = parseExtensions(buf, protocolVersion, extensionsCount);
     sync.setUseConfigurationRawSchema(false);
     LOG.trace("Decoded binary data {}", sync);
@@ -307,22 +310,9 @@ public class BinaryEncDec implements PlatformEncDec {
     return result;
   }
 
-  private void buildExtensionHeader(GrowingByteBuffer buf, short extensionId, byte optionA, byte optionB, int length) {
-    buf.putShort(extensionId);
-    buf.put(optionA);
-    buf.put(optionB);
-    buf.putInt(length);
-  }
-
-  private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
-    buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 8);
-    buf.putInt(sync.getRequestId());
-    buf.putInt(sync.getStatus().ordinal());
-  }
-
   private void encode(GrowingByteBuffer buf, BootstrapServerSync bootstrapSync) {
     buildExtensionHeader(buf, BOOTSTRAP_EXTENSION_ID, NOTHING, NOTHING, 0);
-    int extPosition = buf.position();
+    final int extPosition = buf.position();
     buf.putShort((short) bootstrapSync.getRequestId());
     buf.putShort((short) bootstrapSync.getProtocolList().size());
     for (ProtocolConnectionData data : bootstrapSync.getProtocolList()) {
@@ -342,7 +332,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
   private void encode(GrowingByteBuffer buf, UserServerSync userSync) {
     buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, 0);
-    int extPosition = buf.position();
+    final int extPosition = buf.position();
     if (userSync.getUserAttachResponse() != null) {
       UserAttachResponse uaResponse = userSync.getUserAttachResponse();
       buf.put(USER_ATTACH_RESPONSE_FIELD_ID);
@@ -351,7 +341,9 @@ public class BinaryEncDec implements PlatformEncDec {
       buf.put(NOTHING);
 
       if (uaResponse.getResult() != SyncStatus.SUCCESS) {
-        buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
+        buf.putShort((short) (uaResponse.getErrorCode() != null
+            ? uaResponse.getErrorCode().ordinal()
+            : 0));
         if (uaResponse.getErrorReason() != null) {
           byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
           buf.putShort((short) data.length);
@@ -366,15 +358,15 @@ public class BinaryEncDec implements PlatformEncDec {
       buf.put(USER_ATTACH_NOTIFICATION_FIELD_ID);
       buf.put((byte) nf.getUserExternalId().length());
       buf.putShort((short) nf.getEndpointAccessToken().length());
-      putUTF(buf, nf.getUserExternalId());
-      putUTF(buf, nf.getEndpointAccessToken());
+      putUtf(buf, nf.getUserExternalId());
+      putUtf(buf, nf.getEndpointAccessToken());
     }
     if (userSync.getUserDetachNotification() != null) {
       UserDetachNotification nf = userSync.getUserDetachNotification();
       buf.put(USER_DETACH_NOTIFICATION_FIELD_ID);
       buf.put(NOTHING);
       buf.putShort((short) nf.getEndpointAccessToken().length());
-      putUTF(buf, nf.getEndpointAccessToken());
+      putUtf(buf, nf.getEndpointAccessToken());
     }
     if (userSync.getEndpointAttachResponses() != null) {
       buf.put(ENDPOINT_ATTACH_RESPONSE_FIELD_ID);
@@ -440,7 +432,7 @@ public class BinaryEncDec implements PlatformEncDec {
       option |= 0x02;
     }
     buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, (byte) option, 0);
-    int extPosition = buf.position();
+    final int extPosition = buf.position();
 
     if (confSchemaPresent) {
       buf.putInt(configurationSync.getConfSchemaBody().array().length);
@@ -460,7 +452,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
   private void encode(GrowingByteBuffer buf, NotificationServerSync notificationSync) {
     buildExtensionHeader(buf, NOTIFICATION_EXTENSION_ID, NOTHING, NOTHING, 0);
-    int extPosition = buf.position();
+    final int extPosition = buf.position();
 
     SyncResponseStatus status = notificationSync.getResponseStatus();
     switch (status) {
@@ -473,6 +465,8 @@ public class BinaryEncDec implements PlatformEncDec {
       case RESYNC:
         buf.putInt(2);
         break;
+      default:
+        break;
     }
     if (notificationSync.getAvailableTopics() != null) {
       buf.put(NF_TOPICS_FIELD_ID);
@@ -483,7 +477,7 @@ public class BinaryEncDec implements PlatformEncDec {
         buf.put(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
         buf.put(NOTHING);
         buf.putShort((short) t.getName().getBytes(UTF8).length);
-        putUTF(buf, t.getName());
+        putUtf(buf, t.getName());
       }
     }
     if (notificationSync.getNotifications() != null) {
@@ -496,9 +490,9 @@ public class BinaryEncDec implements PlatformEncDec {
         buf.put(NOTHING);
         buf.putShort(nf.getUid() != null ? (short) nf.getUid().length() : (short) 0);
         buf.putInt(nf.getBody().array().length);
-        long topicId = nf.getTopicId() != null ? nf.getTopicIdAsLong() : 0l;
+        long topicId = nf.getTopicId() != null ? nf.getTopicIdAsLong() : 0L;
         buf.putLong(topicId);
-        putUTF(buf, nf.getUid());
+        putUtf(buf, nf.getUid());
         put(buf, nf.getBody().array());
       }
     }
@@ -512,13 +506,14 @@ public class BinaryEncDec implements PlatformEncDec {
       option = 1;
     }
     buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, option, 0);
-    int extPosition = buf.position();
+    final int extPosition = buf.position();
 
     if (eventSync.getEventSequenceNumberResponse() != null) {
       buf.putInt(eventSync.getEventSequenceNumberResponse().getSeqNum());
     }
 
-    if (eventSync.getEventListenersResponses() != null && !eventSync.getEventListenersResponses().isEmpty()) {
+    if (eventSync.getEventListenersResponses() != null
+        && !eventSync.getEventListenersResponses().isEmpty()) {
       buf.put(EVENT_LISTENERS_RESPONSE_FIELD_ID);
       buf.put(NOTHING);
       buf.putShort((short) eventSync.getEventListenersResponses().size());
@@ -540,18 +535,19 @@ public class BinaryEncDec implements PlatformEncDec {
       buf.put(NOTHING);
       buf.putShort((short) eventSync.getEvents().size());
       for (Event event : eventSync.getEvents()) {
-        boolean eventDataIsEmpty = event.getEventData() == null || event.getEventData().array().length == 0;
+        boolean eventDataIsEmpty = event.getEventData() == null
+            || event.getEventData().array().length == 0;
         if (!eventDataIsEmpty) {
           buf.putShort(EVENT_DATA_IS_EMPTY_OPTION);
         } else {
           buf.putShort(NOTHING);
         }
-        buf.putShort((short) event.getEventClassFQN().length());
+        buf.putShort((short) event.getEventClassFqn().length());
         if (!eventDataIsEmpty) {
           buf.putInt(event.getEventData().array().length);
         }
         buf.put(Base64Util.decode(event.getSource()));
-        putUTF(buf, event.getEventClassFQN());
+        putUtf(buf, event.getEventClassFqn());
         if (!eventDataIsEmpty) {
           put(buf, event.getEventData().array());
         }
@@ -566,7 +562,7 @@ public class BinaryEncDec implements PlatformEncDec {
     buf.putInt(redirectSync.getAccessPointId());
   }
 
-  public void putUTF(GrowingByteBuffer buf, String str) {
+  public void putUtf(GrowingByteBuffer buf, String str) {
     if (str != null) {
       put(buf, str.getBytes(UTF8));
     }
@@ -583,19 +579,22 @@ public class BinaryEncDec implements PlatformEncDec {
     }
   }
 
-  private ClientSync parseExtensions(ByteBuffer buf, int protocolVersion, int extensionsCount) throws PlatformEncDecException {
+  private ClientSync parseExtensions(ByteBuffer buf, int protocolVersion, int extensionsCount)
+      throws PlatformEncDecException {
     ClientSync sync = new ClientSync();
     for (short extPos = 0; extPos < extensionsCount; extPos++) {
       if (buf.remaining() < MIN_SIZE_OF_EXTENSION_HEADER) {
         throw new PlatformEncDecException(MessageFormat.format(
-            "Extension header is to small. Available {0}, current possition is {1}!", buf.remaining(), buf.position()));
+            "Extension header is to small. Available {0}, current possition is {1}!",
+            buf.remaining(), buf.position()));
       }
       short type = buf.getShort();
       int options = buf.getShort();
       int payloadLength = buf.getInt();
       if (buf.remaining() < payloadLength) {
         throw new PlatformEncDecException(MessageFormat.format(
-            "Extension payload is to small. Available {0}, expected {1} current possition is {2}!", buf.remaining(),
+            "Extension payload is to small. Available {0}, expected {1} current possition is {2}!",
+            buf.remaining(),
             payloadLength, buf.position()));
       }
       switch (type) {
@@ -630,7 +629,28 @@ public class BinaryEncDec implements PlatformEncDec {
     return validate(sync);
   }
 
-  private void parseClientSyncMetaData(ClientSync sync, ByteBuffer buf, int options, int payloadLength) throws PlatformEncDecException {
+  private void buildExtensionHeader(GrowingByteBuffer buf,
+                                    short extensionId,
+                                    byte optionA,
+                                    byte optionB,
+                                    int length) {
+    buf.putShort(extensionId);
+    buf.put(optionA);
+    buf.put(optionB);
+    buf.putInt(length);
+  }
+
+  private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
+    buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 8);
+    buf.putInt(sync.getRequestId());
+    buf.putInt(sync.getStatus().ordinal());
+  }
+
+  private void parseClientSyncMetaData(ClientSync sync,
+                                       ByteBuffer buf,
+                                       int options,
+                                       int payloadLength)
+      throws PlatformEncDecException {
     sync.setRequestId(buf.getInt());
     ClientSyncMetaData md = new ClientSyncMetaData();
     if (hasOption(options, CLIENT_META_SYNC_TIMEOUT_OPTION)) {
@@ -643,12 +663,15 @@ public class BinaryEncDec implements PlatformEncDec {
       md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
     }
     if (hasOption(options, CLIENT_META_SYNC_SDK_TOKEN_OPTION)) {
-      md.setSdkToken(getUTF8String(buf, Constants.SDK_TOKEN_SIZE));
+      md.setSdkToken(getUtf8String(buf, Constants.SDK_TOKEN_SIZE));
     }
     sync.setClientSyncMetaData(md);
   }
 
-  private void parseBootstrapClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseBootstrapClientSync(ClientSync sync,
+                                        ByteBuffer buf,
+                                        int options,
+                                        int payloadLength) {
     int requestId = buf.getShort();
     int protocolCount = buf.getShort();
     List<ProtocolVersionId> keys = new ArrayList<>(protocolCount);
@@ -660,7 +683,10 @@ public class BinaryEncDec implements PlatformEncDec {
     sync.setBootstrapSync(new BootstrapClientSync(requestId, keys));
   }
 
-  private void parseProfileClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseProfileClientSync(ClientSync sync,
+                                      ByteBuffer buf,
+                                      int options,
+                                      int payloadLength) {
     int payloadLimitPosition = buf.position() + payloadLength;
     ProfileClientSync profileSync = new ProfileClientSync();
     profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
@@ -673,7 +699,7 @@ public class BinaryEncDec implements PlatformEncDec {
           profileSync.setEndpointPublicKey(getNewByteBuffer(buf, getIntFromUnsignedShort(buf)));
           break;
         case ACCESS_TOKEN_FIELD_ID:
-          profileSync.setEndpointAccessToken(getUTF8String(buf));
+          profileSync.setEndpointAccessToken(getUtf8String(buf));
           break;
         default:
           break;
@@ -682,7 +708,10 @@ public class BinaryEncDec implements PlatformEncDec {
     sync.setProfileSync(profileSync);
   }
 
-  private void parseUserClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseUserClientSync(ClientSync sync,
+                                   ByteBuffer buf,
+                                   int options,
+                                   int payloadLength) {
     int payloadLimitPosition = buf.position() + payloadLength;
     UserClientSync userSync = new UserClientSync();
     while (buf.position() < payloadLimitPosition) {
@@ -704,7 +733,10 @@ public class BinaryEncDec implements PlatformEncDec {
     sync.setUserSync(userSync);
   }
 
-  private void parseLogClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseLogClientSync(ClientSync sync,
+                                  ByteBuffer buf,
+                                  int options,
+                                  int payloadLength) {
     LogClientSync logSync = new LogClientSync();
     logSync.setRequestId(getIntFromUnsignedShort(buf));
     int size = getIntFromUnsignedShort(buf);
@@ -716,7 +748,10 @@ public class BinaryEncDec implements PlatformEncDec {
     sync.setLogSync(logSync);
   }
 
-  private void parseConfigurationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseConfigurationClientSync(ClientSync sync,
+                                            ByteBuffer buf,
+                                            int options,
+                                            int payloadLength) {
     ConfigurationClientSync confSync = new ConfigurationClientSync();
     if (hasOption(options, CONFIGURATION_HASH_OPTION)) {
       confSync.setConfigurationHash(getNewByteBuffer(buf, CONFIGURATION_HASH_SIZE));
@@ -727,7 +762,10 @@ public class BinaryEncDec implements PlatformEncDec {
     sync.setConfigurationSync(confSync);
   }
 
-  private void parseEventClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseEventClientSync(ClientSync sync,
+                                    ByteBuffer buf,
+                                    int options,
+                                    int payloadLength) {
     EventClientSync eventSync = new EventClientSync();
     if (hasOption(options, EVENT_SEQ_NUMBER_REQUEST_OPTION)) {
       eventSync.setSeqNumberRequest(true);
@@ -751,7 +789,10 @@ public class BinaryEncDec implements PlatformEncDec {
     sync.setEventSync(eventSync);
   }
 
-  private void parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+  private void parseNotificationClientSync(ClientSync sync,
+                                           ByteBuffer buf,
+                                           int options,
+                                           int payloadLength) {
     int payloadLimitPosition = buf.position() + payloadLength;
 
     NotificationClientSync nfSync = new NotificationClientSync();
@@ -773,18 +814,24 @@ public class BinaryEncDec implements PlatformEncDec {
         case NF_SUBSCRIPTION_REMOVE_FIELD_ID:
           parseSubscriptionCommands(nfSync, buf, false);
           break;
+        default:
+          break;
       }
     }
     sync.setNotificationSync(nfSync);
   }
 
-  private void parseSubscriptionCommands(NotificationClientSync nfSync, ByteBuffer buf, boolean add) {
+  private void parseSubscriptionCommands(NotificationClientSync nfSync,
+                                         ByteBuffer buf,
+                                         boolean add) {
     int count = getIntFromUnsignedShort(buf);
     if (nfSync.getSubscriptionCommands() == null) {
-      nfSync.setSubscriptionCommands(new ArrayList<SubscriptionCommand>());
+      nfSync.setSubscriptionCommands(new ArrayList<>());
     }
-    SubscriptionCommandType subscriptionType = add ? SubscriptionCommandType.ADD : SubscriptionCommandType.REMOVE;
-    List<SubscriptionCommand> commands = new ArrayList<SubscriptionCommand>();
+    SubscriptionCommandType subscriptionType = add
+        ? SubscriptionCommandType.ADD
+        : SubscriptionCommandType.REMOVE;
+    List<SubscriptionCommand> commands = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       long topicId = buf.getLong();
       commands.add(new SubscriptionCommand(topicId, subscriptionType));
@@ -808,7 +855,7 @@ public class BinaryEncDec implements PlatformEncDec {
     List<String> uids = new ArrayList<>(count);
     for (int i = 0; i < count; i++) {
       int uidLength = buf.getInt();
-      uids.add(getUTF8String(buf, uidLength));
+      uids.add(getUtf8String(buf, uidLength));
     }
     return uids;
   }
@@ -824,7 +871,7 @@ public class BinaryEncDec implements PlatformEncDec {
         int fqnLength = getIntFromUnsignedShort(buf);
         // reserved
         buf.getShort();
-        fqns.add(getUTF8String(buf, fqnLength));
+        fqns.add(getUtf8String(buf, fqnLength));
       }
       requests.add(new EventListenersRequest(requestId, fqns));
     }
@@ -846,7 +893,7 @@ public class BinaryEncDec implements PlatformEncDec {
       if (hasOption(eventOptions, 0x01)) {
         event.setTarget(Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE)));
       }
-      event.setEventClassFQN(getUTF8String(buf, fqnLength));
+      event.setEventClassFqn(getUtf8String(buf, fqnLength));
       if (dataSize > 0) {
         event.setEventData(getNewByteBuffer(buf, dataSize));
       } else {
@@ -864,7 +911,7 @@ public class BinaryEncDec implements PlatformEncDec {
     List<EndpointAttachRequest> requests = new ArrayList<EndpointAttachRequest>(count);
     for (int i = 0; i < count; i++) {
       int requestId = getIntFromUnsignedShort(buf);
-      String accessToken = getUTF8String(buf);
+      String accessToken = getUtf8String(buf);
       requests.add(new EndpointAttachRequest(requestId, accessToken));
     }
     return requests;
@@ -879,7 +926,8 @@ public class BinaryEncDec implements PlatformEncDec {
       int requestId = getIntFromUnsignedShort(buf);
       // reserved
       buf.getShort();
-      requests.add(new EndpointDetachRequest(requestId, Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE))));
+      requests.add(new EndpointDetachRequest(
+          requestId, Base64Util.encode(getNewByteArray(buf, PUBLIC_KEY_HASH_SIZE))));
     }
     return requests;
   }
@@ -890,15 +938,16 @@ public class BinaryEncDec implements PlatformEncDec {
     int verifierTokenLength = getIntFromUnsignedShort(buf);
     // reserved
     buf.getShort();
-    String userExternalId = getUTF8String(buf, extIdLength);
-    String userAccessToken = getUTF8String(buf, tokenLength);
-    String userVerifierToken = getUTF8String(buf, verifierTokenLength);
+    String userExternalId = getUtf8String(buf, extIdLength);
+    String userAccessToken = getUtf8String(buf, tokenLength);
+    String userVerifierToken = getUtf8String(buf, verifierTokenLength);
     return new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
   }
 
   private ClientSync validate(ClientSync sync) throws PlatformEncDecException {
     if (sync.getClientSyncMetaData() == null) {
-      throw new PlatformEncDecException(MessageFormat.format("Input data does not have client sync meta data: {0}!", sync));
+      throw new PlatformEncDecException(
+          MessageFormat.format("Input data does not have client sync meta data: {0}!", sync));
     }
     return sync;
   }

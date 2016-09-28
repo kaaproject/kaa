@@ -31,7 +31,8 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import java.io.Serializable;
 
 @UDT(name = ENDPOINT_GROUP_STATE_USER_TYPE_NAME)
-public final class CassandraEndpointGroupState implements ToDto<EndpointGroupStateDto>, Serializable {
+public final class CassandraEndpointGroupState
+    implements ToDto<EndpointGroupStateDto>, Serializable {
 
   @Transient
   private static final long serialVersionUID = -1658174097110691624L;
@@ -77,23 +78,31 @@ public final class CassandraEndpointGroupState implements ToDto<EndpointGroupSta
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    CassandraEndpointGroupState that = (CassandraEndpointGroupState) o;
+    CassandraEndpointGroupState that = (CassandraEndpointGroupState) object;
 
-    if (configurationId != null ? !configurationId.equals(that.configurationId) : that.configurationId != null) {
+    if (configurationId != null
+        ? !configurationId.equals(that.configurationId)
+        : that.configurationId != null) {
       return false;
     }
-    if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) : that.endpointGroupId != null) {
+
+    if (endpointGroupId != null
+        ? !endpointGroupId.equals(that.endpointGroupId)
+        : that.endpointGroupId != null) {
       return false;
     }
-    if (profileFilterId != null ? !profileFilterId.equals(that.profileFilterId) : that.profileFilterId != null) {
+
+    if (profileFilterId != null
+        ? !profileFilterId.equals(that.profileFilterId)
+        : that.profileFilterId != null) {
       return false;
     }
 
@@ -110,11 +119,11 @@ public final class CassandraEndpointGroupState implements ToDto<EndpointGroupSta
 
   @Override
   public String toString() {
-    return "CassandraEndpointGroupState{" +
-        "endpointGroupId='" + endpointGroupId + '\'' +
-        ", profileFilterId='" + profileFilterId + '\'' +
-        ", configurationId='" + configurationId + '\'' +
-        '}';
+    return "CassandraEndpointGroupState{"
+        + "endpointGroupId='" + endpointGroupId + '\''
+        + ", profileFilterId='" + profileFilterId + '\''
+        + ", configurationId='" + configurationId + '\''
+        + '}';
   }
 
   @Override

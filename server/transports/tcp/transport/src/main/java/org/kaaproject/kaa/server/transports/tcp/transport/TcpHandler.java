@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
 import org.kaaproject.kaa.server.transport.EndpointVerificationException;
-import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
+import org.kaaproject.kaa.server.transport.InvalidSdkTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
@@ -63,12 +63,12 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
   private static final boolean NOT_ZIPPED = false;
   private final static ErrorBuilder connectErrorConverter = new ErrorBuilder() { //NOSONAR
     @Override
-    public Object[] build(Exception e) {
+    public Object[] build(Exception exception) {
       Object[] responses = new Object[1];
-      if (e instanceof GeneralSecurityException || e instanceof IOException ||
-          e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
+      if (exception instanceof GeneralSecurityException || exception instanceof IOException ||
+          exception instanceof IllegalArgumentException || exception instanceof InvalidSdkTokenException) {
         responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDENTIALS);
-      } else if (e instanceof EndpointVerificationException) {
+      } else if (exception instanceof EndpointVerificationException) {
         responses[0] = new ConnAck(ReturnCode.REFUSE_VERIFICATION_FAILED);
       } else {
         responses[0] = new ConnAck(ReturnCode.REFUSE_SERVER_UNAVAILABLE);
@@ -93,12 +93,12 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
   };
   private final static ErrorBuilder syncErrorConverter = new ErrorBuilder() { //NOSONAR
     @Override
-    public Object[] build(Exception e) {
+    public Object[] build(Exception exception) {
       Object[] responses = new Object[1];
-      if (e instanceof GeneralSecurityException || e instanceof IOException ||
-          e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
+      if (exception instanceof GeneralSecurityException || exception instanceof IOException ||
+          exception instanceof IllegalArgumentException || exception instanceof InvalidSdkTokenException) {
         responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
-      } else if (e instanceof EndpointVerificationException) {
+      } else if (exception instanceof EndpointVerificationException) {
         responses[0] = new Disconnect(DisconnectReason.CREDENTIALS_REVOKED);
       } else {
         responses[0] = new Disconnect(DisconnectReason.INTERNAL_ERROR);

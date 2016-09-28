@@ -94,7 +94,7 @@ public class AvroEncDecTest {
   @Test
   public void convertEventTest() {
     Event event = new Event();
-    org.kaaproject.kaa.common.endpoint.gen.Event genEvent = new org.kaaproject.kaa.common.endpoint.gen.Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(), event.getSource(), event.getTarget());
+    org.kaaproject.kaa.common.endpoint.gen.Event genEvent = new org.kaaproject.kaa.common.endpoint.gen.Event(event.getSeqNum(), event.getEventClassFqn(), event.getEventData(), event.getSource(), event.getTarget());
     org.kaaproject.kaa.common.endpoint.gen.Event nullGenEvent = null;
     Assert.assertEquals(event, AvroEncDec.convert(genEvent));
     Assert.assertNull(AvroEncDec.convert(nullGenEvent));

@@ -39,9 +39,9 @@ public class GrowingByteBuffer {
     data = ByteBuffer.wrap(new byte[size]);
   }
 
-  public GrowingByteBuffer put(byte b) {
+  public GrowingByteBuffer put(byte bt) {
     resizeIfNeeded(SIZE_OF_BYTE);
-    data.put(b);
+    data.put(bt);
     return this;
   }
 
@@ -51,32 +51,32 @@ public class GrowingByteBuffer {
     return this;
   }
 
-  public GrowingByteBuffer putShort(short s) {
+  public GrowingByteBuffer putShort(short shrt) {
     resizeIfNeeded(SIZE_OF_SHORT);
-    data.putShort(s);
+    data.putShort(shrt);
     return this;
   }
 
-  public GrowingByteBuffer putShort(int position, short s) {
+  public GrowingByteBuffer putShort(int position, short shrt) {
     checkPosition(position + SIZE_OF_SHORT);
     int tmp = data.position();
     data.position(position);
-    data.putShort(s);
+    data.putShort(shrt);
     data.position(tmp);
     return this;
   }
 
-  public GrowingByteBuffer putInt(int i) {
+  public GrowingByteBuffer putInt(int integer) {
     resizeIfNeeded(SIZE_OF_INT);
-    data.putInt(i);
+    data.putInt(integer);
     return this;
   }
 
-  public GrowingByteBuffer putInt(int position, int i) {
+  public GrowingByteBuffer putInt(int position, int integer) {
     checkPosition(position + SIZE_OF_INT);
     int tmp = data.position();
     data.position(position);
-    data.putInt(i);
+    data.putInt(integer);
     data.position(tmp);
     return this;
   }
@@ -93,14 +93,17 @@ public class GrowingByteBuffer {
 
   private void checkPosition(int position) {
     if (data.capacity() < position) {
-      throw new IllegalArgumentException(MessageFormat.format("Position {0} is greater then capacity {1}", position, data.capacity()));
+      throw new IllegalArgumentException(
+          MessageFormat.format("Position {0} is greater then capacity {1}",
+              position, data.capacity()));
     }
   }
 
   private void resizeIfNeeded(int size) {
     if (size > data.remaining()) {
       int position = data.position();
-      data = ByteBuffer.wrap(Arrays.copyOf(data.array(), Math.max(data.position() + size, data.array().length * 2)));
+      data = ByteBuffer.wrap(Arrays.copyOf(
+          data.array(), Math.max(data.position() + size, data.array().length * 2)));
       data.position(position);
     }
   }

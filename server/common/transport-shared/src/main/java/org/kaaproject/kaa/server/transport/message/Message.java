@@ -35,7 +35,7 @@ public interface Message extends ChannelAware, PlatformAware {
   MessageBuilder getMessageBuilder();
 
   /**
-   * Returns the error builder
+   * Returns the error builder.
    *
    * @return the error builder
    */

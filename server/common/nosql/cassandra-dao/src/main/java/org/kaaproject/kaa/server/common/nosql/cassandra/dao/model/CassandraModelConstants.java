@@ -125,7 +125,7 @@ public class CassandraModelConstants {
     public static final String EP_USER_ENDPOINT_IDS_PROPERTY = "ep_ids";
 
     /**
-     * CassandraEPByAccessToken constants.
+     * CassandraEpByAccessToken constants.
      */
     public static final String EP_BY_ACCESS_TOKEN_COLUMN_FAMILY_NAME = "access_token_eps";
     public static final String EP_BY_ACCESS_TOKEN_ACCESS_TOKEN_PROPERTY =
@@ -134,7 +134,7 @@ public class CassandraModelConstants {
         ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
-     * CassandraEPByAppId constants.
+     * CassandraEpByAppId constants.
      */
     public static final String EP_BY_APP_ID_COLUMN_FAMILY_NAME = "app_eps";
     public static final String EP_BY_APP_ID_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
@@ -150,7 +150,7 @@ public class CassandraModelConstants {
         ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
-     * CassandraEPByEndpointGroupId constants.
+     * CassandraEpByEndpointGroupId constants.
      */
     public static final String EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME =
         "endpoint_group_id_eps";

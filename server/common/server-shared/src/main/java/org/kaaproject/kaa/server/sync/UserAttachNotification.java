@@ -64,20 +64,25 @@ public final class UserAttachNotification {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    UserAttachNotification that = (UserAttachNotification) o;
+    UserAttachNotification that = (UserAttachNotification) object;
 
-    if (endpointAccessToken != null ? !endpointAccessToken.equals(that.endpointAccessToken) : that.endpointAccessToken != null) {
+    if (endpointAccessToken != null
+        ? !endpointAccessToken.equals(that.endpointAccessToken)
+        : that.endpointAccessToken != null) {
       return false;
     }
-    if (userExternalId != null ? !userExternalId.equals(that.userExternalId) : that.userExternalId != null) {
+
+    if (userExternalId != null
+        ? !userExternalId.equals(that.userExternalId)
+        : that.userExternalId != null) {
       return false;
     }
 

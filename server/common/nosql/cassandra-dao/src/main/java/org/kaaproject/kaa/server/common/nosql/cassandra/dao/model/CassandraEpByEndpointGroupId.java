@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 @Table(name = CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME)
-public class CassandraEPByEndpointGroupId implements Serializable {
+public class CassandraEpByEndpointGroupId implements Serializable {
 
   @Transient
   private static final long serialVersionUID = 4892433114353644609L;
@@ -38,10 +38,10 @@ public class CassandraEPByEndpointGroupId implements Serializable {
   @Column(name = CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY)
   private ByteBuffer endpointKeyHash;
 
-  public CassandraEPByEndpointGroupId() {
+  public CassandraEpByEndpointGroupId() {
   }
 
-  public CassandraEPByEndpointGroupId(String epGroupId, ByteBuffer endpointKeyHash) {
+  public CassandraEpByEndpointGroupId(String epGroupId, ByteBuffer endpointKeyHash) {
     this.epGroupId = epGroupId;
     this.endpointKeyHash = endpointKeyHash;
   }
@@ -82,7 +82,7 @@ public class CassandraEPByEndpointGroupId implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    CassandraEPByEndpointGroupId other = (CassandraEPByEndpointGroupId) obj;
+    CassandraEpByEndpointGroupId other = (CassandraEpByEndpointGroupId) obj;
     if (endpointKeyHash == null) {
       if (other.endpointKeyHash != null) {
         return false;
@@ -102,9 +102,9 @@ public class CassandraEPByEndpointGroupId implements Serializable {
 
   @Override
   public String toString() {
-    return "CassandraEPByAccessToken{" +
-        "epGroupId='" + epGroupId + '\'' +
-        ", endpointKeyHash=" + endpointKeyHash +
-        '}';
+    return "CassandraEpByAccessToken{"
+        + "epGroupId='" + epGroupId + '\''
+        + ", endpointKeyHash=" + endpointKeyHash
+        + '}';
   }
 }

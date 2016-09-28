@@ -89,8 +89,8 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
       try {
         Notification record = new Notification();
         return record;
-      } catch (Exception e) {
-        throw new org.apache.avro.AvroRuntimeException(e);
+      } catch (Exception exception) {
+        throw new org.apache.avro.AvroRuntimeException(exception);
       }
     }
   }

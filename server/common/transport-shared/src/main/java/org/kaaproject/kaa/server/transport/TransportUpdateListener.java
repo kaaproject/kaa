@@ -30,7 +30,7 @@ public interface TransportUpdateListener {
   /**
    * Notify about the initialized transports.
    *
-   * @param msList a list of the initialized transport meta data
+   * @param mdList a list of the initialized transport meta data
    */
   void onTransportsStarted(List<TransportMetaData> mdList);
 

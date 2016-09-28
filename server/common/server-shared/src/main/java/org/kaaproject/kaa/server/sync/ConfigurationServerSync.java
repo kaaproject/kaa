@@ -30,7 +30,9 @@ public final class ConfigurationServerSync {
   /**
    * All-args constructor.
    */
-  public ConfigurationServerSync(int appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
+  public ConfigurationServerSync(int appStateSeqNumber,
+                                 SyncResponseStatus responseStatus,
+                                 ByteBuffer confSchemaBody,
                                  ByteBuffer confDeltaBody) {
     this.responseStatus = responseStatus;
     this.confSchemaBody = confSchemaBody;
@@ -86,22 +88,33 @@ public final class ConfigurationServerSync {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    ConfigurationServerSync that = (ConfigurationServerSync) o;
-
-    if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null) {
-      return false;
-    }
-    if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null) {
-      return false;
-    }
-    if (responseStatus != that.responseStatus) return false;
-    {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
+
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
+
+    ConfigurationServerSync that = (ConfigurationServerSync) object;
+
+    if (confDeltaBody != null
+        ? !confDeltaBody.equals(that.confDeltaBody)
+        : that.confDeltaBody != null) {
+      return false;
+    }
+    if (confSchemaBody != null
+        ? !confSchemaBody.equals(that.confSchemaBody)
+        : that.confSchemaBody != null) {
+      return false;
+    }
+
+    if (responseStatus != that.responseStatus) {
+      return false;
+    }
+
+    return true;
   }
 
   @Override

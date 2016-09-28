@@ -31,7 +31,7 @@ import java.util.Map;
 public class TransportMetaData implements Serializable {
 
   /**
-   * Generated value
+   * Generated value.
    */
   private static final long serialVersionUID = 9208273898021695583L;
 
@@ -40,7 +40,9 @@ public class TransportMetaData implements Serializable {
   private final List<byte[]> defaultConnectionInfoList;
   private final Map<Integer, List<byte[]>> versionSpecificConnectionInfoList;
 
-  public TransportMetaData(int minSupportedVersion, int maxSupportedVersion, List<byte[]> defaultConnectionInfoList) {
+  public TransportMetaData(int minSupportedVersion,
+                           int maxSupportedVersion,
+                           List<byte[]> defaultConnectionInfoList) {
     super();
     this.minSupportedVersion = minSupportedVersion;
     this.maxSupportedVersion = maxSupportedVersion;

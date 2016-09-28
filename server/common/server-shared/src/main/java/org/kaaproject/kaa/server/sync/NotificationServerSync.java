@@ -34,7 +34,9 @@ public final class NotificationServerSync {
   /**
    * All-args constructor.
    */
-  public NotificationServerSync(SyncResponseStatus responseStatus, List<Notification> notifications, List<Topic> availableTopics) {
+  public NotificationServerSync(SyncResponseStatus responseStatus,
+                                List<Notification> notifications,
+                                List<Topic> availableTopics) {
     this.responseStatus = responseStatus;
     this.notifications = notifications;
     this.availableTopics = availableTopics;
@@ -89,22 +91,28 @@ public final class NotificationServerSync {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    NotificationServerSync that = (NotificationServerSync) o;
+    NotificationServerSync that = (NotificationServerSync) object;
 
-    if (availableTopics != null ? !availableTopics.equals(that.availableTopics) : that.availableTopics != null) {
+    if (availableTopics != null
+        ? !availableTopics.equals(that.availableTopics)
+        : that.availableTopics != null) {
       return false;
     }
-    if (notifications != null ? !notifications.equals(that.notifications) : that.notifications != null) {
+
+    if (notifications != null
+        ? !notifications.equals(that.notifications)
+        : that.notifications != null) {
       return false;
     }
+
     if (responseStatus != that.responseStatus) {
       return false;
     }

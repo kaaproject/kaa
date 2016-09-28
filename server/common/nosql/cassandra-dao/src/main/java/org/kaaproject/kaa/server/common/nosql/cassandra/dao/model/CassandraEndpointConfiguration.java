@@ -82,22 +82,27 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    CassandraEndpointConfiguration that = (CassandraEndpointConfiguration) o;
+    CassandraEndpointConfiguration that = (CassandraEndpointConfiguration) object;
 
-    if (configuration != null ? !configuration.equals(that.configuration) : that.configuration != null) {
+    if (configuration != null
+        ? !configuration.equals(that.configuration)
+        : that.configuration != null) {
       return false;
     }
-    if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) {
+    if (configurationHash != null
+        ? !configurationHash.equals(that.configurationHash)
+        : that.configurationHash != null) {
       return false;
     }
+
     if (id != null ? !id.equals(that.id) : that.id != null) {
       return false;
     }
@@ -115,10 +120,10 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
 
   @Override
   public String toString() {
-    return "EndpointConfiguration{" +
-        "configurationHash=" + configurationHash +
-        ", configuration=" + configuration +
-        '}';
+    return "EndpointConfiguration{"
+        + "configurationHash=" + configurationHash
+        + ", configuration=" + configuration
+        + '}';
   }
 
   @Override

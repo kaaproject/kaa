@@ -169,7 +169,8 @@ public class AvroEncDec implements PlatformEncDec {
     if (event == null) {
       return null;
     }
-    return new org.kaaproject.kaa.common.endpoint.gen.Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(),
+    return new org.kaaproject.kaa.common.endpoint.gen.Event(
+        event.getSeqNum(), event.getEventClassFqn(), event.getEventData(),
         event.getSource(), event.getTarget());
   }
 
@@ -177,14 +178,16 @@ public class AvroEncDec implements PlatformEncDec {
    * Converts Avro {@link org.kaaproject.kaa.common.endpoint.gen.Event} to
    * {@link Event}.
    *
-   * @param source the avro structure
+   * @param event the avro structure
    * @return the event
    */
   public static Event convert(org.kaaproject.kaa.common.endpoint.gen.Event event) {
     if (event == null) {
       return null;
     }
-    return new Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(), event.getSource(), event.getTarget());
+    return new Event(
+        event.getSeqNum(), event.getEventClassFQN(),
+        event.getEventData(), event.getSource(), event.getTarget());
   }
 
   private static SyncResponseResultType convert(org.kaaproject.kaa.server.sync.SyncStatus status) {
@@ -209,16 +212,19 @@ public class AvroEncDec implements PlatformEncDec {
     if (bootstrapSync == null) {
       return null;
     }
-    return new BootstrapSyncResponse(bootstrapSync.getRequestId(), convert(bootstrapSync.getProtocolList()));
+    return new BootstrapSyncResponse(
+        bootstrapSync.getRequestId(), convert(bootstrapSync.getProtocolList()));
   }
 
   private static List<ProtocolMetaData> convert(Set<ProtocolConnectionData> source) {
     if (source == null) {
       return Collections.emptyList();
     }
-    List<ProtocolMetaData> result = new ArrayList<ProtocolMetaData>(source.size());
+    List<ProtocolMetaData> result = new ArrayList<>(source.size());
     for (ProtocolConnectionData pcd : source) {
-      result.add(new ProtocolMetaData(pcd.getAccessPointId(), new ProtocolVersionPair(pcd.getProtocolId(), pcd.getProtocolVersion()),
+      result.add(new ProtocolMetaData(
+          pcd.getAccessPointId(),
+          new ProtocolVersionPair(pcd.getProtocolId(), pcd.getProtocolVersion()),
           ByteBuffer.wrap(pcd.getConnectionData())));
     }
     return result;
@@ -238,7 +244,8 @@ public class AvroEncDec implements PlatformEncDec {
     return new ProfileSyncResponse(convert(profileSyncResponse.getResponseStatus()));
   }
 
-  private static SyncResponseStatus convert(org.kaaproject.kaa.server.sync.SyncResponseStatus responseStatus) {
+  private static SyncResponseStatus convert(
+      org.kaaproject.kaa.server.sync.SyncResponseStatus responseStatus) {
     if (responseStatus == null) {
       return null;
     }
@@ -274,14 +281,18 @@ public class AvroEncDec implements PlatformEncDec {
     if (source.getAvailableTopics() != null) {
       List<Topic> topics = new ArrayList<>(source.getAvailableTopics().size());
       for (org.kaaproject.kaa.server.sync.Topic topic : source.getAvailableTopics()) {
-        topics.add(new Topic(topic.getIdAsLong(), topic.getName(), convert(topic.getSubscriptionType())));
+        topics.add(new Topic(
+            topic.getIdAsLong(), topic.getName(), convert(topic.getSubscriptionType())));
       }
       sync.setAvailableTopics(topics);
     }
     if (source.getNotifications() != null) {
       List<Notification> notifications = new ArrayList<>(source.getNotifications().size());
       for (org.kaaproject.kaa.server.sync.Notification notification : source.getNotifications()) {
-        notifications.add(new Notification(notification.getTopicIdAsLong(), convert(notification.getType()), notification.getUid(),
+        notifications.add(new Notification(
+            notification.getTopicIdAsLong(),
+            convert(notification.getType()),
+            notification.getUid(),
             notification.getSeqNumber(), notification.getBody()));
       }
       sync.setNotifications(notifications);
@@ -295,19 +306,26 @@ public class AvroEncDec implements PlatformEncDec {
     }
     EventSyncResponse sync = new EventSyncResponse();
     if (source.getEventSequenceNumberResponse() != null) {
-      sync.setEventSequenceNumberResponse(new EventSequenceNumberResponse(source.getEventSequenceNumberResponse().getSeqNum()));
+      sync.setEventSequenceNumberResponse(new EventSequenceNumberResponse(
+          source.getEventSequenceNumberResponse().getSeqNum()));
     }
     if (source.getEvents() != null) {
-      List<org.kaaproject.kaa.common.endpoint.gen.Event> events = new ArrayList<>(source.getEvents().size());
+      List<org.kaaproject.kaa.common.endpoint.gen.Event> events = new ArrayList<>(
+          source.getEvents().size());
+
       for (Event event : source.getEvents()) {
         events.add(convert(event));
       }
       sync.setEvents(events);
     }
     if (source.getEventListenersResponses() != null) {
-      List<EventListenersResponse> responses = new ArrayList<>(source.getEventListenersResponses().size());
-      for (org.kaaproject.kaa.server.sync.EventListenersResponse response : source.getEventListenersResponses()) {
-        responses.add(new EventListenersResponse(response.getRequestId(), response.getListeners(), convert(response.getResult())));
+      List<EventListenersResponse> responses = new ArrayList<>(
+          source.getEventListenersResponses().size());
+
+      for (org.kaaproject.kaa.server.sync.EventListenersResponse response
+          : source.getEventListenersResponses()) {
+        responses.add(new EventListenersResponse(
+            response.getRequestId(), response.getListeners(), convert(response.getResult())));
       }
       sync.setEventListenersResponses(responses);
     }
@@ -320,36 +338,47 @@ public class AvroEncDec implements PlatformEncDec {
     }
     UserSyncResponse sync = new UserSyncResponse();
     if (source.getUserAttachNotification() != null) {
-      sync.setUserAttachNotification(new UserAttachNotification(source.getUserAttachNotification().getUserExternalId(), source
+      sync.setUserAttachNotification(
+          new UserAttachNotification(source.getUserAttachNotification().getUserExternalId(), source
           .getUserAttachNotification().getEndpointAccessToken()));
     }
     if (source.getUserDetachNotification() != null) {
-      sync.setUserDetachNotification(new UserDetachNotification(source.getUserDetachNotification().getEndpointAccessToken()));
+      sync.setUserDetachNotification(new UserDetachNotification(
+          source.getUserDetachNotification().getEndpointAccessToken()));
     }
     if (source.getUserAttachResponse() != null) {
       sync.setUserAttachResponse(convert(source.getUserAttachResponse()));
     }
     if (source.getEndpointAttachResponses() != null) {
-      List<EndpointAttachResponse> responses = new ArrayList<>(source.getEndpointAttachResponses().size());
-      for (org.kaaproject.kaa.server.sync.EndpointAttachResponse response : source.getEndpointAttachResponses()) {
-        responses.add(new EndpointAttachResponse(response.getRequestId(), response.getEndpointKeyHash(), convert(response
+      List<EndpointAttachResponse> responses = new ArrayList<>(
+          source.getEndpointAttachResponses().size());
+      for (org.kaaproject.kaa.server.sync.EndpointAttachResponse response
+          : source.getEndpointAttachResponses()) {
+        responses.add(new EndpointAttachResponse(
+            response.getRequestId(), response.getEndpointKeyHash(), convert(response
             .getResult())));
       }
       sync.setEndpointAttachResponses(responses);
     }
     if (source.getEndpointDetachResponses() != null) {
-      List<EndpointDetachResponse> responses = new ArrayList<>(source.getEndpointDetachResponses().size());
-      for (org.kaaproject.kaa.server.sync.EndpointDetachResponse response : source.getEndpointDetachResponses()) {
-        responses.add(new EndpointDetachResponse(response.getRequestId(), convert(response.getResult())));
+      List<EndpointDetachResponse> responses = new ArrayList<>(
+          source.getEndpointDetachResponses().size());
+      for (org.kaaproject.kaa.server.sync.EndpointDetachResponse response
+          : source.getEndpointDetachResponses()) {
+        responses.add(new EndpointDetachResponse(
+            response.getRequestId(), convert(response.getResult())));
       }
       sync.setEndpointDetachResponses(responses);
     }
     return sync;
   }
 
-  private static UserAttachResponse convert(org.kaaproject.kaa.server.sync.UserAttachResponse source) {
+  private static UserAttachResponse convert(
+      org.kaaproject.kaa.server.sync.UserAttachResponse source) {
     UserAttachResponse response = new UserAttachResponse();
-    response.setResult(source.getResult() == SyncStatus.SUCCESS ? SyncResponseResultType.SUCCESS : SyncResponseResultType.FAILURE);
+    response.setResult(source.getResult() == SyncStatus.SUCCESS
+        ? SyncResponseResultType.SUCCESS
+        : SyncResponseResultType.FAILURE);
     response.setErrorCode(convert(source.getErrorCode()));
     response.setErrorReason(source.getErrorReason());
     return response;
@@ -391,7 +420,8 @@ public class AvroEncDec implements PlatformEncDec {
     }
   }
 
-  private static SubscriptionType convert(org.kaaproject.kaa.server.sync.SubscriptionType subscriptionType) {
+  private static SubscriptionType convert(
+      org.kaaproject.kaa.server.sync.SubscriptionType subscriptionType) {
     if (subscriptionType == null) {
       return null;
     }
@@ -410,7 +440,7 @@ public class AvroEncDec implements PlatformEncDec {
       return null;
     }
     LogSyncResponse sync = new LogSyncResponse();
-    List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> statuses = new ArrayList<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus>();
+    List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> statuses = new ArrayList<>();
     for (LogDeliveryStatus status : source.getDeliveryStatuses()) {
       statuses.add(convert(status));
     }
@@ -418,14 +448,19 @@ public class AvroEncDec implements PlatformEncDec {
     return sync;
   }
 
-  private static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus convert(LogDeliveryStatus source) {
+  private static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus convert(
+      LogDeliveryStatus source) {
     if (source == null) {
       return null;
     }
-    return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus(source.getRequestId(), convert(source.getResult()), convert(source.getErrorCode()));
+    return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus(
+        source.getRequestId(),
+        convert(source.getResult()),
+        convert(source.getErrorCode()));
   }
 
-  private static LogDeliveryErrorCode convert(org.kaaproject.kaa.server.sync.LogDeliveryErrorCode errorCode) {
+  private static LogDeliveryErrorCode convert(
+      org.kaaproject.kaa.server.sync.LogDeliveryErrorCode errorCode) {
     if (errorCode == null) {
       return null;
     }
@@ -447,8 +482,9 @@ public class AvroEncDec implements PlatformEncDec {
     if (source == null) {
       return null;
     }
-    return new ClientSyncMetaData(null, source.getSdkToken(), source.getEndpointPublicKeyHash(), source.getProfileHash(),
-        source.getTimeout());
+    return new ClientSyncMetaData(
+        null, source.getSdkToken(), source.getEndpointPublicKeyHash(),
+        source.getProfileHash(), source.getTimeout());
   }
 
   private static BootstrapClientSync convert(BootstrapSyncRequest source) {
@@ -495,11 +531,16 @@ public class AvroEncDec implements PlatformEncDec {
     NotificationClientSync sync = new NotificationClientSync();
     sync.setTopicListHash(source.getTopicListHash());
     if (source.getAcceptedUnicastNotifications() != null) {
-      sync.setAcceptedUnicastNotifications(new ArrayList<String>(source.getAcceptedUnicastNotifications()));
+      sync.setAcceptedUnicastNotifications(new ArrayList<>(
+          source.getAcceptedUnicastNotifications()));
     }
+
     if (source.getSubscriptionCommands() != null) {
-      List<SubscriptionCommand> commands = new ArrayList<SubscriptionCommand>(source.getSubscriptionCommands().size());
-      for (org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand command : source.getSubscriptionCommands()) {
+      List<SubscriptionCommand> commands = new ArrayList<>(
+          source.getSubscriptionCommands().size());
+
+      for (org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand command
+          : source.getSubscriptionCommands()) {
         SubscriptionCommand copy = new SubscriptionCommand();
         copy.setTopicId(command.getTopicId());
         switch (command.getCommand()) {
@@ -540,9 +581,13 @@ public class AvroEncDec implements PlatformEncDec {
       sync.setEvents(events);
     }
     if (source.getEventListenersRequests() != null) {
-      List<EventListenersRequest> requests = new ArrayList<EventListenersRequest>(source.getEventListenersRequests().size());
-      for (org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest request : source.getEventListenersRequests()) {
-        requests.add(new EventListenersRequest(request.getRequestId(), request.getEventClassFQNs()));
+      List<EventListenersRequest> requests = new ArrayList<>(
+          source.getEventListenersRequests().size());
+
+      for (org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest request
+          : source.getEventListenersRequests()) {
+        requests.add(new EventListenersRequest(
+            request.getRequestId(), request.getEventClassFQNs()));
       }
       sync.setEventListenersRequests(requests);
     }
@@ -572,20 +617,29 @@ public class AvroEncDec implements PlatformEncDec {
     }
     UserClientSync sync = new UserClientSync();
     if (source.getUserAttachRequest() != null) {
-      sync.setUserAttachRequest(new UserAttachRequest(source.getUserAttachRequest().getUserVerifierId(), source.getUserAttachRequest().getUserExternalId(), source
-          .getUserAttachRequest().getUserAccessToken()));
+      sync.setUserAttachRequest(new UserAttachRequest(
+          source.getUserAttachRequest().getUserVerifierId(),
+          source.getUserAttachRequest().getUserExternalId(),
+          source.getUserAttachRequest().getUserAccessToken()));
     }
     if (source.getEndpointAttachRequests() != null) {
-      List<EndpointAttachRequest> requests = new ArrayList<>(source.getEndpointAttachRequests().size());
-      for (org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest request : source.getEndpointAttachRequests()) {
-        requests.add(new EndpointAttachRequest(request.getRequestId(), request.getEndpointAccessToken()));
+      List<EndpointAttachRequest> requests = new ArrayList<>(
+          source.getEndpointAttachRequests().size());
+      for (org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest request
+          : source.getEndpointAttachRequests()) {
+        requests.add(new EndpointAttachRequest(
+            request.getRequestId(), request.getEndpointAccessToken()));
       }
       sync.setEndpointAttachRequests(requests);
     }
     if (source.getEndpointDetachRequests() != null) {
-      List<EndpointDetachRequest> requests = new ArrayList<>(source.getEndpointDetachRequests().size());
-      for (org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest request : source.getEndpointDetachRequests()) {
-        requests.add(new EndpointDetachRequest(request.getRequestId(), request.getEndpointKeyHash()));
+      List<EndpointDetachRequest> requests = new ArrayList<>(
+          source.getEndpointDetachRequests().size());
+
+      for (org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest request
+          : source.getEndpointDetachRequests()) {
+        requests.add(new EndpointDetachRequest(
+            request.getRequestId(), request.getEndpointKeyHash()));
       }
       sync.setEndpointDetachRequests(requests);
     }
@@ -626,8 +680,8 @@ public class AvroEncDec implements PlatformEncDec {
       sync.setUseConfigurationRawSchema(false);
       LOG.trace("Decoded client sync {}", sync);
       return sync;
-    } catch (IOException e) {
-      throw new PlatformEncDecException(e);
+    } catch (IOException exception) {
+      throw new PlatformEncDecException(exception);
     }
   }
 
@@ -654,8 +708,8 @@ public class AvroEncDec implements PlatformEncDec {
         LOG.trace("Encoded avro data {}", Arrays.toString(data));
       }
       return data;
-    } catch (IOException e) {
-      throw new PlatformEncDecException(e);
+    } catch (IOException exception) {
+      throw new PlatformEncDecException(exception);
     }
   }
 }

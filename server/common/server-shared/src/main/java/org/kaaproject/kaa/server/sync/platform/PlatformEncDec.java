@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.sync.ServerSync;
 public interface PlatformEncDec {
 
   /**
-   * Returns id of the platform level protocol
+   * Returns id of the platform level protocol.
    */
   int getId();
 

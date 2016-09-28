@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 
 public final class Event {
   private int seqNum;
-  private String eventClassFQN;
+  private String eventClassFqn;
   private ByteBuffer eventData;
   private String source;
   private String target;
@@ -31,9 +31,10 @@ public final class Event {
   /**
    * All-args constructor.
    */
-  public Event(int seqNum, String eventClassFQN, ByteBuffer eventData, String source, String target) {
+  public Event(int seqNum, String eventClassFqn, ByteBuffer eventData,
+               String source, String target) {
     this.seqNum = seqNum;
-    this.eventClassFQN = eventClassFQN;
+    this.eventClassFqn = eventClassFqn;
     this.eventData = eventData;
     this.source = source;
     this.target = target;
@@ -56,19 +57,19 @@ public final class Event {
   }
 
   /**
-   * Gets the value of the 'eventClassFQN' field.
+   * Gets the value of the 'eventClassFqn' field.
    */
-  public String getEventClassFQN() {
-    return eventClassFQN;
+  public String getEventClassFqn() {
+    return eventClassFqn;
   }
 
   /**
-   * Sets the value of the 'eventClassFQN' field.
+   * Sets the value of the 'eventClassFqn' field.
    *
    * @param value the value to set.
    */
-  public void setEventClassFQN(String value) {
-    this.eventClassFQN = value;
+  public void setEventClassFqn(String value) {
+    this.eventClassFqn = value;
   }
 
   /**
@@ -123,7 +124,7 @@ public final class Event {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((eventClassFQN == null) ? 0 : eventClassFQN.hashCode());
+    result = prime * result + ((eventClassFqn == null) ? 0 : eventClassFqn.hashCode());
     result = prime * result + ((eventData == null) ? 0 : eventData.hashCode());
     result = prime * result + seqNum;
     result = prime * result + ((source == null) ? 0 : source.hashCode());
@@ -143,11 +144,11 @@ public final class Event {
       return false;
     }
     Event other = (Event) obj;
-    if (eventClassFQN == null) {
-      if (other.eventClassFQN != null) {
+    if (eventClassFqn == null) {
+      if (other.eventClassFqn != null) {
         return false;
       }
-    } else if (!eventClassFQN.equals(other.eventClassFQN)) {
+    } else if (!eventClassFqn.equals(other.eventClassFqn)) {
       return false;
     }
     if (eventData == null) {
@@ -182,8 +183,8 @@ public final class Event {
     StringBuilder builder = new StringBuilder();
     builder.append("Event [seqNum=");
     builder.append(seqNum);
-    builder.append(", eventClassFQN=");
-    builder.append(eventClassFQN);
+    builder.append(", eventClassFqn=");
+    builder.append(eventClassFqn);
     builder.append(", eventData=");
     builder.append(eventData);
     builder.append(", source=");

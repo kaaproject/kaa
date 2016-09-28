@@ -37,8 +37,12 @@ public abstract class AbstractMessage implements PlatformAware {
   private final MessageBuilder responseConverter;
   private final ErrorBuilder errorConverter;
 
-  protected AbstractMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType,
-                            MessageBuilder responseConverter, ErrorBuilder errorConverter) {
+  protected AbstractMessage(UUID uuid,
+                            Integer platformId,
+                            ChannelContext channelContext,
+                            ChannelType channelType,
+                            MessageBuilder responseConverter,
+                            ErrorBuilder errorConverter) {
     super();
     this.uuid = uuid;
     this.platformId = platformId;

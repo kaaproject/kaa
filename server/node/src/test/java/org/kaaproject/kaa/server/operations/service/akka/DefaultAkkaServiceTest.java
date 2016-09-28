@@ -123,7 +123,7 @@ import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
 import org.kaaproject.kaa.server.transport.EndpointRevocationException;
 import org.kaaproject.kaa.server.transport.EndpointVerificationException;
-import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
+import org.kaaproject.kaa.server.transport.InvalidSdkTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
@@ -510,7 +510,7 @@ public class DefaultAkkaServiceTest {
 
     Assert.assertNotNull(akkaService.getActorSystem());
     akkaService.process(message);
-    Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.isA(InvalidSDKTokenException.class));
+    Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.isA(InvalidSdkTokenException.class));
   }
 
   @Test

@@ -42,7 +42,9 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 @Repository
-public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCredentials, ByteBuffer> implements CredentialsDao<CassandraCredentials> {
+public class CredentialsCassandraDao
+    extends AbstractCassandraDao<CassandraCredentials, ByteBuffer>
+    implements CredentialsDao<CassandraCredentials> {
 
   private static final Logger LOG = LoggerFactory.getLogger(CredentialsCassandraDao.class);
 
@@ -64,7 +66,8 @@ public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCrede
 
   @Override
   public Optional<CassandraCredentials> find(String applicationId, String credentialsId) {
-    LOG.debug("Searching credential by applicationID[{}] and credentialsID[{}]", applicationId, credentialsId);
+    LOG.debug("Searching credential by applicationID[{}] and credentialsID[{}]",
+        applicationId, credentialsId);
     Select.Where query = select().from(getColumnFamilyName()).
         where(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
         and(eq(CREDENTIALS_ID_PROPERTY, credentialsId));
@@ -72,10 +75,14 @@ public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCrede
   }
 
   @Override
-  public Optional<CassandraCredentials> updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
-    LOG.debug("Updating credentials status with applicationID[{}] and credentialsID[{}] to STATUS[{}]",
+  public Optional<CassandraCredentials> updateStatus(String applicationId,
+                                                     String credentialsId,
+                                                     CredentialsStatus status) {
+    LOG.debug("Updating credentials status with applicationID[{}] "
+            + "and credentialsID[{}] to STATUS[{}]",
         applicationId, credentialsId, status.toString());
-    Update.Assignments query = update(getColumnFamilyName()).where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
+    Update.Assignments query = update(getColumnFamilyName())
+        .where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
         and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
         with(set(CREDENTIALS_STATUS_PROPERTY, status.toString()));
     execute(query);
@@ -84,7 +91,8 @@ public class CredentialsCassandraDao extends AbstractCassandraDao<CassandraCrede
 
   @Override
   public void remove(String applicationId, String credentialsId) {
-    LOG.debug("Deleting credential by applicationID[{}] and credentialsID[{}]", applicationId, credentialsId);
+    LOG.debug("Deleting credential by applicationID[{}] and credentialsID[{}]",
+        applicationId, credentialsId);
     Delete.Where query = delete().from(getColumnFamilyName()).
         where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
         and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId));

@@ -47,15 +47,15 @@ public final class ProfileServerSync {
 
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    ProfileServerSync that = (ProfileServerSync) o;
+    ProfileServerSync that = (ProfileServerSync) object;
 
     if (responseStatus != that.responseStatus) {
       return false;

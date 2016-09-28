@@ -26,7 +26,9 @@ public final class ProtocolConnectionData {
   private final ProtocolVersionId protocolVersionId;
   private final byte[] connectionData;
 
-  public ProtocolConnectionData(int accessPointId, ProtocolVersionId protocolVersionId, byte[] connectionData) {
+  public ProtocolConnectionData(int accessPointId,
+                                ProtocolVersionId protocolVersionId,
+                                byte[] connectionData) {
     super();
     this.accessPointId = accessPointId;
     this.protocolVersionId = protocolVersionId;

@@ -43,7 +43,7 @@ public class CommandFactory<U, V> {
 
   /**
    * getCommandProcessor - used to instantiate CommandProcessor for specific
-   * URI
+   * URI.
    *
    * @param uri - HTTP request URI, should have following format: /DOMAIN/CommandName
    * @return - CommandProcessor

@@ -26,7 +26,9 @@ public final class EventClientSync {
   public EventClientSync() {
   }
 
-  public EventClientSync(boolean seqNumberRequest, List<EventListenersRequest> eventListenersRequests, List<Event> events) {
+  public EventClientSync(boolean seqNumberRequest,
+                         List<EventListenersRequest> eventListenersRequests,
+                         List<Event> events) {
     super();
     this.seqNumberRequest = seqNumberRequest;
     this.eventListenersRequests = eventListenersRequests;
@@ -77,7 +79,8 @@ public final class EventClientSync {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((eventListenersRequests == null) ? 0 : eventListenersRequests.hashCode());
+    result = prime * result
+        + ((eventListenersRequests == null) ? 0 : eventListenersRequests.hashCode());
     result = prime * result + ((events == null) ? 0 : events.hashCode());
     result = prime * result + (seqNumberRequest ? 1231 : 1237);
     return result;

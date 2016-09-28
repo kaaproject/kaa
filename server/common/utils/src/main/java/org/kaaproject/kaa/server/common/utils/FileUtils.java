@@ -44,7 +44,8 @@ public class FileUtils {
     String result = null;
     try {
       StringBuffer fileData = new StringBuffer();
-      InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+      InputStream input = Thread.currentThread().getContextClassLoader()
+          .getResourceAsStream(resource);
       BufferedReader reader = new BufferedReader(new InputStreamReader(input));
       char[] buf = new char[1024];
       int numRead = 0;
@@ -54,10 +55,10 @@ public class FileUtils {
       }
       reader.close();
       result = fileData.toString();
-    } catch (IOException e) {
+    } catch (IOException exception) {
       LOG.error("Unable to read from specified resource '"
-          + resource + "'! Error: " + e.getMessage(), e);
-      throw e;
+          + resource + "'! Error: " + exception.getMessage(), exception);
+      throw exception;
     }
     return result;
   }
@@ -70,12 +71,13 @@ public class FileUtils {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   public static byte[] readResourceBytes(String resource) throws IOException {
-    try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
+    try (InputStream input = Thread.currentThread().getContextClassLoader()
+        .getResourceAsStream(resource)) {
       return IOUtils.toByteArray(input);
-    } catch (IOException e) {
+    } catch (IOException exception) {
       LOG.error("Unable to read from specified resource '"
-          + resource + "'! Error: " + e.getMessage(), e);
-      throw e;
+          + resource + "'! Error: " + exception.getMessage(), exception);
+      throw exception;
     }
   }
 
@@ -89,14 +91,15 @@ public class FileUtils {
   public static Properties readResourceProperties(String resource) throws IOException {
     Properties result = null;
     try {
-      InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+      InputStream input = Thread.currentThread().getContextClassLoader()
+          .getResourceAsStream(resource);
       result = new Properties();
       result.load(input);
       input.close();
-    } catch (IOException e) {
+    } catch (IOException exception) {
       LOG.error("Unable to read from specified resource '"
-          + resource + "'! Error: " + e.getMessage(), e);
-      throw e;
+          + resource + "'! Error: " + exception.getMessage(), exception);
+      throw exception;
     }
     return result;
   }

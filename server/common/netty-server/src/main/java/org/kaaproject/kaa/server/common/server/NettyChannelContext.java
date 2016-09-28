@@ -39,8 +39,8 @@ public class NettyChannelContext implements ChannelContext {
   }
 
   @Override
-  public void fireExceptionCaught(Exception e) {
-    ctx.fireExceptionCaught(e);
+  public void fireExceptionCaught(Exception exception) {
+    ctx.fireExceptionCaught(exception);
   }
 
   @Override

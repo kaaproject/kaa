@@ -44,8 +44,10 @@ public final class ServerSync {
    * All-args constructor.
    */
   public ServerSync(int requestId, SyncStatus status, ProfileServerSync profileSync,
-                    ConfigurationServerSync configurationSync, NotificationServerSync notificationSync, UserServerSync userSync,
-                    EventServerSync eventSync, RedirectServerSync redirectSync, LogServerSync logSync) {
+                    ConfigurationServerSync configurationSync,
+                    NotificationServerSync notificationSync, UserServerSync userSync,
+                    EventServerSync eventSync, RedirectServerSync redirectSync,
+                    LogServerSync logSync) {
     this.requestId = requestId;
     this.status = status;
     this.profileSync = profileSync;
@@ -72,19 +74,6 @@ public final class ServerSync {
     copy.setEventSync(deepCopy(source.getEventSync()));
     copy.setConfigurationSync(deepCopy(source.getConfigurationSync()));
     return copy;
-  }
-
-  public static void cleanup(ServerSync syncResponse) {
-    if (syncResponse == null) {
-      return;
-    }
-    syncResponse.setUserSync(null);
-    syncResponse.setRedirectSync(null);
-    syncResponse.setProfileSync(null);
-    syncResponse.setNotificationSync(null);
-    syncResponse.setLogSync(null);
-    syncResponse.setEventSync(null);
-    syncResponse.setConfigurationSync(null);
   }
 
   private static ConfigurationServerSync deepCopy(ConfigurationServerSync source) {
@@ -122,7 +111,8 @@ public final class ServerSync {
     if (source.getDeliveryStatuses() != null) {
       List<LogDeliveryStatus> statusList = new ArrayList<>(source.getDeliveryStatuses().size());
       for (LogDeliveryStatus status : source.getDeliveryStatuses()) {
-        statusList.add(new LogDeliveryStatus(status.getRequestId(), status.getResult(), status.getErrorCode()));
+        statusList.add(new LogDeliveryStatus(
+            status.getRequestId(), status.getResult(), status.getErrorCode()));
       }
       return new LogServerSync(statusList);
     } else {
@@ -171,18 +161,35 @@ public final class ServerSync {
       copy.setEndpointDetachResponses(new ArrayList<>(source.getEndpointDetachResponses()));
     }
     if (source.getUserAttachNotification() != null) {
-      copy.setUserAttachNotification(new UserAttachNotification(source.getUserAttachNotification().getUserExternalId(), source
+      copy.setUserAttachNotification(new UserAttachNotification(
+          source.getUserAttachNotification().getUserExternalId(), source
           .getUserAttachNotification().getEndpointAccessToken()));
     }
     if (source.getUserAttachResponse() != null) {
       UserAttachResponse uarSource = source.getUserAttachResponse();
-      copy.setUserAttachResponse(new UserAttachResponse(uarSource.getResult(), uarSource.getErrorCode(), uarSource.getErrorReason()));
+      copy.setUserAttachResponse(new UserAttachResponse(
+          uarSource.getResult(), uarSource.getErrorCode(), uarSource.getErrorReason()));
     }
     if (source.getUserDetachNotification() != null) {
-      copy.setUserDetachNotification(new UserDetachNotification(source.getUserDetachNotification().getEndpointAccessToken()));
+      copy.setUserDetachNotification(new UserDetachNotification(
+          source.getUserDetachNotification().getEndpointAccessToken()));
     }
     return copy;
   }
+
+  public static void cleanup(ServerSync syncResponse) {
+    if (syncResponse == null) {
+      return;
+    }
+    syncResponse.setUserSync(null);
+    syncResponse.setRedirectSync(null);
+    syncResponse.setProfileSync(null);
+    syncResponse.setNotificationSync(null);
+    syncResponse.setLogSync(null);
+    syncResponse.setEventSync(null);
+    syncResponse.setConfigurationSync(null);
+  }
+
 
   /**
    * Gets the value of the 'requestId' field.
@@ -337,43 +344,58 @@ public final class ServerSync {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    ServerSync that = (ServerSync) o;
+    ServerSync that = (ServerSync) object;
 
     if (requestId != that.requestId) {
       return false;
     }
-    if (bootstrapSync != null ? !bootstrapSync.equals(that.bootstrapSync) : that.bootstrapSync != null) {
+    if (bootstrapSync != null
+        ? !bootstrapSync.equals(that.bootstrapSync)
+        : that.bootstrapSync != null) {
       return false;
     }
-    if (configurationSync != null ? !configurationSync.equals(that.configurationSync) : that.configurationSync != null) {
+
+    if (configurationSync != null
+        ? !configurationSync.equals(that.configurationSync)
+        : that.configurationSync != null) {
       return false;
     }
+
     if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null) {
       return false;
     }
+
     if (logSync != null ? !logSync.equals(that.logSync) : that.logSync != null) {
       return false;
     }
-    if (notificationSync != null ? !notificationSync.equals(that.notificationSync) : that.notificationSync != null) {
+
+    if (notificationSync != null
+        ? !notificationSync.equals(that.notificationSync)
+        : that.notificationSync != null) {
       return false;
     }
+
     if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null) {
       return false;
     }
-    if (redirectSync != null ? !redirectSync.equals(that.redirectSync) : that.redirectSync != null) {
+    if (redirectSync != null
+        ? !redirectSync.equals(that.redirectSync)
+        : that.redirectSync != null) {
       return false;
     }
+
     if (status != that.status) {
       return false;
     }
+
     if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) {
       return false;
     }

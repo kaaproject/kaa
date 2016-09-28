@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.AbstractCassandraDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByAppId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +38,13 @@ import org.springframework.stereotype.Repository;
 import com.datastax.driver.core.Statement;
 
 @Repository
-public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEPByAppId, String> {
+public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEpByAppId, String> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEpbyAppIdDao.class);
 
     @Override
-    protected Class<CassandraEPByAppId> getColumnFamilyClass() {
-        return CassandraEPByAppId.class;
+    protected Class<CassandraEpByAppId> getColumnFamilyClass() {
+        return CassandraEpByAppId.class;
     }
 
     @Override
@@ -54,21 +54,21 @@ public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEPByApp
 
     public ByteBuffer[] getEpIdsListByAppId(String appId) {
         LOG.debug("Try to find endpoint key hash list by application id {}", appId);
-        List<CassandraEPByAppId> filter = findListByStatement(select()
+        List<CassandraEpByAppId> filter = findListByStatement(select()
             .from(getColumnFamilyName())
             .where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId)));
         ByteBuffer[] result = new ByteBuffer[filter.size()];
         int pos = 0;
-        for (CassandraEPByAppId ep : filter) {
+        for (CassandraEpByAppId ep : filter) {
             result[pos++] = ep.getEndpointKeyHash();
         }
         return result;
     }
 
-    private ByteBuffer[] getEndpointKeyHash(List<CassandraEPByAppId> filter) {
+    private ByteBuffer[] getEndpointKeyHash(List<CassandraEpByAppId> filter) {
         ByteBuffer[] endpointKeyHash = new ByteBuffer[filter.size()];
         int pos = 0;
-        for (CassandraEPByAppId ep : filter) {
+        for (CassandraEpByAppId ep : filter) {
             endpointKeyHash[pos++] = ep.getEndpointKeyHash();
         }
         return endpointKeyHash;
@@ -94,7 +94,7 @@ public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEPByApp
                     + "with limit {} start from keyHash {}",
                     appId, limit, endpointKey);
         }
-        List<CassandraEPByAppId> filter = findListByStatement(queryStatement);
+        List<CassandraEpByAppId> filter = findListByStatement(queryStatement);
         return getEndpointKeyHash(filter);
     }
 }

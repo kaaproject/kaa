@@ -54,9 +54,14 @@ public final class ClientSync {
   }
 
 
-  public ClientSync(int requestId, ClientSyncMetaData clientSyncMetaData, ProfileClientSync profileSync,
-                    ConfigurationClientSync configurationSync, NotificationClientSync notificationSync, UserClientSync userSync,
-                    EventClientSync eventSync, LogClientSync logSync) {
+  public ClientSync(int requestId,
+                    ClientSyncMetaData clientSyncMetaData,
+                    ProfileClientSync profileSync,
+                    ConfigurationClientSync configurationSync,
+                    NotificationClientSync notificationSync,
+                    UserClientSync userSync,
+                    EventClientSync eventSync,
+                    LogClientSync logSync) {
     this.requestId = requestId;
     this.clientSyncMetaData = clientSyncMetaData;
     this.profileSync = profileSync;
@@ -189,29 +194,68 @@ public final class ClientSync {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
 
-    ClientSync that = (ClientSync) o;
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
 
-    if (requestId != that.requestId) return false;
-    if (forceConfigurationSync != that.forceConfigurationSync) return false;
-    if (forceNotificationSync != that.forceNotificationSync) return false;
-    if (useConfigurationRawSchema != that.useConfigurationRawSchema) return false;
-    if (clientSyncMetaData != null ? !clientSyncMetaData.equals(that.clientSyncMetaData) : that.clientSyncMetaData != null)
+    ClientSync that = (ClientSync) object;
+
+    if (requestId != that.requestId) {
       return false;
-    if (bootstrapSync != null ? !bootstrapSync.equals(that.bootstrapSync) : that.bootstrapSync != null)
+    }
+
+    if (forceConfigurationSync != that.forceConfigurationSync) {
       return false;
-    if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null)
+    }
+
+    if (forceNotificationSync != that.forceNotificationSync) {
       return false;
-    if (configurationSync != null ? !configurationSync.equals(that.configurationSync) : that.configurationSync != null)
+    }
+
+    if (useConfigurationRawSchema != that.useConfigurationRawSchema) {
       return false;
-    if (notificationSync != null ? !notificationSync.equals(that.notificationSync) : that.notificationSync != null)
+    }
+
+    if (clientSyncMetaData != null
+        ? !clientSyncMetaData.equals(that.clientSyncMetaData)
+        : that.clientSyncMetaData != null) {
       return false;
-    if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) return false;
-    if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null)
+    }
+
+    if (bootstrapSync != null
+        ? !bootstrapSync.equals(that.bootstrapSync)
+        : that.bootstrapSync != null) {
       return false;
+    }
+
+    if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null) {
+      return false;
+    }
+
+    if (configurationSync != null
+        ? !configurationSync.equals(that.configurationSync)
+        : that.configurationSync != null) {
+      return false;
+    }
+
+    if (notificationSync != null
+        ? !notificationSync.equals(that.notificationSync)
+        : that.notificationSync != null) {
+      return false;
+    }
+
+    if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) {
+      return false;
+    }
+
+    if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null) {
+      return false;
+    }
     return logSync != null ? logSync.equals(that.logSync) : that.logSync == null;
 
   }

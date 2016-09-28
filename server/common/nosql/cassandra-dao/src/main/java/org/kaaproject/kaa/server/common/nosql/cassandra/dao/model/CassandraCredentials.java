@@ -111,15 +111,28 @@ public class CassandraCredentials implements Credentials, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
 
-    CassandraCredentials that = (CassandraCredentials) o;
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
 
-    if (!applicationId.equals(that.applicationId)) return false;
-    if (!cassandraCredentialsStatus.equals(that.cassandraCredentialsStatus)) return false;
-    if (!cassandraCredentialsBody.equals(that.cassandraCredentialsBody)) return false;
+    CassandraCredentials that = (CassandraCredentials) object;
+
+    if (!applicationId.equals(that.applicationId)) {
+      return false;
+    }
+
+    if (!cassandraCredentialsStatus.equals(that.cassandraCredentialsStatus)) {
+      return false;
+    }
+
+    if (!cassandraCredentialsBody.equals(that.cassandraCredentialsBody)) {
+      return false;
+    }
 
     return true;
   }
@@ -134,12 +147,12 @@ public class CassandraCredentials implements Credentials, Serializable {
 
   @Override
   public String toString() {
-    return "CassandraCredentials{" +
-        "applicationId='" + applicationId + '\'' +
-        ", id='" + id + '\'' +
-        ", credentialsBody=" + cassandraCredentialsBody +
-        ", status='" + cassandraCredentialsStatus + '\'' +
-        '}';
+    return "CassandraCredentials{"
+        + "applicationId='" + applicationId + '\''
+        + ", id='" + id + '\''
+        + ", credentialsBody=" + cassandraCredentialsBody
+        + ", status='" + cassandraCredentialsStatus + '\''
+        + '}';
   }
 
   @Override

@@ -86,22 +86,28 @@ public final class EventServerSync {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    EventServerSync that = (EventServerSync) o;
+    EventServerSync that = (EventServerSync) object;
 
-    if (eventListenersResponses != null ? !eventListenersResponses.equals(that.eventListenersResponses) : that.eventListenersResponses != null) {
+    if (eventListenersResponses != null
+        ? !eventListenersResponses.equals(that.eventListenersResponses)
+        : that.eventListenersResponses != null) {
       return false;
     }
-    if (eventSequenceNumberResponse != null ? !eventSequenceNumberResponse.equals(that.eventSequenceNumberResponse) : that.eventSequenceNumberResponse != null) {
+
+    if (eventSequenceNumberResponse != null
+        ? !eventSequenceNumberResponse.equals(that.eventSequenceNumberResponse)
+        : that.eventSequenceNumberResponse != null) {
       return false;
     }
+
     if (events != null ? !events.equals(that.events) : that.events != null) {
       return false;
     }
@@ -112,7 +118,8 @@ public final class EventServerSync {
   @Override
   public int hashCode() {
     int result = eventSequenceNumberResponse != null ? eventSequenceNumberResponse.hashCode() : 0;
-    result = 31 * result + (eventListenersResponses != null ? eventListenersResponses.hashCode() : 0);
+    result = 31 * result
+        + (eventListenersResponses != null ? eventListenersResponses.hashCode() : 0);
     result = 31 * result + (events != null ? events.hashCode() : 0);
     return result;
   }
