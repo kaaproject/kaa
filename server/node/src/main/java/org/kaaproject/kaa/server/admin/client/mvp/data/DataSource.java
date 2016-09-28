@@ -435,7 +435,7 @@ public class DataSource {
     }
 
     public void editUser(UserDto user, final AsyncCallback<UserDto> callback) {
-        userRpcService.editUser(user, new DataCallback<UserDto>(callback) {
+        userRpcService.editUser(user, true, new DataCallback<UserDto>(callback) {
             @Override
             protected void onResult(UserDto result) {
                 if (KaaAdmin.getAuthInfo().getAuthority() == KaaAuthorityDto.TENANT_ADMIN) {

@@ -304,10 +304,10 @@ public abstract class AbstractAdminService implements InitializingBean {
         }
     }
 
-    CreateUserResult saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user) throws Exception {
+    CreateUserResult saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user, boolean doSendTempPassword) throws Exception {
         CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
         try {
-            if (!isEmpty(result.getPassword())) {
+            if (!isEmpty(result.getPassword()) && doSendTempPassword) {
                 messagingService.sendTempPassword(user.getUsername(),
                         result.getPassword(),
                         user.getMail());
@@ -326,7 +326,7 @@ public abstract class AbstractAdminService implements InitializingBean {
         return result;
     }
 
-    String createNewUser(org.kaaproject.kaa.common.dto.admin.UserDto user) throws Exception {
+    String createNewUser(org.kaaproject.kaa.common.dto.admin.UserDto user, boolean doSendTempPassword) throws Exception {
         checkFieldUniquieness(
                 user.getUsername(),
                 userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
@@ -339,7 +339,7 @@ public abstract class AbstractAdminService implements InitializingBean {
                 "email"
         );
 
-        CreateUserResult result = saveUser(user);
+        CreateUserResult result = saveUser(user, doSendTempPassword);
         user.setExternalUid(result.getUserId().toString());
         return result.getPassword();
     }
