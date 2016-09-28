@@ -299,12 +299,7 @@ Click the appropriate tab to see a code example for the application that sends t
 </ul>
 
 <div class="tab-content">
-<div id="#app-obj-c" class="tab-pane fade in active" markdown="1" >
 
-
-</div>
-
-<div class="tab-content">
 <div id="app-c" class="tab-pane fade in active" markdown="1" >
 
 ```c
