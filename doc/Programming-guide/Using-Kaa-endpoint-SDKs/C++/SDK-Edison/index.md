@@ -85,6 +85,7 @@ Refer to [the official Edison getting started guide](https://software.intel.com/
 
 Creating application based on C++ SDK for Linux platform is identical for Intel Edison platform.
 You can follow [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux#quick-way-to-build-sdk).
+Before building your application put this command `export LD_LIBRARY_PATH=/usr/local/lib:"$LD_LIBRARY_PATH"` in a console for setting directories where libraries should be searched for first.
 
 ## Known Issues
 
