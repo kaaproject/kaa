@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The type Compiler.
+ */
 public abstract class Compiler {
   private static final String DIRECTION_PROP = "direction";
 
@@ -71,7 +74,17 @@ public abstract class Compiler {
     initVelocityEngine();
   }
 
-  public Compiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+
+  /**
+   * Instantiates a new Compiler.
+   *
+   * @param schema     the schema that used to generate source files
+   * @param sourceName the name of source file
+   * @param hdrS       the stream of header file
+   * @param srcS       the stream of source file
+   */
+  public Compiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS)
+      throws KaaGeneratorException {
     this(sourceName);
     this.schemas.add(schema);
     this.headerWriter = new PrintWriter(hdrS);
@@ -79,7 +92,17 @@ public abstract class Compiler {
     prepareTemplates(false);
   }
 
-  public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+
+  /**
+   * Instantiates a new Compiler.
+   *
+   * @param schemas    list of schemas that used to generate source files
+   * @param sourceName name of source files
+   * @param hdrS       stream of the header file
+   * @param srcS       stream of the source file
+   */
+  public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS)
+      throws KaaGeneratorException {
     this(sourceName);
     this.schemas.addAll(schemas);
     this.headerWriter = new PrintWriter(hdrS);
@@ -87,13 +110,23 @@ public abstract class Compiler {
     prepareTemplates(false);
   }
 
-  public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS, Set<Schema> generatedSchemas) throws KaaGeneratorException {
+
+  public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS,
+                  Set<Schema> generatedSchemas) throws KaaGeneratorException {
     this(schemas, sourceName, hdrS, srcS);
     this.generatedSchemas = new HashSet<>(generatedSchemas);
   }
 
 
-  public Compiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
+  /**
+   * Instantiates a new Compiler.
+   *
+   * @param schemaPath path to file that contains schema
+   * @param outputPath destination path for generated sources
+   * @param sourceName name of source files
+   */
+  public Compiler(String schemaPath, String outputPath, String sourceName)
+      throws KaaGeneratorException {
     this(sourceName);
     try {
       this.schemas.add(new Schema.Parser().parse(new File(schemaPath)));
@@ -106,16 +139,16 @@ public abstract class Compiler {
       String headerPath = outputPath + File.separator + generatedSourceName + ".h";
       String sourcePath = outputPath + File.separator + generatedSourceName + getSourceExtension();
 
-      Files.move(new File(headerTemplateGen()).toPath()
-          , new File(headerPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
-      Files.move(new File(sourceTemplateGen()).toPath()
-          , new File(sourcePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+      Files.move(new File(headerTemplateGen()).toPath(),
+          new File(headerPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+      Files.move(new File(sourceTemplateGen()).toPath(),
+          new File(sourcePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
       this.headerWriter = new PrintWriter(new BufferedWriter(new FileWriter(headerPath, true)));
       this.sourceWriter = new PrintWriter(new BufferedWriter(new FileWriter(sourcePath, true)));
-    } catch (Exception e) {
-      LOG.error("Failed to create ouput path: ", e);
-      throw new KaaGeneratorException("Failed to create output path: " + e.toString());
+    } catch (Exception ex) {
+      LOG.error("Failed to create ouput path: ", ex);
+      throw new KaaGeneratorException("Failed to create output path: " + ex.toString());
     }
   }
 
@@ -129,7 +162,8 @@ public abstract class Compiler {
         "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
     engine.addProperty("file.resource.loader.path", "/, .");
     engine.setProperty("runtime.references.strict", true);
-    engine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+    engine.setProperty("runtime.log.logsystem.class",
+        "org.apache.velocity.runtime.log.NullLogSystem");
   }
 
   protected abstract String headerTemplateGen();
@@ -158,9 +192,9 @@ public abstract class Compiler {
       } else {
         writeToStream(hdrWriter, srcWriter);
       }
-    } catch (Exception e) {
-      LOG.error("Failed to prepare source templates: ", e);
-      throw new KaaGeneratorException("Failed to prepare source templates: " + e.toString());
+    } catch (Exception ex) {
+      LOG.error("Failed to prepare source templates: ", ex);
+      throw new KaaGeneratorException("Failed to prepare source templates: " + ex.toString());
     }
   }
 
@@ -180,6 +214,9 @@ public abstract class Compiler {
   }
 
 
+  /**
+  * Generate source files using the schemas and write them to specified source file.
+  */
   public Set<Schema> generate() throws KaaGeneratorException {
     try {
       LOG.debug("Processing schemas: [" + join(schemas, ", ") + "]");
@@ -199,9 +236,9 @@ public abstract class Compiler {
 
       LOG.debug("Sources were successfully generated");
       return schemaGenerationQueue.keySet();
-    } catch (Exception e) {
-      LOG.error("Failed to generate C sources: ", e);
-      throw new KaaGeneratorException("Failed to generate sources: " + e.toString());
+    } catch (Exception ex) {
+      LOG.error("Failed to generate C sources: ", ex);
+      throw new KaaGeneratorException("Failed to generate sources: " + ex.toString());
     } finally {
       headerWriter.close();
       sourceWriter.close();

@@ -30,15 +30,18 @@ import java.util.Map;
 
 public class CCompiler extends Compiler {
 
-  public CCompiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
+  public CCompiler(String schemaPath, String outputPath, String sourceName)
+      throws KaaGeneratorException {
     super(schemaPath, outputPath, sourceName);
   }
 
-  public CCompiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+  public CCompiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS)
+      throws KaaGeneratorException {
     super(schema, sourceName, hdrS, srcS);
   }
 
-  public CCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+  public CCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS)
+      throws KaaGeneratorException {
     super(schemas, sourceName, hdrS, srcS);
   }
 
