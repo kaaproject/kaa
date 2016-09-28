@@ -215,8 +215,8 @@ public abstract class Compiler {
 
 
   /**
-  * Generate source files using the schemas and write them to specified source file.
-  */
+   * Generate source files using the schemas and write them to specified source file.
+   */
   public Set<Schema> generate() throws KaaGeneratorException {
     try {
       LOG.debug("Processing schemas: [" + join(schemas, ", ") + "]");

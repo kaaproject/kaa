@@ -95,7 +95,7 @@ public abstract class MqttFrame {
   /**
    * Pack message into mqtt frame.
    */
-  protected abstract  void pack();
+  protected abstract void pack();
 
   /**
    * Return remaining length of mqtt frame, necessary for ByteBuffer size calculation.
@@ -118,7 +118,7 @@ public abstract class MqttFrame {
    *
    * @return boolean 'true' if connection should be closed after frame transmition.
    */
-  public abstract  boolean isNeedCloseConnection();
+  public abstract boolean isNeedCloseConnection();
 
   /**
    * Fill mqtt frame fixed header.

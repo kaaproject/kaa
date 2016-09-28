@@ -41,9 +41,8 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements SqlDao<T> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
-
   public static final int FIRST = 1;
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
   private static final int MAX_TIMEOUT = 30000;
 
   @Autowired

@@ -47,16 +47,16 @@ public interface SqlDao<T> extends Dao<T, String> {
   /**
    * Save object. Will be returned object with id.
    *
-   * @param object     the domain object
-   * @param flush specify if session flush needed.
+   * @param object the domain object
+   * @param flush  specify if session flush needed.
    * @return the saved object
    */
   T save(T object, boolean flush);
 
   /**
-   * @param object     the o
-   * @param clazz the clazz
-   * @param <V>   the V
+   * @param object the o
+   * @param clazz  the clazz
+   * @param <V>    the V
    * @return the saved object
    */
   <V> V save(V object, Class<?> clazz);

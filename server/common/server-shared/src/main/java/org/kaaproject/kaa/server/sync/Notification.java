@@ -52,6 +52,15 @@ public final class Notification {
    *
    * @param value the value to set.
    */
+  public void setTopicId(String value) {
+    this.topicId = value;
+  }
+
+  /**
+   * Sets the value of the 'topicId' field.
+   *
+   * @param value the value to set.
+   */
   public void setTopicId(Long value) {
     this.topicId = Long.toString(value);
   }
@@ -61,15 +70,6 @@ public final class Notification {
    */
   public long getTopicIdAsLong() {
     return Long.parseLong(topicId);
-  }
-
-  /**
-   * Sets the value of the 'topicId' field.
-   *
-   * @param value the value to set.
-   */
-  public void setTopicId(String value) {
-    this.topicId = value;
   }
 
   /**

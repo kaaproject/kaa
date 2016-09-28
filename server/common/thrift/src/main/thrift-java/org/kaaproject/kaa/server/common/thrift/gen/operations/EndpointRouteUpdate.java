@@ -274,13 +274,13 @@ public class EndpointRouteUpdate implements org.apache.thrift.TBase<EndpointRout
     return ucfHash == null ? null : ucfHash.array();
   }
 
-  public EndpointRouteUpdate setUcfHash(ByteBuffer ucfHash) {
-    this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
+  public EndpointRouteUpdate setUcfHash(byte[] ucfHash) {
+    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
     return this;
   }
 
-  public EndpointRouteUpdate setUcfHash(byte[] ucfHash) {
-    this.ucfHash = ucfHash == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(ucfHash, ucfHash.length));
+  public EndpointRouteUpdate setUcfHash(ByteBuffer ucfHash) {
+    this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(ucfHash);
     return this;
   }
 

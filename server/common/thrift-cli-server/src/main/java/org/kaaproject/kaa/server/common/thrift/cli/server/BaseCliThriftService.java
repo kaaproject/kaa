@@ -491,7 +491,6 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
   }
 
 
-
   /**
    * Creates the string padding.
    *
@@ -511,8 +510,8 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
   /**
    * Creates the padding using specified character.
    *
-   * @param len length of the padding
-   * @param character   the character to use for padding
+   * @param len       length of the padding
+   * @param character the character to use for padding
    * @return the resulting padding string
    */
   protected String createPadding(int len, char character) {

@@ -42,7 +42,7 @@ public interface CtlSchemaDao<T> extends SqlDao<T> {
 
   /**
    * Find available for application(include system and tenant scope) CTL schemas by given tenant
-   *     and application identifier.
+   * and application identifier.
    *
    * @param tenantId the tenant identifier.
    * @param appId    the application identifier.
@@ -62,14 +62,14 @@ public interface CtlSchemaDao<T> extends SqlDao<T> {
 
   /**
    * Find CTL schema with the given fully qualified name, version, tenant and application
-   *     identifiers.
+   * identifiers.
    *
    * @param fqn           the fully qualified name.
    * @param version       the schema version.
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the CTL schema with the given fully qualified name, version, tenant and application
-   *     identifiers.
+   * identifiers.
    */
 
   T findByFqnAndVerAndTenantIdAndApplicationId(String fqn,
@@ -79,14 +79,14 @@ public interface CtlSchemaDao<T> extends SqlDao<T> {
 
   /**
    * Find any CTL schema with the given fully qualified name, version, tenant and application
-   *     identifiers.
+   * identifiers.
    *
    * @param fqn           the fully qualified name.
    * @param version       the schema version.
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
-   * @return the any CTL schema with the given fully qualified name, version, tenant
-   *     and application identifiers.
+   * @return the any CTL schema with the given fully qualified name, version, tenant and application
+   * identifiers.
    */
   T findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn,
                                                   Integer version,
@@ -95,13 +95,13 @@ public interface CtlSchemaDao<T> extends SqlDao<T> {
 
   /**
    * Find the last version of CTL schema with the given fully qualified name, tenant
-   *  and application identifiers.
+   * and application identifiers.
    *
    * @param fqn           the qualified name.
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the latest version of CTL schema with the given fully qualified name, tenant and
-   *     application identifiers.
+   * application identifiers.
    */
   T findLatestByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
 
@@ -122,7 +122,7 @@ public interface CtlSchemaDao<T> extends SqlDao<T> {
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the list of available versions of CTL schema with the given fully qualified name,
-   *     tenant and application identifiers.
+   * tenant and application identifiers.
    */
   List<T> findAllByFqnAndTenantIdAndApplicationId(String fqn,
                                                   String tenantId,

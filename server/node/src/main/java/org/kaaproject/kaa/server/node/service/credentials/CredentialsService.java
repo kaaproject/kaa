@@ -28,7 +28,6 @@ import java.util.Optional;
  *
  * @author Bohdan Khablenko
  * @author Andrew Shvayka
- *
  * @since v0.9.0
  */
 public interface CredentialsService {
@@ -37,12 +36,10 @@ public interface CredentialsService {
    * Provide credentials information to the external system.
    *
    * @param credentials The credentials to provision
-   *
    * @return The credentials provided
-   *
-   * @throws UnsupportedOperationException - if the underlying implementation
-   *             forbids credentials provisioning.
-   * @throws CredentialsServiceException - if an unexpected exception occures.
+   * @throws UnsupportedOperationException - if the underlying implementation forbids credentials
+   *                                       provisioning.
+   * @throws CredentialsServiceException   - if an unexpected exception occures.
    */
   CredentialsDto provideCredentials(CredentialsDto credentials) throws CredentialsServiceException;
 
@@ -50,9 +47,7 @@ public interface CredentialsService {
    * Returns the credentials by ID.
    *
    * @param credentialsId The credentials ID
-   *
    * @return The credentials with the given ID
-   *
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
   Optional<CredentialsDto> lookupCredentials(String credentialsId) throws CredentialsServiceException;
@@ -62,9 +57,7 @@ public interface CredentialsService {
    * {@link CredentialsStatus#IN_USE}.
    *
    * @param credentialsId The credentials ID
-   *
-   * @throws CredentialsServiceException - if the credentials are not
-   *             {@link CredentialsStatus#AVAILABLE}.
+   * @throws CredentialsServiceException - if the credentials are not {@link CredentialsStatus#AVAILABLE}.
    */
   void markCredentialsInUse(String credentialsId) throws CredentialsServiceException;
 
@@ -73,10 +66,9 @@ public interface CredentialsService {
    * {@link CredentialsStatus#REVOKED}.
    *
    * @param credentialsId The credentials ID
-   *
-   * @throws UnsupportedOperationException - if the underlying implementation
-   *             forbids credentials revokation.
-   * @throws CredentialsServiceException - if an unexpected exception occures.
+   * @throws UnsupportedOperationException - if the underlying implementation forbids credentials
+   *                                       revokation.
+   * @throws CredentialsServiceException   - if an unexpected exception occures.
    */
   void markCredentialsRevoked(String credentialsId) throws CredentialsServiceException;
 }

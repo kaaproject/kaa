@@ -267,6 +267,20 @@ public class MessageEncoderDecoder {
    * @param remotePublicKey the new remote public key
    * @throws GeneralSecurityException the general security exception
    */
+  public void setRemotePublicKey(byte[] remotePublicKey) throws GeneralSecurityException {
+    this.remotePublicKey = KeyUtil.getPublic(remotePublicKey);
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("RemotePublicKey {}",
+          this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
+    }
+  }
+
+  /**
+   * Sets the remote public key.
+   *
+   * @param remotePublicKey the new remote public key
+   * @throws GeneralSecurityException the general security exception
+   */
   public void setRemotePublicKey(PublicKey remotePublicKey) throws GeneralSecurityException {
     this.remotePublicKey = remotePublicKey;
     if (LOG.isTraceEnabled()) {
@@ -286,20 +300,6 @@ public class MessageEncoderDecoder {
       sessionKey = SESSION_KEY_GENERATOR.get().generateKey();
     }
     return sessionKey;
-  }
-
-  /**
-   * Sets the remote public key.
-   *
-   * @param remotePublicKey the new remote public key
-   * @throws GeneralSecurityException the general security exception
-   */
-  public void setRemotePublicKey(byte[] remotePublicKey) throws GeneralSecurityException {
-    this.remotePublicKey = KeyUtil.getPublic(remotePublicKey);
-    if (LOG.isTraceEnabled()) {
-      LOG.trace("RemotePublicKey {}",
-          this.remotePublicKey != null ? bytesToHex(this.remotePublicKey.getEncoded()) : "empty");
-    }
   }
 
   public CipherPair getSessionCipherPair() {

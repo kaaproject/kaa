@@ -26,7 +26,6 @@ import java.util.Optional;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public final class CredentialsServiceAdapter implements CredentialsService {
@@ -37,7 +36,7 @@ public final class CredentialsServiceAdapter implements CredentialsService {
   /**
    * Constructs an adapter for the given application.
    *
-   * @param applicationId The application ID
+   * @param applicationId      The application ID
    * @param credentialsService The internal credentials service used by Kaa
    */
   public CredentialsServiceAdapter(String applicationId, org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {

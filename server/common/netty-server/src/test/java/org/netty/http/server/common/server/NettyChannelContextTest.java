@@ -19,10 +19,10 @@ package org.netty.http.server.common.server;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import io.netty.channel.ChannelHandlerContext;
+
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
-
-import io.netty.channel.ChannelHandlerContext;
 
 public class NettyChannelContextTest {
   @Test

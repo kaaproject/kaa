@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.common.server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -32,6 +26,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * NettyHttpServer Class. Used to start Netty server. Config is used to handle
@@ -58,7 +58,7 @@ public abstract class AbstractNettyServer extends Thread {
    * NettyHttpServer constructor.
    *
    * @param bindAddress bind address
-   * @param port bind port
+   * @param port        bind port
    */
   public AbstractNettyServer(String bindAddress, int port) {
     this.bindAddress = bindAddress;

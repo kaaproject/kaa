@@ -43,5 +43,4 @@ public class AndroidBase64 implements Base64 {
   }
 
 
-
 }

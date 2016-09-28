@@ -43,5 +43,4 @@ public class CommonsBase64 implements Base64 {
   }
 
 
-
 }

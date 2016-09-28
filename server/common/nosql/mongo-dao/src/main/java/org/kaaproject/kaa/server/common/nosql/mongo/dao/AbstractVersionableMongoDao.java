@@ -25,31 +25,31 @@ import org.springframework.dao.OptimisticLockingFailureException;
 
 public abstract class AbstractVersionableMongoDao<T extends HasVersion, K>
     extends AbstractMongoDao<T, K> {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractVersionableMongoDao.class);
 
-    /**
-     * Store an object in a database.
-     *
-     * @param object object to be stored
-     * @return saved object
-     */
-    public T save(T object) {
-        try {
-            mongoTemplate.save(object);
-            return object;
-        } catch (OptimisticLockingFailureException exception) {
-            LOG.error("[{}] Can't update entity with version {}. Entity already changed!",
-                getDocumentClass(), object.getVersion());
-            throw new KaaOptimisticLockingFailureException(
-                    "Can't update entity with version "
-                        + object.getVersion()
-                        + ". Entity already changed!");
-        } catch (DuplicateKeyException exception) {
-            LOG.error("[{}] Can't insert entity. Entity already exists!", getDocumentClass());
-            throw new KaaOptimisticLockingFailureException(
-                "Can't insert entity. Entity already exists!");
-        }
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractVersionableMongoDao.class);
+
+  /**
+   * Store an object in a database.
+   *
+   * @param object object to be stored
+   * @return saved object
+   */
+  public T save(T object) {
+    try {
+      mongoTemplate.save(object);
+      return object;
+    } catch (OptimisticLockingFailureException exception) {
+      LOG.error("[{}] Can't update entity with version {}. Entity already changed!",
+          getDocumentClass(), object.getVersion());
+      throw new KaaOptimisticLockingFailureException(
+          "Can't update entity with version "
+              + object.getVersion()
+              + ". Entity already changed!");
+    } catch (DuplicateKeyException exception) {
+      LOG.error("[{}] Can't insert entity. Entity already exists!", getDocumentClass());
+      throw new KaaOptimisticLockingFailureException(
+          "Can't insert entity. Entity already exists!");
     }
+  }
 
 }

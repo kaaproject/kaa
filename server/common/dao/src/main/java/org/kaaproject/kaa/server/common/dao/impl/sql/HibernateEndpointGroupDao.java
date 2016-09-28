@@ -181,7 +181,6 @@ public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGrou
   }
 
 
-
   @Override
   protected Class<EndpointGroup> getEntityClass() {
     return EndpointGroup.class;

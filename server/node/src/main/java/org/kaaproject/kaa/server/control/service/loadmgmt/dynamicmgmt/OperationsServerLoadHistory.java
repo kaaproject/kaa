@@ -86,6 +86,15 @@ public class OperationsServerLoadHistory {
   }
 
   /**
+   * Sets the max history time live.
+   *
+   * @param maxHistoryTimeLive the maxHistoryTimeLive to set
+   */
+  public void setMaxHistoryTimeLive(long maxHistoryTimeLive) {
+    this.maxHistoryTimeLive = maxHistoryTimeLive;
+  }
+
+  /**
    * The Class OperationsServerLoad.
    */
   public class OperationsServerLoad {
@@ -123,12 +132,5 @@ public class OperationsServerLoadHistory {
     public void setLoadInfo(LoadInfo loadInfo) {
       this.loadInfo = loadInfo;
     }
-  }  /**
-   * Sets the max history time live.
-   *
-   * @param maxHistoryTimeLive the maxHistoryTimeLive to set
-   */
-  public void setMaxHistoryTimeLive(long maxHistoryTimeLive) {
-    this.maxHistoryTimeLive = maxHistoryTimeLive;
   }
 }

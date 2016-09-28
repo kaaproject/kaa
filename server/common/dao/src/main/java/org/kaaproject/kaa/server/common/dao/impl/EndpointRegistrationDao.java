@@ -24,7 +24,6 @@ import java.util.Optional;
 /**
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public interface EndpointRegistrationDao<T extends EndpointRegistration> extends Dao<T, String> {
@@ -33,7 +32,6 @@ public interface EndpointRegistrationDao<T extends EndpointRegistration> extends
    * Saves the given endpoint registration.
    *
    * @param endpointRegistration The endpoint registration to save
-   *
    * @return The endpoint registration saved
    */
   T save(EndpointRegistrationDto endpointRegistration);
@@ -42,7 +40,6 @@ public interface EndpointRegistrationDao<T extends EndpointRegistration> extends
    * Returns the endpooint registration by endpoint ID.
    *
    * @param endpointId The endpoint ID
-   *
    * @return The endpoint registration found
    */
   Optional<T> findByEndpointId(String endpointId);
@@ -51,7 +48,6 @@ public interface EndpointRegistrationDao<T extends EndpointRegistration> extends
    * Returns the endpoint registration by credentials ID.
    *
    * @param credentialsId The credentials ID
-   *
    * @return The endpoint registration found
    */
   Optional<T> findByCredentialsId(String credentialsId);

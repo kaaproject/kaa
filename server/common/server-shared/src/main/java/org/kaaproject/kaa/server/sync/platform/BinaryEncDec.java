@@ -234,7 +234,7 @@ public class BinaryEncDec implements PlatformEncDec {
     if (buf.remaining() < MIN_SIZE_OF_MESSAGE_HEADER) {
       throw new PlatformEncDecException(
           MessageFormat.format("Message header is to small {0} to be kaa binary message!",
-          buf.capacity()));
+              buf.capacity()));
     }
 
     int protocolId = buf.getInt();

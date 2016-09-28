@@ -33,78 +33,78 @@ import java.util.Arrays;
 @Document(collection = ENDPOINT_NOTIFICATION)
 public final class MongoEndpointNotification implements EndpointNotification, Serializable {
 
-    private static final long serialVersionUID = -6770166693195322360L;
+  private static final long serialVersionUID = -6770166693195322360L;
 
-    @Id
-    private String id;
-    @Field(EP_NF_ENDPOINT_KEY_HASH)
-    private byte[] endpointKeyHash;
-    private MongoNotification notification;
+  @Id
+  private String id;
+  @Field(EP_NF_ENDPOINT_KEY_HASH)
+  private byte[] endpointKeyHash;
+  private MongoNotification notification;
 
-    public MongoEndpointNotification() {
+  public MongoEndpointNotification() {
+  }
+
+  public MongoEndpointNotification(EndpointNotificationDto dto) {
+    this.id = dto.getId();
+    this.endpointKeyHash = getArrayCopy(dto.getEndpointKeyHash());
+    this.notification = dto.getNotificationDto() != null
+        ? new MongoNotification(dto.getNotificationDto())
+        : null;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public MongoNotification getNotification() {
+    return notification;
+  }
+
+  public byte[] getEndpointKeyHash() {
+    return endpointKeyHash;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (!(object instanceof MongoEndpointNotification)) {
+      return false;
     }
 
-    public MongoEndpointNotification(EndpointNotificationDto dto) {
-        this.id = dto.getId();
-        this.endpointKeyHash = getArrayCopy(dto.getEndpointKeyHash());
-        this.notification = dto.getNotificationDto() != null
-            ? new MongoNotification(dto.getNotificationDto())
-            : null;
+    MongoEndpointNotification that = (MongoEndpointNotification) object;
+
+    if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
+      return false;
     }
 
-    public String getId() {
-        return id;
-    }
+    return !(notification != null
+        ? !notification.equals(that.notification)
+        : that.notification != null);
+  }
 
-    public MongoNotification getNotification() {
-        return notification;
-    }
+  @Override
+  public int hashCode() {
+    int result = endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0;
+    result = 31 * result + (notification != null ? notification.hashCode() : 0);
+    return result;
+  }
 
-    public byte[] getEndpointKeyHash() {
-        return endpointKeyHash;
-    }
+  @Override
+  public String toString() {
+    return "EndpointNotification{"
+        + "id='" + id + '\''
+        + ", endpointKeyHash=" + Arrays.toString(endpointKeyHash)
+        + ", notification=" + notification + '}';
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof MongoEndpointNotification)) {
-            return false;
-        }
-
-        MongoEndpointNotification that = (MongoEndpointNotification) object;
-
-        if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
-            return false;
-        }
-
-        return !(notification != null
-            ? !notification.equals(that.notification)
-            : that.notification != null);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0;
-        result = 31 * result + (notification != null ? notification.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-      return "EndpointNotification{"
-          + "id='" + id + '\''
-          + ", endpointKeyHash=" + Arrays.toString(endpointKeyHash)
-          + ", notification=" + notification + '}';
-    }
-
-    @Override
-    public EndpointNotificationDto toDto() {
-        EndpointNotificationDto dto = new EndpointNotificationDto();
-        dto.setId(id);
-        dto.setEndpointKeyHash(getArrayCopy(endpointKeyHash));
-        dto.setNotificationDto(notification != null ? notification.toDto() : null);
-        return dto;
-    }
+  @Override
+  public EndpointNotificationDto toDto() {
+    EndpointNotificationDto dto = new EndpointNotificationDto();
+    dto.setId(id);
+    dto.setEndpointKeyHash(getArrayCopy(endpointKeyHash));
+    dto.setNotificationDto(notification != null ? notification.toDto() : null);
+    return dto;
+  }
 }

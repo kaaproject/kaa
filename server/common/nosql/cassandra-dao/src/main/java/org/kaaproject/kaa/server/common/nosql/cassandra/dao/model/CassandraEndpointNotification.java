@@ -251,7 +251,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
       return false;
     }
 
-    if (seqNum != null ? !seqNum.equals(that.seqNum) : that.seqNum != null)  {
+    if (seqNum != null ? !seqNum.equals(that.seqNum) : that.seqNum != null) {
       return false;
     }
 

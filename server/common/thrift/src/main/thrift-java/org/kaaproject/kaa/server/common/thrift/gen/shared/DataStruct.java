@@ -118,13 +118,13 @@ public class DataStruct implements org.apache.thrift.TBase<DataStruct, DataStruc
     return data == null ? null : data.array();
   }
 
-  public DataStruct setData(ByteBuffer data) {
-    this.data = org.apache.thrift.TBaseHelper.copyBinary(data);
+  public DataStruct setData(byte[] data) {
+    this.data = data == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(data, data.length));
     return this;
   }
 
-  public DataStruct setData(byte[] data) {
-    this.data = data == null ? (ByteBuffer) null : ByteBuffer.wrap(Arrays.copyOf(data, data.length));
+  public DataStruct setData(ByteBuffer data) {
+    this.data = org.apache.thrift.TBaseHelper.copyBinary(data);
     return this;
   }
 

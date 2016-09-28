@@ -162,7 +162,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   }
 
 
-
   @Override
   public List<Topic> getTopics() {
     List<Topic> topicList = new LinkedList<Topic>();
@@ -250,7 +249,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
       doSync();
     }
   }
-
 
 
   @Override

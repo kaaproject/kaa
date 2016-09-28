@@ -22,7 +22,6 @@ package org.kaaproject.kaa.server.common.dao.exception;
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public final class CredentialsServiceException extends Exception {
@@ -42,7 +41,7 @@ public final class CredentialsServiceException extends Exception {
    * Constructs a new exception with the specified cause and detail message.
    *
    * @param message The detail message
-   * @param cause The exception cause
+   * @param cause   The exception cause
    */
   public CredentialsServiceException(String message, Throwable cause) {
     super(message, cause);

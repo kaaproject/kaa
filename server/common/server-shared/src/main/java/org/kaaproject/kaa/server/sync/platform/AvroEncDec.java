@@ -340,7 +340,7 @@ public class AvroEncDec implements PlatformEncDec {
     if (source.getUserAttachNotification() != null) {
       sync.setUserAttachNotification(
           new UserAttachNotification(source.getUserAttachNotification().getUserExternalId(), source
-          .getUserAttachNotification().getEndpointAccessToken()));
+              .getUserAttachNotification().getEndpointAccessToken()));
     }
     if (source.getUserDetachNotification() != null) {
       sync.setUserDetachNotification(new UserDetachNotification(

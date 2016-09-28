@@ -83,8 +83,8 @@ public class CredentialsCassandraDao
         applicationId, credentialsId, status.toString());
     Update.Assignments query = update(getColumnFamilyName())
         .where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
-        and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
-        with(set(CREDENTIALS_STATUS_PROPERTY, status.toString()));
+            and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
+            with(set(CREDENTIALS_STATUS_PROPERTY, status.toString()));
     execute(query);
     return find(applicationId, credentialsId);
   }

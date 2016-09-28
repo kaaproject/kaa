@@ -269,7 +269,6 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   }
 
 
-
   @Override
   public synchronized void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
     LOG.debug("Transport connection info updated for server: {}", newServer);
