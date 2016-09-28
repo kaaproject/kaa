@@ -27,7 +27,8 @@ class ConfigurationCollection : public kaa::IConfigurationReceiver {
 public:
     ConfigurationCollection()
         : kaaClient_(kaa::Kaa::newClient())
-        , interval_(samplePeriod_ = 0)
+        , samplePeriod_(0)
+        , interval_(samplePeriod_)
         , timer_(service_, interval_) 
     {
         // Set a custom strategy for uploading logs.
@@ -56,6 +57,11 @@ public:
     {
         // Run the Kaa endpoint.
         kaaClient_->start();
+        // Read default sample period
+        samplePeriod_ = kaaClient_->getConfiguration().samplePeriod;
+        std::cout << "Default sample period: " << samplePeriod_<< std::endl;
+        // Default sample period
+        timer_.expires_from_now(boost::posix_time::seconds(samplePeriod_));
         service_.run();
     }
     
