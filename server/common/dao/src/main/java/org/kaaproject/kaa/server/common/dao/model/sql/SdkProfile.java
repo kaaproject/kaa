@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -91,10 +92,22 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
   public SdkProfile() {
   }
 
+
+  /**
+   * Instantiates a new Sdk profile with uniq identifier.
+   *
+   * @param id the identifier of new instance
+   */
   public SdkProfile(Long id) {
     this.id = id;
   }
 
+
+  /**
+   * Instantiates a new SDKProfile based on passed dto object.
+   *
+   * @param dto data transfer object that used for creating new instance
+   */
   public SdkProfile(SdkProfileDto dto) {
     if (dto != null) {
       this.id = ModelUtils.getLongId(dto.getId());
@@ -277,86 +290,59 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-
-    SdkProfile other = (SdkProfile) o;
-
-    if (application != null ? !application.equals(other.application) : other.application != null) {
-      return false;
-    }
-    if (token != null ? !token.equals(other.token) : other.token != null) {
-      return false;
-    }
-    if (name != null ? !name.equals(other.name) : other.name != null) {
-      return false;
-    }
-    if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(other.configurationSchemaVersion) : other.configurationSchemaVersion != null) {
-      return false;
-    }
-    if (profileSchemaVersion != null ? !profileSchemaVersion.equals(other.profileSchemaVersion) : other.profileSchemaVersion != null) {
-      return false;
-    }
-    if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(other.notificationSchemaVersion) : other.notificationSchemaVersion != null) {
-      return false;
-    }
-    if (logSchemaVersion != null ? !logSchemaVersion.equals(other.logSchemaVersion) : other.logSchemaVersion != null) {
-      return false;
-    }
-    if (aefMapIds != null ? !aefMapIds.equals(other.aefMapIds) : other.aefMapIds != null) {
-      return false;
-    }
-    if (defaultVerifierToken != null ? !defaultVerifierToken.equals(other.defaultVerifierToken) : other.defaultVerifierToken != null) {
-      return false;
-    }
-    if (createdUsername != null ? !createdUsername.equals(other.createdUsername) : other.createdUsername != null) {
-      return false;
-    }
-    if (createdTime != null ? !createdTime.equals(other.createdTime) : other.createdTime != null) {
-      return false;
-    }
-
-
-    return true;
+    SdkProfile that = (SdkProfile) obj;
+    return Objects.equals(application, that.application)
+        && Objects.equals(token, that.token)
+        && Objects.equals(name, that.name)
+        && Objects.equals(configurationSchemaVersion, that.configurationSchemaVersion)
+        && Objects.equals(profileSchemaVersion, that.profileSchemaVersion)
+        && Objects.equals(notificationSchemaVersion, that.notificationSchemaVersion)
+        && Objects.equals(logSchemaVersion, that.logSchemaVersion)
+        && Objects.equals(aefMapIds, that.aefMapIds)
+        && Objects.equals(defaultVerifierToken, that.defaultVerifierToken)
+        && Objects.equals(createdUsername, that.createdUsername)
+        && Objects.equals(createdTime, that.createdTime);
   }
 
   @Override
   public int hashCode() {
-    int result = token != null ? token.hashCode() : 0;
-    result = 31 * result + (application != null ? application.hashCode() : 0);
-    result = 31 * result + (name != null ? name.hashCode() : 0);
-    result = 31 * result + (configurationSchemaVersion != null ? configurationSchemaVersion.hashCode() : 0);
-    result = 31 * result + (profileSchemaVersion != null ? profileSchemaVersion.hashCode() : 0);
-    result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
-    result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
-    result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
-    result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
-    result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
-    result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
-
-    return result;
+    return Objects.hash(
+        application,
+        token,
+        name,
+        configurationSchemaVersion,
+        profileSchemaVersion,
+        notificationSchemaVersion,
+        logSchemaVersion,
+        aefMapIds,
+        defaultVerifierToken,
+        createdUsername,
+        createdTime);
   }
 
   @Override
   public String toString() {
-    return "SdkToken{" +
-        "token='" + token + '\'' +
-        ", application=" + application +
-        ", name=" + name +
-        ", configurationSchemaVersion=" + configurationSchemaVersion +
-        ", profileSchemaVersion=" + profileSchemaVersion +
-        ", notificationSchemaVersion=" + notificationSchemaVersion +
-        ", logSchemaVersion=" + logSchemaVersion +
-        ", aefMapIds=" + (aefMapIds != null ? Arrays.toString(aefMapIds.toArray()) : null) +
-        ", defaultVerifierToken=" + defaultVerifierToken +
-        ", createdUsername=" + createdUsername +
-        ", createdTime=" + createdTime +
-        ", endpointCount=" + endpointCount +
-        '}';
+    final StringBuilder sb = new StringBuilder("SdkProfile{");
+    sb.append("application=").append(application);
+    sb.append(", token='").append(token).append('\'');
+    sb.append(", name='").append(name).append('\'');
+    sb.append(", configurationSchemaVersion=").append(configurationSchemaVersion);
+    sb.append(", profileSchemaVersion=").append(profileSchemaVersion);
+    sb.append(", notificationSchemaVersion=").append(notificationSchemaVersion);
+    sb.append(", logSchemaVersion=").append(logSchemaVersion);
+    sb.append(", aefMapIds=").append(aefMapIds);
+    sb.append(", defaultVerifierToken='").append(defaultVerifierToken).append('\'');
+    sb.append(", createdUsername='").append(createdUsername).append('\'');
+    sb.append(", createdTime=").append(createdTime);
+    sb.append(", endpointCount=").append(endpointCount);
+    sb.append('}');
+    return sb.toString();
   }
 }

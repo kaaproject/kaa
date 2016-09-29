@@ -57,14 +57,26 @@ public class DaoConstants {
   public static final String ECFV_ALIAS = "ecfv";
 
   public static final String TENANT_REFERENCE = TENANT_ALIAS + "." + ID_PROPERTY;
-  public static final String ENDPOINT_PROFILE_SCHEMA_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
-  public static final String SERVER_PROFILE_SCHEMA_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
-  public static final String ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
-  public static final String SERVER_PROFILE_SCHEMA_VERSION_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
+
+  public static final String ENDPOINT_PROFILE_SCHEMA_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS
+      + "." + ID_PROPERTY;
+
+  public static final String SERVER_PROFILE_SCHEMA_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS
+      + "." + ID_PROPERTY;
+
+  public static final String ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE =
+      ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
+
+  public static final String SERVER_PROFILE_SCHEMA_VERSION_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS
+      + "." + VERSION_PROPERTY;
+
   public static final String ENDPOINT_GROUP_REFERENCE = ENDPOINT_GROUP_ALIAS + "." + ID_PROPERTY;
   public static final String APPLICATION_REFERENCE = APPLICATION_ALIAS + "." + ID_PROPERTY;
   public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
-  public static final String CONFIGURATION_SCHEMA_REFERENCE = CONFIGURATION_SCHEMA_ALIAS + "." + ID_PROPERTY;
+
+  public static final String CONFIGURATION_SCHEMA_REFERENCE = CONFIGURATION_SCHEMA_ALIAS
+      + "." + ID_PROPERTY;
+
   public static final String ECF_REFERENCE = ECF_ALIAS + "." + ID_PROPERTY;
   public static final String ECFV_REFERENCE = ECFV_ALIAS + "." + ID_PROPERTY;
 
@@ -227,7 +239,8 @@ public class DaoConstants {
   public static final String CONFIGURATION_TABLE_NAME = "configuration";
   public static final String CONFIGURATION_CONFIGURATION_BODY = "configuration_body";
   public static final String CONFIGURATION_CONFIGURATION_SCHEMA_ID = "configuration_schems_id";
-  public static final String CONFIGURATION_CONFIGURATION_SCHEMA_VERSION = "configuration_schems_version";
+  public static final String CONFIGURATION_CONFIGURATION_SCHEMA_VERSION =
+      "configuration_schems_version";
 
   /**
    * Topic constants.
@@ -269,7 +282,8 @@ public class DaoConstants {
   public static final String EVENT_CLASS_FAMILY_VERSION_VERSION = VERSION;
   public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME = CREATED_USERNAME;
   public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_TIME = CREATED_TIME;
-  public static final String EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
+  public static final String EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID =
+      EVENT_CLASS_FAMILY_ID;
 
   /**
    * Event class family constants.
@@ -288,7 +302,8 @@ public class DaoConstants {
    */
   public static final String EVENT_CLASS_TABLE_NAME = "events_class";
   public static final String EVENT_CLASS_TENANT_ID = TENANT_ID;
-  public static final String EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID = EVENT_CLASS_FAMILY_VERSION_ID;
+  public static final String EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID =
+      EVENT_CLASS_FAMILY_VERSION_ID;
   public static final String EVENT_CLASS_FQN = FQN;
   public static final String EVENT_CLASS_TYPE = "type";
   public static final String EVENT_CLASS_SCHEMA = "schems";
@@ -301,14 +316,17 @@ public class DaoConstants {
   public static final String APPLICATION_EVENT_MAP_EVENT_CLASS_ID = "events_class_id";
   public static final String APPLICATION_EVENT_MAP_FQN = FQN;
   public static final String APPLICATION_EVENT_MAP_ACTION = "action";
-  public static final String APPLICATION_EVENT_MAP_APPLICATION_EVENT_FAMILY_MAP_ID = "application_event_family_map_id";
+  public static final String APPLICATION_EVENT_MAP_APPLICATION_EVENT_FAMILY_MAP_ID =
+      "application_event_family_map_id";
 
   /**
    * Application event family map constants.
    */
-  public static final String APPLICATION_EVENT_FAMILY_MAP_TABLE_NAME = "application_event_family_map";
+  public static final String APPLICATION_EVENT_FAMILY_MAP_TABLE_NAME =
+      "application_event_family_map";
   public static final String APPLICATION_EVENT_FAMILY_MAP_APPLICATION_ID = APPLICATION_ID;
-  public static final String APPLICATION_EVENT_FAMILY_MAP_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
+  public static final String APPLICATION_EVENT_FAMILY_MAP_EVENT_CLASS_FAMILY_ID =
+      EVENT_CLASS_FAMILY_ID;
   public static final String APPLICATION_EVENT_FAMILY_MAP_VERSION = VERSION;
   public static final String APPLICATION_EVENT_FAMILY_MAP_CREATED_USERNAME = CREATED_USERNAME;
   public static final String APPLICATION_EVENT_FAMILY_MAP_CREATED_TIME = CREATED_TIME;
@@ -357,14 +375,16 @@ public class DaoConstants {
    * SDK profile constants
    */
   public static final String SDK_PROFILE_APPLICATION_ID = APPLICATION_ID;
-  public static final String SDK_PROFILE_CONFIGURATION_SCHEMA_VERSION = "configuration_schems_version";
+  public static final String SDK_PROFILE_CONFIGURATION_SCHEMA_VERSION =
+      "configuration_schems_version";
   public static final String SDK_PROFILE_CREATED_TIME = CREATED_TIME;
   public static final String SDK_PROFILE_CREATED_USERNAME = CREATED_USERNAME;
   public static final String SDK_PROFILE_DEFAULT_VERIFIER_TOKEN = "default_verifier_token";
   public static final String SDK_PROFILE_ENDPOINT_COUNT = ENDPOINT_COUNT;
   public static final String SDK_PROFILE_LOG_SCHEMA_VERSION = "log_schems_version";
   public static final String SDK_PROFILE_NAME = NAME;
-  public static final String SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION = "notification_schems_version";
+  public static final String SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION =
+      "notification_schems_version";
   public static final String SDK_PROFILE_PROFILE_SCHEMA_VERSION = "profile_schems_version";
   public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
   public static final String SDK_PROFILE_TOKEN = "token";
@@ -391,7 +411,8 @@ public class DaoConstants {
   // Properties and alias constants
   public static final String CTL_SCHEMA_DEPENDENCY_PROP = "dependencySet";
   public static final String CTL_SCHEMA_DEPENDENCY_ALIAS = "dep";
-  public static final String CTL_SCHEMA_DEPENDENCY_ID_ALIAS = CTL_SCHEMA_DEPENDENCY_ALIAS + "." + ID;
+  public static final String CTL_SCHEMA_DEPENDENCY_ID_ALIAS = CTL_SCHEMA_DEPENDENCY_ALIAS
+      + "." + ID;
 
   /**
    * CTL schems meta info constants
@@ -400,7 +421,8 @@ public class DaoConstants {
   public static final String CTL_SCHEMA_META_INFO_FQN = FQN;
   public static final String CTL_SCHEMA_META_INFO_TENANT_ID = TENANT_ID;
   public static final String CTL_SCHEMA_META_INFO_APPLICATION_ID = APPLICATION_ID;
-  public static final String CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT = "ctl_metainfo_unique_constraint";
+  public static final String CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT =
+      "ctl_metainfo_unique_constraint";
 
   // CTL schems meta info foreign keys
   public static final String CTL_SCHEMA_META_INFO_TENANT_FK = "fk_ctl_metainfo_tenant_id";
@@ -413,10 +435,14 @@ public class DaoConstants {
   public static final String CTL_SCHEMA_META_INFO_APPLICATION_ID_ALIAS = APPLICATION_REFERENCE;
   public static final String CTL_SCHEMA_META_INFO_PROPERTY = "metaInfo";
   public static final String CTL_SCHEMA_META_INFO_ALIAS = "mi";
-  public static final String CTL_SCHEMA_META_INFO_ALIAS_FQN = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_FQN;
-  public static final String CTL_SCHEMA_META_INFO_ALIAS_TENANT_ID = CTL_SCHEMA_META_INFO_ALIAS + "." + TENANT_REFERENCE;
-  public static final String CTL_SCHEMA_META_INFO_ALIAS_APPLICATION_ID = CTL_SCHEMA_META_INFO_ALIAS + "." + APPLICATION_REFERENCE;
-  public static final String CTL_SCHEMA_META_INFO_ALIAS_ID = CTL_SCHEMA_META_INFO_ALIAS + "." + ID_PROPERTY;
+  public static final String CTL_SCHEMA_META_INFO_ALIAS_FQN = CTL_SCHEMA_META_INFO_ALIAS
+      + "." + CTL_SCHEMA_META_INFO_FQN;
+  public static final String CTL_SCHEMA_META_INFO_ALIAS_TENANT_ID = CTL_SCHEMA_META_INFO_ALIAS
+      + "." + TENANT_REFERENCE;
+  public static final String CTL_SCHEMA_META_INFO_ALIAS_APPLICATION_ID = CTL_SCHEMA_META_INFO_ALIAS
+      + "." + APPLICATION_REFERENCE;
+  public static final String CTL_SCHEMA_META_INFO_ALIAS_ID = CTL_SCHEMA_META_INFO_ALIAS
+      + "." + ID_PROPERTY;
 
   public static final String LAST_PAGE_MESSAGE = "It is the last page";
   public static final String PROFILE = "profile";
