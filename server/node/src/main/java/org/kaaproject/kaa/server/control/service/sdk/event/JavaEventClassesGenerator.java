@@ -29,60 +29,65 @@ import java.util.List;
 
 public class JavaEventClassesGenerator {
 
-  /**
-   * The Constant LOG.
-   */
-  private static final Logger LOG = LoggerFactory
-      .getLogger(JavaEventClassesGenerator.class);
 
-  /**
-   * The Constant EVENT_FAMILY_JAVA_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_JAVA_TEMPLATE = "sdk/java/event/EventFamily.java.template";
+  private static final Logger LOG = LoggerFactory.getLogger(JavaEventClassesGenerator.class);
 
-  /**
-   * The Constant EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE = "sdk/java/event/eventFamilyAddSupportedFqn.template";
+  private static final String FOLDER = "sdk/java/event/";
 
-  /**
-   * The Constant EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE = "sdk/java/event/eventFamilyOnGenericEvent.template";
+  private static final String EVENT_FAMILY_FACTORY = "EventFamilyFactory";
 
-  /**
-   * The Constant EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE = "sdk/java/event/eventFamilySendEventMethods.template";
 
-  /**
-   * The Constant EVENT_FAMILY_LISTENER_METHOD_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_LISTENER_METHOD_TEMPLATE = "sdk/java/event/eventFamilyListenerMethod.template";
+  private static final String EVENT_FAMILY_JAVA_TEMPLATE = FOLDER + "EventFamily.java.template";
 
-  /**
-   * The Constant EVENT_FAMILY_FACTORY_JAVA_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_FACTORY_JAVA_TEMPLATE = "sdk/java/event/EventFamilyFactory.java.template";
+  private static final String EVENT_FAMILY_FACTORY_JAVA_TEMPLATE = FOLDER
+      + "EventFamilyFactory.java.template";
 
-  /**
-   * The Constant EVENT_FAMILY_FACTORY_METHOD_TEMPLATE.
-   */
-  private static final String EVENT_FAMILY_FACTORY_METHOD_TEMPLATE = "sdk/java/event/eventFamilyFactoryMethod.template";
+  private static final String EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE = FOLDER
+      + "eventFamilyAddSupportedFqn.template";
+
+
+  private static final String EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE =  FOLDER
+      + "eventFamilyOnGenericEvent.template";
+
+
+  private static final String EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE = FOLDER
+      + "eventFamilySendEventMethods.template";
+
+
+  private static final String EVENT_FAMILY_LISTENER_METHOD_TEMPLATE = FOLDER
+      + "eventFamilyListenerMethod.template";
+
+
+  private static final String EVENT_FAMILY_FACTORY_METHOD_TEMPLATE =  FOLDER
+      + "eventFamilyFactoryMethod.template";
+
+
 
   private static final String EVENT_FAMILY_NAMESPACE_VAR = "\\$\\{event_family_namespace\\}";
   private static final String EVENT_FAMILY_CLASS_NAME_VAR = "\\$\\{event_family_class_name\\}";
   private static final String EVENT_FAMILY_VAR_NAME_VAR = "\\$\\{event_family_var_name\\}";
 
-  private static final String ADD_SUPPORTED_EVENT_CLASS_FQNS_VAR = "\\$\\{add_supported_event_class_fqns\\}";
-  private static final String EVENT_FAMILY_LISTENERS_ON_GENERIC_EVENT_VAR = "\\$\\{event_family_listeners_on_generic_event\\}";
-  private static final String EVENT_FAMILY_SEND_EVENT_METHODS_VAR = "\\$\\{event_family_send_event_methods\\}";
-  private static final String EVENT_FAMILY_LISTENER_METHODS_VAR = "\\$\\{event_family_listener_methods\\}";
-  private static final String EVENT_CLASS_FQN_VAR = "\\$\\{event_class_fqn\\}";
-  private static final String EVENT_FAMILY_FACTORY_IMPORTS_VAR = "\\$\\{event_family_factory_imports\\}";
-  private static final String EVENT_FAMILY_FACTORY_METHODS_VAR = "\\$\\{event_family_factory_methods\\}";
+  private static final String ADD_SUPPORTED_EVENT_CLASS_FQNS_VAR =
+      "\\$\\{add_supported_event_class_fqns\\}";
 
-  private static final String EVENT_FAMILY_FACTORY = "EventFamilyFactory";
+  private static final String EVENT_FAMILY_LISTENERS_ON_GENERIC_EVENT_VAR =
+      "\\$\\{event_family_listeners_on_generic_event\\}";
+
+  private static final String EVENT_FAMILY_SEND_EVENT_METHODS_VAR =
+      "\\$\\{event_family_send_event_methods\\}";
+
+  private static final String EVENT_FAMILY_LISTENER_METHODS_VAR =
+      "\\$\\{event_family_listener_methods\\}";
+
+  private static final String EVENT_CLASS_FQN_VAR = "\\$\\{event_class_fqn\\}";
+
+  private static final String EVENT_FAMILY_FACTORY_IMPORTS_VAR =
+      "\\$\\{event_family_factory_imports\\}";
+
+  private static final String EVENT_FAMILY_FACTORY_METHODS_VAR =
+      "\\$\\{event_family_factory_methods\\}";
+
+
 
   private static String eventFamilyJava;
   private static String eventFamilyAddSupportedFqn;
@@ -95,35 +100,48 @@ public class JavaEventClassesGenerator {
   static {
     try {
       eventFamilyJava = SdkGenerator.readResource(EVENT_FAMILY_JAVA_TEMPLATE);
-      eventFamilyAddSupportedFqn = SdkGenerator.readResource(EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE);
-      eventFamilyOnGenericEvent = SdkGenerator.readResource(EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE);
-      eventFamilySendEventMethod = SdkGenerator.readResource(EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE);
+
+      eventFamilyAddSupportedFqn = SdkGenerator
+          .readResource(EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE);
+
+      eventFamilyOnGenericEvent = SdkGenerator
+          .readResource(EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE);
+
+      eventFamilySendEventMethod = SdkGenerator
+          .readResource(EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE);
+
       eventFamilyListenerMethod = SdkGenerator.readResource(EVENT_FAMILY_LISTENER_METHOD_TEMPLATE);
       eventFamilyFactoryJava = SdkGenerator.readResource(EVENT_FAMILY_FACTORY_JAVA_TEMPLATE);
       eventFamilyFactoryMethod = SdkGenerator.readResource(EVENT_FAMILY_FACTORY_METHOD_TEMPLATE);
-    } catch (IOException e) {
-      LOG.error("Unable to initialize JavaEventClassesGenerator", e);
+    } catch (IOException ex) {
+      LOG.error("Unable to initialize JavaEventClassesGenerator", ex);
     }
   }
 
   private JavaEventClassesGenerator() {
   }
 
-  public static List<JavaDynamicBean> generateEventClasses(List<EventFamilyMetadata> eventFamilies) {
+  public static List<JavaDynamicBean> generateEventClasses(
+      List<EventFamilyMetadata> eventFamilies) {
+
     List<JavaDynamicBean> javaSources = new ArrayList<>();
 
     String eventFamilyFactoryImports = "";
     String eventFamilyFactoryMethods = "";
 
     for (EventFamilyMetadata efm : eventFamilies) {
-      eventFamilyFactoryImports += "import " + efm.getEcfNamespace() + "." + efm.getEcfClassName() + ";\n";
+      eventFamilyFactoryImports += "import "
+          + efm.getEcfNamespace()
+          + "."
+          + efm.getEcfClassName() + ";\n";
+
       String eventFamilyVarName = efm.getEcfClassName().substring(0, 1).toLowerCase();
       if (efm.getEcfClassName().length() > 1) {
         eventFamilyVarName += efm.getEcfClassName().substring(1);
       }
-      eventFamilyFactoryMethods += eventFamilyFactoryMethod.
-          replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()).
-          replaceAll(EVENT_FAMILY_VAR_NAME_VAR, eventFamilyVarName);
+      eventFamilyFactoryMethods += eventFamilyFactoryMethod
+          .replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName())
+          .replaceAll(EVENT_FAMILY_VAR_NAME_VAR, eventFamilyVarName);
 
       String addSupportedEventClassFqns = "";
       String eventFamilyListenersOnGenericEvent = "";
@@ -131,32 +149,35 @@ public class JavaEventClassesGenerator {
       String eventFamilyListenerMethods = "";
 
       for (ApplicationEventMapDto eventMap : efm.getEventMaps()) {
-        if (eventMap.getAction() == ApplicationEventAction.SINK ||
-            eventMap.getAction() == ApplicationEventAction.BOTH) {
-          addSupportedEventClassFqns += eventFamilyAddSupportedFqn.
-              replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
+        if (eventMap.getAction() == ApplicationEventAction.SINK
+            || eventMap.getAction() == ApplicationEventAction.BOTH) {
+          addSupportedEventClassFqns += eventFamilyAddSupportedFqn
+              .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
           if (eventFamilyListenersOnGenericEvent.length() > 0) {
             eventFamilyListenersOnGenericEvent += "else ";
           }
-          eventFamilyListenersOnGenericEvent += eventFamilyOnGenericEvent.
-              replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
-          eventFamilyListenerMethods += eventFamilyListenerMethod.
-              replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
+          eventFamilyListenersOnGenericEvent += eventFamilyOnGenericEvent
+              .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
+          eventFamilyListenerMethods += eventFamilyListenerMethod
+              .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
         }
-        if (eventMap.getAction() == ApplicationEventAction.SOURCE ||
-            eventMap.getAction() == ApplicationEventAction.BOTH) {
-          eventFamilySendEventMethods += eventFamilySendEventMethod.
-              replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
+        if (eventMap.getAction() == ApplicationEventAction.SOURCE
+            || eventMap.getAction() == ApplicationEventAction.BOTH) {
+          eventFamilySendEventMethods += eventFamilySendEventMethod
+              .replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()) + "\n";
         }
       }
 
-      String eventFamilySource = eventFamilyJava.
-          replaceAll(EVENT_FAMILY_NAMESPACE_VAR, efm.getEcfNamespace()).
-          replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()).
-          replaceAll(ADD_SUPPORTED_EVENT_CLASS_FQNS_VAR, addSupportedEventClassFqns).
-          replaceAll(EVENT_FAMILY_LISTENERS_ON_GENERIC_EVENT_VAR, eventFamilyListenersOnGenericEvent).
-          replaceAll(EVENT_FAMILY_SEND_EVENT_METHODS_VAR, eventFamilySendEventMethods).
-          replaceAll(EVENT_FAMILY_LISTENER_METHODS_VAR, eventFamilyListenerMethods);
+      String eventFamilySource = eventFamilyJava
+          .replaceAll(EVENT_FAMILY_NAMESPACE_VAR, efm.getEcfNamespace())
+          .replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName())
+          .replaceAll(ADD_SUPPORTED_EVENT_CLASS_FQNS_VAR, addSupportedEventClassFqns)
+          .replaceAll(
+              EVENT_FAMILY_LISTENERS_ON_GENERIC_EVENT_VAR,
+              eventFamilyListenersOnGenericEvent
+          )
+          .replaceAll(EVENT_FAMILY_SEND_EVENT_METHODS_VAR, eventFamilySendEventMethods)
+          .replaceAll(EVENT_FAMILY_LISTENER_METHODS_VAR, eventFamilyListenerMethods);
 
       LOG.trace("Going to compile {} using source {}", efm.getEcfClassName(), eventFamilySource);
 
@@ -165,9 +186,9 @@ public class JavaEventClassesGenerator {
       javaSources.add(eventFamily);
     }
 
-    String eventFamilyFactorySource = eventFamilyFactoryJava.
-        replaceAll(EVENT_FAMILY_FACTORY_IMPORTS_VAR, eventFamilyFactoryImports).
-        replaceAll(EVENT_FAMILY_FACTORY_METHODS_VAR, eventFamilyFactoryMethods);
+    String eventFamilyFactorySource = eventFamilyFactoryJava
+        .replaceAll(EVENT_FAMILY_FACTORY_IMPORTS_VAR, eventFamilyFactoryImports)
+        .replaceAll(EVENT_FAMILY_FACTORY_METHODS_VAR, eventFamilyFactoryMethods);
 
 
     LOG.trace("Going to compile {} using source {}", EVENT_FAMILY_FACTORY, eventFamilyFactorySource);
