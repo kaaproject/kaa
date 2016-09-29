@@ -48,7 +48,9 @@ public class JavaDynamicManager extends
   }
 
   /* (non-Javadoc)
-   * @see javax.tools.ForwardingJavaFileManager#getJavaFileForOutput(javax.tools.JavaFileManager.Location, java.lang.String, javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
+   * @see javax.tools.ForwardingJavaFileManager#getJavaFileForOutput(
+   *      javax.tools.JavaFileManager.Location, java.lang.String,
+   *      javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
    */
   @Override
   public JavaFileObject getJavaFileForOutput(Location location,

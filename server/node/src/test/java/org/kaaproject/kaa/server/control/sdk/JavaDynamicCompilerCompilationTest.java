@@ -81,6 +81,6 @@ public class JavaDynamicCompilerCompilationTest {
    */
   @Test(expected = RuntimeException.class)
   public void testInvalidUri() {
-    JavaDynamicUtils.INSTANCE.createURI("\\test");
+    JavaDynamicUtils.INSTANCE.createUri("\\test");
   }
 }

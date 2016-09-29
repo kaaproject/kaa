@@ -90,7 +90,8 @@ public class JavaDynamicCompiler {
    * @param additionalOptions the additional options
    * @return the collection of java dynamic beans
    */
-  public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources, String... additionalOptions) {
+  public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources,
+                                                          String... additionalOptions) {
     try {
       List<String> options = optionList;
       if (additionalOptions.length > 0) {
