@@ -40,7 +40,7 @@ import java.util.List;
 
 
 /**
- * Default implementation of {@link ConfigurationMerger}.
+ * Default implementation of {@link OverrideAlgorithm}.
  */
 public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
 
@@ -53,11 +53,16 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
   private Schema.Parser baseSchemaParser;
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.operations.service.delta.merge.ConfigurationMerger#merge(List<org.kaaproject.kaa.common.dto.EndpointGroupDto>, List<org.kaaproject.kaa.common.dto.ConfigurationDto>, org.kaaproject.kaa.common.dto.ConfigurationSchemaDto)
+   * @see org.kaaproject.kaa.server.operations.service.delta.merge.ConfigurationMerger#merge(
+   * List<org.kaaproject.kaa.common.dto.EndpointGroupDto>,
+   * List<org.kaaproject.kaa.common.dto.ConfigurationDto>,
+   * org.kaaproject.kaa.common.dto.ConfigurationSchemaDto)
    */
   @Override
-  public BaseData override(BaseData baseConfiguration, List<OverrideData> overrideConfigurations) throws OverrideException, IOException {
-    LOG.debug("Merging:base configuration = {}; override = {}", baseConfiguration, overrideConfigurations);
+  public BaseData override(BaseData baseConfiguration, List<OverrideData> overrideConfigurations)
+          throws OverrideException, IOException {
+    LOG.debug("Merging:base configuration = {}; override = {}", baseConfiguration,
+            overrideConfigurations);
     if (baseConfiguration == null) {
       LOG.debug("empty endpoint groups or configurations - returning empty result");
       return null;
@@ -68,23 +73,27 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
     }
 
     try {
-      confGenerator = new DefaultRecordGenerationAlgorithmImpl(baseConfiguration.getSchema(), new BaseDataFactory());
-    } catch (ConfigurationGenerationException e) {
-      throw new OverrideException(e);
+      confGenerator = new DefaultRecordGenerationAlgorithmImpl(baseConfiguration.getSchema(),
+              new BaseDataFactory());
+    } catch (ConfigurationGenerationException ex) {
+      throw new OverrideException(ex);
     }
 
     baseSchemaParser = new Schema.Parser();
     Schema baseAvroSchema = baseSchemaParser.parse(baseConfiguration.getSchema().getRawSchema());
     Schema.Parser overrideSchemaParser = new Schema.Parser();
-    Schema overrideAvroSchema = overrideSchemaParser.parse(overrideConfigurations.get(0).getSchema().getRawSchema());
+    Schema overrideAvroSchema = overrideSchemaParser.parse(
+            overrideConfigurations.get(0).getSchema().getRawSchema());
 
     LOG.info("converter: {}", baseAvroSchema.toString());
     GenericAvroConverter<GenericRecord> baseConverter = new GenericAvroConverter(baseAvroSchema);
-    GenericAvroConverter<GenericRecord> overrideConverter = new GenericAvroConverter(overrideAvroSchema);
+    GenericAvroConverter<GenericRecord> overrideConverter = new GenericAvroConverter(
+            overrideAvroSchema);
     GenericRecord mergedConfiguration = baseConverter.decodeJson(baseConfiguration.getRawData());
 
     try {
-      ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaParser.getTypes());
+      ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(
+              baseSchemaParser.getTypes());
       for (OverrideData entry : overrideConfigurations) {
         String configurationToApply = entry.getRawData();
         // else execute merge
@@ -93,9 +102,10 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
         LOG.info("configurationToApply: {}", nodeToApply);
         applyNode(mergedConfiguration, nodeToApply, arrayMergeStrategyResolver);
       }
-      return new BaseData(baseConfiguration.getSchema(), baseConverter.encodeToJson(mergedConfiguration));
-    } catch (IOException | ConfigurationGenerationException e) {
-      throw new OverrideException(e);
+      return new BaseData(baseConfiguration.getSchema(),
+              baseConverter.encodeToJson(mergedConfiguration));
+    } catch (IOException | ConfigurationGenerationException ex) {
+      throw new OverrideException(ex);
     }
   }
 
@@ -111,7 +121,9 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
    * @param arrayMergeStrategyResolver the array merge strategy resolver
    * @throws OverrideException the merge exception
    */
-  private void applyNode(GenericRecord destinationRoot, GenericRecord sourceRoot, ArrayOverrideStrategyResolver arrayMergeStrategyResolver) throws OverrideException, ConfigurationGenerationException {
+  private void applyNode(GenericRecord destinationRoot, GenericRecord sourceRoot,
+                         ArrayOverrideStrategyResolver arrayMergeStrategyResolver)
+          throws OverrideException, ConfigurationGenerationException {
     Schema sourceRootSchema = sourceRoot.getSchema();
 
     // iterate over each child node and try to apply it
@@ -125,7 +137,8 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
         // in destination data we should generate the default value for it
         if (sourceEnum.toString().equals(UNCHANGED)) {
           if (destinationRoot.get(field.pos()) == null) {
-            GenericRecord defRec = confGenerator.getConfigurationByName(sourceRootSchema.getName(), sourceRootSchema.getNamespace());
+            GenericRecord defRec = confGenerator.getConfigurationByName(
+                    sourceRootSchema.getName(), sourceRootSchema.getNamespace());
             destinationRoot.put(field.pos(), defRec.get(field.pos()));
           }
           continue;
@@ -147,7 +160,8 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
           }
         }
         if (destinationRecord == null) {
-          destinationRecord = new GenericData.Record(getSchemaByName(sourceRecord.getSchema().getFullName()));
+          destinationRecord = new GenericData.Record(
+                  getSchemaByName(sourceRecord.getSchema().getFullName()));
           destinationRoot.put(field.pos(), destinationRecord);
         }
         // merge nodes
@@ -160,29 +174,34 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
         if (!sourceArray.isEmpty() && destinationChild instanceof GenericArray) {
           GenericArray destArray = (GenericArray) destinationChild;
           // Checking if first elements have same type
-          if (!destArray.isEmpty() && destArray.get(0).getClass() == sourceArray.get(0).getClass()) {
+          if (!destArray.isEmpty()
+                  && destArray.get(0).getClass() == sourceArray.get(0).getClass()) {
             boolean resolveStrategy = false;
             if (destArray.get(0) instanceof GenericContainer) {
               GenericContainer destFirst = (GenericContainer) destArray.get(0);
               GenericContainer sourceFirst = (GenericContainer) sourceArray.get(0);
-              if (destFirst.getSchema().getFullName().equals(sourceFirst.getSchema().getFullName())) {
+              if (destFirst.getSchema().getFullName().equals(
+                      sourceFirst.getSchema().getFullName())) {
                 resolveStrategy = true;
               }
             } else {
               resolveStrategy = true;
             }
             if (resolveStrategy) {
-              mergeStrategy = arrayMergeStrategyResolver.resolve(sourceRootSchema.getName(), sourceRootSchema.getNamespace(), sourceChildname);
+              mergeStrategy = arrayMergeStrategyResolver.resolve(
+                      sourceRootSchema.getName(), sourceRootSchema.getNamespace(), sourceChildname);
             }
           }
         }
         switch (mergeStrategy) {
           case REPLACE:
             if (sourceArray.getSchema().getElementType().getType() == Schema.Type.RECORD) {
-              GenericArray destArray = new GenericData.Array<>(sourceArray.size(), sourceArray.getSchema());
+              GenericArray destArray = new GenericData.Array<>(sourceArray.size(),
+                      sourceArray.getSchema());
               for (Object item : sourceArray) {
                 GenericRecord recordItem = (GenericRecord) item;
-                GenericRecord destRecord = new GenericData.Record(getSchemaByName(recordItem.getSchema().getFullName()));
+                GenericRecord destRecord = new GenericData.Record(
+                        getSchemaByName(recordItem.getSchema().getFullName()));
                 applyNode(destRecord, recordItem, arrayMergeStrategyResolver);
                 destArray.add(destRecord);
               }
@@ -196,7 +215,8 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
             if (sourceArray.getSchema().getElementType().getType() == Schema.Type.RECORD) {
               for (Object item : sourceArray) {
                 GenericRecord recordItem = (GenericRecord) item;
-                GenericRecord destRecord = new GenericData.Record(getSchemaByName(recordItem.getSchema().getFullName()));
+                GenericRecord destRecord = new GenericData.Record(
+                        getSchemaByName(recordItem.getSchema().getFullName()));
                 applyNode(destRecord, recordItem, arrayMergeStrategyResolver);
                 destArray.add(destRecord);
               }

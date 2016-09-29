@@ -72,7 +72,7 @@ public interface SchemaCreationStrategy<T extends KaaSchema> {
   Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords);
 
   /**
-   * Creates a schema object
+   * Creates a schema object.
    *
    * @param schema the raw schema data
    * @return the schema object

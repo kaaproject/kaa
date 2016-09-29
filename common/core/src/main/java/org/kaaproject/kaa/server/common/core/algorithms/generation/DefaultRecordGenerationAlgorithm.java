@@ -52,5 +52,6 @@ public interface DefaultRecordGenerationAlgorithm<T extends KaaData> {
    * @return the configuration by name
    * @throws ConfigurationGenerationException the configuration processing exception
    */
-  GenericRecord getConfigurationByName(String name, String namespace) throws ConfigurationGenerationException;
+  GenericRecord getConfigurationByName(String name, String namespace)
+          throws ConfigurationGenerationException;
 }

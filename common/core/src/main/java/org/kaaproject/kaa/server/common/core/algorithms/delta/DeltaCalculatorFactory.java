@@ -32,6 +32,7 @@ public interface DeltaCalculatorFactory {
    * @param baseDataSchema     base the schema body
    * @return the delta calculator
    */
-  DeltaCalculationAlgorithm createDeltaCalculator(ProtocolSchema protocolSchemaBody, BaseSchema baseDataSchema);
+  DeltaCalculationAlgorithm createDeltaCalculator(
+          ProtocolSchema protocolSchemaBody, BaseSchema baseDataSchema);
 
 }

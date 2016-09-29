@@ -36,7 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implements UuidValidator<T> {
+public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implements
+        UuidValidator<T> {
 
   /**
    * The Constant LOG.
@@ -122,7 +123,8 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
    * @return the generic record with updated uuid fields.
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private GenericRecord validateRecord(GenericRecord currentRecord, GenericRecord previousRecord, GenericRecord rootPreviousRecord) {
+  private GenericRecord validateRecord(GenericRecord currentRecord, GenericRecord previousRecord,
+                                       GenericRecord rootPreviousRecord) {
     if (currentRecord != null) {
       LOG.trace("Processing new record: {}, old record: {}", currentRecord, previousRecord);
       if (isRecordHaveUuid(currentRecord)) {
@@ -139,7 +141,8 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
             if (previousRecord == null) {
               GenericRecord validatingRecord = findRecordByUuid(rootPreviousRecord, uuidValue);
               if (validatingRecord == null
-                  || !validatingRecord.getSchema().getFullName().equals(currentRecord.getSchema().getFullName())) {
+                  || !validatingRecord.getSchema().getFullName().equals(
+                      currentRecord.getSchema().getFullName())) {
                 LOG.trace("Unknown UUID {}. Generating a new one", uuidValue);
                 generateUuidForRecord(currentRecord);
               } else if (!uuidValue.equals(validatingRecord.get(UUID_FIELD))) {
@@ -178,9 +181,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
               String currentName = currentSubRecord.getSchema().getFullName();
               String previousName = previousSubRecord.getSchema().getFullName();
               subResult = validateRecord(currentSubRecord,
-                  currentName.equals(previousName) ?
-                      previousSubRecord :
-                      null, rootPreviousRecord);
+                  currentName.equals(previousName) ? previousSubRecord : null, rootPreviousRecord);
             } else {
               subResult = validateRecord(currentSubRecord, null, rootPreviousRecord);
             }
@@ -207,13 +208,14 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator#validateUuidFields(T, T)
    */
   @Override
-  public T validateUuidFields(T configurationToValidate, T previousConfiguration) throws IOException {
+  public T validateUuidFields(T configurationToValidate, T previousConfiguration)
+          throws IOException {
     processedUuids.clear();
     String config = null;
-    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema.getRawSchema());
+    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+            schema.getRawSchema());
     GenericRecord currentRecord = converter.decodeJson(configurationToValidate.getRawData());
     GenericRecord previousRecord = null;
     if (previousConfiguration != null) {
@@ -228,13 +230,14 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator#validateUuidFields(org.apache.avro.generic.GenericRecord, org.apache.avro.generic.GenericRecord)
    */
   @Override
-  public T validateUuidFields(GenericRecord configurationToValidate, GenericRecord previousConfiguration) throws IOException {
+  public T validateUuidFields(GenericRecord configurationToValidate,
+                              GenericRecord previousConfiguration) throws IOException {
     processedUuids.clear();
     String config = null;
-    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema.getRawSchema());
+    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+            schema.getRawSchema());
     validateRecord(configurationToValidate, previousConfiguration, previousConfiguration);
     if (configurationToValidate != null) {
       config = converter.encodeToJson(configurationToValidate);

@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * This is override schema strategy for generating schema for configurations which are not in group
- * "all"
+ * "all".
  */
 public class OverrideDataSchemaStrategy extends AbstractSchemaStrategy<OverrideSchema> {
 

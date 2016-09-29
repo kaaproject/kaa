@@ -42,7 +42,7 @@ public class ArrayOverrideStrategyResolver {
   /**
    * Instantiates a new array merge strategy resolver.
    *
-   * @param configurationSchema the configuration schema
+   * @param types the configuration schema types
    * @throws IOException Signals that an I/O exception has occurred.
    */
   public ArrayOverrideStrategyResolver(Map<String, Schema> types) throws IOException {
@@ -52,15 +52,18 @@ public class ArrayOverrideStrategyResolver {
   /**
    * Resolve.
    *
-   * @param parent    the parent
-   * @param childName the child name
+   * @param name        the parent name
+   * @param namespace   the namespace
+   * @param childName   the child name
    * @return the array merge strategy
    * @throws OverrideException the merge exception
    */
-  public ArrayOverrideStrategy resolve(String name, String namespace, String childName) throws OverrideException {
+  public ArrayOverrideStrategy resolve(String name, String namespace, String childName)
+          throws OverrideException {
     Schema schemaForParent = schemaTypes.get(namespace + "." + name);
     if (schemaForParent == null) {
-      throw new OverrideException(MessageFormat.format("Failed to find Schema with Name ''{0}'' and namespace ''{1}''", name, namespace));
+      throw new OverrideException(MessageFormat.format(
+              "Failed to find Schema with Name ''{0}'' and namespace ''{1}''", name, namespace));
     }
     String mergeStrategyName = findMergeStrategy(schemaForParent, childName);
 

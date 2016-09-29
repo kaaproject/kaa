@@ -34,7 +34,8 @@ public class SchemaGenerationAlgorithmImpl implements SchemaGenerationAlgorithm 
     this.initialSchema = schema;
   }
 
-  private <T extends KaaSchema> SchemaCreator<T> getSchemaCreator(SchemaCreationStrategy<T> strategy) {
+  private <T extends KaaSchema> SchemaCreator<T> getSchemaCreator(
+          SchemaCreationStrategy<T> strategy) {
     return new SchemaCreatorImpl<T>(strategy);
   }
 
@@ -49,7 +50,8 @@ public class SchemaGenerationAlgorithmImpl implements SchemaGenerationAlgorithm 
   @Override
   public OverrideSchema getOverrideSchema() throws SchemaCreationException {
     if (overrideSchema == null) {
-      overrideSchema = getSchemaCreator(new OverrideDataSchemaStrategy()).createSchema(initialSchema);
+      overrideSchema = getSchemaCreator(
+              new OverrideDataSchemaStrategy()).createSchema(initialSchema);
     }
     return overrideSchema;
   }
