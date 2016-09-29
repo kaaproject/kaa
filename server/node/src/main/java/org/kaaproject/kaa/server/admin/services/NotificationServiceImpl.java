@@ -437,5 +437,6 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       return getNotificationSchemaView(savedNotificationSchema.getId());
     } catch (Exception ex) {
       throw Utils.handleException(ex);
+    }
   }
 }

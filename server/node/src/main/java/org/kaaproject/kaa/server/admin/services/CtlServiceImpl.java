@@ -220,7 +220,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     this.checkAuthority(KaaAuthorityDto.values());
     try {
       this.checkCtlSchemaId(schemaId);
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaById(schemaId);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaById(schemaId);
       Utils.checkNotNull(schemaFound);
       checkCtlSchemaReadScope(
           schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
