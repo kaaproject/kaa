@@ -27,7 +27,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class CtlSchemasViewImpl extends BaseListViewImpl<CTLSchemaMetaInfoDto> implements CtlSchemasView {
+public class CtlSchemasViewImpl
+    extends BaseListViewImpl<CTLSchemaMetaInfoDto>
+    implements CtlSchemasView {
 
   private CheckBox showHigherScopeCheckBox;
 
@@ -36,8 +38,8 @@ public class CtlSchemasViewImpl extends BaseListViewImpl<CTLSchemaMetaInfoDto> i
     if (displayShowHigherLevelScopeCheckBox()) {
       showHigherScopeCheckBox = new CheckBox(Utils.constants.displayHigherScopes());
       showHigherScopeCheckBox.addStyleName(Utils.kaaAdminStyle.bAppContentTitle());
-      Element.as(showHigherScopeCheckBox.getElement().getChild(0)).
-          getStyle().setMarginRight(10, Unit.PX);
+      Element.as(showHigherScopeCheckBox.getElement().getChild(0))
+          .getStyle().setMarginRight(10, Unit.PX);
       showHigherScopeCheckBox.setValue(defaultShowHigherLevelScopes());
       appendToolbarWidget(showHigherScopeCheckBox);
     }

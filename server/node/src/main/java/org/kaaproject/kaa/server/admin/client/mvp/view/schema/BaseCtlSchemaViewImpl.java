@@ -46,7 +46,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 
-public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implements BaseCtlSchemaView {
+public abstract class BaseCtlSchemaViewImpl
+    extends BaseDetailsViewImpl
+    implements BaseCtlSchemaView {
 
   private static final String CTL_REFERENCE_PANEL_HEIGHT = "280px";
   private static final String SCHEMA_FORM_PANEL_HEIGHT = "700px";
@@ -163,8 +165,8 @@ public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implemen
     ctlSchemaReferenceBox = new CtlSchemaReferenceBox();
     ctlSchemaReferenceBox.setWidth("500px");
 
-    schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900).createConfig(),
+    schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(900).createConfig(),
         Utils.constants.schema(), this, !create, !create);
 
     if (create) {

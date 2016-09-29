@@ -110,7 +110,7 @@ public class EventClassActivity
 
   @Override
   protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-    KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null,
         null,
         null,
         ConverterType.FORM_AVRO_CONVERTER,

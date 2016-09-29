@@ -79,23 +79,25 @@ public class EventMapGrid extends AbstractKaaGrid<ApplicationEventMapDto, String
       ValueSelectionCell<ApplicationEventAction> actionsCell = new ValueSelectionCell<>(actions,
           actionRenderer);
 
-      Column<ApplicationEventMapDto, ApplicationEventAction> actionColumn = new Column<ApplicationEventMapDto, ApplicationEventAction>(actionsCell) {
-        @Override
-        public ApplicationEventAction getValue(ApplicationEventMapDto object) {
-          return object.getAction();
-        }
-      };
+      Column<ApplicationEventMapDto, ApplicationEventAction> actionColumn =
+          new Column<ApplicationEventMapDto, ApplicationEventAction>(actionsCell) {
+            @Override
+            public ApplicationEventAction getValue(ApplicationEventMapDto object) {
+              return object.getAction();
+            }
+          };
 
       Header<SafeHtml> actionHeader = new SafeHtmlHeader(
           SafeHtmlUtils.fromSafeConstant(Utils.constants.action()));
 
       table.addColumn(actionColumn, actionHeader);
-      actionColumn.setFieldUpdater(new FieldUpdater<ApplicationEventMapDto, ApplicationEventAction>() {
-        @Override
-        public void update(int index, ApplicationEventMapDto object, ApplicationEventAction value) {
-          object.setAction(value);
-        }
-      });
+      actionColumn.setFieldUpdater(
+          new FieldUpdater<ApplicationEventMapDto, ApplicationEventAction>() {
+            @Override
+            public void update(int index, ApplicationEventMapDto object, ApplicationEventAction value) {
+              object.setAction(value);
+            }
+          });
       table.setColumnWidth(actionColumn, 80, Unit.PX);
       prefWidth += 80;
     } else {

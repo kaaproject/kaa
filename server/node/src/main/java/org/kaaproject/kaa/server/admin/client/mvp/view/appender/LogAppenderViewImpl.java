@@ -37,7 +37,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppenderView, ChosenChangeHandler {
+public class LogAppenderViewImpl
+    extends BasePluginViewImpl
+    implements LogAppenderView, ChosenChangeHandler {
 
   private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 

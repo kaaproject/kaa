@@ -38,7 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstrainedValue<CtlSchemaReferenceDto>, RequiresResize {
+public class CtlSchemaReferenceBox
+    extends HorizontalPanel
+    implements HasConstrainedValue<CtlSchemaReferenceDto>, RequiresResize {
 
   private CtlSchemaReferenceDto value;
 

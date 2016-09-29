@@ -40,7 +40,8 @@ public class LogSchemaGrid extends BaseCtlSchemasGrid<LogSchemaDto> {
   @Override
   protected float constructActions(DataGrid<LogSchemaDto> table, float prefWidth) {
     float result = super.constructActions(table, prefWidth);
-    if (!embedded && (downloadLibraryColumn == null || table.getColumnIndex(downloadLibraryColumn) == -1)) {
+    if (!embedded
+        && (downloadLibraryColumn == null || table.getColumnIndex(downloadLibraryColumn) == -1)) {
       Header<SafeHtml> downloadLibraryHeader = new SafeHtmlHeader(
           SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordLibrary()));
 
@@ -52,7 +53,8 @@ public class LogSchemaGrid extends BaseCtlSchemasGrid<LogSchemaDto> {
     if (enableActions) {
       if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
         Header<SafeHtml> deleteHeader = new SafeHtmlHeader(
-            SafeHtmlUtils.fromSafeConstant(embedded ? Utils.constants.remove() : Utils.constants.delete()));
+            SafeHtmlUtils.fromSafeConstant(
+                embedded ? Utils.constants.remove() : Utils.constants.delete()));
 
         deleteColumn = constructDeleteColumn("");
         table.addColumn(deleteColumn, deleteHeader);
@@ -65,12 +67,14 @@ public class LogSchemaGrid extends BaseCtlSchemasGrid<LogSchemaDto> {
   }
 
   private Column<LogSchemaDto, LogSchemaDto> constructDownloadLibraryColumn(String text) {
-    ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
+    ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(
+        Utils.resources.download_grey(), text, embedded,
         new ActionListener<LogSchemaDto>() {
           @Override
           public void onItemAction(LogSchemaDto value) {
             Integer logSchemaVersion = value.getVersion();
-            RowActionEvent<String> rowDownloadLibraryEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY);
+            RowActionEvent<String> rowDownloadLibraryEvent = new RowActionEvent<>(
+                String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY);
             fireEvent(rowDownloadLibraryEvent);
           }
         }, new ActionValidator<LogSchemaDto>() {

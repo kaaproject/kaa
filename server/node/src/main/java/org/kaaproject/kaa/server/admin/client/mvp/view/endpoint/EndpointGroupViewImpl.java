@@ -148,7 +148,10 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     addProfileFilterButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
     detailsTable.setWidget(row, 0, profileFiltersLabel);
-    profileFiltersLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+    profileFiltersLabel.getElement()
+        .getParentElement()
+        .getStyle()
+        .setPropertyPx("paddingBottom", 10);
 
     detailsTable.setWidget(row, 1, includeDeprecatedProfileFilters);
 
@@ -158,8 +161,12 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
 
     row++;
     detailsTable.setWidget(row, 2, addProfileFilterButton);
-    addProfileFilterButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-    detailsTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+    addProfileFilterButton.getElement()
+        .getParentElement()
+        .getStyle()
+        .setPropertyPx("paddingTop", 15);
+    detailsTable.getCellFormatter()
+        .setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
     profileFiltersLabel.setVisible(!create);
     includeDeprecatedProfileFilters.setVisible(!create);
@@ -177,7 +184,10 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     addConfigurationButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
     detailsTable.setWidget(row, 0, configurationsLabel);
-    configurationsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+    configurationsLabel.getElement()
+        .getParentElement()
+        .getStyle()
+        .setPropertyPx("paddingBottom", 10);
 
     detailsTable.setWidget(row, 1, includeDeprecatedConfigurations);
 
@@ -187,8 +197,12 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
 
     row++;
     detailsTable.setWidget(row, 2, addConfigurationButton);
-    addConfigurationButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-    detailsTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+    addConfigurationButton.getElement()
+        .getParentElement()
+        .getStyle()
+        .setPropertyPx("paddingTop", 15);
+    detailsTable.getCellFormatter()
+        .setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
     configurationsLabel.setVisible(!create);
     includeDeprecatedConfigurations.setVisible(!create);
@@ -213,7 +227,8 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     row++;
     detailsTable.setWidget(row, 2, addTopicButton);
     addTopicButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-    detailsTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+    detailsTable.getCellFormatter()
+        .setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
     topicsLabel.setVisible(!create);
     topicsGrid.setVisible(!create);

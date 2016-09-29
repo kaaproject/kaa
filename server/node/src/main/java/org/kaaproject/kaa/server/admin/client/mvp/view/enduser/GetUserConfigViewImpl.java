@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.admin.client.mvp.view.enduser;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -75,8 +76,6 @@ public class GetUserConfigViewImpl extends BaseDetailsViewImpl implements GetUse
 
   @Override
   protected void initDetailsTable() {
-    int row = 0;
-
     Label label = new Label(Utils.constants.userId());
 
     label.addStyleName(Utils.avroUiStyle.requiredField());
@@ -85,16 +84,14 @@ public class GetUserConfigViewImpl extends BaseDetailsViewImpl implements GetUse
     downloadUserCongigurationButton = new ImageTextButton(Utils.resources.download(), "Download");
     externalUserId.setWidth(FULL_WIDTH);
     externalUserId.addInputHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, externalUserId);
+    detailsTable.setWidget(0, 0, label);
+    detailsTable.setWidget(0, 1, externalUserId);
 
     label = new Label(Utils.constants.configurationSchema());
     label.addStyleName(Utils.avroUiStyle.requiredField());
-    row++;
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, configurationSchemaInfo);
-    row++;
-    detailsTable.setWidget(row, 0, downloadUserCongigurationButton);
+    detailsTable.setWidget(1, 0, label);
+    detailsTable.setWidget(1, 1, configurationSchemaInfo);
+    detailsTable.setWidget(2, 0, downloadUserCongigurationButton);
 
     configurationSchemaInfo.addValueChangeHandler(new ValueChangeHandler<SchemaInfoDto>() {
       @Override
@@ -102,7 +99,6 @@ public class GetUserConfigViewImpl extends BaseDetailsViewImpl implements GetUse
         updateConfigurationData(event.getValue());
       }
     });
-    row++;
   }
 
   @Override

@@ -27,7 +27,9 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> extends TabPanel implements SelectionHandler<Integer> {
+public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V>
+    extends TabPanel
+    implements SelectionHandler<Integer> {
 
   protected BaseStructView<T, V> activePanel;
   protected BaseStructView<T, V> inactivePanel;

@@ -36,7 +36,9 @@ import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import java.util.Date;
 
 
-public class SendNotificationViewImpl extends BaseDetailsViewImpl implements SendNotificationView, ValueChangeHandler<RecordField> {
+public class SendNotificationViewImpl
+    extends BaseDetailsViewImpl
+    implements SendNotificationView, ValueChangeHandler<RecordField> {
 
   private SchemaInfoListBox notificationSchemaInfo;
   private DateBox expiredAt;
@@ -80,8 +82,8 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
 
     getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
 
-    notificationData = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900).gridHeight(250).tableHeight(230).createConfig(),
+    notificationData = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(900).gridHeight(250).tableHeight(230).createConfig(),
         Utils.constants.notificationBody(), this, false, false);
 
     notificationData.addValueChangeHandler(this);

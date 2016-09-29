@@ -107,8 +107,8 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
     detailsView.getEndpointConfiguration().setValue(entity.getEndpointConfig());
 
     if (entity.getUserId() != null) {
-      detailsView.getUserID().setValue(entity.getUserId());
-      detailsView.getUserExternalID().setValue(entity.getUserExternalId());
+      detailsView.getUserId().setValue(entity.getUserId());
+      detailsView.getUserExternalId().setValue(entity.getUserExternalId());
       for (Widget widget : detailsView.getUserInfoList()) {
         widget.setVisible(true);
       }

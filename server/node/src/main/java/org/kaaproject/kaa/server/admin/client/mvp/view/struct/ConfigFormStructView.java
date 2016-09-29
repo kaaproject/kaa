@@ -45,7 +45,8 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
 
   @Override
   protected HasValue<RecordField> createBody(HasErrorMessage hasErrorMessage) {
-    RecordPanel field = new RecordPanel(Utils.constants.configurationBody(), hasErrorMessage, false, false);
+    RecordPanel field = new RecordPanel(
+        Utils.constants.configurationBody(), hasErrorMessage, false, false);
     configurationFormDataLoader = new ConfigurationFormDataLoader();
     field.setFormDataLoader(configurationFormDataLoader);
     field.getRecordWidget().setForceNavigation(true);
@@ -94,8 +95,9 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
       @Override
       public void onClick(ClickEvent clickEvent) {
         String url = Window.Location.getHref();
-        Window.open("/kaaAdmin/servlet/kaaConfigurationDownloadServlet?schemaId=" + Utils.getSchemaIdFromUrl(url) +
-                "&endGroupId=" + Utils.getEndpointGroupIdFromUrl(url),
+        Window.open("/kaaAdmin/servlet/kaaConfigurationDownloadServlet?schemaId="
+                + Utils.getSchemaIdFromUrl(url)
+                + "&endGroupId=" + Utils.getEndpointGroupIdFromUrl(url),
             "_blank", "status=0,toolbar=0,menubar=0,location=0");
       }
     });

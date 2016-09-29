@@ -64,7 +64,7 @@ public class NotificationSchemaActivity extends AbstractBaseCtlSchemaActivityApp
 
   @Override
   protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-    KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, null, applicationId,
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null, null, applicationId,
         ConverterType.FORM_AVRO_CONVERTER,
         callback);
   }

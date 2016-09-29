@@ -102,7 +102,8 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
 
       if (deleteColumn == null || table.getColumnIndex(deleteColumn) == -1) {
         Header<SafeHtml> deleteHeader = new SafeHtmlHeader(
-            SafeHtmlUtils.fromSafeConstant(embedded ? Utils.constants.remove() : Utils.constants.delete()));
+            SafeHtmlUtils.fromSafeConstant(
+                embedded ? Utils.constants.remove() : Utils.constants.delete()));
 
         deleteColumn = constructDeleteColumn("");
         table.addColumn(deleteColumn, deleteHeader);

@@ -72,7 +72,7 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -278,9 +278,9 @@ public class DefaultAkkaServiceTest {
     clusterServiceListener = (AkkaClusterServiceListener) ReflectionTestUtils.getField(akkaService, "clusterListener");
 
     clientPublicKey = ByteBuffer.wrap(clientPair.getPublic().getEncoded());
-    clientPublicKeyHash = ByteBuffer.wrap(SHA1HashUtils.hashToBytes(clientPair.getPublic().getEncoded()));
+    clientPublicKeyHash = ByteBuffer.wrap(Sha1HashUtils.hashToBytes(clientPair.getPublic().getEncoded()));
 
-    targetPublicKeyHash = ByteBuffer.wrap(SHA1HashUtils.hashToBytes(targetPair.getPublic().getEncoded()));
+    targetPublicKeyHash = ByteBuffer.wrap(Sha1HashUtils.hashToBytes(targetPair.getPublic().getEncoded()));
 
     Mockito.when(cacheService.getTenantIdByAppToken(APP_TOKEN)).thenReturn(TENANT_ID);
     Mockito.when(cacheService.getAppTokenBySdkToken(SDK_TOKEN)).thenReturn(APP_TOKEN);
@@ -358,7 +358,7 @@ public class DefaultAkkaServiceTest {
 
   private void registerPublicKey(PublicKey publicKey) throws EndpointRegistrationServiceException {
     byte[] clientPublicKeyBytes = publicKey.getEncoded();
-    String endpointId = Base64Util.encode(EndpointObjectHash.fromSHA1(clientPublicKeyBytes).getData());
+    String endpointId = Base64Util.encode(EndpointObjectHash.fromSha1(clientPublicKeyBytes).getData());
     EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto(APP_ID, endpointId, endpointId, null, null);
     Mockito.when(registrationService.findEndpointRegistrationByCredentialsId(endpointId)).thenReturn(Optional.of(endpointRegistration));
   }
@@ -472,7 +472,7 @@ public class DefaultAkkaServiceTest {
     ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
 
     SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID,
-        Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class), EndpointObjectHash.fromSHA1("test"),
+        Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class), EndpointObjectHash.fromSha1("test"),
         "applicationToken", "sdkToken", 100, true);
     Mockito.when(message.getChannelContext()).thenReturn(Mockito.mock(ChannelContext.class));
     Mockito.when(message.getErrorBuilder()).thenReturn(errorBuilder);
@@ -1140,7 +1140,7 @@ public class DefaultAkkaServiceTest {
       when(actorCtxMock.parent()).thenReturn(parentMock);
       EndpointEventReceiveMessage msg = mock(EndpointEventReceiveMessage.class);
       LocalEndpointActorMessageProcessor processor = spy(new LocalEndpointActorMessageProcessor(
-          context, APP_TOKEN, EndpointObjectHash.fromSHA1(clientPublicKeyHash.array()), "ACTOR_TOKEN"
+          context, APP_TOKEN, EndpointObjectHash.fromSha1(clientPublicKeyHash.array()), "ACTOR_TOKEN"
       ));
       processor.processEndpointEventReceiveMessage(actorCtxMock, msg);
       Assert.assertEquals(

@@ -31,7 +31,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-public class ConfigurationViewImpl extends BaseRecordViewImpl<ConfigurationRecordFormDto, RecordField>
+public class ConfigurationViewImpl
+    extends BaseRecordViewImpl<ConfigurationRecordFormDto, RecordField>
     implements ConfigurationView {
 
   private VersionListBox schema;

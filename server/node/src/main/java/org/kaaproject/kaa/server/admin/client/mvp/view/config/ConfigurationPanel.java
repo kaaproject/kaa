@@ -24,7 +24,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-public class ConfigurationPanel extends AbstractRecordPanel<ConfigurationRecordFormDto, RecordField> {
+public class ConfigurationPanel
+    extends AbstractRecordPanel<ConfigurationRecordFormDto, RecordField> {
 
   public ConfigurationPanel(HasErrorMessage hasErrorMessage) {
     super(hasErrorMessage);
@@ -41,7 +42,8 @@ public class ConfigurationPanel extends AbstractRecordPanel<ConfigurationRecordF
   }
 
   @Override
-  protected BaseStructView<ConfigurationRecordFormDto, RecordField> createStructView(HasErrorMessage hasErrorMessage) {
+  protected BaseStructView<ConfigurationRecordFormDto, RecordField> createStructView(
+      HasErrorMessage hasErrorMessage) {
     return new ConfigFormStructView(hasErrorMessage);
   }
 

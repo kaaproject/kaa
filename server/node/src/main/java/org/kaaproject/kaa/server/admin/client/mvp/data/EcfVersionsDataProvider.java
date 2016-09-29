@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class EcfVersionsDataProvider extends AbstractDataProvider<EventClassFamilyVersionDto, Integer> {
+public class EcfVersionsDataProvider
+    extends AbstractDataProvider<EventClassFamilyVersionDto, Integer> {
 
   private List<EventClassFamilyVersionDto> schemas = new ArrayList<>();
 

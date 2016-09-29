@@ -25,7 +25,7 @@ import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -109,7 +109,7 @@ public class DefaultProfileService implements ProfileService {
    */
   @Override
   public EndpointProfileDto registerProfile(RegisterProfileRequest request) {
-    String endpointId = Base64Util.encode(SHA1HashUtils.hashToBytes(request.getEndpointKey()));
+    String endpointId = Base64Util.encode(Sha1HashUtils.hashToBytes(request.getEndpointKey()));
     LOG.debug("Registering Profile for {}", request.getEndpointKey());
     LOG.trace("Lookup application by token: {}", request.getAppToken());
 
@@ -121,7 +121,7 @@ public class DefaultProfileService implements ProfileService {
 
     String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), sdkProfile.getProfileSchemaVersion());
 
-    EndpointObjectHash keyHash = EndpointObjectHash.fromSHA1(request.getEndpointKey());
+    EndpointObjectHash keyHash = EndpointObjectHash.fromSha1(request.getEndpointKey());
 
     EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
     if (dto == null) {
@@ -131,7 +131,7 @@ public class DefaultProfileService implements ProfileService {
       dto.setEndpointKey(request.getEndpointKey());
       dto.setEndpointKeyHash(keyHash.getData());
       dto.setClientProfileBody(profileJson);
-      dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
+      dto.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
 
       try {
         Optional<EndpointRegistrationDto> endpointRegistrationLookup = endpointRegistrationService.findEndpointRegistrationByEndpointId(endpointId);
@@ -195,7 +195,7 @@ public class DefaultProfileService implements ProfileService {
         profile.setAccessToken(request.getAccessToken());
       }
       profile.setClientProfileBody(profileJson);
-      profile.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
+      profile.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
 
       populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
       profile.setGroupState(new ArrayList<>());

@@ -43,7 +43,7 @@ public class EndpointActorMessageProcessorTest {
     Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
     LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-        .fromSHA1("key"), "actorKey"));
+        .fromSha1("key"), "actorKey"));
     EndpointEventReceiveMessage msg = Mockito.mock(EndpointEventReceiveMessage.class);
 
     Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
@@ -62,7 +62,7 @@ public class EndpointActorMessageProcessorTest {
     Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
     LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-        .fromSHA1("key"), "actorKey"));
+        .fromSha1("key"), "actorKey"));
     ActorTimeoutMessage msg = new ActorTimeoutMessage(System.currentTimeMillis());
 
     Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
@@ -81,7 +81,7 @@ public class EndpointActorMessageProcessorTest {
     Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
     LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-        .fromSHA1("key"), "actorKey"));
+        .fromSha1("key"), "actorKey"));
     ActorTimeoutMessage msg = new ActorTimeoutMessage(-1);
 
     Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
@@ -100,7 +100,7 @@ public class EndpointActorMessageProcessorTest {
     Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
     LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-        .fromSHA1("key"), "actorKey"));
+        .fromSha1("key"), "actorKey"));
     ChannelAware msg = Mockito.mock(ChannelAware.class);
 
     Assert.assertFalse(processor.processDisconnectMessage(ctxMock, msg));

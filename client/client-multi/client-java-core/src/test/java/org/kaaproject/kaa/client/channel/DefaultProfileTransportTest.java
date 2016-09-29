@@ -92,7 +92,7 @@ public class DefaultProfileTransportTest {
     byte[] profile = new byte[]{1, 2, 3};
     KaaClientState clientState = Mockito.mock(KaaClientState.class);
     Mockito.when(clientState.isRegistered()).thenReturn(true);
-    Mockito.when(clientState.getProfileHash()).thenReturn(EndpointObjectHash.fromSHA1(profile));
+    Mockito.when(clientState.getProfileHash()).thenReturn(EndpointObjectHash.fromSha1(profile));
     KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
     ProfileManager profileManager = Mockito.mock(ProfileManager.class);
     Mockito.when(profileManager.getSerializedProfile()).thenReturn(new byte[]{1, 2, 3});

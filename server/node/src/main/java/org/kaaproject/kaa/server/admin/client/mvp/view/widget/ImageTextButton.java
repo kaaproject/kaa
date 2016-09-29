@@ -61,7 +61,9 @@ public class ImageTextButton extends Button {
     return this.text;
   }
 
-  private void updateImageElementFromImageResource(Element imageSpan, ImageResource res, int spacing) {
+  private void updateImageElementFromImageResource(Element imageSpan,
+                                                   ImageResource res,
+                                                   int spacing) {
     SafeUri url = res.getSafeUri();
     int width = res.getWidth();
     int height = res.getHeight();

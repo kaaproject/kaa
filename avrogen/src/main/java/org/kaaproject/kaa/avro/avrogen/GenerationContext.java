@@ -25,6 +25,13 @@ public class GenerationContext {
   private final String fieldName;
   private DirectionType direction;
 
+  /**
+   * Instantiates a new GenerationContext.
+   *
+   * @param parentName  the parent name
+   * @param fieldName   the field name
+   * @param direction   the direction
+   */
   public GenerationContext(String parentName, String fieldName, String direction) {
     this.parentName = parentName;
     this.fieldName = fieldName;
@@ -41,6 +48,11 @@ public class GenerationContext {
     }
   }
 
+  /**
+   * Update direction type of GenerationContext.
+   *
+   * @param context the GenerationContext
+   */
   public void updateDirection(GenerationContext context) {
     if (direction != DirectionType.INOUT && context != null && direction != context.direction) {
       direction = DirectionType.INOUT;

@@ -27,22 +27,27 @@ import java.util.Set;
 
 public class ObjectiveCCompiler extends Compiler {
 
-  public ObjectiveCCompiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+  public ObjectiveCCompiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS)
+          throws KaaGeneratorException {
     super(schema, sourceName, hdrS, srcS);
     setNamespacePrefix("");
   }
 
-  public ObjectiveCCompiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
+  public ObjectiveCCompiler(String schemaPath, String outputPath, String sourceName)
+          throws KaaGeneratorException {
     super(schemaPath, outputPath, sourceName);
     setNamespacePrefix("");
   }
 
 
-  public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+  public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS,
+                            OutputStream srcS) throws KaaGeneratorException {
     super(schemas, sourceName, hdrS, srcS);
   }
 
-  public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS, Set<Schema> generatedSchemas) throws KaaGeneratorException {
+  public ObjectiveCCompiler(List<Schema> schemas, String sourceName, OutputStream hdrS,
+                            OutputStream srcS, Set<Schema> generatedSchemas)
+          throws KaaGeneratorException {
     super(schemas, sourceName, hdrS, srcS, generatedSchemas);
   }
 
@@ -81,6 +86,8 @@ public class ObjectiveCCompiler extends Compiler {
             break;
           case ENUM:
             processEnum(cursor.getKey(), "ObjC/enumObjC.h.vm");
+            break;
+          default:
             break;
         }
       }

@@ -26,7 +26,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
 
-public class AefMapsDataProvider extends AbstractDataProvider<ApplicationEventFamilyMapDto, String> {
+public class AefMapsDataProvider
+    extends AbstractDataProvider<ApplicationEventFamilyMapDto, String> {
 
   private String applicationId;
 
@@ -40,18 +41,19 @@ public class AefMapsDataProvider extends AbstractDataProvider<ApplicationEventFa
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadApplicationEventFamilyMaps(applicationId, new AsyncCallback<List<ApplicationEventFamilyMapDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadApplicationEventFamilyMaps(
+        applicationId, new AsyncCallback<List<ApplicationEventFamilyMapDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<ApplicationEventFamilyMapDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<ApplicationEventFamilyMapDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

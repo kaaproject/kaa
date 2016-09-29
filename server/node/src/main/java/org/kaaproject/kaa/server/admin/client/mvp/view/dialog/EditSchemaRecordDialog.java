@@ -40,7 +40,9 @@ import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
 import java.util.List;
 
-public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHandler<SchemaInfoDto>, HasErrorMessage {
+public class EditSchemaRecordDialog
+    extends FormPopup
+    implements ValueChangeHandler<SchemaInfoDto>, HasErrorMessage {
 
   private AlertPanel errorPanel;
 
@@ -49,7 +51,9 @@ public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHand
   private Button saveButton;
   private Listener listener;
 
-  public EditSchemaRecordDialog(Listener listener, String title, List<SchemaInfoDto> schemas, int schemaVersion) {
+  public EditSchemaRecordDialog(Listener listener,
+                                String title, List<SchemaInfoDto> schemas,
+                                int schemaVersion) {
     setWidth("100%");
     setTitle(title);
     this.listener = listener;
@@ -74,8 +78,6 @@ public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHand
     table.setCellSpacing(6);
     table.addStyleName(Utils.avroUiStyle.fieldWidget());
 
-    int row = 0;
-
     Widget schemaVersionLabel = new Label(Utils.constants.schemaVersion());
     schemaVersionLabel.addStyleName(Utils.avroUiStyle.requiredField());
     schemaBox = new SchemaInfoListBox();
@@ -89,10 +91,10 @@ public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHand
     versionPanel.add(schemaVersionLabel);
     versionPanel.add(schemaBox);
 
-    table.setWidget(row, 0, versionPanel);
+    table.setWidget(0, 0, versionPanel);
 
-    schemaRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(700).createConfig(),
+    schemaRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(700).createConfig(),
         Utils.constants.schema(), this, false, false);
 
     //schemaRecordPanel.setWidth("750px");
@@ -106,8 +108,8 @@ public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHand
       }
     });
 
-    table.setWidget(++row, 0, schemaRecordPanel);
-    table.getFlexCellFormatter().setColSpan(row, 0, 2);
+    table.setWidget(1, 0, schemaRecordPanel);
+    table.getFlexCellFormatter().setColSpan(1, 0, 2);
 
     dialogContents.add(table);
 
@@ -133,8 +135,11 @@ public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHand
     saveButton.setEnabled(false);
   }
 
-  public static void showEditSchemaRecordDialog(Listener listener, String title, List<SchemaInfoDto> schemas, int schemaVersion) {
-    EditSchemaRecordDialog dialog = new EditSchemaRecordDialog(listener, title, schemas, schemaVersion);
+  public static void showEditSchemaRecordDialog(Listener listener,
+                                                String title, List<SchemaInfoDto> schemas,
+                                                int schemaVersion) {
+    EditSchemaRecordDialog dialog = new EditSchemaRecordDialog(
+        listener, title, schemas, schemaVersion);
     dialog.center();
     dialog.show();
   }

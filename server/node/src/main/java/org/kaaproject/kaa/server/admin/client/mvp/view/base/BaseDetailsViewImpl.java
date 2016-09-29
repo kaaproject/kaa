@@ -47,11 +47,15 @@ import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseDetailsView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class BaseDetailsViewImpl extends Composite implements InputEventHandler, ChangeHandler, BaseDetailsView {
+public abstract class BaseDetailsViewImpl
+    extends Composite
+    implements InputEventHandler, ChangeHandler, BaseDetailsView {
 
   protected static final String FULL_WIDTH = "100%";
   protected static final int DEFAULT_TEXTBOX_SIZE = 255;
-  private static BaseDetailsViewImplUiBinder uiBinder = GWT.create(BaseDetailsViewImplUiBinder.class);
+  private static BaseDetailsViewImplUiBinder uiBinder =
+      GWT.create(BaseDetailsViewImplUiBinder.class);
+
   @UiField(provided = true)
   public final AlertPanel errorPanel;
   @UiField(provided = true)

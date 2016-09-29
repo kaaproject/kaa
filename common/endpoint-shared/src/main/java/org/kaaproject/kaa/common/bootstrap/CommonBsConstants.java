@@ -21,13 +21,13 @@ import org.kaaproject.kaa.common.Constants;
 /**
  * Common Bootstrap Constants.
  */
-public interface CommonBSConstants extends Constants { //NOSONAR
+public interface CommonBsConstants extends Constants { //NOSONAR
 
   public static final String BOOTSTRAP_DOMAIN = "BS"; //NOSONAR
 
   public static final String BOOTSTRAP_RESOLVE_COMMAND = "Resolve"; //NOSONAR
-  public static final String BOOTSTRAP_RESOLVE_URI = URI_DELIM + BOOTSTRAP_DOMAIN + URI_DELIM //NOSONAR
-      + BOOTSTRAP_RESOLVE_COMMAND;
+  public static final String BOOTSTRAP_RESOLVE_URI = URI_DELIM + BOOTSTRAP_DOMAIN
+          + URI_DELIM + BOOTSTRAP_RESOLVE_COMMAND; //NOSONAR
 
   /**
    * The Constant RESPONSE_TYPE.

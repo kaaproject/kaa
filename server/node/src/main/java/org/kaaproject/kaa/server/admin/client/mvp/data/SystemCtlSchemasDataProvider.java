@@ -26,7 +26,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
 
-public class SystemCtlSchemasDataProvider extends AbstractDataProvider<CTLSchemaMetaInfoDto, String> {
+public class SystemCtlSchemasDataProvider
+    extends AbstractDataProvider<CTLSchemaMetaInfoDto, String> {
 
   public SystemCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
                                       HasErrorMessage hasErrorMessage) {
@@ -35,18 +36,19 @@ public class SystemCtlSchemasDataProvider extends AbstractDataProvider<CTLSchema
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().getSystemLevelCTLSchemas(new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().getSystemLevelCtlSchemas(
+        new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

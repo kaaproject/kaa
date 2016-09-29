@@ -26,7 +26,8 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
 
-public class ProfileSchemasDataProvider extends AbstractDataProvider<EndpointProfileSchemaDto, String> {
+public class ProfileSchemasDataProvider
+    extends AbstractDataProvider<EndpointProfileSchemaDto, String> {
 
   private String applicationId;
 
@@ -40,18 +41,19 @@ public class ProfileSchemasDataProvider extends AbstractDataProvider<EndpointPro
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadProfileSchemas(applicationId, new AsyncCallback<List<EndpointProfileSchemaDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
+    KaaAdmin.getDataSource().loadProfileSchemas(
+        applicationId, new AsyncCallback<List<EndpointProfileSchemaDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-      }
+          }
 
-      @Override
-      public void onSuccess(List<EndpointProfileSchemaDto> result) {
-        callback.onSuccess(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<EndpointProfileSchemaDto> result) {
+            callback.onSuccess(result);
+          }
+        });
   }
 
 }

@@ -117,7 +117,8 @@ public class BaseCtlSchemasGrid<T extends BaseSchemaDto> extends AbstractKaaGrid
   }
 
   protected Column<T, T> constructDownloadSchemaColumn() {
-    ActionsButtonCell<T> cell = new ActionsButtonCell<>(Utils.resources.export(), Utils.constants.export());
+    ActionsButtonCell<T> cell = new ActionsButtonCell<>(
+        Utils.resources.export(), Utils.constants.export());
     cell.addMenuItem(Utils.constants.shallow(), new ActionsButtonCell.ActionMenuItemListener<T>() {
       @Override
       public void onMenuItemSelected(T value) {
@@ -142,14 +143,15 @@ public class BaseCtlSchemasGrid<T extends BaseSchemaDto> extends AbstractKaaGrid
         fireEvent(schemaEvent);
       }
     });
-    cell.addMenuItem(Utils.constants.javaLibrary(), new ActionsButtonCell.ActionMenuItemListener<T>() {
-      @Override
-      public void onMenuItemSelected(T value) {
-        RowActionEvent<String> schemaEvent =
-            new RowActionEvent<>(value.getCtlSchemaId(), KaaRowAction.CTL_EXPORT_LIBRARY);
-        fireEvent(schemaEvent);
-      }
-    });
+    cell.addMenuItem(
+        Utils.constants.javaLibrary(), new ActionsButtonCell.ActionMenuItemListener<T>() {
+          @Override
+          public void onMenuItemSelected(T value) {
+            RowActionEvent<String> schemaEvent =
+                new RowActionEvent<>(value.getCtlSchemaId(), KaaRowAction.CTL_EXPORT_LIBRARY);
+            fireEvent(schemaEvent);
+          }
+        });
 
     Column<T, T> column = new Column<T, T>(cell) {
       @Override

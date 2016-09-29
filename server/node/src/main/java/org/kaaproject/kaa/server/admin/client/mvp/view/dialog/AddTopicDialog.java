@@ -39,7 +39,9 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AddTopicDialog extends AvroUiDialog implements ValueChangeHandler<List<TopicDto>>, HasErrorMessage {
+public class AddTopicDialog
+    extends AvroUiDialog
+    implements ValueChangeHandler<List<TopicDto>>, HasErrorMessage {
 
   private AlertPanel errorPanel;
 
@@ -69,8 +71,6 @@ public class AddTopicDialog extends AvroUiDialog implements ValueChangeHandler<L
     FlexTable table = new FlexTable();
     table.setCellSpacing(6);
 
-    int row = 0;
-
     Widget label = new Label(Utils.constants.selectNotificationTopics());
     label.addStyleName(Utils.avroUiStyle.requiredField());
     topic = new TopicListBox();
@@ -78,9 +78,9 @@ public class AddTopicDialog extends AvroUiDialog implements ValueChangeHandler<L
     topic.setAcceptableValues(topics);
     topic.addValueChangeHandler(this);
 
-    table.setWidget(row, 0, label);
-    table.setWidget(row, 1, topic);
-    table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    table.setWidget(0, 0, label);
+    table.setWidget(0, 1, topic);
+    table.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 
     dialogContents.add(table);
 
@@ -103,21 +103,23 @@ public class AddTopicDialog extends AvroUiDialog implements ValueChangeHandler<L
     addButton.setEnabled(false);
   }
 
-  public static void showAddTopicDialog(final String endpointGroupId, final AsyncCallback<AddTopicDialog> callback) {
-    KaaAdmin.getDataSource().loadVacantTopicsByEndpointGroupId(endpointGroupId, new AsyncCallback<List<TopicDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        callback.onFailure(caught);
-      }
+  public static void showAddTopicDialog(final String endpointGroupId,
+                                        final AsyncCallback<AddTopicDialog> callback) {
+    KaaAdmin.getDataSource()
+        .loadVacantTopicsByEndpointGroupId(endpointGroupId, new AsyncCallback<List<TopicDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
+          }
 
-      @Override
-      public void onSuccess(List<TopicDto> result) {
-        AddTopicDialog dialog = new AddTopicDialog(endpointGroupId, result);
-        dialog.center();
-        callback.onSuccess(dialog);
-        dialog.show();
-      }
-    });
+          @Override
+          public void onSuccess(List<TopicDto> result) {
+            AddTopicDialog dialog = new AddTopicDialog(endpointGroupId, result);
+            dialog.center();
+            callback.onSuccess(dialog);
+            dialog.show();
+          }
+        });
   }
 
   @Override

@@ -21,6 +21,12 @@ import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
 import org.kaaproject.kaa.avro.avrogen.compiler.ObjectiveCCompiler;
 
 public class Main {
+
+  /**
+   * The main method.
+   *
+   * @param args the input arguments
+   */
   public static void main(String[] args) {
     try {
       if (args.length < 3) {

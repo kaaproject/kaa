@@ -71,7 +71,7 @@ public class ConfigurationSchemaActivity extends
 
   @Override
   protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-    KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null,
         null,
         applicationId,
         ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER,

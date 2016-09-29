@@ -369,7 +369,7 @@ public class DefaultDeltaService implements DeltaService {
 
   private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, String jsonData, String schema, EndpointObjectHash userConfigurationHash) throws IOException {
     byte[] configuration = GenericAvroConverter.toRawData(jsonData, schema);
-    return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
+    return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSha1(configuration),
         userConfigurationHash);
   }
 

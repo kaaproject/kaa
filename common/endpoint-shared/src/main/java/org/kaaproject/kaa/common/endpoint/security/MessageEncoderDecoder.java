@@ -55,13 +55,16 @@ public class MessageEncoderDecoder {
       return cipherForAlgorithm(RSA);
     }
   };
-  private static final ThreadLocal<Signature> SHA1WITH_RSA_SIGNATURE = new ThreadLocal<Signature>() {
+  private static final ThreadLocal<Signature> SHA1WITH_RSA_SIGNATURE = new
+          ThreadLocal<Signature>() {
     @Override
     protected Signature initialValue() {
       return signatureForAlgorithm(SHA1WITH_RSA);
     }
   };
-  private static final ThreadLocal<KeyGenerator> SESSION_KEY_GENERATOR = new ThreadLocal<KeyGenerator>() {
+
+  private static final ThreadLocal<KeyGenerator> SESSION_KEY_GENERATOR = new
+          ThreadLocal<KeyGenerator>() {
     @Override
     protected KeyGenerator initialValue() {
       return keyGeneratorForAlgorithm(SESSION_KEY_ALGORITHM, SESSION_KEY_SIZE);
@@ -90,7 +93,8 @@ public class MessageEncoderDecoder {
    * @param publicKey       the public key
    * @param remotePublicKey the remote public key
    */
-  public MessageEncoderDecoder(PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
+  public MessageEncoderDecoder(
+          PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
     super();
     this.privateKey = privateKey;
     this.publicKey = publicKey;
@@ -106,8 +110,8 @@ public class MessageEncoderDecoder {
   static Cipher cipherForAlgorithm(String algorithm) {
     try {
       return Cipher.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-      LOG.error("Cipher init error", e);
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
+      LOG.error("Cipher init error", ex);
       return null;
     }
   }
@@ -117,8 +121,8 @@ public class MessageEncoderDecoder {
       KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
       keyGen.init(size);
       return keyGen;
-    } catch (NoSuchAlgorithmException e) {
-      LOG.error("Key generator init error", e);
+    } catch (NoSuchAlgorithmException ex) {
+      LOG.error("Key generator init error", ex);
       return null;
     }
   }
@@ -126,12 +130,17 @@ public class MessageEncoderDecoder {
   static Signature signatureForAlgorithm(String algorithm) {
     try {
       return Signature.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException e) {
-      LOG.error("Signature init error", e);
+    } catch (NoSuchAlgorithmException ex) {
+      LOG.error("Signature init error", ex);
       return null;
     }
   }
 
+  /**
+   *  Convert bytes to hex format.
+   * @param   bytes the input bytes
+   * @return  the string of converted bytes in hex format
+   */
   public static String bytesToHex(byte[] bytes) {
     char[] hexChars = new char[bytes.length * 3];
     for (int j = 0; j < bytes.length; j++) {
@@ -312,14 +321,14 @@ public class MessageEncoderDecoder {
 
   /**
    * Cipher Pair holds references for encoding and decoding Ciphers that are initialized with the
-   * same key
+   * same key.
    */
   public static class CipherPair {
     private Cipher decCipher;
     private Cipher encCipher;
 
     /**
-     * Creates enc/dec ciphers based on cipher algorithm and secret key
+     * Creates enc/dec ciphers based on cipher algorithm and secret key.
      *
      * @param algorithm - Cipher algorithm
      * @param secretKey - Secret key

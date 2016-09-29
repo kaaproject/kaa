@@ -71,6 +71,6 @@ public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P 
         ServletHelper.exportCtlSchema(key);
       }
     };
-    KaaAdmin.getDataSource().prepareCTLSchemaExport(ctlSchemaId, method, schemaExportCallback);
+    KaaAdmin.getDataSource().prepareCtlSchemaExport(ctlSchemaId, method, schemaExportCallback);
   }
 }

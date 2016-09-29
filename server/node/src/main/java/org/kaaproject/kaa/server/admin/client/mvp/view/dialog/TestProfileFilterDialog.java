@@ -67,7 +67,9 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
   private TabPanel profileRecordsPanel;
 
   public TestProfileFilterDialog(TestProfileFilterDialogListener listener,
-                                 String endpointProfileSchemaId, String serverProfileSchemaId, String filterBody) {
+                                 String endpointProfileSchemaId,
+                                 String serverProfileSchemaId,
+                                 String filterBody) {
     setWidth("100%");
     setTitle(Utils.constants.testProfileFilter());
 
@@ -80,12 +82,12 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
     dialogContents.getElement().getStyle().setOverflow(Overflow.AUTO);
     setWidget(dialogContents);
 
-    VerticalPanel infoPanel = new VerticalPanel();
-
     matchedPanel = new AlertPanel(AlertPanel.Type.SUCCESS);
     matchedPanel.setVisible(false);
     matchedPanel.setWidth("720px");
     matchedPanel.setMessage(Utils.constants.filterMatched());
+
+    VerticalPanel infoPanel = new VerticalPanel();
     infoPanel.add(matchedPanel);
 
     notMatchedPanel = new AlertPanel(AlertPanel.Type.WARNING);
@@ -112,8 +114,8 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
     profileRecordsPanel = new TabPanel();
     table.setWidget(++row, 0, profileRecordsPanel);
 
-    endpointProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(700).createConfig(),
+    endpointProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(700).createConfig(),
         Utils.constants.schema(), this, false, false);
     endpointProfileRecordPanel.setWidth("750px");
     endpointProfileRecordPanel.getRecordWidget().setForceNavigation(true);
@@ -129,8 +131,8 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
       }
     });
 
-    serverProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(700).createConfig(),
+    serverProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(700).createConfig(),
         Utils.constants.schema(), this, false, false);
 
     serverProfileRecordPanel.setWidth("750px");
@@ -196,8 +198,11 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
   }
 
   public static void showTestProfileFilterDialog(TestProfileFilterDialogListener listener,
-                                                 String endpointProfileSchemaId, String serverProfileSchemaId, String filterBody) {
-    TestProfileFilterDialog dialog = new TestProfileFilterDialog(listener, endpointProfileSchemaId, serverProfileSchemaId, filterBody);
+                                                 String endpointProfileSchemaId,
+                                                 String serverProfileSchemaId,
+                                                 String filterBody) {
+    TestProfileFilterDialog dialog = new TestProfileFilterDialog(
+        listener, endpointProfileSchemaId, serverProfileSchemaId, filterBody);
     dialog.center();
     dialog.show();
   }
@@ -215,37 +220,43 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
 
   private void processLoad() {
     if (Utils.isNotBlank(endpointProfileSchemaId) && endpointProfile == null) {
-      KaaAdmin.getDataSource().getEndpointProfileSchemaInfo(endpointProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
-        @Override
-        public void onFailureImpl(Throwable caught) {
-          Utils.handleException(caught, TestProfileFilterDialog.this);
-        }
+      KaaAdmin.getDataSource()
+          .getEndpointProfileSchemaInfo(
+              endpointProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                  Utils.handleException(caught, TestProfileFilterDialog.this);
+                }
 
-        @Override
-        public void onSuccessImpl(SchemaInfoDto result) {
-          endpointProfile = result;
-          endpointProfileRecordPanel.setValue(result.getSchemaForm());
-          endpointProfileRecordPanel.setTitle(result.getSchemaName());
-          profileRecordsPanel.add(endpointProfileRecordPanel, Utils.constants.endpointProfile());
-          processLoad();
-        }
-      });
+                @Override
+                public void onSuccessImpl(SchemaInfoDto result) {
+                  endpointProfile = result;
+                  endpointProfileRecordPanel.setValue(result.getSchemaForm());
+                  endpointProfileRecordPanel.setTitle(result.getSchemaName());
+                  profileRecordsPanel.add(
+                      endpointProfileRecordPanel, Utils.constants.endpointProfile());
+                  processLoad();
+                }
+              });
     } else if (Utils.isNotBlank(serverProfileSchemaId) && serverProfile == null) {
-      KaaAdmin.getDataSource().getServerProfileSchemaInfo(serverProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
-        @Override
-        public void onFailureImpl(Throwable caught) {
-          Utils.handleException(caught, TestProfileFilterDialog.this);
-        }
+      KaaAdmin.getDataSource()
+          .getServerProfileSchemaInfo(
+              serverProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                  Utils.handleException(caught, TestProfileFilterDialog.this);
+                }
 
-        @Override
-        public void onSuccessImpl(SchemaInfoDto result) {
-          serverProfile = result;
-          serverProfileRecordPanel.setValue(result.getSchemaForm());
-          serverProfileRecordPanel.setTitle(result.getSchemaName());
-          profileRecordsPanel.add(serverProfileRecordPanel, Utils.constants.serverProfile());
-          processLoad();
-        }
-      });
+                @Override
+                public void onSuccessImpl(SchemaInfoDto result) {
+                  serverProfile = result;
+                  serverProfileRecordPanel.setValue(result.getSchemaForm());
+                  serverProfileRecordPanel.setTitle(result.getSchemaName());
+                  profileRecordsPanel.add(
+                      serverProfileRecordPanel, Utils.constants.serverProfile());
+                  processLoad();
+                }
+              });
     } else {
       profileRecordsPanel.selectTab(0);
       if (endpointProfile != null) {
@@ -277,19 +288,25 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
       serverProfileRecord = serverProfileRecordPanel.getValue();
     }
     String filterBody = filterPanel.getValue();
-    KaaAdmin.getDataSource().testProfileFilter(endpointProfileRecord, serverProfileRecord, filterBody, new BusyAsyncCallback<Boolean>() {
+    KaaAdmin.getDataSource()
+        .testProfileFilter(
+            endpointProfileRecord,
+            serverProfileRecord,
+            filterBody,
+            new BusyAsyncCallback<Boolean>() {
 
-      @Override
-      public void onFailureImpl(Throwable caught) {
-        Utils.handleException(caught, TestProfileFilterDialog.this, TestProfileFilterDialog.this);
-      }
+              @Override
+              public void onFailureImpl(Throwable caught) {
+                Utils.handleException(
+                    caught, TestProfileFilterDialog.this, TestProfileFilterDialog.this);
+              }
 
-      @Override
-      public void onSuccessImpl(Boolean result) {
-        matchedPanel.setVisible(result);
-        notMatchedPanel.setVisible(!result);
-      }
-    });
+              @Override
+              public void onSuccessImpl(Boolean result) {
+                matchedPanel.setVisible(result);
+                notMatchedPanel.setVisible(!result);
+              }
+            });
   }
 
   private void clearMessages() {

@@ -178,7 +178,7 @@ public class KaaClientPropertiesStateTest {
   @Test
   public void testProfileHash() throws IOException {
     KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
-    EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
+    EndpointObjectHash hash = EndpointObjectHash.fromSha1(new byte[]{1, 2, 3});
     state.setProfileHash(hash);
     assertEquals(hash, state.getProfileHash());
   }

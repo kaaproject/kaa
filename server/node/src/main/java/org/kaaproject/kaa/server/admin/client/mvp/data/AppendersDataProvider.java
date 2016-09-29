@@ -42,17 +42,18 @@ public class AppendersDataProvider extends AbstractDataProvider<LogAppenderDto, 
   @Override
   protected void loadData(final LoadCallback callback) {
     if (!isEmpty(applicationId)) {
-      KaaAdmin.getDataSource().loadLogAppenders(applicationId, new AsyncCallback<List<LogAppenderDto>>() {
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
-        }
+      KaaAdmin.getDataSource().loadLogAppenders(
+          applicationId, new AsyncCallback<List<LogAppenderDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
+            }
 
-        @Override
-        public void onSuccess(List<LogAppenderDto> result) {
-          callback.onSuccess(result);
-        }
-      });
+            @Override
+            public void onSuccess(List<LogAppenderDto> result) {
+              callback.onSuccess(result);
+            }
+          });
     }
   }
 }

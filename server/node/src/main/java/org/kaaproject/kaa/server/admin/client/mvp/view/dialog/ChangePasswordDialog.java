@@ -61,8 +61,6 @@ public class ChangePasswordDialog extends AvroUiDialog {
 
     this.username = username;
 
-    InputChangeHandler handler = new InputChangeHandler(listener);
-
     setWidth("500px");
 
     setTitle(Utils.constants.changePassword());
@@ -90,6 +88,7 @@ public class ChangePasswordDialog extends AvroUiDialog {
     oldPassword = new ExtendedPasswordTextBox();
     table.setWidget(row, 0, label);
     table.setWidget(row, 1, oldPassword);
+    InputChangeHandler handler = new InputChangeHandler(listener);
     oldPassword.addInputHandler(handler);
     oldPassword.addKeyDownHandler(handler);
 
@@ -132,7 +131,9 @@ public class ChangePasswordDialog extends AvroUiDialog {
     changePasswordButton.setEnabled(false);
   }
 
-  public static ChangePasswordDialog showChangePasswordDialog(Listener listener, String username, String message) {
+  public static ChangePasswordDialog showChangePasswordDialog(Listener listener,
+                                                              String username,
+                                                              String message) {
     ChangePasswordDialog dialog = new ChangePasswordDialog(listener, username, message);
     dialog.center();
     dialog.show();
@@ -165,20 +166,21 @@ public class ChangePasswordDialog extends AvroUiDialog {
     if (validatePasswords()) {
       String oldPasswordText = oldPassword.getValue();
       String newPasswordText = newPassword.getValue();
-      authService.changePassword(username, oldPasswordText, newPasswordText, new AsyncCallback<ResultCode>() {
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
-        }
+      authService.changePassword(
+          username, oldPasswordText, newPasswordText, new AsyncCallback<ResultCode>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
+            }
 
-        @Override
-        public void onSuccess(ResultCode result) {
-          if (ResultCode.OK != result) {
-            setError(Utils.constants.getString(result.getResourceKey()));
-          }
-          callback.onSuccess(result);
-        }
-      });
+            @Override
+            public void onSuccess(ResultCode result) {
+              if (ResultCode.OK != result) {
+                setError(Utils.constants.getString(result.getResourceKey()));
+              }
+              callback.onSuccess(result);
+            }
+          });
     }
   }
 

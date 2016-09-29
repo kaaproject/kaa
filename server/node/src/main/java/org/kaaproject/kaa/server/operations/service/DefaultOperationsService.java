@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -691,7 +691,7 @@ public class DefaultOperationsService implements OperationsService {
 
   @Override
   public void setPublicKey(PublicKey publicKey) {
-    operationServerHash = Base64Util.encode(SHA1HashUtils.hashToBytes(publicKey.getEncoded()));
+    operationServerHash = Base64Util.encode(Sha1HashUtils.hashToBytes(publicKey.getEncoded()));
   }
 
   @Override

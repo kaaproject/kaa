@@ -180,7 +180,8 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
 
     detailsTable.setWidget(8, 2, addEcfVersionButton);
     addEcfVersionButton.getElement().getParentElement().getStyle().setPropertyPx("paddingTop", 15);
-    detailsTable.getCellFormatter().setHorizontalAlignment(8, 2, HasHorizontalAlignment.ALIGN_RIGHT);
+    detailsTable.getCellFormatter().setHorizontalAlignment(
+        8, 2, HasHorizontalAlignment.ALIGN_RIGHT);
 
     ecfVersionsLabel.setVisible(!create);
     ecfVersionsGrid.setVisible(!create);

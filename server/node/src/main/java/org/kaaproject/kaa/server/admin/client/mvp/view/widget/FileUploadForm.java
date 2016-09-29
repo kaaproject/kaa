@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.admin.client.util.GUID;
 
 public class FileUploadForm extends FormPanel {
 
-  public final static String KAA_FILE_UPLOAD_SERVLET_PATH = "servlet/kaaFileUploadServlet";
+  public static final String KAA_FILE_UPLOAD_SERVLET_PATH = "servlet/kaaFileUploadServlet";
 
   private FileUpload fu = new FileUpload();
 

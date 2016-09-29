@@ -19,13 +19,13 @@
  */
 package org.kaaproject.kaa.server.transports.http.transport.commands;
 
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 
 /**
  * The Class SyncCommand.
  */
-public class SyncCommand extends AbstractHttpSyncCommand implements CommonEPConstans {
+public class SyncCommand extends AbstractHttpSyncCommand implements CommonEpConstans {
 
   /**
    * Instantiates a new sync command.

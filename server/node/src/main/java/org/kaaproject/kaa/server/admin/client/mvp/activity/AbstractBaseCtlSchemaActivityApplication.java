@@ -76,7 +76,7 @@ public abstract class AbstractBaseCtlSchemaActivityApplication<S extends BaseSch
           goTo(newCtlPlace);
         }
       }));
-      KaaAdmin.getDataSource().getAvailableApplicationCTLSchemaReferences(applicationId,
+      KaaAdmin.getDataSource().getAvailableApplicationCtlSchemaReferences(applicationId,
           new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
             @Override
             public void onFailureImpl(Throwable caught) {

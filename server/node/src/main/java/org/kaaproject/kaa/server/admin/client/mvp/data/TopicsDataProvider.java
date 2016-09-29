@@ -58,18 +58,19 @@ public class TopicsDataProvider extends AbstractDataProvider<TopicDto, String> {
         }
       });
     } else if (!isEmpty(endpointGroupId)) {
-      KaaAdmin.getDataSource().loadTopicsByEndpointGroupId(endpointGroupId, new AsyncCallback<List<TopicDto>>() {
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
+      KaaAdmin.getDataSource().loadTopicsByEndpointGroupId(
+          endpointGroupId, new AsyncCallback<List<TopicDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
 
-        }
+            }
 
-        @Override
-        public void onSuccess(List<TopicDto> result) {
-          callback.onSuccess(result);
-        }
-      });
+            @Override
+            public void onSuccess(List<TopicDto> result) {
+              callback.onSuccess(result);
+            }
+          });
     }
   }
 

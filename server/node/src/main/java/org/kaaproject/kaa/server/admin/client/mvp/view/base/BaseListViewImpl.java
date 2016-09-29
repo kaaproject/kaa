@@ -41,7 +41,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ImageTextButton;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite implements BaseListView<T> {
+public abstract class BaseListViewImpl<T extends HasId>
+    extends ResizeComposite
+    implements BaseListView<T> {
 
   private static BaseListViewImplUiBinder uiBinder = GWT.create(BaseListViewImplUiBinder.class);
   @UiField(provided = true)

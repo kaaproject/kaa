@@ -39,7 +39,8 @@ public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto>
   @Override
   protected float constructActions(DataGrid<ConfigurationSchemaDto> table, float prefWidth) {
     float result = super.constructActions(table, prefWidth);
-    if (!embedded && (downloadBaseSchemaColumn == null || table.getColumnIndex(downloadBaseSchemaColumn) == -1)) {
+    if (!embedded && (downloadBaseSchemaColumn == null
+        || table.getColumnIndex(downloadBaseSchemaColumn) == -1)) {
       Header<SafeHtml> downloadBaseSchemaHeader = new SafeHtmlHeader(
           SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadBaseSchema()));
 
@@ -49,7 +50,8 @@ public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto>
       result += ACTION_COLUMN_WIDTH;
     }
 
-    if (!embedded && (downloadOverrideSchemaColumn == null || table.getColumnIndex(downloadOverrideSchemaColumn) == -1)) {
+    if (!embedded && (downloadOverrideSchemaColumn == null
+        || table.getColumnIndex(downloadOverrideSchemaColumn) == -1)) {
       Header<SafeHtml> downloadOverrideSchemaHeader = new SafeHtmlHeader(
           SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadOverrideSchema()));
 
@@ -61,13 +63,16 @@ public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto>
     return result;
   }
 
-  private Column<ConfigurationSchemaDto, ConfigurationSchemaDto> constructDownloadBaseSchemaColumnColumn(String text) {
-    ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
+  private Column<ConfigurationSchemaDto, ConfigurationSchemaDto>
+  constructDownloadBaseSchemaColumnColumn(String text) {
+    ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(
+        Utils.resources.download_grey(), text, embedded,
         new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
           @Override
           public void onItemAction(ConfigurationSchemaDto value) {
             Integer schemaVersion = value.getVersion();
-            RowActionEvent<String> rowDownloadBaseSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_BASE_SCHEMA);
+            RowActionEvent<String> rowDownloadBaseSchemaEvent = new RowActionEvent<>(
+                String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_BASE_SCHEMA);
             fireEvent(rowDownloadBaseSchemaEvent);
           }
         }, new ActionButtonCell.ActionValidator<ConfigurationSchemaDto>() {
@@ -86,13 +91,16 @@ public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto>
   }
 
 
-  private Column<ConfigurationSchemaDto, ConfigurationSchemaDto> constructDownloadOverrideSchemaColumnColumn(String text) {
-    ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
+  private Column<ConfigurationSchemaDto, ConfigurationSchemaDto>
+  constructDownloadOverrideSchemaColumnColumn(String text) {
+    ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(
+        Utils.resources.download_grey(), text, embedded,
         new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
           @Override
           public void onItemAction(ConfigurationSchemaDto value) {
             Integer schemaVersion = value.getVersion();
-            RowActionEvent<String> rowDownloadOverrideSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_OVERRIDE_SCHEMA);
+            RowActionEvent<String> rowDownloadOverrideSchemaEvent = new RowActionEvent<>(
+                String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_OVERRIDE_SCHEMA);
             fireEvent(rowDownloadOverrideSchemaEvent);
           }
         }, new ActionButtonCell.ActionValidator<ConfigurationSchemaDto>() {

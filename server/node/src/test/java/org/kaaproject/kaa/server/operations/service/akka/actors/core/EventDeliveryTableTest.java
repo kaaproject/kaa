@@ -31,9 +31,9 @@ public class EventDeliveryTableTest {
   @Test
   public void testEventDeliveryTable() {
     EventDeliveryTable table = new EventDeliveryTable();
-    EndpointEvent event = new EndpointEvent(EndpointObjectHash.fromSHA1("sender"), new Event(1, "eventClassFQN", ByteBuffer.wrap(new byte[3]), "sender", "target"));
-    RouteTableAddress routeAddress = new RouteTableAddress(EndpointObjectHash.fromSHA1("target"), "applicationToken");
-    RouteTableAddress routeAddress2 = new RouteTableAddress(EndpointObjectHash.fromSHA1("target2"), "applicationToken");
+    EndpointEvent event = new EndpointEvent(EndpointObjectHash.fromSha1("sender"), new Event(1, "eventClassFQN", ByteBuffer.wrap(new byte[3]), "sender", "target"));
+    RouteTableAddress routeAddress = new RouteTableAddress(EndpointObjectHash.fromSha1("target"), "applicationToken");
+    RouteTableAddress routeAddress2 = new RouteTableAddress(EndpointObjectHash.fromSha1("target2"), "applicationToken");
 
     Assert.assertFalse(table.clear(event));
     table.registerDeliveryAttempt(event, routeAddress);

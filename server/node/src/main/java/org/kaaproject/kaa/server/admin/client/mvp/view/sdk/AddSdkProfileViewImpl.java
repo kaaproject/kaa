@@ -52,7 +52,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdkProfileView, ValueChangeHandler<VersionDto> {
+public class AddSdkProfileViewImpl
+    extends BaseDetailsViewImpl
+    implements AddSdkProfileView, ValueChangeHandler<VersionDto> {
 
   private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
@@ -81,55 +83,48 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
 
   @Override
   protected void initDetailsTable() {
-
     detailsTable.getColumnFormatter().setWidth(0, "250px");
     detailsTable.getColumnFormatter().setWidth(1, "500px");
 
-    int row = 0;
     Widget label = new Label(Utils.constants.name());
     label.addStyleName(REQUIRED);
     name = new KaaAdminSizedTextBox(256);
     name.addInputHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, name);
+    detailsTable.setWidget(0, 0, label);
+    detailsTable.setWidget(0, 1, name);
 
-    row++;
     label = new Label(Utils.constants.configurationSchemaVersion());
     label.addStyleName(REQUIRED);
     configurationSchemaVersion = new VersionListBox();
     configurationSchemaVersion.setWidth("80px");
     configurationSchemaVersion.addValueChangeHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, configurationSchemaVersion);
+    detailsTable.setWidget(1, 0, label);
+    detailsTable.setWidget(1, 1, configurationSchemaVersion);
 
-    row++;
     label = new Label(Utils.constants.profileSchemaVersion());
     label.addStyleName(REQUIRED);
     profileSchemaVersion = new VersionListBox();
     profileSchemaVersion.setWidth("80px");
     profileSchemaVersion.addValueChangeHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, profileSchemaVersion);
+    detailsTable.setWidget(2, 0, label);
+    detailsTable.setWidget(2, 1, profileSchemaVersion);
 
-    row++;
     label = new Label(Utils.constants.notificationSchemaVersion());
     label.addStyleName(REQUIRED);
     notificationSchemaVersion = new VersionListBox();
     notificationSchemaVersion.setWidth("80px");
     notificationSchemaVersion.addValueChangeHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, notificationSchemaVersion);
+    detailsTable.setWidget(3, 0, label);
+    detailsTable.setWidget(3, 1, notificationSchemaVersion);
 
-    row++;
     label = new Label(Utils.constants.logSchemaVersion());
     label.addStyleName(REQUIRED);
     logSchemaVersion = new VersionListBox();
     logSchemaVersion.setWidth("80px");
     logSchemaVersion.addValueChangeHandler(this);
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, logSchemaVersion);
+    detailsTable.setWidget(4, 0, label);
+    detailsTable.setWidget(4, 1, logSchemaVersion);
 
-    row++;
     FlexTable ecfsTable = new FlexTable();
     ecfsTable.setCellSpacing(6);
 
@@ -201,10 +196,9 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         updateAefMapButtons();
       }
     });
-    detailsTable.setWidget(row, 0, ecfsDisclosure);
-    detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+    detailsTable.setWidget(5, 0, ecfsDisclosure);
+    detailsTable.getFlexCellFormatter().setColSpan(5, 0, 2);
 
-    row++;
     label = new Label(Utils.constants.defaultUserVerifier());
     Renderer<UserVerifierDto> userVerifierRenderer = new Renderer<UserVerifierDto>() {
       @Override
@@ -228,8 +222,8 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         fireChanged();
       }
     });
-    detailsTable.setWidget(row, 0, label);
-    detailsTable.setWidget(row, 1, defaultUserVerifier);
+    detailsTable.setWidget(6, 0, label);
+    detailsTable.setWidget(6, 1, defaultUserVerifier);
   }
 
   @Override
@@ -367,8 +361,10 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
   }
 
   private void updateAefMapButtons() {
-    boolean availableSelected = availableAefMaps.getValue() != null && !availableAefMaps.getValue().isEmpty();
-    boolean selectedSelected = selectedAefMaps.getValue() != null && !selectedAefMaps.getValue().isEmpty();
+    boolean availableSelected = availableAefMaps.getValue() != null
+        && !availableAefMaps.getValue().isEmpty();
+    boolean selectedSelected = selectedAefMaps.getValue() != null
+        && !selectedAefMaps.getValue().isEmpty();
     addAefMapButton.setEnabled(availableSelected);
     removeAefMapButton.setEnabled(selectedSelected);
   }

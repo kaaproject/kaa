@@ -92,35 +92,35 @@ public class SdkProfileViewImpl extends BaseDetailsViewImpl implements SdkProfil
     detailsTable.setWidget(row, 0, sdkDateCreatedLabel);
     detailsTable.setWidget(row++, 1, sdkDateCreated);
 
-    Label sdkConfigurationVersionLabel = new Label(Utils.constants.configurationSchema());
     sdkConfigurationVersion = new Anchor();
     sdkConfigurationVersion.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     sdkConfigurationVersion.setWidth("100%");
     detailsTable.getFlexCellFormatter().setHeight(row, 0, "40px");
+    Label sdkConfigurationVersionLabel = new Label(Utils.constants.configurationSchema());
     detailsTable.setWidget(row, 0, sdkConfigurationVersionLabel);
     detailsTable.setWidget(row++, 1, sdkConfigurationVersion);
 
-    Label sdkProfileVersionLabel = new Label(Utils.constants.profileSchema());
     sdkProfileVersion = new Anchor();
     sdkProfileVersion.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     sdkProfileVersion.setWidth("100%");
     detailsTable.getFlexCellFormatter().setHeight(row, 0, "40px");
+    Label sdkProfileVersionLabel = new Label(Utils.constants.profileSchema());
     detailsTable.setWidget(row, 0, sdkProfileVersionLabel);
     detailsTable.setWidget(row++, 1, sdkProfileVersion);
 
-    Label sdkNotificationVersionLabel = new Label(Utils.constants.notificationSchema());
     sdkNotificationVersion = new Anchor();
     sdkNotificationVersion.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     sdkNotificationVersion.setWidth("100%");
     detailsTable.getFlexCellFormatter().setHeight(row, 0, "40px");
+    Label sdkNotificationVersionLabel = new Label(Utils.constants.notificationSchema());
     detailsTable.setWidget(row, 0, sdkNotificationVersionLabel);
     detailsTable.setWidget(row++, 1, sdkNotificationVersion);
 
-    Label sdkLoggingVersionLabel = new Label(Utils.constants.logSchema());
     sdkLoggingVersion = new Anchor();
     sdkLoggingVersion.getElement().getStyle().setCursor(Style.Cursor.POINTER);
     sdkLoggingVersion.setWidth("100%");
     detailsTable.getFlexCellFormatter().setHeight(row, 0, "40px");
+    Label sdkLoggingVersionLabel = new Label(Utils.constants.logSchema());
     detailsTable.setWidget(row, 0, sdkLoggingVersionLabel);
     detailsTable.setWidget(row++, 1, sdkLoggingVersion);
 
@@ -128,7 +128,10 @@ public class SdkProfileViewImpl extends BaseDetailsViewImpl implements SdkProfil
     sdkAefMapsGrid.setSize("700px", "200px");
     Label sdkAefMapsGridLabel = new Label(Utils.constants.aefMaps());
     detailsTable.setWidget(++row, 0, sdkAefMapsGridLabel);
-    sdkAefMapsGridLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+    sdkAefMapsGridLabel.getElement()
+        .getParentElement()
+        .getStyle()
+        .setPropertyPx("paddingBottom", 10);
     detailsTable.setWidget(++row, 0, sdkAefMapsGrid);
     sdkAefMapsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
     detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);

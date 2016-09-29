@@ -30,16 +30,16 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implements EcfVersionView {
 
   @UiField
-  public final ImageTextButton addECButton;
+  public final ImageTextButton addEcButton;
 
   public EcfVersionViewImpl(boolean editable) {
     super(true);
-    this.addECButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
-    addECButton.setVisible(editable);
+    this.addEcButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());
+    addEcButton.setVisible(editable);
     addButton.setVisible(editable);
     supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
     supportPanel.setWidth("300px");
-    supportPanel.add(addECButton);
+    supportPanel.add(addEcButton);
   }
 
   @Override
@@ -68,7 +68,7 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
 
   @Override
   public Button addButtonEventClass() {
-    return addECButton;
+    return addEcButton;
   }
 
   @Override

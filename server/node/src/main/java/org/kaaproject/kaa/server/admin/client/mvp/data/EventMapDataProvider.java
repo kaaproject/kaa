@@ -53,25 +53,28 @@ public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventM
   @Override
   protected void loadData(final LoadCallback callback) {
     if (this.eventMaps == null && ecf != null) {
-      KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(ecf.getEcfId(), ecf.getVersion(), EventClassType.EVENT, new AsyncCallback<List<EventClassDto>>() {
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
-        }
+      KaaAdmin.getDataSource()
+          .getEventClassesByFamilyIdVersionAndType(
+              ecf.getEcfId(), ecf.getVersion(), EventClassType.EVENT,
+              new AsyncCallback<List<EventClassDto>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                  callback.onFailure(caught);
+                }
 
-        @Override
-        public void onSuccess(List<EventClassDto> result) {
-          List<ApplicationEventMapDto> eventMaps = new ArrayList<>(result.size());
-          for (EventClassDto eventClass : result) {
-            ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
-            eventMap.setEventClassId(eventClass.getId());
-            eventMap.setFqn(eventClass.getFqn());
-            eventMap.setAction(ApplicationEventAction.BOTH);
-            eventMaps.add(eventMap);
-          }
-          callback.onSuccess(eventMaps);
-        }
-      });
+                @Override
+                public void onSuccess(List<EventClassDto> result) {
+                  List<ApplicationEventMapDto> eventMaps = new ArrayList<>(result.size());
+                  for (EventClassDto eventClass : result) {
+                    ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
+                    eventMap.setEventClassId(eventClass.getId());
+                    eventMap.setFqn(eventClass.getFqn());
+                    eventMap.setAction(ApplicationEventAction.BOTH);
+                    eventMaps.add(eventMap);
+                  }
+                  callback.onSuccess(eventMaps);
+                }
+              });
     } else if (this.eventMaps != null) {
       callback.onSuccess(this.eventMaps);
     } else {

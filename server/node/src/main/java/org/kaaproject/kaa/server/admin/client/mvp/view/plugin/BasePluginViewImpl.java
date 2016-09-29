@@ -65,11 +65,11 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
     authorLabel.setVisible(!create);
     createdUsername.setVisible(!create);
 
-    Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
     createdDateTime = new KaaAdminSizedTextBox(-1, false);
     createdDateTime.setWidth(FULL_WIDTH);
 
     idx++;
+    Label dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
     detailsTable.setWidget(idx, 0, dateTimeCreatedLabel);
     detailsTable.setWidget(idx, 1, createdDateTime);
 
@@ -97,7 +97,6 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
     detailsTable.getCellFormatter().setVerticalAlignment(6, 0, HasVerticalAlignment.ALIGN_TOP);
     description.addInputHandler(this);
 
-    Label typeLabel = new Label(Utils.constants.type());
     pluginInfo = new PluginInfoListBox();
     pluginInfo.setEnabled(create);
     pluginInfo.addValueChangeHandler(new ValueChangeHandler<PluginInfoDto>() {
@@ -108,14 +107,15 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
     });
 
     idx++;
+    Label typeLabel = new Label(Utils.constants.type());
     detailsTable.setWidget(idx, 0, typeLabel);
     detailsTable.setWidget(idx, 1, pluginInfo);
 
     getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
     getFooter().setWidth("1000px");
 
-    configuration = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900).createConfig(),
+    configuration = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(900).createConfig(),
         Utils.constants.configuration(), this, !create, false);
     configuration.addValueChangeHandler(this);
     getFooter().add(configuration);

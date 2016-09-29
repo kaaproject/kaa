@@ -36,8 +36,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * The Class AvroByteArrayConverter is used to convert {#link org.apache.avro.generic.GenericContainer
- * specific avro records} to/from bytes. NOT Thread safe.
+ * The Class AvroByteArrayConverter is used to convert
+ * {#link org.apache.avro.generic.GenericContainer specific avro records} to/from bytes.
+ * NOT Thread safe.
  *
  * @param <T> the generic type that extends GenericContainer
  */
@@ -78,7 +79,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
   }
 
   /**
-   * Convert binary data using schema to Json
+   * Convert binary data using schema to Json.
    *
    * @param rawData    the encoded data
    * @param dataSchema the encoded data schema
@@ -86,22 +87,23 @@ public class GenericAvroConverter<T extends GenericContainer> {
    */
   public static String toJson(byte[] rawData, String dataSchema) {
     Schema schema = new Schema.Parser().parse(dataSchema);
-    GenericAvroConverter<GenericContainer> converter = new GenericAvroConverter<GenericContainer>(schema);
+    GenericAvroConverter<GenericContainer> converter = new
+            GenericAvroConverter<GenericContainer>(schema);
 
     String json;
 
     try {
       GenericContainer record = converter.decodeBinary(rawData);
       json = converter.encodeToJson(record);
-    } catch (IOException e) {
-      LOG.warn("Can't parse json data", e);
-      throw new RuntimeException(e); //NOSONAR
+    } catch (IOException ex) {
+      LOG.warn("Can't parse json data", ex);
+      throw new RuntimeException(ex); //NOSONAR
     }
     return json;
   }
 
   /**
-   * Convert json string using schema to binary data
+   * Convert json string using schema to binary data.
    *
    * @param json       the json string
    * @param dataSchema the encoded data schema
@@ -109,16 +111,17 @@ public class GenericAvroConverter<T extends GenericContainer> {
    */
   public static byte[] toRawData(String json, String dataSchema) {
     Schema schema = new Schema.Parser().parse(dataSchema);
-    GenericAvroConverter<GenericContainer> converter = new GenericAvroConverter<GenericContainer>(schema);
+    GenericAvroConverter<GenericContainer> converter = new
+            GenericAvroConverter<GenericContainer>(schema);
 
     byte[] rawData;
 
     try {
       GenericContainer record = converter.decodeJson(json);
       rawData = converter.encode(record);
-    } catch (IOException e) {
-      LOG.warn("Can't parse json data", e);
-      throw new RuntimeException(e); //NOSONAR
+    } catch (IOException ex) {
+      LOG.warn("Can't parse json data", ex);
+      throw new RuntimeException(ex); //NOSONAR
     }
     return rawData;
   }

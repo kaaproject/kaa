@@ -344,7 +344,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
     md.setSdkToken(SDK_TOKEN);
     request.setClientSyncMetaData(md);
 
@@ -378,7 +378,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
     md.setSdkToken(SDK_TOKEN);
     request.setClientSyncMetaData(md);
 
@@ -423,8 +423,8 @@ public class OperationsServiceIT extends AbstractTest {
     ClientSync request = new ClientSync();
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(oldProfile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(oldProfile).getData()));
     md.setSdkToken(SDK_TOKEN);
     request.setClientSyncMetaData(md);
 
@@ -461,8 +461,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
@@ -489,8 +489,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
@@ -523,8 +523,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     NotificationClientSync nfSyncRequest = new NotificationClientSync();
@@ -556,8 +556,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     NotificationClientSync nfSyncRequest = new NotificationClientSync();
@@ -596,7 +596,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY2).getData()));
     md.setSdkToken(SDK_TOKEN);
     request.setClientSyncMetaData(md);
 
@@ -630,8 +630,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     UserClientSync userRequest = new UserClientSync();
@@ -671,8 +671,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     UserClientSync userRequest = new UserClientSync();
@@ -710,12 +710,12 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     UserClientSync userRequest = new UserClientSync();
-    userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
+    userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSha1(ENDPOINT_KEY2).getData()))));
     request.setUserSync(userRequest);
 
     SyncContext context = createContext(request);
@@ -748,13 +748,13 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     UserClientSync userRequest = new UserClientSync();
     userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
-    userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
+    userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSha1(ENDPOINT_KEY2).getData()))));
     request.setUserSync(userRequest);
 
     profileDto.setEndpointUserId(userDto.getId());
@@ -786,8 +786,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     ClientSyncMetaData md = new ClientSyncMetaData();
     md.setApplicationToken(application.getApplicationToken());
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(ENDPOINT_KEY).getData()));
+    md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSha1(profile).getData()));
     request.setClientSyncMetaData(md);
 
     EventClientSync eventRequest = new EventClientSync();

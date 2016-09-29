@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,24 +32,26 @@ public class TenantAdminDataProvider extends AbstractDataProvider<UserDto, Strin
   private String tenantId;
 
 
-  public TenantAdminDataProvider(AbstractGrid<UserDto, String> dataGrid, HasErrorMessage hasErrorMessage, String tenantId) {
+  public TenantAdminDataProvider(AbstractGrid<UserDto, String> dataGrid,
+                                 HasErrorMessage hasErrorMessage, String tenantId) {
     super(dataGrid, hasErrorMessage);
     this.tenantId = tenantId;
   }
 
   @Override
   protected void loadData(final LoadCallback callback) {
-    KaaAdmin.getDataSource().loadAllTenantAdminsByTenantId(tenantId, new AsyncCallback<List<UserDto>>() {
-      @Override
-      public void onFailure(Throwable throwable) {
-        callback.onFailure(throwable);
-      }
+    KaaAdmin.getDataSource().loadAllTenantAdminsByTenantId(
+        tenantId, new AsyncCallback<List<UserDto>>() {
+          @Override
+          public void onFailure(Throwable throwable) {
+            callback.onFailure(throwable);
+          }
 
-      @Override
-      public void onSuccess(List<UserDto> userDtos) {
-        callback.onSuccess(userDtos);
-      }
-    });
+          @Override
+          public void onSuccess(List<UserDto> userDtos) {
+            callback.onSuccess(userDtos);
+          }
+        });
   }
 
   public String getTenantId() {
