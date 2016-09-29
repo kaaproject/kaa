@@ -34,6 +34,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.web.bindery.event.shared.EventBus;
 
+import jline.internal.Log;
+
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto.Result;
@@ -89,7 +91,8 @@ public class KaaAdmin implements EntryPoint {
   }
 
   public static void signOut() {
-    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, GWT.getModuleBaseURL() + "j_spring_security_logout");
+    RequestBuilder builder = new RequestBuilder(
+        RequestBuilder.POST, GWT.getModuleBaseURL() + "j_spring_security_logout");
     try {
       builder.sendRequest(null, new RequestCallback() {
         @Override
@@ -103,7 +106,8 @@ public class KaaAdmin implements EntryPoint {
           redirectToModule("..");
         }
       });
-    } catch (RequestException e) {
+    } catch (RequestException ex) {
+      GWT.log("Exception: " + ex.getMessage());
     }
   }
 
@@ -154,14 +158,14 @@ public class KaaAdmin implements EntryPoint {
 
     dataSource = new DataSource(eventBus);
 
-    PlaceController placeController = clientFactory.getPlaceController();
-
     ActivityMapper headerActivityMapper = new HeaderActivityMapper(clientFactory);
     ActivityManager headerActivityManager = new ActivityManager(headerActivityMapper, eventBus);
     headerActivityManager.setDisplay(appWidget.getAppHeaderHolder());
 
-    ActivityMapper navigationActivityMapper = new NavigationActivityMapper(clientFactory, eventBus);
-    ActivityManager navigationActivityManager = new ActivityManager(navigationActivityMapper, eventBus);
+    ActivityMapper navigationActivityMapper = new NavigationActivityMapper(
+        clientFactory, eventBus);
+    ActivityManager navigationActivityManager = new ActivityManager(
+        navigationActivityMapper, eventBus);
     navigationActivityManager.setDisplay(appWidget.getNavContentHolder());
 
     ActivityMapper appActivityMapper = new AppActivityMapper(clientFactory);
@@ -186,7 +190,8 @@ public class KaaAdmin implements EntryPoint {
         historyMapper = GWT.create(TenantUserPlaceHistoryMapper.class);
         clientFactory.setHomePlace(new ApplicationsPlace());
         break;
-
+      default:
+        break;
     }
 
     PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(historyMapper);
@@ -198,6 +203,7 @@ public class KaaAdmin implements EntryPoint {
       place = new ApplicationsPlace();
     }
 
+    PlaceController placeController = clientFactory.getPlaceController();
     historyHandler.register(placeController, eventBus, place);
 
     RootLayoutPanel.get().add(appWidget);

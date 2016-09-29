@@ -59,7 +59,8 @@ public class ProfileSchemaPlace extends AbstractSchemaPlaceApplication {
   }
 
   @Prefix(value = "profSchema")
-  public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<ProfileSchemaPlace> {
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<ProfileSchemaPlace> {
 
     @Override
     protected ProfileSchemaPlace getPlaceImpl(String applicationId,

@@ -135,9 +135,12 @@ public class ClientFactoryImpl implements ClientFactory {
   private final TenantView createTenantView = new TenantViewImpl(true);
   private final TenantView tenantView = new TenantViewImpl(false);
 
-  private final BaseListView<ApplicationDto> applicationsView = new ApplicationsViewImpl(KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
-  private final ApplicationView createApplicationView = new ApplicationViewImpl(true, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
-  private final ApplicationView applicationView = new ApplicationViewImpl(false, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
+  private final BaseListView<ApplicationDto> applicationsView =
+      new ApplicationsViewImpl(KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
+  private final ApplicationView createApplicationView =
+      new ApplicationViewImpl(true, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
+  private final ApplicationView applicationView =
+      new ApplicationViewImpl(false, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
 
   private final BaseListView<SdkProfileDto> sdkProfilesView = new SdkProfilesViewImpl();
   private final SdkProfileView sdkProfileView = new SdkProfileViewImpl();
@@ -147,21 +150,33 @@ public class ClientFactoryImpl implements ClientFactory {
   private final UserView createUserView = new UserViewImpl(true);
   private final UserView userView = new UserViewImpl(false);
 
-  private final BaseListView<EndpointProfileSchemaDto> profileSchemasView = new ProfileSchemasViewImpl();
-  private final BaseCtlSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
-  private final BaseCtlSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
+  private final BaseListView<EndpointProfileSchemaDto> profileSchemasView =
+      new ProfileSchemasViewImpl();
+  private final BaseCtlSchemaView profileSchemaView =
+      new ProfileSchemaViewImpl(false);
+  private final BaseCtlSchemaView createProfileSchemaView =
+      new ProfileSchemaViewImpl(true);
 
-  private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
-  private final BaseCtlSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
-  private final BaseCtlSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
+  private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView =
+      new ServerProfileSchemasViewImpl();
+  private final BaseCtlSchemaView serverProfileSchemaView =
+      new ServerProfileSchemaViewImpl(false);
+  private final BaseCtlSchemaView createServerProfileSchemaView =
+      new ServerProfileSchemaViewImpl(true);
 
-  private final BaseListView<ConfigurationSchemaDto> configurationSchemasView = new ConfigurationSchemasViewImpl();
-  private final BaseCtlSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
-  private final BaseCtlSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
+  private final BaseListView<ConfigurationSchemaDto> configurationSchemasView =
+      new ConfigurationSchemasViewImpl();
+  private final BaseCtlSchemaView configurationSchemaView =
+      new ConfigurationSchemaViewImpl(false);
+  private final BaseCtlSchemaView createConfigurationSchemaView =
+      new ConfigurationSchemaViewImpl(true);
 
-  private final BaseListView<NotificationSchemaDto> notificationSchemasView = new NotificationSchemasViewImpl();
-  private final BaseCtlSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
-  private final BaseCtlSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
+  private final BaseListView<NotificationSchemaDto> notificationSchemasView =
+      new NotificationSchemasViewImpl();
+  private final BaseCtlSchemaView notificationSchemaView =
+      new NotificationSchemaViewImpl(false);
+  private final BaseCtlSchemaView createNotificationSchemaView =
+      new NotificationSchemaViewImpl(true);
 
   private final BaseListView<LogSchemaDto> logSchemasView = new LogSchemasViewImpl();
   private final BaseCtlSchemaView logSchemaView = new LogSchemaViewImpl(false);
@@ -217,7 +232,8 @@ public class ClientFactoryImpl implements ClientFactory {
 
   private final CtlSchemaView createCtlSchemaView = new CtlSchemaViewImpl(true, true);
   private final CtlSchemaView editCtlSchemaView = new CtlSchemaViewImpl(false, true);
-  private final CtlSchemaView editApplicationCtlSchemaView = new ApplicationCtlSchemaViewImpl(false, true);
+  private final CtlSchemaView editApplicationCtlSchemaView =
+      new ApplicationCtlSchemaViewImpl(false, true);
   private final CtlSchemaView viewCtlSchemaView = new CtlSchemaViewImpl(false, false);
 
   private Place homePlace;

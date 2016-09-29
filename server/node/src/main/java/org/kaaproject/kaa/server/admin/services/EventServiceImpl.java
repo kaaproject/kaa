@@ -56,30 +56,34 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       return controlService.getEventClassFamiliesByTenantId(getTenantId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws KaaAdminServiceException {
+  public EventClassFamilyDto getEventClassFamily(String eventClassFamilyId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
-      EventClassFamilyDto eventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
+      EventClassFamilyDto eventClassFamily =
+          controlService.getEventClassFamily(eventClassFamilyId);
       Utils.checkNotNull(eventClassFamily);
       checkTenantId(eventClassFamily.getTenantId());
       return eventClassFamily;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
+  public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       if (!isEmpty(eventClassFamily.getId())) {
-        EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamily.getId());
+        EventClassFamilyDto storedEventClassFamily =
+            controlService.getEventClassFamily(eventClassFamily.getId());
         Utils.checkNotNull(storedEventClassFamily);
         checkTenantId(storedEventClassFamily.getTenantId());
       } else {
@@ -88,61 +92,71 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       }
       eventClassFamily.setTenantId(getTenantId());
       return controlService.editEventClassFamily(eventClassFamily);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
+  public void addEventClassFamilyVersion(String eventClassFamilyId,
+                                         EventClassFamilyVersionDto eventClassFamilyVersion)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       checkEventClassFamilyId(eventClassFamilyId);
 
-      EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
+      EventClassFamilyDto storedEventClassFamily =
+          controlService.getEventClassFamily(eventClassFamilyId);
       Utils.checkNotNull(storedEventClassFamily);
       checkTenantId(storedEventClassFamily.getTenantId());
 
       String username = getCurrentUser().getUsername();
-      controlService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      controlService.addEventClassFamilyVersion(
+          eventClassFamilyId, eventClassFamilyVersion, username);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken)
+  public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(
+      String applicationToken)
       throws KaaAdminServiceException {
     return getApplicationEventFamilyMapsByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId)
+  public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(
+      String applicationId)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getApplicationEventFamilyMapsByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws KaaAdminServiceException {
+  public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(
+      String applicationEventFamilyMapId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      ApplicationEventFamilyMapDto aefMap = controlService.getApplicationEventFamilyMap(applicationEventFamilyMapId);
+      ApplicationEventFamilyMapDto aefMap = controlService.getApplicationEventFamilyMap(
+          applicationEventFamilyMapId);
       Utils.checkNotNull(aefMap);
       checkApplicationId(aefMap.getApplicationId());
       return aefMap;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap)
+  public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(
+      ApplicationEventFamilyMapDto applicationEventFamilyMap)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
@@ -157,40 +171,45 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
         checkApplicationId(storedApplicationEventFamilyMap.getApplicationId());
       }
       return controlService.editApplicationEventFamilyMap(applicationEventFamilyMap);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(
+      String applicationToken)
+      throws KaaAdminServiceException {
     return getVacantEventClassFamiliesByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getVacantEventClassFamiliesByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getEventClassFamiliesByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getEventClassFamiliesByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -202,11 +221,14 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
 
   @Override
   public RecordField createEcfEmptySchemaForm() throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       return ecfSchemaFormAvroConverter.getEmptySchemaFormInstance();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -217,43 +239,50 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       String avroSchema = new String(data);
       Schema schema = new Schema.Parser().parse(avroSchema);
       return ecfSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws KaaAdminServiceException {
+  public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       return controlService.getEventClassFamilyVersions(eventClassFamilyId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
   public EventClassViewDto getEventClassView(String eventClassId) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER, KaaAuthorityDto.TENANT_ADMIN);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER,
+        KaaAuthorityDto.TENANT_ADMIN);
     try {
       EventClassDto eventClassDto = getEventClass(eventClassId);
       CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
-      EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
+      EventClassViewDto eventClassViewDto = new EventClassViewDto(
+          eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return eventClassViewDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException {
+  public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto)
+      throws KaaAdminServiceException {
     try {
       CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
       Utils.checkNotNull(ctlSchemaDto);
-      EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
+      EventClassViewDto eventClassViewDto = new EventClassViewDto(
+          eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return eventClassViewDto;
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -261,13 +290,14 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   public EventClassDto getEventClass(String eventClassId) throws KaaAdminServiceException {
     try {
       return controlService.getEventClassById(eventClassId);
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EventClassViewDto saveEventClassView(EventClassViewDto eventClassViewDto) throws KaaAdminServiceException {
+  public EventClassViewDto saveEventClassView(EventClassViewDto eventClassViewDto)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       EventClassDto eventClassDto = eventClassViewDto.getSchema();
@@ -276,42 +306,49 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       if (isEmpty(ctlSchemaId)) {
         if (eventClassViewDto.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = eventClassViewDto.getExistingMetaInfo();
-          CTLSchemaDto schema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
+          CTLSchemaDto schema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           eventClassDto.setCtlSchemaId(schema.getId());
         } else {
-          ctlSchemaForm = ctlService.saveCTLSchemaForm(eventClassViewDto.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
+          ctlSchemaForm = ctlService.saveCTLSchemaForm(
+              eventClassViewDto.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
           eventClassDto.setCtlSchemaId(ctlSchemaForm.getId());
         }
       }
       return getEventClassViewByCtlSchemaId(eventClassDto);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EventClassViewDto createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+  public EventClassViewDto createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaForm)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       checkTenantId(ctlSchemaForm.getMetaInfo().getTenantId());
       EventClassDto eventClassDto = new EventClassDto();
       eventClassDto.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       eventClassDto.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+          ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
       eventClassDto.setCtlSchemaId(savedCtlSchemaForm.getId());
       return getEventClassViewByCtlSchemaId(eventClassDto);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException {
+  public void addEventClassFamilyVersionFromView(String eventClassFamilyId,
+                                                 List<EventClassViewDto> eventClassViewDto)
+      throws KaaAdminServiceException {
     if (eventClassViewDto.isEmpty()) {
-      throw Utils.handleException(new IllegalArgumentException("Event Class Family Version cannot be without Event Classes"));
+      throw Utils.handleException(new IllegalArgumentException(
+          "Event Class Family Version cannot be without Event Classes"));
     }
     EventClassFamilyVersionDto eventClassFamilyVersionDto = new EventClassFamilyVersionDto();
     eventClassFamilyVersionDto.setCreatedTime(System.currentTimeMillis());
@@ -328,27 +365,35 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   }
 
   @Override
-  public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws KaaAdminServiceException {
+  public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList)
+      throws KaaAdminServiceException {
     try {
       controlService.validateECFListInSdkProfile(ecfList);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type)
+  public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId,
+                                                                     int version,
+                                                                     EventClassType type)
       throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       checkEventClassFamilyId(eventClassFamilyId);
-      EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(eventClassFamilyId);
+      EventClassFamilyDto storedEventClassFamily = controlService.getEventClassFamily(
+          eventClassFamilyId);
       Utils.checkNotNull(storedEventClassFamily);
       checkTenantId(storedEventClassFamily.getTenantId());
 
-      return controlService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      return controlService.getEventClassesByFamilyIdVersionAndType(
+          eventClassFamilyId, version, type);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

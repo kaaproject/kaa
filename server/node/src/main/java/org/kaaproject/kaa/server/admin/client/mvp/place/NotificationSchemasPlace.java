@@ -65,7 +65,8 @@ public class NotificationSchemasPlace extends SchemasPlaceApplication {
   }
 
   @Prefix(value = "notifSchemas")
-  public static class Tokenizer extends SchemasPlaceApplication.Tokenizer<NotificationSchemasPlace> {
+  public static class Tokenizer
+      extends SchemasPlaceApplication.Tokenizer<NotificationSchemasPlace> {
 
     @Override
     protected NotificationSchemasPlace getPlaceImpl(String applicationId) {

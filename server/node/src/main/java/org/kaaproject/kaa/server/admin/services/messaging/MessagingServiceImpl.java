@@ -86,7 +86,8 @@ public class MessagingServiceImpl implements MessagingService {
 
   public void init() {
     String sendName = "send-message-call-runner-%d";
-    sendPool = Executors.newFixedThreadPool(sendPoolSize, new ThreadFactoryBuilder().setNameFormat(sendName).build());
+    sendPool = Executors.newFixedThreadPool(
+        sendPoolSize, new ThreadFactoryBuilder().setNameFormat(sendName).build());
     configureMailSender();
   }
 
@@ -105,17 +106,19 @@ public class MessagingServiceImpl implements MessagingService {
 
   @Override
   public void configureMailSender() {
-    SmtpMailProperties smtpMailProperties = propertiesFacade.getSpecificProperties(SmtpMailProperties.class);
-    Properties javaMailProperties = toJavaMailProperties(smtpMailProperties);
+    SmtpMailProperties smtpMailProperties = propertiesFacade.getSpecificProperties(
+        SmtpMailProperties.class);
     kaaMessagingMailSender = new JavaMailSenderImpl();
     kaaMessagingMailSender.setHost(smtpMailProperties.getSmtpHost());
     kaaMessagingMailSender.setPort(smtpMailProperties.getSmtpPort());
     kaaMessagingMailSender.setUsername(smtpMailProperties.getUsername());
     kaaMessagingMailSender.setPassword(smtpMailProperties.getPassword());
+    Properties javaMailProperties = toJavaMailProperties(smtpMailProperties);
     kaaMessagingMailSender.setJavaMailProperties(javaMailProperties);
     mailFrom = smtpMailProperties.getMailFrom();
 
-    GeneralProperties generalProperties = propertiesFacade.getSpecificProperties(GeneralProperties.class);
+    GeneralProperties generalProperties = propertiesFacade.getSpecificProperties(
+        GeneralProperties.class);
     appBaseUrl = generalProperties.getBaseUrl();
     appName = generalProperties.getAppTitle();
   }
@@ -124,19 +127,30 @@ public class MessagingServiceImpl implements MessagingService {
     Properties javaMailProperties = new Properties();
     String protocol = smtpMailProperties.getSmtpProtocol().toString().toLowerCase();
     javaMailProperties.put("mail.transport.protocol", protocol);
-    javaMailProperties.put("mail." + protocol + ".host", smtpMailProperties.getSmtpHost());
-    javaMailProperties.put("mail." + protocol + ".port", String.valueOf(smtpMailProperties.getSmtpPort()));
-    javaMailProperties.put("mail." + protocol + ".timeout", String.valueOf(smtpMailProperties.getTimeout()));
-    javaMailProperties.put("mail." + protocol + ".auth", String.valueOf(!Utils.isEmpty(smtpMailProperties.getUsername())));
-    javaMailProperties.put("mail." + protocol + ".starttls.enable", String.valueOf(smtpMailProperties.getEnableTls()));
+    javaMailProperties.put("mail."
+        + protocol + ".host", smtpMailProperties.getSmtpHost());
+    javaMailProperties.put("mail."
+        + protocol + ".port", String.valueOf(smtpMailProperties.getSmtpPort()));
+    javaMailProperties.put("mail."
+        + protocol + ".timeout", String.valueOf(smtpMailProperties.getTimeout()));
+    javaMailProperties.put("mail."
+        + protocol + ".auth", String.valueOf(!Utils.isEmpty(smtpMailProperties.getUsername())));
+    javaMailProperties.put("mail."
+        + protocol + ".starttls.enable", String.valueOf(smtpMailProperties.getEnableTls()));
     javaMailProperties.put("mail.debug", "true");
     return javaMailProperties;
   }
 
   @Override
-  public void sendTempPassword(final String username, final String password, final String email) throws Exception {
-    String subject = messages.getMessage("tempPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
-    String text = messages.getMessage("tempPasswordMailMessageBody", new Object[]{appBaseUrl, appName, username, password}, Locale.ENGLISH);
+  public void sendTempPassword(final String username,
+                               final String password,
+                               final String email) throws Exception {
+    String subject = messages.getMessage(
+        "tempPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
+    String text = messages.getMessage(
+        "tempPasswordMailMessageBody",
+        new Object[]{appBaseUrl, appName,username, password},
+        Locale.ENGLISH);
     MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
     helper.setFrom(mailFrom);
@@ -147,7 +161,9 @@ public class MessagingServiceImpl implements MessagingService {
   }
 
   @Override
-  public void sendPasswordResetLink(final String passwordResetHash, final String username, final String email) {
+  public void sendPasswordResetLink(final String passwordResetHash,
+                                    final String username,
+                                    final String email) {
     try {
       callAsync(new Callable<Void>() {
         @Override
@@ -155,8 +171,12 @@ public class MessagingServiceImpl implements MessagingService {
           Map<String, String> paramsMap = new HashMap<>();
           paramsMap.put(UrlParams.RESET_PASSWORD, passwordResetHash);
           String params = "#" + UrlParams.generateParamsUrl(paramsMap);
-          String subject = messages.getMessage("resetPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
-          String text = messages.getMessage("resetPasswordMailMessageBody", new Object[]{username, appName, appBaseUrl + params}, Locale.ENGLISH);
+          String subject = messages.getMessage(
+              "resetPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
+          String text = messages.getMessage(
+              "resetPasswordMailMessageBody",
+              new Object[]{username, appName, appBaseUrl + params},
+              Locale.ENGLISH);
           MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
           MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
           try {
@@ -165,25 +185,31 @@ public class MessagingServiceImpl implements MessagingService {
             helper.setSubject(subject);
             helper.setText(text, true);
             kaaMessagingMailSender.send(helper.getMimeMessage());
-          } catch (MessagingException e) {
-            LOG.error("Unexpected error while sendPasswordResetLinkMail", e);
+          } catch (MessagingException ex) {
+            LOG.error("Unexpected error while sendPasswordResetLinkMail", ex);
           }
           return null;
         }
       });
-    } catch (Exception e) {
-      LOG.error("Unexpected error while sendPasswordResetLinkMail", e);
+    } catch (Exception ex) {
+      LOG.error("Unexpected error while sendPasswordResetLinkMail", ex);
     }
   }
 
   @Override
-  public void sendPasswordAfterReset(final String username, final String password, final String email) {
+  public void sendPasswordAfterReset(final String username,
+                                     final String password,
+                                     final String email) {
     try {
       callAsync(new Callable<Void>() {
         @Override
         public Void call() throws Exception {
-          String subject = messages.getMessage("passwordWasResetMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
-          String text = messages.getMessage("passwordWasResetMailMessageBody", new Object[]{username, appBaseUrl, appName, password}, Locale.ENGLISH);
+          String subject = messages.getMessage(
+              "passwordWasResetMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
+          String text = messages.getMessage(
+              "passwordWasResetMailMessageBody",
+              new Object[]{username, appBaseUrl, appName, password},
+              Locale.ENGLISH);
           MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
           MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
           try {
@@ -192,14 +218,14 @@ public class MessagingServiceImpl implements MessagingService {
             helper.setSubject(subject);
             helper.setText(text, true);
             kaaMessagingMailSender.send(helper.getMimeMessage());
-          } catch (MessagingException e) {
-            LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
+          } catch (MessagingException ex) {
+            LOG.error("Unexpected error while sendPasswordAfterResetMail", ex);
           }
           return null;
         }
       });
-    } catch (Exception e) {
-      LOG.error("Unexpected error while sendPasswordAfterResetMail", e);
+    } catch (Exception ex) {
+      LOG.error("Unexpected error while sendPasswordAfterResetMail", ex);
     }
   }
 
@@ -216,10 +242,10 @@ public class MessagingServiceImpl implements MessagingService {
       } else {
         return future.get();
       }
-    } catch (TimeoutException eT) {
+    } catch (TimeoutException ex) {
       future.cancel(true);
       throw new IOException("Callable timed out after " + sendTimeout
-          + " sec", eT);
+          + " sec", ex);
     } catch (ExecutionException e1) {
       Throwable cause = e1.getCause();
       if (cause instanceof IOException) {

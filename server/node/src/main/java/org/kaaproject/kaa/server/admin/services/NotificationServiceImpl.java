@@ -66,46 +66,53 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
   CtlService ctlService;
 
   @Override
-  public List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(
+      String applicationToken) throws KaaAdminServiceException {
     return getNotificationSchemasByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<NotificationSchemaDto> getNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<NotificationSchemaDto> getNotificationSchemasByApplicationId(
+      String applicationId) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
-      return controlService.findNotificationSchemasByAppIdAndType(applicationId, NotificationTypeDto.USER);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      return controlService.findNotificationSchemasByAppIdAndType(
+          applicationId, NotificationTypeDto.USER);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getUserNotificationSchemasByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getUserNotificationSchemasByAppId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
-  public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException {
+  public NotificationSchemaDto getNotificationSchema(String notificationSchemaId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(notificationSchemaId);
+      NotificationSchemaDto notificationSchema = controlService.getNotificationSchema(
+          notificationSchemaId);
       Utils.checkNotNull(notificationSchema);
       checkApplicationId(notificationSchema.getApplicationId());
       return notificationSchema;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -118,52 +125,57 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
         notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
         checkApplicationId(notificationSchema.getApplicationId());
       } else {
-        NotificationSchemaDto storedNotificationSchema = controlService.getNotificationSchema(notificationSchema.getId());
+        NotificationSchemaDto storedNotificationSchema = controlService.getNotificationSchema(
+            notificationSchema.getId());
         Utils.checkNotNull(storedNotificationSchema);
         checkApplicationId(storedNotificationSchema.getApplicationId());
       }
       notificationSchema.setType(NotificationTypeDto.USER);
       return controlService.saveNotificationSchema(notificationSchema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<TopicDto> getTopicsByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getTopicsByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<TopicDto> getTopicsByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<TopicDto> getTopicsByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getTopicByAppId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+  public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getTopicByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+  public List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getVacantTopicByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -175,8 +187,8 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       return topic;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -188,11 +200,12 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
         topic.setCreatedUsername(getCurrentUser().getUsername());
         checkApplicationId(topic.getApplicationId());
       } else {
-        throw new KaaAdminServiceException("Unable to edit existing topic!", ServiceErrorCode.INVALID_ARGUMENTS);
+        throw new KaaAdminServiceException(
+            "Unable to edit existing topic!", ServiceErrorCode.INVALID_ARGUMENTS);
       }
       return controlService.editTopic(topic);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -205,13 +218,14 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.deleteTopicById(topicId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void addTopicToEndpointGroup(String endpointGroupId, String topicId) throws KaaAdminServiceException {
+  public void addTopicToEndpointGroup(String endpointGroupId, String topicId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
@@ -220,13 +234,14 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.addTopicsToEndpointGroup(endpointGroupId, topicId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void removeTopicFromEndpointGroup(String endpointGroupId, String topicId) throws KaaAdminServiceException {
+  public void removeTopicFromEndpointGroup(String endpointGroupId, String topicId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
@@ -235,13 +250,14 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       controlService.removeTopicsFromEndpointGroup(endpointGroupId, topicId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public NotificationDto sendNotification(NotificationDto notification, byte[] body) throws KaaAdminServiceException {
+  public NotificationDto sendNotification(NotificationDto notification, byte[] body)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkExpiredDate(notification);
@@ -251,13 +267,37 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       return controlService.editNotification(notification);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, byte[] body)
+  public void sendNotification(NotificationDto notification, RecordField notificationData)
+      throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    try {
+      checkExpiredDate(notification);
+      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(
+          notificationData);
+      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+          record.getSchema());
+      byte[] body = converter.encodeToJsonBytes(record);
+      notification.setBody(body);
+      checkApplicationId(notification.getApplicationId());
+      TopicDto topic = controlService.getTopic(notification.getTopicId());
+      Utils.checkNotNull(topic);
+      checkApplicationId(topic.getApplicationId());
+      controlService.editNotification(notification);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  @Override
+  public EndpointNotificationDto sendUnicastNotification(NotificationDto notification,
+                                                         String clientKeyHash,
+                                                         byte[] body)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
@@ -268,11 +308,30 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       Utils.checkNotNull(topic);
       checkApplicationId(topic.getApplicationId());
       EndpointNotificationDto unicastNotification = new EndpointNotificationDto();
-      unicastNotification.setEndpointKeyHash(Base64.decode(clientKeyHash.getBytes(Charsets.UTF_8)));
+      unicastNotification.setEndpointKeyHash(
+          Base64.decode(clientKeyHash.getBytes(Charsets.UTF_8)));
       unicastNotification.setNotificationDto(notification);
       return controlService.editUnicastNotification(unicastNotification);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  @Override
+  public EndpointNotificationDto sendUnicastNotification(NotificationDto notification,
+                                                         String clientKeyHash,
+                                                         RecordField notificationData)
+      throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    try {
+      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(
+          notificationData);
+      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+          record.getSchema());
+      byte[] body = converter.encodeToJsonBytes(record);
+      return sendUnicastNotification(notification, clientKeyHash, body);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -289,41 +348,48 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
   }
 
   @Override
-  public List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
-      List<NotificationSchemaDto> notificationSchemas = controlService.findNotificationSchemasByAppIdAndType(applicationId,
-          NotificationTypeDto.USER);
+      List<NotificationSchemaDto> notificationSchemas =
+          controlService.findNotificationSchemasByAppIdAndType(
+              applicationId, NotificationTypeDto.USER);
       List<SchemaInfoDto> schemaInfos = new ArrayList<>(notificationSchemas.size());
       for (NotificationSchemaDto notificationSchema : notificationSchemas) {
         SchemaInfoDto schemaInfo = new SchemaInfoDto(notificationSchema);
-        RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(notificationSchema.getCtlSchemaId(), null);
+        RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(
+            notificationSchema.getCtlSchemaId(), null);
         schemaInfo.setSchemaForm(schemaForm);
         schemaInfos.add(schemaInfo);
       }
       return schemaInfos;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException {
+  public NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
-      NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto,
+      CTLSchemaDto ctlSchemaDto =
+          controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
+      NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(
+          notificationSchema, toCtlSchemaForm(ctlSchemaDto,
           ConverterType.FORM_AVRO_CONVERTER));
       return notificationSchemaViewDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public NotificationSchemaViewDto saveNotificationSchemaView(NotificationSchemaViewDto notificationSchemaView) throws KaaAdminServiceException {
+  public NotificationSchemaViewDto saveNotificationSchemaView(
+      NotificationSchemaViewDto notificationSchemaView) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       NotificationSchemaDto notificationSchema = notificationSchemaView.getSchema();
@@ -333,26 +399,30 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       if (isEmpty(ctlSchemaId)) {
         if (notificationSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = notificationSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
+          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           notificationSchema.setCtlSchemaId(schema.getId());
         } else {
-          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(notificationSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
+          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(
+              notificationSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
           notificationSchema.setCtlSchemaId(ctlSchemaForm.getId());
         }
       }
       NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
       return getNotificationSchemaView(savedNotificationSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public NotificationSchemaViewDto createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
-    LOG.error("createNotificationSchemaFormCtlSchema [{}]", ctlSchemaForm.getSchema().getDisplayString());
+  public NotificationSchemaViewDto createNotificationSchemaFormCtlSchema(
+      CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+    LOG.error("createNotificationSchemaFormCtlSchema [{}]",
+        ctlSchemaForm.getSchema().getDisplayString());
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
@@ -360,45 +430,13 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       notificationSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       notificationSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       notificationSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+          ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
       notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);
       return getNotificationSchemaView(savedNotificationSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
-    }
-  }
-
-  @Override
-  public void sendNotification(NotificationDto notification, RecordField notificationData) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-    try {
-      checkExpiredDate(notification);
-      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
-      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
-      byte[] body = converter.encodeToJsonBytes(record);
-      notification.setBody(body);
-      checkApplicationId(notification.getApplicationId());
-      TopicDto topic = controlService.getTopic(notification.getTopicId());
-      Utils.checkNotNull(topic);
-      checkApplicationId(topic.getApplicationId());
-      controlService.editNotification(notification);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
-    }
-  }
-
-  @Override
-  public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, RecordField notificationData)
-      throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-    try {
-      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
-      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
-      byte[] body = converter.encodeToJsonBytes(record);
-      return sendUnicastNotification(notification, clientKeyHash, body);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

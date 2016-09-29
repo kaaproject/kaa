@@ -118,6 +118,20 @@ public class MultiValueListBox<T> extends Composite implements
     setValue(value, false);
   }
 
+  public void setValue(List<T> value, boolean fireEvents) {
+    if (value == this.value || (this.value != null && this.value.equals(value))) {
+      return;
+    }
+
+    List<T> before = this.value;
+    this.value = value;
+    updateListBox();
+
+    if (fireEvents) {
+      ValueChangeEvent.fireIfNotEqual(this, before, value);
+    }
+  }
+
   @Override
   public boolean isEnabled() {
     return getListBox().isEnabled();
@@ -149,20 +163,6 @@ public class MultiValueListBox<T> extends Composite implements
   @Override
   public void setFocus(boolean focused) {
     getListBox().setFocus(focused);
-  }
-
-  public void setValue(List<T> value, boolean fireEvents) {
-    if (value == this.value || (this.value != null && this.value.equals(value))) {
-      return;
-    }
-
-    List<T> before = this.value;
-    this.value = value;
-    updateListBox();
-
-    if (fireEvents) {
-      ValueChangeEvent.fireIfNotEqual(this, before, value);
-    }
   }
 
   public List<T> getValues() {

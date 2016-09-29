@@ -24,7 +24,8 @@ public class ConfigurationPlace extends AbstractRecordPlace {
 
   private String schemaId;
 
-  public ConfigurationPlace(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random) {
+  public ConfigurationPlace(String applicationId, String schemaId, String endpointGroupId,
+                            boolean create, boolean showActive, double random) {
     super(applicationId, endpointGroupId, create, showActive, random);
     this.schemaId = schemaId;
   }
@@ -64,8 +65,11 @@ public class ConfigurationPlace extends AbstractRecordPlace {
   public static class Tokenizer extends AbstractRecordPlace.Tokenizer<ConfigurationPlace> {
 
     @Override
-    protected ConfigurationPlace getPlaceImpl(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random) {
-      return new ConfigurationPlace(applicationId, PlaceParams.getParam(SCHEMA_ID), endpointGroupId, create, showActive, random);
+    protected ConfigurationPlace getPlaceImpl(String applicationId, String endpointGroupId,
+                                              boolean create, boolean showActive, double random) {
+      return new ConfigurationPlace(
+          applicationId, PlaceParams.getParam(SCHEMA_ID),
+          endpointGroupId, create, showActive, random);
     }
 
     @Override

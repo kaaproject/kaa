@@ -34,27 +34,29 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.springframework.stereotype.Service;
 
 @Service("adminUIService")
-public class AdminUIServiceImpl extends AbstractAdminService implements AdminUIService {
+public class AdminUiServiceImpl extends AbstractAdminService implements AdminUIService {
 
   @Override
   public PropertiesDto getMailProperties() throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     try {
       return propertiesFacade.getPropertiesDto(SmtpMailProperties.class);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto) throws KaaAdminServiceException {
+  public PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     try {
-      PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(mailPropertiesDto, SmtpMailProperties.class);
+      PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(
+          mailPropertiesDto, SmtpMailProperties.class);
       messagingService.configureMailSender();
       return storedPropertiesDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -63,98 +65,116 @@ public class AdminUIServiceImpl extends AbstractAdminService implements AdminUIS
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     try {
       return propertiesFacade.getPropertiesDto(GeneralProperties.class);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto) throws KaaAdminServiceException {
+  public PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     try {
-      PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(generalPropertiesDto, GeneralProperties.class);
+      PropertiesDto storedPropertiesDto = propertiesFacade.editPropertiesDto(
+          generalPropertiesDto, GeneralProperties.class);
       messagingService.configureMailSender();
       return storedPropertiesDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file)
+  public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId,
+                                                             int schemaVersion,
+                                                             RecordKey.RecordFiles file)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       RecordKey sdkKey = new RecordKey(applicationId, schemaVersion, file);
       return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file)
+  public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId,
+                                                                int logSchemaVersion,
+                                                                RecordKey.RecordFiles file)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       RecordKey sdkKey = new RecordKey(applicationId, logSchemaVersion, file);
       return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
   public RecordField createSimpleEmptySchemaForm() throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       return simpleSchemaFormAvroConverter.getEmptySchemaFormInstance();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
   public RecordField createCommonEmptySchemaForm() throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       return commonSchemaFormAvroConverter.getEmptySchemaFormInstance();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public RecordField generateSimpleSchemaForm(String fileItemName) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+  public RecordField generateSimpleSchemaForm(String fileItemName)
+      throws KaaAdminServiceException {
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       byte[] data = getFileContent(fileItemName);
       String avroSchema = new String(data);
       Schema schema = new Schema.Parser().parse(avroSchema);
       validateRecordSchema(schema);
       return simpleSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public RecordField generateCommonSchemaForm(String fileItemName) throws KaaAdminServiceException {
+  public RecordField generateCommonSchemaForm(String fileItemName)
+      throws KaaAdminServiceException {
     try {
       byte[] data = getFileContent(fileItemName);
       String avroSchema = new String(data);
       Schema schema = new Schema.Parser().parse(avroSchema);
       validateRecordSchema(schema);
       return commonSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public RecordField getRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
+  public RecordField getRecordDataFromFile(String schema, String fileItemName)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       byte[] body = getFileContent(fileItemName);
@@ -162,8 +182,8 @@ public class AdminUIServiceImpl extends AbstractAdminService implements AdminUIS
       GenericRecord record = converter.decodeJson(body);
       RecordField recordData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
       return recordData;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 }

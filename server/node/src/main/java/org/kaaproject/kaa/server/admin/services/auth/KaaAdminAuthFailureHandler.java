@@ -49,16 +49,19 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
 
   /**
    * Performs the redirect or forward to the {@code defaultFailureUrl} if set, otherwise returns a
-   * 401 error code. <p> If redirecting or forwarding, {@code saveException} will be called to cache
-   * the exception for use in the target view.
+   * 401 error code. <p> If redirecting or forwarding, {@code saveException}
+   * will be called to cache the exception for use in the target view.
    */
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                      AuthenticationException exception) throws IOException, ServletException {
+                                      AuthenticationException exception)
+      throws IOException, ServletException {
 
     if (defaultFailureUrl == null) {
       LOG.debug("No failure URL set, sending 401 Unauthorized error");
 
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed: " + exception.getLocalizedMessage());
+      response.sendError(
+          HttpServletResponse.SC_UNAUTHORIZED,
+          "Authentication Failed: " + exception.getLocalizedMessage());
     } else {
       saveException(request, exception);
 
@@ -89,7 +92,8 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
    * @param request   the request
    * @param exception the exception
    */
-  protected final void saveException(HttpServletRequest request, AuthenticationException exception) {
+  protected final void saveException(HttpServletRequest request,
+                                     AuthenticationException exception) {
     // Do nothing
   }
 

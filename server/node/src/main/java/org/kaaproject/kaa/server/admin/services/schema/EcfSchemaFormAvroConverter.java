@@ -107,7 +107,6 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#createConverterSchema()
    */
   @Override
   protected Schema createConverterSchema() throws IOException {
@@ -118,7 +117,6 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeRecordFields(org.apache.avro.Schema, java.util.List)
    */
   @Override
   protected void customizeRecordFields(Schema recordSchema, List<Field> fields) {
@@ -132,7 +130,6 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeType(org.apache.avro.generic.GenericData.Record, org.apache.avro.Schema)
    */
   @Override
   protected void customizeType(Record record, Schema fieldTypeSchema) {
@@ -150,7 +147,6 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeFieldSchema(org.apache.avro.Schema, org.apache.avro.generic.GenericRecord)
    */
   @Override
   protected void customizeFieldSchema(Schema fieldSchema, GenericRecord fieldType) {

@@ -98,7 +98,6 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeRecordFields(org.apache.avro.Schema, java.util.List)
    */
   @Override
   protected void customizeRecordFields(Schema recordSchema, List<Field> fields) {
@@ -116,7 +115,6 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeType(org.apache.avro.generic.GenericData.Record, org.apache.avro.Schema)
    */
   @Override
   protected void customizeType(Record record, Schema fieldTypeSchema) {
@@ -131,7 +129,6 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeFormField(org.apache.avro.generic.GenericData.Record, org.apache.avro.Schema.Field)
    */
   @Override
   protected void customizeFormField(Record fieldType, Field field) {
@@ -141,16 +138,17 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
           fieldType.getSchema().getField(OVERRIDE_STRATEGY).schema();
       if (overrideStrategyNode != null && overrideStrategyNode.isTextual()) {
         fieldType.put(OVERRIDE_STRATEGY,
-            new GenericData.EnumSymbol(overrideStrategySchema, overrideStrategyNode.asText().toUpperCase()));
+            new GenericData.EnumSymbol(
+                overrideStrategySchema, overrideStrategyNode.asText().toUpperCase()));
       } else {
         fieldType.put(OVERRIDE_STRATEGY,
-            new GenericData.EnumSymbol(overrideStrategySchema, OverrideStrategy.REPLACE.name()));
+            new GenericData.EnumSymbol(
+                overrideStrategySchema, OverrideStrategy.REPLACE.name()));
       }
     }
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeFieldSchema(org.apache.avro.Schema, org.apache.avro.generic.GenericRecord)
    */
   @Override
   protected void customizeFieldSchema(Schema fieldSchema, GenericRecord fieldType) {
@@ -163,21 +161,20 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeSchemaField(org.apache.avro.Schema.Field, org.apache.avro.generic.GenericData.Record)
    */
   @Override
   protected void customizeSchemaField(Field avroField, Record fieldType) {
     if (fieldType.getSchema().getName().equals(ARRAY_FIELD_TYPE)) {
       GenericData.EnumSymbol overrideStrategy =
           (GenericData.EnumSymbol) fieldType.get(OVERRIDE_STRATEGY);
-      if (overrideStrategy != null && !overrideStrategy.toString().equalsIgnoreCase(OverrideStrategy.REPLACE.name())) {
+      if (overrideStrategy != null
+          && !overrideStrategy.toString().equalsIgnoreCase(OverrideStrategy.REPLACE.name())) {
         avroField.addProp(OVERRIDE_STRATEGY, overrideStrategy.toString().toLowerCase());
       }
     }
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeUiForm(org.kaaproject.avro.ui.shared.RecordField)
    */
   @Override
   protected RecordField customizeUiForm(RecordField field) {

@@ -26,26 +26,26 @@ public class SimpleWidgetPanel extends LayoutPanel implements AcceptsOneWidget {
   private Widget widget;
 
   @Override
-  public void setWidget(IsWidget w) {
-    setOneWidget(asWidgetOrNull(w));
+  public void setWidget(IsWidget widget) {
+    setOneWidget(asWidgetOrNull(widget));
   }
 
-  private void setOneWidget(Widget w) {
+  private void setOneWidget(Widget widget) {
     // validate
-    if (w == widget) {
+    if (widget == this.widget) {
       return;
     }
 
     // remove the old widget
-    if (widget != null) {
-      super.remove(widget);
+    if (this.widget != null) {
+      super.remove(this.widget);
     }
 
     // logical attach
-    widget = w;
+    this.widget = widget;
 
-    if (w != null) {
-      super.add(w);
+    if (widget != null) {
+      super.add(widget);
     }
     forceLayout();
   }

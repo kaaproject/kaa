@@ -69,7 +69,7 @@ public abstract class TreePlace extends Place implements PlaceConstants {
     }
   }
 
-  public static abstract class TreePlaceDataProvider extends AsyncDataProvider<TreePlace> {
+  public abstract static class TreePlaceDataProvider extends AsyncDataProvider<TreePlace> {
 
     protected List<TreePlace> data;
     private LoadCallback callback;

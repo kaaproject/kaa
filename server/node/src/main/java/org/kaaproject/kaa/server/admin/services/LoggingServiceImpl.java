@@ -56,18 +56,20 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
   CtlService ctlService;
 
   @Override
-  public List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getLogSchemasByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getLogSchemasByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -79,22 +81,26 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       Utils.checkNotNull(logSchema);
       checkApplicationId(logSchema.getApplicationId());
       return logSchema;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException {
+  public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken,
+                                                               int version)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      ApplicationDto storedApplication = controlService.getApplicationByApplicationToken(applicationToken);
+      ApplicationDto storedApplication = controlService.getApplicationByApplicationToken(
+          applicationToken);
       checkApplication(storedApplication);
-      LogSchemaDto logSchema = controlService.getLogSchemaByApplicationIdAndVersion(storedApplication.getId(), version);
+      LogSchemaDto logSchema = controlService.getLogSchemaByApplicationIdAndVersion(
+          storedApplication.getId(), version);
       Utils.checkNotNull(logSchema);
       return logSchema;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -111,8 +117,8 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
         checkApplicationId(storedLogSchema.getApplicationId());
       }
       return controlService.saveLogSchema(logSchema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -122,15 +128,17 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
     try {
       LogSchemaDto logSchema = getLogSchema(logSchemaId);
       CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(logSchema.getCtlSchemaId());
-      LogSchemaViewDto logSchemaViewDto = new LogSchemaViewDto(logSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
+      LogSchemaViewDto logSchemaViewDto = new LogSchemaViewDto(
+          logSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return logSchemaViewDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public LogSchemaViewDto saveLogSchemaView(LogSchemaViewDto logSchemaView) throws KaaAdminServiceException {
+  public LogSchemaViewDto saveLogSchemaView(LogSchemaViewDto logSchemaView)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       LogSchemaDto logSchemaDto = logSchemaView.getSchema();
@@ -140,25 +148,28 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       if (isEmpty(ctlSchemaId)) {
         if (logSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = logSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
+          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           logSchemaDto.setCtlSchemaId(schema.getId());
         } else {
-          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(logSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
+          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(
+              logSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
           logSchemaDto.setCtlSchemaId(ctlSchemaForm.getId());
         }
       }
       LogSchemaDto savedLogSchema = saveLogSchema(logSchemaDto);
       return getLogSchemaView(savedLogSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public LogSchemaViewDto createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+  public LogSchemaViewDto createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm)
+      throws KaaAdminServiceException {
     LOG.error("createLogSchemaFormCtlSchema [{}]", ctlSchemaForm.getSchema().getDisplayString());
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
@@ -167,22 +178,25 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       logSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       logSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       logSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+          ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
       logSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       LogSchemaDto savedLogSchema = saveLogSchema(logSchema);
       return getLogSchemaView(savedLogSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException {
+  public List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken)
+      throws KaaAdminServiceException {
     return getRestLogAppendersByApplicationId(checkApplicationToken(appToken));
   }
 
   @Override
-  public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
+  public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId)
+      throws KaaAdminServiceException {
     List<LogAppenderDto> logAppenders = getLogAppendersByApplicationId(appId);
     for (LogAppenderDto logAppender : logAppenders) {
       setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
@@ -191,38 +205,42 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
   }
 
   @Override
-  public List<LogAppenderDto> getLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
+  public List<LogAppenderDto> getLogAppendersByApplicationId(String appId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(appId);
       return controlService.getLogAppendersByApplicationId(appId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
+  public LogAppenderDto getRestLogAppender(String appenderId)
+      throws KaaAdminServiceException {
     LogAppenderDto logAppender = getLogAppender(appenderId);
     setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
     return logAppender;
   }
 
   @Override
-  public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException {
+  public LogAppenderDto getLogAppender(String appenderId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       LogAppenderDto logAppender = controlService.getLogAppender(appenderId);
       Utils.checkNotNull(logAppender);
       checkApplicationId(logAppender.getApplicationId());
       return logAppender;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public LogAppenderDto editRestLogAppender(LogAppenderDto logAppender) throws KaaAdminServiceException {
+  public LogAppenderDto editRestLogAppender(LogAppenderDto logAppender)
+      throws KaaAdminServiceException {
     setPluginRawConfigurationFromJson(logAppender, PluginType.LOG_APPENDER);
     LogAppenderDto savedLogAppender = editLogAppender(logAppender);
     setPluginJsonConfigurationFromRaw(savedLogAppender, PluginType.LOG_APPENDER);
@@ -230,7 +248,8 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
   }
 
   @Override
-  public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException {
+  public LogAppenderDto editLogAppender(LogAppenderDto appender)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       if (isEmpty(appender.getId())) {
@@ -242,8 +261,8 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
         checkApplicationId(storedlLogAppender.getApplicationId());
       }
       return controlService.editLogAppender(appender);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -258,20 +277,21 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       Utils.checkNotNull(logAppender);
       checkApplicationId(logAppender.getApplicationId());
       controlService.deleteLogAppender(appenderId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<VersionDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException {
+  public List<VersionDto> getLogSchemasVersions(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     List<VersionDto> logSchemaVersions = Collections.emptyList();
     try {
       checkApplicationId(applicationId);
       logSchemaVersions = controlService.getLogSchemaVersionsByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
     return logSchemaVersions;
   }
@@ -282,19 +302,20 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
     try {
       setPluginFormConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
       return logAppender;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public LogAppenderDto editLogAppenderForm(LogAppenderDto logAppender) throws KaaAdminServiceException {
+  public LogAppenderDto editLogAppenderForm(LogAppenderDto logAppender)
+      throws KaaAdminServiceException {
     try {
       setPluginRawConfigurationFromForm(logAppender);
       LogAppenderDto saved = editLogAppender(logAppender);
       return saved;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

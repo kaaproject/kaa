@@ -72,8 +72,9 @@ public class PropertiesFacade {
           new AvroByteArrayConverter<>(propertiesClass);
       try {
         specificProperties = converter.fromByteArray(entity.getRawConfiguration());
-      } catch (IOException e) {
-        LOG.error("Unable to parse raw data for specific record " + propertiesClass.getSimpleName(), e);
+      } catch (IOException ex) {
+        LOG.error(
+            "Unable to parse raw data for specific record " + propertiesClass.getSimpleName(), ex);
       }
     }
     if (specificProperties == null) {
@@ -82,14 +83,17 @@ public class PropertiesFacade {
     return specificProperties;
   }
 
-  public <S extends SpecificRecordBase> PropertiesDto getPropertiesDto(Class<S> propertiesClass) throws Exception {
+  public <S extends SpecificRecordBase> PropertiesDto getPropertiesDto(Class<S> propertiesClass)
+      throws Exception {
     Properties entity = findOrCreateByClass(propertiesClass);
     return toDto(entity, propertiesClass);
   }
 
-  public <S extends SpecificRecordBase> PropertiesDto editPropertiesDto(PropertiesDto propertiesDto, Class<S> propertiesClass) throws Exception {
+  public <S extends SpecificRecordBase> PropertiesDto editPropertiesDto(
+      PropertiesDto propertiesDto,Class<S> propertiesClass) throws Exception {
     Properties entity = findOrCreateByClass(propertiesClass);
-    GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(propertiesDto.getConfiguration());
+    GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(
+        propertiesDto.getConfiguration());
     GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
     byte[] rawConfiguration = converter.encode(record);
     entity.setRawConfiguration(rawConfiguration);
@@ -118,12 +122,15 @@ public class PropertiesFacade {
     try {
       Schema schema = (Schema) propertiesClass.getField(SCHEMA).get(null);
       RawSchema rawSchema = new RawSchema(schema.toString());
-      DefaultRecordGenerationAlgorithm<RawData> algotithm = new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+      DefaultRecordGenerationAlgorithm<RawData> algotithm =
+          new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
       RawData rawData = algotithm.getRootData();
       AvroJsonConverter<S> converter = new AvroJsonConverter<>(schema, propertiesClass);
       result = converter.decodeJson(rawData.getRawData());
-    } catch (Exception e) {
-      LOG.error("Unable to build default specific properties for class " + propertiesClass.getSimpleName(), e);
+    } catch (Exception ex) {
+      LOG.error(
+          "Unable to build default specific properties for class "
+              + propertiesClass.getSimpleName(), ex);
     }
     return result;
   }
@@ -136,8 +143,8 @@ public class PropertiesFacade {
         new AvroByteArrayConverter<>(propertiesClass);
     try {
       properties.setRawConfiguration(converter.toByteArray(specificProperties));
-    } catch (IOException e) {
-      LOG.error("Unable to serialize configuration for properties", e);
+    } catch (IOException ex) {
+      LOG.error("Unable to serialize configuration for properties", ex);
     }
     properties.setFqn(propertiesClass.getName());
     Long id = save(properties);
@@ -145,7 +152,9 @@ public class PropertiesFacade {
     return properties;
   }
 
-  private <S extends SpecificRecordBase> PropertiesDto toDto(Properties entity, Class<S> propertiesClass) throws Exception {
+  private <S extends SpecificRecordBase> PropertiesDto toDto(Properties entity,
+                                                             Class<S> propertiesClass)
+      throws Exception {
     PropertiesDto propertiesDto = new PropertiesDto();
     propertiesDto.setId(String.valueOf(entity.getId()));
     Schema schema = (Schema) propertiesClass.getField(SCHEMA).get(null);

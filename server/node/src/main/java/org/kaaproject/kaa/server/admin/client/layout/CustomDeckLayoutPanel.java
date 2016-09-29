@@ -54,8 +54,8 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
   }
 
   @Override
-  public void add(Widget w) {
-    insert(w, getWidgetCount());
+  public void add(Widget widget) {
+    insert(widget, getWidgetCount());
   }
 
   @Override
@@ -114,8 +114,8 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
   }
 
   @Override
-  public void insert(IsWidget w, int beforeIndex) {
-    insert(asWidgetOrNull(w), beforeIndex);
+  public void insert(IsWidget widget, int beforeIndex) {
+    insert(asWidgetOrNull(widget), beforeIndex);
   }
 
   @Override
@@ -190,20 +190,20 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
   }
 
   @Override
-  public boolean remove(Widget w) {
-    boolean removed = super.remove(w);
+  public boolean remove(Widget widget) {
+    boolean removed = super.remove(widget);
     if (removed) {
-      Layer layer = (Layer) w.getLayoutData();
+      Layer layer = (Layer) widget.getLayoutData();
       layout.removeChild(layer);
-      w.setLayoutData(null);
+      widget.setLayoutData(null);
 
-      if (visibleWidget == w) {
+      if (visibleWidget == widget) {
         visibleWidget = null;
       }
-      if (hidingWidget == w) {
+      if (hidingWidget == widget) {
         hidingWidget = null;
       }
-      if (lastVisibleWidget == w) {
+      if (lastVisibleWidget == widget) {
         lastVisibleWidget = null;
       }
     }
@@ -215,23 +215,23 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
    * is added to the end of the panel. If the specified widget is null, the
    * currently-visible widget will be hidden.
    *
-   * @param w the widget to show, and add if not a child
+   * @param widget the widget to show, and add if not a child
    */
   @Override
-  public void setWidget(IsWidget w) {
+  public void setWidget(IsWidget widget) {
     // Hide the currently visible widget.
-    if (w == null) {
+    if (widget == null) {
       showWidget(null);
       return;
     }
 
     // Add the widget if it is not already a child.
-    if (w.asWidget().getParent() != this) {
-      add(w);
+    if (widget.asWidget().getParent() != this) {
+      add(widget);
     }
 
     // Show the widget.
-    showWidget(w.asWidget());
+    showWidget(widget.asWidget());
   }
 
   /**
@@ -294,7 +294,8 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
    * @param widget the widget to check
    */
   void assertIsChild(Widget widget) {
-    assert (widget == null) || (widget.getParent() == this) : "The specified widget is not a child of this panel";
+    assert (widget == null)
+        || (widget.getParent() == this) : "The specified widget is not a child of this panel";
   }
 
   /**
@@ -322,8 +323,8 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
     int oldIndex = getWidgetIndex(lastVisibleWidget);
     int newIndex = getWidgetIndex(visibleWidget);
     double direction = (oldIndex < newIndex) ? 100.0 : -100.0;
-    double vDirection = isAnimationVertical ? direction : 0.0;
-    double hDirection = isAnimationVertical ? 0.0
+    double vertDirection = isAnimationVertical ? direction : 0.0;
+    double horizDirection = isAnimationVertical ? 0.0
         : LocaleInfo.getCurrentLocale().isRTL() ? -direction : direction;
 
       /*
@@ -342,8 +343,8 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
       }
       if (newLayer != null) {
         // The new layer starts off to one side.
-        newLayer.setTopHeight(vDirection, Unit.PCT, 100.0, Unit.PCT);
-        newLayer.setLeftWidth(hDirection, Unit.PCT, 100.0, Unit.PCT);
+        newLayer.setTopHeight(vertDirection, Unit.PCT, 100.0, Unit.PCT);
+        newLayer.setLeftWidth(horizDirection, Unit.PCT, 100.0, Unit.PCT);
         setWidgetVisible(visibleWidget, newLayer, true);
       }
       layout.layout();
@@ -353,8 +354,8 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
     // Set the end positions of the layers.
     if (oldLayer != null) {
       // The old layer ends off to one side.
-      oldLayer.setTopHeight(-vDirection, Unit.PCT, 100.0, Unit.PCT);
-      oldLayer.setLeftWidth(-hDirection, Unit.PCT, 100.0, Unit.PCT);
+      oldLayer.setTopHeight(-vertDirection, Unit.PCT, 100.0, Unit.PCT);
+      oldLayer.setLeftWidth(-horizDirection, Unit.PCT, 100.0, Unit.PCT);
       setWidgetVisible(lastVisibleWidget, oldLayer, true);
     }
     if (newLayer != null) {
@@ -373,14 +374,14 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
     lastVisibleWidget = visibleWidget;
   }
 
-  private void setWidgetVisible(Widget w, Layer layer, boolean visible) {
+  private void setWidgetVisible(Widget widget, Layer layer, boolean visible) {
     layer.setVisible(visible);
 
       /*
        * Set the visibility of the widget. This is used by lazy panel to
        * initialize the widget.
        */
-    w.setVisible(visible);
+    widget.setVisible(visible);
   }
 
   /**

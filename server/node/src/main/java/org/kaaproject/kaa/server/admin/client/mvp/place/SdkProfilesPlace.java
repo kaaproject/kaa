@@ -53,17 +53,17 @@ public class SdkProfilesPlace extends TreePlace {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null) {
+    if (object == null) {
       return false;
     }
-    if (this.getClass() != o.getClass()) {
+    if (this.getClass() != object.getClass()) {
       return false;
     }
-    SdkProfilesPlace other = (SdkProfilesPlace) o;
+    SdkProfilesPlace other = (SdkProfilesPlace) object;
     if (applicationId == null) {
       if (other.applicationId != null) {
         return false;

@@ -36,11 +36,12 @@ import java.util.List;
 public class UserServiceImpl extends AbstractAdminService implements UserService {
 
   @Override
-  public org.kaaproject.kaa.common.dto.admin.UserDto getUserProfile() throws KaaAdminServiceException {
+  public org.kaaproject.kaa.common.dto.admin.UserDto getUserProfile()
+      throws KaaAdminServiceException {
     try {
       return toUser(getCurrentUser());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -59,29 +60,33 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
         user.setMail(userDto.getMail());
       }
       userFacade.save(user);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<org.kaaproject.kaa.common.dto.admin.UserDto> getUsers() throws KaaAdminServiceException {
+  public List<org.kaaproject.kaa.common.dto.admin.UserDto> getUsers()
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
-      List<org.kaaproject.kaa.common.dto.UserDto> users = controlService.getTenantUsers(getTenantId());
-      List<org.kaaproject.kaa.common.dto.admin.UserDto> tenantUsers = new ArrayList<>(users.size());
+      List<org.kaaproject.kaa.common.dto.UserDto> users = controlService.getTenantUsers(
+          getTenantId());
+      List<org.kaaproject.kaa.common.dto.admin.UserDto> tenantUsers = new ArrayList<>(
+          users.size());
       for (org.kaaproject.kaa.common.dto.UserDto user : users) {
         org.kaaproject.kaa.common.dto.admin.UserDto tenantUser = toUser(user);
         tenantUsers.add(tenantUser);
       }
       return tenantUsers;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public org.kaaproject.kaa.common.dto.admin.UserDto getUser(String userId) throws KaaAdminServiceException {
+  public org.kaaproject.kaa.common.dto.admin.UserDto getUser(String userId)
+      throws KaaAdminServiceException {
     try {
       UserDto user = controlService.getUser(userId);
       Utils.checkNotNull(user);
@@ -92,13 +97,14 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
         checkTenantId(user.getTenantId());
       }
       return toUser(user);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
+  public org.kaaproject.kaa.common.dto.admin.UserDto editUser(
+      org.kaaproject.kaa.common.dto.admin.UserDto user)
       throws KaaAdminServiceException {
     try {
       boolean createNewUser = (user.getId() == null);
@@ -117,8 +123,8 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
         editedUser.setTempPassword(tempPassword);
       }
       return editedUser;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -135,23 +141,25 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
       }
       userFacade.deleteUser(Long.valueOf(user.getExternalUid()));
       controlService.deleteUser(user.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<org.kaaproject.kaa.common.dto.admin.UserDto> findAllTenantAdminsByTenantId(String tenantId) throws KaaAdminServiceException {
+  public List<org.kaaproject.kaa.common.dto.admin.UserDto> findAllTenantAdminsByTenantId(
+      String tenantId) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     List<org.kaaproject.kaa.common.dto.admin.UserDto> tenantAdminList = new ArrayList<>();
     try {
       List<UserDto> userDtoList = controlService.findAllTenantAdminsByTenantId(tenantId);
       if (userDtoList != null) {
-        for (UserDto userDto : userDtoList)
+        for (UserDto userDto : userDtoList) {
           tenantAdminList.add(toUser(userDto));
+        }
       }
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
     return tenantAdminList;
   }

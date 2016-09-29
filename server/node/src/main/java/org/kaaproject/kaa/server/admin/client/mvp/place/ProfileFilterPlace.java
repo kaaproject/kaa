@@ -25,7 +25,13 @@ public class ProfileFilterPlace extends AbstractRecordPlace {
   private String endpointProfileSchemaId;
   private String serverProfileSchemaId;
 
-  public ProfileFilterPlace(String applicationId, String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId, boolean create, boolean showActive, double random) {
+  public ProfileFilterPlace(String applicationId,
+                            String endpointProfileSchemaId,
+                            String serverProfileSchemaId,
+                            String endpointGroupId,
+                            boolean create,
+                            boolean showActive,
+                            double random) {
     super(applicationId, endpointGroupId, create, showActive, random);
     this.endpointProfileSchemaId = endpointProfileSchemaId;
     this.serverProfileSchemaId = serverProfileSchemaId;
@@ -78,7 +84,11 @@ public class ProfileFilterPlace extends AbstractRecordPlace {
   public static class Tokenizer extends AbstractRecordPlace.Tokenizer<ProfileFilterPlace> {
 
     @Override
-    protected ProfileFilterPlace getPlaceImpl(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random) {
+    protected ProfileFilterPlace getPlaceImpl(String applicationId,
+                                              String endpointGroupId,
+                                              boolean create,
+                                              boolean showActive,
+                                              double random) {
       return new ProfileFilterPlace(applicationId,
           PlaceParams.getParam(ENDPOINT_PROFILE_SCHEMA_ID),
           PlaceParams.getParam(SERVER_PROFILE_SCHEMA_ID),

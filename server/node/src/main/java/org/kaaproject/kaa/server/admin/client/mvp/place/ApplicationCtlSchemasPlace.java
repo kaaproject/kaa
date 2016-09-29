@@ -40,18 +40,24 @@ public class ApplicationCtlSchemasPlace extends TreePlace {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+
+    if (getClass() != obj.getClass()) {
       return false;
+    }
+
     ApplicationCtlSchemasPlace other = (ApplicationCtlSchemasPlace) obj;
-    if (applicationId == null) {
-      if (other.applicationId != null)
+    if (applicationId == null && other.applicationId != null) {
         return false;
-    } else if (!applicationId.equals(other.applicationId))
+    } else if (!applicationId.equals(other.applicationId)) {
       return false;
+    }
     return true;
   }
 
@@ -66,7 +72,8 @@ public class ApplicationCtlSchemasPlace extends TreePlace {
   }
 
   @Prefix(value = "appCtlSchemas")
-  public static class Tokenizer implements PlaceTokenizer<ApplicationCtlSchemasPlace>, PlaceConstants {
+  public static class Tokenizer
+      implements PlaceTokenizer<ApplicationCtlSchemasPlace>, PlaceConstants {
 
     @Override
     public ApplicationCtlSchemasPlace getPlace(String token) {

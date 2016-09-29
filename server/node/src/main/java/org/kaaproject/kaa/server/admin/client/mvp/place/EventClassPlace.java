@@ -26,9 +26,12 @@ import java.util.List;
 public class EventClassPlace extends AbstractSchemaPlaceEvent {
 
   private String ctlSchemaId;
-  private String nameEC;
+  private String nameEc;
 
-  public EventClassPlace(String ecfId, String ecfVersionId, int ecfVersion, String schemaId, List<EventClassViewDto> eventClassDtoList) {
+  public EventClassPlace(String ecfId, String ecfVersionId,
+                         int ecfVersion,
+                         String schemaId,
+                         List<EventClassViewDto> eventClassDtoList) {
     super(ecfId, ecfVersionId, ecfVersion, schemaId);
     this.eventClassDtoList = eventClassDtoList;
   }
@@ -45,12 +48,12 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
     this.ctlSchemaId = ctlSchemaId;
   }
 
-  public String getNameEC() {
-    return nameEC;
+  public String getNameEc() {
+    return nameEc;
   }
 
-  public void setNameEC(String nameEC) {
-    this.nameEC = nameEC;
+  public void setNameEc(String nameEc) {
+    this.nameEc = nameEc;
   }
 
   @Override
@@ -64,15 +67,24 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof EventClassPlace)) return false;
-    if (!super.equals(o)) return false;
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
 
-    EventClassPlace that = (EventClassPlace) o;
+    if (!(object instanceof EventClassPlace)) {
+      return false;
+    }
 
-    return getEcfVersionId() != null ? getEcfVersionId().equals(that.getEcfVersionId()) : that.getEcfVersionId() == null;
+    if (!super.equals(object)) {
+      return false;
+    }
 
+    EventClassPlace that = (EventClassPlace) object;
+
+    return getEcfVersionId() != null
+        ? getEcfVersionId().equals(that.getEcfVersionId())
+        : that.getEcfVersionId() == null;
   }
 
   @Override

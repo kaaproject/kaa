@@ -43,7 +43,7 @@ import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
-import org.kaaproject.kaa.server.admin.services.schema.CTLSchemaParser;
+import org.kaaproject.kaa.server.admin.services.schema.CtlSchemaParser;
 import org.kaaproject.kaa.server.admin.services.schema.ConfigurationSchemaFormAvroConverter;
 import org.kaaproject.kaa.server.admin.services.schema.EcfSchemaFormAvroConverter;
 import org.kaaproject.kaa.server.admin.services.schema.SimpleSchemaFormAvroConverter;
@@ -131,8 +131,14 @@ public abstract class AbstractAdminService implements InitializingBean {
   void validateRecordSchema(Schema schema) throws KaaAdminServiceException {
     SchemaUtil.compileAvroSchema(schema);
     if (schema.getType() != Schema.Type.RECORD) {
-      throw new KaaAdminServiceException("Schema " + schema.getFullName() + " is not a record schema!", ServiceErrorCode.INVALID_SCHEMA);
+      throw new KaaAdminServiceException("Schema "
+          + schema.getFullName() + " is not a record schema!", ServiceErrorCode.INVALID_SCHEMA);
     }
+  }
+
+  void validateRecordSchema(String avroSchema, boolean isCtl) throws KaaAdminServiceException {
+    Schema schema = validateSchema(avroSchema, isCtl);
+    validateRecordSchema(schema);
   }
 
   byte[] getFileContent(String fileItemName) throws KaaAdminServiceException {
@@ -140,14 +146,16 @@ public abstract class AbstractAdminService implements InitializingBean {
       try {
         byte[] data = cacheService.uploadedFile(fileItemName, null);
         if (data == null) {
-          throw new KaaAdminServiceException("Unable to get file content!", ServiceErrorCode.FILE_NOT_FOUND);
+          throw new KaaAdminServiceException(
+              "Unable to get file content!", ServiceErrorCode.FILE_NOT_FOUND);
         }
         return data;
       } finally {
         cacheService.removeUploadedFile(fileItemName);
       }
     } else {
-      throw new KaaAdminServiceException("Unable to get file content, file item name is empty!", ServiceErrorCode.FILE_NOT_FOUND);
+      throw new KaaAdminServiceException(
+          "Unable to get file content, file item name is empty!", ServiceErrorCode.FILE_NOT_FOUND);
     }
   }
 
@@ -161,7 +169,9 @@ public abstract class AbstractAdminService implements InitializingBean {
       }
     }
     if (!matched) {
-      throw new KaaAdminServiceException("You do not have permission to perform this operation!", ServiceErrorCode.PERMISSION_DENIED);
+      throw new KaaAdminServiceException(
+          "You do not have permission to perform this operation!",
+          ServiceErrorCode.PERMISSION_DENIED);
     }
   }
 
@@ -187,8 +197,8 @@ public abstract class AbstractAdminService implements InitializingBean {
       ApplicationDto application = controlService.getApplication(applicationId);
       checkApplication(application);
       return application;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -197,11 +207,12 @@ public abstract class AbstractAdminService implements InitializingBean {
       if (isEmpty(applicationToken)) {
         throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
       }
-      ApplicationDto application = controlService.getApplicationByApplicationToken(applicationToken);
+      ApplicationDto application = controlService.getApplicationByApplicationToken(
+          applicationToken);
       checkApplication(application);
       return application.getId();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -219,8 +230,8 @@ public abstract class AbstractAdminService implements InitializingBean {
       Utils.checkNotNull(endpointGroup);
       checkApplicationId(endpointGroup.getApplicationId());
       return endpointGroup;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -238,7 +249,8 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+    ClassPathScanningCandidateComponentProvider scanner =
+        new ClassPathScanningCandidateComponentProvider(false);
     scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPluginConfig.class));
     scanPluginsPackage(scanner, "org.kaaproject.kaa.server.appenders");
     scanPluginsPackage(scanner, "org.kaaproject.kaa.server.verifiers");
@@ -251,14 +263,17 @@ public abstract class AbstractAdminService implements InitializingBean {
     ecfSchemaFormAvroConverter = new EcfSchemaFormAvroConverter();
   }
 
-  private void scanPluginsPackage(ClassPathScanningCandidateComponentProvider scanner, String packageName) throws Exception {
+  private void scanPluginsPackage(ClassPathScanningCandidateComponentProvider scanner,
+                                  String packageName) throws Exception {
     Set<BeanDefinition> beans = scanner.findCandidateComponents(packageName);
     for (BeanDefinition bean : beans) {
       Class<?> clazz = Class.forName(bean.getBeanClassName());
       KaaPluginConfig annotation = clazz.getAnnotation(KaaPluginConfig.class);
       PluginConfig pluginConfig = (PluginConfig) clazz.newInstance();
-      RecordField fieldConfiguration = FormAvroConverter.createRecordFieldFromSchema(pluginConfig.getPluginConfigSchema());
-      PluginInfoDto pluginInfo = new PluginInfoDto(pluginConfig.getPluginTypeName(), fieldConfiguration,
+      RecordField fieldConfiguration =
+          FormAvroConverter.createRecordFieldFromSchema(pluginConfig.getPluginConfigSchema());
+      PluginInfoDto pluginInfo =
+          new PluginInfoDto(pluginConfig.getPluginTypeName(), fieldConfiguration,
           pluginConfig.getPluginClassName());
       pluginsInfo.get(annotation.pluginType()).put(pluginInfo.getPluginClassName(), pluginInfo);
     }
@@ -270,15 +285,10 @@ public abstract class AbstractAdminService implements InitializingBean {
     schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
   }
 
-  void validateRecordSchema(String avroSchema, boolean isCtl) throws KaaAdminServiceException {
-    Schema schema = validateSchema(avroSchema, isCtl);
-    validateRecordSchema(schema);
-  }
-
   Schema validateSchema(String avroSchema, boolean isCtl) throws KaaAdminServiceException {
     try {
       if (isCtl) {
-        return CTLSchemaParser.parseStringCtlSchema(avroSchema);
+        return CtlSchemaParser.parseStringCtlSchema(avroSchema);
       } else {
         Schema.Parser parser = new Schema.Parser();
         return parser.parse(avroSchema);
@@ -289,7 +299,8 @@ public abstract class AbstractAdminService implements InitializingBean {
     }
   }
 
-  RecordField createRecordFieldFromCtlSchemaAndBody(String ctlSchemaId, String body) throws KaaAdminServiceException {
+  RecordField createRecordFieldFromCtlSchemaAndBody(String ctlSchemaId, String body)
+      throws KaaAdminServiceException {
     try {
       RecordField recordField;
       CTLSchemaDto ctlSchema = controlService.getCTLSchemaById(ctlSchemaId);
@@ -302,8 +313,8 @@ public abstract class AbstractAdminService implements InitializingBean {
         recordField = FormAvroConverter.createRecordFieldFromSchema(schema);
       }
       return recordField;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -315,16 +326,19 @@ public abstract class AbstractAdminService implements InitializingBean {
             result.getPassword(),
             user.getMail());
       }
-    } catch (Exception e) {
-      LOG.error("Can't send temporary password. Exception was catched: ", e);
+    } catch (Exception ex) {
+      LOG.error("Can't send temporary password. Exception was catched: ", ex);
       if (isEmpty(user.getExternalUid())) {
         userFacade.deleteUser(result.getUserId());
       }
-      StringBuilder errorMessage = new StringBuilder("Failed to send email with temporary password. ");
-      if (e instanceof MailException) {
+      StringBuilder errorMessage =
+          new StringBuilder("Failed to send email with temporary password. ");
+      if (ex instanceof MailException) {
         errorMessage.append("Please, check outgoing email settings. ");
       }
-      throw new KaaAdminServiceException(String.valueOf(errorMessage.append("See server logs for details.")), ServiceErrorCode.GENERAL_ERROR);
+      throw new KaaAdminServiceException(
+          String.valueOf(errorMessage.append("See server logs for details.")),
+          ServiceErrorCode.GENERAL_ERROR);
     }
     return result;
   }
@@ -364,7 +378,8 @@ public abstract class AbstractAdminService implements InitializingBean {
     userFacade.save(storedUserOld);
   }
 
-  org.kaaproject.kaa.common.dto.admin.UserDto editControlServiceUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
+  org.kaaproject.kaa.common.dto.admin.UserDto editControlServiceUser(
+      org.kaaproject.kaa.common.dto.admin.UserDto user)
       throws KaaAdminServiceException, ControlServiceException {
     if (!isEmpty(getTenantId())) {
       user.setTenantId(getTenantId());
@@ -387,14 +402,16 @@ public abstract class AbstractAdminService implements InitializingBean {
     }
   }
 
-  void checkEditUserPermission(UserDto user) throws KaaAdminServiceException, ControlServiceException {
+  void checkEditUserPermission(UserDto user)
+      throws KaaAdminServiceException, ControlServiceException {
     checkUserId(user.getId());
   }
 
   void setPluginJsonConfigurationFromRaw(PluginDto plugin, PluginType type) {
     PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
     byte[] rawConfiguration = plugin.getRawConfiguration();
-    String jsonConfiguration = GenericAvroConverter.toJson(rawConfiguration, pluginInfo.getFieldConfiguration().getSchema());
+    String jsonConfiguration = GenericAvroConverter.toJson(
+        rawConfiguration, pluginInfo.getFieldConfiguration().getSchema());
     plugin.setJsonConfiguration(jsonConfiguration);
   }
 
@@ -402,24 +419,33 @@ public abstract class AbstractAdminService implements InitializingBean {
     LOG.trace("Updating plugin {} configuration using info {}", plugin, pluginsInfo.get(type));
     PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
     if (pluginInfo == null) {
-      LOG.error("Plugin configuration for class name {} is not found", plugin.getPluginClassName());
-      throw new InvalidParameterException("Plugin configuration for class name " + plugin.getPluginClassName() + " is not found");
+      LOG.error(
+          "Plugin configuration for class name {} is not found", plugin.getPluginClassName());
+      throw new InvalidParameterException(
+          "Plugin configuration for class name " + plugin.getPluginClassName() + " is not found");
     }
-    byte[] rawConfiguration = GenericAvroConverter.toRawData(plugin.getJsonConfiguration(), pluginInfo.getFieldConfiguration()
+    byte[] rawConfiguration = GenericAvroConverter.toRawData(
+        plugin.getJsonConfiguration(), pluginInfo.getFieldConfiguration()
         .getSchema());
     plugin.setRawConfiguration(rawConfiguration);
   }
 
-  CtlSchemaFormDto toCtlSchemaForm(CTLSchemaDto ctlSchema, ConverterType converterType) throws KaaAdminServiceException {
+  CtlSchemaFormDto toCtlSchemaForm(CTLSchemaDto ctlSchema, ConverterType converterType)
+      throws KaaAdminServiceException {
     try {
       CtlSchemaFormDto ctlSchemaForm = new CtlSchemaFormDto(ctlSchema);
-      SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(ctlSchemaForm.getMetaInfo().getTenantId(),
+      SchemaFormAvroConverter converter = getCtlSchemaConverterForScope(
+          ctlSchemaForm.getMetaInfo().getTenantId(),
           ctlSchemaForm.getMetaInfo().getApplicationId(), converterType);
       RecordField form = converter.createSchemaFormFromSchema(ctlSchema.getBody());
       ctlSchemaForm.setSchema(form);
-      List<Integer> availableVersions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(
-          ctlSchema.getMetaInfo().getFqn(), ctlSchema.getMetaInfo().getTenantId(), ctlSchema.getMetaInfo().getApplicationId());
-      availableVersions = availableVersions == null ? Collections.<Integer>emptyList() : availableVersions;
+      List<Integer> availableVersions =
+          controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(
+              ctlSchema.getMetaInfo().getFqn(), ctlSchema.getMetaInfo().getTenantId(),
+              ctlSchema.getMetaInfo().getApplicationId());
+      availableVersions = availableVersions == null
+          ? Collections.<Integer>emptyList()
+          : availableVersions;
       Collections.sort(availableVersions);
       ctlSchemaForm.getMetaInfo().setVersions(availableVersions);
       return ctlSchemaForm;
@@ -428,7 +454,10 @@ public abstract class AbstractAdminService implements InitializingBean {
     }
   }
 
-  SchemaFormAvroConverter getCtlSchemaConverterForScope(String tenantId, String applicationId, ConverterType converterType) throws KaaAdminServiceException {
+  SchemaFormAvroConverter getCtlSchemaConverterForScope(String tenantId,
+                                                        String applicationId,
+                                                        ConverterType converterType)
+      throws KaaAdminServiceException {
     try {
       if (isEmpty(tenantId)) {
         return getCtlSchemaConverterForSystem(converterType);
@@ -442,31 +471,42 @@ public abstract class AbstractAdminService implements InitializingBean {
     }
   }
 
-  private SchemaFormAvroConverter getCtlSchemaConverterForSystem(ConverterType converterType) throws KaaAdminServiceException {
+  private SchemaFormAvroConverter getCtlSchemaConverterForSystem(ConverterType converterType)
+      throws KaaAdminServiceException {
     try {
-      return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForSystem(), converterType);
+      return createSchemaConverterFromCtlTypes(
+          controlService.getAvailableCTLSchemaVersionsForSystem(), converterType);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
   }
 
-  private SchemaFormAvroConverter getCtlSchemaConverterForTenant(String tenantId, ConverterType converterType) throws KaaAdminServiceException {
+  private SchemaFormAvroConverter getCtlSchemaConverterForTenant(String tenantId,
+                                                                 ConverterType converterType)
+      throws KaaAdminServiceException {
     try {
-      return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForTenant(tenantId), converterType);
+      return createSchemaConverterFromCtlTypes(
+          controlService.getAvailableCTLSchemaVersionsForTenant(tenantId), converterType);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
   }
 
-  private SchemaFormAvroConverter getCtlSchemaConverterForApplication(String tenantId, String applicationId, ConverterType converterType) throws KaaAdminServiceException {
+  private SchemaFormAvroConverter getCtlSchemaConverterForApplication(String tenantId,
+                                                                      String applicationId,
+                                                                      ConverterType converterType)
+      throws KaaAdminServiceException {
     try {
-      return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForApplication(tenantId, applicationId), converterType);
+      return createSchemaConverterFromCtlTypes(
+          controlService.getAvailableCTLSchemaVersionsForApplication(tenantId, applicationId),
+          converterType);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
   }
 
-  private SchemaFormAvroConverter createSchemaConverterFromCtlTypes(final Map<Fqn, List<Integer>> ctlTypes, ConverterType converterType) throws KaaAdminServiceException {
+  private SchemaFormAvroConverter createSchemaConverterFromCtlTypes(final Map<Fqn,
+      List<Integer>> ctlTypes, ConverterType converterType) throws KaaAdminServiceException {
     try {
       CtlSource ctlSource = new CtlSource() {
         @Override
@@ -484,13 +524,17 @@ public abstract class AbstractAdminService implements InitializingBean {
     }
   }
 
-  void convertToSchemaForm(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws IOException {
+  void convertToSchemaForm(AbstractSchemaDto dto,
+                           SchemaFormAvroConverter converter)
+      throws IOException {
     Schema schema = new Schema.Parser().parse(dto.getSchema());
     RecordField schemaForm = converter.createSchemaFormFromSchema(schema);
     dto.setSchemaForm(schemaForm);
   }
 
-  void convertToStringSchema(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws Exception {
+  void convertToStringSchema(AbstractSchemaDto dto,
+                             SchemaFormAvroConverter converter)
+      throws Exception {
     Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
     validateRecordSchema(schema);
     String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
@@ -499,7 +543,8 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   void setPluginRawConfigurationFromForm(PluginDto plugin) throws IOException {
     RecordField fieldConfiguration = plugin.getFieldConfiguration();
-    GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(fieldConfiguration);
+    GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(
+        fieldConfiguration);
     GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
     byte[] rawConfiguration = converter.encode(record);
     plugin.setRawConfiguration(rawConfiguration);
@@ -509,7 +554,8 @@ public abstract class AbstractAdminService implements InitializingBean {
     LOG.trace("Updating plugin {} configuration", plugin);
     PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
     byte[] rawConfiguration = plugin.getRawConfiguration();
-    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(pluginInfo.getFieldConfiguration().getSchema());
+    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+        pluginInfo.getFieldConfiguration().getSchema());
     GenericRecord record = converter.decodeBinary(rawConfiguration);
     RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
     plugin.setFieldConfiguration(formData);
@@ -517,7 +563,8 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   protected org.kaaproject.kaa.common.dto.admin.UserDto toUser(UserDto tenantUser) {
     User user = userFacade.findById(Long.valueOf(tenantUser.getExternalUid()));
-    org.kaaproject.kaa.common.dto.admin.UserDto result = new org.kaaproject.kaa.common.dto.admin.UserDto(
+    org.kaaproject.kaa.common.dto.admin.UserDto result =
+        new org.kaaproject.kaa.common.dto.admin.UserDto(
         user.getId().toString(),
         user.getUsername(),
         user.getFirstName(),

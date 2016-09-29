@@ -65,20 +65,21 @@ public class LoginView extends Composite implements HasErrorMessage {
 
     initWidget(uiBinder.createAndBindUi(this));
 
-    loginTitle.getElement().setInnerSafeHtml(SafeHtmlUtils.fromSafeConstant(Utils.messages.loginTitle()));
+    loginTitle.getElement().setInnerSafeHtml(
+        SafeHtmlUtils.fromSafeConstant(Utils.messages.loginTitle()));
 
-    Label loginLabel = new Label(Utils.constants.username());
     usernameBox = new TextBox();
     usernameBox.setName("j_username");
     usernameBox.setWidth("100%");
 
-    Label passwordLabel = new Label(Utils.constants.password());
     passwordBox = new PasswordTextBox();
     passwordBox.setName("j_password");
     passwordBox.setWidth("100%");
 
+    Label loginLabel = new Label(Utils.constants.username());
     loginTable.setWidget(0, 0, loginLabel);
     loginTable.setWidget(0, 1, usernameBox);
+    Label passwordLabel = new Label(Utils.constants.password());
     loginTable.setWidget(1, 0, passwordLabel);
     loginTable.setWidget(1, 1, passwordBox);
 
@@ -87,10 +88,14 @@ public class LoginView extends Composite implements HasErrorMessage {
     loginTable.setWidget(2, 0, forgotPasswordLabel);
 
     loginTable.getFlexCellFormatter().setWidth(0, 0, "130px");
-    loginTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-    loginTable.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-    loginTable.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-    loginTable.getFlexCellFormatter().setColSpan(2, 0, 2);
+    loginTable.getFlexCellFormatter()
+        .setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    loginTable.getFlexCellFormatter()
+        .setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    loginTable.getFlexCellFormatter()
+        .setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    loginTable.getFlexCellFormatter()
+        .setColSpan(2, 0, 2);
 
     loginButton = new Button(Utils.constants.login());
     loginButton.addStyleName(Utils.kaaAdminStyle.loginButton());

@@ -182,7 +182,7 @@ public class EventClassActivity
         @Override
         public void onSuccess(CtlSchemaReferenceDto ctlSchemaReferenceDto) {
           detailsView.getCtlSchemaReference().setValue(ctlSchemaReferenceDto);
-          detailsView.getName().setValue(place.getNameEC());
+          detailsView.getName().setValue(place.getNameEc());
           place.setCtlSchemaId(null);
         }
       });

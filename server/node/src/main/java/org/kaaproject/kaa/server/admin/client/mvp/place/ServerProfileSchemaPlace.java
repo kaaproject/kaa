@@ -37,21 +37,22 @@ public class ServerProfileSchemaPlace extends AbstractSchemaPlaceApplication {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
+    if (!super.equals(object)) {
       return false;
     }
 
-    ServerProfileSchemaPlace that = (ServerProfileSchemaPlace) o;
+    ServerProfileSchemaPlace that = (ServerProfileSchemaPlace) object;
 
-    return !(applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null);
-
+    return !(applicationId != null
+        ? !applicationId.equals(that.applicationId)
+        : that.applicationId != null);
   }
 
   @Override
@@ -60,7 +61,8 @@ public class ServerProfileSchemaPlace extends AbstractSchemaPlaceApplication {
   }
 
   @Prefix(value = "serverProfSchema")
-  public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<ServerProfileSchemaPlace> {
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<ServerProfileSchemaPlace> {
 
     @Override
     protected ServerProfileSchemaPlace getPlaceImpl(String applicationId,

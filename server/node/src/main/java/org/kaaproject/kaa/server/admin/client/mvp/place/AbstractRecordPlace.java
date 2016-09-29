@@ -100,7 +100,8 @@ public abstract class AbstractRecordPlace extends TreePlace {
     return new EndpointGroupPlace(applicationId, endpointGroupId, false, false);
   }
 
-  public static abstract class Tokenizer<P extends AbstractRecordPlace> implements PlaceTokenizer<P>, PlaceConstants {
+  public abstract static class Tokenizer<P extends AbstractRecordPlace>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
     public P getPlace(String token) {
@@ -112,7 +113,8 @@ public abstract class AbstractRecordPlace extends TreePlace {
           PlaceParams.getDoubleParam(RANDOM));
     }
 
-    protected abstract P getPlaceImpl(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random);
+    protected abstract P getPlaceImpl(String applicationId, String endpointGroupId,
+                                      boolean create, boolean showActive, double random);
 
     @Override
     public String getToken(P place) {

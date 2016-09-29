@@ -52,8 +52,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userDto = controlService.getUserByExternalUid(authUser.getExternalUid());
         authUser.setId(userDto.getId());
         authUser.setTenantId(userDto.getTenantId());
-      } catch (ControlServiceException e) {
-        throw new UsernameNotFoundException("unable to fetch user details", e);
+      } catch (ControlServiceException ex) {
+        throw new UsernameNotFoundException("unable to fetch user details", ex);
       }
     }
     return authUser;

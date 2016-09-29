@@ -68,7 +68,8 @@ public abstract class AbstractPluginsPlace extends TreePlace {
     return null;
   }
 
-  public static abstract class Tokenizer<P extends AbstractPluginsPlace> implements PlaceTokenizer<P>, PlaceConstants {
+  public static abstract class Tokenizer<P extends AbstractPluginsPlace>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
     public P getPlace(String token) {

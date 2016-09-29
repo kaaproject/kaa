@@ -51,7 +51,7 @@ import java.util.Set;
  * @see #validate(CTLSchemaDto)
  * @since v0.8.0
  */
-public class CTLSchemaParser {
+public class CtlSchemaParser {
 
   private static final String VERSION = "version";
 
@@ -68,14 +68,14 @@ public class CTLSchemaParser {
   /**
    * The Constant LOG.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(CTLSchemaParser.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CtlSchemaParser.class);
 
   private final Schema.Parser parser = new Schema.Parser();
 
   private final ControlService controlService;
   private final String tenantId;
 
-  public CTLSchemaParser(ControlService controlService, String tenantId) {
+  public CtlSchemaParser(ControlService controlService, String tenantId) {
     this.controlService = controlService;
     this.tenantId = tenantId;
   }
@@ -111,14 +111,16 @@ public class CTLSchemaParser {
     return parser.parse(avroSchema);
   }
 
-  public CTLSchemaDto parse(String body, String applicationId) throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
+  public CTLSchemaDto parse(String body, String applicationId)
+      throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
     CTLSchemaDto schema = new CTLSchemaDto();
     CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
     String fqn = null;
 
     ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
 
-    if (!object.has(TYPE) || !object.get(TYPE).isTextual() || !object.get(TYPE).getTextValue().equals("record")) {
+    if (!object.has(TYPE) || !object.get(TYPE).isTextual() ||
+        !object.get(TYPE).getTextValue().equals("record")) {
       throw new IllegalArgumentException("The data provided is not a record!");
     }
 
@@ -145,14 +147,16 @@ public class CTLSchemaParser {
       throw new IllegalArgumentException("Illegal dependencies format!");
     } else {
       for (JsonNode child : object.get(DEPENDENCIES)) {
-        if (!child.isObject() || !child.has(FQN) || !child.get(FQN).isTextual() || !child.has(VERSION)
-            || !child.get(VERSION).isInt()) {
+        if (!child.isObject() || !child.has(FQN) || !child.get(FQN).isTextual()
+            || !child.has(VERSION) || !child.get(VERSION).isInt()) {
           throw new IllegalArgumentException("Illegal dependency format!");
         } else {
           String dependencyFqn = child.get(FQN).asText();
           int dependencyVersion = child.get(VERSION).asInt();
 
-          CTLSchemaDto dependency = controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(dependencyFqn, dependencyVersion, tenantId, applicationId);
+          CTLSchemaDto dependency =
+              controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(
+                  dependencyFqn, dependencyVersion, tenantId, applicationId);
           if (dependency != null) {
             dependencies.add(dependency);
           } else {
@@ -161,7 +165,8 @@ public class CTLSchemaParser {
         }
       }
       if (!missingDependencies.isEmpty()) {
-        String message = "The following dependencies are missing from the database: " + Arrays.toString(missingDependencies.toArray());
+        String message = "The following dependencies are missing from the database: "
+            + Arrays.toString(missingDependencies.toArray());
         throw new IllegalArgumentException(message);
       }
       schema.setDependencySet(dependencies);
@@ -184,10 +189,14 @@ public class CTLSchemaParser {
     if (schema.getDependencySet() != null) {
       for (CTLSchemaDto dependency : schema.getDependencySet()) {
         try {
-          CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(dependency.getMetaInfo().getFqn(),
-              dependency.getVersion(), dependency.getMetaInfo().getTenantId(), dependency.getMetaInfo().getApplicationId());
+          CTLSchemaDto dependencySchema =
+              controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+                  dependency.getMetaInfo().getFqn(), dependency.getVersion(),
+                  dependency.getMetaInfo().getTenantId(),
+                  dependency.getMetaInfo().getApplicationId());
           if (dependencySchema == null) {
-            String message = "Unable to locate dependency \"" + dependency.getMetaInfo().getFqn() + "\" (version " + dependency.getVersion() + ")";
+            String message = "Unable to locate dependency \"" + dependency.getMetaInfo().getFqn()
+                + "\" (version " + dependency.getVersion() + ")";
             throw new IllegalArgumentException(message);
           }
           validate(dependencySchema);
@@ -204,8 +213,11 @@ public class CTLSchemaParser {
              */
       return parser.parse(schema.getBody());
     } catch (Exception cause) {
-      LOG.error("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): ", cause);
-      throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
+      LOG.error("Unable to parse CTL schema \""
+          + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): ", cause);
+      throw new IllegalArgumentException("Unable to parse CTL schema \""
+          + schema.getMetaInfo().getFqn() + "\" (version "
+          + schema.getVersion() + "): " + cause.getMessage());
     }
   }
 }

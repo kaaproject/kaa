@@ -23,7 +23,10 @@ public abstract class AbstractSchemaPlaceEvent extends SchemasPlaceEvent {
 
   protected String schemaId;
 
-  public AbstractSchemaPlaceEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+  public AbstractSchemaPlaceEvent(String ecfId,
+                                  String ecfVersionId,
+                                  int ecfVersion,
+                                  String schemaId) {
     super(ecfId, ecfVersionId, ecfVersion);
     this.schemaId = schemaId;
   }
@@ -42,15 +45,23 @@ public abstract class AbstractSchemaPlaceEvent extends SchemasPlaceEvent {
     return null;
   }
 
-  public static abstract class Tokenizer<P extends AbstractSchemaPlaceEvent> implements PlaceTokenizer<P>, PlaceConstants {
+  public abstract static class Tokenizer<P extends AbstractSchemaPlaceEvent>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
     public P getPlace(String token) {
       PlaceParams.paramsFromToken(token);
-      return getPlaceImpl(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID), PlaceParams.getIntParam(ECF_VERSION), PlaceParams.getParam(SCHEMA_ID));
+      return getPlaceImpl(
+          PlaceParams.getParam(ECF_ID),
+          PlaceParams.getParam(ECF_VERSION_ID),
+          PlaceParams.getIntParam(ECF_VERSION),
+          PlaceParams.getParam(SCHEMA_ID));
     }
 
-    protected abstract P getPlaceImpl(String ecfId, String ecfVersionId, int ecfVersion, String schemaId);
+    protected abstract P getPlaceImpl(String ecfId,
+                                      String ecfVersionId,
+                                      int ecfVersion,
+                                      String schemaId);
 
     @Override
     public String getToken(P place) {

@@ -42,7 +42,8 @@ public abstract class AbstractSchemaPlaceApplication extends SchemasPlaceApplica
     return null;
   }
 
-  public static abstract class Tokenizer<P extends AbstractSchemaPlaceApplication> implements PlaceTokenizer<P>, PlaceConstants {
+  public abstract static class Tokenizer<P extends AbstractSchemaPlaceApplication>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
     public P getPlace(String token) {

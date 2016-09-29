@@ -118,7 +118,9 @@ public class KaaAuthServiceImpl implements KaaAuthService {
         new org.kaaproject.kaa.server.admin.services.entity.User();
 
     if (!checkPasswordStrength(password)) {
-      throw new KaaAdminServiceException("Bad password strength. Password length must be greater than 5 characters.", ServiceErrorCode.GENERAL_ERROR);
+      throw new KaaAdminServiceException(
+          "Bad password strength. Password length must be greater than 5 characters.",
+          ServiceErrorCode.GENERAL_ERROR);
     }
 
     userEntity.setUsername(username);
@@ -197,10 +199,12 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     User userEntity = userFacade.findByUsernameOrMail(usernameOrEmail);
     ResultCode result = checkUserAndEmailExists(userEntity);
     if (result == ResultCode.OK) {
-      String passwordResetHash = RandomStringUtils.randomAlphanumeric(UrlParams.PASSWORD_RESET_HASH_LENGTH);
+      String passwordResetHash = RandomStringUtils.randomAlphanumeric(
+          UrlParams.PASSWORD_RESET_HASH_LENGTH);
       userEntity.setPasswordResetHash(passwordResetHash);
       userFacade.save(userEntity);
-      messagingService.sendPasswordResetLink(passwordResetHash, userEntity.getUsername(), userEntity.getMail());
+      messagingService.sendPasswordResetLink(
+          passwordResetHash, userEntity.getUsername(), userEntity.getMail());
     }
     return result;
   }
@@ -225,11 +229,13 @@ public class KaaAuthServiceImpl implements KaaAuthService {
       return ResultCode.USER_EMAIL_NOT_DEFINED;
     }
     userEntity.setPasswordResetHash(null);
-    String generatedPassword = RandomStringUtils.randomAlphanumeric(User.TEMPORARY_PASSWORD_LENGTH);
+    String generatedPassword = RandomStringUtils.randomAlphanumeric(
+        User.TEMPORARY_PASSWORD_LENGTH);
     userEntity.setPassword(passwordEncoder.encode(generatedPassword));
     userEntity.setTempPassword(true);
     userFacade.save(userEntity);
-    messagingService.sendPasswordAfterReset(userEntity.getUsername(), generatedPassword, userEntity.getMail());
+    messagingService.sendPasswordAfterReset(
+        userEntity.getUsername(), generatedPassword, userEntity.getMail());
     return ResultCode.OK;
   }
 

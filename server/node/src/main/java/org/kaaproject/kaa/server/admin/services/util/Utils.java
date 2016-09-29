@@ -47,7 +47,8 @@ public class Utils {
     return new KaaAdminServiceException(message, ServiceErrorCode.GENERAL_ERROR);
   }
 
-  public static KaaAdminServiceException handleException(Exception exception, boolean logException) {
+  public static KaaAdminServiceException handleException(Exception exception,
+                                                         boolean logException) {
     if (logException) {
       LOG.error("An unexpected exception occured!", exception);
     }
@@ -61,26 +62,35 @@ public class Utils {
       return (KaaAdminServiceException) exception;
     } else if (exception instanceof NotFoundException) {
       return new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.ITEM_NOT_FOUND);
-    } else if (exception instanceof IllegalArgumentException || exception instanceof IncorrectParameterException
+    } else if (exception instanceof IllegalArgumentException
+        || exception instanceof IncorrectParameterException
         || cause.contains("IncorrectParameterException")) {
-      return new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
+      return new KaaAdminServiceException(
+          exception.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
     } else {
-      return new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.GENERAL_ERROR);
+      return new KaaAdminServiceException(
+          exception.getMessage(), ServiceErrorCode.GENERAL_ERROR);
     }
   }
 
   public static <T> T checkNotNull(T reference) throws KaaAdminServiceException {
     if (reference == null) {
-      throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
+      throw new KaaAdminServiceException(
+          "The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
     }
     return reference;
   }
 
-  public static void checkFieldUniquieness(String field, Set<String> storedEmails, String fieldName) throws KaaAdminServiceException {
+  public static void checkFieldUniquieness(String field,
+                                           Set<String> storedEmails,
+                                           String fieldName)
+      throws KaaAdminServiceException {
     checkNotNull(field);
     boolean isAdded = storedEmails.add(field);
     if (!isAdded) {
-      throw new KaaAdminServiceException(String.format("Entered %s is already used by another user!", fieldName), ServiceErrorCode.INVALID_ARGUMENTS);
+      throw new KaaAdminServiceException(
+          String.format("Entered %s is already used by another user!", fieldName),
+          ServiceErrorCode.INVALID_ARGUMENTS);
     }
   }
 
@@ -90,7 +100,9 @@ public class Utils {
     if (authentication.getPrincipal() instanceof AuthUserDto) {
       return (AuthUserDto) authentication.getPrincipal();
     } else {
-      throw new KaaAdminServiceException("You are not authorized to perform this operation!", ServiceErrorCode.NOT_AUTHORIZED);
+      throw new KaaAdminServiceException(
+          "You are not authorized to perform this operation!",
+          ServiceErrorCode.NOT_AUTHORIZED);
     }
   }
 }

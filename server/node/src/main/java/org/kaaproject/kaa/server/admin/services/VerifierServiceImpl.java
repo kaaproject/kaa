@@ -35,12 +35,14 @@ import java.util.List;
 public class VerifierServiceImpl extends AbstractAdminService implements VerifierService {
 
   @Override
-  public List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException {
+  public List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken)
+      throws KaaAdminServiceException {
     return getRestUserVerifiersByApplicationId(checkApplicationToken(appToken));
   }
 
   @Override
-  public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException {
+  public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId)
+      throws KaaAdminServiceException {
     List<UserVerifierDto> userVerifiers = getUserVerifiersByApplicationId(appId);
     for (UserVerifierDto userVerifier : userVerifiers) {
       setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
@@ -49,38 +51,42 @@ public class VerifierServiceImpl extends AbstractAdminService implements Verifie
   }
 
   @Override
-  public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException {
+  public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(appId);
       return controlService.getUserVerifiersByApplicationId(appId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public UserVerifierDto getRestUserVerifier(String userVerifierId) throws KaaAdminServiceException {
+  public UserVerifierDto getRestUserVerifier(String userVerifierId)
+      throws KaaAdminServiceException {
     UserVerifierDto userVerifier = getUserVerifier(userVerifierId);
     setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
     return userVerifier;
   }
 
   @Override
-  public UserVerifierDto getUserVerifier(String userVerifierId) throws KaaAdminServiceException {
+  public UserVerifierDto getUserVerifier(String userVerifierId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       UserVerifierDto userVerifier = controlService.getUserVerifier(userVerifierId);
       Utils.checkNotNull(userVerifier);
       checkApplicationId(userVerifier.getApplicationId());
       return userVerifier;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException {
+  public UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier)
+      throws KaaAdminServiceException {
     setPluginRawConfigurationFromJson(userVerifier, PluginType.USER_VERIFIER);
     UserVerifierDto savedUserVerifier = editUserVerifier(userVerifier);
     setPluginJsonConfigurationFromRaw(savedUserVerifier, PluginType.USER_VERIFIER);
@@ -88,7 +94,8 @@ public class VerifierServiceImpl extends AbstractAdminService implements Verifie
   }
 
   @Override
-  public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException {
+  public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       if (isEmpty(userVerifier.getId())) {
@@ -100,8 +107,8 @@ public class VerifierServiceImpl extends AbstractAdminService implements Verifie
         checkApplicationId(storedUserVerifier.getApplicationId());
       }
       return controlService.editUserVerifier(userVerifier);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -116,30 +123,32 @@ public class VerifierServiceImpl extends AbstractAdminService implements Verifie
       Utils.checkNotNull(userVerifier);
       checkApplicationId(userVerifier.getApplicationId());
       controlService.deleteUserVerifier(userVerifierId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public UserVerifierDto getUserVerifierForm(String userVerifierId) throws KaaAdminServiceException {
+  public UserVerifierDto getUserVerifierForm(String userVerifierId)
+      throws KaaAdminServiceException {
     UserVerifierDto userVerifier = getUserVerifier(userVerifierId);
     try {
       setPluginFormConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
       return userVerifier;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier) throws KaaAdminServiceException {
+  public UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier)
+      throws KaaAdminServiceException {
     try {
       setPluginRawConfigurationFromForm(userVerifier);
       UserVerifierDto saved = editUserVerifier(userVerifier);
       return saved;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

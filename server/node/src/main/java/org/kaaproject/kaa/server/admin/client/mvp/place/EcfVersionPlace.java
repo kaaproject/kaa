@@ -29,7 +29,8 @@ public class EcfVersionPlace extends SchemasPlaceEvent {
     super(ecfId, ecfVersionId, ecfVersion);
   }
 
-  public EcfVersionPlace(String ecfId, String ecfVersionId, int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
+  public EcfVersionPlace(String ecfId, String ecfVersionId,
+                         int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
     super(ecfId, ecfVersionId, ecfVersion, eventClassViewDtoList);
   }
 
@@ -83,7 +84,10 @@ public class EcfVersionPlace extends SchemasPlaceEvent {
     @Override
     public EcfVersionPlace getPlace(String token) {
       PlaceParams.paramsFromToken(token);
-      return new EcfVersionPlace(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID), PlaceParams.getIntParam(ECF_VERSION));
+      return new EcfVersionPlace(
+          PlaceParams.getParam(ECF_ID),
+          PlaceParams.getParam(ECF_VERSION_ID),
+          PlaceParams.getIntParam(ECF_VERSION));
     }
 
     @Override

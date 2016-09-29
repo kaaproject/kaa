@@ -38,7 +38,6 @@ public class SimpleSchemaFormAvroConverter extends SchemaFormAvroConverter {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeRecordFields(org.apache.avro.Schema, java.util.List)
    */
   @Override
   protected void customizeRecordFields(Schema recordSchema, List<Field> fields) {

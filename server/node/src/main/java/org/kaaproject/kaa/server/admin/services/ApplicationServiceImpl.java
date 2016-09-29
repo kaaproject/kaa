@@ -33,17 +33,24 @@ public class ApplicationServiceImpl extends AbstractAdminService implements Appl
 
   @Override
   public List<ApplicationDto> getApplications() throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       return controlService.getApplicationsByTenantId(getTenantId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+  public ApplicationDto getApplicationByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       if (isEmpty(applicationToken)) {
         throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
@@ -51,23 +58,27 @@ public class ApplicationServiceImpl extends AbstractAdminService implements Appl
       ApplicationDto application = controlService.getApplicationByApplicationToken(applicationToken);
       checkApplication(application);
       return application;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
   public ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       return checkApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException {
+  public ApplicationDto editApplication(ApplicationDto application)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       if (!isEmpty(application.getId())) {
@@ -78,8 +89,8 @@ public class ApplicationServiceImpl extends AbstractAdminService implements Appl
       }
       application.setTenantId(getTenantId());
       return controlService.editApplication(application);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

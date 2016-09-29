@@ -115,36 +115,52 @@ public class CtlSchemaPlace extends TreePlace {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+
+    if (getClass() != obj.getClass()) {
       return false;
+    }
+
     CtlSchemaPlace other = (CtlSchemaPlace) obj;
-    if (applicationId == null) {
-      if (other.applicationId != null)
+    if (applicationId == null && other.applicationId != null) {
+      return false;
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+
+    if (create != other.create) {
+      return false;
+    }
+
+    if (editable != other.editable) {
+      return false;
+    }
+
+    if (metaInfoId == null && other.metaInfoId != null) {
         return false;
-    } else if (!applicationId.equals(other.applicationId))
+    } else if (!metaInfoId.equals(other.metaInfoId)) {
       return false;
-    if (create != other.create)
+    }
+
+    if (scope != other.scope) {
       return false;
-    if (editable != other.editable)
+    }
+
+    if (schemaType != other.schemaType) {
       return false;
-    if (metaInfoId == null) {
-      if (other.metaInfoId != null)
+    }
+
+    if (version == null && other.version != null) {
         return false;
-    } else if (!metaInfoId.equals(other.metaInfoId))
+    } else if (!version.equals(other.version)) {
       return false;
-    if (scope != other.scope)
-      return false;
-    if (schemaType != other.schemaType)
-      return false;
-    if (version == null) {
-      if (other.version != null)
-        return false;
-    } else if (!version.equals(other.version))
-      return false;
+    }
     return true;
   }
 
@@ -234,7 +250,8 @@ public class CtlSchemaPlace extends TreePlace {
         if (PlaceParams.getParam(ECF_VERSION) != null) {
           ecfVersion = Integer.valueOf(PlaceParams.getParam(ECF_VERSION));
         }
-        place = new CtlSchemaPlace(metaInfoId, version, scope, ecfId, ecfVersionId, ecfVersion, editable, create);
+        place = new CtlSchemaPlace(
+            metaInfoId, version, scope, ecfId, ecfVersionId, ecfVersion, editable, create);
       }
       place.setSchemaType(schemaType);
       return place;

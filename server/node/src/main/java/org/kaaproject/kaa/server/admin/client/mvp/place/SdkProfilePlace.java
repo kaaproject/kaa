@@ -35,20 +35,22 @@ public class SdkProfilePlace extends SdkProfilesPlace {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
+    if (!super.equals(object)) {
       return false;
     }
 
-    SdkProfilePlace that = (SdkProfilePlace) o;
+    SdkProfilePlace that = (SdkProfilePlace) object;
 
-    return !(sdkProfileId != null ? !sdkProfileId.equals(that.sdkProfileId) : that.sdkProfileId != null);
+    return !(sdkProfileId != null
+        ? !sdkProfileId.equals(that.sdkProfileId)
+        : that.sdkProfileId != null);
 
   }
 

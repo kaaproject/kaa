@@ -75,7 +75,9 @@ public class ApplicationPlace extends TreePlace {
 
   @Override
   public boolean isLeaf() {
-    return !KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    return !KaaAdmin.checkAuthorities(
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
   }
 
   @Override

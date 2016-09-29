@@ -59,7 +59,8 @@ public class ConfigurationSchemaPlace extends AbstractSchemaPlaceApplication {
   }
 
   @Prefix(value = "confSchema")
-  public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<ConfigurationSchemaPlace> {
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<ConfigurationSchemaPlace> {
 
     @Override
     protected ConfigurationSchemaPlace getPlaceImpl(String applicationId,

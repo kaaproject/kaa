@@ -40,7 +40,8 @@ public class SchemasPlaceEvent extends TreePlace {
     this.ecfVersion = ecfVersion;
   }
 
-  public SchemasPlaceEvent(String ecfId, String ecfVersionId, int ecfVersion, List<EventClassViewDto> eventClassDtoList) {
+  public SchemasPlaceEvent(String ecfId, String ecfVersionId,
+                           int ecfVersion, List<EventClassViewDto> eventClassDtoList) {
     this.ecfId = ecfId;
     this.ecfVersionId = ecfVersionId;
     this.ecfVersion = ecfVersion;
@@ -97,12 +98,16 @@ public class SchemasPlaceEvent extends TreePlace {
     return new TenantPlace(PlaceParams.getParam(USER_ID));
   }
 
-  public static abstract class Tokenizer<P extends SchemasPlaceEvent> implements PlaceTokenizer<P>, PlaceConstants {
+  public abstract static class Tokenizer<P extends SchemasPlaceEvent>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
     public P getPlace(String token) {
       PlaceParams.paramsFromToken(token);
-      return getPlaceImpl(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID), PlaceParams.getIntParam(ECF_VERSION));
+      return getPlaceImpl(
+          PlaceParams.getParam(ECF_ID),
+          PlaceParams.getParam(ECF_VERSION_ID),
+          PlaceParams.getIntParam(ECF_VERSION));
     }
 
     protected abstract P getPlaceImpl(String ecfId, String ecfVersionId, int ecfVersion);

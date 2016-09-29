@@ -172,7 +172,9 @@ public class UserFacade {
     Criteria criteria = getCriteria();
     Criterion usernameCriterion = Restrictions.eq(USERNAME_PROPERTY, userName);
     if (userId != null) {
-      criteria.add(Restrictions.and(usernameCriterion, Restrictions.not(Restrictions.eq(ID_PROPERTY, userId))));
+      criteria.add(
+          Restrictions.and(
+              usernameCriterion, Restrictions.not(Restrictions.eq(ID_PROPERTY, userId))));
     } else {
       criteria.add(usernameCriterion);
     }
@@ -183,7 +185,8 @@ public class UserFacade {
     Criteria criteria = getCriteria();
     Criterion mailCriterion = Restrictions.eq(MAIL_PROPERTY, mail);
     if (userId != null) {
-      criteria.add(Restrictions.and(mailCriterion, Restrictions.not(Restrictions.eq(ID_PROPERTY, userId))));
+      criteria.add(Restrictions.and(
+          mailCriterion, Restrictions.not(Restrictions.eq(ID_PROPERTY, userId))));
     } else {
       criteria.add(mailCriterion);
     }

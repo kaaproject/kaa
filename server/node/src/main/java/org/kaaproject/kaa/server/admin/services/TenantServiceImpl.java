@@ -43,8 +43,8 @@ public class TenantServiceImpl extends AbstractAdminService implements TenantSer
       Utils.checkNotNull(tenants);
       return tenants;
 
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -55,8 +55,8 @@ public class TenantServiceImpl extends AbstractAdminService implements TenantSer
       TenantDto tenantDto = controlService.getTenant(tenantId);
       Utils.checkNotNull(tenantDto);
       return tenantDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -65,8 +65,8 @@ public class TenantServiceImpl extends AbstractAdminService implements TenantSer
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     try {
       return controlService.editTenant(tenantUser);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -75,8 +75,8 @@ public class TenantServiceImpl extends AbstractAdminService implements TenantSer
     checkAuthority(KaaAuthorityDto.KAA_ADMIN);
     try {
       controlService.deleteTenant(tenantId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

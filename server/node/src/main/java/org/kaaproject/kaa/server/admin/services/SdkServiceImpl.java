@@ -99,12 +99,14 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
   }
 
   @Override
-  public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getSdkProfilesByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       this.checkApplicationId(applicationId);
@@ -115,17 +117,21 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
   }
 
   @Override
-  public FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
+  public FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform)
+      throws KaaAdminServiceException {
     try {
       return doGenerateSdk(sdkProfile, targetPlatform);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
   public void flushSdkCache() throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       List<ApplicationDto> applications = applicationService.getApplications();
       for (ApplicationDto application : applications) {
@@ -133,18 +139,20 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
           cacheService.flushSdk(key);
         }
       }
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
+  public String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform)
+      throws KaaAdminServiceException {
     try {
       doGenerateSdk(sdkProfile, targetPlatform);
-      return Base64.encodeObject(new CacheService.SdkKey(sdkProfile, targetPlatform), Base64.URL_SAFE);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      return Base64.encodeObject(
+          new CacheService.SdkKey(sdkProfile, targetPlatform), Base64.URL_SAFE);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -159,8 +167,8 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
 
       String applicationId = sdkProfile.getApplicationId();
       List<ApplicationEventFamilyMapDto> aefDtoList = new ArrayList<>();
-      List<ApplicationEventFamilyMapDto> aefMaps = controlService.
-          getApplicationEventFamilyMapsByApplicationId(applicationId);
+      List<ApplicationEventFamilyMapDto> aefMaps = controlService
+          .getApplicationEventFamilyMapsByApplicationId(applicationId);
       List<String> aefMapIds = sdkProfile.getAefMapIds();
       for (ApplicationEventFamilyMapDto aefDto : aefMaps) {
         if (aefMapIds.contains(aefDto.getId())) {
@@ -178,7 +186,8 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
         }
       }
 
-      List<EndpointProfileSchemaDto> profileSchemas = controlService.getProfileSchemasByApplicationId(applicationId);
+      List<EndpointProfileSchemaDto> profileSchemas =
+          controlService.getProfileSchemasByApplicationId(applicationId);
       for (EndpointProfileSchemaDto dto : profileSchemas) {
         if (dto.getVersion() == sdkProfile.getProfileSchemaVersion()) {
           viewDto.setProfileSchemaName(dto.getName() + " (v." + dto.getVersion() + ")");
@@ -204,39 +213,45 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
       }
 
       return viewDto;
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getSchemaVersionsByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public SchemaVersions getSchemaVersionsByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
 
       SchemaVersions schemaVersions = new SchemaVersions();
 
-      List<VersionDto> configurationSchemaVersions = controlService.getConfigurationSchemaVersionsByApplicationId(applicationId);
+      List<VersionDto> configurationSchemaVersions =
+          controlService.getConfigurationSchemaVersionsByApplicationId(applicationId);
       schemaVersions.setConfigurationSchemaVersions(configurationSchemaVersions);
 
-      List<VersionDto> profileSchemaVersions = controlService.getProfileSchemaVersionsByApplicationId(applicationId);
+      List<VersionDto> profileSchemaVersions =
+          controlService.getProfileSchemaVersionsByApplicationId(applicationId);
       schemaVersions.setProfileSchemaVersions(profileSchemaVersions);
 
-      List<VersionDto> notificationSchemaVersions = controlService.getNotificationSchemaVersionsByApplicationId(applicationId);
+      List<VersionDto> notificationSchemaVersions =
+          controlService.getNotificationSchemaVersionsByApplicationId(applicationId);
       schemaVersions.setNotificationSchemaVersions(notificationSchemaVersions);
 
-      List<VersionDto> logSchemaVersions = controlService.getLogSchemaVersionsByApplicationId(applicationId);
+      List<VersionDto> logSchemaVersions =
+          controlService.getLogSchemaVersionsByApplicationId(applicationId);
       schemaVersions.setLogSchemaVersions(logSchemaVersions);
 
       return schemaVersions;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -253,7 +268,8 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
     }
   }
 
-  private FileData doGenerateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
+  private FileData doGenerateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(sdkProfile.getApplicationId());
@@ -264,8 +280,8 @@ public class SdkServiceImpl extends AbstractAdminService implements SdkService {
         cacheService.putSdk(sdkKey, sdkFile);
       }
       return sdkFile;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

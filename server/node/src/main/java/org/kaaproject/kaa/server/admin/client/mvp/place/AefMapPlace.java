@@ -77,7 +77,9 @@ public class AefMapPlace extends AefMapsPlace {
     @Override
     public AefMapPlace getPlace(String token) {
       PlaceParams.paramsFromToken(token);
-      return new AefMapPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(AEF_MAP_ID));
+      return new AefMapPlace(
+          PlaceParams.getParam(APPLICATION_ID),
+          PlaceParams.getParam(AEF_MAP_ID));
     }
 
     @Override

@@ -89,7 +89,8 @@ public class SendNotificationPlace extends TreePlace {
     @Override
     public SendNotificationPlace getPlace(String token) {
       PlaceParams.paramsFromToken(token);
-      return new SendNotificationPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
+      return new SendNotificationPlace(
+          PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
     }
 
     @Override

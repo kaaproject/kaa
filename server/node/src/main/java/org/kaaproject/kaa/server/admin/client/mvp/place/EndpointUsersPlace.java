@@ -84,7 +84,8 @@ public class EndpointUsersPlace extends TreePlace {
     return new ApplicationPlace(applicationId);
   }
 
-  public static abstract class Tokenizer<P extends EndpointUsersPlace> implements PlaceTokenizer<P>, PlaceConstants {
+  public abstract static class Tokenizer<P extends EndpointUsersPlace>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
     public P getPlace(String token) {

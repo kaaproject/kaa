@@ -60,33 +60,37 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
   ProfileService profileService;
 
   @Override
-  public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<EndpointGroupDto> getEndpointGroupsByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException {
     return getEndpointGroupsByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getEndpointGroupsByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws KaaAdminServiceException {
+  public EndpointGroupDto getEndpointGroup(String endpointGroupId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       return checkEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws KaaAdminServiceException {
+  public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupWeight(endpointGroup.getWeight());
@@ -97,8 +101,8 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
         checkEndpointGroupId(endpointGroup.getId());
       }
       return controlService.editEndpointGroup(endpointGroup);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -108,49 +112,57 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
     try {
       checkEndpointGroupId(endpointGroupId);
       controlService.deleteEndpointGroup(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId,
-                                                                               boolean includeDeprecated) throws KaaAdminServiceException {
+  public List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(
+      String endpointGroupId, boolean includeDeprecated) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
-      return controlService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      return controlService.getProfileFilterRecordsByEndpointGroupId(
+          endpointGroupId, includeDeprecated);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,
-                                                       String endpointGroupId) throws KaaAdminServiceException {
+  public ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId,
+                                                       String serverProfileSchemaId,
+                                                       String endpointGroupId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
-      ProfileFilterRecordDto record = controlService.getProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
+      ProfileFilterRecordDto record = controlService.getProfileFilterRecord(
+          endpointProfileSchemaId,
+          serverProfileSchemaId,
+          endpointGroupId);
       return record;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+  public List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(
+      String endpointGroupId) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws KaaAdminServiceException {
+  public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       String username = getCurrentUser().getUsername();
@@ -159,7 +171,8 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
         checkEndpointGroupId(profileFilter.getEndpointGroupId());
       } else {
         profileFilter.setModifiedUsername(username);
-        ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(profileFilter.getId());
+        ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(
+            profileFilter.getId());
         Utils.checkNotNull(storedProfileFilter);
         checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
       }
@@ -167,13 +180,14 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
           profileFilter.getServerProfileSchemaId(),
           profileFilter.getBody());
       return controlService.editProfileFilter(profileFilter);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ProfileFilterDto activateProfileFilter(String profileFilterId) throws KaaAdminServiceException {
+  public ProfileFilterDto activateProfileFilter(String profileFilterId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(profileFilterId);
@@ -181,13 +195,14 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
       checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       return controlService.activateProfileFilter(profileFilterId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ProfileFilterDto deactivateProfileFilter(String profileFilterId) throws KaaAdminServiceException {
+  public ProfileFilterDto deactivateProfileFilter(String profileFilterId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(profileFilterId);
@@ -195,32 +210,38 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
       checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       return controlService.deactivateProfileFilter(profileFilterId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) throws KaaAdminServiceException {
+  public void deleteProfileFilterRecord(String endpointProfileSchemaId,
+                                        String serverProfileSchemaId,
+                                        String endpointGroupId) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      ProfileFilterRecordDto record = controlService.getProfileFilterRecord(endpointProfileSchemaId,
-          serverProfileSchemaId, endpointGroupId);
+      ProfileFilterRecordDto record = controlService.getProfileFilterRecord(
+          endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
       checkEndpointGroupId(record.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
-      controlService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      controlService.deleteProfileFilterRecord(
+          endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId, username);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset)
+  public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId,
+                                                                     String limit,
+                                                                     String offset)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       if (Integer.valueOf(limit) > MAX_LIMIT) {
-        throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
+        throw new IllegalArgumentException(
+            "Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
       }
       EndpointGroupDto endpointGroupDto = getEndpointGroup(endpointGroupId);
       PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
@@ -228,18 +249,21 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
         pageLinkDto.setApplicationId(endpointGroupDto.getApplicationId());
       }
       return controlService.getEndpointProfileByEndpointGroupId(pageLinkDto);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(String endpointGroupId, String limit, String offset)
+  public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(String endpointGroupId,
+                                                                         String limit,
+                                                                         String offset)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       if (Integer.valueOf(limit) > MAX_LIMIT) {
-        throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
+        throw new IllegalArgumentException(
+            "Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
       }
       EndpointGroupDto endpointGroupDto = getEndpointGroup(endpointGroupId);
       PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
@@ -247,8 +271,8 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
         pageLinkDto.setApplicationId(endpointGroupDto.getApplicationId());
       }
       return controlService.getEndpointProfileBodyByEndpointGroupId(pageLinkDto);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -258,39 +282,46 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
     }
   }
 
-  private void validateProfileFilterBody(String endpointProfileSchemaId, String serverProfileSchemaId,
+  private void validateProfileFilterBody(String endpointProfileSchemaId,
+                                         String serverProfileSchemaId,
                                          String filterBody) throws KaaAdminServiceException {
     GenericRecord endpointProfileRecord = null;
     GenericRecord serverProfileRecord = null;
     try {
       if (endpointProfileSchemaId != null) {
-        EndpointProfileSchemaDto endpointProfileSchema = profileService.getProfileSchema(endpointProfileSchemaId);
-        endpointProfileRecord = getDefaultRecordFromCtlSchema(endpointProfileSchema.getCtlSchemaId());
+        EndpointProfileSchemaDto endpointProfileSchema = profileService.getProfileSchema(
+            endpointProfileSchemaId);
+        endpointProfileRecord = getDefaultRecordFromCtlSchema(
+            endpointProfileSchema.getCtlSchemaId());
       }
       if (serverProfileSchemaId != null) {
-        ServerProfileSchemaDto serverProfileSchema = profileService.getServerProfileSchema(serverProfileSchemaId);
+        ServerProfileSchemaDto serverProfileSchema = profileService.getServerProfileSchema(
+            serverProfileSchemaId);
         serverProfileRecord = getDefaultRecordFromCtlSchema(serverProfileSchema.getCtlSchemaId());
       }
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
     try {
       Expression expression = new SpelExpressionParser().parseExpression(filterBody);
       StandardEvaluationContext evaluationContext;
       if (endpointProfileRecord != null) {
         evaluationContext = new StandardEvaluationContext(endpointProfileRecord);
-        evaluationContext.setVariable(DefaultFilterEvaluator.CLIENT_PROFILE_VARIABLE_NAME, endpointProfileRecord);
+        evaluationContext.setVariable(
+            DefaultFilterEvaluator.CLIENT_PROFILE_VARIABLE_NAME, endpointProfileRecord);
       } else {
         evaluationContext = new StandardEvaluationContext();
       }
       evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
       evaluationContext.setVariable(DefaultFilterEvaluator.EP_KEYHASH_VARIABLE_NAME, "test");
       if (serverProfileRecord != null) {
-        evaluationContext.setVariable(DefaultFilterEvaluator.SERVER_PROFILE_VARIABLE_NAME, serverProfileRecord);
+        evaluationContext.setVariable(
+            DefaultFilterEvaluator.SERVER_PROFILE_VARIABLE_NAME, serverProfileRecord);
       }
       expression.getValue(evaluationContext, Boolean.class);
-    } catch (Exception e) {
-      throw new KaaAdminServiceException("Invalid profile filter body!", e, ServiceErrorCode.BAD_REQUEST_PARAMS);
+    } catch (Exception ex) {
+      throw new KaaAdminServiceException(
+          "Invalid profile filter body!", ex, ServiceErrorCode.BAD_REQUEST_PARAMS);
     }
   }
 
