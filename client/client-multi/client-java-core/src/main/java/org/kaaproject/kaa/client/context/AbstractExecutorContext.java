@@ -57,8 +57,8 @@ public abstract class AbstractExecutorContext implements ExecutorContext {
     LOG.debug("Waiting for executor service to shutdown for {} {}", getTimeout(), getTimeunit());
     try {
       executor.awaitTermination(getTimeout(), getTimeunit());
-    } catch (InterruptedException e) {
-      LOG.warn("Interrupted while waiting for executor to shutdown", e);
+    } catch (InterruptedException ex) {
+      LOG.warn("Interrupted while waiting for executor to shutdown", ex);
     }
   }
 }

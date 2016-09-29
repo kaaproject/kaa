@@ -51,14 +51,14 @@ import java.nio.ByteBuffer;
 public interface SchemaStorage {
 
   /**
-   * Saves schema
+   * Saves schema.
    *
    * @param buffer buffer with schema
    */
   void saveSchema(ByteBuffer buffer);
 
   /**
-   * Loads schema
+   * Loads schema.
    *
    * @return buffer with loaded schema, or null if schema is empty
    */

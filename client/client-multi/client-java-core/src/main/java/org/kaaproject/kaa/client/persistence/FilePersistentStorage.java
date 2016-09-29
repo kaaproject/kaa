@@ -32,11 +32,11 @@ public class FilePersistentStorage implements PersistentStorage {
 
   @Override
   public OutputStream openForWrite(String path) throws IOException {
-    File f = new File(path);
-    if (f.getParentFile() != null && !f.getParentFile().exists()) {
-      f.getParentFile().mkdirs();
+    File file = new File(path);
+    if (file.getParentFile() != null && !file.getParentFile().exists()) {
+      file.getParentFile().mkdirs();
     }
-    return new FileOutputStream(f);
+    return new FileOutputStream(file);
   }
 
   @Override

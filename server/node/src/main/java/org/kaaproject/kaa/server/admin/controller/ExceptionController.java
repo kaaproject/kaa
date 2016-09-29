@@ -36,7 +36,8 @@ public class ExceptionController {
   private static final Logger LOG = LoggerFactory.getLogger(ExceptionController.class);
 
   @ExceptionHandler(KaaAdminServiceException.class)
-  public void handleKaaAdminServiceException(KaaAdminServiceException ex, HttpServletResponse response) {
+  public void handleKaaAdminServiceException(KaaAdminServiceException ex,
+                                             HttpServletResponse response) {
     try {
       ServiceErrorCode errorCode = ex.getErrorCode();
       switch (errorCode) {
@@ -66,11 +67,12 @@ public class ExceptionController {
           break;
         case CONFLICT:
           response.sendError(HttpServletResponse.SC_CONFLICT, ex.getMessage());
+          break;
         default:
           break;
       }
-    } catch (IOException e) {
-      LOG.error("Can't handle exception", e);
+    } catch (IOException ioEx) {
+      LOG.error("Can't handle exception", ioEx);
     }
   }
 

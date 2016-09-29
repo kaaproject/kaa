@@ -33,7 +33,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Api(value = "Device management", description = "Provides function for device management", basePath = "/kaaAdmin/rest")
+@Api(value = "Device management",
+    description = "Provides function for device management",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class DeviceManagementController extends AbstractAdminController {
 
@@ -47,20 +49,33 @@ public class DeviceManagementController extends AbstractAdminController {
    * @throws KaaAdminServiceException - if an exception occures.
    */
   @ApiOperation(value = "Provision security credentials",
-      notes = " Using this credentials endpoint can interact with specified application. Only users with the TENANT_ADMIN role are allowed to submit " +
-          "this request.")
+      notes = " Using this credentials endpoint can interact with specified application. "
+          + "Only users with the TENANT_ADMIN role are allowed to submit "
+          + "this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "Parameter conditions \"applicationToken, credentialsBody\" not met for actual request parameters"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
-      @ApiResponse(code = 404, message = "The requested item was not found"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "provisionCredentials", params = {"applicationToken", "credentialsBody"}, method = RequestMethod.POST)
+      @ApiResponse(code = 400,
+          message = "Parameter conditions \"applicationToken, "
+              + "credentialsBody\" not met for actual request parameters"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
+      @ApiResponse(code = 404,
+          message = "The requested item was not found"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
+  @RequestMapping(value = "provisionCredentials",
+      params = {"applicationToken", "credentialsBody"},
+      method = RequestMethod.POST)
   @ResponseBody
   public CredentialsDto provisionCredentials(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @RequestParam String applicationToken,
-      @ApiParam(name = "credentialsBody", value = "The public key hash of the endpoint in Base64 URL safe format", required = true)
+      @ApiParam(name = "credentialsBody",
+          value = "The public key hash of the endpoint in Base64 URL safe format",
+          required = true)
       @RequestParam String credentialsBody)
       throws KaaAdminServiceException {
     return this.deviceManagementService.provisionCredentials(applicationToken, credentialsBody);
@@ -77,18 +92,28 @@ public class DeviceManagementController extends AbstractAdminController {
   @ApiOperation(value = "Provides the status of given credentials",
       notes = " Only users with the TENANT_ADMIN role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "Parameter conditions \"applicationToken, credentialsId\" not met for actual request parameters"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
-      @ApiResponse(code = 404, message = "The requested item was not found"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 400,
+          message = "Parameter conditions \"applicationToken, credentialsId\" not met for actual "
+              + "request parameters"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
+      @ApiResponse(code = 404,
+          message = "The requested item was not found"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "credentialsStatus", method = RequestMethod.GET)
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public CredentialsStatus getCredentialsStatus(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @RequestParam String applicationToken,
-      @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
+      @ApiParam(name = "credentialsId",
+          value = "A unique credentials identifier",
+          required = true)
       @RequestParam String credentialsId)
       throws KaaAdminServiceException {
     return this.deviceManagementService.getCredentialsStatus(applicationToken, credentialsId);
@@ -106,22 +131,36 @@ public class DeviceManagementController extends AbstractAdminController {
   @ApiOperation(value = "Bind specified endpoint profile to the credentials",
       notes = " Only users with the TENANT_ADMIN role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "provisionRegistration", params = {"applicationToken", "credentialsId", "serverProfileVersion", "serverProfileBody"}, method = RequestMethod.POST)
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
+  @RequestMapping(value = "provisionRegistration",
+      params = {"applicationToken", "credentialsId", "serverProfileVersion", "serverProfileBody"},
+      method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
   public void provisionRegistration(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @RequestParam String applicationToken,
-      @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
+      @ApiParam(name = "credentialsId",
+          value = "A unique credentials identifier",
+          required = true)
       @RequestParam String credentialsId,
-      @ApiParam(name = "serverProfileVersion", value = "The version number of server-side endpoint profile", required = true)
+      @ApiParam(name = "serverProfileVersion",
+          value = "The version number of server-side endpoint profile",
+          required = true)
       @RequestParam Integer serverProfileVersion,
-      @ApiParam(name = "serverProfileBody", value = "The body of server-side endpoint profile", required = true)
+      @ApiParam(name = "serverProfileBody",
+          value = "The body of server-side endpoint profile",
+          required = true)
       @RequestParam String serverProfileBody)
       throws KaaAdminServiceException {
-    this.deviceManagementService.provisionRegistration(applicationToken, credentialsId, serverProfileVersion, serverProfileBody);
+    this.deviceManagementService.provisionRegistration(
+        applicationToken, credentialsId, serverProfileVersion, serverProfileBody);
   }
 
   /**
@@ -134,18 +173,27 @@ public class DeviceManagementController extends AbstractAdminController {
    * @throws KaaAdminServiceException - if an exception occures.
    */
   @ApiOperation(value = "Revoke security credentials from the corresponding credentials storage",
-      notes = "Launches an asynchronous process to terminate all active sessions of the endpoint that uses these credentials. Only users with the " +
-          "TENANT_ADMIN role are allowed to submit this request.")
+      notes = "Launches an asynchronous process to terminate all active "
+          + "sessions of the endpoint that uses these credentials. Only users with the "
+          + "TENANT_ADMIN role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the required role "
+          + "(TENANT_ADMIN)"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "revokeCredentials", params = {"applicationToken", "credentialsId"}, method = RequestMethod.POST)
+  @RequestMapping(value = "revokeCredentials",
+      params = {"applicationToken", "credentialsId"},
+      method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
   public void revokeCredentials(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @RequestParam String applicationToken,
-      @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
+      @ApiParam(name = "credentialsId",
+          value = "A unique credentials identifier",
+          required = true)
       @RequestParam String credentialsId) throws KaaAdminServiceException {
     this.deviceManagementService.revokeCredentials(applicationToken, credentialsId);
   }
@@ -161,19 +209,30 @@ public class DeviceManagementController extends AbstractAdminController {
    * @throws KaaAdminServiceException - if an exception occures.
    */
   @ApiOperation(value = "Notify the Kaa cluster about security credentials revocation",
-      notes = "If an endpoint is already registered with the specified credentials, this API all launches an asynchronous process to terminate all " +
-          "active sessions of  the corresponding endpoint. Only users with the TENANT_ADMIN role are allowed to submit this request.")
+      notes = "If an endpoint is already registered with the specified credentials, "
+          + "this API all launches an asynchronous process to terminate all "
+          + "active sessions of  the corresponding endpoint. Only users with the TENANT_ADMIN "
+          + "role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
-      @ApiResponse(code = 404, message = "An endpoint group to be edited with the specified endpointGroupId does not exist"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not "
+          + "have the required role (TENANT_ADMIN)"),
+      @ApiResponse(code = 404, message = "An endpoint group to be edited with "
+          + "the specified endpointGroupId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "notifyRevoked", params = {"applicationToken", "credentialsId"}, method = RequestMethod.POST)
+  @RequestMapping(value = "notifyRevoked",
+      params = {"applicationToken", "credentialsId"},
+      method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
   public void onCredentialsRevoked(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @RequestParam String applicationToken,
-      @ApiParam(name = "credentialsId", value = "A unique credentials identifier", required = true)
+      @ApiParam(name = "credentialsId",
+          value = "A unique credentials identifier",
+          required = true)
       @RequestParam String credentialsId) throws KaaAdminServiceException {
     this.deviceManagementService.onCredentialsRevoked(applicationToken, credentialsId);
   }
