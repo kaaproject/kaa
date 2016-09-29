@@ -121,7 +121,7 @@ public class DefaultProfileService implements ProfileService {
 
     String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), sdkProfile.getProfileSchemaVersion());
 
-    EndpointObjectHash keyHash = EndpointObjectHash.fromSHA1(request.getEndpointKey());
+    EndpointObjectHash keyHash = EndpointObjectHash.fromSha1(request.getEndpointKey());
 
     EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
     if (dto == null) {
@@ -131,7 +131,7 @@ public class DefaultProfileService implements ProfileService {
       dto.setEndpointKey(request.getEndpointKey());
       dto.setEndpointKeyHash(keyHash.getData());
       dto.setClientProfileBody(profileJson);
-      dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
+      dto.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
 
       try {
         Optional<EndpointRegistrationDto> endpointRegistrationLookup = endpointRegistrationService.findEndpointRegistrationByEndpointId(endpointId);
@@ -195,7 +195,7 @@ public class DefaultProfileService implements ProfileService {
         profile.setAccessToken(request.getAccessToken());
       }
       profile.setClientProfileBody(profileJson);
-      profile.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
+      profile.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
 
       populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
       profile.setGroupState(new ArrayList<>());

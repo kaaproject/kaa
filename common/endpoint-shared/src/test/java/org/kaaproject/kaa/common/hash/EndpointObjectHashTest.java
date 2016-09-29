@@ -27,33 +27,33 @@ public class EndpointObjectHashTest {
 
   @Test
   public void deltaSameEndpointObjectHashTest() {
-    EndpointObjectHash hash1 = EndpointObjectHash.fromSHA1("test");
-    EndpointObjectHash hash2 = EndpointObjectHash.fromSHA1("test");
+    EndpointObjectHash hash1 = EndpointObjectHash.fromSha1("test");
+    EndpointObjectHash hash2 = EndpointObjectHash.fromSha1("test");
     Assert.assertEquals(hash1, hash2);
-    hash1 = EndpointObjectHash.fromSHA1("test".getBytes());
-    hash2 = EndpointObjectHash.fromSHA1("test".getBytes());
+    hash1 = EndpointObjectHash.fromSha1("test".getBytes());
+    hash2 = EndpointObjectHash.fromSha1("test".getBytes());
     Assert.assertEquals(hash1, hash2);
   }
 
   @Test
   public void deltaDifferentEndpointObjectHashTest() {
-    EndpointObjectHash hash1 = EndpointObjectHash.fromSHA1("test1");
-    EndpointObjectHash hash2 = EndpointObjectHash.fromSHA1("test2");
+    EndpointObjectHash hash1 = EndpointObjectHash.fromSha1("test1");
+    EndpointObjectHash hash2 = EndpointObjectHash.fromSha1("test2");
     Assert.assertNotEquals(hash1, hash2);
-    hash1 = EndpointObjectHash.fromSHA1("test1".getBytes());
-    hash2 = EndpointObjectHash.fromSHA1("test2".getBytes());
+    hash1 = EndpointObjectHash.fromSha1("test1".getBytes());
+    hash2 = EndpointObjectHash.fromSha1("test2".getBytes());
     Assert.assertNotEquals(hash1, hash2);
   }
 
   @Test
   public void nullEndpointObjectHashTest() {
     byte[] binaryData = null;
-    EndpointObjectHash hash1 = EndpointObjectHash.fromSHA1(binaryData);
+    EndpointObjectHash hash1 = EndpointObjectHash.fromSha1(binaryData);
     Assert.assertNull(hash1);
     hash1 = EndpointObjectHash.fromBytes(binaryData);
     Assert.assertNull(hash1);
     String strData = null;
-    hash1 = EndpointObjectHash.fromSHA1(strData);
+    hash1 = EndpointObjectHash.fromSha1(strData);
     Assert.assertNull(hash1);
   }
 

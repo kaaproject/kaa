@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.transports.http.transport.commands;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
 
@@ -42,7 +42,7 @@ public class SyncCommandFactory implements KaaCommandProcessorFactory<HttpReques
 
   @Override
   public String getCommandName() {
-    return CommonEPConstans.SYNC_COMMAND;
+    return CommonEpConstans.SYNC_COMMAND;
   }
 
   @Override

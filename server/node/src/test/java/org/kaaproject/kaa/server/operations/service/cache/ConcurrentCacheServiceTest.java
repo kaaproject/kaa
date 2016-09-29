@@ -133,7 +133,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
   private static final ProfileFilterDto TEST_PROFILE_FILTER = new ProfileFilterDto();
   private static final List<ProfileFilterDto> TEST_PROFILE_FILTER_LIST = Collections.singletonList(TEST_PROFILE_FILTER);
 
-  private static final EndpointObjectHash CF1_HASH = EndpointObjectHash.fromSHA1(CF1_ID);
+  private static final EndpointObjectHash CF1_HASH = EndpointObjectHash.fromSha1(CF1_ID);
 
   private static final EndpointObjectHash TLCE1_HASH = CF1_HASH;
   private static final TopicListEntryDto TLCE1 = new TopicListEntryDto(100, TLCE1_HASH.getData(), null);
@@ -342,11 +342,11 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
     publicKey = keyGen.genKeyPair().getPublic();
     byte[] key = publicKey.getEncoded();
-    publicKeyHash = EndpointObjectHash.fromSHA1(key);
+    publicKeyHash = EndpointObjectHash.fromSha1(key);
 
     publicKey2 = keyGen.genKeyPair().getPublic();
     byte[] key2 = publicKey2.getEncoded();
-    publicKeyHash2 = EndpointObjectHash.fromSHA1(key2);
+    publicKeyHash2 = EndpointObjectHash.fromSha1(key2);
 
     final EndpointProfileDto ep = new EndpointProfileDto();
     ep.setEndpointKey(key);

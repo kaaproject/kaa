@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.transports.http.transport;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
@@ -201,7 +201,7 @@ abstract public class HttpTestClient<T extends SpecificRecordBase, R extends Spe
       throw new Exception(e.toString());
     }
 
-    ByteBuffer publicKeyBuffer = ByteBuffer.wrap(EndpointObjectHash.fromSHA1(clientPublicKey.getEncoded()).getData());
+    ByteBuffer publicKeyBuffer = ByteBuffer.wrap(EndpointObjectHash.fromSha1(clientPublicKey.getEncoded()).getData());
 
     clientPublicKeyHash = EndpointObjectHash.fromBytes(publicKeyBuffer.array());
 
@@ -227,9 +227,9 @@ abstract public class HttpTestClient<T extends SpecificRecordBase, R extends Spe
       throw new Exception(e.toString());
     }
 
-    objects.addObject(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME, signature);
-    objects.addObject(CommonEPConstans.REQUEST_KEY_ATTR_NAME, key);
-    objects.addObject(CommonEPConstans.REQUEST_DATA_ATTR_NAME, data);
+    objects.addObject(CommonEpConstans.REQUEST_SIGNATURE_ATTR_NAME, signature);
+    objects.addObject(CommonEpConstans.REQUEST_KEY_ATTR_NAME, key);
+    objects.addObject(CommonEpConstans.REQUEST_DATA_ATTR_NAME, data);
   }
 
   /* (non-Javadoc)
@@ -304,10 +304,10 @@ abstract public class HttpTestClient<T extends SpecificRecordBase, R extends Spe
    * @return type R Response
    */
   protected R decodeHttpResponse(Map<String, List<String>> header, byte[] body) throws Exception {
-    if (header.containsKey(CommonEPConstans.SIGNATURE_HEADER_NAME)
-        && header.get(CommonEPConstans.SIGNATURE_HEADER_NAME) != null
-        && header.get(CommonEPConstans.SIGNATURE_HEADER_NAME).size() > 0) {
-      String sigHeader = header.get(CommonEPConstans.SIGNATURE_HEADER_NAME).get(0);
+    if (header.containsKey(CommonEpConstans.SIGNATURE_HEADER_NAME)
+        && header.get(CommonEpConstans.SIGNATURE_HEADER_NAME) != null
+        && header.get(CommonEpConstans.SIGNATURE_HEADER_NAME).size() > 0) {
+      String sigHeader = header.get(CommonEpConstans.SIGNATURE_HEADER_NAME).get(0);
       byte[] respSignature = Base64.decodeBase64(sigHeader);
       byte[] respData = body;
       crypt.verify(respData, respSignature);
@@ -315,7 +315,7 @@ abstract public class HttpTestClient<T extends SpecificRecordBase, R extends Spe
       byte[] respDecoded = crypt.decodeData(respData);
       return responseConverter.fromByteArray(respDecoded);
     } else {
-      throw new Exception("HTTP response incorrect, no signature fields " + CommonEPConstans.SIGNATURE_HEADER_NAME);
+      throw new Exception("HTTP response incorrect, no signature fields " + CommonEpConstans.SIGNATURE_HEADER_NAME);
     }
   }
 

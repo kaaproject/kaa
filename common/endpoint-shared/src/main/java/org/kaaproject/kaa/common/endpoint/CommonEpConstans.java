@@ -19,9 +19,9 @@ package org.kaaproject.kaa.common.endpoint;
 import org.kaaproject.kaa.common.Constants;
 
 /**
- * The Interface CommonEPConstans.
+ * The Interface CommonEpConstans.
  */
-public interface CommonEPConstans extends Constants { //NOSONAR
+public interface CommonEpConstans extends Constants { //NOSONAR
 
   /**
    * The Constant ENDPOINT_DOMAIN.
@@ -36,8 +36,8 @@ public interface CommonEPConstans extends Constants { //NOSONAR
   /**
    * The Constant ENDPOINT_REGISTER_URI.
    */
-  public static final String ENDPOINT_REGISTER_URI = URI_DELIM + ENDPOINT_DOMAIN + URI_DELIM //NOSONAR
-      + ENDPOINT_REGISTER_COMMAND;
+  public static final String ENDPOINT_REGISTER_URI = URI_DELIM + ENDPOINT_DOMAIN + //NOSONAR
+          URI_DELIM + ENDPOINT_REGISTER_COMMAND;
 
   /**
    * The Constant ENDPOINT_UPDATE_COMMAND.
@@ -64,12 +64,14 @@ public interface CommonEPConstans extends Constants { //NOSONAR
   /**
    * The Constant SYNC_URI.
    */
-  public static final String SYNC_URI = URI_DELIM + ENDPOINT_DOMAIN + URI_DELIM + SYNC_COMMAND; //NOSONAR
+  public static final String SYNC_URI = URI_DELIM + ENDPOINT_DOMAIN + URI_DELIM
+          + SYNC_COMMAND; //NOSONAR
 
   /**
    * The Constant SYNC_URI.
    */
-  public static final String LONG_SYNC_URI = URI_DELIM + ENDPOINT_DOMAIN + URI_DELIM + LONG_SYNC_COMMAND; //NOSONAR
+  public static final String LONG_SYNC_URI = URI_DELIM + ENDPOINT_DOMAIN + URI_DELIM
+          + LONG_SYNC_COMMAND; //NOSONAR
 
 
   /**

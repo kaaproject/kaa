@@ -24,7 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.ByteArrayBuffer;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +135,7 @@ public class AndroidHttpClient extends AbstractHttpClient {
 
       if (verifyResponse) {
         Header signatureHeader = response
-            .getFirstHeader(CommonEPConstans.SIGNATURE_HEADER_NAME);
+            .getFirstHeader(CommonEpConstans.SIGNATURE_HEADER_NAME);
 
         if (signatureHeader == null) {
           throw new IOException("can't verify message");

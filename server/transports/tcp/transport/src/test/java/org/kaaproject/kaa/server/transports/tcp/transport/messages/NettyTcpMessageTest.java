@@ -41,7 +41,7 @@ public class NettyTcpMessageTest {
     ChannelContext ctx = Mockito.mock(ChannelContext.class);
     ChannelType channelType = ChannelType.ASYNC;
     CipherPair sessionKey = Mockito.mock(CipherPair.class);
-    EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
     String applicationToken = "AppToken";
     String sdkToken = "SdkToken";
     int keepAlive = 100;
@@ -80,7 +80,7 @@ public class NettyTcpMessageTest {
     ChannelContext ctx = Mockito.mock(ChannelContext.class);
     ChannelType channelType = ChannelType.ASYNC;
     CipherPair sessionKey = Mockito.mock(CipherPair.class);
-    EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
     String applicationToken = "AppToken";
     String sdkToken = "SdkToken";
     int keepAlive = 100;
@@ -103,7 +103,7 @@ public class NettyTcpMessageTest {
     ChannelContext ctx = Mockito.mock(ChannelContext.class);
     ChannelType channelType = ChannelType.ASYNC;
     CipherPair sessionKey = Mockito.mock(CipherPair.class);
-    EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
     String applicationToken = "AppToken";
     String sdkToken = "SdkToken";
     int keepAlive = 100;
@@ -125,7 +125,7 @@ public class NettyTcpMessageTest {
     ChannelContext ctx = Mockito.mock(ChannelContext.class);
     ChannelType channelType = ChannelType.ASYNC;
     CipherPair sessionKey = Mockito.mock(CipherPair.class);
-    EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
     String applicationToken = "AppToken";
     String sdkToken = "SdkToken";
     int keepAlive = 100;

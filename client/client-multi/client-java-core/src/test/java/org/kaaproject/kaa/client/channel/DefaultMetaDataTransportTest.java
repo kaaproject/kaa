@@ -31,8 +31,8 @@ public class DefaultMetaDataTransportTest {
   public void testCreateMetaDataRequest() {
     KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
     KaaClientState state = Mockito.mock(KaaClientState.class);
-    Mockito.when(state.getProfileHash()).thenReturn(EndpointObjectHash.fromSHA1("123"));
-    EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1("567");
+    Mockito.when(state.getProfileHash()).thenReturn(EndpointObjectHash.fromSha1("123"));
+    EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSha1("567");
     MetaDataTransport transport = new DefaultMetaDataTransport();
     transport.createMetaDataRequest();
     transport.setClientProperties(properties);

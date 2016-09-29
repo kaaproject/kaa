@@ -28,7 +28,7 @@ public class RouteTableTest {
   private static final String SERVER1 = "server1";
   private static final String ECF1 = "ECF1";
   private static final String APP_TOKEN = "APP_TOKEN";
-  private static final EndpointObjectHash endpoint = EndpointObjectHash.fromSHA1("endpoint1");
+  private static final EndpointObjectHash endpoint = EndpointObjectHash.fromSha1("endpoint1");
 
   private RouteTable testTable;
 

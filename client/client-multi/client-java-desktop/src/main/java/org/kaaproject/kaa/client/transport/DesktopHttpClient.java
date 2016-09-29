@@ -27,7 +27,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +99,7 @@ public class DesktopHttpClient extends AbstractHttpClient {
 
       if (verifyResponse) {
         Header signatureHeader = response
-            .getFirstHeader(CommonEPConstans.SIGNATURE_HEADER_NAME);
+            .getFirstHeader(CommonEpConstans.SIGNATURE_HEADER_NAME);
 
         if (signatureHeader == null) {
           throw new IOException("can't verify message");

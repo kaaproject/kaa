@@ -161,7 +161,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
   private class HashContainer implements ConfigurationHashContainer {
     @Override
     public EndpointObjectHash getConfigurationHash() {
-      return EndpointObjectHash.fromSHA1(getConfigurationData());
+      return EndpointObjectHash.fromSha1(getConfigurationData());
     }
   }
 }

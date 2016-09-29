@@ -37,7 +37,7 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.Constants;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.server.common.server.BadRequestException;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
@@ -122,7 +122,7 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
           LOG.trace("Multipart1 name " + data.getName() + " type " + data.getHttpDataType().name());
           if (data.getHttpDataType() == HttpDataType.Attribute) {
             Attribute attribute = (Attribute) data;
-            if (CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME.equals(data.getName())) {
+            if (CommonEpConstans.REQUEST_SIGNATURE_ATTR_NAME.equals(data.getName())) {
               requestSignature = attribute.get();
               if (LOG.isTraceEnabled()) {
                 LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " Signature set. size: "
@@ -130,21 +130,21 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestSignature));
               }
 
-            } else if (CommonEPConstans.REQUEST_KEY_ATTR_NAME.equals(data.getName())) {
+            } else if (CommonEpConstans.REQUEST_KEY_ATTR_NAME.equals(data.getName())) {
               requestKey = attribute.get();
               if (LOG.isTraceEnabled()) {
                 LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " requestKey set. size: "
                     + requestKey.length);
                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestKey));
               }
-            } else if (CommonEPConstans.REQUEST_DATA_ATTR_NAME.equals(data.getName())) {
+            } else if (CommonEpConstans.REQUEST_DATA_ATTR_NAME.equals(data.getName())) {
               requestData = attribute.get();
               if (LOG.isTraceEnabled()) {
                 LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " requestData set. size: "
                     + requestData.length);
                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestData));
               }
-            } else if (CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME.equals(data.getName())) {
+            } else if (CommonEpConstans.NEXT_PROTOCOL_ATTR_NAME.equals(data.getName())) {
               nextProtocol = ByteBuffer.wrap(attribute.get()).getInt();
               LOG.trace("[{}] next protocol is {}", getSessionUuid(), nextProtocol);
             }
@@ -209,12 +209,12 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
     LOG.warn("Response data: {}", Arrays.toString(data.array()));
     FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, data);
 
-    httpResponse.headers().set(CONTENT_TYPE, CommonEPConstans.RESPONSE_CONTENT_TYPE);
+    httpResponse.headers().set(CONTENT_TYPE, CommonEpConstans.RESPONSE_CONTENT_TYPE);
     httpResponse.headers().set(CONTENT_LENGTH, data.readableBytes());
     LOG.warn("Response size: {}", data.readableBytes());
-    httpResponse.headers().set(CommonEPConstans.RESPONSE_TYPE, CommonEPConstans.RESPONSE_TYPE_OPERATION);
+    httpResponse.headers().set(CommonEpConstans.RESPONSE_TYPE, CommonEpConstans.RESPONSE_TYPE_OPERATION);
     if (responseSignature != null) {
-      httpResponse.headers().set(CommonEPConstans.SIGNATURE_HEADER_NAME, Base64.encodeBase64String(responseSignature));
+      httpResponse.headers().set(CommonEpConstans.SIGNATURE_HEADER_NAME, Base64.encodeBase64String(responseSignature));
     }
     if (isNeedConnectionClose()) {
       httpResponse.headers().set(CONNECTION, HttpHeaders.Values.CLOSE);
