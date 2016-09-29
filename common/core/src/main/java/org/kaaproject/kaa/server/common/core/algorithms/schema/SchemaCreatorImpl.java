@@ -175,7 +175,8 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
     if (processedRecords.containsKey(root.getFullName())) {
       return processedRecords.get(root.getFullName());
     }
-    Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(), root.isError());
+    Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(),
+            root.isError());
     processedRecords.put(copySchema.getFullName(), copySchema);
 
     boolean addressable = isAddressableValue(root);
@@ -219,16 +220,19 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
 
       Field newField = null;
       if (newUnion.size() > 1) {
-        newField = new Field(fieldIter.name(), Schema.createUnion(newUnion), fieldIter.doc(), fieldIter.defaultValue());
+        newField = new Field(fieldIter.name(), Schema.createUnion(newUnion), fieldIter.doc(),
+                fieldIter.defaultValue());
       } else {
-        newField = new Field(fieldIter.name(), newUnion.get(0), fieldIter.doc(), fieldIter.defaultValue());
+        newField = new Field(fieldIter.name(), newUnion.get(0), fieldIter.doc(),
+                fieldIter.defaultValue());
       }
       AvroUtils.copyJsonProperties(fieldIter, newField);
       newFields.add(newField);
     }
     if (addressable) {
       // This record supports partial updates, adding "uuid" field if it is not exists already
-      Optional<Field> uuidOptional = newFields.stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst();
+      Optional<Field> uuidOptional = newFields.stream().filter(f -> f.name().equals(UUID_FIELD))
+              .findFirst();
       if (!uuidOptional.isPresent()) {
         newFields.add(getUuidField());
       }

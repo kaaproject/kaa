@@ -32,6 +32,7 @@ public interface OverrideAlgorithm {
    * @return the merged configuration
    * @throws OverrideException the configuration merger exception
    */
-  BaseData override(BaseData baseConfiguration, List<OverrideData> overrideConfigurations) throws OverrideException, IOException;
+  BaseData override(BaseData baseConfiguration, List<OverrideData> overrideConfigurations)
+          throws OverrideException, IOException;
 
 }

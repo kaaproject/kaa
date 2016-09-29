@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
  * (0) Will RETAIN (0) Will QoS (00) Will flag (0) Clean Session (1) 0x02 - value Keep Alive timer
  * byte 11 Keep alive MSB (0) byte 12 Keep alive LSB (200) Keep Alive timer - default value 200
  * seconds.
- *
  * Payload: Session Key:   AES Session encoding key (16 byte) - encrypted with the Operations server
  * RSA Public Key EndpointPublicKeyHash: SHA Hash of Endpoint Public Key (32 byte) Signature: RSA
  * signature (32 byte) signed with the Endpoint Private Key of Session key (16 byte) +
@@ -49,7 +48,8 @@ public class Connect extends MqttFrame {
   public static final byte CONNECT_FIXED_HEADER_FLAG = 0x02;
   public static final byte CONNECT_SESSION_KEY_FLAGS = 0x11;
   public static final byte CONNECT_SIGNATURE_FLAGS = 0x01;
-  private static final byte[] FIXED_HEADER_CONST = new byte[]{0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p',
+  private static final byte[] FIXED_HEADER_CONST = new
+          byte[]{0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p',
       CONNECT_VERSION,
       CONNECT_FIXED_HEADER_FLAG};
 
@@ -92,7 +92,8 @@ public class Connect extends MqttFrame {
    * @param signature      the byte[] of Signature of aesSessionKey and endpointPublicKeyHash,
    *                       length 32 byte.
    */
-  public Connect(int keepAlive, int nextProtocolId, byte[] aesSessionKey, byte[] syncRequest, byte[] signature) {
+  public Connect(int keepAlive, int nextProtocolId, byte[] aesSessionKey, byte[] syncRequest,
+                 byte[] signature) {
     setMessageType(MessageType.CONNECT);
     this.setKeepAlive(keepAlive);
     this.setNextProtocolId(nextProtocolId);
@@ -109,7 +110,8 @@ public class Connect extends MqttFrame {
     if (syncRequest != null) {
       remainingLength += syncRequest.length;
     }
-    LOG.debug("Created Connect message: session key size = {}, signature size = {}, sync request size = {}",
+    LOG.debug("Created Connect message: session key size = {}, signature size = {},"
+                    + " sync request size = {}",
         aesSessionKey != null ? aesSessionKey.length : "null",
         signature != null ? signature.length : "null",
         syncRequest != null ? syncRequest.length : "null");
@@ -330,7 +332,8 @@ public class Connect extends MqttFrame {
 
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+   * @see
+   * org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
    */
   @Override
   public boolean isNeedCloseConnection() {

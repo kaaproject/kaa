@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This is base schema strategy for generating schema for group "all" configurations
+ * This is base schema strategy for generating schema for group "all" configurations.
  */
 public class BaseDataSchemaStrategy extends AbstractSchemaStrategy<BaseSchema> {
 

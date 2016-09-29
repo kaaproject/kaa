@@ -44,12 +44,12 @@ public class Framer {
       .getLogger(Framer.class);
 
   /**
-   * Mqtt frame listeners list
+   * Mqtt frame listeners list.
    */
   private final List<MqttFramelistener> listeners;
 
   /**
-   * Current processing frame
+   * Current processing frame.
    */
   private MqttFrame currentFrame;
 
@@ -108,7 +108,7 @@ public class Framer {
   }
 
   /**
-   * Notify all listeners on new Frame
+   * Notify all listeners on new Frame.
    */
   private void callListeners(MqttFrame frame) {
     for (MqttFramelistener listener : listeners) {
@@ -117,7 +117,7 @@ public class Framer {
   }
 
   /**
-   * Creates specific Kaatcp message by MessageType
+   * Creates specific Kaatcp message by MessageType.
    *
    * @param type - MessageType of mqttFrame
    * @return mqttFrame

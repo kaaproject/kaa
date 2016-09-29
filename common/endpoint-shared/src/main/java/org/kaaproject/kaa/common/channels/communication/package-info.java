@@ -16,7 +16,7 @@
 
 /**
  * Provides Communications parameters implementations for all types of Channels
- * Base type for IP oriented Channels - IPParameters consists
+ * Base type for IP oriented Channels - IpParameters consists
  * HostName String and Integer port
  *
  * @author Andrey Panasenko

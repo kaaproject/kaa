@@ -23,6 +23,12 @@ public class Pair<T1, T2> implements Serializable {
   private final T1 v1;
   private final T2 v2;
 
+  /**
+   * Instantiates a new Pair.
+   *
+   * @param v1 the v1
+   * @param v2 the v2
+   */
   public Pair(T1 v1, T2 v2) {
     super();
     this.v1 = v1;

@@ -43,14 +43,17 @@ import java.util.Map;
 
 /**
  * Default implementation of
- * {@link org.kaaproject.kaa.server.common.dao.configuration.DefaultRecordGenerationAlgorithm}
+ * {@link
+ * org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm}
  */
-public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends KaaData<U>> implements DefaultRecordGenerationAlgorithm<T> {
+public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends KaaData<U>>
+        implements DefaultRecordGenerationAlgorithm<T> {
 
   /**
    * The Constant LOG.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultRecordGenerationAlgorithmImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+          DefaultRecordGenerationAlgorithmImpl.class);
 
   /**
    * The processed types.
@@ -83,8 +86,10 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
    * @param kaaSchema the base schema
    * @throws ConfigurationGenerationException the configuration processing exception
    */
-  public DefaultRecordGenerationAlgorithmImpl(U kaaSchema, KaaDataFactory<U, T> factory) throws ConfigurationGenerationException {
-    LOG.debug("Generating default configuration for configuration schema: " + kaaSchema.getRawSchema());
+  public DefaultRecordGenerationAlgorithmImpl(U kaaSchema, KaaDataFactory<U, T> factory)
+          throws ConfigurationGenerationException {
+    LOG.debug("Generating default configuration for configuration schema: "
+            + kaaSchema.getRawSchema());
 
     this.rootSchema = kaaSchema;
     this.dataFactory = factory;
@@ -101,7 +106,8 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
    * @return generated value.
    * @throws ConfigurationGenerationException the configuration processing exception.
    */
-  private Object applyDefaultValue(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
+  private Object applyDefaultValue(Schema schemaNode, JsonNode byDefault)
+          throws ConfigurationGenerationException {
     if (byDefault.isArray() && AvroUtils.getSchemaByType(schemaNode, Type.BYTES) != null) {
       // if this is a 'bytes' type then convert json bytes array to
       // avro 'bytes' representation or
@@ -142,7 +148,8 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
         return byDefault.asText();
       }
     }
-    throw new ConfigurationGenerationException("Default value " + byDefault.toString() + " is not applicable for the field");
+    throw new ConfigurationGenerationException("Default value " + byDefault.toString()
+            + " is not applicable for the field");
   }
 
   /**
@@ -153,7 +160,8 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
    * @return generated value for input type.
    * @throws ConfigurationGenerationException configuration processing exception
    */
-  private Object processType(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
+  private Object processType(Schema schemaNode, JsonNode byDefault)
+          throws ConfigurationGenerationException {
     if (byDefault != null && !byDefault.isNull()) {
       return applyDefaultValue(schemaNode, byDefault);
     }
@@ -239,7 +247,8 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
    * @return generated value for input enum type.
    */
   private Object processEnum(Schema schemaNode) {
-    GenericEnumSymbol result = new GenericData.EnumSymbol(schemaNode, schemaNode.getEnumSymbols().get(0));
+    GenericEnumSymbol result = new GenericData.EnumSymbol(schemaNode,
+            schemaNode.getEnumSymbols().get(0));
     return result;
   }
 
@@ -279,7 +288,6 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.common.dao.configuration.ConfigurationProcessor#getRootConfiguration()
    */
   @Override
   public final GenericRecord getRootConfiguration() throws ConfigurationGenerationException {
@@ -287,7 +295,6 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.common.dao.configuration.ConfigurationProcessor#getRootJsonConfiguration()
    */
   @Override
   public final T getRootData() throws IOException, ConfigurationGenerationException {
@@ -295,16 +302,17 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
     GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(root.getSchema());
     try {
       return dataFactory.createData(rootSchema, converter.encodeToJson(root));
-    } catch (RuntimeException e) {
+    } catch (RuntimeException ex) {
       // NPE is thrown if "null" was written into a field that is not nullable
       // CGE is thrown if value of wrong type was written into a field
-      LOG.error("Unexpected exception occurred while generating configuration.", e);
-      throw new ConfigurationGenerationException(e);
+      LOG.error("Unexpected exception occurred while generating configuration.", ex);
+      throw new ConfigurationGenerationException(ex);
     }
   }
 
   @Override
-  public final GenericRecord getConfigurationByName(String name, String namespace) throws ConfigurationGenerationException {
+  public final GenericRecord getConfigurationByName(String name, String namespace)
+          throws ConfigurationGenerationException {
     if (name == null || namespace == null) {
       return null;
     }

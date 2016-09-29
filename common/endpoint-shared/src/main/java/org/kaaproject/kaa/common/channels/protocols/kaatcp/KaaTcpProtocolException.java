@@ -24,13 +24,10 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp;
  */
 public class KaaTcpProtocolException extends Exception {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = 4989380711384492851L;
 
   /**
-   * Default constructor with error message
+   * Default constructor with error message.
    *
    * @param string the string
    */

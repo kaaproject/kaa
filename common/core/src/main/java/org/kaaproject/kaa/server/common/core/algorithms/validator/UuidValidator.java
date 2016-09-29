@@ -41,6 +41,7 @@ public interface UuidValidator<T extends KaaData> {
    * @return the configuration with validated uuid fields
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  T validateUuidFields(GenericRecord configurationToValidate, GenericRecord previousConfiguration) throws IOException;
+  T validateUuidFields(GenericRecord configurationToValidate, GenericRecord previousConfiguration)
+          throws IOException;
 
 }

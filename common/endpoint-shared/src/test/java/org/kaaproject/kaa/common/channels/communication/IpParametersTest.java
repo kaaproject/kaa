@@ -25,66 +25,66 @@ import org.junit.Test;
 /**
  * @author Andrey Panasenko
  */
-public class IPParametersTest {
+public class IpParametersTest {
 
   /**
-   * Test method for {@link org.kaaproject.kaa.common.channels.communication.IPParameters#hashCode()}.
+   * Test method for {@link IpParameters#hashCode()}.
    */
   @Test
   public void testHashCode() {
-    IPParameters p1 = new IPParameters();
-    IPParameters p2 = new IPParameters();
+    IpParameters p1 = new IpParameters();
+    IpParameters p2 = new IpParameters();
     p1.setHostName("host1");
     p2.setHostName("host1");
     p1.setPort(10);
     p2.setPort(10);
     assertEquals(p1.hashCode(), p2.hashCode());
 
-    IPParameters p3 = new IPParameters();
+    IpParameters p3 = new IpParameters();
     p3.setPort(10);
     assertNotEquals(p1.hashCode(), p3.hashCode());
     assertNotEquals(p2.hashCode(), p3.hashCode());
   }
 
   /**
-   * Test method for {@link org.kaaproject.kaa.common.channels.communication.IPParameters#getHostName()}.
+   * Test method for {@link IpParameters#getHostName()}.
    */
   @Test
   public void testGetHostName() {
-    IPParameters p1 = new IPParameters();
+    IpParameters p1 = new IpParameters();
     p1.setHostName("host1");
     assertEquals("host1", p1.getHostName());
   }
 
   /**
-   * Test method for {@link org.kaaproject.kaa.common.channels.communication.IPParameters#getPort()}.
+   * Test method for {@link IpParameters#getPort()}.
    */
   @Test
   public void testGetPort() {
-    IPParameters p1 = new IPParameters();
+    IpParameters p1 = new IpParameters();
     p1.setPort(100);
     assertEquals(100, p1.getPort());
   }
 
 
   /**
-   * Test method for {@link org.kaaproject.kaa.common.channels.communication.IPParameters#toString()}.
+   * Test method for {@link IpParameters#toString()}.
    */
   @Test
   public void testToString() {
-    IPParameters p1 = new IPParameters();
+    IpParameters p1 = new IpParameters();
     p1.setHostName("host1");
     p1.setPort(100);
-    assertEquals("IPParameters [hostName=host1, port=100]", p1.toString());
+    assertEquals("IpParameters [hostName=host1, port=100]", p1.toString());
   }
 
   /**
-   * Test method for {@link org.kaaproject.kaa.common.channels.communication.IPParameters#equals(java.lang.Object)}.
+   * Test method for {@link IpParameters#equals(java.lang.Object)}.
    */
   @Test
   public void testEqualsObject() {
-    IPParameters p1 = new IPParameters();
-    IPParameters p2 = new IPParameters();
+    IpParameters p1 = new IpParameters();
+    IpParameters p2 = new IpParameters();
     p1.setHostName("host1");
     p2.setHostName("host1");
     p1.setPort(10);
@@ -101,8 +101,8 @@ public class IPParametersTest {
     if (p1.equals(new Object())) {
       fail("TestEquals to Object() objects failed");
     }
-    IPParameters p3 = new IPParameters();
-    IPParameters p4 = new IPParameters();
+    IpParameters p3 = new IpParameters();
+    IpParameters p4 = new IpParameters();
     if (p3.equals(p1)) {
       fail("TestEquals to not equals objects failed");
     }

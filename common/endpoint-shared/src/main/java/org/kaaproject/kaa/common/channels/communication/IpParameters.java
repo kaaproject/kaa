@@ -17,13 +17,13 @@
 package org.kaaproject.kaa.common.channels.communication;
 
 /**
- * IPParameters Class.
- * Base type for IP oriented Channels - IPParameters consists
+ * IpParameters Class.
+ * Base type for IP oriented Channels - IpParameters consists
  * HostName String and Integer port
  *
  * @author Andrey Panasenko
  */
-public class IPParameters {
+public class IpParameters {
   private String hostName;
   private int port;
 
@@ -68,7 +68,7 @@ public class IPParameters {
    */
   @Override
   public String toString() {
-    return "IPParameters [hostName=" + hostName + ", port=" + port + "]";
+    return "IpParameters [hostName=" + hostName + ", port=" + port + "]";
   }
 
   /* (non-Javadoc)
@@ -97,7 +97,7 @@ public class IPParameters {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    IPParameters other = (IPParameters) obj;
+    IpParameters other = (IpParameters) obj;
     if (hostName == null) {
       if (other.hostName != null) {
         return false;

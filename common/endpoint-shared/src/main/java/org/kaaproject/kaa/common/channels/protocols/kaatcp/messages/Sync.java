@@ -34,13 +34,13 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
 public class Sync extends KaaSync {
 
   /**
-   * Avro object byte representation
+   * Avro object byte representation.
    */
   private byte[] avroObject;
 
 
   /**
-   * Constructor for migrating from KaaSync to specific SyncRequest or SyncResponse
+   * Constructor for migrating from KaaSync to specific SyncRequest or SyncResponse.
    *
    * @param old KaaSync object which used to create new
    */
@@ -71,7 +71,7 @@ public class Sync extends KaaSync {
   }
 
   /**
-   * Decode Avro Object
+   * Decode Avro Object.
    */
   protected void decodeAvroObject() {
     int avroObjectSize = buffer.capacity() - buffer.position();

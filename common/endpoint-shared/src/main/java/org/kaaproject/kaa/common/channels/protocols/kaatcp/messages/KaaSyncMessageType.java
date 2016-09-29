@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;
 
 /**
- * KAASYNC subcomand id table
+ * KAASYNC subcomand id table.
  * Mnemonic  Enumeration Description
  * UNUSED    0           reserved value
  * SYNC      1           Sync request/response
