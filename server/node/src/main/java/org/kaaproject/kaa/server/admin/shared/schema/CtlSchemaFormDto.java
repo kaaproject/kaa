@@ -37,7 +37,8 @@ public class CtlSchemaFormDto extends CTLSchemaDto {
     setVersion(ctlSchema.getVersion());
     setCreatedTime(ctlSchema.getCreatedTime());
     setCreatedUsername(ctlSchema.getCreatedUsername());
-    setHasDependencies(ctlSchema.getDependencySet() != null && !ctlSchema.getDependencySet().isEmpty());
+    setHasDependencies(ctlSchema.getDependencySet() != null
+        && !ctlSchema.getDependencySet().isEmpty());
   }
 
   public RecordField getSchema() {

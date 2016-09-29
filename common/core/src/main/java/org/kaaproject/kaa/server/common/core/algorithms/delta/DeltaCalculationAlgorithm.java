@@ -30,7 +30,7 @@ public interface DeltaCalculationAlgorithm {
   /**
    * Calculates delta merging new and old configurations.
    *
-   * @param oldConfiguration     old configuration data (binary)
+   * @param endpointConfiguration     old configuration data (binary)
    * @param newConfigurationBody the new configuration body (binary)
    * @return the raw binary delta
    * @throws IOException              Signals that an I/O exception has occurred.
@@ -47,5 +47,6 @@ public interface DeltaCalculationAlgorithm {
    * @throws IOException              Signals that an I/O exception has occurred.
    * @throws DeltaCalculatorException the delta calculator exception
    */
-  RawBinaryDelta calculate(BaseData newConfigurationBody) throws IOException, DeltaCalculatorException;
+  RawBinaryDelta calculate(BaseData newConfigurationBody)
+          throws IOException, DeltaCalculatorException;
 }

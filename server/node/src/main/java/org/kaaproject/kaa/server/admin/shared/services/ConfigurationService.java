@@ -36,58 +36,84 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/configurationService")
 public interface ConfigurationService extends RemoteService {
 
-  List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
+  List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException;
 
-  ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException;
+  ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId)
+      throws KaaAdminServiceException;
 
-  ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException;
+  ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto configurationSchema)
+      throws KaaAdminServiceException;
 
-  List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws KaaAdminServiceException;
+  List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
+                                                                        boolean includeDeprecated)
+      throws KaaAdminServiceException;
 
-  ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
+  ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId)
+      throws KaaAdminServiceException;
 
-  ConfigurationDto editConfiguration(ConfigurationDto configuration) throws KaaAdminServiceException;
+  ConfigurationDto editConfiguration(ConfigurationDto configuration)
+      throws KaaAdminServiceException;
 
-  void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException;
+  void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration)
+      throws KaaAdminServiceException;
+
+  void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration,
+                             String applicationId,
+                             RecordField configurationData) throws KaaAdminServiceException;
 
   ConfigurationDto activateConfiguration(String configurationId) throws KaaAdminServiceException;
 
   ConfigurationDto deactivateConfiguration(String configurationId) throws KaaAdminServiceException;
 
-  void deleteConfigurationRecord(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
+  void deleteConfigurationRecord(String schemaId, String endpointGroupId)
+      throws KaaAdminServiceException;
 
   RecordField generateConfigurationSchemaForm(String fileItemName) throws KaaAdminServiceException;
 
-  ConfigurationSchemaViewDto saveConfigurationSchemaView(ConfigurationSchemaViewDto confSchemaView) throws KaaAdminServiceException;
+  ConfigurationSchemaViewDto saveConfigurationSchemaView(ConfigurationSchemaViewDto confSchemaView)
+      throws KaaAdminServiceException;
 
-  ConfigurationSchemaViewDto getConfigurationSchemaView(String configurationSchemaId) throws KaaAdminServiceException;
+  ConfigurationSchemaViewDto getConfigurationSchemaView(String configurationSchemaId)
+      throws KaaAdminServiceException;
 
-  ConfigurationRecordViewDto getConfigurationRecordView(String schemaId, String endpointGroupId) throws KaaAdminServiceException;
+  ConfigurationRecordViewDto getConfigurationRecordView(String schemaId, String endpointGroupId)
+      throws KaaAdminServiceException;
 
-  ConfigurationRecordFormDto editConfigurationRecordForm(ConfigurationRecordFormDto configuration) throws KaaAdminServiceException;
+  ConfigurationRecordFormDto editConfigurationRecordForm(ConfigurationRecordFormDto configuration)
+      throws KaaAdminServiceException;
 
-  ConfigurationRecordFormDto activateConfigurationRecordForm(String configurationId) throws KaaAdminServiceException;
+  ConfigurationRecordFormDto activateConfigurationRecordForm(String configurationId)
+      throws KaaAdminServiceException;
 
-  ConfigurationRecordFormDto deactivateConfigurationRecordForm(String configurationId) throws KaaAdminServiceException;
+  ConfigurationRecordFormDto deactivateConfigurationRecordForm(String configurationId)
+      throws KaaAdminServiceException;
 
-  List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
+  List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException;
 
-  RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
+  RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName)
+      throws KaaAdminServiceException;
 
-  List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
+  ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm)
+      throws KaaAdminServiceException;
 
-  ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+  String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash)
+      throws KaaAdminServiceException;
 
-  String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+      String externalUId, String appToken, Integer schemaVersion) throws KaaAdminServiceException;
 
-  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUId, String appToken, Integer schemaVersion) throws KaaAdminServiceException;
-
-  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException;
+  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(
+      String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException;
 
 }

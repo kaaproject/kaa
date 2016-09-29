@@ -91,9 +91,10 @@ public class CacheServiceImpl implements CacheService {
   @Cacheable(RECORD_LIBRARY_CACHE)
   public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
     try {
-      return controlService.generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+      return controlService.generateRecordStructureLibrary(
+          key.getApplicationId(), key.getSchemaVersion());
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -101,9 +102,10 @@ public class CacheServiceImpl implements CacheService {
   @Cacheable(RECORD_SCHEMA_CACHE)
   public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
     try {
-      return controlService.getRecordStructureSchema(key.getApplicationId(), key.getSchemaVersion());
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+      return controlService.getRecordStructureSchema(
+          key.getApplicationId(), key.getSchemaVersion());
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -112,8 +114,8 @@ public class CacheServiceImpl implements CacheService {
   public FileData getRecordData(RecordKey key) throws KaaAdminServiceException {
     try {
       return controlService.getRecordStructureData(key);
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -134,10 +136,13 @@ public class CacheServiceImpl implements CacheService {
         case LIBRARY:
           return controlService.exportCtlSchemaFlatAsLibrary(schemaFound);
         default:
-          throw new IllegalArgumentException("The export method " + key.getExportMethod().name() + " is not currently supported!");
+          throw new IllegalArgumentException(
+              "The export method "
+                  + key.getExportMethod().name()
+                  + " is not currently supported!");
       }
-    } catch (ControlServiceException e) {
-      throw Utils.handleException(e);
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -152,6 +157,5 @@ public class CacheServiceImpl implements CacheService {
   public void removeUploadedFile(String key) {
     // Do nothing
   }
-
 
 }

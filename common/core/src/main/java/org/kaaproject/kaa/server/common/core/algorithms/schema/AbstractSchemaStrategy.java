@@ -20,7 +20,8 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactory;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 
-public abstract class AbstractSchemaStrategy<T extends KaaSchema> implements SchemaCreationStrategy<T> {
+public abstract class AbstractSchemaStrategy<T extends KaaSchema> implements
+        SchemaCreationStrategy<T> {
 
   private final KaaSchemaFactory schemaFactory = new KaaSchemaFactoryImpl();
 

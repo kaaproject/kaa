@@ -63,20 +63,26 @@ public class CtlSchemaReferenceDto implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+
+    if (getClass() != obj.getClass()) {
       return false;
+    }
+
     CtlSchemaReferenceDto other = (CtlSchemaReferenceDto) obj;
-    if (metaInfo == null) {
-      if (other.metaInfo != null)
+    if (metaInfo == null && other.metaInfo != null) {
         return false;
-    } else if (!metaInfo.equals(other.metaInfo))
+    } else if (!metaInfo.equals(other.metaInfo)) {
       return false;
-    if (version != other.version)
+    } if (version != other.version) {
       return false;
+    }
     return true;
   }
 

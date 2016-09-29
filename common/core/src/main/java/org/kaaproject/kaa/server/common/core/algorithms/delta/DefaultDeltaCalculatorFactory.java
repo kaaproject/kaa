@@ -27,10 +27,12 @@ import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 public class DefaultDeltaCalculatorFactory implements DeltaCalculatorFactory {
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.operations.service.delta.DeltaCalculatorFactory#createDeltaCalculator(java.lang.String)
+   * @see org.kaaproject.kaa.server.operations.service.delta.DeltaCalculatorFactory
+   * #createDeltaCalculator(java.lang.String)
    */
   @Override
-  public DeltaCalculationAlgorithm createDeltaCalculator(ProtocolSchema protocolSchemaBody, BaseSchema baseDataSchema) {
+  public DeltaCalculationAlgorithm createDeltaCalculator(
+          ProtocolSchema protocolSchemaBody, BaseSchema baseDataSchema) {
     Schema protocolSchema = new Schema.Parser().parse(protocolSchemaBody.getRawSchema());
     Schema baseSchema = new Schema.Parser().parse(baseDataSchema.getRawSchema());
     return new DefaultDeltaCalculationAlgorithm(protocolSchema, baseSchema);

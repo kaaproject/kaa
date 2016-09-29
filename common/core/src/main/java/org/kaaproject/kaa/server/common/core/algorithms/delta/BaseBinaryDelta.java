@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.common.core.algorithms.delta;
 import java.io.IOException;
 
 /**
- * Simple container for resync delta encoded using base schema
+ * Simple container for resync delta encoded using base schema.
  *
  * @author Andrew Shvayka
  */
