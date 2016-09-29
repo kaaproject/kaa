@@ -37,11 +37,11 @@ public enum JavaDynamicUtils {
    * @param str the str
    * @return the uri
    */
-  public URI createURI(String str) {
+  public URI createUri(String str) {
     try {
       return new URI(str);
-    } catch (URISyntaxException e) {
-      throw new RuntimeException(e); //NOSONAR
+    } catch (URISyntaxException ex) {
+      throw new RuntimeException(ex); //NOSONAR
     }
   }
 

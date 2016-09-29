@@ -59,12 +59,12 @@ public class JavaDynamicException extends RuntimeException {
   /**
    * Instantiates a new java dynamic exception.
    *
-   * @param e         the e
+   * @param ex         the ex
    * @param collector the collector
    */
-  public JavaDynamicException(Throwable e,
+  public JavaDynamicException(Throwable ex,
                               DiagnosticCollector<JavaFileObject> collector) {
-    super(e);
+    super(ex);
     this.collector = collector;
   }
 

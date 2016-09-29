@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.control.service.sdk;
 
+import static org.kaaproject.kaa.common.dto.admin.SdkPlatform.JAVA;
+
 import org.apache.avro.Schema;
 import org.apache.avro.compiler.specific.SpecificCompiler;
 import org.apache.avro.compiler.specific.SpecificCompiler.FieldVisibility;
@@ -100,49 +102,64 @@ public class JavaSdkGenerator extends SdkGenerator {
   private static final String KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/KaaClient.java.template";
 
 
-  private static final String BASE_KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/BaseKaaClient.java.template";
+  private static final String BASE_KAA_CLIENT_SOURCE_TEMPLATE =
+      "sdk/java/BaseKaaClient.java.template";
 
 
-  private static final String CONFIGURATION_MANAGER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationManager.java.template";
+  private static final String CONFIGURATION_MANAGER_SOURCE_TEMPLATE =
+      "sdk/java/cf/ConfigurationManager.java.template";
 
 
-  private static final String CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE = "sdk/java/cf/ResyncConfigurationManager.java.template";
+  private static final String CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE =
+      "sdk/java/cf/ResyncConfigurationManager.java.template";
 
 
-  private static final String CONFIGURATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationListener.java.template";
+  private static final String CONFIGURATION_LISTENER_SOURCE_TEMPLATE =
+      "sdk/java/cf/ConfigurationListener.java.template";
 
 
-  private static final String CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationDeserializer.java.template";
+  private static final String CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE =
+      "sdk/java/cf/ConfigurationDeserializer.java.template";
 
 
-  private static final String NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationListener.java.template";
+  private static final String NOTIFICATION_LISTENER_SOURCE_TEMPLATE =
+      "sdk/java/nf/NotificationListener.java.template";
 
 
-  private static final String NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationDeserializer.java.template";
+  private static final String NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE =
+      "sdk/java/nf/NotificationDeserializer.java.template";
 
 
-  private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileContainer.java.template";
+  private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE =
+      "sdk/java/profile/ProfileContainer.java.template";
 
 
-  private static final String DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileContainer.java.template";
+  private static final String DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE =
+      "sdk/java/profile/DefaultProfileContainer.java.template";
 
 
-  private static final String PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileSerializer.java.template";
+  private static final String PROFILE_SERIALIZER_SOURCE_TEMPLATE =
+      "sdk/java/profile/ProfileSerializer.java.template";
 
 
-  private static final String DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileSerializer.java.template";
+  private static final String DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE =
+      "sdk/java/profile/DefaultProfileSerializer.java.template";
 
 
-  private static final String LOG_RECORD_SOURCE_TEMPLATE = "sdk/java/log/LogRecord.java.template";
+  private static final String LOG_RECORD_SOURCE_TEMPLATE =
+      "sdk/java/log/LogRecord.java.template";
 
 
-  private static final String LOG_COLLECTOR_INTERFACE_TEMPLATE = "sdk/java/log/LogCollector.java.template";
+  private static final String LOG_COLLECTOR_INTERFACE_TEMPLATE =
+      "sdk/java/log/LogCollector.java.template";
 
 
-  private static final String LOG_COLLECTOR_SOURCE_TEMPLATE = "sdk/java/log/DefaultLogCollector.java.template";
+  private static final String LOG_COLLECTOR_SOURCE_TEMPLATE =
+      "sdk/java/log/DefaultLogCollector.java.template";
 
 
-  private static final String USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE = "sdk/java/event/UserVerifierConstants.java.template";
+  private static final String USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE =
+      "sdk/java/event/UserVerifierConstants.java.template";
 
 
   private static final String PROFILE_CONTAINER = "ProfileContainer";
@@ -202,13 +219,15 @@ public class JavaSdkGenerator extends SdkGenerator {
   private static final String PROFILE_CLASS_VAR = "\\$\\{profile_class\\}";
 
 
-  private static final String CONFIGURATION_CLASS_PACKAGE_VAR = "\\$\\{configuration_class_package\\}";
+  private static final String CONFIGURATION_CLASS_PACKAGE_VAR =
+      "\\$\\{configuration_class_package\\}";
 
 
   private static final String CONFIGURATION_CLASS_VAR = "\\$\\{configuration_class\\}";
 
 
-  private static final String NOTIFICATION_CLASS_PACKAGE_VAR = "\\$\\{notification_class_package\\}";
+  private static final String NOTIFICATION_CLASS_PACKAGE_VAR =
+      "\\$\\{notification_class_package\\}";
 
 
   private static final String NOTIFICATION_CLASS_VAR = "\\$\\{notification_class\\}";
@@ -220,7 +239,8 @@ public class JavaSdkGenerator extends SdkGenerator {
   private static final String LOG_RECORD_CLASS_VAR = "\\$\\{log_record_class\\}";
 
 
-  private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
+  private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR =
+      "\\$\\{default_user_verifier_token\\}";
 
 
   private static final String JAVA_SOURCE_COMPILER_RELEASE = "7";
@@ -244,20 +264,21 @@ public class JavaSdkGenerator extends SdkGenerator {
    * @return the list
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  public static List<JavaDynamicBean> generateSchemaSources(Schema schema, Map<String, Schema> uniqueSchemas) throws IOException {
+  public static List<JavaDynamicBean> generateSchemaSources(
+      Schema schema, Map<String, Schema> uniqueSchemas) throws IOException {
     SpecificCompiler compiler = new SpecificCompiler(schema);
     compiler.setStringType(StringType.String);
     compiler.setFieldVisibility(FieldVisibility.PRIVATE);
 
     File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-    long n = RANDOM.nextLong();
-    if (n == Long.MIN_VALUE) {
+    long value = RANDOM.nextLong();
+    if (value == Long.MIN_VALUE) {
       // corner case
-      n = 0;
+      value = 0;
     } else {
-      n = Math.abs(n);
+      value = Math.abs(value);
     }
-    File tmpOutputDir = new File(tmpdir, "tmp-gen-" + Long.toString(n));
+    File tmpOutputDir = new File(tmpdir, "tmp-gen-" + Long.toString(value));
     tmpOutputDir.mkdirs();
 
     compiler.compileToDestination(null, tmpOutputDir);
@@ -276,7 +297,8 @@ public class JavaSdkGenerator extends SdkGenerator {
    * @return the java sources
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  private static List<JavaDynamicBean> getJavaSources(File srcDir, Map<String, Schema> uniqueSchemas) throws IOException {
+  private static List<JavaDynamicBean> getJavaSources(
+      File srcDir, Map<String, Schema> uniqueSchemas) throws IOException {
     List<JavaDynamicBean> result = new ArrayList<JavaDynamicBean>();
     File[] files = srcDir.listFiles();
     for (File f : files) {
@@ -292,7 +314,10 @@ public class JavaSdkGenerator extends SdkGenerator {
         String[] sourceLines = sourceCode.split("\n");
         for (String ss : sourceLines) {
           if (ss.startsWith("package ")) {
-            classPackageAndName = ss.replace("package ", "").trim().replaceAll(";", ".") + className;
+            classPackageAndName = ss
+                .replace("package ", "")
+                .trim()
+                .replaceAll(";", ".") + className;
             break;
           }
         }
@@ -317,27 +342,31 @@ public class JavaSdkGenerator extends SdkGenerator {
    * java.util.List)
    */
   @Override
-  public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, SdkProfileDto sdkProfile,
-                              String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
-                              String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
-                              String logSchemaBody)
-      throws Exception {
+  public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes,
+                              SdkProfileDto sdkProfile,
+                              String profileSchemaBody,
+                              String notificationSchemaBody,
+                              String configurationProtocolSchemaBody,
+                              String configurationSchemaBody,
+                              byte[] defaultConfigurationData,
+                              List<EventFamilyMetadata> eventFamilies,
+                              String logSchemaBody) throws Exception {
 
-    String sdkToken = sdkProfile.getToken();
-    Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
-    Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
-    Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
-    String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
+    final String sdkToken = sdkProfile.getToken();
+    final Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
+    final Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
+    final Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
 
-    Schema configurationSchema = new Schema.Parser().parse(configurationSchemaBody);
-    Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);
-    Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
-    Schema logSchema = new Schema.Parser().parse(logSchemaBody);
+
+    final Schema configurationSchema = new Schema.Parser().parse(configurationSchemaBody);
+    final Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);
+    final Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
+    final Schema logSchema = new Schema.Parser().parse(logSchemaBody);
 
     List<String> flatEventClassCtlSchemas = new ArrayList<>();
     eventFamilies.forEach(ecf -> flatEventClassCtlSchemas.addAll(ecf.getRawCtlsSchemas()));
     List<Schema> eventClassCtlSchemas = new LinkedList<>();
-    if (flatEventClassCtlSchemas != null && !flatEventClassCtlSchemas.isEmpty()) {
+    if (!flatEventClassCtlSchemas.isEmpty()) {
       for (String flatCtlSchema : flatEventClassCtlSchemas) {
         Schema eventClassCtlSchema = new Schema.Parser().parse(flatCtlSchema);
         eventClassCtlSchemas.add(eventClassCtlSchema);
@@ -354,13 +383,13 @@ public class JavaSdkGenerator extends SdkGenerator {
     Map<String, Schema> uniqueSchemasMap = SchemaUtil.getUniqueSchemasMap(schemasToCheck);
 
     String sdkTemplateLocation;
-    if (sdkPlatform == SdkPlatform.JAVA) {
-      sdkTemplateLocation = Environment.getServerHomeDir() + "/" + JAVA_SDK_DIR + "/" + JAVA_SDK_PREFIX + buildVersion
-          + ".jar";
+    if (sdkPlatform == JAVA) {
+      sdkTemplateLocation = Environment.getServerHomeDir()
+          + "/" + JAVA_SDK_DIR + "/" + JAVA_SDK_PREFIX + buildVersion + ".jar";
       LOG.debug("Lookup Java SDK template: {}", sdkTemplateLocation);
     } else { // ANDROID
-      sdkTemplateLocation = Environment.getServerHomeDir() + "/" + ANDROID_SDK_DIR + "/" + ANDROID_SDK_PREFIX + buildVersion
-          + ".jar";
+      sdkTemplateLocation = Environment.getServerHomeDir()
+          + "/" + ANDROID_SDK_DIR + "/" + ANDROID_SDK_PREFIX + buildVersion + ".jar";
       LOG.debug("Lookup Android SDK template: {}", sdkTemplateLocation);
     }
 
@@ -370,10 +399,14 @@ public class JavaSdkGenerator extends SdkGenerator {
     Map<String, ZipEntryData> replacementData = new HashMap<String, ZipEntryData>();
 
     ZipEntry clientPropertiesEntry = templateArhive.getEntry(CLIENT_PROPERTIES);
-    byte[] clientPropertiesData = generateClientProperties(templateArhive.getInputStream(clientPropertiesEntry), bootstrapNodes,
+    byte[] clientPropertiesData = generateClientProperties(
+        templateArhive.getInputStream(clientPropertiesEntry), bootstrapNodes,
         sdkToken, configurationProtocolSchemaBody, defaultConfigurationData);
 
-    replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(new ZipEntry(CLIENT_PROPERTIES), clientPropertiesData));
+    replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(
+        new ZipEntry(CLIENT_PROPERTIES),
+        clientPropertiesData)
+    );
 
     List<JavaDynamicBean> javaSources = new ArrayList<JavaDynamicBean>();
 
@@ -382,34 +415,50 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     javaSources.addAll(generateSchemaSources(configurationSchema, uniqueSchemasMap));
 
-    String configurationManagerImplTemplate = readResource(CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE);
-    String configurationManagerImplSource = configurationManagerImplTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
-        configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+    String configurationManagerImplTemplate = readResource(
+        CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE
+    );
+    String configurationManagerImplSource = configurationManagerImplTemplate
+        .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
+        .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-    JavaDynamicBean configurationManagerImplClassBean = new JavaDynamicBean(CONFIGURATION_MANAGER_IMPL, configurationManagerImplSource);
+    JavaDynamicBean configurationManagerImplClassBean = new JavaDynamicBean(
+        CONFIGURATION_MANAGER_IMPL, configurationManagerImplSource);
     javaSources.add(configurationManagerImplClassBean);
 
     String configurationManagerTemplate = readResource(CONFIGURATION_MANAGER_SOURCE_TEMPLATE);
-    String configurationManagerSource = configurationManagerTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
-        configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+    String configurationManagerSource = configurationManagerTemplate
+        .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
+        .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-    JavaDynamicBean configurationManagerClassBean = new JavaDynamicBean(CONFIGURATION_MANAGER, configurationManagerSource);
+    JavaDynamicBean configurationManagerClassBean = new JavaDynamicBean(
+        CONFIGURATION_MANAGER, configurationManagerSource
+    );
     javaSources.add(configurationManagerClassBean);
 
     String configurationListenerTemplate = readResource(CONFIGURATION_LISTENER_SOURCE_TEMPLATE);
-    String configurationListenerSource = configurationListenerTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
-        configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+    String configurationListenerSource = configurationListenerTemplate
+        .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
+        .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-    JavaDynamicBean configurationListenerClassBean = new JavaDynamicBean(CONFIGURATION_LISTENER, configurationListenerSource);
+    JavaDynamicBean configurationListenerClassBean = new JavaDynamicBean(
+        CONFIGURATION_LISTENER,
+        configurationListenerSource
+    );
     javaSources.add(configurationListenerClassBean);
 
 
-    String configurationDeserializerSourceTemplate = readResource(CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE);
-    String configurationDeserializerSource = configurationDeserializerSourceTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
-        configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+    String configurationDeserializerSourceTemplate = readResource(
+        CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE
+    );
+    String configurationDeserializerSource = configurationDeserializerSourceTemplate
+        .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
+        .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-    JavaDynamicBean configurationDeserializerClassBean = new JavaDynamicBean(CONFIGURATION_DESERIALIZER,
-        configurationDeserializerSource);
+    JavaDynamicBean configurationDeserializerClassBean = new JavaDynamicBean(
+        CONFIGURATION_DESERIALIZER,
+        configurationDeserializerSource
+    );
     javaSources.add(configurationDeserializerClassBean);
 
     String profileClassName = profileSchema.getName();
@@ -420,15 +469,22 @@ public class JavaSdkGenerator extends SdkGenerator {
     }
 
     String profileContainerTemplate = readResource(PROFILE_CONTAINER_SOURCE_TEMPLATE);
-    String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
-        PROFILE_CLASS_VAR, profileClassName);
-    JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(PROFILE_CONTAINER, profileContainerSource);
+    String profileContainerSource = profileContainerTemplate
+        .replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
+        .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+
+    JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(
+        PROFILE_CONTAINER, profileContainerSource);
+
     javaSources.add(profileContainerClassBean);
 
-    String defaultProfileContainerTemplate = readResource(DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE);
-    String defaultProfileContainerSource = defaultProfileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
-        PROFILE_CLASS_VAR, profileClassName);
-    JavaDynamicBean defaultProfileContainerClassBean = new JavaDynamicBean(DEFAULT_PROFILE_CONTAINER, defaultProfileContainerSource);
+    String defaultProfileContainerTemplate = readResource(
+        DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE);
+    String defaultProfileContainerSource = defaultProfileContainerTemplate
+        .replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
+        .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+    JavaDynamicBean defaultProfileContainerClassBean = new JavaDynamicBean(
+        DEFAULT_PROFILE_CONTAINER, defaultProfileContainerSource);
     javaSources.add(defaultProfileContainerClassBean);
 
     String profileSerializerTemplate;
@@ -437,9 +493,15 @@ public class JavaSdkGenerator extends SdkGenerator {
     } else {
       profileSerializerTemplate = readResource(PROFILE_SERIALIZER_SOURCE_TEMPLATE);
     }
-    String profileSerializerSource = profileSerializerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
-        PROFILE_CLASS_VAR, profileClassName);
-    JavaDynamicBean profileSerializerClassBean = new JavaDynamicBean(PROFILE_SERIALIZER, profileSerializerSource);
+    String profileSerializerSource = profileSerializerTemplate
+        .replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage)
+        .replaceAll(PROFILE_CLASS_VAR, profileClassName);
+
+    JavaDynamicBean profileSerializerClassBean = new JavaDynamicBean(
+        PROFILE_SERIALIZER,
+        profileSerializerSource
+    );
+
     javaSources.add(profileSerializerClassBean);
 
     String notificationClassName = notificationSchema.getName();
@@ -450,17 +512,25 @@ public class JavaSdkGenerator extends SdkGenerator {
     }
 
     String notificationListenerTemplate = readResource(NOTIFICATION_LISTENER_SOURCE_TEMPLATE);
-    String notificationListenerSource = notificationListenerTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
-        notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
+    String notificationListenerSource = notificationListenerTemplate
+        .replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR, notificationClassPackage)
+        .replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
 
-    JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(NOTIFICATION_LISTENER, notificationListenerSource);
+    JavaDynamicBean notificationListenerClassBean = new JavaDynamicBean(
+        NOTIFICATION_LISTENER,
+        notificationListenerSource
+    );
     javaSources.add(notificationListenerClassBean);
 
-    String notificationDeserializerSourceTemplate = readResource(NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE);
-    String notificationDeserializerSource = notificationDeserializerSourceTemplate.replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR,
-        notificationClassPackage).replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
+    String notificationDeserializerSourceTemplate = readResource(
+        NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE);
 
-    JavaDynamicBean notificationDeserializerClassBean = new JavaDynamicBean(NOTIFICATION_DESERIALIZER, notificationDeserializerSource);
+    String notificationDeserializerSource = notificationDeserializerSourceTemplate
+        .replaceAll(NOTIFICATION_CLASS_PACKAGE_VAR, notificationClassPackage)
+        .replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
+
+    JavaDynamicBean notificationDeserializerClassBean = new JavaDynamicBean(
+        NOTIFICATION_DESERIALIZER, notificationDeserializerSource);
     javaSources.add(notificationDeserializerClassBean);
 
     if (logSchemaVersion != DEFAULT_SCHEMA_VERSION) {
@@ -468,20 +538,25 @@ public class JavaSdkGenerator extends SdkGenerator {
     }
 
     String logRecordTemplate = readResource(LOG_RECORD_SOURCE_TEMPLATE);
-    String logRecordSource = logRecordTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
-        LOG_RECORD_CLASS_VAR, logSchema.getName());
+    String logRecordSource = logRecordTemplate
+        .replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+        .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
 
     String logCollectorInterfaceTemplate = readResource(LOG_COLLECTOR_INTERFACE_TEMPLATE);
-    String logCollectorInterface = logCollectorInterfaceTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+    String logCollectorInterface = logCollectorInterfaceTemplate
+        .replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
         .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
 
     String logCollectorSourceTemplate = readResource(LOG_COLLECTOR_SOURCE_TEMPLATE);
-    String logCollectorSource = logCollectorSourceTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+    String logCollectorSource = logCollectorSourceTemplate
+        .replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
         .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName());
 
     JavaDynamicBean logRecordClassBean = new JavaDynamicBean(LOG_RECORD, logRecordSource);
-    JavaDynamicBean logCollectorInterfaceClassBean = new JavaDynamicBean(LOG_COLLECTOR_INTERFACE, logCollectorInterface);
-    JavaDynamicBean logCollectorSourceClassBean = new JavaDynamicBean(LOG_COLLECTOR_SOURCE, logCollectorSource);
+    JavaDynamicBean logCollectorInterfaceClassBean = new JavaDynamicBean(
+        LOG_COLLECTOR_INTERFACE, logCollectorInterface);
+    JavaDynamicBean logCollectorSourceClassBean = new JavaDynamicBean(
+        LOG_COLLECTOR_SOURCE, logCollectorSource);
 
     javaSources.add(logRecordClassBean);
     javaSources.add(logCollectorInterfaceClassBean);
@@ -494,6 +569,7 @@ public class JavaSdkGenerator extends SdkGenerator {
       javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
     }
 
+    String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
     String userVerifierConstantsTemplate = readResource(USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE);
     if (defaultVerifierToken == null) {
       defaultVerifierToken = "null";
@@ -503,23 +579,30 @@ public class JavaSdkGenerator extends SdkGenerator {
     String userVerifierConstantsSource = userVerifierConstantsTemplate
         .replaceAll(DEFAULT_USER_VERIFIER_TOKEN_VAR, defaultVerifierToken);
 
-    JavaDynamicBean userVerifierConstantsClassBean = new JavaDynamicBean(USER_VERIFIER_CONSTANTS, userVerifierConstantsSource);
+    JavaDynamicBean userVerifierConstantsClassBean = new JavaDynamicBean(
+        USER_VERIFIER_CONSTANTS, userVerifierConstantsSource);
     javaSources.add(userVerifierConstantsClassBean);
 
     String kaaClientTemplate = readResource(KAA_CLIENT_SOURCE_TEMPLATE);
-    String kaaClientSource = kaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+
+    String kaaClientSource = kaaClientTemplate
+        .replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
         .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName())
         .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
         .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+
     JavaDynamicBean kaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, kaaClientSource);
     javaSources.add(kaaClientClassBean);
 
     String baseKaaClientTemplate = readResource(BASE_KAA_CLIENT_SOURCE_TEMPLATE);
-    String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+    String baseKaaClientSource = baseKaaClientTemplate
+        .replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
         .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName())
         .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
         .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
-    JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(BASE_KAA_CLIENT, baseKaaClientSource);
+
+    JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(
+        BASE_KAA_CLIENT, baseKaaClientSource);
     javaSources.add(baseKaaClientClassBean);
 
     packageSources(javaSources, replacementData);
@@ -554,7 +637,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     sdkFile.close();
 
-    String fileNamePrefix = (sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_PREFIX : ANDROID_SDK_PREFIX);
+    String fileNamePrefix = (sdkPlatform == JAVA ? JAVA_SDK_PREFIX : ANDROID_SDK_PREFIX);
     String sdkFileName = fileNamePrefix + sdkProfile.getToken() + ".jar";
 
     byte[] sdkData = sdkOutput.toByteArray();
@@ -578,9 +661,23 @@ public class JavaSdkGenerator extends SdkGenerator {
       LOG.debug("Compiling bean [{}]...", bean.getName());
       LOG.trace("Bean source:\n{}", bean.getCharContent(true));
       Stream<String> sourceLines = Arrays.stream(bean.getCharContent(true).split("\n"));
-      String packageLine = sourceLines.filter(line -> line.startsWith("package")).findFirst().orElse("");
-      String sourceFileName = packageLine.replaceAll("package", "").replaceAll("\\.|;", "/").trim() + bean.getName();
-      data.put(sourceFileName, new ZipEntryData(new ZipEntry(sourceFileName), bean.getCharContent(true).getBytes()));
+
+      String packageLine = sourceLines
+          .filter(line -> line.startsWith("package"))
+          .findFirst()
+          .orElse("");
+
+      String sourceFileName = packageLine
+          .replaceAll("package", "")
+          .replaceAll("\\.|;", "/")
+          .trim() + bean.getName();
+
+      data.put(sourceFileName,
+          new ZipEntryData(
+              new ZipEntry(sourceFileName),
+              bean.getCharContent(true).getBytes()
+          )
+      );
     }
     Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources,
         "-source", JAVA_SOURCE_COMPILER_RELEASE,
@@ -617,10 +714,14 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
     clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
-    clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
+    clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY,
+        CommonSdkUtil.bootstrapNodesToString(bootstrapNodes)
+    );
     clientProperties.put(SDK_TOKEN_PROPERTY, sdkToken);
     clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
-    clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));
+    clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY,
+        Base64.encodeBase64String(defaultConfigurationData)
+    );
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

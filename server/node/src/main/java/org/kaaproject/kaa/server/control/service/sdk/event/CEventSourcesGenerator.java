@@ -66,11 +66,15 @@ public class CEventSourcesGenerator {
     velocityEngine.addProperty("resource.loader", "class, file");
     velocityEngine.addProperty("class.resource.loader.class",
         "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+
     velocityEngine.addProperty("file.resource.loader.class",
         "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+
     velocityEngine.addProperty("file.resource.loader.path", "/, .");
     velocityEngine.setProperty("runtime.references.strict", true);
-    velocityEngine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+
+    velocityEngine.setProperty("runtime.log.logsystem.class",
+        "org.apache.velocity.runtime.log.NullLogSystem");
   }
 
   public static List<TarEntryData> generateEventSources(List<EventFamilyMetadata> eventFamilies) {
@@ -86,17 +90,19 @@ public class CEventSourcesGenerator {
     for (EventFamilyMetadata eventFamily : eventFamilies) {
       context.put("StyleUtils", StyleUtils.class);
       String name = StyleUtils.toLowerUnderScore(eventFamily.getEcfClassName());
-      String NAME = StyleUtils.toUpperUnderScore(eventFamily.getEcfClassName());
+      String nameUpperCase = StyleUtils.toUpperUnderScore(eventFamily.getEcfClassName());
       context.put("event_family_name", name);
-      context.put("EVENT_FAMILY_NAME", NAME);
+      context.put("EVENT_FAMILY_NAME", nameUpperCase);
       context.put("namespacePrefix", NAME_PREFIX_TEMPLATE.replace("{name}", name));
 
       List<Schema> records = new ArrayList<>();
-      eventFamily.getRawCtlsSchemas().forEach(rawCtl -> records.add(new Schema.Parser().parse(rawCtl)));
+      eventFamily.getRawCtlsSchemas()
+          .forEach(rawCtl -> records.add(new Schema.Parser().parse(rawCtl)));
       List<String> emptyRecords = new ArrayList<>();
 
       for (Schema record : records) {
-        if (record.getType() == Schema.Type.RECORD && record.getFields() != null && record.getFields().size() == 0) {
+        if (record.getType() == Schema.Type.RECORD
+            && record.getFields() != null && record.getFields().size() == 0) {
           emptyRecords.add(record.getFullName());
         }
       }
@@ -107,12 +113,12 @@ public class CEventSourcesGenerator {
       List<String> outgoingEventFqns = new ArrayList<>();
       if (eventFamily.getEventMaps() != null) {
         for (ApplicationEventMapDto appEventDto : eventFamily.getEventMaps()) {
-          if (appEventDto.getAction() == ApplicationEventAction.SINK ||
-              appEventDto.getAction() == ApplicationEventAction.BOTH) {
+          if (appEventDto.getAction() == ApplicationEventAction.SINK
+              || appEventDto.getAction() == ApplicationEventAction.BOTH) {
             incomingEventFqns.add(appEventDto.getFqn());
           }
-          if (appEventDto.getAction() == ApplicationEventAction.SOURCE ||
-              appEventDto.getAction() == ApplicationEventAction.BOTH) {
+          if (appEventDto.getAction() == ApplicationEventAction.SOURCE
+              || appEventDto.getAction() == ApplicationEventAction.BOTH) {
             outgoingEventFqns.add(appEventDto.getFqn());
           }
         }
@@ -124,8 +130,8 @@ public class CEventSourcesGenerator {
       LOG.debug("[sdk generateEventSources] header generating:");
       velocityEngine.getTemplate(EVENT_FAMILIES_H_PATTERN).merge(context, headerWriter);
 
-      TarArchiveEntry entry = new TarArchiveEntry(EVENT_SOURCE_OUTPUT +
-          EVENT_FAMILIES_H_FILE.replace("{name}", name));
+      TarArchiveEntry entry = new TarArchiveEntry(EVENT_SOURCE_OUTPUT
+          + EVENT_FAMILIES_H_FILE.replace("{name}", name));
 
       LOG.debug("[sdk generateEventSources] header generated: {}", entry.getName());
 
@@ -139,8 +145,8 @@ public class CEventSourcesGenerator {
       LOG.debug("[sdk generateEventSources] source generating:");
       velocityEngine.getTemplate(EVENT_FAMILIES_C_PATTERN).merge(context, sourceWriter);
 
-      entry = new TarArchiveEntry(EVENT_SOURCE_OUTPUT +
-          EVENT_FAMILIES_C_FILE.replace("{name}", name));
+      entry = new TarArchiveEntry(EVENT_SOURCE_OUTPUT
+          + EVENT_FAMILIES_C_FILE.replace("{name}", name));
 
       LOG.debug("[sdk generateEventSources] source generated: {}", entry.getName());
 
@@ -163,7 +169,8 @@ public class CEventSourcesGenerator {
         String fileName = EVENT_FAMILY_DEFINITION_PATTERN.replace("{name}", name);
 
         List<Schema> eventCtlSchemas = new ArrayList<>();
-        eventFamily.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
+        eventFamily.getRawCtlsSchemas()
+            .forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
 
         Compiler compiler = new CCompiler(eventCtlSchemas, fileName, hdrStream, srcStream);
         compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
@@ -180,8 +187,8 @@ public class CEventSourcesGenerator {
         entry.setSize(eventData.length());
         tarEntry = new TarEntryData(entry, eventData.getBytes());
         eventSources.add(tarEntry);
-      } catch (Exception e) {
-        LOG.error("got exception", e);
+      } catch (Exception ex) {
+        LOG.error("got exception", ex);
       }
     }
 

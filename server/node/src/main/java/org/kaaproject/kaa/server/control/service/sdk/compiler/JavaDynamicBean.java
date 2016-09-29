@@ -44,8 +44,8 @@ public class JavaDynamicBean extends SimpleJavaFileObject {
    * @param source   the source
    */
   public JavaDynamicBean(String baseName, String source) {
-    super(JavaDynamicUtils.INSTANCE.createURI(JavaDynamicUtils.INSTANCE.getClassNameWithExt(baseName)),
-        Kind.SOURCE);
+    super(JavaDynamicUtils.INSTANCE
+        .createUri(JavaDynamicUtils.INSTANCE.getClassNameWithExt(baseName)), Kind.SOURCE);
     this.source = source;
   }
 
@@ -56,7 +56,7 @@ public class JavaDynamicBean extends SimpleJavaFileObject {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   public JavaDynamicBean(String name) throws IOException {
-    super(JavaDynamicUtils.INSTANCE.createURI(name), Kind.CLASS);
+    super(JavaDynamicUtils.INSTANCE.createUri(name), Kind.CLASS);
   }
 
   /* (non-Javadoc)
