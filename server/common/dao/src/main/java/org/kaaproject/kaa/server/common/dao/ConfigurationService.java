@@ -48,7 +48,8 @@ public interface ConfigurationService {
    * @param version         the version
    * @return the found configuration object
    */
-  ConfigurationDto findConfigurationByEndpointGroupIdAndVersion(String endpointGroupId, int version);
+  ConfigurationDto findConfigurationByEndpointGroupIdAndVersion(String endpointGroupId,
+                                                                int version);
 
   /**
    * Find default configuration by configuration schema id.
@@ -73,7 +74,9 @@ public interface ConfigurationService {
    * @param includeDeprecated the include deprecated
    * @return the list of structure records
    */
-  Collection<ConfigurationRecordDto> findAllConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated);
+  Collection<ConfigurationRecordDto> findAllConfigurationRecordsByEndpointGroupId(
+      String endpointGroupId,
+      boolean includeDeprecated);
 
   /**
    * Find configuration record by schema id and group id.
@@ -82,7 +85,9 @@ public interface ConfigurationService {
    * @param endpointGroupId the endpoint group id
    * @return the structure record dto
    */
-  ConfigurationRecordDto findConfigurationRecordBySchemaIdAndEndpointGroupId(String schemaId, String endpointGroupId);
+  ConfigurationRecordDto findConfigurationRecordBySchemaIdAndEndpointGroupId(
+      String schemaId,
+      String endpointGroupId);
 
   /**
    * Find all vacant configuration schemas by group id.
@@ -131,7 +136,9 @@ public interface ConfigurationService {
    * @param deactivatedUsername the deactivated username
    * @return the change configuration notification
    */
-  ChangeConfigurationNotification deleteConfigurationRecord(String schemaId, String groupId, String deactivatedUsername);
+  ChangeConfigurationNotification deleteConfigurationRecord(String schemaId,
+                                                            String groupId,
+                                                            String deactivatedUsername);
 
   /**
    * Find configurations by endpoint group id.
@@ -167,19 +174,21 @@ public interface ConfigurationService {
   ConfigurationSchemaDto findConfSchemaByAppIdAndVersion(String applicationId, int version);
 
   /**
-   * Save Configuration schema. Please see {@link ConfigurationService#saveConfSchema(ConfigurationSchemaDto,
-   * String)}
+   * Save Configuration schema.
+   * Please see {@link ConfigurationService#saveConfSchema(ConfigurationSchemaDto,String)}
    *
    * @param configurationSchema the configuration schema
    * @param groupId             group id for generated default configuration based on schema
    * @return the configuration schema dto
    */
-  ConfigurationSchemaDto saveConfSchema(ConfigurationSchemaDto configurationSchema, String groupId);
+  ConfigurationSchemaDto saveConfSchema(ConfigurationSchemaDto configurationSchema,
+                                        String groupId);
 
   /**
    * Save Configuration schema. <p> During saving new configuration schema will be generated: <ul>
    * <li>Base Schema</li> <li>Override Schema</li> <li>Protocol Schema</li> <li>Base Data -
-   * Configuration attached to default group</li> </ul> After that will added information to history
+   * Configuration attached to default group</li> </ul> After that will added information
+   * to history
    * {@link HistoryService#saveHistory(HistoryDto historyDto)}
    *
    * @param configurationSchema the configuration schema

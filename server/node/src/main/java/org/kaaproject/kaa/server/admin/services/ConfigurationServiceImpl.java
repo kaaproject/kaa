@@ -60,7 +60,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service("configurationService")
-public class ConfigurationServiceImpl extends AbstractAdminService implements ConfigurationService {
+public class ConfigurationServiceImpl
+    extends AbstractAdminService
+    implements ConfigurationService {
 
   /**
    * The Constant LOG.
@@ -74,65 +76,73 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
   CtlService ctlService;
 
   @Override
-  public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+  public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(
+      String applicationToken) throws KaaAdminServiceException {
     return getConfigurationSchemasByApplicationId(checkApplicationToken(applicationToken));
   }
 
   @Override
-  public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(
+      String applicationId) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
       return controlService.getConfigurationSchemasByApplicationId(applicationId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+  public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
       return controlService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException {
+  public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      ConfigurationSchemaDto configurationSchema = controlService.getConfigurationSchema(configurationSchemaId);
+      ConfigurationSchemaDto configurationSchema = controlService.getConfigurationSchema(
+          configurationSchemaId);
       Utils.checkNotNull(configurationSchema);
       checkApplicationId(configurationSchema.getApplicationId());
       return configurationSchema;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto confSchema) throws KaaAdminServiceException {
+  public ConfigurationSchemaDto saveConfigurationSchema(ConfigurationSchemaDto confSchema)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       if (isEmpty(confSchema.getId())) {
         confSchema.setCreatedUsername(getCurrentUser().getUsername());
         checkApplicationId(confSchema.getApplicationId());
       } else {
-        ConfigurationSchemaDto storedConfSchema = controlService.getConfigurationSchema(confSchema.getId());
+        ConfigurationSchemaDto storedConfSchema = controlService.getConfigurationSchema(
+            confSchema.getId());
         Utils.checkNotNull(storedConfSchema);
         checkApplicationId(storedConfSchema.getApplicationId());
       }
       return controlService.editConfigurationSchema(confSchema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationSchemaViewDto saveConfigurationSchemaView(ConfigurationSchemaViewDto confSchemaView) throws KaaAdminServiceException {
+  public ConfigurationSchemaViewDto saveConfigurationSchemaView(
+      ConfigurationSchemaViewDto confSchemaView) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationSchemaDto confSchema = confSchemaView.getSchema();
@@ -143,45 +153,51 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       if (isEmpty(ctlSchemaId)) {
         if (confSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = confSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
+          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           confSchema.setCtlSchemaId(schema.getId());
         } else {
-          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(confSchemaView.getCtlSchemaForm(), ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
+          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(
+              confSchemaView.getCtlSchemaForm(), ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
           confSchema.setCtlSchemaId(ctlSchemaForm.getId());
         }
       }
 
       ConfigurationSchemaDto savedConfSchema = saveConfigurationSchema(confSchema);
       return getConfigurationSchemaView(savedConfSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationSchemaViewDto getConfigurationSchemaView(String configurationSchemaId) throws KaaAdminServiceException {
+  public ConfigurationSchemaViewDto getConfigurationSchemaView(String configurationSchemaId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationSchemaDto confSchema = getConfigurationSchema(configurationSchemaId);
       CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(confSchema.getCtlSchemaId());
-      return new ConfigurationSchemaViewDto(confSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER));
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      return new ConfigurationSchemaViewDto(
+          confSchema, toCtlSchemaForm(
+              ctlSchemaDto, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER));
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
-                                                                               boolean includeDeprecated) throws KaaAdminServiceException {
+  public List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(
+      String endpointGroupId, boolean includeDeprecated) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
-      return controlService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+      return controlService.getConfigurationRecordsByEndpointGroupId(
+          endpointGroupId, includeDeprecated);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -191,15 +207,17 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkEndpointGroupId(endpointGroupId);
-      ConfigurationRecordDto record = controlService.getConfigurationRecord(schemaId, endpointGroupId);
+      ConfigurationRecordDto record = controlService.getConfigurationRecord(
+          schemaId, endpointGroupId);
       return record;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws KaaAdminServiceException {
+  public ConfigurationDto editConfiguration(ConfigurationDto configuration)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       String username = getCurrentUser().getUsername();
@@ -208,33 +226,59 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         checkEndpointGroupId(configuration.getEndpointGroupId());
       } else {
         configuration.setModifiedUsername(username);
-        ConfigurationDto storedConfiguration = controlService.getConfiguration(configuration.getId());
+        ConfigurationDto storedConfiguration = controlService.getConfiguration(
+            configuration.getId());
         Utils.checkNotNull(storedConfiguration);
         checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
       }
       return controlService.editConfiguration(configuration);
-    } catch (StaleObjectStateException e) {
-      LOG.error("Someone has already updated the configuration. Reload page to be able to edit it. ", e);
-      throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
+    } catch (StaleObjectStateException ex) {
+      LOG.error(
+          "Someone has already updated the configuration. Reload page to be able to edit it. ", ex);
+      throw new KaaAdminServiceException(
+          "Someone has already updated the configuration. Reload page to be able to edit it.",
           ServiceErrorCode.GENERAL_ERROR);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
+  public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationToken(endpointUserConfiguration.getAppToken());
       controlService.editUserConfiguration(endpointUserConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationDto activateConfiguration(String configurationId) throws KaaAdminServiceException {
+  public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration,
+                                    String applicationId,
+                                    RecordField configurationData)
+      throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    try {
+      ApplicationDto application = checkApplicationId(applicationId);
+      endpointUserConfiguration.setAppToken(application.getApplicationToken());
+      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(
+          configurationData);
+      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+          record.getSchema());
+      String body = converter.encodeToJson(record);
+      endpointUserConfiguration.setBody(body);
+      controlService.editUserConfiguration(endpointUserConfiguration);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  @Override
+  public ConfigurationDto activateConfiguration(String configurationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationDto storedConfiguration = controlService.getConfiguration(configurationId);
@@ -242,13 +286,14 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       return controlService.activateConfiguration(configurationId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationDto deactivateConfiguration(String configurationId) throws KaaAdminServiceException {
+  public ConfigurationDto deactivateConfiguration(String configurationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationDto storedConfiguration = controlService.getConfiguration(configurationId);
@@ -256,86 +301,94 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       return controlService.deactivateConfiguration(configurationId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void deleteConfigurationRecord(String schemaId, String endpointGroupId) throws KaaAdminServiceException {
+  public void deleteConfigurationRecord(String schemaId, String endpointGroupId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      StructureRecordDto<ConfigurationDto> record = controlService.getConfigurationRecord(schemaId, endpointGroupId);
+      StructureRecordDto<ConfigurationDto> record = controlService.getConfigurationRecord(
+          schemaId, endpointGroupId);
       checkEndpointGroupId(record.getEndpointGroupId());
       String username = getCurrentUser().getUsername();
       controlService.deleteConfigurationRecord(schemaId, endpointGroupId, username);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public RecordField generateConfigurationSchemaForm(String fileItemName) throws KaaAdminServiceException {
+  public RecordField generateConfigurationSchemaForm(String fileItemName)
+      throws KaaAdminServiceException {
     try {
       byte[] data = getFileContent(fileItemName);
       String avroSchema = new String(data);
       Schema schema = new Schema.Parser().parse(avroSchema);
       validateRecordSchema(schema);
       return configurationSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationRecordViewDto getConfigurationRecordView(String schemaId, String endpointGroupId)
+  public ConfigurationRecordViewDto getConfigurationRecordView(String schemaId,
+                                                               String endpointGroupId)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkSchemaId(schemaId);
       ConfigurationRecordDto record = getConfigurationRecord(schemaId, endpointGroupId);
       return toConfigurationRecordView(record);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationRecordFormDto editConfigurationRecordForm(ConfigurationRecordFormDto configuration) throws KaaAdminServiceException {
+  public ConfigurationRecordFormDto editConfigurationRecordForm(
+      ConfigurationRecordFormDto configuration) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationDto toSave = toConfigurationDto(configuration);
       ConfigurationDto stored = editConfiguration(toSave);
       return toConfigurationRecordFormDto(stored);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationRecordFormDto activateConfigurationRecordForm(String configurationId) throws KaaAdminServiceException {
+  public ConfigurationRecordFormDto activateConfigurationRecordForm(String configurationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationDto storedConfiguration = activateConfiguration(configurationId);
       return toConfigurationRecordFormDto(storedConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationRecordFormDto deactivateConfigurationRecordForm(String configurationId) throws KaaAdminServiceException {
+  public ConfigurationRecordFormDto deactivateConfigurationRecordForm(String configurationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationDto storedConfiguration = deactivateConfiguration(configurationId);
       return toConfigurationRecordFormDto(storedConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
+  public RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       Schema avroSchema = new Schema.Parser().parse(schema);
@@ -344,17 +397,19 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
       GenericRecord record = converter.decodeJson(body);
       return FormAvroConverter.createRecordFieldFromGenericRecord(record);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException {
+  public List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(applicationId);
-      List<ConfigurationSchemaDto> configurationSchemas = controlService.getConfigurationSchemasByApplicationId(applicationId);
+      List<ConfigurationSchemaDto> configurationSchemas =
+          controlService.getConfigurationSchemasByApplicationId(applicationId);
       List<SchemaInfoDto> schemaInfos = new ArrayList<>(configurationSchemas.size());
       for (ConfigurationSchemaDto configurationSchema : configurationSchemas) {
         SchemaInfoDto schemaInfo = new SchemaInfoDto(configurationSchema);
@@ -364,87 +419,87 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         schemaInfos.add(schemaInfo);
       }
       return schemaInfos;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId,
-                                    RecordField configurationData) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-    try {
-      ApplicationDto application = checkApplicationId(applicationId);
-      endpointUserConfiguration.setAppToken(application.getApplicationToken());
-      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(configurationData);
-      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
-      String body = converter.encodeToJson(record);
-      endpointUserConfiguration.setBody(body);
-      controlService.editUserConfiguration(endpointUserConfiguration);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
-    }
-  }
-
-  @Override
-  public List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+  public List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(
+      String endpointGroupId) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       EndpointGroupDto endpointGroup = checkEndpointGroupId(endpointGroupId);
       List<VersionDto> schemas = getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
       return toConfigurationSchemaInfos(schemas, endpointGroup);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
-    checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+  public ConfigurationSchemaViewDto createConfigurationSchemaFormCtlSchema(
+      CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+    checkAuthority(
+        KaaAuthorityDto.TENANT_ADMIN,
+        KaaAuthorityDto.TENANT_DEVELOPER,
+        KaaAuthorityDto.TENANT_USER);
     try {
       checkApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       ConfigurationSchemaDto confSchema = new ConfigurationSchemaDto();
       confSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       confSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       confSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(ctlSchemaForm, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+          ctlSchemaForm, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
       confSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       ConfigurationSchemaDto savedConfSchema = saveConfigurationSchema(confSchema);
       return getConfigurationSchemaView(savedConfSchema.getId());
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+  public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     return controlService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash);
   }
 
 
   @Override
-  public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUserId, String appToken, Integer schemaVersion) throws KaaAdminServiceException {
+  public
+  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+      String externalUserId, String appToken, Integer schemaVersion)
+      throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
-      EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId, appToken, schemaVersion, getTenantId());
+      EndpointUserConfigurationDto userConfigurationDto =
+          controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+              externalUserId, appToken, schemaVersion, getTenantId());
       if (userConfigurationDto == null) {
-        throw Utils.handleException(new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
+        throw Utils.handleException(
+            new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
       }
       return userConfigurationDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
   @Override
-  public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException {
+  public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(
+      String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       String appToken = controlService.getApplication(appId).getApplicationToken();
-      EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId, appToken, schemaVersion, getTenantId());
+      EndpointUserConfigurationDto userConfigurationDto =
+          controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+              externalUId, appToken, schemaVersion, getTenantId());
       if (userConfigurationDto == null) {
-        throw Utils.handleException(new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
+        throw Utils.handleException(
+            new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
       }
       return userConfigurationDto;
     } catch (Exception e) {
@@ -465,7 +520,9 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     ConfigurationSchemaDto schemaDto = this.getConfigurationSchema(record.getSchemaId());
     EndpointGroupDto endpointGroup = groupService.getEndpointGroup(record.getEndpointGroupId());
 
-    String rawSchema = endpointGroup.getWeight() == 0 ? schemaDto.getBaseSchema() : schemaDto.getOverrideSchema();
+    String rawSchema = endpointGroup.getWeight() == 0
+        ? schemaDto.getBaseSchema()
+        : schemaDto.getOverrideSchema();
 
     Schema schema = new Schema.Parser().parse(rawSchema);
 
@@ -478,18 +535,22 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       inactiveConfig = toConfigurationRecordFormDto(record.getInactiveStructureDto(), schema);
     }
 
-    ConfigurationRecordViewDto result = new ConfigurationRecordViewDto(activeConfig, inactiveConfig);
+    ConfigurationRecordViewDto result = new ConfigurationRecordViewDto(
+        activeConfig, inactiveConfig);
 
     return result;
   }
 
-  private ConfigurationDto toConfigurationDto(ConfigurationRecordFormDto configuration) throws KaaAdminServiceException, IOException {
+  private ConfigurationDto toConfigurationDto(ConfigurationRecordFormDto configuration)
+      throws KaaAdminServiceException, IOException {
 
     String body = null;
     RecordField configurationRecord = configuration.getConfigurationRecord();
     if (configurationRecord != null) {
-      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(configurationRecord);
-      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+      GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(
+          configurationRecord);
+      GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(
+          record.getSchema());
       body = converter.encodeToJson(record);
     }
     ConfigurationDto result = new ConfigurationDto(configuration);
@@ -497,20 +558,25 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     return result;
   }
 
-  private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration) throws KaaAdminServiceException,
+  private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration)
+      throws KaaAdminServiceException,
       IOException {
 
     ConfigurationSchemaDto schemaDto = this.getConfigurationSchema(configuration.getSchemaId());
-    EndpointGroupDto endpointGroup = groupService.getEndpointGroup(configuration.getEndpointGroupId());
+    EndpointGroupDto endpointGroup = groupService.getEndpointGroup(
+        configuration.getEndpointGroupId());
 
-    String rawSchema = endpointGroup.getWeight() == 0 ? schemaDto.getBaseSchema() : schemaDto.getOverrideSchema();
+    String rawSchema = endpointGroup.getWeight() == 0
+        ? schemaDto.getBaseSchema()
+        : schemaDto.getOverrideSchema();
 
     Schema schema = new Schema.Parser().parse(rawSchema);
 
     return toConfigurationRecordFormDto(configuration, schema);
   }
 
-  private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration, Schema schema)
+  private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration,
+                                                                  Schema schema)
       throws KaaAdminServiceException, IOException {
 
     String body = configuration.getBody();
@@ -525,18 +591,22 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
       configurationRecord = FormAvroConverter.createRecordFieldFromSchema(schema);
     }
 
-    ConfigurationRecordFormDto configurationRecordForm = new ConfigurationRecordFormDto(configuration);
+    ConfigurationRecordFormDto configurationRecordForm = new ConfigurationRecordFormDto(
+        configuration);
     configurationRecordForm.setConfigurationRecord(configurationRecord);
 
     return configurationRecordForm;
   }
 
-  private List<SchemaInfoDto> toConfigurationSchemaInfos(List<VersionDto> schemas, EndpointGroupDto endpointGroup)
+  private List<SchemaInfoDto> toConfigurationSchemaInfos(List<VersionDto> schemas,
+                                                         EndpointGroupDto endpointGroup)
       throws KaaAdminServiceException, IOException {
     List<SchemaInfoDto> schemaInfos = new ArrayList<>();
     for (VersionDto schemaDto : schemas) {
       ConfigurationSchemaDto configSchema = this.getConfigurationSchema(schemaDto.getId());
-      String rawSchema = endpointGroup.getWeight() == 0 ? configSchema.getBaseSchema() : configSchema.getOverrideSchema();
+      String rawSchema = endpointGroup.getWeight() == 0
+          ? configSchema.getBaseSchema()
+          : configSchema.getOverrideSchema();
       Schema schema = new Schema.Parser().parse(rawSchema);
       SchemaInfoDto schemaInfo = new SchemaInfoDto(schemaDto);
       RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
