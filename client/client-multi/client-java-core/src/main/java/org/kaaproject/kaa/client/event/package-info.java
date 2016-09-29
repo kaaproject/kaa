@@ -103,8 +103,8 @@
  * <h3>Searching for event recipients</h3>
  * <pre>
  *  {@code
- *      Kaa.getClient().getEventListenersResolver().findEventListeners(Arrays.asList("org.kaa.example.events.TestEvent"),
- * new FetchEventListeners() {
+ *      Kaa.getClient().getEventListenersResolver().findEventListeners(Arrays.asList(
+ *      "org.kaa.example.events.TestEvent"),new FetchEventListeners() {
  *          \@Override
  *          public void onEventListenersReceived(List<String> eventListeners) {
  *              // process response

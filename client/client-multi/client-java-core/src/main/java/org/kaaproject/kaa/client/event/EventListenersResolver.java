@@ -25,9 +25,7 @@ import java.util.List;
  * events' fully-qualified names.<br>
  * <b>NOTE:</b> Operations server will respond with list of endpoints which
  * can receive <b>ALL</b> listed event types (FQNs).
- *
  * For example:
- *
  * <pre>
  * {@code
  * List<String> fqnsToBeSupported = new ArrayList<String>();
@@ -56,9 +54,9 @@ public interface EventListenersResolver {
   /**
    * Submits an event listeners resolution request
    *
-   * @param eventFQNs List of event class FQNs which have to be supported by endpoint.
+   * @param eventFqns List of event class FQNs which have to be supported by endpoint.
    * @param listener  Result listener {@link FindEventListenersCallback}}
    * @return Request ID of submitted request
    */
-  int findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
+  int findEventListeners(List<String> eventFqns, FindEventListenersCallback listener);
 }

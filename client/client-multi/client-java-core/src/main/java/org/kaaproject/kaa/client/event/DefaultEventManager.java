@@ -125,7 +125,7 @@ public class DefaultEventManager implements EventManager {
     LOG.info("Received event [eventClassFQN: {}]", eventFqn);
     for (final EventFamily family : registeredEventFamilies) {
       LOG.info("Lookup event fqn {} in family {}", eventFqn, family);
-      if (family.getSupportedEventFQNs().contains(eventFqn)) {
+      if (family.getSupportedEventFqns().contains(eventFqn)) {
         LOG.info("Event fqn {} found in family {}", eventFqn, family);
         executorContext.getCallbackExecutor().submit(new Runnable() {
           @Override
@@ -138,9 +138,9 @@ public class DefaultEventManager implements EventManager {
   }
 
   @Override
-  public int findEventListeners(List<String> eventClassFQNs, FindEventListenersCallback listener) {
+  public int findEventListeners(List<String> eventFqns, FindEventListenersCallback listener) {
     int requestId = new Random().nextInt();
-    EventListenersRequest request = new EventListenersRequest(requestId, eventClassFQNs);
+    EventListenersRequest request = new EventListenersRequest(requestId, eventFqns);
     EventListenersRequestBinding bind = new EventListenersRequestBinding(listener, request);
     eventListenersRequests.put(requestId, bind);
     LOG.debug("Adding event listener resolution request. Request ID: {}", requestId);

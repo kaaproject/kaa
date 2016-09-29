@@ -107,7 +107,7 @@ public interface EventManager extends EventListenersResolver, Transactable {
   void clearState();
 
   /**
-   * Restrict manager to use data channel until {@link #releaseDataChannel()} called
+   * Restrict manager to use data channel until {@link #releaseDataChannel()} called.
    */
   void engageDataChannel();
 

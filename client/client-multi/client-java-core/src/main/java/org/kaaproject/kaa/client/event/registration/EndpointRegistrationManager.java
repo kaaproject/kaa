@@ -84,17 +84,19 @@ public interface EndpointRegistrationManager {
    * @see EndpointAccessToken
    * @see OnAttachEndpointOperationCallback
    */
-  void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener);
+  void attachEndpoint(EndpointAccessToken endpointAccessToken,
+                      OnAttachEndpointOperationCallback resultListener);
 
   /**
-   * Updates with new endpoint detach request
+   * Updates with new endpoint detach request.
    *
    * @param endpointKeyHash Key hash of the detaching endpoint
    * @param resultListener  Listener to notify about result of the enpoint attaching
    * @see EndpointKeyHash
    * @see OnDetachEndpointOperationCallback
    */
-  void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener);
+  void detachEndpoint(EndpointKeyHash endpointKeyHash,
+                      OnDetachEndpointOperationCallback resultListener);
 
   /**
    * Creates user attach request using default verifier. Default verifier is selected during SDK
@@ -117,7 +119,8 @@ public interface EndpointRegistrationManager {
    * @param callback          called when authentication result received
    * @see UserAttachCallback
    */
-  void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback);
+  void attachUser(String userVerifierToken, String userExternalId, String userAccessToken,
+                  UserAttachCallback callback);
 
   /**
    * Checks if current endpoint is attached to user.
@@ -127,7 +130,7 @@ public interface EndpointRegistrationManager {
   boolean isAttachedToUser();
 
   /**
-   * Sets callback for notifications when current endpoint is attached to user
+   * Sets callback for notifications when current endpoint is attached to user.
    *
    * @param callback the callback
    * @see AttachEndpointToUserCallback
@@ -135,7 +138,7 @@ public interface EndpointRegistrationManager {
   void setAttachedCallback(AttachEndpointToUserCallback callback);
 
   /**
-   * Sets callback for notifications when current endpoint is detached from user
+   * Sets callback for notifications when current endpoint is detached from user.
    *
    * @param callback the callback
    * @see DetachEndpointFromUserCallback

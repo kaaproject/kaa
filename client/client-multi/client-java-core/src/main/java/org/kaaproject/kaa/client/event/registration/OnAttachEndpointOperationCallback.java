@@ -24,7 +24,6 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
  * Callback interface for attached endpoint notifications.<br>
  * <br>
  * Use this interface to receive result of next operations:
- *
  * Attach endpoint to user by {@link EndpointAccessToken}
  * <br>
  * Once result from Operations server is received, listener is notified with

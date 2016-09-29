@@ -64,7 +64,7 @@ public class EventManagerTest {
     eventManager.registerEventFamily(eventFamily);
     eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
     Mockito.verify(transport, times(1)).sync();
-    verify(eventFamily, times(0)).getSupportedEventFQNs();
+    verify(eventFamily, times(0)).getSupportedEventFqns();
     verify(eventFamily, times(0)).onGenericEvent(anyString(), any(byte[].class), anyString());
   }
 
@@ -244,12 +244,12 @@ public class EventManagerTest {
     }
 
     @Override
-    public Set<String> getSupportedEventFQNs() {
+    public Set<String> getSupportedEventFqns() {
       return supportedEventFQNs;
     }
 
     @Override
-    public void onGenericEvent(String eventFQN, byte[] data, String source) {
+    public void onGenericEvent(String eventFqn, byte[] data, String source) {
       eventsCount++;
     }
 
